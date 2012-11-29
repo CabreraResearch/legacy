@@ -114,10 +114,10 @@ namespace ChemSW.Nbt.WebServices
                 NodeObj["allowdelete"] = AllowDelete;
 
                 // Props in the View
+                JArray PropsArray = new JArray();
+                NodeObj["props"] = PropsArray;
                 foreach( TableProp thisProp in Props.Values )
                 {
-                    JArray PropsArray = new JArray();
-                    NodeObj["props"] = PropsArray;
                     PropsArray.Add( thisProp.ToJson() );
                 }
                 return NodeObj;
