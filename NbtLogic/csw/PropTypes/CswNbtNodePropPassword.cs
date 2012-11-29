@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] )
+            if( false == EncryptedPassword.Equals( JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )].ToString() ) )
             {
                 EncryptedPassword = JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )].ToString();
             }
