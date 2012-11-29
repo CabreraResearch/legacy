@@ -74,7 +74,7 @@
 
             // initTable()
 
-            function makeQuotaRow(qRow, canedit, objectclass, nodetype, currentusage, quota) {
+            function makeQuotaRow(qRow, canedit, rowid, objectclass, nodetype, currentusage, quota) {
                 // one object class row                                
                 var cell4;
                 table.cell(qRow, 1).text(objectclass);
@@ -84,7 +84,7 @@
                 if (canedit) {
                     cell4 = table.cell(qRow, 4);
                     cell4.input({
-                        name: o.name + id + 'quota',
+                        name: o.name + rowid + 'quota',
                         type: Csw.enums.inputTypes.text,
                         value: quota,
                         width: '50px'
