@@ -25,6 +25,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
             _CswNbtSchemaModTrnsctn.deleteAllModuleObjectClassJunctions( receiptLotOC );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, receiptLotOC.ObjectClassId );
 
             #endregion
 
