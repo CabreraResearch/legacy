@@ -503,18 +503,17 @@
                                 };
                                 var step3Table = cswPrivate.divStep3.table();
                                 //Containers Grid
-                                cswPrivate.ReconciliationContainersGrid = step3Table.cell(1, 1).grid(cswPrivate.gridOptions);
+                                cswPrivate.makeContainersGrid(step3Table.cell(1, 1), true);
                                 if (cswPrivate.isCurrent) {
                                     //Filter Correct Containers Checkbox
                                     var filterCorrectTable = step3Table.cell(2, 1).table({ cellvalign: 'center' });
                                     var filterCorrectCheckbox = filterCorrectTable.cell(1, 1).checkBox({
                                         checked: true,
                                         onChange: Csw.method(function () {
-                                            cswPrivate.filterCorrectContainers(filterCorrectCheckbox.checked());
+                                            cswPrivate.makeContainersGrid(step3Table.cell(1, 1), filterCorrectCheckbox.checked());
                                         })
                                     });
                                     filterCorrectTable.cell(1, 2).span({ text: ' Filter out Correct Containers' });
-                                    cswPrivate.filterCorrectContainers(filterCorrectCheckbox.checked());
                                     step3Table.cell(3, 1).br();
                                     //Set Action in Bulk
                                     var bulkActionTable = step3Table.cell(4, 1).table({ cellvalign: 'center' });
@@ -556,8 +555,7 @@
                                                     cswPrivate.addActionChange(row.data, actionSelect.val());
                                                 }
                                             });
-                                            step3Table.cell(1, 1).empty();
-                                            step3Table.cell(1, 1).grid(cswPrivate.gridOptions);
+                                            cswPrivate.makeContainersGrid(step3Table.cell(1, 1), filterCorrectCheckbox.checked());
                                             applyChangesButton.enable();
                                         }
                                     });
@@ -662,20 +660,25 @@
                 return actionOptions;
             };
 
+            cswPrivate.makeContainersGrid = function(parentDiv, filterOutCorrect) {
+                parentDiv.empty();
+                cswPrivate.ReconciliationContainersGrid = parentDiv.grid(cswPrivate.gridOptions);
+                var statusFilter = cswPrivate.ReconciliationContainersGrid.extGrid.filters.getFilter('status');
+                statusFilter.setActive(true);
+                cswPrivate.filterCorrectContainers(filterOutCorrect);
+            };
+
             cswPrivate.filterCorrectContainers = function (filterOutCorrect) {
                 var statusFilter = cswPrivate.ReconciliationContainersGrid.extGrid.filters.getFilter('status');
-                if (filterOutCorrect) {
-                    statusFilter.setActive(true);
-                    var optionsToFilter = [];
-                    Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
-                        if (row.Status !== 'Scanned Correct' && row.Status !== 'Received, Moved, Dispensed, or Disposed') {
-                            optionsToFilter.push(row.Status);
-                        }
-                    });
-                    statusFilter.menu.setSelected(optionsToFilter, true);
-                } else {
-                    statusFilter.setActive(false);
-                }
+                statusFilter.setActive(true);
+                var optionsToFilter = [];
+                Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
+                    if (false === filterOutCorrect ||
+                        (row.Status !== 'Scanned Correct' && row.Status !== 'Received, Moved, Dispensed, or Disposed')) {
+                        optionsToFilter.push(row.Status);
+                    }
+                });
+                statusFilter.menu.setSelected(optionsToFilter, true);
             };
 
             cswPrivate.saveChanges = function() {
