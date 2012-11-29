@@ -41,9 +41,11 @@
                     var highLightInvalid = function (value) {
                         if ((false == Csw.validateCASNo(value)) && false == (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired)) {
                             cswPrivate.input.css('background-color', '#FF4000');
+                            cswPrivate.badCheckSumTxt.hide();
                             cswPrivate.invalidTxt.show();
                         } else if (false == Csw.checkSumCASNo(value) && false == (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired)) {
                             cswPrivate.input.css('background-color', '#FF4000');
+                            cswPrivate.invalidTxt.hide();
                             cswPrivate.badCheckSumTxt.show();
                         } else {
                             cswPrivate.input.css('background-color', 'White');
