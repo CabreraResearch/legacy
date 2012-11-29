@@ -256,18 +256,22 @@
                         }
                     });
                     div.br();
-                }
+                } // makeFilterLink()
 
-                function makeFilterSet(thisFilterSet, Name) {
+                function makeFilterSet(thisFilterSet) {
 
                     var filterCount = 0;
                     var moreDiv = fdiv.moreDiv();
+                    var filterName = '';
 
-                    moreDiv.shownDiv.append('<b>' + Name + ':</b>');
+                    var nameSpan = moreDiv.shownDiv.span({ }).css({ fontWeight: 'bold' });
                     moreDiv.shownDiv.br();
                     var thisdiv = moreDiv.shownDiv;
                     moreDiv.moreLink.hide();
-                    Csw.each(thisFilterSet, function (thisFilter) {
+                    Csw.each(thisFilterSet, function(thisFilter) {
+                        if (filterName === '') {
+                            filterName = thisFilter.filtername;
+                        }
                         if (filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
@@ -275,9 +279,10 @@
                         makeFilterLink(thisFilter, thisdiv, filterCount);
                         filterCount++;
                     });
+                    nameSpan.text(filterName);
                     fdiv.br();
                     fdiv.br();
-                }
+                } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
 

@@ -300,6 +300,7 @@
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28046.cs" />
+    <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27884.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27709.cs" />

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using System.Linq;
+using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -19,12 +20,14 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtView _View;
         private readonly CswNbtStatisticsEvents _CswNbtStatisticsEvents;
+        private readonly CswNbtSearchPropOrder _CswNbtSearchPropOrder;
         public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, CswNbtView View )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
             _View = View;
             _CswNbtResources.EditMode = NodeEditMode.Table;
+            _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
         }
 
         public JObject getTable()
@@ -181,40 +184,9 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
                         thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNode.NodeType );
 
-                        Dictionary<Int32, Int32> OrderMap = new Dictionary<Int32, Int32>();
-                        if( _View != null )
-                        {
-                            CswNbtViewRelationship ViewRel = (CswNbtViewRelationship) _View.FindViewNodeByUniqueId( thisNode.NodeKey.ViewNodeUniqueId );
-                            if( ViewRel != null )
-                            {
-                                thisNode.AllowView = thisNode.AllowView && ViewRel.AllowView;
-                                thisNode.AllowEdit = thisNode.AllowEdit && ViewRel.AllowEdit;
-                                thisNode.AllowDelete = thisNode.AllowDelete && ViewRel.AllowDelete;
+                        // Properties
+                        Dictionary<Int32, Int32> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey );
 
-                                // Map property order to insert position
-                                foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
-                                {
-                                    Int32 ThisOrder = 0;
-                                    foreach( CswNbtViewProperty OtherViewProp in ViewRel.Properties )
-                                    {
-                                        if( ( OtherViewProp.Order != Int32.MinValue && OtherViewProp.Order < ViewProp.Order ) ||
-                                            ViewProp.Order == Int32.MinValue )
-                                        {
-                                            ThisOrder++;
-                                        }
-                                    }
-                                    while( OrderMap.ContainsValue( ThisOrder ) )
-                                    {
-                                        ThisOrder++;
-                                    }
-                                    OrderMap.Add( ViewProp.NodeTypePropId, ThisOrder );
-                                } // foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
-                            } // if( ViewRel != null )
-                        } // if( _View != null )
-
-
-                        // Props in the View
-                        Int32 OrderCnt = 100;
                         foreach( JObject PropElm in Tree.getChildNodePropsOfNode() )
                         {
                             TableProp thisProp = new TableProp();
@@ -256,17 +228,7 @@ namespace ChemSW.Nbt.WebServices
                                             CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, CswConvert.ToString( PropElm["field2"] ), CswConvert.ToString( PropElm["field1"] ) );
                                             thisProp.PropData["values"] = PropValues;
                                         }
-                                        Int32 thisOrder = OrderCnt;
-                                        if( OrderMap.ContainsKey( thisProp.NodeTypePropId ) )
-                                        {
-                                            thisOrder = OrderMap[thisProp.NodeTypePropId];
-                                        }
-                                        while( thisNode.Props.ContainsKey( thisOrder ) )
-                                        {
-                                            thisOrder++;
-                                        }
-                                        thisNode.Props.Add( thisOrder, thisProp );
-                                        OrderCnt++;
+                                        thisNode.Props.Add( orderDict[thisProp.NodeTypePropId], thisProp );
                                     }
                                 } // if( false == PropsToHide.Contains( NodeTypePropId ) )
                             } //if (false == CswConvert.ToBoolean(PropElm["hidden"]))
@@ -284,13 +246,13 @@ namespace ChemSW.Nbt.WebServices
             } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
         } // _populateDictionary()
 
-        public JObject _dictionaryToJson()
+        public JArray _dictionaryToJson()
         {
-            JObject ret = new JObject();
-            foreach( CswNbtMetaDataNodeType NodeType in _TableDict.Keys )
+            JArray ret = new JArray();
+            foreach( CswNbtMetaDataNodeType NodeType in _TableDict.Keys.OrderByDescending( NodeType => _TableDict[NodeType].Count ) )
             {
                 JObject NodeTypeObj = new JObject();
-                ret[NodeType.NodeTypeId.ToString()] = NodeTypeObj;
+                ret.Add( NodeTypeObj );
 
                 NodeTypeObj["nodetypeid"] = NodeType.NodeTypeId;
                 NodeTypeObj["nodetypename"] = NodeType.NodeTypeName;
