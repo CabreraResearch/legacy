@@ -34,10 +34,25 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
 
-            // Add 'default' Table layout elements for the nodetype to the view for efficiency
             if( _View != null )
             {
-                Int32 Order = -1000;
+                // Find current max order set in view
+                Int32 maxOrder = ( from ViewRel in _View.Root.ChildRelationships 
+                                   from ViewProp in ViewRel.Properties 
+                                 select ViewProp.Order ).Concat( new[] {0} ).Max();  // thanks Resharper!
+
+                // Set default order for properties in the view without one
+                foreach( CswNbtViewProperty ViewProp in from ViewRel in _View.Root.ChildRelationships 
+                                                        from ViewProp in ViewRel.Properties 
+                                                       where Int32.MinValue == ViewProp.Order 
+                                                      select ViewProp )
+                {
+                    ViewProp.Order = maxOrder + 1;
+                    maxOrder++;
+                }
+
+                // Add 'default' Table layout elements for the nodetype to the view for efficiency
+                // Set the order to be after properties in the view
                 foreach( CswNbtViewRelationship ViewRel in _View.Root.ChildRelationships )
                 {
                     if( ViewRel.SecondType == NbtViewRelatedIdType.NodeTypeId )
@@ -57,8 +72,8 @@ namespace ChemSW.Nbt.WebServices
                             if( false == AlreadyExists )
                             {
                                 CswNbtViewProperty NewViewProp = _View.AddViewProperty( ViewRel, NTProp );
-                                NewViewProp.Order = Order;
-                                Order++;
+                                CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout propTableLayout = NTProp.getTableLayout();
+                                NewViewProp.Order = maxOrder + propTableLayout.DisplayRow;
                             }
                         } // foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )
                     } // if( ViewRel.SecondType == RelatedIdType.NodeTypeId )
@@ -185,7 +200,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNode.NodeType );
 
                         // Properties
-                        Dictionary<Int32, Int32> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey );
+                        Dictionary<Int32, Int32> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey, _View );
 
                         foreach( JObject PropElm in Tree.getChildNodePropsOfNode() )
                         {

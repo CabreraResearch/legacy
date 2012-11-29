@@ -76,7 +76,8 @@ namespace ChemSW.Nbt.Search
                     {
                         _TableLayoutDict[NodeType] = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeType.NodeTypeId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
                     }
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[NodeType] )
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[NodeType]
+                                                                    .Where( Prop => false == dict.ContainsKey( Prop.PropId ) ) )
                     {
                         CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout propTableLayout = Prop.getTableLayout();
                         if( propTableLayout.DisplayRow > 0 )
@@ -94,8 +95,8 @@ namespace ChemSW.Nbt.Search
                     // Everything else in alphabetical order
                     maxOrder = ( dict.Values.Count > 0 ) ? dict.Values.Max() : 0;
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps()
-                        .Where( Prop => false == dict.ContainsKey( Prop.PropId ) )
-                        .OrderBy( Prop => Prop.PropName ) )
+                                                                    .Where( Prop => false == dict.ContainsKey( Prop.PropId ) )
+                                                                    .OrderBy( Prop => Prop.PropName ) )
                     {
                         maxOrder++;
                         dict.Add( Prop.PropId, maxOrder );
