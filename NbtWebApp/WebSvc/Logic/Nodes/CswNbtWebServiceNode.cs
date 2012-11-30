@@ -466,7 +466,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
             }
-            else if( Request.NodeTypeId != Int32.MinValue )
+            else if( Request.NodeTypeId > 0 )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId );
                 Nodes = MetaDataNodeType.getNodes( true, false );
@@ -475,7 +475,7 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 CswNbtMetaDataObjectClass MetaDataObjectClass = null;
-                if( Request.ObjectClassId != Int32.MinValue )
+                if( Request.ObjectClassId > 0 )
                 {
                     MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Request.ObjectClassId );
                 }

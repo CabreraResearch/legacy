@@ -281,7 +281,7 @@
                         }
                     };
                 } else {
-                    gridopts.selType = 'cellmodel';
+                    gridopts.selType = 'rowmodel';
                     gridopts.listeners.beforeselect = function () {
                         return Csw.bool(cswPrivate.canSelectRow);
                     };

@@ -25,10 +25,24 @@ namespace NbtWebApp
             public Int32 NodeTypeId = Int32.MinValue;
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
+
+            private NbtObjectClass _ObjectClass;
+
             [DataMember( IsRequired = false )]
-            public NbtObjectClass ObjectClass = CswNbtResources.UnknownEnum;
+            public string ObjectClass
+            {
+                get { return _ObjectClass; }
+                set { _ObjectClass = value; }
+            }
+
+            private NbtObjectClass _RelatedToObjectClass;
+
             [DataMember( IsRequired = false )]
-            public NbtObjectClass RelatedToObjectClass = CswNbtResources.UnknownEnum;
+            public string RelatedToObjectClass
+            {
+                get { return _RelatedToObjectClass; }
+                set { _RelatedToObjectClass = value; }
+            }
 
             private string _RelatedToNodeId = string.Empty;
             [DataMember( IsRequired = false )]

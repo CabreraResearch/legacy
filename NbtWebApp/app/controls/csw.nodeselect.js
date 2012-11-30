@@ -47,9 +47,10 @@
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
                 
                 cswPrivate.options = cswPrivate.options|| [];
-                
-                cswPrivate.table = cswParent.table();
 
+                cswPublic = cswParent.div();
+                cswPrivate.table = cswPublic.table();
+                
                 // Default to selected node as relationship value for new nodes being added
                 if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
                     Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
@@ -73,7 +74,7 @@
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     async: Csw.bool(cswPrivate.async),
-                    data: {
+                    data: cswPrivate.ajaxData || {
                         NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
                         ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
                         ObjectClass: Csw.string(cswPrivate.objectClassName),
@@ -156,21 +157,24 @@
                     cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
                 }
 
-                cswPublic = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
+                cswPublic.select = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: function () {
-                        var val = cswPublic.val();
+                        var val = cswPublic.select.val();
                         Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val });
                     },
                     values: cswPrivate.relationships,
                     selected: cswPrivate.selectedNodeId
                 });
 
-                cswPublic.bind('change', function () {
-                    cswPrivate.selectedNodeId = cswPublic.val();
-                    Csw.tryExec(cswPrivate.onChange, cswPublic);
-                    Csw.tryExec(cswPrivate.onSelect, cswPublic.val());
+                cswPublic.val = cswPublic.select.val; 
+
+                cswPublic.select.bind('change', function () {
+                    var val = cswPublic.select.val();
+                    cswPrivate.selectedNodeId = val;
+                    Csw.tryExec(cswPrivate.onChange, cswPublic.select);
+                    Csw.tryExec(cswPrivate.onSelect, val);
                 });
                 
                 cswPrivate.cellCol += 1;
@@ -193,10 +197,10 @@
                 
                 cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
 
-                cswPublic.required(cswPrivate.isRequired);
+                cswPublic.select.required(cswPrivate.isRequired);
 
-                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPublic.val()); },
-                                function (event) { Csw.nodeHoverOut(event, cswPublic.val()); });
+                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPublic.select.val()); },
+                                function (event) { Csw.nodeHoverOut(event, cswPublic.select.val()); });
             };
 
             cswPrivate.makeSearch = function() {
@@ -242,11 +246,11 @@
 
             cswPrivate.toggleOptions = function (on) {
                 if (Csw.bool(on)) {
-                    cswPublic.show();
+                    cswPublic.select.show();
                     cswPrivate.toggleButton.hide();
                     cswPrivate.nodeLinkText.hide();
                 } else {
-                    cswPublic.hide();
+                    cswPublic.select.hide();
                     cswPrivate.toggleButton.show();
                     cswPrivate.nodeLinkText.show();
                 }
@@ -263,12 +267,12 @@
                 if (cswPrivate.hiddenValue) {
                     cswPrivate.hiddenValue.val(nodeid);
                 }
-                if (cswPublic) {
-                    cswPublic.option({ value: nodeid, display: nodename });
-                    cswPublic.val(nodeid);
+                if (cswPublic && cswPublic.select) {
+                    cswPublic.select.option({ value: nodeid, display: nodename });
+                    cswPublic.select.val(nodeid);
                     cswPrivate.toggleOptions(true);
                     Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
-                    cswPublic.$.valid();
+                    cswPublic.select.$.valid();
                 }
             };
 
@@ -309,8 +313,8 @@
             //#region Public
             
             cswPublic.selectedNodeId = function () {
-                if(cswPublic && cswPublic.val) {
-                    cswPrivate.selectedNodeId = cswPublic.val();
+                if(cswPublic && cswPublic.select && cswPublic.select.val) {
+                    cswPrivate.selectedNodeId = cswPublic.select.val();
                 }
                 return cswPrivate.selectedNodeId;
             };
@@ -325,7 +329,7 @@
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink
                     });
-                    cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
+                    cswPublic.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                     function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
                 } else {
                     if (cswPrivate.options.length > 0) {
