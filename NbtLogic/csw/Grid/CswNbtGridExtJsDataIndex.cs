@@ -20,9 +20,18 @@ namespace ChemSW.Nbt.Grid.ExtJs
 
         public CswNbtGridExtJsDataIndex( string UniquePrefix, string dataIndex )
         {
-            _prefix = UniquePrefix.Replace( " ", "_" ).ToLower();
-            _dataIndex = dataIndex.Replace( " ", "_" ).ToLower();
+            _prefix = _makeSafe( UniquePrefix );
+            _dataIndex = _makeSafe( dataIndex );
         }
+
+        private string _makeSafe(string str)
+        {
+            string ret = str.ToLower();
+            ret = ret.Replace( " ", "_" );
+            ret = ret.Replace( "(", "_" );
+            ret = ret.Replace( ")", "_" );
+            return ret;
+        } // _makeSafe()
 
         /// <summary>
         /// Returns prefix + dataIndex as a string

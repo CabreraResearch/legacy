@@ -82,7 +82,7 @@ namespace ChemSW.Nbt
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
+                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) || _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                     {
                         Int32 ThisNTPId = Int32.MinValue;
                         if( NodesTable.Columns.Contains( "nodetypepropid" ) )
@@ -147,14 +147,37 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
             #region Container View Inventory Group Permission
+            CswNbtObjClassContainer ContainerNode = null;
             if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerClass )
             {
-
-                CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != CswNbtObjClassContainer )
+                ContainerNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+            }
+            else if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerDispenseTransactionClass )
+            {
+                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                if( null != ContDispTransNode )
                 {
-                    canView = CswNbtObjClassContainer.canContainer( CswNbtPermit.NodeTypePermission.View, null );
+                    if( null != ContDispTransNode.SourceContainer.RelatedNodeId )
+                    {
+                        ContainerNode = _CswNbtResources.Nodes[ContDispTransNode.SourceContainer.RelatedNodeId];
+                    }
+                    else if( null != ContDispTransNode.DestinationContainer.RelatedNodeId )
+                    {
+                        ContainerNode = _CswNbtResources.Nodes[ContDispTransNode.DestinationContainer.RelatedNodeId];
+                    }
                 }
+            }
+            else if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerLocationClass )
+            {
+                CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                if( null != ContainerLocationNode )
+                {
+                    ContainerNode = _CswNbtResources.Nodes[ContainerLocationNode.Container.RelatedNodeId];
+                }
+            }
+            if( null != ContainerNode )
+            {
+                canView = ContainerNode.canContainer( CswNbtPermit.NodeTypePermission.View );
             }
             #endregion
             return canView;
@@ -165,17 +188,22 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
             #region Container Request Button Inventory Group Permission
+            
             CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
-            if( NTProp.ObjectClassPropId == RequestProp.PropId )
+            if( null != ContainerClass )
             {
-                CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != CswNbtObjClassContainerInstance )
+                CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
+                if( NTProp.ObjectClassPropId == RequestProp.PropId )
                 {
+                    CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                    if( null != CswNbtObjClassContainerInstance )
+                    {
 
                     canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
+                    }
                 }
             }
+
             #endregion
             return canView;
         }

@@ -542,7 +542,7 @@ window.initMain = window.initMain || function (undefined) {
                                     getViewGrid({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'nodekey': o.nodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                                     break;
                                 case 'table':
-                                    getViewTable({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'nodekey': o.nodekey });
+                                    getViewTable({ 'viewid': o.itemid }); //, 'nodeid': o.nodeid, 'nodekey': o.nodekey });
                                     break;
                                 default:
                                     refreshNodesTree({ 'viewid': o.itemid, 'viewmode': o.mode, 'nodeid': o.nodeid, 'nodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
@@ -749,8 +749,8 @@ window.initMain = window.initMain || function (undefined) {
             function getViewTable(options) {
                 var o = {
                     viewid: '',
-                    nodeid: '',
-                    nodekey: '',
+//            nodeid: '',
+//            nodekey: '',
                     //			doMenuRefresh: true,
                     //			onAddNode: '',
                     onEditNode: '',
@@ -791,8 +791,8 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.nbt.nodeTable(Csw.main.centerBottomDiv, {
                     viewid: o.viewid,
-                    nodeid: o.nodeid,
-                    nodekey: o.nodekey,
+//            nodeid: o.nodeid,
+//            nodekey: o.nodekey,
                     name: mainTableId,
                     Multi: multi,
                     //'onAddNode': o.onAddNode,
@@ -1005,9 +1005,9 @@ window.initMain = window.initMain || function (undefined) {
                             break;
                         case 'table':
                             getViewTable({
-                                viewid: o.viewid,
-                                nodeid: o.nodeid,
-                                nodekey: o.nodekey
+                            viewid: o.viewid //,
+//                            nodeid: o.nodeid,
+//                            nodekey: o.nodekey
                             });
                             break;
                         case 'tree':

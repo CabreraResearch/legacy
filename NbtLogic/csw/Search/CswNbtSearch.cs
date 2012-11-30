@@ -20,12 +20,15 @@ namespace ChemSW.Nbt.Search
         /// </summary>
         protected CswNbtResources _CswNbtResources;
 
+        private CswNbtSearchPropOrder _CswNbtSearchPropOrder;
+
         /// <summary>
         /// Constructor - new search
         /// </summary>
         public CswNbtSearch( CswNbtResources CswNbtResources, string SearchTerm )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
 
             _SearchObj = new JObject();
             _SearchObj["searchterm"] = SearchTerm;
@@ -38,6 +41,8 @@ namespace ChemSW.Nbt.Search
         public CswNbtSearch( CswNbtResources CswNbtResources, DataRow SessionDataRow )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
+
             _SearchObj = JObject.Parse( SessionDataRow["viewxml"].ToString() );
             SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionDataRow["sessiondataid"] ) );
         }
@@ -96,6 +101,15 @@ namespace ChemSW.Nbt.Search
         } // getFilteredPropIds()
 
         #region Search Functions
+
+        public void addNodeTypeFilter( Int32 NodeTypeId )
+        {
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            if( null != NodeType )
+            {
+                addFilter( makeFilter( NodeType, Int32.MinValue, true ) );
+            }
+        } // addNodeTypeFilter()
 
         public void addFilter( CswNbtSearchFilterWrapper Filter )
         {
@@ -199,9 +213,9 @@ namespace ChemSW.Nbt.Search
         /// <summary>
         /// New Filters to offer, based on Results
         /// </summary>
-        public JObject FilterOptions( ICswNbtTree Tree )
+        public JArray FilterOptions( ICswNbtTree Tree )
         {
-            JObject FiltersObj = new JObject();
+            JArray FiltersArr = new JArray();
             Tree.goToRoot();
             bool SingleNodeType = IsSingleNodeType();
             if( false == SingleNodeType )
@@ -224,7 +238,6 @@ namespace ChemSW.Nbt.Search
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
-                string FilterName = "Filter To";
                 if( NodeTypeIds.Keys.Count == 1 )
                 {
                     if( false == IsSingleNodeType() )
@@ -241,7 +254,7 @@ namespace ChemSW.Nbt.Search
                 else
                 {
                     JArray FilterSet = new JArray();
-                    FiltersObj[FilterName] = FilterSet;
+                    FiltersArr.Add( FilterSet );
 
                     // Sort by count descending, then (unfortunately) by nodetypeid
                     Dictionary<Int32, Int32> sortedDict = ( from entry
@@ -264,10 +277,16 @@ namespace ChemSW.Nbt.Search
                 // Filter on property values in the results
                 Collection<Int32> FilteredPropIds = getFilteredPropIds();
                 Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
+                Dictionary<Int32, Int32> PropOrder = null;
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
                     Tree.goToNthChild( n );
+
+                    if( null == PropOrder )
+                    {
+                        PropOrder = _CswNbtSearchPropOrder.getPropOrderDict( Tree.getNodeKeyForCurrentPosition() );
+                    }
                     JArray Props = Tree.getChildNodePropsOfNode();
                     foreach( JObject Prop in Props )
                     {
@@ -292,17 +311,16 @@ namespace ChemSW.Nbt.Search
                             PropCounts[NodeTypePropId][Gestalt] += 1;
                         }
                     }
+
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
-                foreach( Int32 NodeTypePropId in PropCounts.Keys )
+                foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder[NodeTypePropId] ) )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
-                    string FilterName = NodeTypeProp.PropName;
 
                     JArray FilterSet = new JArray();
-                    FiltersObj[FilterName] = FilterSet;
-
+                    FiltersArr.Add( FilterSet );
 
                     // Sort by count descending, then alphabetically by gestalt
                     Dictionary<string, Int32> sortedDict = ( from entry
@@ -319,7 +337,7 @@ namespace ChemSW.Nbt.Search
                 }
             } // if( SingleNodeType )
 
-            return FiltersObj;
+            return FiltersArr;
         } // FilterOptions()
 
 

@@ -1137,7 +1137,7 @@
                     var parent = Csw.literals.factory($newThis);
                     parent.triStateCheckBox({
                         name: id,
-                        Checked: 'false',
+                        checked: 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
                     
