@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                CswPrimaryKey PotentialKey = CswConvert.ToPrimaryKey( value );
+                CswPrimaryKey PotentialKey = value;
 
                 if( CswTools.IsPrimaryKey( PotentialKey ) &&
                     false == string.IsNullOrEmpty( PotentialKey.TableName ) &&
