@@ -16,8 +16,8 @@ namespace ChemSW.Nbt.PropTypes
             return PropWrapper.AsLocation;
         }
 
-        public CswNbtNodePropLocation( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        public CswNbtNodePropLocation( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             _FieldTypeRule = (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _NameSubField = _FieldTypeRule.NameSubField;

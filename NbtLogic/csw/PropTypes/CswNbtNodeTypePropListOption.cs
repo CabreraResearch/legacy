@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return( string.Empty == Text || string.Empty == Value );
+                return ( string.Empty == Text || string.Empty == Value );
             }//get
         }//Empty
 

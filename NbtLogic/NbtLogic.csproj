@@ -516,7 +516,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropSequence.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropStatic.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropText.cs" />
-    <Compile Include="csw\PropTypes\CswNbtNodePropTime.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropTimeInterval.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropUserSelect.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropViewPickList.cs" />
