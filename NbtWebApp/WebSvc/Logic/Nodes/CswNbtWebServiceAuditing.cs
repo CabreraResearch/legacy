@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( DataRow row in HistoryTable.Rows )
                 {
                     string currentAuditId = row["AuditId"].ToString();
-                    if( false == currentAuditId.Equals( mutatingRowsAuditId ) ) //we're onto a new group
+                    if( currentAuditId != mutatingRowsAuditId ) //we're onto a new group
                     {
                         mutatingRowsAuditId = currentAuditId;
                         changeToDate = row["ChangeDate"].ToString();
