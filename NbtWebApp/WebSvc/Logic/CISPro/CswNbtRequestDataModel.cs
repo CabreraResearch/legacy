@@ -74,6 +74,9 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
                     set { CswRequestName = new CswPropIdAttr( value ); }
                 }
 
+                [DataMember( IsRequired = false )]
+                public Collection<NodeSelect.Node> RequestItems = new Collection<NodeSelect.Node>();
+
                 [IgnoreDataMember]
                 public CswPrimaryKey CswRequestId { get; set; }
                 [IgnoreDataMember]

@@ -89,17 +89,19 @@
                 });
             };
 
-            cswPrivate.saveToFavorites = function () {
-                //cswPrivate.makePendingTab({
-                //    urlMethod: 'copyRequest',
-                //    data: {
-                //        CopyFromRequestId: cswPrivate.copyFromNodeId,
-                //        CopyToRequestId: cswPrivate.cartnodeid
-                //    },
-                //    onSuccess: function () {
-                //        Csw.publish(Csw.enums.events.main.refreshHeader);
-                //    }
-                //});
+            cswPrivate.copyToRequest = function (copyToRequest, copyRequestItems) {
+                if (copyToRequest && copyRequestItems) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Requests/copy',
+                        data: {
+                            RequestItems: copyRequestItems,
+                            RequestId: copyToRequest
+                        },
+                        onSuccess: function() {
+                            Csw.publish(Csw.enums.events.main.refreshHeader);
+                        }
+                    });
+                }
             }; // copyRequest()  
 
             //#endregion AJAX methods
@@ -211,6 +213,17 @@
                 
                 ol.li().br({ number: 1 });
 
+                var hasOneRowSelected = false;
+                var hasFavoriteSelected = false;
+                
+                var toggleSaveBtn = function() {
+                    if (hasOneRowSelected && hasFavoriteSelected) {
+                        saveBtn.enable();
+                    } else {
+                        saveBtn.disable();
+                    }  
+                };
+
                 cswPublic.grid = ol.li().grid({
                     name: gridId,
                     storeId: gridId + '_store',
@@ -287,31 +300,51 @@
                             publishDeleteEvent: false
                         });
                     }, // onDelete
-                    onSelect: function(row) {}, 
-                    onDeselect: function(row) {}
+                    onSelectChange: function(rowCount) {
+                        hasOneRowSelected = rowCount > 0;
+                        toggleSaveBtn();
+                    }
                 });
 
                 ol.li().br();
                 
                 var btmTbl = ol.li().table();
-                btmTbl.cell(1, 1).buttonExt({
+                var saveBtn = btmTbl.cell(1, 1).buttonExt({
                     enabledText: 'Save to Favorites',
+                    disabledText: 'Saving...',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-                    onClick: cswPrivate.saveToFavorites
-                });
+                    onClick: function () {
+                        var nodes = [];
+                        cswPrivate.containerGrid.grid.getSelectedRowsVals('nodeid').forEach(function(nodeId) {
+                            nodes.push({ NodeId: nodeId });
+                        });
+                        cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes);
+                    }
+                }).disable();
 
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/cart',
                     success: function(data) {
                         var picklistCell = btmTbl.cell(1, 2);
+                        
                         var makePicklist = function () {
                             picklistCell.empty();
-                            picklistCell.nodeSelect({
+                            var toggleSave = function () {
+                                var nodeId = nS.selectedNodeId();
+                                if (nodeId) {
+                                    cswPrivate.selectedFavoriteId = nodeId;
+                                    hasFavoriteSelected = true;
+                                    toggleSaveBtn();
+                                }
+                            };
+                            var nS = picklistCell.nodeSelect({
                                 width: '50px',
                                 selectedNodeId: cswPrivate.lastCreatedFavorite || '',
                                 showSelectOnLoad: true,
                                 viewid: data.FavoriteItemsViewId,
-                                allowAdd: false
+                                allowAdd: false,
+                                onSelectNode: toggleSave,
+                                onSuccess: toggleSave
                             });
                         };
                         makePicklist();
@@ -377,6 +410,6 @@
 
             return cswPublic;
             
-            //#region _postCtor
+            //#endregion _postCtor
         });
 }());

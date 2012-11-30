@@ -32,12 +32,13 @@
 
                 canSelectRow: false,
 
-                onLoad: null,   // function(grid, ajaxResult)
-                onEdit: null,   // function(rows)
-                onDelete: null, // function(rows)
-                onSelect: null, // function(row)
-                onDeselect: null, // function(row)
-
+                onLoad: function(grid, ajaxResult) {},
+                onEdit: function (rows) { },   
+                onDelete: function (rows) { }, 
+                onSelect: function (rows) { }, 
+                onDeselect: function (row) { },
+                onSelectChange: function (rowCount) { },
+                
                 height: '',  // overridden by webservice if paging is on
                 //width: '100%',
                 width: '',
@@ -401,6 +402,9 @@
                     deselect: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
                     },
+                    selectionchange: function(rowModel, selected, eOpts) {
+                        Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
+                    },
                     afterrender: function (component) {
                         var bottomToolbar = component.getDockedComponent('bottomtoolbar');
                         if (false === Csw.isNullOrEmpty(bottomToolbar)) {
@@ -463,6 +467,10 @@
 
             cswPublic.getSelectedRowId = Csw.method(function () {
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
+            });
+
+            cswPublic.getSelectedRowCount = Csw.method(function() {
+                return cswPrivate.grid.getSelectionModel().getSelection().length;
             });
 
             cswPublic.getSelectedRows = Csw.method(function () {
