@@ -8,14 +8,12 @@
             'use strict';
             var cswPrivate = {
                 name: '',
-                prefix: '',
                 checked: '',
                 ReadOnly: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
                 onChange: null, // function (newval) {},
                 value: 'false'
-                
             };
 
             var cswPublic = {};
@@ -46,7 +44,6 @@
                         };
                         cswPrivate.checkBox = cswParent.input(cswPrivate);
                     }
-
                     cswPublic = Csw.dom({}, cswPrivate.checkBox.$);
                 } ());
 
