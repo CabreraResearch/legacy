@@ -128,7 +128,7 @@ namespace NbtWebApp
             var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, CswNbtRequestDataModel.CswRequestReturn.Ret>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceRequesting.createFavorite,
+                WebSvcMethodPtr: CswNbtWebServiceRequesting.copyFavorite,
                 ParamObj: Request
                 );
 

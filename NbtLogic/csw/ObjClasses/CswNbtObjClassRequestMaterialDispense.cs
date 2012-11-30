@@ -515,6 +515,11 @@ namespace ChemSW.Nbt.ObjClasses
             Type.setReadOnly( value: true, SaveToDb: true );
         }
 
+        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        {
+            IsFavorite.RecalculateReferenceValue();
+        }
+
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );

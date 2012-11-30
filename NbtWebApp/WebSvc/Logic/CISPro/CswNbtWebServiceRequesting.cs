@@ -158,6 +158,42 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
+        /// WCF method to get current User's cart data
+        /// </summary>
+        public static void copyFavorite( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.CswRequestReturn.Ret Request )
+        {
+            CswNbtResources NbtResources = _validate( CswResources );
+            bool Succeeded = false;
+            if( CswTools.IsPrimaryKey( Request.CswRequestId ) && Request.RequestItems.Any() )
+            {
+                CswNbtObjClassRequest RequestNode = NbtResources.Nodes[Request.CswRequestId];
+                if( null != RequestNode )
+                {
+                    foreach( NodeSelect.Node Item in Request.RequestItems )
+                    {
+                        CswNbtPropertySetRequestItem PropertySetRequest = NbtResources.Nodes[Item.NodePk];
+                        if( null != PropertySetRequest && (
+                            PropertySetRequest.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk ||
+                            PropertySetRequest.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
+                           )
+                        {
+                            CswNbtObjClassRequestMaterialDispense MaterialDispense = CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest );
+                            if( null != MaterialDispense )
+                            {
+                                CswNbtPropertySetRequestItem NewPropSetRequest = MaterialDispense.copyNode();
+                                CswNbtObjClassRequestMaterialDispense NewMaterialDispense = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest );
+                                NewMaterialDispense.Request.RelatedNodeId = RequestNode.NodeId;
+                                NewMaterialDispense.postChanges( ForceUpdate: false );
+                                Succeeded = true;
+                            }
+                        }
+                    }
+                }
+            }
+            Ret.Data.Succeeded = Succeeded;
+        }
+
+        /// <summary>
         /// WCF method to fulfill request
         /// </summary>
         public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )

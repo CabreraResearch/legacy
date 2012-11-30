@@ -308,6 +308,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        {
+        
+        }
+
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             //Nothing to do yet

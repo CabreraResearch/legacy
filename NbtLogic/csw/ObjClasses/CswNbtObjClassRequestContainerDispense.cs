@@ -341,6 +341,11 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.State = FulfillMenu.Dispense;
         }
 
+        public override void onRequestPropChange( CswNbtNodeProp Prop )
+        {
+        
+        }
+
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             //Nothing to do yet

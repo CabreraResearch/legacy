@@ -92,7 +92,7 @@
             cswPrivate.copyToRequest = function (copyToRequest, copyRequestItems) {
                 if (copyToRequest && copyRequestItems) {
                     Csw.ajaxWcf.post({
-                        urlMethod: 'Requests/copy',
+                        urlMethod: 'Requests/Favorites/copy',
                         data: {
                             RequestItems: copyRequestItems,
                             RequestId: copyToRequest
@@ -214,10 +214,16 @@
                 ol.li().br({ number: 1 });
 
                 var hasOneRowSelected = false;
-                var hasFavoriteSelected = false;
+                var favoriteSelect;
                 
                 var toggleSaveBtn = function() {
-                    if (hasOneRowSelected && hasFavoriteSelected) {
+                    if (favoriteSelect) {
+                        var nodeId = favoriteSelect.selectedNodeId();
+                        if (nodeId) {
+                            cswPrivate.selectedFavoriteId = nodeId;
+                        }
+                    }
+                    if (hasOneRowSelected && cswPrivate.selectedFavoriteId) {
                         saveBtn.enable();
                     } else {
                         saveBtn.disable();
@@ -314,7 +320,7 @@
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     onClick: function () {
                         var nodes = [];
-                        cswPrivate.containerGrid.grid.getSelectedRowsVals('nodeid').forEach(function(nodeId) {
+                        cswPublic.grid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
                         cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes);
@@ -328,22 +334,14 @@
                         
                         var makePicklist = function () {
                             picklistCell.empty();
-                            var toggleSave = function () {
-                                var nodeId = nS.selectedNodeId();
-                                if (nodeId) {
-                                    cswPrivate.selectedFavoriteId = nodeId;
-                                    hasFavoriteSelected = true;
-                                    toggleSaveBtn();
-                                }
-                            };
-                            var nS = picklistCell.nodeSelect({
+                            favoriteSelect = picklistCell.nodeSelect({
                                 width: '50px',
                                 selectedNodeId: cswPrivate.lastCreatedFavorite || '',
                                 showSelectOnLoad: true,
                                 viewid: data.FavoriteItemsViewId,
                                 allowAdd: false,
-                                onSelectNode: toggleSave,
-                                onSuccess: toggleSave
+                                onSelectNode: toggleSaveBtn,
+                                onSuccess: toggleSaveBtn
                             });
                         };
                         makePicklist();

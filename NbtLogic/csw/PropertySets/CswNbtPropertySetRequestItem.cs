@@ -246,6 +246,11 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void onTypePropChange( CswNbtNodeProp Prop );
 
         /// <summary>
+        /// Request change event for derived classes to implement
+        /// </summary>
+        public abstract void onRequestPropChange( CswNbtNodeProp Prop );
+
+        /// <summary>
         /// Mechanism to add default filters in derived classes
         /// </summary>
         public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
@@ -327,6 +332,7 @@ namespace ChemSW.Nbt.ObjClasses
             setFulfillVisibility();
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
+            Request.SetOnPropChange( _onRequestPropChange );
             CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -412,20 +418,28 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
 
+        public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
+        private void _onRequestPropChange( CswNbtNodeProp Prop )
+        {
+            onRequestPropChange( Prop );
+        }
+
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         private void _onTypePropChange( CswNbtNodeProp Prop )
         {
             onTypePropChange( Prop );
         }
 
+
+
+
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-        public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
-        public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropRelationship Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
+        public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropSequence Number { get { return _CswNbtNode.Properties[PropertyName.Number]; } }
         public CswNbtNodePropStatic Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }
