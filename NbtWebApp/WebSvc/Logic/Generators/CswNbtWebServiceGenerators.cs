@@ -60,7 +60,10 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( BatchNodes[0].NodeType, false );
                 foreach( CswNbtObjClassBatchOp BatchNode in BatchNodes )
                 {
-                    BatchRel.NodeIdsToFilterIn.Add( BatchNode.NodeId );
+                    if( BatchNode != null )
+                    {
+                        BatchRel.NodeIdsToFilterIn.Add( BatchNode.NodeId );
+                    }
                 }
 
                 CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources, BatchOpsView );
