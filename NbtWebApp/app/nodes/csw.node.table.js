@@ -6,12 +6,10 @@
         Csw.nbt.register('nodeTable', function (cswParent, params) {
             'use strict';
             var cswPrivate = {
-                //TableSearchUrl: 'getTableSearch',
-                TableViewUrl: 'getTableView',
                 viewid: '',
                 name: '',
-                nodeid: '',
-                nodekey: '',
+//                nodeid: '',
+//                nodekey: '',
                 EditMode: Csw.enums.editMode.Edit,
                 onEditNode: null,
                 onDeleteNode: null,
@@ -29,7 +27,23 @@
                 extraActionIcon: Csw.enums.iconType.none,
                 onExtraAction: null,  // function(nodeObj) {}
                 properties: {},
-                onMoreClick: function () { }
+                onMoreClick: function (nodetypeid, nodetypename) {
+                    // default behavior: rerun with filtered nodetype
+                    cswPrivate.filterToNodeTypeId = nodetypeid;
+                    cswPrivate.originaltabledata = cswPrivate.tabledata;
+                    cswPrivate.tabledata = null;
+                    cswPrivate.init(function() {
+                        cswPrivate.tableDiv.a({
+                            text: 'Back to All Results',
+                            onClick: function() {
+                                cswPrivate.filterToNodeTypeId = '';
+                                cswPrivate.tabledata = cswPrivate.originaltabledata;
+                                cswPrivate.init();
+                            }
+                        });
+                    });
+                },
+                filterToNodeTypeId: ''
             };
             if (params) Csw.extend(cswPrivate, params);
 
@@ -440,6 +454,7 @@
 
 
             cswPrivate.HandleTableData = function () {
+                cswParent.empty();
                 cswPrivate.results = Csw.number(cswPrivate.tabledata.results, -1);
 
                 // multi-nodetype
@@ -483,15 +498,7 @@
                 Csw.tryExec(cswPrivate.onSuccess);
             }; // HandleTableData()
 
-
-            cswPublic.expandAll = function () {
-                Csw.each(cswPrivate.texttables, function (texttable) {
-                    texttable.toggle();
-                });
-            }; // expandAll()
-
-            // constructor
-            (function () {
+            cswPrivate.init = function(onAfterInit) {
                 cswPrivate.r = 1;
                 cswPrivate.c = 1;
                 cswPrivate.currentpage = 1;
@@ -499,21 +506,35 @@
 
                 if (false === Csw.isNullOrEmpty(cswPrivate.tabledata)) {
                     cswPrivate.HandleTableData();
+                    Csw.tryExec(onAfterInit);
                 } else {
                     Csw.ajax.post({
-                        urlMethod: cswPrivate.TableViewUrl,
+                        urlMethod: 'getTableView',
                         data: {
                             ViewId: cswPrivate.viewid,
-                            NodeId: cswPrivate.nodeid,
-                            NodeKey: cswPrivate.nodekey
+//                            NodeId: cswPrivate.nodeid,
+//                            NodeKey: cswPrivate.nodekey,
+                            NodeTypeId: cswPrivate.filterToNodeTypeId
                         },
-                        success: function (result) {
+                        success: function(result) {
                             cswPrivate.tabledata = result;
-                            cswPrivate.HandleTableData();
+                            cswPrivate.HandleTableData(onAfterInit);
+                            Csw.tryExec(onAfterInit);
                         }
-                    });
+                    }); // ajax
                 }
+            }; // init()
+            
+            // constructor
+            (function () {
+                cswPrivate.init();
             })(); // constructor
+
+            cswPublic.expandAll = function () {
+                Csw.each(cswPrivate.texttables, function (texttable) {
+                    texttable.toggle();
+                });
+            }; // expandAll()
 
             return cswPublic;
         }); // register

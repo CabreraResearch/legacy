@@ -16,18 +16,21 @@ namespace ChemSW.Nbt.WebServices
     {
         private const Int32 _MaxLength = 35;
         private const Int32 _NodePerNodeTypeLimit = 3;
-
+        
+        private Int32 _FilterToNodeTypeId;
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtView _View;
         private readonly CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private readonly CswNbtSearchPropOrder _CswNbtSearchPropOrder;
-        public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, CswNbtView View )
+        
+        public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, CswNbtView View, Int32 NodeTypeId )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
             _View = View;
             _CswNbtResources.EditMode = NodeEditMode.Table;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
+            _FilterToNodeTypeId = NodeTypeId;
         }
 
         public JObject getTable()
@@ -90,9 +93,9 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( Tree != null )
             {
-                _populateDictionary( Tree, PropsToHide );
-                
-                ret["results"] = Tree.getChildNodeCount().ToString();
+                Int32 results = _populateDictionary( Tree, PropsToHide );
+
+                ret["results"] = results; // Tree.getChildNodeCount().ToString();
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
                 ret["nodetypes"] = _dictionaryToJson();
@@ -166,8 +169,9 @@ namespace ChemSW.Nbt.WebServices
 
         private Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>> _TableDict = new Dictionary<CswNbtMetaDataNodeType, Collection<TableNode>>();
 
-        private void _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide )
+        private Int32 _populateDictionary( ICswNbtTree Tree, Collection<Int32> PropsToHide )
         {
+            Int32 results = 0;
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
@@ -175,7 +179,13 @@ namespace ChemSW.Nbt.WebServices
                 TableNode thisNode = new TableNode();
 
                 thisNode.NodeKey = Tree.getNodeKeyForCurrentPosition();
-                if(null != thisNode.NodeKey )
+                
+                // Note on FilterToNodeTypeId: 
+                // It would be better to filter inside the view, 
+                // but it's also much more work, and I'm not even sure this feature will be used.
+                
+                if( null != thisNode.NodeKey && 
+                    ( Int32.MinValue == _FilterToNodeTypeId || _FilterToNodeTypeId == thisNode.NodeKey.NodeTypeId ) )
                 {
                     thisNode.NodeType = _CswNbtResources.MetaData.getNodeType( thisNode.NodeKey.NodeTypeId );
                     if( null != thisNode.NodeType )
@@ -251,14 +261,16 @@ namespace ChemSW.Nbt.WebServices
 
                         if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
                         {
-                            _TableDict.Add( thisNode.NodeType , new Collection<TableNode>() );
+                            _TableDict.Add( thisNode.NodeType, new Collection<TableNode>() );
                         }
                         _TableDict[thisNode.NodeType].Add( thisNode );
+                        results++;
 
                     } // if( thisNode.NodeType != null )
-                } // if(null != thisNode.NodeKey )
+                } // if(null != thisNode.NodeKey && ( Int32.MinValue == _FilterToNodeTypeId || _FilterToNodeTypeId == thisNode.NodeKey.NodeTypeId ) )
                 Tree.goToParentNode();
             } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            return results;
         } // _populateDictionary()
 
         public JArray _dictionaryToJson()

@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.WebServices
         private JObject _finishUniversalSearch( CswNbtSearch Search )
         {
             ICswNbtTree Tree = Search.Results();
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null );
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null, Int32.MinValue );
 
             JObject ret = new JObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
