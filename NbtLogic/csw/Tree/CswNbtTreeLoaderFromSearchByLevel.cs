@@ -147,14 +147,37 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
             #region Container View Inventory Group Permission
+            CswNbtObjClassContainer ContainerNode = null;
             if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerClass )
             {
-
-                CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != CswNbtObjClassContainer )
+                ContainerNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+            }
+            else if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerDispenseTransactionClass )
+            {
+                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                if( null != ContDispTransNode )
                 {
-                    canView = CswNbtObjClassContainer.canContainer( CswNbtPermit.NodeTypePermission.View, null );
+                    if( null != ContDispTransNode.SourceContainer.RelatedNodeId )
+                    {
+                        ContainerNode = _CswNbtResources.Nodes[ContDispTransNode.SourceContainer.RelatedNodeId];
+                    }
+                    else if( null != ContDispTransNode.DestinationContainer.RelatedNodeId )
+                    {
+                        ContainerNode = _CswNbtResources.Nodes[ContDispTransNode.DestinationContainer.RelatedNodeId];
+                    }
                 }
+            }
+            else if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerLocationClass )
+            {
+                CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                if( null != ContainerLocationNode )
+                {
+                    ContainerNode = _CswNbtResources.Nodes[ContainerLocationNode.Container.RelatedNodeId];
+                }
+            }
+            if( null != ContainerNode )
+            {
+                canView = ContainerNode.canContainer( CswNbtPermit.NodeTypePermission.View );
             }
             #endregion
             return canView;

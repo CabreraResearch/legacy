@@ -272,16 +272,6 @@ namespace ChemSW.Nbt.Actions
                 NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
                 NodeAsSize.UnitCount.Value = CswConvert.ToDouble( SizeObj["unitCount"] );
 
-                JArray Row = new JArray();
-                Ret["row"] = Row;
-
-                Row.Add( "(New Size)" );
-                Row.Add( NodeAsSize.InitialQuantity.Gestalt );
-                Row.Add( NodeAsSize.Dispensable.Gestalt );
-                Row.Add( NodeAsSize.QuantityEditable.Gestalt );
-                Row.Add( NodeAsSize.CatalogNo.Gestalt );
-                Row.Add( NodeAsSize.UnitCount.Gestalt );
-
                 if( ( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
                     || false == CswTools.IsDouble( NodeAsSize.UnitCount.Value ) )
                 {
