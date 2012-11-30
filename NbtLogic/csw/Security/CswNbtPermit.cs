@@ -823,7 +823,7 @@ namespace ChemSW.Nbt.Security
 
                         CswNbtObjClassContainer CswNbtObjClassContainer = Node;
 
-                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.NodeTypePermission, null, _CswNbtPermitInfo.User );
+                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.User );
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == NodeTypePermission.Edit )
                     {
