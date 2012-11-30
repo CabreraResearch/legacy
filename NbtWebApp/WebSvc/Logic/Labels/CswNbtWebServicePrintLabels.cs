@@ -101,9 +101,26 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataObjectClass PrintLabelClass = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
                     foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in TargetNodeType.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
                     {
-                        if( RelationshipProp.FKValue == PrintLabelClass.ObjectClassId )
+                        bool PropMatchesPrintLabel = false;
+                        if( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                            RelationshipProp.FKValue == PrintLabelClass.ObjectClassId )
+                        {
+                            PropMatchesPrintLabel = true;
+                        }
+                        else if ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                        {
+                            foreach( Int32 PrintLabelNTId in PrintLabelClass.getNodeTypeIds() )
+                            {
+                                if( RelationshipProp.FKValue == PrintLabelNTId )
+                                {
+                                    PropMatchesPrintLabel = true;
+                                }
+                            }
+                        }
+                        if( PropMatchesPrintLabel )
                         {
                             LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId.ToString();
+                            break;
                         }
                     }
                 }
