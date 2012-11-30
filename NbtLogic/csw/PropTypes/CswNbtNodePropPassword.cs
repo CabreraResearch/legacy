@@ -77,10 +77,9 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 }
 
-                _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
-                if( WasModified )
+                if( _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
                 {
+                    _CswNbtNodePropData.Gestalt = value;
                     ChangedDate = DateTime.Now;
                 }
             }
