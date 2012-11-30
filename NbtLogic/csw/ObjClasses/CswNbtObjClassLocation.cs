@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LocationCode = "Location Code";
             public const string AllowInventory = "Allow Inventory";
             public const string StorageCompatability = "Storage Compatability";
+            public const string Containers = "Containers";
         }
 
 
@@ -223,6 +224,13 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[PropertyName.StorageCompatability] );
+            }
+        }
+        public CswNbtNodePropGrid Containers
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.Containers] );
             }
         }
 

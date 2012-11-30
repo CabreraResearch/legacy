@@ -1598,6 +1598,42 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _makeContainersPropOnLocations( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass locationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp containerLocationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+            CswNbtMetaDataObjectClassProp containerBarcodeOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode );
+            CswNbtMetaDataObjectClassProp containerExpirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
+            CswNbtMetaDataObjectClassProp containerMissingOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
+            CswNbtMetaDataObjectClassProp containerOwnerOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
+            CswNbtMetaDataObjectClassProp containerStatusOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status );
+
+            CswNbtMetaDataObjectClassProp containersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( locationOC )
+            {
+                PropName = CswNbtObjClassLocation.PropertyName.Containers,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+            } );
+
+            CswNbtView containersView = _CswNbtSchemaModTrnsctn.makeNewView( "Containers", NbtViewVisibility.Property );
+            containersView.SetViewMode( NbtViewRenderingMode.Grid );
+
+            CswNbtViewRelationship parent = containersView.AddViewRelationship( locationOC, true );
+            CswNbtViewRelationship containerParent = containersView.AddViewRelationship( parent, NbtViewPropOwnerType.Second, containerLocationOCP, true );
+            containersView.AddViewProperty( containerParent, containerBarcodeOCP );
+            containersView.AddViewProperty( containerParent, containerExpirationDateOCP );
+            containersView.AddViewProperty( containerParent, containerMissingOCP );
+            containersView.AddViewProperty( containerParent, containerOwnerOCP );
+            containersView.AddViewProperty( containerParent, containerStatusOCP );
+            containersView.save();
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( containersOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, containersView.ToString() );
+
+            _resetBlame();
+        }
+
         #endregion Ursula Methods
 
 
@@ -1643,6 +1679,7 @@ namespace ChemSW.Nbt.Schema
             _addGeneratorTargetCreatedDate();
 
             _makePendingFeedbackCountProp( CswDeveloper.MB, 28079 );
+            _makeContainersPropOnLocations( CswDeveloper.MB, 28236 );
 
             #endregion URSULA
 
