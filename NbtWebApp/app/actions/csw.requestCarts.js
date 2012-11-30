@@ -1,13 +1,13 @@
 
 (function () {
 
-    Csw.actions.submitRequest = Csw.actions.submitRequest ||
-        Csw.actions.register('submitRequest', function (cswParent, cswPrivate) {
+    Csw.actions.requestCarts = Csw.actions.requestCarts ||
+        Csw.actions.register('requestCarts', function (cswParent, cswPrivate) {
             'use strict';
             var cswPublic = {};
             
             if (Csw.isNullOrEmpty(cswParent)) {
-                Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
+                Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.requestCarts', 'csw.requestCarts.js', 14);
             }
             (function _preCtor() {
                 cswPrivate.name = cswPrivate.name || 'CswSubmitRequest';

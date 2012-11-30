@@ -166,7 +166,7 @@
     <Content Include="app\controls\csw.checkbox.js" />
     <Content Include="app\controls\csw.buttongroup.js" />
     <Content Include="app\layouts\csw.action.js" />
-    <Content Include="app\actions\csw.submitrequest.js" />
+    <Content Include="app\actions\csw.requestCarts.js" />
     <Content Include="app\wizards\csw.wizard.amountsgrid.js" />
     <Content Include="app\wizards\csw.wizard.nodethingrid.js" />
     <Content Include="app\wizards\csw.wizard.addlayout.js" />

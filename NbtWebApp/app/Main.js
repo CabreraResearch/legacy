@@ -1383,7 +1383,7 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.actions.sessions(Csw.main.centerTopDiv);
                     break;
                 case 'submit request':
-                    Csw.actions.submitRequest(Csw.main.centerTopDiv, {
+                    Csw.actions.requestCarts(Csw.main.centerTopDiv, {
                         onSubmit: function() {
                             clear({ 'all': true });
                             Csw.clientState.setCurrent(Csw.clientState.getLast());
