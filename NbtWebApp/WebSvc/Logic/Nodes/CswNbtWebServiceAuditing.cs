@@ -41,10 +41,10 @@ namespace ChemSW.Nbt.WebServices
                             where ja.nodeid = " + Node.NodeId.PrimaryKey.ToString();
 
 
-                CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString();
+                CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString( 0, "'" );
                 foreach( SystemUserNames sysUserName in Enum.GetValues( typeof( SystemUserNames ) ) )
                 {
-                    sysUserNames.Add( "'" + sysUserName.ToString() + "'" );
+                    sysUserNames.Add( sysUserName.ToString() );
                 }
                 SQL += @" and x.transactionusername not in (" + sysUserNames + ") order by AuditId desc";
 
