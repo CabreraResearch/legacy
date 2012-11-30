@@ -28,9 +28,7 @@
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onExtraAction: null,  // function(nodeObj) {}
                 compactResults: false,
-
                 newsearchurl: 'doUniversalSearch',
-                filtersearchurl: 'filterUniversalSearch',
                 restoresearchurl: 'restoreUniversalSearch',
                 saveurl: 'saveSearchAsView',
                 //filters: {},
@@ -104,13 +102,13 @@
             }; // search()
 
             cswPrivate.handleResults = function (data) {
-                var fdiv, ftable, filtersdivid;
+                var fdiv, ftable;
 
                 cswPrivate.sessiondataid = data.sessiondataid;
 
                 // Search results
 
-                function _renderResultsTable(columns) {
+                function _renderResultsTable() { //columns) {
                     var nodeTable;
 
                     cswPrivate.searchResultsParent.empty();
@@ -120,7 +118,10 @@
                         width: '100%'
                     });
 
-                    resultstable.cell(1, 1).append('<b>Search Results: (' + data.table.results + ')</b>');
+                    resultstable.cell(1, 1).div({
+                        cssclass: 'SearchLabel',
+                        text: 'Search Results: (' + data.table.results + ')'
+                    });
 
                     if (Csw.bool(cswPrivate.compactResults)) {
                         resultstable.cell(1, 2).css({ width: '100px' });
@@ -137,29 +138,29 @@
                             }
                         });
                     }
-                    resultstable.cell(1, 3).css({ width: '18px' });
-                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
-                        Active: (columns === 1),
-                        AlternateText: 'Single Column',
-                        onClick: function () {
-                            setTimeout(function () { // so we see the clear immediately
-                                _renderResultsTable(1);
-                            }, 0);
-                        }
-                    });
+//                    resultstable.cell(1, 3).css({ width: '18px' });
+//                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
+//                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
+//                        Active: (columns === 1),
+//                        AlternateText: 'Single Column',
+//                        onClick: function () {
+//                            setTimeout(function () { // so we see the clear immediately
+//                                _renderResultsTable(1);
+//                            }, 0);
+//                        }
+//                    });
 
-                    resultstable.cell(1, 4).css({ width: '18px' });
-                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
-                        Active: (columns !== 1),
-                        AlternateText: 'Multi Column',
-                        onClick: function () {
-                            setTimeout(function () { // so we see the clear immediately
-                                _renderResultsTable(3);
-                            }, 0);
-                        }
-                    });
+//                    resultstable.cell(1, 4).css({ width: '18px' });
+//                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
+//                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
+//                        Active: (columns !== 1),
+//                        AlternateText: 'Multi Column',
+//                        onClick: function () {
+//                            setTimeout(function () { // so we see the clear immediately
+//                                _renderResultsTable(3);
+//                            }, 0);
+//                        }
+//                    });
 
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
@@ -176,17 +177,21 @@
                             resultstable.cell(2, 1).text('No Results Found');
                         },
                         tabledata: data.table,
-                        columns: columns,
+                        //columns: columns,
                         allowEdit: cswPrivate.allowEdit,
                         allowDelete: cswPrivate.allowEdit,
                         extraAction: cswPrivate.extraAction,
                         extraActionIcon: cswPrivate.extraActionIcon,
                         onExtraAction: cswPrivate.onExtraAction,
-                        compactResults: cswPrivate.compactResults
+                        compactResults: cswPrivate.compactResults,
+                        onMoreClick: function (nodetypeid, nodetypename) {
+                            // a little bit of a kludge
+                            cswPrivate.filterNodeType(nodetypeid);
+                        }
                     });
                 }
 
-                _renderResultsTable(1);
+                _renderResultsTable(); //1);
 
                 // Filter panel
                 cswPrivate.searchFiltersParent.empty();
@@ -251,18 +256,22 @@
                         }
                     });
                     div.br();
-                }
+                } // makeFilterLink()
 
-                function makeFilterSet(thisFilterSet, Name) {
+                function makeFilterSet(thisFilterSet) {
 
                     var filterCount = 0;
                     var moreDiv = fdiv.moreDiv();
+                    var filterName = '';
 
-                    moreDiv.shownDiv.append('<b>' + Name + ':</b>');
+                    var nameSpan = moreDiv.shownDiv.span({ }).css({ fontWeight: 'bold' });
                     moreDiv.shownDiv.br();
                     var thisdiv = moreDiv.shownDiv;
                     moreDiv.moreLink.hide();
-                    Csw.each(thisFilterSet, function (thisFilter) {
+                    Csw.each(thisFilterSet, function(thisFilter) {
+                        if (filterName === '') {
+                            filterName = thisFilter.filtername;
+                        }
                         if (filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
@@ -270,9 +279,10 @@
                         makeFilterLink(thisFilter, thisdiv, filterCount);
                         filterCount++;
                     });
+                    nameSpan.text(filterName);
                     fdiv.br();
                     fdiv.br();
-                }
+                } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
 
@@ -285,11 +295,23 @@
             cswPrivate.filter = function (thisFilter, action) {
                 Csw.tryExec(cswPrivate.onBeforeSearch);
                 Csw.ajax.post({
-                    urlMethod: cswPrivate.filtersearchurl,
+                    urlMethod: 'filterUniversalSearch',
                     data: {
                         SessionDataId: cswPrivate.sessiondataid,
                         Filter: JSON.stringify(thisFilter),
                         Action: action
+                    },
+                    success: cswPrivate.handleResults
+                });
+            }; // filter()
+
+            cswPrivate.filterNodeType = function (nodetypeid) {
+                Csw.tryExec(cswPrivate.onBeforeSearch);
+                Csw.ajax.post({
+                    urlMethod: 'filterUniversalSearchByNodeType',
+                    data: {
+                        SessionDataId: cswPrivate.sessiondataid,
+                        NodeTypeId: nodetypeid
                     },
                     success: cswPrivate.handleResults
                 });

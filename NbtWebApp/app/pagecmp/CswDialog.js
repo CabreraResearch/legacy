@@ -1017,7 +1017,7 @@
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswDlgPrivate = {
                 name: 'print_label',
-                GetPrintLabelsUrl: 'Labels/type/',
+                GetPrintLabelsUrl: 'Labels/list',
                 nodes: {},
                 nodeids: [],
                 nodetypeid: ''
@@ -1063,16 +1063,20 @@
                 name: cswDlgPrivate.name + '_labelsel'
             });
 
-            Csw.ajaxWcf.get({
-                urlMethod: cswDlgPrivate.GetPrintLabelsUrl + cswDlgPrivate.nodetypeid,
+            Csw.ajaxWcf.post({
+                urlMethod: cswDlgPrivate.GetPrintLabelsUrl,
+                data: {
+                    TargetTypeId: cswDlgPrivate.nodetypeid,
+                    TargetId: cswDlgPrivate.nodeids[0]
+                },
                 success: function (data) {
                     if (data.Labels && data.Labels.length > 0) {
                         for (var i = 0; i < data.Labels.length; i += 1) {
                             var label = data.Labels[i];
-                            labelSel.option({ value: label.Id, display: label.Name });
+                            var isSelected = Csw.bool(label.Id === data.SelectedLabelId);
+                            labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
                         }
                     } else {
-
                         labelSelDiv.span({ text: 'No labels have been assigned!' });
                     }
                 } // success

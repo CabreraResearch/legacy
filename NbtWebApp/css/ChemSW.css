@@ -1196,7 +1196,20 @@ ul li div {
 .SearchLabel
 {
     color: #6699cc;
-    font-size: 22px;
+    font-size: 24px;
+    padding-bottom: 5px;
+}
+.SearchSubLabel
+{
+    color: #6699cc;
+    font-size: 18px;
+    border-top: 1px solid #99ccff;
+    padding-top: 5px;
+}
+.SearchSubLabel a
+{
+    color: #6699cc;
+    font-size: 18px;
 }
 .ListTable
 {

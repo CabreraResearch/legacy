@@ -147,6 +147,9 @@
                     listeners: {
                         viewready: function () {
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
+                        },
+                        afterrender: function (grid) {
+                            grid.filters.createFilters();
                         }
                     },
                     dockedItems: [],

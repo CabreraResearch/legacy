@@ -49,7 +49,10 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27912() ) );                         //01T-021
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case28020() ) );                         //01T-022
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case28146() ) );                         //01T-023
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_0T1_Case27867_part2() ) );                   //01T-024
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27867_part2() ) );                   //01T-024
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27947_part2() ) );                   //01T-025
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case28260() ) );                         //01T-026
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case28254() ) );                         //01T-027
 
             #endregion TITANIA
 
@@ -65,9 +68,10 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case24489() ) );                         //01T-032    01U-008
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case24489_Part2() ) );                   //01T-033    01U-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28196() ) );                         //01T-034    01U-010
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28117() ) );                         //01T-035    01U-011
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28156() ) );                         //01T-036    01U-012
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28249() ) );                         //01T-035    01U-011
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28075() ) );                         //01T-036    01U-012
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28117() ) );                         //01T-037    01U-013
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28156() ) );                         //01T-038    01U-014
 
             #endregion URSULA
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using ChemSW.Core;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Search;
@@ -98,10 +99,23 @@ namespace ChemSW.Nbt.WebServices
             }
             return ret;
         }
+
+        public JObject filterUniversalSearchByNodeType( CswNbtSessionDataId SessionDataId, Int32 NodeTypeId )
+        {
+            JObject ret = new JObject();
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                CswNbtSearch Search = SessionDataItem.Search;
+                Search.addNodeTypeFilter( NodeTypeId );
+                ret = _finishUniversalSearch( Search );
+            }
+            return ret;
+        }
         private JObject _finishUniversalSearch( CswNbtSearch Search )
         {
             ICswNbtTree Tree = Search.Results();
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null );
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null, Int32.MinValue );
 
             JObject ret = new JObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
