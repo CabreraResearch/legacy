@@ -618,6 +618,8 @@ namespace ChemSW.Nbt.ObjClasses
                 ReceiptLotToDispense.setHidden( value: true, SaveToDb: true );
                 ReceiptLotsReceived.setHidden( value: true, SaveToDb: true );
                 NextReorderDate.setHidden( value: true, SaveToDb: true );
+                GoodsReceived.setHidden( value: true, SaveToDb: true );
+                IsFavorite.setHidden( value: true, SaveToDb: true );
             }
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
