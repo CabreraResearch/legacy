@@ -43,6 +43,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// Truncated
         /// </summary>
         public bool Truncated = false;
+        /// <summary>
+        /// GroupByCol
+        /// </summary>
+        public string GroupByCol = "";
 
         public CswNbtGridExtJsGrid( string UniquePrefix )
         {
@@ -91,7 +95,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
             return ret;
         } // getColumn()
 
-        public JObject ToJson( string GroupByCol = "" )
+        public JObject ToJson()
         {
             JArray Jfields = new JArray();
             JArray Jcolumns = new JArray();

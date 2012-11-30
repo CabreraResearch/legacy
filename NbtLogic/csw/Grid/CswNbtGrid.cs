@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.Grid
             string gridUniquePrefix = _getUniquePrefix( View );
 
             CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid( gridUniquePrefix );
+            grid.GroupByCol = GroupByCol;
             grid.title = View.ViewName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
             {
@@ -178,7 +179,7 @@ namespace ChemSW.Nbt.Grid
                 grid.rows.Add( gridrow );
             }
 
-            return grid.ToJson( GroupByCol );
+            return grid.ToJson();
         } // TreeToJson()
 
         private void _TreeNodeToGrid( CswNbtView View, ICswNbtTree Tree, CswNbtGridExtJsGrid grid, CswNbtGridExtJsRow gridrow )
@@ -287,11 +288,12 @@ namespace ChemSW.Nbt.Grid
         } // _TreeNodeToGrid()
 
 
-        public CswNbtGridExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false )
+        public CswNbtGridExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "" )
         {
             string gridUniquePrefix = DT.TableName;
 
             CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid( gridUniquePrefix );
+            grid.GroupByCol = GroupByCol;
             grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
             {
@@ -327,8 +329,8 @@ namespace ChemSW.Nbt.Grid
 
         public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "" )
         {
-            CswNbtGridExtJsGrid grid = DataTableToGrid( DT, Editable );
-            return grid.ToJson( GroupByCol );
+            CswNbtGridExtJsGrid grid = DataTableToGrid( DT, Editable, GroupByCol );
+            return grid.ToJson();
         } // DataTableToJSON()
 
 
