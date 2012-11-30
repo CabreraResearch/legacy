@@ -79,7 +79,10 @@ namespace ChemSW.Nbt.PropTypes
 
                 _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
                 _CswNbtNodePropData.Gestalt = value;
-                ChangedDate = DateTime.Now;
+                if( WasModified )
+                {
+                    ChangedDate = DateTime.Now;
+                }
             }
         }
 
@@ -183,7 +186,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( false == EncryptedPassword.Equals( JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )].ToString() ) )
+            if( null != JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] )
             {
                 EncryptedPassword = JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )].ToString();
             }
