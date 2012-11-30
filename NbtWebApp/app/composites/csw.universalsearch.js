@@ -1,9 +1,5 @@
-
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
 (function () {
-
-
     Csw.composites.universalSearch = Csw.composites.universalSearch ||
         Csw.composites.register('universalSearch', function (cswParent, params) {
             'use strict';
@@ -19,7 +15,6 @@
                 onAfterNewSearch: null,
                 onLoadView: null,
                 onAddView: null,
-                //searchresults_maxheight: '600',
                 searchbox_width: '200px',
                 showSaveAsView: true,
                 allowEdit: true,
@@ -31,7 +26,6 @@
                 newsearchurl: 'doUniversalSearch',
                 restoresearchurl: 'restoreUniversalSearch',
                 saveurl: 'saveSearchAsView',
-                //filters: {},
                 sessiondataid: '',
                 searchterm: '',
                 filterHideThreshold: 5,
@@ -138,30 +132,7 @@
                             }
                         });
                     }
-//                    resultstable.cell(1, 3).css({ width: '18px' });
-//                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
-//                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
-//                        Active: (columns === 1),
-//                        AlternateText: 'Single Column',
-//                        onClick: function () {
-//                            setTimeout(function () { // so we see the clear immediately
-//                                _renderResultsTable(1);
-//                            }, 0);
-//                        }
-//                    });
-
-//                    resultstable.cell(1, 4).css({ width: '18px' });
-//                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
-//                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
-//                        Active: (columns !== 1),
-//                        AlternateText: 'Multi Column',
-//                        onClick: function () {
-//                            setTimeout(function () { // so we see the clear immediately
-//                                _renderResultsTable(3);
-//                            }, 0);
-//                        }
-//                    });
-
+                    
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
                     nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
@@ -370,5 +341,4 @@
 
             return cswPublic;
         });
-
 })();
