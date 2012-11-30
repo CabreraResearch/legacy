@@ -7,6 +7,8 @@
         Csw.controls.register('nodeSelect', function (cswParent, cswPrivate) {
             'use strict';
             
+            //#region _preCtor
+
             var cswPublic = {};
 
             (function _preCtor() {
@@ -62,17 +64,17 @@
 
             }());
             
+            //#endregion _preCtor
+
+            //#region AJAX
+
             cswPrivate.getNodes = function() {
                 cswPublic.bind('change', function () {
                     cswPrivate.selectedNodeId = cswPublic.val();
                     Csw.tryExec(cswPrivate.onChange, cswPublic);
                     Csw.tryExec(cswPrivate.onSelect, cswPublic.val());
                 });
-
-                cswPublic.selectedNodeId = function () {
-                    return cswPrivate.selectedNodeId || cswPublic.val();
-                };
-
+                
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     async: Csw.bool(cswPrivate.async),
@@ -103,6 +105,38 @@
                     }
                 });
             };
+
+            cswPrivate.getNodeTypeOptions = function () {
+                cswPrivate.blankText = '[Select One]';
+                cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
+                    cswPublic.cell(1, cswPrivate.cellCol)
+                             .nodeTypeSelect({
+                                 objectClassId: cswPrivate.objectClassId,
+                                 onSelect: function () {
+                                     if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
+                                         cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
+                                         cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
+                                     }
+                                 },
+                                 onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
+                                     if (Csw.number(nodeTypeCount) > 1) {
+                                         cswPrivate.selectedNodeType.show();
+                                         cswPrivate.addImage.hide();
+                                     } else {
+                                         cswPrivate.nodeTypeId = lastNodeTypeId;
+                                         cswPrivate.selectedNodeType.hide();
+                                         cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
+                                     }
+                                 },
+                                 blankOptionText: cswPrivate.blankText,
+                                 filterToPermission: 'Create'
+                             }).hide();
+                cswPrivate.cellCol += 1;
+            };
+
+            //#endregion AJAX
+
+            //#region Control Construction
 
             cswPrivate.makeControl = function() {
                 if (cswPrivate.useSearch) {
@@ -156,30 +190,10 @@
                     }
                 });
                 cswPrivate.cellCol += 1;
-
-                cswPrivate.toggleOptions = function (on) {
-                    if (Csw.bool(on)) {
-                        cswPrivate.selectBox.show();
-                        cswPrivate.toggleButton.hide();
-                        cswPrivate.nodeLinkText.hide();
-                    } else {
-                        cswPrivate.selectBox.hide();
-                        cswPrivate.toggleButton.show();
-                        cswPrivate.nodeLinkText.show();
-                    }
-                };
-
+                
                 cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
 
                 cswPrivate.selectBox.required(cswPrivate.isRequired);
-
-                cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
-                    cswPrivate.selectBox.option({ value: nodeid, display: nodename });
-                    cswPrivate.selectBox.val(nodeid);
-                    cswPrivate.toggleOptions(true);
-                    Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
-                    cswPrivate.selectBox.$.valid();
-                };
 
                 cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
                                 function (event) { Csw.nodeHoverOut(event, cswPrivate.selectBox.val()); });
@@ -223,76 +237,84 @@
 
                     cswPrivate.nameSpan.$.hover(function(event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
                         function(event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
-
-                    cswPrivate.onAddNodeFunc = function(nodeid, nodekey, nodename) {
-                        cswPrivate.nameSpan.text(nodename);
-                        cswPrivate.hiddenValue.val(nodeid);
-                    };
-
                 }
+            };
+
+            cswPrivate.toggleOptions = function (on) {
+                if (Csw.bool(on)) {
+                    cswPrivate.selectBox.show();
+                    cswPrivate.toggleButton.hide();
+                    cswPrivate.nodeLinkText.hide();
+                } else {
+                    cswPrivate.selectBox.hide();
+                    cswPrivate.toggleButton.show();
+                    cswPrivate.nodeLinkText.show();
+                }
+            };
+
+            //#endregion Control Construction
+
+            //#region Add
+
+            cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
+                if (cswPrivate.nameSpan) {
+                    cswPrivate.nameSpan.text(nodename);
+                }
+                if (cswPrivate.hiddenValue) {
+                    cswPrivate.hiddenValue.val(nodeid);
+                }
+                if (cswPrivate.selectBox) {
+                    cswPrivate.selectBox.option({ value: nodeid, display: nodename });
+                    cswPrivate.selectBox.val(nodeid);
+                    cswPrivate.toggleOptions(true);
+                    Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
+                    cswPrivate.selectBox.$.valid();
+                }
+            };
+
+            cswPrivate.openAddNodeDialog = function (nodetypeToAdd) {
+                $.CswDialog('AddNodeDialog', {
+                    nodetypeid: nodetypeToAdd,
+                    onAddNode: cswPrivate.onAddNodeFunc,
+                    text: cswPrivate.name
+                });
+            };
+            
+            cswPrivate.makeAddImage = function () {
+                cswPrivate.addImage = cswPublic.cell(1, cswPrivate.cellCol).div()
+                    .buttonExt({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                        size: 'small',
+                        tooltip: { title: 'Add New ' + cswPrivate.name },
+                        onClick: function () {
+                            if (Csw.number(cswPrivate.nodeTypeId) > 0) {
+                                cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
+                            }
+                            else {
+                                cswPrivate.getNodeTypeOptions();
+                            }
+                        }
+                    });
+                cswPrivate.cellCol += 1;
             };
 
             cswPrivate.makeAdd = function() {
                 if (cswPrivate.allowAdd) {
-
-                    cswPrivate.openAddNodeDialog = function (nodetypeToAdd) {
-                        $.CswDialog('AddNodeDialog', {
-                            nodetypeid: nodetypeToAdd,
-                            onAddNode: cswPrivate.onAddNodeFunc,
-                            text: cswPrivate.name
-                        });
-                    };
-
-                    cswPrivate.getNodeTypeOptions = function () {
-                        cswPrivate.blankText = '[Select One]';
-                        cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
-                            cswPublic.cell(1, cswPrivate.cellCol)
-                                     .nodeTypeSelect({
-                                objectClassId: cswPrivate.objectClassId,
-                                onSelect: function () {
-                                    if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
-                                        cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
-                                        cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
-                                    }
-                                },
-                                onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
-                                    if (Csw.number(nodeTypeCount) > 1) {
-                                        cswPrivate.selectedNodeType.show();
-                                        cswPrivate.addImage.hide();
-                                    } else {
-                                        cswPrivate.nodeTypeId = lastNodeTypeId;
-                                        cswPrivate.selectedNodeType.hide();
-                                        cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
-                                    }
-                                },
-                                blankOptionText: cswPrivate.blankText,
-                                filterToPermission: 'Create'
-                            }).hide();
-                        cswPrivate.cellCol += 1;
-                    };
-
-                    cswPrivate.makeAddImage = function () {
-                        cswPrivate.addImage = cswPublic.cell(1, cswPrivate.cellCol).div()
-                            .buttonExt({
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
-                                size: 'small',
-                                tooltip: { title: 'Add New ' + cswPrivate.name },
-                                onClick: function () {
-                                    if (Csw.number(cswPrivate.nodeTypeId)>0) {
-                                        cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
-                                    }
-                                    else {
-                                        cswPrivate.getNodeTypeOptions();
-                                    }
-                                }
-                            });
-                        cswPrivate.cellCol += 1;
-                    };
-
                     cswPrivate.makeAddImage();
-
                 } //if (allowAdd)
             };
+
+            //#endregion Add
+
+            //#region Public
+            
+            cswPublic.selectedNodeId = function () {
+                return cswPrivate.selectedNodeId || cswPublic.val();
+            };
+
+            //#endregion Public
+
+            //#region _postCtor
 
             (function _relationship() {
                 if (cswPrivate.isReadOnly) {
@@ -312,6 +334,8 @@
             }());
 
             return cswPublic;
+            
+            //#endregion _postCtor
         });
 } ());
 
