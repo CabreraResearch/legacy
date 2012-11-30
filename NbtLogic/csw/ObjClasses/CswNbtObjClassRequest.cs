@@ -99,7 +99,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, "me" );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Tristate.False.ToString() );
+            CswNbtViewProperty FavoriteVp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsFavoriteOcp );
+            FavoriteVp.ShowInGrid = false;
+            ParentRelationship.View.AddViewPropertyFilter(  FavoriteVp, Tristate.False.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }

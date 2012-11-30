@@ -58,19 +58,6 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public JObject getRequestHistory()
-        {
-            return _RequestAct.getRequestHistory();
-        }
-
-        public JObject copyRequest( CswPrimaryKey CopyFromNodeId, CswPrimaryKey CopyToNodeId )
-        {
-            /* We're need two instances of CswNbtActSubmitRequest. 
-             * The current instance was loaded with CopyFromNodeId
-             * For the response we need a new instance with the current RequestNodeId, CopyToNodeId */
-            CswNbtActRequesting CopyRequest = _RequestAct.copyRequest( CopyFromNodeId, CopyToNodeId );
-            return getCurrentRequest( CopyRequest );
-        }
 
         #region WCF
 

@@ -249,6 +249,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
                 }
             }
+            IsFavorite.setHidden( value: true, SaveToDb: true );
         }
 
         /// <summary>
@@ -523,7 +524,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Tristate.False.ToString() );
+            CswNbtViewProperty FavoriteVp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsFavoriteOcp );
+            FavoriteVp.ShowInGrid = false;
+            ParentRelationship.View.AddViewPropertyFilter( FavoriteVp, Tristate.False.ToString() );
         }
 
         #endregion
@@ -619,7 +622,6 @@ namespace ChemSW.Nbt.ObjClasses
                 ReceiptLotsReceived.setHidden( value: true, SaveToDb: true );
                 NextReorderDate.setHidden( value: true, SaveToDb: true );
                 GoodsReceived.setHidden( value: true, SaveToDb: true );
-                IsFavorite.setHidden( value: true, SaveToDb: true );
             }
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }

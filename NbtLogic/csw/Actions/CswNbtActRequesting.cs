@@ -50,17 +50,9 @@ namespace ChemSW.Nbt.Actions
                 }
             }
 
-            if( RequestViewName == SystemViewName.CISProRequestCart )
-            {
-                _CurrentCartView = _SystemViews.SystemView;
-                _CurrentCartView.SaveToCache( false );
-                applyCurrentCartFilter();
-            }
-            else if( RequestViewName == SystemViewName.CISProRequestHistory )
-            {
-                _RequestHistoryView = _SystemViews.SystemView;
-                _RequestHistoryView.SaveToCache( false );
-            }
+            _CurrentCartView = _SystemViews.SystemView;
+            _CurrentCartView.SaveToCache( false );
+            applyCurrentCartFilter();
         }
 
         #endregion Constructor
@@ -99,20 +91,6 @@ namespace ChemSW.Nbt.Actions
                     applyCurrentCartFilter();
                 }
                 return _CurrentCartView;
-            }
-        }
-        private CswNbtView _RequestHistoryView;
-        public CswNbtView RequestHistoryView
-        {
-            get
-            {
-                if( null == _RequestHistoryView )
-                {
-                    CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtResources, SystemViewName.CISProRequestHistory, null );
-                    _RequestHistoryView = SystemViews.SystemView;
-                    _RequestHistoryView.SaveToCache( false );
-                }
-                return _RequestHistoryView;
             }
         }
 
@@ -179,33 +157,6 @@ namespace ChemSW.Nbt.Actions
                 CartTree.goToNthChild( 0 );
                 CartContentCount = CartTree.getChildNodeCount();
             }
-        }
-
-        public JObject getRequestHistory()
-        {
-            JObject Ret = new JObject();
-
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestHistoryView, true, false, false );
-            Int32 RequestCount = Tree.getChildNodeCount();
-            Ret["count"] = RequestCount;
-            if( RequestCount > 0 )
-            {
-                for( Int32 I = 0; I < RequestCount; I += 1 )
-                {
-                    Tree.goToNthChild( I );
-
-                    Ret[Tree.getNodeNameForCurrentPosition()] = new JObject();
-                    Ret[Tree.getNodeNameForCurrentPosition()]["requestnodeid"] = Tree.getNodeIdForCurrentPosition().ToString();
-                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
-                    {
-                        string PropName = Prop["propname"].ToString().ToLower();
-                        Ret[Tree.getNodeNameForCurrentPosition()][PropName] = Prop["gestalt"].ToString();
-                    }
-
-                    Tree.goToParentNode();
-                }
-            }
-            return Ret;
         }
 
         public bool submitRequest( CswPrimaryKey NodeId, string NodeName )
