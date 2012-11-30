@@ -23,6 +23,24 @@ namespace ChemSW.Nbt.WebServices
         } //ctor
 
         /// <summary>
+        /// Get a list of all Object Classes
+        /// </summary>
+        public JObject getObjectClasses()
+        {
+            JObject ReturnVal = new JObject();
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses().OrderBy( ObjectClass => ObjectClass.ObjectClass.ToString() ) )
+            {
+                string ObjectClassName = ObjectClass.ObjectClass.ToString();
+                ReturnVal[ObjectClassName] = new JObject();
+                ReturnVal[ObjectClassName]["objectclass"] = ObjectClassName;
+                ReturnVal[ObjectClassName]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
+                ReturnVal[ObjectClassName]["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + ObjectClass.IconFileName;
+            }
+            return ReturnVal;
+        } // getObjectClasses()
+
+
+        /// <summary>
         /// Get a list of all NodeTypes, optionally limited according to supplied parameters
         /// </summary>
         /// <param name="ObjectClass">(Optional) An Object Class to constrain results.</param>

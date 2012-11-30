@@ -33,7 +33,7 @@
                 buttonMultiColumn: ''
             };
             Csw.extend(cswPrivate, params);
-            
+
             if (false === Csw.isNullOrEmpty(cswParent)) {
                 cswPrivate.table = cswParent.table({
                     cellpadding: '2px'
@@ -55,13 +55,53 @@
                 cswPrivate.searchBoxParent.empty();
                 var cswtable = cswPrivate.searchBoxParent.table();
 
-                cswPrivate.searchinput = cswtable.cell(1, 1).input({
+                var onPreFilterClick = function (objectclass) {
+                    if (false === Csw.isNullOrEmpty(objectclass)) {
+                        cswPrivate.preFilterSelect.setText('');
+                        cswPrivate.preFilterSelect.setIcon(objectclass.iconfilename);
+                    } else {
+                        cswPrivate.preFilterSelect.setText('All');
+                        cswPrivate.preFilterSelect.setIcon('');
+                    }
+                }; // onFilterClick()
+
+                Csw.ajax.post({
+                    urlMethod: 'getObjectClasses',
+                    success: function (data) {
+                        var objclassItems = [];
+
+                        objclassItems.push({
+                            text: 'All',
+                            icon: '',
+                            handler: function () { onPreFilterClick(null); }
+                        });
+
+                        Csw.each(data, function (oc) {
+                            objclassItems.push({
+                                text: oc.objectclass,
+                                icon: oc.iconfilename,
+                                handler: function () { onPreFilterClick(oc); }
+                            });
+                        });
+
+                        cswPrivate.preFilterSelect = window.Ext.create('Ext.SplitButton', {
+                            text: 'All',
+                            renderTo: cswtable.cell(1, 1).getId(),
+                            menu: {
+                                items: objclassItems
+                            }
+                        }); // toolbar
+
+                    } // success
+                }); // ajax
+
+                cswPrivate.searchinput = cswtable.cell(1, 2).input({
                     type: Csw.enums.inputTypes.search,
                     width: cswPrivate.searchbox_width,
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2)
+                cswPrivate.searchbutton = cswtable.cell(1, 3)
                     .div()
                     .buttonExt({
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
@@ -74,7 +114,7 @@
                             cswPrivate.searchterm = cswPrivate.searchinput.val();
                             cswPrivate.newsearch();
                         }
-                });
+                    });
             })();
 
             // Handle search submission
@@ -132,7 +172,7 @@
                             }
                         });
                     }
-                    
+
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
                     nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
@@ -235,11 +275,11 @@
                     var moreDiv = fdiv.moreDiv();
                     var filterName = '';
 
-                    var nameSpan = moreDiv.shownDiv.span({ }).css({ fontWeight: 'bold' });
+                    var nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
                     moreDiv.shownDiv.br();
                     var thisdiv = moreDiv.shownDiv;
                     moreDiv.moreLink.hide();
-                    Csw.each(thisFilterSet, function(thisFilter) {
+                    Csw.each(thisFilterSet, function (thisFilter) {
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
                         }
@@ -326,7 +366,7 @@
                 });
             }; // restoreSearch()
 
-            cswPublic.getFilterToNodeTypeId = function() {
+            cswPublic.getFilterToNodeTypeId = function () {
                 var ret = '';
 
                 function findFilterToNodeTypeId(thisFilter) {
