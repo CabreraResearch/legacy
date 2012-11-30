@@ -106,11 +106,10 @@
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without a parent.', '', 'csw.wizard.amountsgrid.js', 22));
                     }
                     cswPublic.containerCount = 0;
-                    
-                    var containerNoSpan = cswParent.span({
-                        labelText: 'Total number of containers:',
-                        text: cswPublic.containerCount
-                    });
+
+                    var containerNoSpan = cswParent.span(); 
+                    containerNoSpan.setLabelText('Total number of containers: ' + cswPublic.containerCount);
+
                     var containerLimitExceededSpan = cswParent.span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' The limit for containers created at receipt is [' + cswPublic.containerlimit + '].' });
                     containerLimitExceededSpan.hide();
 
@@ -128,7 +127,7 @@
 
                     var updateTotalContainerCount = function () {
                         cswPublic.containerCount = getTotalContainerQuantity();
-                        containerNoSpan.text(cswPublic.containerCount);
+                        containerNoSpan.empty().setLabelText('Total number of containers: ' + cswPublic.containerCount);
                         if (cswPublic.containerCount > cswPublic.containerlimit) {
                             containerLimitExceededSpan.show();
                         } else {
@@ -197,7 +196,10 @@
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
                                         name: 'sizes',
                                         async: false,
-                                        objectClassName: 'SizeClass',
+                                        ajaxData: {
+                                            ObjectClass: 'SizeClass'
+                                        },
+                                        showSelectOnLoad: true,
                                         addNodeDialogTitle: 'Size',
                                         relatedTo: {
                                             objectClassName: 'MaterialClass',
@@ -209,9 +211,12 @@
                                             cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                             updateColumnVals(true);
                                         },
+                                        onSuccess: function() {
+                                            updateSizeVals();
+                                        },
                                         allowAdd: true
                                     });
-                                    updateSizeVals();
+                                    
                                     break;
                                 case cswPrivate.config.quantityName:
                                     cswPrivate.getQuantity();

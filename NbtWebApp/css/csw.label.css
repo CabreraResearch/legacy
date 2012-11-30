@@ -1,22 +1,3 @@
-.CswLabel
-{
-    display: block;
-    float: left;
-    text-align: right;
-    font-weight: bold;
-    width: 30%;
-}
-
-.CswLabelValue
-{
-    display: block;
-    float: left;
-    /*width: 65%;*/
-    margin-left: 10px;
-    text-align: left;
-}
-
-
 .CswLabelCreateMaterial{
     width: 325px;
     font-weight: bold;
@@ -26,7 +7,8 @@
 .wizardHelpDesc{
     width: 80%;
     text-align: left;
-    font-weight: normal;
+    font-weight: bold;
+    font-size: 110%;
 }
 
 .changeMolDataDialogLabel{

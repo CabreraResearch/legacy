@@ -245,26 +245,25 @@
 
                             if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                                    dispenseTypeTable.cell(1, 1).span({
-                                        labelText: 'Barcode:', 
-                                        text: Csw.string(cswPrivate.state.barcode)
-                                    });
+                                    dispenseTypeTable.cell(1, 1).span().setLabelText('Barcode: ');
+                                    dispenseTypeTable.cell(1, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
+                                    
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                                    dispenseTypeTable.cell(2, 1).span({
-                                        labelText: 'Material:',
+                                    dispenseTypeTable.cell(2, 1).span().setLabelText('Material: ');
+                                    dispenseTypeTable.cell(2, 2).span({
                                         text: Csw.string(cswPrivate.state.materialname)
                                     });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                                    dispenseTypeTable.cell(3, 1).span({
-                                        labelText: 'Location:',
+                                    dispenseTypeTable.cell(3, 1).span().setLabelText('Location: ');
+                                    dispenseTypeTable.cell(3, 2).span({
                                         text: Csw.string(cswPrivate.state.location)
                                     });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
-                                    dispenseTypeTable.cell(4, 1).span({
-                                        labelText: 'Current Quantity:',
+                                    dispenseTypeTable.cell(4, 1).span().setLabelText('Current Quantity: ');
+                                    dispenseTypeTable.cell(4, 2).span({
                                         text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName
                                     });
                                 }
@@ -298,7 +297,7 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         if (false === cswPrivate.stepTwoComplete) {
                             var quantityTable,
-                                qtyTableCol = 1,
+                                qtyTableRow = 1,
                                 blankText = '[Select One]';
 
                             cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
@@ -313,37 +312,47 @@
                                 cellvalign: 'middle'
                             });
 
-                            quantityTable.cell(qtyTableCol, 1).br();
-                            qtyTableCol++;
+                            quantityTable.cell(qtyTableRow, 1).br();
+                            qtyTableRow += 1;
+                            var propTbl = quantityTable.cell(qtyTableRow, 1).table({
+                                FirstCellRightAlign: true
+                            });
+                            qtyTableRow += 1;
+                            var propRow = 1;
+                            
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                                quantityTable.cell(qtyTableCol, 1).span({ labelText: 'Barcode: ', text: Csw.string(cswPrivate.state.barcode) });
-                                qtyTableCol++;
+                                propTbl.cell(propRow, 1).span().setLabelText('Barcode: ');
+                                propTbl.cell(propRow, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
+                                propRow += 1;
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                                quantityTable.cell(qtyTableCol, 1).span({ labelText: 'Material: ', text: Csw.string(cswPrivate.state.materialname) });
-                                qtyTableCol++;
+                                propTbl.cell(propRow, 1).span().setLabelText('Material: ');
+                                propTbl.cell(propRow, 2).span({ text: Csw.string(cswPrivate.state.materialname) });
+                                propRow += 1;
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                                quantityTable.cell(qtyTableCol, 1).span({ labelText: 'Location: ', text: Csw.string(cswPrivate.state.location) });
-                                qtyTableCol++;
+                                propTbl.cell(propRow, 1).span().setLabelText('Location: ');
+                                propTbl.cell(propRow, 2).span({ text: Csw.string(cswPrivate.state.location) });
+                                propRow += 1;
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
-                                quantityTable.cell(qtyTableCol, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
-                                qtyTableCol += 1;
+                                propTbl.cell(propRow, 1).span().setLabelText('Current Quantity: ');
+                                propTbl.cell(propRow, 2).span({ text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
-                                cswPrivate.quantityAfterDispenseSpan = quantityTable.cell(qtyTableCol, 1).span({ labelText: 'After Dispense: ', text: cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName });
-                                cswPrivate.netQuantityExceededSpan = quantityTable.cell(qtyTableCol, 2).span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' Total quantity to dispense cannot exceed source container\'s net quantity.' });
+                                propTbl.cell(propRow, 3).span().setLabelText('After Dispense: ');
+                                cswPrivate.quantityAfterDispenseSpan = propTbl.cell(propRow, 4).span({ text: cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName });
+                                cswPrivate.netQuantityExceededSpan = propTbl.cell(propRow, 2).span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' Total quantity to dispense cannot exceed source container\'s net quantity.' });
                                 cswPrivate.netQuantityExceededSpan.hide();
-                                qtyTableCol += 1;
+                                propRow += 1;
                             }
 
                             var makeContainerSelect = function () {
-                                var containerTypeTable = quantityTable.cell(qtyTableCol, 1).table({
+                                var containerTypeTable = quantityTable.cell(qtyTableRow, 1).table({
                                     name: 'setContainerTypeTable',
                                     cellpadding: '1px',
                                     cellvalign: 'middle'
                                 }).hide();
-                                qtyTableCol++;
+                                qtyTableRow++;
 
                                 containerTypeTable.cell(1, 1).span({ text: 'Select a Container Type' });
 
@@ -369,7 +378,7 @@
 
                             var makeQuantityForm = function () {
 
-                                cswPrivate.amountsGrid = Csw.wizard.amountsGrid(quantityTable.cell(qtyTableCol, 1), {
+                                cswPrivate.amountsGrid = Csw.wizard.amountsGrid(quantityTable.cell(qtyTableRow, 1), {
                                     name: 'wizardAmountsThinGrid',
                                     onChange: function (quantities) {
                                         cswPrivate.formIsValid = cswPrivate.updateQuantityAfterDispense(quantities);
@@ -383,16 +392,16 @@
                                     selectedSizeId: cswPrivate.state.sizeId,
                                     customBarcodes: cswPrivate.state.customBarcodes
                                 });
-                                qtyTableCol++;
+                                qtyTableRow++;
                             };
 
                             var makePrintBarcodesCheckBox = function() {
-                                var checkBoxTable = quantityTable.cell(qtyTableCol, 1).table({
+                                var checkBoxTable = quantityTable.cell(qtyTableRow, 1).table({
                                     name: 'checkboxTable',
                                     cellpadding: '1px',
                                     cellvalign: 'middle'
                                 });
-                                qtyTableCol++;
+                                qtyTableRow++;
 
                                 cswPrivate.printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
                                     onChange: Csw.method(function() {
@@ -424,15 +433,15 @@
                                 makeQuantityForm();
                                 makePrintBarcodesCheckBox();
                             } else {
-                                quantityTable.cell(qtyTableCol, 1).br();
-                                quantityTable.cell(qtyTableCol, 1).span({ text: 'Set quantity for dispense:' });                                
-                                qtyTableCol++;
+                                quantityTable.cell(qtyTableRow, 1).br();
+                                quantityTable.cell(qtyTableRow, 1).span({ text: 'Set quantity for dispense:' });                                
+                                qtyTableRow++;
                                 cswPrivate.state.initialQuantity.onChange = function() {
                                     getQuantityAfterDispense();
                                 };
-                                quantityTable.cell(qtyTableCol, 1).br({ number: 2 });
-                                cswPrivate.quantityControl = quantityTable.cell(qtyTableCol, 1).quantity(cswPrivate.state.initialQuantity);
-                                qtyTableCol++;
+                                quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
+                                cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
+                                qtyTableRow++;
                                 getQuantityAfterDispense();
                             }
                             cswPrivate.stepTwoComplete = true;

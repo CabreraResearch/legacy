@@ -93,8 +93,6 @@
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
                         cswPrivate.objectClassId = cswPrivate.objectClassId || data.ObjectClassId;
                         cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId;
-
-                        Csw.tryExec(cswPrivate.onSuccess, data);
                         
                         cswPrivate.makeControl();
                     }
@@ -140,6 +138,19 @@
                     cswPrivate.makeSelect();
                 }
                 cswPrivate.makeAdd();
+                Csw.tryExec(cswPrivate.onSuccess, cswPrivate.relationships);
+            };
+
+            cswPrivate.bindSelectMethods = function() {
+                cswPublic.val = cswPublic.select.val;
+                cswPublic.selectedText = cswPublic.select.selectedText;
+                cswPublic.selectedVal = cswPublic.select.selectedVal;
+                cswPublic.makeOption = cswPublic.select.makeOption;
+                cswPublic.makeOptions = cswPublic.select.makeOptions;
+                cswPublic.addOption = cswPublic.select.addOption;
+                cswPublic.setOptions = cswPublic.select.setOptions;
+                cswPublic.removeOption = cswPublic.select.removeOption;
+                cswPublic.option = cswPublic.select.option;
             };
 
             cswPrivate.makeSelect = function() {
@@ -157,6 +168,9 @@
                     cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
                 }
 
+                //Normally, we would assign the select to cswPublic, as it's the primary control; 
+                //however, to assign now would be decoupled from the return. The caller would not receive this reference.
+                //Instead, we'll assign the select as a member and we'll reassign key methods to cswPublic.
                 cswPublic.select = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
@@ -165,10 +179,10 @@
                         Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val });
                     },
                     values: cswPrivate.relationships,
-                    selected: cswPrivate.selectedNodeId
+                    selected: cswPrivate.selectedNodeId,
+                    width: cswPrivate.width
                 });
-
-                cswPublic.val = cswPublic.select.val; 
+                cswPrivate.bindSelectMethods();
 
                 cswPublic.select.bind('change', function () {
                     var val = cswPublic.select.val();
