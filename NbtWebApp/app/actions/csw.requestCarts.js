@@ -4,6 +4,9 @@
     Csw.actions.requestCarts = Csw.actions.requestCarts ||
         Csw.actions.register('requestCarts', function (cswParent, cswPrivate) {
             'use strict';
+
+            //#region _preCtor
+
             var cswPublic = {};
             
             if (Csw.isNullOrEmpty(cswParent)) {
@@ -23,6 +26,10 @@
 
             cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
             cswPrivate.gridOpts = {};
+
+            //#endregion _preCtor
+            
+            //#region AJAX methods
 
             cswPrivate.makeRequestCreateMaterial = function () {
                 Csw.ajaxWcf.get({
@@ -80,6 +87,86 @@
                         }
                     }
                 });
+            };
+
+            cswPrivate.saveToFavorites = function () {
+                //cswPrivate.makePendingTab({
+                //    urlMethod: 'copyRequest',
+                //    data: {
+                //        CopyFromRequestId: cswPrivate.copyFromNodeId,
+                //        CopyToRequestId: cswPrivate.cartnodeid
+                //    },
+                //    onSuccess: function () {
+                //        Csw.publish(Csw.enums.events.main.refreshHeader);
+                //    }
+                //});
+            }; // copyRequest()  
+
+            //#endregion AJAX methods
+
+            //#region Tab construction
+
+            cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
+                switch (tabName) {
+                    case 'Pending':
+                        cswPrivate.action.finish.enable();
+                        cswPrivate.tabs.setTitle('Request Items Pending Submission');
+                        break;
+                    case 'Submitted':
+                        cswPrivate.action.finish.disable();
+                        break;
+                    case 'Recurring':
+                        cswPrivate.action.finish.disable();
+                        break;
+                    case 'Favorites':
+                        cswPrivate.action.finish.disable();
+                        break;
+                }
+
+
+                /*
+            
+            cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
+      cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
+      cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
+          name: cswPrivate.gridId
+      }); //, align: 'center' });
+
+      cswPrivate.initGrid();
+
+      cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
+      Csw.ajax.post({
+          urlMethod: 'getRequestHistory',
+          data: {},
+          success: function (json) {
+              if (json.count > 0) {
+                  delete json.count;
+                  cswPrivate.historyTbl.cell(1, 1).span({ text: '</br>&nbsp;Past Requests: ' });
+                  cswPrivate.historySelect = cswPrivate.historyTbl.cell(2, 1).select({
+                      onChange: function () {
+                          cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
+                      }
+                  });
+                  json = json || {};
+
+                  Csw.each(json, function (prop, name) {
+                      var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
+                      cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
+                  });
+                  cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
+                  cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(2, 2).buttonExt({
+                      icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
+                      size: 'small',
+                      enabledText: 'Copy to Cart',
+                      disabledText: 'Copying...',
+                      onClick: cswPrivate.copyRequest
+                  });
+              }
+          }
+                   
+            
+            */
+
             };
 
             cswPrivate.makePendingTab = function (opts) {
@@ -240,81 +327,9 @@
                 
             }; // cswPrivate.makePendingTab()
 
-            cswPrivate.saveToFavorites = function () {
-                //cswPrivate.makePendingTab({
-                //    urlMethod: 'copyRequest',
-                //    data: {
-                //        CopyFromRequestId: cswPrivate.copyFromNodeId,
-                //        CopyToRequestId: cswPrivate.cartnodeid
-                //    },
-                //    onSuccess: function () {
-                //        Csw.publish(Csw.enums.events.main.refreshHeader);
-                //    }
-                //});
-            }; // copyRequest()    
+            //#endregion Tab construction  
 
-            cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
-                switch (tabName) {
-                    case 'Pending':
-                        cswPrivate.action.finish.enable();
-                        cswPrivate.tabs.setTitle('Request Items Pending Submission');
-                        break;
-                    case 'Submitted':
-                        cswPrivate.action.finish.disable();
-                        break;
-                    case 'Recurring':
-                        cswPrivate.action.finish.disable();
-                        break;
-                    case 'Favorites':
-                        cswPrivate.action.finish.disable();
-                        break;
-                }
-
-
-                /*
-            
-            cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
-      cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
-      cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
-          name: cswPrivate.gridId
-      }); //, align: 'center' });
-
-      cswPrivate.initGrid();
-
-      cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
-      Csw.ajax.post({
-          urlMethod: 'getRequestHistory',
-          data: {},
-          success: function (json) {
-              if (json.count > 0) {
-                  delete json.count;
-                  cswPrivate.historyTbl.cell(1, 1).span({ text: '</br>&nbsp;Past Requests: ' });
-                  cswPrivate.historySelect = cswPrivate.historyTbl.cell(2, 1).select({
-                      onChange: function () {
-                          cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                      }
-                  });
-                  json = json || {};
-
-                  Csw.each(json, function (prop, name) {
-                      var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
-                      cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
-                  });
-                  cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                  cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(2, 2).buttonExt({
-                      icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
-                      size: 'small',
-                      enabledText: 'Copy to Cart',
-                      disabledText: 'Copying...',
-                      onClick: cswPrivate.copyRequest
-                  });
-              }
-          }
-                   
-            
-            */
-
-            };
+            //#region _postCtor            
 
             (function _postCtor() {
 
@@ -361,5 +376,7 @@
             }());
 
             return cswPublic;
+            
+            //#region _postCtor
         });
 }());
