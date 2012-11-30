@@ -69,11 +69,6 @@
             //#region AJAX
 
             cswPrivate.getNodes = function() {
-                cswPublic.bind('change', function () {
-                    cswPrivate.selectedNodeId = cswPublic.val();
-                    Csw.tryExec(cswPrivate.onChange, cswPublic);
-                    Csw.tryExec(cswPrivate.onSelect, cswPublic.val());
-                });
                 
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
@@ -99,8 +94,7 @@
                         cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId;
 
                         Csw.tryExec(cswPrivate.onSuccess, data);
-                        cswPublic.css('width', Csw.string(cswPrivate.width));
-
+                        
                         cswPrivate.makeControl();
                     }
                 });
@@ -173,6 +167,12 @@
                     selected: cswPrivate.selectedNodeId
                 });
 
+                cswPublic.bind('change', function () {
+                    cswPrivate.selectedNodeId = cswPublic.val();
+                    Csw.tryExec(cswPrivate.onChange, cswPublic);
+                    Csw.tryExec(cswPrivate.onSelect, cswPublic.val());
+                });
+                
                 cswPrivate.cellCol += 1;
                 cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.cellCol);
                 cswPrivate.cellCol += 1;
@@ -228,7 +228,7 @@
                                 onSelectNode: function(nodeObj) {
                                     cswPrivate.nameSpan.text(nodeObj.nodename);
                                     cswPrivate.hiddenValue.val(nodeObj.nodeid);
-                                    Csw.tryExec(cswPrivate.onSelectNode);
+                                    Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
                                 }
                             });
                         }
@@ -309,7 +309,10 @@
             //#region Public
             
             cswPublic.selectedNodeId = function () {
-                return cswPrivate.selectedNodeId || cswPublic.val();
+                if(cswPublic && cswPublic.val) {
+                    cswPrivate.selectedNodeId = cswPublic.val();
+                }
+                return cswPrivate.selectedNodeId;
             };
 
             //#endregion Public

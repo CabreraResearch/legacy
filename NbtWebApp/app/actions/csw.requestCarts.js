@@ -311,7 +311,6 @@
                 var btmTbl = ol.li().table();
                 var saveBtn = btmTbl.cell(1, 1).buttonExt({
                     enabledText: 'Save to Favorites',
-                    disabledText: 'Saving...',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     onClick: function () {
                         var nodes = [];
