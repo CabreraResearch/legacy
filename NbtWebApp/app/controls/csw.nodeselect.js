@@ -48,7 +48,7 @@
                 
                 cswPrivate.relationships = cswPrivate.relationships || [];
                 
-                cswPublic = cswParent.table();
+                cswPrivate.table = cswParent.table();
 
                 // Default to selected node as relationship value for new nodes being added
                 if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
@@ -109,7 +109,7 @@
             cswPrivate.getNodeTypeOptions = function () {
                 cswPrivate.blankText = '[Select One]';
                 cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
-                    cswPublic.cell(1, cswPrivate.cellCol)
+                    cswPrivate.table.cell(1, cswPrivate.cellCol)
                              .nodeTypeSelect({
                                  objectClassId: cswPrivate.objectClassId,
                                  onSelect: function () {
@@ -162,11 +162,11 @@
                     cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
                 }
 
-                cswPrivate.selectBox = cswPublic.cell(1, cswPrivate.cellCol).select({
+                cswPublic = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: function () {
-                        var val = cswPrivate.selectBox.val();
+                        var val = cswPublic.val();
                         Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val });
                     },
                     values: cswPrivate.relationships,
@@ -174,7 +174,7 @@
                 });
 
                 cswPrivate.cellCol += 1;
-                cswPrivate.nodeLinkText = cswPublic.cell(1, cswPrivate.cellCol);
+                cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.cellCol);
                 cswPrivate.cellCol += 1;
                 if (false === cswPrivate.isMulti) {
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
@@ -182,7 +182,7 @@
                     });
                 }
 
-                cswPrivate.toggleButton = cswPublic.cell(1, cswPrivate.cellCol).icon({
+                cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.cellCol).icon({
                     iconType: Csw.enums.iconType.pencil,
                     isButton: true,
                     onClick: function () {
@@ -193,29 +193,29 @@
                 
                 cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
 
-                cswPrivate.selectBox.required(cswPrivate.isRequired);
+                cswPublic.required(cswPrivate.isRequired);
 
-                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
-                                function (event) { Csw.nodeHoverOut(event, cswPrivate.selectBox.val()); });
+                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPublic.val()); },
+                                function (event) { Csw.nodeHoverOut(event, cswPublic.val()); });
             };
 
             cswPrivate.makeSearch = function() {
                 if (cswPrivate.useSearch) {
                     // Find value by using search in a dialog
 
-                    cswPrivate.nameSpan = cswPublic.cell(1, cswPrivate.cellCol).span({
+                    cswPrivate.nameSpan = cswPrivate.table.cell(1, cswPrivate.cellCol).span({
                         name: 'selectedname',
                         text: cswPrivate.selectedName
                     });
 
-                    cswPrivate.hiddenValue = cswPublic.cell(1, cswPrivate.cellCol).input({
+                    cswPrivate.hiddenValue = cswPrivate.table.cell(1, cswPrivate.cellCol).input({
                         name: 'hiddenvalue',
                         type: Csw.enums.inputTypes.hidden,
                         value: cswPrivate.selectedNodeId
                     });
                     cswPrivate.cellCol += 1;
 
-                    cswPublic.cell(1, cswPrivate.cellCol).icon({
+                    cswPrivate.table.cell(1, cswPrivate.cellCol).icon({
                         iconType: Csw.enums.iconType.magglass,
                         hovertext: "Search " + cswPrivate.name,
                         size: 16,
@@ -242,11 +242,11 @@
 
             cswPrivate.toggleOptions = function (on) {
                 if (Csw.bool(on)) {
-                    cswPrivate.selectBox.show();
+                    cswPublic.show();
                     cswPrivate.toggleButton.hide();
                     cswPrivate.nodeLinkText.hide();
                 } else {
-                    cswPrivate.selectBox.hide();
+                    cswPublic.hide();
                     cswPrivate.toggleButton.show();
                     cswPrivate.nodeLinkText.show();
                 }
@@ -263,12 +263,12 @@
                 if (cswPrivate.hiddenValue) {
                     cswPrivate.hiddenValue.val(nodeid);
                 }
-                if (cswPrivate.selectBox) {
-                    cswPrivate.selectBox.option({ value: nodeid, display: nodename });
-                    cswPrivate.selectBox.val(nodeid);
+                if (cswPublic) {
+                    cswPublic.option({ value: nodeid, display: nodename });
+                    cswPublic.val(nodeid);
                     cswPrivate.toggleOptions(true);
                     Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
-                    cswPrivate.selectBox.$.valid();
+                    cswPublic.$.valid();
                 }
             };
 
@@ -281,7 +281,7 @@
             };
             
             cswPrivate.makeAddImage = function () {
-                cswPrivate.addImage = cswPublic.cell(1, cswPrivate.cellCol).div()
+                cswPrivate.addImage = cswPrivate.table.cell(1, cswPrivate.cellCol).div()
                     .buttonExt({
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         size: 'small',
@@ -318,7 +318,7 @@
 
             (function _relationship() {
                 if (cswPrivate.isReadOnly) {
-                    cswPrivate.nodeLinkTextCell = cswPublic.cell(1, cswPrivate.cellCol);
+                    cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink
                     });
