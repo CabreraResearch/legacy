@@ -28,7 +28,6 @@
                     nodeSelect.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
                     nodeSelect.options = cswPrivate.propVals.options;
                     nodeSelect.useSearch = Csw.bool(cswPrivate.propVals.usesearch);
-                    nodeSelect.relationships = cswPrivate.propVals.options;
                     nodeSelect.cellCol = 1;
                     nodeSelect.selectedNodeType = {};
                     nodeSelect.addImage = {};

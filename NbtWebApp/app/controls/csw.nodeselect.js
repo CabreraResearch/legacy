@@ -46,7 +46,7 @@
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
                 
-                cswPrivate.relationships = cswPrivate.relationships || [];
+                cswPrivate.options = cswPrivate.options|| [];
                 
                 cswPrivate.table = cswParent.table();
 
@@ -61,7 +61,7 @@
                     cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
                 }
 
-
+                cswPrivate.relationships = [];
             }());
             
             //#endregion _preCtor
@@ -82,11 +82,11 @@
                         ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
-                        var relationships = [];
+                        var options = [];
                         data.Nodes.forEach(function(obj) {
-                            relationships.push({value: obj.NodeId, display: obj.NodeName});
+                            options.push({id: obj.NodeId, value: obj.NodeName});
                         });
-                        cswPrivate.relationships = relationships;
+                        cswPrivate.options = options;
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
@@ -145,12 +145,12 @@
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
-                Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
+                Csw.each(cswPrivate.options, function (relatedObj) {
                     if (false === cswPrivate.isMulti && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
                     }
                     cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value });
-                }, false);
+                });
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
                     // case 25820 - guarantee selected option appears
                     cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
@@ -328,7 +328,7 @@
                     cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                     function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
                 } else {
-                    if (cswPrivate.relationships.length > 0) {
+                    if (cswPrivate.options.length > 0) {
                         cswPrivate.makeControl();
                     } else {
                         cswPrivate.getNodes();
