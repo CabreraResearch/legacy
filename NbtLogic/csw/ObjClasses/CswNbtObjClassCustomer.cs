@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClass feedbackOC = OtherResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass );
                 foreach( CswNbtObjClassFeedback feedbackNode in feedbackOC.getNodes( false, false ) )
                 {
-                    if( feedbackNode.Status.Value.Equals( "Pending review" ) )
+                    if( feedbackNode.Status.Value.Equals( CswNbtObjClassFeedback.Statuses.PendingReview ) )
                     {
                         count++;
                     }
