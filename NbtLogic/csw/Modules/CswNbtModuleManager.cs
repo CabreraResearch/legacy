@@ -7,6 +7,7 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt
 {
@@ -145,6 +146,7 @@ namespace ChemSW.Nbt
                     if( false == Enabled )
                     {
                         ModuleRow["enabled"] = CswConvert.ToDbVal( true );
+                        _ModuleRules[Module].Enabled = true;
                         _ModuleRules[Module].OnEnable();
                     }
                 }
@@ -154,6 +156,7 @@ namespace ChemSW.Nbt
                     if( Enabled )
                     {
                         ModuleRow["enabled"] = CswConvert.ToDbVal( false );
+                        _ModuleRules[Module].Enabled = false;
                         _ModuleRules[Module].OnDisable();
                     }
                 }
@@ -271,7 +274,7 @@ namespace ChemSW.Nbt
                     view.save();
                 }
             }
-        }        
+        }
 
         /// <summary>
         /// Convenience function for hiding all views in a category
@@ -287,6 +290,18 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString(), visibility );
             }
+        }
+
+        public void ToggleAction( bool showInList, CswNbtActionName actionName )
+        {
+            string databaseActionName = CswNbtAction.ActionNameEnumToString( actionName );
+            CswTableUpdate actionTU = _CswNbtResources.makeCswTableUpdate( "toggleActionVisibility", "actions" );
+            DataTable actionsDT = actionTU.getTable( "where actionname = '" + databaseActionName + "'" );
+            foreach( DataRow row in actionsDT.Rows )
+            {
+                row["showinlist"] = CswConvert.ToDbVal( showInList );
+            }
+            actionTU.update( actionsDT );
         }
 
     } // class CswNbtModuleManager

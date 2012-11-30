@@ -1627,6 +1627,22 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _makePendingFeedbackCountProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass customerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CustomerClass );
+            CswNbtMetaDataObjectClassProp pendingFeedbackCount = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( customerOC )
+            {
+                PropName = CswNbtObjClassCustomer.PropertyName.PendingFeedbackCount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( pendingFeedbackCount, 0 );
+
+            _resetBlame();
+        }
+
         #endregion Ursula Methods
 
 
@@ -1672,6 +1688,8 @@ namespace ChemSW.Nbt.Schema
             _replaceMaterialCASNoProp( CswDeveloper.MB, 27876 );
 
             _addGeneratorTargetCreatedDate();
+
+            _makePendingFeedbackCountProp( CswDeveloper.MB, 28079 );
 
             #endregion URSULA
 

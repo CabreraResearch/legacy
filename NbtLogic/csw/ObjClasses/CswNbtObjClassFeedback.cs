@@ -25,6 +25,19 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CurrentViewMode = "Current View Mode";
         }
 
+        public sealed class Statuses
+        {
+            public const string PendingReview = "Pending review";
+            public const string Resolved = "Resolved";
+            public const string AwaitingAuthorResponse = "Awaiting author response";
+
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
+                {
+                    PendingReview,
+                    Resolved,
+                    AwaitingAuthorResponse
+                };
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 

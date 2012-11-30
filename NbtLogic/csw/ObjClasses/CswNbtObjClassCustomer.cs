@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Login = "Login";
             public const string SchemaName = "Schema Name";
             public const string SchemaVersion = "Schema Version";
+            public const string PendingFeedbackCount = "Pending Feedback Count";
         }
 
 
@@ -197,6 +198,18 @@ namespace ChemSW.Nbt.ObjClasses
                 // case 25960
                 string OtherSchemaVersion = OtherResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.schemaversion.ToString() );
 
+                //case 28079 - count the number of pending feedback nodes
+                int count = 0;
+                CswNbtMetaDataObjectClass feedbackOC = OtherResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass );
+                foreach( CswNbtObjClassFeedback feedbackNode in feedbackOC.getNodes( false, false ) )
+                {
+                    if( feedbackNode.Status.Value.Equals( CswNbtObjClassFeedback.Statuses.PendingReview ) )
+                    {
+                        count++;
+                    }
+                }
+                PendingFeedbackCount.Value = count;
+
                 // reconnect to original schema
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
@@ -304,6 +317,13 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[PropertyName.SchemaName] );
+            }
+        }
+        public CswNbtNodePropNumber PendingFeedbackCount
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.PendingFeedbackCount] );
             }
         }
 
