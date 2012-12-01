@@ -12,7 +12,9 @@
             'use strict';
             //#region cswPrivate
 
-            var cswPrivate = {};
+            var cswPrivate = {
+                count: 0
+            };
             cswPublic = cswPublic || {};
 
             cswPrivate.controlPreProcessing = function (opts, controlName) {
@@ -21,17 +23,22 @@
                 Reference useful relationships. 
                 TODO: We must fix this to allow Csw style children() as well as parent()
                 */
+                cswPrivate.count += 1;
                 opts = opts || {};
                 opts.controlName = controlName;
                 opts.$parent = $element;
                 opts.root = cswPublic.root;
+                //This seemed like a good idea, but it fails far too often.
+                //  Since these failures don't correspond to faults in the page, it's not clear that they are meaningful.
+                //Csw.debug.assert(false === Csw.isNullOrEmpty(cswPublic.getId()), 'Parent\'s element id was null or empty.');
+                opts.ID = cswPublic.getId();
                 if (opts.suffix) {
-                    opts.ID = Csw.makeId(cswPublic.getId(), opts.suffix);
-                } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(cswPublic.getId())) {
-                    opts.ID = Csw.makeId(cswPublic.getId(), controlName);
+                    opts.ID += opts.suffix;
                 }
+                opts.ID += controlName + cswPrivate.count;
+                //opts.ID = window.Ext.id();
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
-                    cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
+                    cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide, isRequired: opts.isRequired });
                 }
                 opts.parent = function () {
                     return cswPublic;
@@ -82,7 +89,15 @@
 
             //#endregion cswPrivate
 
-            //#region Csw DOM classes
+            //Csw.each is EXPENSIVE. Do !not! do this until each() is fixed.
+            //Csw.each(Csw.literals, function(literal, name) {
+            //    if (false === Csw.contains(Csw, name) &&
+            //        name !== 'factory') {
+            //       cswPublic[name] = function(opts) {
+            //           return cswPrivate.makeControlForChaining(opts, name, $element);
+            //       };
+            //   }
+            //});
 
             cswPublic.a = function (opts) {
                 /// <summary> Creates a Csw.a on this element</summary>
@@ -126,6 +141,13 @@
                 return cswPrivate.makeControlForChaining(opts, 'div');
             };
 
+            cswPublic.fieldSet = function (opts) {
+                /// <summary> Creates a Csw.fieldSet on this element</summary>
+                /// <param name="opts" type="Object">Options to define the fieldSet.</param>
+                /// <returns type="Csw.literals.fieldSet">A Csw.literals.fieldSet</returns> 
+                return cswPrivate.makeControlForChaining(opts, 'fieldSet');
+            };
+
             cswPublic.form = function (opts) {
                 /// <summary> Creates a Csw.form on this element</summary>
                 /// <param name="opts" type="Object">Options to define the form.</param>
@@ -140,18 +162,16 @@
                 return cswPrivate.makeControlForChaining(opts, 'img');
             };
 
-            cswPublic.jquery = function ($jqElement, opts) {
-                /// <summary> Extend a jQuery object with Csw methods.</summary>
-                /// <param name="$element" type="jQuery">Element to extend.</param>
-                /// <returns type="Csw.literals.jquery">A Csw.literals.jquery object</returns>
-                return cswPrivate.makeControlForChaining(opts, 'jquery', $jqElement);
-            };
-
             cswPublic.input = function (opts) {
                 /// <summary> Creates a Csw.input on this element</summary>
                 /// <param name="opts" type="Object">Options to define the input.</param>
                 /// <returns type="Csw.literals.input">A Csw.literals.input</returns> 
                 return cswPrivate.makeControlForChaining(opts, 'input');
+            };
+            
+            cswPublic.jquery = function ($jqElement, opts) {
+                /// <summary> Extend a jQuery object with Csw methods.</summary>
+                return cswPrivate.makeControlForChaining(opts, 'jquery', $jqElement);
             };
 
             cswPublic.label = function (opts) {
@@ -159,14 +179,6 @@
                 /// <param name="opts" type="Object">Options to define the label.</param>
                 /// <returns type="Csw.literals.label">A Csw.literals.label</returns> 
                 return cswPrivate.makeControlForChaining(opts, 'label');
-            };
-
-            /* Case 25125: This literal is deprecated. Use composite instead. */
-            cswPublic.moreDiv = function (opts) {
-                /// <summary> (Deprecated) Creates a Csw.moreDiv on this element</summary>
-                /// <param name="opts" type="Object">Options to define the moreDiv.</param>
-                /// <returns type="Csw.literals.moreDiv">A Csw.literals.moreDiv</returns> 
-                return cswPrivate.makeControlForChaining(opts, 'moreDiv');
             };
 
             cswPublic.ol = function (opts) {
@@ -219,10 +231,10 @@
                 return cswPrivate.makeControlForChaining(opts, 'ul');
             };
 
-            //#endregion Csw DOM classes
+
 
             return cswPublic;
         });
-} ());
+}());
 
 

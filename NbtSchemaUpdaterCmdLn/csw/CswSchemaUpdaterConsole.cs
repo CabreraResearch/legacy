@@ -20,15 +20,19 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private const string _Separator_OrArgs = " | ";
         private const string _Separator_NuLine = "\r\n";
         private const string _Separator_Arg = "-";
-        private const string _ArgKey_Help = "help";
-        private const string _ArgKey_AccessId = "accessid";
-        private const string _ArgKey_All = "all";
-        private const string _ArgKey_Mode = "mode";
         private const string _ArgVal_Test = "test";
-        private const string _ArgKey_Describe = "describe";
-        private const string _ArgKey_StartAtTestCase = "start";
-        private const string _ArgKey_EndAtTestCase = "end";
-        private const string _ArgKey_IgnoreTestCasesCsv = "ignore";
+        private sealed class _ArgKey
+        {
+            public const string Help = "help";
+            public const string AccessId = "accessid";
+            public const string All = "all";
+            public const string Mode = "mode";
+            public const string Version = "version";
+            public const string Describe = "describe";
+            public const string StartAtTestCase = "start";
+            public const string EndAtTestCase = "end";
+            public const string IgnoreTestCasesCsv = "ignore";
+        }
 
         public CswSchemaUpdaterConsole()
         {
@@ -50,14 +54,15 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 ReturnVal = _VersionInfo;
 
                 ReturnVal += _Separator_NuLine + _Separator_NuLine + "Usage: " +
-                                            _Separator_NuLine + "NbtSchemaUpdate " + _Separator_Arg + _ArgKey_Help + _Separator_OrArgs + _Separator_Arg + _ArgKey_All + _Separator_OrArgs + _Separator_Arg + _ArgKey_AccessId + " <AccessId>" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_All + ": update all schemata specified CswDbConfig.xml" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_Describe + " writes descriptions of all current scripts" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_StartAtTestCase + "  test case to begin at" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_EndAtTestCase + "  test case to end at" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey_IgnoreTestCasesCsv + "  csv of test cases to ignore";
+                                            _Separator_NuLine + "NbtSchemaUpdate " + _Separator_Arg + _ArgKey.Help + _Separator_OrArgs + _Separator_Arg + _ArgKey.All + _Separator_OrArgs + _Separator_Arg + _ArgKey.AccessId + " <AccessId>" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.All + ": update all schemata specified CswDbConfig.xml" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.AccessId + " <AccessId>: The AccessId, as per CswDbConfig.xml, of the schema to be updated" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.Mode + " prod | test: perform schema update, or auto-test the schema update infrastructure" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.Version + " writes schema version of all active AccessIds" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.Describe + " writes descriptions of all current scripts" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.StartAtTestCase + "  test case to begin at" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.EndAtTestCase + "  test case to end at" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.IgnoreTestCasesCsv + "  csv of test cases to ignore";
                 return ( ReturnVal );
             }
         }
@@ -73,11 +78,11 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 if( Convert.ToChar( _Separator_Arg ) == CurrentArg[0] )
                 {
                     string CurrentArgContent = CurrentArg.Substring( 1 ).Trim().ToLower();
-                    if( _ArgKey_AccessId == CurrentArgContent ||
-                        _ArgKey_Mode == CurrentArgContent ||
-                        _ArgKey_StartAtTestCase == CurrentArgContent ||
-                        _ArgKey_EndAtTestCase == CurrentArgContent ||
-                        _ArgKey_IgnoreTestCasesCsv == CurrentArgContent )
+                    if( _ArgKey.AccessId == CurrentArgContent ||
+                        _ArgKey.Mode == CurrentArgContent ||
+                        _ArgKey.StartAtTestCase == CurrentArgContent ||
+                        _ArgKey.EndAtTestCase == CurrentArgContent ||
+                        _ArgKey.IgnoreTestCasesCsv == CurrentArgContent )
                     {
                         _UserArgs.Add( CurrentArgContent, args[idx + 1].Trim() );
                         idx += 2;
@@ -114,6 +119,65 @@ namespace ChemSW.Nbt.Schema.CmdLn
             return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_SchemaUpdt );
         }
 
+        private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
+        {
+            // Do the update on the current accessid
+            ICswSchemaScripts CswSchemaScripts = null;
+            if( _UserArgs.ContainsKey( _ArgKey.Mode ) && _ArgVal_Test == _UserArgs[_ArgKey.Mode] )
+            {
+                // Use test cases
+                Int32 StartAtTestCase = 0;
+                if( _UserArgs.ContainsKey( _ArgKey.StartAtTestCase ) )
+                {
+                    StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey.StartAtTestCase] );
+                }
+
+                Int32 EndAtTestCase = 0;
+                if( _UserArgs.ContainsKey( _ArgKey.EndAtTestCase ) )
+                {
+                    EndAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey.EndAtTestCase] );
+                }
+
+                List<string> TestCasesToIgnore = new List<string>();
+                if( _UserArgs.ContainsKey( _ArgKey.IgnoreTestCasesCsv ) )
+                {
+                    CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
+                    CswCommaDelimitedString.FromString( _UserArgs[_ArgKey.IgnoreTestCasesCsv] );
+                    TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
+                }
+                CswSchemaScripts = new CswSchemaScriptsTest( StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
+            }
+            else
+            {
+                // Use production scripts
+                CswSchemaScripts = new CswSchemaScriptsProd();
+            }
+
+            CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, _makeResources, CswSchemaScripts );
+
+            CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
+            if( false == _UserArgs.ContainsKey( _ArgKey.Describe ) )
+            {
+                _updateAccessId( CurrentAccessId, CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
+            }
+            else if( _UserArgs.ContainsKey( _ArgKey.Mode ) && _ArgVal_Test == _UserArgs[_ArgKey.Mode] )
+            {
+                CswConsoleOutput.write( "Ach. The iteration model for production scripts so woefully different than for test scripts that verily do I say unto the brother, uh, yay: it is easier for a camel to pass through the eye of a needle than is to give an inventory of production test scripts. Of course, since the production test scripts don't deploy the Description property of CswRequestDriver in as a rich a way as do the test scripts, it probably doesn't matter. See case 21739" );
+            }
+            else
+            {
+                _describe( CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
+            }
+
+            CswConsoleOutput.write( _Separator_NuLine );
+        }
+
+        private void _doVersionOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
+        {
+            CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, _makeResources, new CswSchemaScriptsProd() );
+            CswConsoleOutput.write( CurrentAccessId + ", " + CswSchemaUpdater.CurrentVersion( CswNbtResources ) );
+        }
+
         public void process( string[] args )
         {
             CswNbtResources CswNbtResources = _makeResources( string.Empty );
@@ -123,7 +187,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
             {
                 _convertArgsToDictionary( args );
 
-                if( _UserArgs.ContainsKey( _ArgKey_Help ) )
+                if( _UserArgs.ContainsKey( _ArgKey.Help ) )
                 {
                     CswConsoleOutput.write( _Help );
                 }
@@ -131,11 +195,11 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 {
                     StringCollection AccessIdsToUpdate = new StringCollection();
 
-                    if( _UserArgs.ContainsKey( _ArgKey_AccessId ) )
+                    if( _UserArgs.ContainsKey( _ArgKey.AccessId ) )
                     {
-                        AccessIdsToUpdate.Add( _UserArgs[_ArgKey_AccessId] );
+                        AccessIdsToUpdate.Add( _UserArgs[_ArgKey.AccessId] );
                     }
-                    else if( _UserArgs.ContainsKey( _ArgKey_All ) )
+                    else if( _UserArgs.ContainsKey( _ArgKey.All ) || _UserArgs.ContainsKey( _ArgKey.Version ) )
                     {
                         foreach( string AccessId in CswNbtResources.CswDbCfgInfo.ActiveAccessIds )
                         {
@@ -148,6 +212,12 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         CswConsoleOutput.write( _Help );
                     }
 
+                    if( _UserArgs.ContainsKey( _ArgKey.Version ) )
+                    {
+                        CswConsoleOutput.write( "AccessId, Version" );
+                        CswConsoleOutput.write( _Separator_NuLine );
+                    }
+
                     foreach( string CurrentAccessId in AccessIdsToUpdate )
                     {
                         if( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
@@ -158,54 +228,13 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         {
                             CswNbtResources.AccessId = CurrentAccessId;
 
-                            // Do the update on the current accessid
-                            CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
-
-                            ICswSchemaScripts CswSchemaScripts = null;
-                            if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
+                            if( _UserArgs.ContainsKey( _ArgKey.Version ) )
                             {
-                                // Use test cases
-                                Int32 StartAtTestCase = 0;
-                                if( _UserArgs.ContainsKey( _ArgKey_StartAtTestCase ) )
-                                {
-                                    StartAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_StartAtTestCase] );
-                                }
-
-                                Int32 EndAtTestCase = 0;
-                                if( _UserArgs.ContainsKey( _ArgKey_EndAtTestCase ) )
-                                {
-                                    EndAtTestCase = CswConvert.ToInt32( _UserArgs[_ArgKey_EndAtTestCase] );
-                                }
-
-                                List<string> TestCasesToIgnore = new List<string>();
-                                if( _UserArgs.ContainsKey( _ArgKey_IgnoreTestCasesCsv ) )
-                                {
-                                    CswCommaDelimitedString CswCommaDelimitedString = new CswCommaDelimitedString();
-                                    CswCommaDelimitedString.FromString( _UserArgs[_ArgKey_IgnoreTestCasesCsv] );
-                                    TestCasesToIgnore = CswCommaDelimitedString.ToList<string>();
-                                }
-                                CswSchemaScripts = new CswSchemaScriptsTest( StartAtTestCase, EndAtTestCase, TestCasesToIgnore );
+                                _doVersionOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
                             }
                             else
                             {
-                                // Use production scripts
-                                CswSchemaScripts = new CswSchemaScriptsProd();
-                            }
-
-                            CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, new CswSchemaUpdater.ResourcesInitHandler( _makeResources ), CswSchemaScripts );
-
-
-                            if( false == _UserArgs.ContainsKey( _ArgKey_Describe ) )
-                            {
-                                _updateAccessId( CurrentAccessId, CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
-                            }
-                            else if( _UserArgs.ContainsKey( _ArgKey_Mode ) && _ArgVal_Test == _UserArgs[_ArgKey_Mode] )
-                            {
-                                CswConsoleOutput.write( "Ach. The iteration model for production scripts so woefully different than for test scripts that verily do I say unto the brother, uh, yay: it is easier for a camel to pass through the eye of a needle than is to give an inventory of production test scripts. Of course, since the production test scripts don't deploy the Description property of CswRequestDriver in as a rich a way as do the test scripts, it probably doesn't matter. See case 21739" );
-                            }
-                            else
-                            {
-                                _describe( CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
+                                _doUpdateOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
                             }
 
                             CswConsoleOutput.write( _Separator_NuLine );
@@ -214,7 +243,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                     } // foreach( string CurrentAccessId in AccessIdsToUpdate )
 
-                } // if-else( _UserArgs.ContainsKey( _ArgKey_Help ) )
+                } // if-else( _UserArgs.ContainsKey( Help ) )
             }//try
 
             catch( Exception Exception )
@@ -257,7 +286,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
             CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
             //if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             //{
-            CswConsoleOutput.write( "From " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
+            CswConsoleOutput.write( "From " + CurrentVersion.ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
 
 
             CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd();

@@ -15,9 +15,9 @@
                 ButtonType: Csw.enums.imageButton_ButtonType.None,
                 Active: false,
                 AlternateText: '',
-                ID: '',
+                name: '',
                 cssclass: '',
-                Required: false,
+                isRequired: false,
                 onClick: null
             };
             var cswPublic = { };
@@ -86,6 +86,7 @@
                 cswPublic.addClass('divbutton');
                 cswPublic.propNonDom('title', cswPrivate.AlternateText);
                 cswPublic.css('display', 'inline-block');
+                cswPublic.required(cswPrivate.isRequired);
                 cswPublic.setButtonType(cswPrivate.ButtonType);
             }());
             return cswPublic;

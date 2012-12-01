@@ -11,6 +11,7 @@
                     data: propertyOption || Csw.nbt.propertyOption(propertyOption)
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
 
@@ -30,7 +31,7 @@
                             }
                         }
                         return answerCompliant;
-                    }
+                    };
 
                     cswPrivate.checkCompliance = function () {
                         cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
@@ -60,14 +61,14 @@
                     }; // checkCompliance()
 
 
-                    cswPrivate.answer = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.answer = Csw.string(cswPrivate.propVals.answer).trim();
                     cswPrivate.allowedAnswers = Csw.string(cswPrivate.propVals.allowedanswers).trim();
                     cswPrivate.compliantAnswers = Csw.string(cswPrivate.propVals.compliantanswers).trim();
-                    cswPrivate.comments = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.correctiveAction = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.comments = Csw.string(cswPrivate.propVals.comments).trim();
+                    cswPrivate.correctiveAction = Csw.string(cswPrivate.propVals.correctiveaction).trim();
                     cswPrivate.multi = cswPublic.data.isMulti();
-                    cswPrivate.dateAnswered = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.dateanswered.date).trim() : '';
-                    cswPrivate.dateCorrected = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.datecorrected.date).trim() : '';
+                    cswPrivate.dateAnswered = Csw.string(cswPrivate.propVals.dateanswered.date).trim();
+                    cswPrivate.dateCorrected = Csw.string(cswPrivate.propVals.datecorrected.date).trim();
                     cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
 
                     if (cswPublic.data.isReadOnly()) {
@@ -88,20 +89,19 @@
                         cswPublic.control.br();
                     } else {
                         cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
                             FirstCellRightAlign: true
                         });
 
                         cswPublic.control.cell(1, 1).text('Answer');
                         cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.splitAnswers.push(Csw.enums.multiEditDefaultValue);
-                        } else if (Csw.isNullOrEmpty(cswPrivate.answer)) {
+                        if (Csw.isNullOrEmpty(cswPrivate.answer)) {
                             cswPrivate.splitAnswers.push('');
                         }
+
+                        
                         cswPrivate.answerSel = cswPublic.control.cell(1, 2)
                                               .select({
-                                                  ID: cswPublic.data.ID + '_ans',
+                                                  name: cswPublic.data.name + '_ans',
                                                   onChange: function () {
                                                       cswPrivate.propVals = {}
                                                       cswPrivate.checkCompliance();
@@ -118,7 +118,7 @@
 
                         cswPrivate.correctiveActionLabel = cswPublic.control.cell(2, 1).text('Corrective Action');
                         cswPrivate.correctiveActionTextBox = cswPublic.control.cell(2, 2).textArea({
-                            ID: cswPublic.data.ID + '_cor',
+                            name: cswPublic.data.name + '_cor',
                             text: cswPrivate.correctiveAction,
                             onChange: function () {
                                 cswPrivate.checkCompliance();
@@ -130,7 +130,7 @@
 
                         cswPublic.control.cell(3, 1).text('Comments');
                         cswPrivate.commentsArea = cswPublic.control.cell(3, 2).textArea({
-                            ID: cswPublic.data.ID + '_com',
+                            name: cswPublic.data.name + '_com',
                             text: cswPrivate.comments,
                             onChange: function () {
                                 var val = cswPrivate.commentsArea.val();
@@ -151,7 +151,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

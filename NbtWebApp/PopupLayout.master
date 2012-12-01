@@ -7,9 +7,9 @@
     
     <% if( Request.UserAgent.Contains( "MSIE 6.0" ) )
     { %>
-    <link rel="stylesheet" href="ie6style.css" />
+    <link rel="stylesheet" href="Deprecated/ie6style.css" />
     <% } %>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="Deprecated/style.css" />
 </asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="StandardContent" Runat="Server">

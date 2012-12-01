@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -66,36 +64,10 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _CheckedSubField.ToXmlNodeName(), Checked.ToString().ToLower() );
-            CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _CheckedSubField.ToXmlNodeName( true ), Checked.ToString().ToLower() ),
-                new XElement( CswNbtSubField.SubFieldName.Required.ToString(), Required.ToString().ToLower() ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
             ParentObject[CswNbtSubField.SubFieldName.Required.ToString()] = Required.ToString().ToLower();
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Checked = CswConvert.ToTristate( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CheckedSubField.ToXmlNodeName() ) );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _CheckedSubField.ToXmlNodeName( true ) ) )
-            {
-                Checked = CswConvert.ToTristate( XmlNode.Element( _CheckedSubField.ToXmlNodeName( true ) ).Value );
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

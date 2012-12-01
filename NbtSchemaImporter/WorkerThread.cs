@@ -380,8 +380,8 @@ namespace ChemSW.Nbt.Schema
         //    //_CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "exec update_sequences;" );  // this is probably not MSSQL compatible
 
         //    //// Create Administrator role nodetype and node
-        //    //CswNbtMetaDataObjectClass RoleObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
-        //    //CswNbtObjClassRuleRole RoleRule = (CswNbtObjClassRuleRole) CswNbtObjClassRuleFactory.MakeRule( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+        //    //CswNbtMetaDataObjectClass RoleObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass );
+        //    //CswNbtObjClassRuleRole RoleRule = (CswNbtObjClassRuleRole) CswNbtObjClassRuleFactory.MakeRule( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass );
         //    //CswNbtMetaDataNodeType RoleNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( RoleObjectClass.ObjectClassId, "Role", "" );
 
         //    //CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( RoleNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
@@ -392,8 +392,8 @@ namespace ChemSW.Nbt.Schema
         //    //RoleNodeAsRole.postChanges( false );
 
         //    //// Create an admin user nodetype and node
-        //    //CswNbtMetaDataObjectClass UserObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-        //    //CswNbtObjClassRuleUser UserRule = (CswNbtObjClassRuleUser) CswNbtObjClassRuleFactory.MakeRule( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+        //    //CswNbtMetaDataObjectClass UserObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+        //    //CswNbtObjClassRuleUser UserRule = (CswNbtObjClassRuleUser) CswNbtObjClassRuleFactory.MakeRule( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
         //    //CswNbtMetaDataNodeType UserNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( UserObjectClass.ObjectClassId, "User", "" );
 
         //    //CswNbtNode UserNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );

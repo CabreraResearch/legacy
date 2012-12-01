@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 Ret = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship( Ret, StartLocationId );
 
-                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
                 CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
                 CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView ContainerView = GetCurrentQuantityView( InventoryLevel, InventoryLevel.Location.SelectedNodeId );
             if( null != ContainerView )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false, false );
                 Int32 LocationNodeCount = Tree.getChildNodeCount();
                 if( LocationNodeCount > 0 )
                 {
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.ViewName = _ParentLocationInventoryLevelViewName;
                 CswNbtViewRelationship LocationRel = _SdLocations.getAllParentsLocationRelationship( Ret, LocationId );
-                CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass );
+                CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryLevelClass );
                 CswNbtMetaDataObjectClassProp LocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
                 CswNbtViewRelationship InventoryLevelRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
 
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             Collection<CswNbtObjClassInventoryLevel> Ret = new Collection<CswNbtObjClassInventoryLevel>();
             if( null != InventoryLevelView && InventoryLevelView.ViewName == _ParentLocationInventoryLevelViewName )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( InventoryLevelView, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( InventoryLevelView, false, false, false );
                 Int32 LocationCount = Tree.getChildNodeCount();
                 if( LocationCount > 0 )
                 {

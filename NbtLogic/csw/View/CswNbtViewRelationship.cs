@@ -35,7 +35,7 @@ namespace ChemSW.Nbt
         private Int32 _SecondId = Int32.MinValue;
         private string _SecondName = "";
         private NbtViewRelatedIdType _SecondType = NbtViewRelatedIdType.NodeTypeId;
-        private string _SecondIconFileName = "blank.gif";
+        private string _SecondIconFileName;
         private Int32 _GroupByPropId = Int32.MinValue;
         private NbtViewPropIdType _GroupByPropType = NbtViewPropIdType.NodeTypePropId;
         private string _GroupByPropName = "";
@@ -53,7 +53,17 @@ namespace ChemSW.Nbt
         public Int32 SecondId { get { return _SecondId; } }
         public string SecondName { get { return _SecondName; } }
         public NbtViewRelatedIdType SecondType { get { return _SecondType; } }
-        public string SecondIconFileName { get { return _SecondIconFileName; } }
+        public string SecondIconFileName 
+        { 
+            get
+            {
+                if( null == _SecondIconFileName )
+                {
+                    setSecondIconFile();
+                }
+                return _SecondIconFileName;
+            } 
+        }
         public Int32 GroupByPropId { get { return _GroupByPropId; } }
         public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
         public string GroupByPropName { get { return _GroupByPropName; } }
@@ -167,18 +177,38 @@ namespace ChemSW.Nbt
                     _SecondId = SecondNodeType.FirstVersionNodeTypeId;
             }
             _SecondName = InSecondName;
+            //this might be deprecated
             if( InIconFileName.ToLower().StartsWith( "images/" ) )
             {
-                //string IconFileNamePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
-                //if( InIconFileName.Length > IconFileNamePrefix.Length &&
-                //    InIconFileName.Substring( 0, IconFileNamePrefix.Length ) == IconFileNamePrefix )
-                //{
                 _SecondIconFileName = InIconFileName;
             }
             else if( false == string.IsNullOrEmpty( InIconFileName ) )
             {
                 _SecondIconFileName = CswNbtMetaDataObjectClass.IconPrefix16 + InIconFileName;
             }
+
+            setSecondIconFile();
+        }
+
+        public string setSecondIconFile()
+        {
+            if( SecondType == NbtViewRelatedIdType.NodeTypeId )
+            {
+                CswNbtMetaDataNodeType RootNT = _CswNbtResources.MetaData.getNodeType( SecondId );
+                if( RootNT != null )
+                {
+                    _SecondIconFileName = RootNT.IconFileName;
+                }
+            }
+            else if( SecondType == NbtViewRelatedIdType.ObjectClassId )
+            {
+                CswNbtMetaDataObjectClass RootOC = _CswNbtResources.MetaData.getObjectClass( SecondId );
+                if( RootOC != null )
+                {
+                    _SecondIconFileName = RootOC.IconFileName;
+                }
+            }
+            return _SecondIconFileName;
         }
 
         public void overrideProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )

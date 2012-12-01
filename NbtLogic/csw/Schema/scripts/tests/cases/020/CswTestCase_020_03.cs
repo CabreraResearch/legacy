@@ -1,5 +1,6 @@
 ﻿using ChemSW.Audit;
 using ChemSW.Core;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -49,7 +50,19 @@ namespace ChemSW.Nbt.Schema
             _CswTstCaseRsrc.assertColumnIsPresent( AuditTableName02, _CswTstCaseRsrc_020.ArbitraryColumnName_02 );
 
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

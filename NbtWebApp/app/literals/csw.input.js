@@ -32,7 +32,8 @@
             checked: false,
             canCheck: false, /* if this is a radio or checkbox */
             onChange: null,
-            onClick: null
+            onClick: null,
+            isRequired: false
         };
         var cswPublic = {};
 

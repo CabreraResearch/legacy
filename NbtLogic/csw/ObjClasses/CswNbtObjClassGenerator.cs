@@ -28,7 +28,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string Summary = "Summary";
             public static string ParentType = "Parent Type";
             public static string ParentView = "Parent View";
-            public static string RunNow = "Run Now";
         }
 
 
@@ -40,7 +39,6 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
-        public string SchedulerRunNowPropertyName { get { return PropertyName.RunNow; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -54,7 +52,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass ); }
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassGenerator( CswNbtNode Node )
         {
             CswNbtObjClassGenerator ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.GeneratorClass ) )
             {
                 ret = (CswNbtObjClassGenerator) Node.ObjClass;
             }
@@ -86,9 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setDefaultValues();
 
             //Case 24572
-            bool DeleteFutureNodes = ( TargetType.WasModified || ParentType.WasModified );
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( DeleteFutureNodes );
-
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
 
             _trySetNodeTypeSelectDefaultValues();
 
@@ -120,11 +116,11 @@ namespace ChemSW.Nbt.ObjClasses
                 bool SetDefaultParentType = ( ( false == ParentType.WasModified ||
                                                 ParentType.SelectedNodeTypeIds.Count == 0 ) &&
                                                 null != OwnerNode &&
-                                                OwnerNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass &&
+                                                OwnerNode.getObjectClass().ObjectClass == NbtObjectClass.InspectionTargetGroupClass &&
                                                 ParentType.SelectMode != PropertySelectMode.Blank );
                 if( SetDefaultParentType )
                 {
-                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass );
                     foreach( CswNbtMetaDataNodeType InspectionTargetNt in InspectionTargetOc.getNodeTypes() )
                     {
                         if( InspectionTargetNt.IsLatestVersion() )
@@ -166,7 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
                             if( null != InspectionTargetNt )
                             {
                                 CswNbtMetaDataNodeType LatestInspectionTargetNt = InspectionTargetNt.getNodeTypeLatestVersion();
-                                if( LatestInspectionTargetNt.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass &&
+                                if( LatestInspectionTargetNt.getObjectClass().ObjectClass == NbtObjectClass.InspectionTargetClass &&
                                     false == MatchingInspectionTargetNts.Contains( LatestInspectionTargetNt ) )
                                 {
                                     MatchingInspectionTargetNts.Add( LatestInspectionTargetNt );
@@ -176,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     if( MatchingInspectionTargetNts.Count > 0 )
                     {
-                        CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                        CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
                         foreach( CswNbtMetaDataNodeType InspectionDesignNt in InspectionDesignOc.getNodeTypes() )
                         {
                             if( InspectionDesignNt.IsLatestVersion() )
@@ -238,7 +234,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
                         View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True", false );
 
-                        ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                        ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 
                         TargetTree.goToRoot();
                         if( TargetTree.getChildNodeCount() > 0 ) // should always be the case
@@ -276,6 +272,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
+
+            // case 28146
+            WarningDays.MinValue = 0;
+            WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -286,22 +287,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                if( PropertyName.RunNow == OCP.PropName )
-                {
-                    NextDueDate.DateTimeValue = DateTime.Now;
-                    //case 25702 - empty comment?
-                    //RunStatus.StaticText = string.Empty;
-                    //RunStatus_new.a
-                    Node.postChanges( false );
-                    ButtonData.Action = NbtButtonAction.refresh;
-                }
             }
             return true;
         }
@@ -341,6 +329,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 RunTime.setHidden( value: false, SaveToDb: true );
             }
+
+            Int32 max = DueDateInterval.getMaximumWarningDays();
+            if( WarningDays.Value > max )
+            {
+                WarningDays.Value = max;
+            }
+
         } // OnDueDateIntervalChange
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
@@ -355,12 +350,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropViewReference ParentView { get { return ( _CswNbtNode.Properties[PropertyName.ParentView] ); } }
 
-        /// <summary>
-        /// Run Now button clears the Last Run Date thereby forcing scheduler to process the Generator node on its next iteration 
-        /// </summary>
-        public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
-
         #endregion
+
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
+        {
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
+        }
 
     }//CswNbtObjClassGenerator
 

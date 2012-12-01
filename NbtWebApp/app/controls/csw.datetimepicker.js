@@ -12,16 +12,17 @@
             ///<returns type="Csw.controls.dateTimePicker">Object representing a dateTimePicker</returns>
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 Date: '',
                 Time: '',
                 DateFormat: 'mm/dd/yyyy',
                 TimeFormat: '',
                 DisplayMode: 'Date',    // Date, Time, DateTime
                 ReadOnly: false,
-                Required: false,
+                isRequired: false,
                 onChange: null,
-                showTodayButton: false
+                showTodayButton: false,
+                changeYear: true
             };
             var cswPublic = {};
 
@@ -31,7 +32,7 @@
                 }
                 cswPrivate.dateTimeTbl = cswParent.table({
                     isControl: cswPrivate.isControl,
-                    ID: cswPrivate.id
+                    name: cswPrivate.id
                 });
                 cswPublic = Csw.dom({}, cswPrivate.dateTimeTbl);
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
@@ -39,19 +40,19 @@
                 if (cswPrivate.ReadOnly) {
                     switch (cswPrivate.DisplayMode) {
                         case 'Date':
-                            cswPrivate.dateTimeTbl.cell(1,1).div({ ID: cswPrivate.ID + '_date', value: cswPrivate.Date });
+                            cswPrivate.dateTimeTbl.cell(1,1).div({ name: cswPrivate.name + '_date', value: cswPrivate.Date });
                             break;
                         case 'Time':
-                            cswPrivate.dateTimeTbl.cell(1,1).div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Time });
+                            cswPrivate.dateTimeTbl.cell(1,1).div({ name: cswPrivate.name + '_time', value: cswPrivate.Time });
                             break;
                         case 'DateTime':
-                            cswPrivate.dateTimeTbl.cell(1,1).div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
+                            cswPrivate.dateTimeTbl.cell(1,1).div({ name: cswPrivate.name + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
                             break;
                     }
                 } else {
                     if (cswPrivate.DisplayMode === 'Date' || cswPrivate.DisplayMode === 'DateTime') {
                         cswPrivate.dateBox = cswPrivate.dateTimeTbl.cell(1,1).input({
-                            ID: cswPrivate.ID + '_date',
+                            name: cswPrivate.name + '_date',
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.Date,
                             onChange: cswPrivate.onChange,
@@ -59,14 +60,14 @@
                             cssclass: 'textinput'
                         });
                         if (cswPrivate.Date.substr(0, 'today'.length) !== 'today') {
-                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat) });
+                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat), 'changeYear': cswPrivate.changeYear });
                         }
-                        cswPrivate.dateBox.required(cswPrivate.Required);
+                        cswPrivate.dateBox.required(cswPrivate.isRequired);
                     }
 
                     if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
                         cswPrivate.timeBox = cswPrivate.dateTimeTbl.cell(1,3).input({
-                            ID: cswPrivate.ID + '_time',
+                            name: cswPrivate.name + '_time',
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: cswPrivate.onChange,
@@ -74,7 +75,7 @@
                             width: '80px'
                         });
                         cswPrivate.dateTimeTbl.cell(1,4).button({
-                            ID: cswPrivate.ID + '_now',
+                            name: cswPrivate.name + '_now',
                             disableOnClick: false,
                             onClick: function () {
                                 cswPrivate.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
@@ -82,12 +83,12 @@
                             },
                             enabledText: 'Now'
                         });
-                        cswPrivate.timeBox.required(cswPrivate.Required);
+                        cswPrivate.timeBox.required(cswPrivate.isRequired);
                     }
 
                     if (Csw.bool(cswPrivate.showTodayButton)) {
                         cswPrivate.dateTimeTbl.cell(1,2).button({
-                            ID: cswPrivate.ID + '_today',
+                            name: cswPrivate.name + '_today',
                             disableOnClick: false,
                             onClick: function () {
                                 cswPrivate.dateBox.$.datepicker('destroy');

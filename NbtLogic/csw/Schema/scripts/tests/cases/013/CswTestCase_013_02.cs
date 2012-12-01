@@ -1,5 +1,6 @@
 using System.Data;
 using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -33,7 +34,19 @@ namespace ChemSW.Nbt.Schema
             DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName01] = _CswTstCaseRsrc_013.LocalAribtiraryValue01;
             DataTable.Rows[0][_CswTstCaseRsrc_013.FakeValColumnName02] = _CswTstCaseRsrc_013.LocalAribtiraryValue02;
             CswTableUpdate.update( DataTable );
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

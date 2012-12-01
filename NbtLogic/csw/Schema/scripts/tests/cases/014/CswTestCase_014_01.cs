@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -35,7 +36,19 @@ namespace ChemSW.Nbt.Schema
             MaterialsTable.Rows[0]["materialname"] = CswTstCaseRsrc_014.Purpose + "--test row";
             CswTableUpdateSetup.update( MaterialsTable );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

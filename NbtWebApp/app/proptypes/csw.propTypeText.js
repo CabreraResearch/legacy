@@ -11,13 +11,14 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
                     cswPrivate.maxlength = Csw.number(cswPrivate.propVals.maxlength, 14);
 
@@ -25,7 +26,7 @@
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPublic.control = cswPrivate.parent.input({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.value,
                             cssclass: 'textinput',
@@ -35,7 +36,7 @@
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPublic.data.onPropChange({ text: val });
                             },
-                            required: cswPublic.data.isRequired(),
+                            isRequired: cswPublic.data.isRequired(),
                             maxlength: cswPrivate.maxlength
                         });
                         
@@ -45,7 +46,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

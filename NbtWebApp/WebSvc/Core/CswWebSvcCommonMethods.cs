@@ -150,12 +150,13 @@ namespace ChemSW.WebSvc
                                 NodeTypeId = CurrentUser.UserNodeTypeId,
                                 ObjectClassId = CurrentUser.UserObjectClassId
                             };
-                            SvcReturn.Add( new JProperty( "cswnbtnodekey", FakeKey.ToString() ) );
+                            SvcReturn.Add( new JProperty( "nodekey", FakeKey.ToString() ) );
                             CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
                             SvcReturn.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
                         }
 
                         SvcReturn["timer"] = new JObject();
+
                         SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
                         LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
                         if( LogLevel == CswNbtResources.UnknownEnum )

@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtUpdtMTBF() );
             ReturnVal.Add( new CswScheduleLogicNbtUpdtPropVals() );
             ReturnVal.Add( new CswScheduleLogicNbtDisableCswAdmin() );
+            ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
 
             return ( ReturnVal );
 

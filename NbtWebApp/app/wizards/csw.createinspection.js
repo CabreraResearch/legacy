@@ -9,7 +9,7 @@
 
             //#region Variable Declaration
             var cswPrivate = {
-                ID: 'cswInspectionDesignWizard',
+                name: 'cswInspectionDesignWizard',
                 onCancel: null, //function ($wizard) {},
                 onFinish: null, //function ($wizard) {},
                 startingStep: 1,
@@ -78,11 +78,6 @@
                 }
 
                 return false;
-            };
-
-            cswPrivate.makeStepId = function (suffix, stepNo) {
-                var step = stepNo || cswPrivate.currentStepNo;
-                return Csw.makeId({ prefix: 'step_' + step, ID: cswPrivate.ID, suffix: suffix });
             };
 
             cswPrivate.validationFailed = function () {
@@ -156,7 +151,7 @@
                             addBtn.css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .div()
                                 .button({
-                                    ID: cswPrivate.makeStepId('addNewInspectionTarget'),
+                                    name: 'addNewInspectionTarget',
                                     enabledText: 'Add New',
                                     disableOnClick: false,
                                     onClick: function () {
@@ -197,7 +192,7 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .div()
                             .nodeTypeSelect({
-                                ID: cswPrivate.makeStepId('nodeTypeSelect'),
+                                name: 'nodeTypeSelect',
                                 objectClassName: 'InspectionTargetClass',
                                 onSelect: function () {
                                     var selected = cswPrivate.inspectionTargetSelect.find(':selected');
@@ -217,7 +212,7 @@
                         cswPrivate.divStep1.br();
 
                         inspectionTable = cswPrivate.divStep1.table({
-                            ID: cswPrivate.makeStepId('setInspectionTargetTable')
+                            name: 'setInspectionTargetTable'
                         });
 
                         rowOneTable = inspectionTable.cell(1, 1).table({
@@ -287,7 +282,7 @@
                         Csw.subscribe(cswPrivate.createInspectionEvents.targetNameChanged, targetChangedHandle);
 
                         inspectionTable = cswPrivate.divStep2.table({
-                            ID: cswPrivate.makeStepId('inspectionTable'),
+                            name: 'inspectionTable',
                             FirstCellRightAlign: true
                         });
 
@@ -299,7 +294,7 @@
                         cswPrivate.inspectionDesignSelect = inspectionTable.cell(1, 2)
                             .div()
                             .nodeTypeSelect({
-                                ID: Csw.makeSafeId('nodeTypeSelect'),
+                                name: 'nodeTypeSelect',
                                 objectClassName: 'InspectionDesignClass',
                                 blankOptionText: '[Create New]'
                             })
@@ -328,7 +323,7 @@
                         cswPrivate.newDesignName = inspectionTable.cell(3, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .input({
-                                ID: cswPrivate.ID + '_newDesignName',
+                                name: cswPrivate.name + '_newDesignName',
                                 type: Csw.enums.inputTypes.text,
                                 cssclass: 'required',
                                 maxlength: 50,
@@ -356,7 +351,7 @@
                             inspectionTable.cell(6, 2)
                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .input({
-                                    ID: cswPrivate.ID + '_newDesignCategory',
+                                    name: cswPrivate.name + '_newDesignCategory',
                                     type: Csw.enums.inputTypes.text,
                                     value: tempCategoryName,
                                     maxlength: 40,
@@ -379,7 +374,6 @@
                 //This is ugly. Abstract the step div from this function.
                 cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step4.step);
                 cswPrivate.divStep4.empty();
-                var previewGridId = cswPrivate.makeStepId('previewGrid_outer', 4);
 
                 var helpText = cswPrivate.divStep4.p({ text: '<p>Review the <b>' + cswPrivate.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
 
@@ -390,51 +384,16 @@
                 };
                 Csw.subscribe(cswPrivate.createInspectionEvents.designNameChanged, designChangeHandle);
 
-                cswPrivate.inspectionGridDiv = cswPrivate.divStep4.div({ ID: previewGridId });
-                
-//                cswPrivate.gridOptions = {
-//                    ID: cswPrivate.makeStepId('previewGrid'),
-//                    pagermode: 'default',
-//                    gridOpts: {
-//                        autowidth: true,
-//                        height: '200'
-//                    },
-//                    optNav: {
-//                        add: true,
-//                        del: true,
-//                        edit: true,
-//                        view: false,
-//                        editfunc: function (rowid) {
-//                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
-//                        },
-//                        addfunc: function () {
-//                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
-//                        },
-//                        delfunc: function (rowid) {
-//                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('delRowData', rowid);
-//                        }
-//                    }
-//                };
-
-//                if (false === Csw.contains(jqGridOpts, 'data') ||
-//                    false === Csw.contains(jqGridOpts, 'colNames') ||
-//                        jqGridOpts.colNames.length === 0) {
-//                    Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
-//                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-//                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-//                } else {
-//                    Csw.extend(cswPrivate.gridOptions.gridOpts, jqGridOpts);
-//                }
-//                cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
+                cswPrivate.inspectionGridDiv = cswPrivate.divStep4.div();
 
                 if (false === Csw.contains(cswPrivate.gridJson, 'data') || false === Csw.contains(cswPrivate.gridJson, 'columns') || cswPrivate.gridJson.columns.length === 0) {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                 } else {
-                    var previewId = cswPrivate.makeStepId('previewGrid');
+                    var previewId = cswPrivate.name + '_previewGrid';
                     cswPrivate.gridOptions = {
-                        ID: previewId,
+                        name: previewId,
                         storeId: previewId,
                         title: 'Preview Inspection Design',
                         stateId: previewId,
@@ -515,7 +474,7 @@
 
                             //Ordered instructions
                             step3List = cswPrivate.divStep3.ol({
-                                ID: cswPrivate.makeStepId('uploadTemplateList')
+                                name: 'uploadTemplateList'
                             });
 
                             //1. Download template
@@ -531,7 +490,7 @@
                             uploadP = step3List.li()
                                                 .span({ text: 'Upload the completed Inspection Design.' })
                                                 .p()
-                                                .input({ ID: cswPrivate.makeStepId('fileUploadBtn'), type: Csw.enums.inputTypes.file, name: 'fileupload', value: 'Upload' });
+                                                .input({ type: Csw.enums.inputTypes.file, name: 'fileupload', value: 'Upload' });
                             cswPrivate.makeInspectionDesignUpload(uploadP);
 
 
@@ -594,7 +553,7 @@
 
                         cswPrivate.divStep5.p({ text: 'You are about to create the following items. Click Finish to create the design.' });
                         confirmationList = cswPrivate.divStep5.ol({
-                            ID: cswPrivate.makeStepId('confirmationList')
+                            name: 'confirmationList'
                         });
 
                         if (cswPrivate.isNewInspectionDesign()) {
@@ -602,9 +561,9 @@
                                 Csw.extend(confirmGridOptions, cswPrivate.gridOptions, true);
                             }
 
-                            confirmGridOptions.ID = cswPrivate.makeStepId('confirmGrid');
-                            confirmGridOptions.storeId = cswPrivate.makeStepId('confirmGrid');
-                            confirmGridOptions.stateId = cswPrivate.makeStepId('confirmGrid');
+                            confirmGridOptions.name = 'confirmGrid';
+                            confirmGridOptions.storeId = 'confirmGrid';
+                            confirmGridOptions.stateId = 'confirmGrid';
                             confirmGridOptions.height = 150;
                             confirmGridOptions.onEdit = null;
                             confirmGridOptions.onDelete = null;
@@ -624,7 +583,7 @@
                                 text: 'New Types'
                             })
                                 .ul({
-                                    ID: cswPrivate.makeStepId('confirmationTypes')
+                                    name: 'confirmationTypes'
                                 });
 
                             if (cswPrivate.isNewInspectionDesign()) {
@@ -648,7 +607,7 @@
                             text: 'New Views'
                         })
                             .ul({
-                                ID: cswPrivate.makeStepId('confirmationViews')
+                                name: 'confirmationViews'
                             });
                         confirmViewsList.li({
                             text: '<b>Scheduling, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
@@ -672,7 +631,9 @@
                         cswPrivate.makeStepTwo();
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step3.step:
-                        cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name);
+                        if (cswPrivate.isNewInspectionDesign()) {
+                            cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name);
+                        }
                         cswPrivate.makeStepThree(true); //we're moving forward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step4.step:
@@ -742,7 +703,7 @@
                         });
 
                         $.CswDialog('NavigationSelectDialog', {
-                            ID: Csw.makeSafeId('FinishDialog'),
+                            name: 'FinishDialog',
                             title: 'The Inspection Design Wizard Completed Successfully',
                             navigationText: 'Please select from the following views. Click OK to continue.',
                             values: values,
@@ -763,7 +724,7 @@
             (function () {
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
-                    ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
+                    name: 'wizard',
                     Title: 'Create New Inspection',
                     StepCount: Csw.enums.wizardSteps_InspectionDesign.stepcount,
                     Steps: cswPrivate.wizardSteps,

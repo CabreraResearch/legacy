@@ -10,7 +10,7 @@
                 var cswPublic = {
                     data: propertyOption
                 };
-
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -31,7 +31,7 @@
                     } else {
                         /* Select Box */
                         cswPublic.control = cswPrivate.parent.multiSelect({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             cssclass: 'selectinput',
                             values: cswPrivate.options,
                             readonlyless: cswPrivate.propVals.readonlyless,
@@ -49,7 +49,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

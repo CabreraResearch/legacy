@@ -10,6 +10,7 @@
                 data: propertyOption
             };
 
+            //The render function to be executed as a callback
             var render = function () {
                 'use strict';
                 cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -20,27 +21,28 @@
                 cswPrivate.selectMode = cswPrivate.propVals.selectmode; // Single, Multiple, Blank
 
                 cswPublic.control = cswPrivate.parent.checkBoxArray({
-                    ID: cswPublic.data.ID + '_cba',
+                    name: cswPublic.data.name + '_cba',
                     cols: cswPrivate.options.columns,
                     data: cswPrivate.options.data,
                     UseRadios: (cswPrivate.selectMode === 'Single'),
-                    Required: cswPublic.data.isRequired(),
+                    isRequired: cswPublic.data.isRequired(),
                     ReadOnly: cswPublic.data.isReadOnly(),
                     Multi: cswPublic.data.isMulti(),
                     onChange: function () {
                         // We're bypassing this to avoid having to deal with the complexity of multiple copies of the checkboxarray JSON
-                        //var val = cswPublic.control.val();
-                        //Csw.tryExec(cswPublic.data.onChange, val);
-                        //if (false === cswPublic.data.isMulti() || false === cswPublic.control.MultiIsUnchanged() ) {
-                            //cswPublic.data.onPropChange({ options: val.data });
-                        //}
+                        //cswPublic.data.onPropChange({ options: val.data });
                         cswPublic.data.propData.wasmodified = true;
                     }
                 }); // checkBoxArray
                 cswPublic.control.required(cswPublic.data.isRequired());
             }; // render()
 
+            //Bind the callback to the render event
             cswPublic.data.bindRender(render);
+
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //cswPublic.data.unBindRender();
+
             return cswPublic;
         }));
 }());

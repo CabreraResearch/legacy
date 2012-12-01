@@ -11,6 +11,7 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -47,7 +48,7 @@
                         cswPrivate.table.cell(2, 1).show();
 
                         cswPrivate.comboBox = cswPrivate.selectDiv.comboBox({
-                            ID: cswPublic.data.ID + '_combo',
+                            name: cswPublic.data.name + '_combo',
                             topContent: cswPrivate.name,
                             selectContent: '',
                             width: '290px',
@@ -65,7 +66,7 @@
                         });
                         cswPrivate.comboBox.required(cswPublic.data.isRequired());
                         locationTree = Csw.nbt.nodeTree({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             parent: cswPrivate.comboBox.pickList,
                             onInitialSelectNode: function (optSelect) {
                                 cswPrivate.onTreeSelect(optSelect);
@@ -80,7 +81,7 @@
                         locationTree.init({
                             viewid: cswPrivate.viewId,
                             nodeid: cswPrivate.nodeId,
-                            cswnbtnodekey: cswPrivate.nodeKey,
+                            nodekey: cswPrivate.nodeKey,
                             IncludeInQuickLaunch: false,
                             DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                         });
@@ -91,25 +92,18 @@
                     });
 
                     
-                    if (Csw.bool(cswPublic.data.isMulti())) {
-                        cswPrivate.nodeId = '';
-                        cswPrivate.name = Csw.enums.multiEditDefaultValue;
-                        cswPrivate.path = Csw.enums.multiEditDefaultValue;
-                    }
-                    else if (cswPrivate.relatedmatch) {
+                    if (cswPrivate.relatedmatch) {
                         cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid, cswPublic.data.tabState.relatednodeid).trim();
                         cswPrivate.name = Csw.string(cswPrivate.propVals.name, cswPublic.data.tabState.relatednodename).trim();
                         cswPrivate.path = Csw.string(cswPrivate.propVals.path, cswPublic.data.tabState.relatednodename).trim();
                     } else {
-                        cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid, '').trim();
-                        cswPrivate.name = Csw.string(cswPrivate.propVals.name, '').trim();
-                        cswPrivate.path = Csw.string(cswPrivate.propVals.path, '').trim();
+                        cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid).trim();
+                        cswPrivate.name = Csw.string(cswPrivate.propVals.name).trim();
+                        cswPrivate.path = Csw.string(cswPrivate.propVals.path).trim();
                     }
                     cswPrivate.viewId = Csw.string(cswPrivate.propVals.viewid).trim();
 
-                    cswPrivate.table = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+                    cswPrivate.table = cswPrivate.parent.table();
 
                     //TODO: Add nodeLink here
                     cswPrivate.table.cell(1, 1).text(cswPrivate.path);
@@ -129,7 +123,7 @@
                             cswPrivate.makeLocationCombo();
                         } else {
                             cswPrivate.table.cell(1, 2).icon({
-                                ID: Csw.makeId(cswPublic.data.ID, 'toggle'),
+                                name: 'toggle',
                                 iconType: Csw.enums.iconType.pencil,
                                 hovertext: 'Edit',
                                 size: 16,
@@ -143,7 +137,12 @@
                     }
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+                
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

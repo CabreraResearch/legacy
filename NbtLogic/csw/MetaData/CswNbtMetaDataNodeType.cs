@@ -140,6 +140,27 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
+
+        /// <summary>
+        /// Parse the <see cref="NameTemplateValue"/> removing "'{', '}', ' ', '-', '(', ')'" and return a comma delimited string
+        /// </summary>
+        /// <returns></returns>
+        public CswCommaDelimitedString NameTemplatePropIds
+        {
+            get
+            {
+                CswCommaDelimitedString Ret = new CswCommaDelimitedString();
+                string ParsedTemplateText = NameTemplateValue.Replace( " ", "," )
+                    .Replace( "-", "," )
+                    .Replace( "}", "" )
+                    .Replace( "{", "" )
+                    .Replace( "(", "" )
+                    .Replace( ")", "" );
+                Ret.FromString( ParsedTemplateText );
+                return Ret;
+            }
+        }
+
         public string getNameTemplateText()
         {
             return CswNbtMetaData.TemplateValueToTemplateText( getNodeTypeProps(), NameTemplateValue );
@@ -343,7 +364,7 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeTab FirstTab = null;
             foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
             {
-                if( FirstTab == null )
+                if( FirstTab == null && Tab != getIdentityTab() )
                 {
                     FirstTab = Tab;
                     break;
@@ -366,6 +387,16 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             return SecondTab;
+        }
+
+        private CswNbtMetaDataNodeTypeTab _IdentityTab = null;
+        public CswNbtMetaDataNodeTypeTab getIdentityTab()
+        {
+            if( null == _IdentityTab )
+            {
+                _IdentityTab = getNodeTypeTab( CswNbtMetaData.IdentityTabName );
+            }
+            return _IdentityTab;
         }
 
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( string NodeTypeTabName )
@@ -415,6 +446,10 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( string ObjectClassPropName )
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassPropName );
+        }
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassProp.PropName );
         }
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 ObjectClassPropId )
         {
@@ -584,11 +619,11 @@ namespace ChemSW.Nbt.MetaData
             return DefaultView;
         }
 
-        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false )
+        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false, bool IncludeHiddenNodes = false )
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
             CswNbtView View = CreateDefaultView( includeDefaultFilters );
-            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( View, forceReInit, true, true, includeSystemNodes );
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, true, includeSystemNodes, IncludeHiddenNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );

@@ -27,16 +27,16 @@
                 }
                 else {
                     loginDiv = parent.div({
-                        ID: 'logindiv',
+                        name: 'logindiv',
                         align: 'center'
                     });
                     loginTable = loginDiv.form().table({ cellalign: 'center', cellvalign: 'center' });
                     loginMsg = loginTable.cell(1, 2, 'loginmsg').hide();
                     loginTable.cell(2, 1).text('Customer ID: ').align('right');
-                    inpAccessId = loginTable.cell(2, 2).align('left').input({ ID: 'login_accessid', width: '120px' });
+                    inpAccessId = loginTable.cell(2, 2).align('left').input({ name: 'login_accessid', width: '120px' });
                     loginTable.cell(3, 1).text('User Name: ').align('right');
                     inpUserName = loginTable.cell(3, 2).align('left').input({
-                        ID: 'login_username',
+                        name: 'login_username',
                         width: '120px',
                         onChange: function () {//Case 26866/27114
                             var regex = /[^a-zA-Z0-9_]+/g;
@@ -46,12 +46,12 @@
                         }
                     });
                     loginTable.cell(4, 1).text('Password: ').align('right');
-                    inpPassword = loginTable.cell(4, 2).align('left').input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px', cssclass: 'mousetrap' });
+                    inpPassword = loginTable.cell(4, 2).align('left').input({ name: 'login_password', type: Csw.enums.inputTypes.password, width: '120px', cssclass: 'mousetrap' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
                                         .align('left')
                                         .buttonExt({
                                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.right),
-                                            ID: 'login_button',
+                                            name: 'login_button',
                                             enabledText: 'Login',
                                             disabledText: 'Logging in...',
                                             width: '100px',
@@ -79,15 +79,16 @@
                                         });
                     loginTable.cell(6, 2);
                     parent.br({ number: 3 });
-                    parent.div({
-                        ID: 'assemblydiv',
+
+                    var assemblyDiv = parent.div({
+                        name: 'assemblydiv',
                         width: '100%',
                         align: 'right'
                     });
 
-                    $('#assemblydiv').load('_Assembly.txt');
+                    assemblyDiv.$.load('_Assembly.txt');
 
-                    $('#login_accessid').focus();
+                    inpAccessId.$.focus();
                     
                 } // if-else(ThisSessionId !== null)
             } // init

@@ -315,7 +315,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool ReadOnly
         {
-            get { return _ReadOnlyTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
+            get { return NodeTypeProp.ReadOnly || _ReadOnlyTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
         }
         public void setReadOnly( bool value, bool SaveToDb )
         {
@@ -440,6 +440,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         } // GetPropRowValueDate()
 
+        [DebuggerStepThrough]
         public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
         {
             // see case 22613

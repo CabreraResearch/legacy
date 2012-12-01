@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -187,11 +185,11 @@ namespace ChemSW.Nbt.PropTypes
             Data.Columns.Add( ValueColumn, typeof( bool ) );
 
             bool first = true;
-            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
                 if( Tristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
@@ -217,37 +215,8 @@ namespace ChemSW.Nbt.PropTypes
         public const string ValueColumn = "value";
         public const string ElemName_Options = "options";
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _SelectedUserIdsSubField.ToXmlNodeName(), SelectedUserIds.ToString() );
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, ElemName_Options );
-            DataTable UsersTable = getUserOptions();
-            foreach( DataRow UserRow in UsersTable.Rows )
-            {
-                XmlNode UserNode = CswXmlDocument.AppendXmlNode( OptionsNode, "user" );
+        // ToXml()
 
-                XmlNode UserNameNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
-                CswXmlDocument.AppendXmlAttribute( UserNameNode, "field", NameColumn );
-                CswXmlDocument.AppendXmlAttribute( UserNameNode, "value", UserRow[NameColumn].ToString() );
-
-                XmlNode UserIdNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
-                CswXmlDocument.AppendXmlAttribute( UserIdNode, "field", KeyColumn );
-                CswXmlDocument.AppendXmlAttribute( UserIdNode, "value", UserRow[KeyColumn].ToString() );
-
-                XmlNode UserIdStringNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
-                CswXmlDocument.AppendXmlAttribute( UserIdStringNode, "field", StringKeyColumn );
-                CswXmlDocument.AppendXmlAttribute( UserIdStringNode, "value", UserRow[StringKeyColumn].ToString() );
-
-                XmlNode IncludeNode = CswXmlDocument.AppendXmlNode( UserNode, "column" );
-                CswXmlDocument.AppendXmlAttribute( IncludeNode, "field", ValueColumn );
-                CswXmlDocument.AppendXmlAttribute( IncludeNode, "value", UserRow[ValueColumn].ToString() );
-            }
-        } // ToXml()
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            //Not yet implemented
-        }
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
@@ -269,48 +238,6 @@ namespace ChemSW.Nbt.PropTypes
             CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
         }
 
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //string UserIds = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedUserIdsSubField.ToXmlNodeName() );
-            //SelectedUserIds.FromString( UserIds );
-
-            //foreach( string UserIdString in SelectedUserIds )
-            //{
-            //    if( CswTools.IsInteger( UserIdString ) )
-            //    {
-            //        Int32 UserId = CswConvert.ToInt32( UserIdString );
-            //        if( NodeMap != null && NodeMap.ContainsKey( UserId ) )
-            //            SelectedUserIds.Replace( UserIdString, NodeMap[UserId].ToString() );
-            //    }
-            //}
-            //PendingUpdate = true;
-
-
-            CswCommaDelimitedString NewSelectedUserIds = new CswCommaDelimitedString();
-
-            foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "options" ).ChildNodes )
-            {
-                string key = string.Empty;
-                string name = string.Empty;
-                bool value = false;
-                foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
-                {
-                    if( KeyColumn == ColumnNode.Attributes["field"].Value )
-                        key = ColumnNode.Attributes["value"].Value;
-                    if( NameColumn == ColumnNode.Attributes["field"].Value )
-                        name = ColumnNode.Attributes["value"].Value;
-                    if( ValueColumn == ColumnNode.Attributes["field"].Value )
-                        value = CswConvert.ToBoolean( ColumnNode.Attributes["value"].Value );
-                }
-                if( value )
-                {
-                    NewSelectedUserIds.Add( key );
-                }
-            } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
-
-            SelectedUserIds = NewSelectedUserIds;
-        }
-
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             CswCommaDelimitedString NewSelectedUserIds = new CswCommaDelimitedString();
@@ -328,11 +255,6 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }
             SelectedUserIds = NewSelectedUserIds;
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //Not yet implemented
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -358,11 +280,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswCommaDelimitedString SelectedUserNames()
         {
             CswCommaDelimitedString SelectedUserNames = new CswCommaDelimitedString();
-            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
                 CswPrimaryKey ThisUserId = UserNode.NodeId;  //UsersTree.getNodeIdForCurrentPosition();

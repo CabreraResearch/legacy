@@ -440,6 +440,9 @@ namespace ChemSW.Nbt.MetaData
                         if( _ObjectClassPropRow["defaultvalueid"] != null && CswTools.IsInteger( _ObjectClassPropRow["defaultvalueid"] ) )
                         {
                             DataTable DefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getTable( "jctnodepropid", CswConvert.ToInt32( _ObjectClassPropRow["defaultvalueid"] ) );
+                            //WARNING: there is a possibility that DefaultValueTable will be empty, upon which DefaultValue will not be set.
+                            //This can cause _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue() to throw an ORNY exception.
+                            //This needs to be fixed at some point - see Reviews K4156 and K4157 for details.
                             if( DefaultValueTable.Rows.Count > 0 )
                                 _DefaultValueRow = DefaultValueTable.Rows[0];
                         }
@@ -520,12 +523,12 @@ namespace ChemSW.Nbt.MetaData
                     if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
                     }
                     else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
-                        ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
 
                     }
                 }

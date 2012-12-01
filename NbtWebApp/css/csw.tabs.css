@@ -1,0 +1,11 @@
+
+.CswIdentityTab {
+    border: 1px solid #cddded;
+    background: #e5f0ff;
+    margin: 0px;
+    padding: 10px;
+}
+
+.CswIdentityTabHeader {
+    font-size: 22px;
+}

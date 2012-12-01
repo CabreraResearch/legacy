@@ -676,7 +676,7 @@ namespace ChemSW.Nbt
         public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
         {
             // Find any matching mail reports
-            CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( NbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp TargetTypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType );
             CswNbtMetaDataObjectClassProp EventOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event );
             CswNbtMetaDataObjectClassProp EnabledOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Enabled );
@@ -702,7 +702,7 @@ namespace ChemSW.Nbt
                                                       Value: Tristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
@@ -842,6 +842,14 @@ namespace ChemSW.Nbt
         ///// </summary>
         ////public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
         //public CswConfigurationVariables CswConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+
+        /// <summary>
+        /// True if the user is the system user
+        /// </summary>
+        public bool IsSystemUser
+        {
+            get { return CurrentNbtUser is CswNbtSystemUser; }
+        }
 
         /// <summary>
         /// Information associated with the currently logged in user, Nbt-specific.

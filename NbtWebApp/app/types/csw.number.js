@@ -122,9 +122,6 @@
         if (isValid && !regex.test(value)) {
             isValid = false;
         }
-        if (value === Csw.enums.multiEditDefaultValue) {
-            isValid = true;
-        }
         return isValid;
     }
     Csw.register('validateFloatPrecision', validateFloatPrecision);

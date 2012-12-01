@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass ); }
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassDocument( CswNbtNode Node )
         {
             CswNbtObjClassDocument ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.DocumentClass ) )
             {
                 ret = (CswNbtObjClassDocument) Node.ObjClass;
             }
@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.ObjClasses
                         ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
                     }
 
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false, false );
                     Int32 DocCount = Tree.getChildNodeCount();
                     if( DocCount > 0 )
                     {

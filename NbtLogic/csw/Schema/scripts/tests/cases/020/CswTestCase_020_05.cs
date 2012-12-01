@@ -1,4 +1,5 @@
 ﻿using ChemSW.Audit;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -33,7 +34,19 @@ namespace ChemSW.Nbt.Schema
             _CswTstCaseRsrc.assertTableIsAbsent( AuditTableName01 );
             _CswTstCaseRsrc.assertTableIsAbsent( AuditTableName02 );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

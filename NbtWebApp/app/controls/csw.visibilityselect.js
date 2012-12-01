@@ -37,12 +37,12 @@
                     cswPublic.$visibilityselect.append('<option value="Global">Global</option>');
 
                     cswPublic.$visroleselect = parent.cell(1, 3).nodeSelect({
-                        ID: Csw.makeId(id, 'visrolesel'),
+                        name: id + '_visrolesel',
                         objectClassName: 'RoleClass',
                         canAdd: false
                     }).$.hide();
                     cswPublic.$visuserselect = parent.cell(1, 4).nodeSelect({
-                        ID: Csw.makeId(id, 'visusersel'),
+                        name: id + '_visusersel',
                         objectClassName: 'UserClass',
                         canAdd: false
                     }).$;

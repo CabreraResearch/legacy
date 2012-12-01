@@ -24,7 +24,7 @@
 
                 var table = Csw.literals.table({
                     $parent: $DashDiv,
-                    ID: Csw.makeId(o.ID, 'DashboardTable')
+                    name: 'DashboardTable'
                 });
                 table.addClass('DashboardTable');
 

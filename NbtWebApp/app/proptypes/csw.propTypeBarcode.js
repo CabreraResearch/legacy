@@ -10,15 +10,17 @@
                 var cswPublic = {
                     data: propertyOption
                 };
+                
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.barcode).trim();
 
                     cswPublic.control = cswPublic.data.propDiv.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
+                        name: 'tbl'
                     });
 
                     cswPrivate.cell1 = cswPublic.control.cell(1, 1);
@@ -28,7 +30,7 @@
                     } else {
 
                         cswPrivate.input = cswPrivate.cell1.input({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: function () {
@@ -46,9 +48,9 @@
                         nodeObj[cswPublic.data.tabState.nodeid] = {};
                         nodeObj[cswPublic.data.tabState.nodeid].nodeid = cswPublic.data.tabState.nodeid;
                         nodeObj[cswPublic.data.tabState.nodeid].nodename = cswPublic.data.tabState.nodename;
-                        cswPublic.control.cell(1, 2).div({ ID: Csw.makeId(cswPublic.data.ID, 'parent', window.Ext.id()) })
+                        cswPublic.control.cell(1, 2).div({ name: 'parent' })
                             .buttonExt({
-                                ID: Csw.makeId(cswPublic.data.ID, 'print', window.Ext.id()),
+                                name: 'print',
                                 enabledText: 'Print',
                                 size: 'small',
                                 tooltip: { title: 'Print Barcode Label' },
@@ -63,7 +65,12 @@
                             });
                     }
                 };
+                
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
 
                 return cswPublic;
 

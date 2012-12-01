@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -31,7 +32,19 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "test log message # " + idx.ToString() );
                 Thread.Sleep( 10 );
             }
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

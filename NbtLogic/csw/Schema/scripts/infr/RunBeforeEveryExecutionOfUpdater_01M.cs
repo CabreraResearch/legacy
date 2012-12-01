@@ -1,42 +1,77 @@
 using System;
-using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema for DDL changes
+    /// Updates the schema for Modules
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_01M : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: Modules";
 
-        public void _decoupleImcsFromPrintLabel()
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
         {
-            Int32 ImcsId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.IMCS );
-            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
-            foreach( CswNbtMetaDataNodeType NodeType in PrintLabelOc.getNodeTypes() )
-            {
-                _CswNbtSchemaModTrnsctn.removeModuleNodeTypeJunction( ImcsId, NodeType.NodeTypeId );
-            }
+            _Author = BlameMe;
+            _CaseNo = BlameCaseNo;
+        }
 
+        private void _resetBlame()
+        {
+            _Author = CswDeveloper.NBT;
+            _CaseNo = 0;
+        }
 
+        private CswDeveloper _Author = CswDeveloper.NBT;
+
+        public override CswDeveloper Author
+        {
+            get { return _Author; }
+        }
+
+        private Int32 _CaseNo = 0;
+
+        public override int CaseNo
+        {
+            get { return _CaseNo; }
         }
 
         public override void update()
         {
-            // This script is for adding object class properties, 
+            // This script is for adding Modules, 
             // which often become required by other business logic and can cause prior scripts to fail.
 
-            #region SEBASTIAN
+            #region TITANIA
 
-            _decoupleImcsFromPrintLabel();
+            Int32 MlmId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.MLM );
+            if( Int32.MinValue == MlmId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Material Life-Cycle Management", CswNbtModuleName.MLM.ToString(), false );
+            }
+            else if( _CswNbtSchemaModTrnsctn.isMaster() && false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
+            }
 
-            #endregion SEBASTIAN
+            if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.Mobile );
+            }
+            else
+            {
+                _CswNbtSchemaModTrnsctn.Modules.DisableModule( CswNbtModuleName.Mobile );
+            }
 
 
-        }//Update()
+            #endregion TITANIA
 
-    }//class RunBeforeEveryExecutionOfUpdater_01OC
+        }
+
+
+
+        //Update()
+
+    }//class RunBeforeEveryExecutionOfUpdater_01M
 
 }//namespace ChemSW.Nbt.Schema
 

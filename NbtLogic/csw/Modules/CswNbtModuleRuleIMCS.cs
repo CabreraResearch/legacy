@@ -1,5 +1,3 @@
-using System;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -12,9 +10,49 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
+
         public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.IMCS; } }
-        public override void OnEnable() { }
-        public override void OnDisable() { }
+
+        public override void OnEnable()
+        {
+            //Case 27862 show the following...
+            //   Equipment* views
+            //   Equipment manager, user and techician roles and users
+            _CswNbtResources.Modules.ToggleView( false, "All Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Equipment By Assembly", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Equipment By Location", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Equipment List", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Find Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "My Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Retired Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleRoleNodes( false, "equipment" );
+            _CswNbtResources.Modules.ToggleRoleNodes( false, "technician" );
+            _CswNbtResources.Modules.ToggleUserNodes( false, "equipmgr" );
+            _CswNbtResources.Modules.ToggleUserNodes( false, "equipuser" );
+            _CswNbtResources.Modules.ToggleUserNodes( false, "technician" );
+        }
+
+        public override void OnDisable()
+        {
+            //Case 27862 hide the following...
+            //   Equipment* views
+            //   Equipment manager, user and techician roles and users
+            _CswNbtResources.Modules.ToggleView( true, "All Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Equipment By Assembly", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Equipment By Location", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Equipment List", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Find Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "My Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Retired Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleRoleNodes( true, "equipment" );
+            _CswNbtResources.Modules.ToggleRoleNodes( true, "technician" );
+            _CswNbtResources.Modules.ToggleUserNodes( true, "equipmgr" );
+            _CswNbtResources.Modules.ToggleUserNodes( true, "equipuser" );
+            _CswNbtResources.Modules.ToggleUserNodes( true, "technician" );
+
+
+
+        }
 
     } // class CswNbtModuleIMCS
 }// namespace ChemSW.Nbt

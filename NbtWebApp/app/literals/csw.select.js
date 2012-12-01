@@ -15,7 +15,8 @@
                 multiple: false,
                 width: '',
                 onChange: null, //function () {}
-                onComplete: null
+                onComplete: null,
+                isRequired: false
             };
             var cswPublic = {};
 
@@ -58,7 +59,7 @@
 
             cswPublic.makeOptions = function (valueArray) {
                 var values = [];
-                Csw.crawlObject(valueArray, function (val) {
+                Csw.eachRecursive(valueArray, function (val) {
                     var value = cswPublic.makeOption(val);
                     if (false === Csw.isNullOrEmpty(value)) {
                         values.push(value);

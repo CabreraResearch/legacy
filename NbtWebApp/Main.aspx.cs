@@ -16,8 +16,6 @@ namespace ChemSW.Nbt.WebPages
     {
         #region Private Variables
 
-        private Int32 PageSize = 20;  //if this is changed, change Main.js too
-
         private RadTreeView _MainTreeView;
         private CswNodesGrid _MainGrid;
         private CswNodesList _MainList;
@@ -151,9 +149,9 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-				Master.Redirect( "Main.html?clear=y" );
+                Master.Redirect( "Main.html?clear=y" );
 
-				EnsureChildControls();
+                EnsureChildControls();
             }
             catch( Exception ex )
             {
@@ -280,7 +278,7 @@ namespace ChemSW.Nbt.WebPages
             }
             else
             {
-				throw new CswDniException( ErrorType.Error, "Invalid View", "Unhandled View Rendering Mode: " + _ViewMode.ToString() );
+                throw new CswDniException( ErrorType.Error, "Invalid View", "Unhandled View Rendering Mode: " + _ViewMode.ToString() );
             }
 
             if( PropTableParent != null )
@@ -420,7 +418,6 @@ namespace ChemSW.Nbt.WebPages
 
         private void initNavigator( bool ReloadTree )
         {
-            CswNbtNodeKey ParentKey = null;
             if( _ViewMode == NbtViewRenderingMode.Tree )
             {
                 CswNbtNodeKey PriorSelectedNodeKey = null;
@@ -434,12 +431,12 @@ namespace ChemSW.Nbt.WebPages
                 // Get View
                 if( Master.CswNbtView != null )
                 {
-                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtView, ReloadTree, ref ParentKey, null, PageSize, true, true, SelectedNodeKey, false );
+                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, Master.CswNbtView, true, false, false );
                     //_MainFilterEditor.LoadView( Master.CswNbtView );
                     _MainMenu.View = Master.CswNbtView;
                 }
                 else
-					throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build tree without a View" ) );
+                    throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build tree without a View" ) );
 
                 // BZ 10045 - This was a bad idea...
                 //if( CswNbtTree.getChildNodeCount() == 0 )
@@ -577,7 +574,12 @@ namespace ChemSW.Nbt.WebPages
                 // Get View
                 if( Master.CswNbtView != null )
                 {
-                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtView, ReloadTree, ref ParentKey, null, Int32.MinValue, true, true, SelectedNodeKey, false );
+                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView(
+                        RunAsUser: Master.CswNbtResources.CurrentNbtUser,
+                        View: Master.CswNbtView,
+                        RequireViewPermissions: true,
+                        IncludeSystemNodes: false,
+                        IncludeHiddenNodes: false );
 
                     //// Select Root by default
                     //if( SelectedNodeKey == null )
@@ -624,7 +626,7 @@ namespace ChemSW.Nbt.WebPages
 
                 } // if( Master.CswNbtView != null )
                 else
-					throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build list without a View" ) );
+                    throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build list without a View" ) );
 
 
             } // else if( _ViewMode == NbtViewRenderingMode.List )

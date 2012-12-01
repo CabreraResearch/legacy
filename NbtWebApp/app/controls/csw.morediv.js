@@ -7,7 +7,7 @@
         Csw.controls.register('moreDiv', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 moretext: 'more',
                 lesstext: 'less'
             };
@@ -20,16 +20,11 @@
             cswPrivate.moreDiv = cswParent.div();
             cswPublic = Csw.dom({}, cswPrivate.moreDiv);
 
-            cswPublic.shownDiv = cswPrivate.moreDiv.div({
-                ID: Csw.makeId(cswPrivate.ID, '', '_shwn')
-            });
+            cswPublic.shownDiv = cswPrivate.moreDiv.div();
 
-            cswPublic.hiddenDiv = cswPrivate.moreDiv.div({
-                ID: Csw.makeId(cswPrivate.ID, '', '_hddn')
-            }).hide();
+            cswPublic.hiddenDiv = cswPrivate.moreDiv.div().hide();
 
             cswPublic.moreLink = cswPrivate.moreDiv.a({
-                ID: Csw.makeId(cswPrivate.ID, '', '_more'),
                 text: cswPrivate.moretext,
                 cssclass: 'morelink',
                 onClick: function () {

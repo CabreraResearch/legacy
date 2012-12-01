@@ -16,7 +16,7 @@
                         quantityValues: {}
                     }
                 },
-                quantities: function() {
+                quantities: function () {
                     var qtyVals = [];
                     Csw.each(cswPublic.rows, function (row) {
                         qtyVals.push(row.quantityValues);
@@ -31,14 +31,11 @@
             Csw.tryExec(function () {
 
                 var cswPrivate = {
-                    ID: 'wizardAmountsThinGrid',
+                    name: 'wizardAmountsThinGrid',
                     onAdd: null,
                     onDelete: null,
                     onChange: null,
                     quantity: {},
-                    makeId: function (text) {
-                        return text;
-                    },
                     containerMinimum: 1,
                     action: 'Receive',
                     selectedSizeId: null,
@@ -46,24 +43,22 @@
                     materialId: null,
                     rows: [],
                     config: {
-                        numberName: 'No. Containers *',
-                        sizeName: 'Size *',
-                        quantityName: 'Net Quantity *',
+                        numberName: 'No. Containers',
+                        sizeName: 'Size',
+                        quantityName: 'Net Quantity',
                         barcodeName: 'Barcodes (Optional)'
                     },
                     customBarcodes: false
                 };
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
+                Csw.extend(cswPrivate, options);
 
-                cswPrivate.header = [cswPrivate.config.numberName];
+                cswPrivate.header = [{ "value": cswPrivate.config.numberName, "isRequired": true}];
                 if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                    cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.sizeName]);
+                    cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.sizeName, "isRequired": true}]);
                 }
-                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityName]);
+                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityName, "isRequired": true}]);
                 if (cswPrivate.customBarcodes) {
-                    cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.barcodeName]);
+                    cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.barcodeName, "isRequired": false}]);
                 }
 
                 if (cswPrivate.rows.length === 0) {
@@ -101,7 +96,7 @@
                         cswPrivate.quantity = {
                             qtyReadonly: true,
                             unitReadonly: true
-                        }
+                        };
                     }
                     return ret;
                 };
@@ -126,7 +121,7 @@
                             }
                         });
                         return totalContainerQuantity;
-                    }
+                    };
 
                     var updateTotalContainerCount = function () {
                         cswPublic.containerCount = getTotalContainerQuantity();
@@ -178,8 +173,7 @@
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerCount' + rowid),
-                                        name: Csw.tryExec(cswPrivate.makeId, 'containerCount' + rowid),
+                                        name: 'containerCount',
                                         value: 1,
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: cswPublic.containerlimit,
@@ -198,8 +192,7 @@
                                     break;
                                 case cswPrivate.config.sizeName:
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'sizes' + rowid),
-                                        name: Csw.tryExec(cswPrivate.makeId, 'sizes' + rowid),
+                                        name: 'sizes',
                                         async: false,
                                         objectClassName: 'SizeClass',
                                         addNodeDialogTitle: 'Size',
@@ -224,15 +217,14 @@
                                     cswPrivate.quantity.onChange = function () {
                                         updateColumnVals(false);
                                     };
-                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity' + rowid);
+                                    cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
                                     break;
                                 case cswPrivate.config.barcodeName:
                                     cswPublic.rows[rowid].barcodeControl = cswCell.textArea({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes' + rowid),
-                                        name: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes' + rowid),
+                                        name: 'containerBarcodes',
                                         rows: 1,
                                         cols: 14,
                                         onChange: function (value) {

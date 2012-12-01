@@ -8,7 +8,7 @@
             'use strict';
 
             var cswPrivate = {
-                ID: '',
+                name: '',
                 parent: '',      // this must be a table
 
                 viewid: '',         // primary key of view from which filter came
@@ -59,32 +59,32 @@
             cswPrivate.makePropFilterId = function(id) {
                 var delimiter = '_';
                 var idParams = {
-                    ID: id,
-                    prefix: cswPrivate.ID,
+                    name: id,
+                    prefix: cswPrivate.name,
                     suffix: ''
                 };
 
                 if (false == Csw.isNullOrEmpty(cswPrivate.filtarbitraryid)) {
-                    idParams.ID = id + delimiter + 'filtarbitraryid';
+                    idParams.name = id + delimiter + 'filtarbitraryid';
                     idParams.suffix = cswPrivate.filtarbitraryid;
                 }
                 else if (false == Csw.isNullOrEmpty(cswPrivate.viewbuilderpropid)) {
-                    idParams.ID = id + delimiter + 'viewbuilderpropid';
+                    idParams.name = id + delimiter + 'viewbuilderpropid';
                     idParams.suffix = cswPrivate.viewbuilderpropid;
                 }
                 else if (false == Csw.isNullOrEmpty(cswPrivate.proparbitraryid)) {
-                    idParams.ID = id + delimiter + 'proparbitraryid';
+                    idParams.name = id + delimiter + 'proparbitraryid';
                     idParams.suffix = cswPrivate.proparbitraryid;
                 }
 
-                return Csw.makeId(idParams);
+                return Csw.delimitedString(idParams, {delimiter: delimiter}).string();
             }; // makePropFilterId()
 
 
             cswPrivate.makePropNameControl = function() {
                 cswPrivate.propNameCell.empty();
                 cswPrivate.propNameControl = cswPrivate.propNameCell.span({ 
-                    ID: cswPrivate.makePropFilterId('propname'),
+                    name: cswPrivate.makePropFilterId('propname'),
                     text: cswPrivate.propname,
                     nobr: true
                 });
@@ -99,12 +99,12 @@
                 if(cswPrivate.readOnly)
                 {
                     cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.span({ 
-                        ID: conjunctionId,
+                        name: conjunctionId,
                         text: cswPrivate.selectedConjunction
                     });
                 } else {
                     cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.select({ 
-                        ID: conjunctionId,
+                        name: conjunctionId,
                         values: conjunctionOptions,
                         selected: cswPrivate.selectedConjunction,
                         onChange: function () {
@@ -125,7 +125,7 @@
                 if(cswPrivate.readOnly)
                 {
                     cswPrivate.subfieldControl = cswPrivate.subFieldCell.span({ 
-                        ID: subfieldid,
+                        name: subfieldid,
                         text: cswPrivate.selectedSubFieldName
                     });
                 } else {
@@ -137,7 +137,7 @@
                     });
 
                     cswPrivate.subfieldControl = cswPrivate.subFieldCell.select({ 
-                        ID: subfieldid,
+                        name: subfieldid,
                         values: subFieldOptions,
                         selected: cswPrivate.selectedSubFieldName,
                         onChange: function () {
@@ -157,7 +157,7 @@
                 if(cswPrivate.readOnly)
                 {
                     cswPrivate.filterModeControl = cswPrivate.filterModeCell.span({ 
-                        ID: filtermodeid,
+                        name: filtermodeid,
                         text: cswPrivate.selectedFilterMode
                     });
                 } else {
@@ -168,7 +168,7 @@
                     }
 
                     cswPrivate.filterModeControl = cswPrivate.filterModeCell.select({ 
-                        ID: filtermodeid,
+                        name: filtermodeid,
                         values: filterModeOptions,
                         selected: cswPrivate.selectedFilterMode,
                         onChange: function () {
@@ -191,21 +191,21 @@
                 if(cswPrivate.readOnly)
                 {
                     cswPrivate.valueControl = cswPrivate.valueCell.span({ 
-                        ID: valueId,
+                        name: valueId,
                         text: cswPrivate.selectedValue
                     });
                 } else {
                     // DATETIME
                     if (fieldtype === Csw.enums.subFieldsMap.DateTime.name) {
                         cswPrivate.valueControl = cswPrivate.valueCell.dateTimePicker({
-                            ID: valueId,
+                            name: valueId,
                             Date: cswPrivate.selectedValue,
                             //Time: '',
 //                            DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propsData.dateformat),
 //                            TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propsData.timeformat),
                             DisplayMode: 'Date',
                             ReadOnly: false,
-                            Required: false,
+                            isRequired: false,
                             showTodayButton: true,
                             onChange: function() {
                                 cswPrivate.selectedValue = Csw.string(cswPrivate.valueControl.val().date);
@@ -221,7 +221,7 @@
                             });
                         });
                         cswPrivate.valueControl = cswPrivate.valueCell.select({ 
-                            ID: valueId,
+                            name: valueId,
                             values: valueOptions,
                             selected: cswPrivate.selectedValue,
                             onChange: function() {
@@ -231,8 +231,8 @@
                     // LOGICAL
                     } else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
                         cswPrivate.valueControl = cswPrivate.valueCell.triStateCheckBox({ 
-                            ID: valueId,
-                            Checked: cswPrivate.selectedValue,   // tristate, not bool
+                            name: valueId,
+                            checked: cswPrivate.selectedValue,   // tristate, not bool
                             onChange: function() {
                                 cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
@@ -245,7 +245,7 @@
                             }
                         }
                         cswPrivate.valueControl = cswPrivate.valueCell.input({
-                            ID: valueId,
+                            name: valueId,
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.selectedValue,
                             placeholder: placeholder,

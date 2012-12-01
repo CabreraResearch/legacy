@@ -8,7 +8,7 @@ REM Generate default setting file
 >%LOCALCONF% echo REM Configuration File
 >>%LOCALCONF% echo set KilnPath=D:\kiln
 >>%LOCALCONF% echo set SchemaPath=D:\iisroot\Schema
->>%LOCALCONF% echo set LogFile=D:\log\dailyLogQa.txt
+>>%LOCALCONF% echo set LogFile=D:\log\dailyLog.txt
 >>%LOCALCONF% echo set SchedServiceName=ChemSW NBT Schedule Service
 >>%LOCALCONF% echo set ResetSchemaUsername=nbt_master
 >>%LOCALCONF% echo set ResetSchemaPassword=hj345defwu9
@@ -96,6 +96,10 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 
 >>%LogFile% %KilnPath%\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
+>>%LogFile% echo 
+>>%LogFile% echo Schema Update Complete: Version Synopsis Follows
+>>%LogFile% %KilnPath%\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -version
+
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% net stop "ChemSW Log Service"
@@ -103,7 +107,7 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /clp:PerformanceSummary /v:d
+>>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /clp:PerformanceSummary /v:n
 >>%LogFile% net start "ChemSW Log Service"
 
 >>%LogFile% echo ====================================================================

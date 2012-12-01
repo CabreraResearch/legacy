@@ -10,12 +10,13 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.text = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.text = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.columns = Csw.number(cswPrivate.propVals.columns);
                     cswPrivate.rows = Csw.number(cswPrivate.propVals.rows);
                     cswPrivate.overflow = 'auto';
@@ -45,7 +46,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

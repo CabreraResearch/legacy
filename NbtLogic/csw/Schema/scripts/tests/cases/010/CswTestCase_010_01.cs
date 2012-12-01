@@ -3,6 +3,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -42,7 +43,7 @@ namespace ChemSW.Nbt.Schema
             string BlobNodeTypeName = "TestForBlobNodeType";
             string BlobPropName = "The Blob";
             CswNbtMetaData CswNbtMetaData = _CswNbtSchemaModTrnsctn.MetaData;
-            CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
+            CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( NbtObjectClass.GenericClass );
             CswNbtMetaDataNodeType BlobNodeTypeNodeType = CswNbtMetaData.makeNewNodeType( GenericObjectClass.ObjectClassId, BlobNodeTypeName, string.Empty );
             CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewProp( BlobNodeTypeNodeType, CswNbtMetaDataFieldType.NbtFieldType.Image, BlobPropName, string.Empty );
 
@@ -127,7 +128,19 @@ namespace ChemSW.Nbt.Schema
 
             throw ( new CswDniExceptionIgnoreDeliberately() );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

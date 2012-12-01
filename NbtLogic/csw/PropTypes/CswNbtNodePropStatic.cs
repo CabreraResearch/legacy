@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -99,38 +97,11 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), StaticText );
-            CswXmlDocument.AppendXmlAttribute( TextNode, "rows", Rows.ToString() );
-            CswXmlDocument.AppendXmlAttribute( TextNode, "columns", Columns.ToString() );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName( true ), StaticText,
-                new XAttribute( "rows", Rows.ToString() ),
-                new XAttribute( "columns", Columns.ToString() ) ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = StaticText;
             ParentObject["rows"] = Rows.ToString();
             ParentObject["columns"] = Columns.ToString();
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            StaticText = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ) )
-            {
-                StaticText = XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ).Value;
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

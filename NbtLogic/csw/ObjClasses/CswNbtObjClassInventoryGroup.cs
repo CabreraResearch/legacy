@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -8,6 +9,8 @@ namespace ChemSW.Nbt.ObjClasses
         public sealed class PropertyName
         {
             public const string Name = "Name";
+            public const string Central = "Central";
+            public const string AutomaticCertificateApproval = "Automatic Certificate Approval";
         }
 
 
@@ -21,7 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass ); }
         }
 
         /// <summary>
@@ -30,7 +33,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryGroup( CswNbtNode Node )
         {
             CswNbtObjClassInventoryGroup ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.InventoryGroupClass ) )
             {
                 ret = (CswNbtObjClassInventoryGroup) Node.ObjClass;
             }
@@ -62,6 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            AutomaticCertificateApproval.setHidden( Central.Checked != Tristate.True, false );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -83,6 +87,8 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+        public CswNbtNodePropLogical Central { get { return _CswNbtNode.Properties[PropertyName.Central]; } }
+        public CswNbtNodePropLogical AutomaticCertificateApproval { get { return _CswNbtNode.Properties[PropertyName.AutomaticCertificateApproval]; } }
 
         #endregion
 

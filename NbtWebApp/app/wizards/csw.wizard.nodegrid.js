@@ -9,7 +9,7 @@
             ///<summary>Creates a basic grid with an Add menu.</summary>
 
             var cswPrivate = {
-                ID: 'wizardNodeGrid',
+                name: 'wizardNodeGrid',
                 reinitGrid: null,
                 viewid: '',
                 canSelectRow: true,
@@ -42,19 +42,19 @@
 
                 viewid = viewid || cswPrivate.viewid;
 
-                cswPrivate.menuDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'menu') });
+                cswPrivate.menuDiv = cswPublic.rootDiv.div({ name: 'menu' });
                 if (cswPrivate.hasMenu) {
                     cswPrivate.menuDiv.css({ height: '25px' });
                 }
-                cswPrivate.filterDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'filter') });
-                cswPrivate.gridDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'property') });
+                cswPrivate.filterDiv = cswPublic.rootDiv.div({ name: 'filter' });
+                cswPrivate.gridDiv = cswPublic.rootDiv.div({ name: 'property' });
                 cswPrivate.reinitGrid = (function () {
                     return function (newviewid) {
                         cswPrivate.makeGrid(newviewid);
                     };
                 } ());
                 Csw.nbt.viewFilters({
-                    ID: cswPrivate.ID + '_viewfilters',
+                    name: cswPrivate.name + '_viewfilters',
                     parent: cswPrivate.filterDiv,
                     viewid: cswPrivate.viewid,
                     onEditFilters: function (newviewid) {
@@ -63,10 +63,10 @@
                 }); // viewFilters
 
                 cswPrivate.gridOpts = {
-                    ID: cswPrivate.ID + '_grid',
+                    name: cswPrivate.name + '_grid',
                     viewid: viewid,
                     nodeid: cswPrivate.nodeid,
-                    cswnbtnodekey: cswPrivate.cswnbtnodekey,
+                    nodekey: cswPrivate.nodekey,
                     readonly: cswPrivate.ReadOnly,
                     canSelectRow: cswPrivate.canSelectRow,
                     forceFit: cswPrivate.forceFit,
@@ -88,7 +88,7 @@
                     },
                     includeInQuickLaunch: false
                 };
-                cswPublic.grid = cswPrivate.gridDiv.$.CswNodeGrid('init', cswPrivate.gridOpts);
+                cswPublic.grid = Csw.nbt.nodeGrid(cswPrivate.gridDiv, cswPrivate.gridOpts);
             };
 
             cswPrivate.makeGridMenu = function (viewid) {
@@ -99,9 +99,9 @@
                             urlMethod: 'getMainMenu', 
                             data: {
                                 ViewId: viewid,
-                                SafeNodeKey: cswPrivate.cswnbtnodekey,
+                                SafeNodeKey: cswPrivate.nodekey,
                                 NodeTypeId: '',
-                                PropIdAttr: cswPrivate.ID,
+                                PropIdAttr: cswPrivate.name,
                                 LimitMenuTo: 'Add',
                                 ReadOnly: false
                             }

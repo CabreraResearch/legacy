@@ -9,7 +9,7 @@
 
             var cswPrivate = {
                 urlMethod: 'getAuditHistoryGrid',
-                ID: '',
+                name: '',
                 nodeid: '',
                 EditMode: Csw.enums.editMode.Edit,
                 JustDateColumn: false,
@@ -25,9 +25,9 @@
             var cswPublic = { };
             cswParent.empty();
 
-            var gridId = Csw.makeId(cswPrivate.ID, 'auditGrid', window.Ext.id());
+            var gridId = cswPrivate.name + '_auditGrid';
             cswParent.grid({
-                ID: gridId,
+                name: gridId,
                 storeId: gridId,
                 title: 'History',
                 stateId: '',
@@ -45,7 +45,7 @@
                     urlMethod: cswPrivate.urlMethod,
                     data: {
                         NodeId: Csw.string(cswPrivate.nodeid),
-                        NbtNodeKey: Csw.string(cswPrivate.cswnbtnodekey),
+                        NbtNodeKey: Csw.string(cswPrivate.nodekey),
                         JustDateColumn: cswPrivate.JustDateColumn
                     }
                 },

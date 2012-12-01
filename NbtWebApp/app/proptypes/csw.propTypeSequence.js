@@ -11,19 +11,20 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.sequence).trim();
 
                     if (cswPublic.data.isReadOnly() || cswPublic.data.isMulti()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPublic.control = cswPrivate.parent.input({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: function() {
@@ -32,7 +33,7 @@
                                 cswPublic.data.onPropChange({ sequence: val });
                             },
                             value: cswPrivate.value,
-                            required: cswPublic.data.isRequired()
+                            isRequired: cswPublic.data.isRequired()
                         });
 
                         cswPublic.control.required(cswPublic.data.isRequired());
@@ -41,7 +42,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

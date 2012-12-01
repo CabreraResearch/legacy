@@ -11,22 +11,22 @@
                     data: propertyOption || Csw.nbt.propertyOption(propertyOption)
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.isExpired = (false === cswPublic.data.isMulti()) ? Csw.bool(cswPrivate.propVals.isexpired) : null;
-                    cswPrivate.isAdmin = (false === cswPublic.data.isMulti()) ? Csw.bool(cswPrivate.propVals.isadmin) : null;
+                    cswPrivate.isExpired = Csw.bool(cswPrivate.propVals.isexpired);
+                    cswPrivate.isAdmin = Csw.bool(cswPrivate.propVals.isadmin);
                     cswPrivate.passwordcomplexity = Csw.number(cswPrivate.propVals.passwordcomplexity, 0);
                     cswPrivate.passwordlength = Csw.number(cswPrivate.propVals.passwordlength, 0);
 
                     cswPublic.control = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
                         OddCellRightAlign: true
                     });
-                    
+
                     if (cswPublic.data.isReadOnly()) {
                         //show nothing
                     } else {
@@ -38,10 +38,10 @@
                         cswPublic.control.cell(3, 2).text('Expired');
 
                         cswPrivate.textBox1 = cswPrivate.cell12.input({
-                            ID: cswPublic.data.ID + '_pwd1',
+                            name: cswPublic.data.name + '_pwd1',
                             type: Csw.enums.inputTypes.password,
                             cssclass: 'textinput',
-                            value: (false === cswPublic.data.isMulti()) ? '' : Csw.enums.multiEditDefaultValue,
+                            value: '',
                             onChange: function () {
                                 var val = cswPrivate.textBox1.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -51,19 +51,18 @@
 
                         /* Text Box 2 */
                         cswPrivate.cell22.input({
-                            ID: cswPublic.data.ID + '_pwd2',
+                            name: cswPublic.data.name + '_pwd2',
                             type: Csw.enums.inputTypes.password,
-                            value: (false === cswPublic.data.isMulti()) ? '' : Csw.enums.multiEditDefaultValue,
+                            value: '',
                             cssclass: 'textinput password2',
                             onChange: cswPublic.data.onChange
                         });
                         if (cswPrivate.isAdmin) {
                             cswPrivate.expiredChk = cswPrivate.cell31.input({
-                                ID: cswPublic.data.ID + '_exp',
-                                name: cswPublic.data.ID + '_exp',
+                                name: cswPublic.data.name + '_exp',
                                 type: Csw.enums.inputTypes.checkbox,
                                 checked: cswPrivate.isExpired,
-                                onChange: function() {
+                                onChange: function () {
                                     var val = cswPrivate.expiredChk.$.is(':checked');
                                     Csw.tryExec(cswPublic.data.onChange, val);
                                     cswPublic.data.onPropChange({ isexpired: val });
@@ -76,8 +75,8 @@
                         }
 
                         $.validator.addMethod("password2", function () {
-                            cswPrivate.pwd1 = $('#' + cswPublic.data.ID + '_pwd1').val();
-                            cswPrivate.pwd2 = $('#' + cswPublic.data.ID + '_pwd2').val();
+                            cswPrivate.pwd1 = $('#' + cswPublic.data.name + '_pwd1').val();
+                            cswPrivate.pwd2 = $('#' + cswPublic.data.name + '_pwd2').val();
                             return ((cswPrivate.pwd1 === '' && cswPrivate.pwd2 === '') || cswPrivate.pwd1 === cswPrivate.pwd2);
                         }, 'Passwords do not match!');
                         //Case 26096
@@ -103,7 +102,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+                
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

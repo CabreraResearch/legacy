@@ -183,9 +183,6 @@
             YearlyByDate: 'YearlyByDate'
         });
 
-    Csw.enums.multiEditDefaultValue = Csw.enums.multiEditDefaultValue ||
-        Csw.enums.register('multiEditDefaultValue', '[Unchanged]');
-
     Csw.enums.imageButton_ButtonType = Csw.enums.imageButton_ButtonType ||
         Csw.enums.register('imageButton_ButtonType', {
             None: -1,

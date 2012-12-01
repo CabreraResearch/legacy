@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.errormessage.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.fieldtypes.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.label.css" />
-<!--<link rel="stylesheet" type="text/css" href="css/_dev.csw.menu.css" />-->
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.tabs.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.search.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.table.layout.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.thingrid.css" />
@@ -65,20 +65,22 @@
 
 <!-- Layouts -->
 <script type="text/javascript" src="app/layouts/csw.action.js"></script>
+<script type="text/javascript" src="app/layouts/csw.landingpage.js"></script>
+<script type="text/javascript" src="app/layouts/csw.tabsandprops.js"></script>
 <script type="text/javascript" src="app/layouts/csw.wizard.js"></script>
+
 <!-- Literal Controls -->
 <script type="text/javascript" src="app/literals/_literals.factory.js"></script>
 <script type="text/javascript" src="app/literals/csw.a.js"></script>
 <script type="text/javascript" src="app/literals/csw.applet.js"></script>
-<script type="text/javascript" src="app/literals/csw.b.js"></script>
 <script type="text/javascript" src="app/literals/csw.br.js"></script>
 <script type="text/javascript" src="app/literals/csw.button.js"></script>
 <script type="text/javascript" src="app/literals/csw.div.js"></script>
+<script type="text/javascript" src="app/literals/csw.fieldset.js"></script>
 <script type="text/javascript" src="app/literals/csw.form.js"></script>
 <script type="text/javascript" src="app/literals/csw.img.js"></script>
 <script type="text/javascript" src="app/literals/csw.input.js"></script>
 <script type="text/javascript" src="app/literals/csw.label.js"></script>
-<script type="text/javascript" src="app/literals/csw.morediv.js"></script>
 <script type="text/javascript" src="app/literals/csw.ol.js"></script>
 <script type="text/javascript" src="app/literals/csw.p.js"></script>
 <script type="text/javascript" src="app/literals/csw.select.js"></script>
@@ -104,6 +106,7 @@
 <script type="text/javascript" src="app/controls/csw.radiobutton.js"></script>
 <script type="text/javascript" src="app/controls/csw.timeinterval.js"></script>
 <script type="text/javascript" src="app/controls/csw.tabdiv.js"></script>
+<script type="text/javascript" src="app/controls/csw.tabselect.js"></script>
 <script type="text/javascript" src="app/controls/csw.tristatecheckbox.js"></script>
 
 
@@ -138,9 +141,6 @@
 <script type="text/javascript" src="app/composites/csw.menu.js"></script>
 <script type="text/javascript" src="app/composites/csw.quantity.js"></script>
 
-<!-- Layouts -->
-<script type="text/javascript" src="app/layouts/csw.tabsandprops.js"></script>
-
 <!-- PageCmp  -->
 <script type="text/javascript" src="app/controls/csw.nodebutton.js"></script>
 <script type="text/javascript" src="app/controls/csw.nodetypeselect.js"></script>
@@ -153,17 +153,15 @@
 <script type="text/javascript" src="app/pagecmp/CswDialog.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswErrorMessage.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswLogin.js"></script>
-<script type="text/javascript" src="app/pagecmp/CswWelcome.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswWizard.js"></script>
 
 <!-- Node -->
-<script type="text/javascript" src="app/props/csw.props.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.interaction.js"></script>
 <script type="text/javascript" src="app/controls/csw.node.link.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.preview.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.tree.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.table.js"></script>
-<script type="text/javascript" src="app/nodes/CswNodeGrid.js"></script>
+<script type="text/javascript" src="app/nodes/csw.node.grid.js"></script>
 
 <!-- View -->
 <script type="text/javascript" src="app/view/csw.viewfilters.js"></script>

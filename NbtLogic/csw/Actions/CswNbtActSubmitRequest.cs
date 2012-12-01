@@ -42,8 +42,8 @@ namespace ChemSW.Nbt.Actions
                 RequestViewName = CswNbtActSystemViews.SystemViewName.CISProRequestCart;
             }
             _SystemViews = new CswNbtActSystemViews( _CswNbtResources, RequestViewName, null );
-            _RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-            _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            _RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
 
             if( null != RequestNodeId )
             {
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.Actions
                 RequestView.AddViewPropertyAndFilter( RequestVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
                 RequestView.AddViewPropertyAndFilter( RequestVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
 
-                ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false );
+                ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false, false );
                 CartCount = RequestTree.getChildNodeCount();
                 if( CartCount >= 1 )
                 {
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.Actions
             if( null != CartNode )
             {
                 applyCartFilter( CartNode.NodeId );
-                ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false );
+                ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false, false );
                 CartContentCount = CartTree.getChildNodeCount();
                 if( null == _RequestItemNt )
                 {
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.Actions
         {
             JObject Ret = new JObject();
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestHistoryView, true, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestHistoryView, true, false, false );
             Int32 RequestCount = Tree.getChildNodeCount();
             Ret["count"] = RequestCount;
             if( RequestCount > 0 )
@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.Actions
         {
             if( null != CopyFromNodeId && null != CopyToNodeId )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, false, false, false );
                 Int32 ItemCount = Tree.getChildNodeCount();
                 for( Int32 I = 0; I < ItemCount; I += 1 )
                 {
@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
             _CswNbtResources.EditMode = NodeEditMode.Add;
 
-            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
 
         #endregion Public methods and props
@@ -446,7 +446,7 @@ namespace ChemSW.Nbt.Actions
 
         private void _setRequestItemSizesView( CswNbtViewId SizeViewId, CswPrimaryKey SizeMaterialId )
         {
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( SizeViewId );
             SizeView.Root.ChildRelationships.Clear();

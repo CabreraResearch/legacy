@@ -31,19 +31,19 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtActCopyNode CswNbtActCopyNode = new CswNbtActCopyNode( _CswNbtResources );
                 switch( OriginalNode.getObjectClass().ObjectClass )
                 {
-                    case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass:
+                    case NbtObjectClass.EquipmentClass:
                         NewNode = CswNbtActCopyNode.CopyEquipmentNode( OriginalNode );
                         break;
-                    case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass:
+                    case NbtObjectClass.EquipmentAssemblyClass:
                         NewNode = CswNbtActCopyNode.CopyEquipmentAssemblyNode( OriginalNode );
                         break;
-                    case CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass:
+                    case NbtObjectClass.GeneratorClass:
                         NewNode = CswNbtActCopyNode.CopyGeneratorNode( OriginalNode );
                         break;
-                    case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
+                    case NbtObjectClass.InspectionTargetClass:
                         NewNode = CswNbtActCopyNode.CopyInspectionTargetNode( OriginalNode );
                         break;
-                    case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
+                    case NbtObjectClass.InspectionDesignClass:
                         NewNode = CswNbtActCopyNode.CopyInspectionDesignNode( OriginalNode );
                         break;
                     default:
@@ -146,7 +146,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeType NodeType = MetaDataProp.getNodeType();
 
             if( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                _CswNbtResources.Permit.canTab( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) )
+                _CswNbtResources.Permit.canTab( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ||
+                _CswNbtResources.Permit.isPropWritable( Security.CswNbtPermit.NodeTypePermission.Edit, MetaDataProp, Tab ) )
             {
                 Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 

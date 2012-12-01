@@ -11,13 +11,10 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-
-                    cswPrivate.isMultiEditValid = function(value) {
-                        return cswPublic.data.isMulti() && value === Csw.enums.multiEditDefaultValue;
-                    };
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
@@ -25,21 +22,21 @@
                     cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
 
                     cswPublic.control = cswPrivate.parent.numberTextBox({
-                        ID: cswPublic.data.ID + '_num',
-                        value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                        name: cswPublic.data.name + '_num',
+                        value: Csw.string(cswPrivate.propVals.value).trim(),
                         MinValue: Csw.number(cswPrivate.propVals.minvalue),
                         MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
                         excludeRangeLimits: Csw.bool(cswPrivate.propVals.excludeRangeLimits),
                         ceilingVal: cswPrivate.ceilingVal,
                         Precision: cswPrivate.precision,
                         ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
-                        Required: Csw.bool(cswPublic.data.isRequired()),
+                        isRequired: Csw.bool(cswPublic.data.isRequired()),
                         onChange: function () {
                             var val = cswPublic.control.val();
                             Csw.tryExec(cswPublic.data.onChange, val);
                             cswPublic.data.onPropChange({ value: val });
                         },
-                        isValid: cswPrivate.isMultiEditValid
+                        isValid: true
                     });
                     cswPublic.control.required(cswPublic.data.propData.required);
                     if (false === Csw.isNullOrEmpty(cswPublic.control) && cswPublic.control.length > 0) {
@@ -47,7 +44,12 @@
                     }
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

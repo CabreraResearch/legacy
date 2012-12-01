@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Actions
         public void UpdateNode( CswNbtNode Node, bool ForceUpdate )
         {
             // BZ 10240
-            if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+            if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == NbtObjectClass.EquipmentClass )
             {
                 ( (CswNbtObjClassEquipment) Node ).SyncEquipmentToAssembly();
             }

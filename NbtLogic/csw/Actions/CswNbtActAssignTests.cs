@@ -29,10 +29,10 @@ namespace ChemSW.Nbt.Actions
             Collection<CswPrimaryKey> ResultNodeIds = new Collection<CswPrimaryKey>();
 
             // First, get all parameters for all tests
-            CswNbtMetaDataObjectClass TestObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.TestClass );
-            CswNbtMetaDataObjectClass ParameterObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ParameterClass );
+            CswNbtMetaDataObjectClass TestObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.TestClass );
+            CswNbtMetaDataObjectClass ParameterObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ParameterClass );
             CswNbtMetaDataObjectClassProp ParameterTestObjectClassProp = ParameterObjectClass.getObjectClassProp( CswNbtObjClassParameter.PropertyName.Test );
-            
+
             CswNbtView ParameterView = new CswNbtView( _CswNbtResources );
             ParameterView.ViewName = "AssignTest().Parameters";
 
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtViewRelationship ParamRel = ParameterView.AddViewRelationship( TestRel, NbtViewPropOwnerType.Second, ParameterTestObjectClassProp, false );
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ParameterView, true, true, false, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ParameterView, true, false, false );
 
             ArrayList ParamNodes = new ArrayList();
             for( int j = 0; j < Tree.getChildNodeCount(); j++ )

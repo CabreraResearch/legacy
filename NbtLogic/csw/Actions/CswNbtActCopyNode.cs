@@ -23,13 +23,13 @@ namespace ChemSW.Nbt.Actions
             CopiedEquipmentNode.postChanges( true, true );  // sets the PK
 
             // Copy all Generators
-            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship GeneratorRelationship = GeneratorView.AddViewRelationship( GeneratorObjectClass, false );
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
             CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter( OwnerProperty, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, OriginalEquipmentNode.NodeId.PrimaryKey.ToString(), false );
 
-            ICswNbtTree GeneratorTree = _CswNbtResources.Trees.getTreeFromView( GeneratorView, true, true, false, false );
+            ICswNbtTree GeneratorTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, GeneratorView, true, false, false );
             GeneratorTree.goToRoot();
             //if (GeneratorTree.getChildNodeCount() > 0)
             //{
@@ -59,13 +59,13 @@ namespace ChemSW.Nbt.Actions
             CopiedAssemblyNode.postChanges( true, true );  // sets the PK
 
             // Copy all Equipment
-            CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
             CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );
             CswNbtViewProperty AssemblyProperty = EquipmentView.AddViewProperty( EquipmentRelationship, EquipmentObjectClass.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly ) );
             CswNbtViewPropertyFilter AssemblyIsOriginalFilter = EquipmentView.AddViewPropertyFilter( AssemblyProperty, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, OriginalAssemblyNode.NodeId.PrimaryKey.ToString(), false );
 
-            ICswNbtTree EquipmentTree = _CswNbtResources.Trees.getTreeFromView( EquipmentView, true, true, false, false );
+            ICswNbtTree EquipmentTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, EquipmentView, true, false, false );
             EquipmentTree.goToRoot();
             //if (EquipmentTree.getChildNodeCount() > 0)
             //{

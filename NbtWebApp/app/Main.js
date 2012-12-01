@@ -6,6 +6,10 @@ window.initMain = window.initMain || function (undefined) {
 
     'use strict';
 
+    var cswPrivate = {
+        tabsAndProps: null
+    };
+
     Csw.publish(Csw.enums.events.domready);
     //Csw.debug.group('Csw');
     var mainTree;
@@ -36,13 +40,13 @@ window.initMain = window.initMain || function (undefined) {
     } ());
 
 
-    var startSpinner = function() {
+    var startSpinner = function () {
         Csw.main.ajaxImage.show();
         Csw.main.ajaxSpacer.hide();
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
-    var stopSpinner = function() {
+    var stopSpinner = function () {
         Csw.main.ajaxImage.hide();
         Csw.main.ajaxSpacer.show();
     };
@@ -205,7 +209,7 @@ window.initMain = window.initMain || function (undefined) {
 
         } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
             handleReport(qs.reportid);
-            ret = true;  // load the current context (probably the welcome page) below the report
+            ret = true;  // load the current context (probably the welcome landing page) below the report
 
         } else if (false == Csw.isNullOrEmpty(qs.clear)) {
             Csw.clientState.clearCurrent();
@@ -233,7 +237,7 @@ window.initMain = window.initMain || function (undefined) {
                 setUsername(u);
                 refreshDashboard();
                 refreshHeaderMenu();
-                universalsearch = Csw.composites.universalSearch({}, {
+                universalsearch = Csw.composites.universalSearch(null, {
                     searchBoxParent: Csw.main.searchDiv,
                     searchResultsParent: Csw.main.rightDiv,
                     searchFiltersParent: Csw.main.leftDiv,
@@ -289,12 +293,12 @@ window.initMain = window.initMain || function (undefined) {
                                 itemid: current.searchid
                             });
                         } else {
-                            refreshWelcome();
+                            refreshWelcomeLandingPage();
                         }
                     };
-                } 
+                }
                 onSuccess();
-                
+
             } // onAuthenticate
         }); // CswLogin
 
@@ -309,12 +313,12 @@ window.initMain = window.initMain || function (undefined) {
     function refreshViewSelect(onSuccess) {
         Csw.main.viewSelectDiv.empty();
         mainviewselect = Csw.main.viewSelectDiv.viewSelect({
-            ID: 'mainviewselect',
+            name: 'mainviewselect',
             onSelect: handleItemSelect,
             onSuccess: onSuccess
         });
     }
-    
+
     function clear(options) {
         ///<summary>Clears the contents of the page.</summary>
         ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
@@ -352,40 +356,53 @@ window.initMain = window.initMain || function (undefined) {
         clear(opts);
     });
 
-    function refreshWelcome() {
-        clear({ all: true });
-
-        Csw.main.centerBottomDiv.$.CswWelcome('initTable', {
-            'onLinkClick': handleItemSelect,
-            'onAddClick': function (nodetypeid) {
-                $.CswDialog('AddNodeDialog', {
-                    'nodetypeid': nodetypeid,
-                    'onAddNode': function (nodeid, cswnbtnodekey) {
-                        clear({ all: true });
-                        refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
-                    }
-                });
-            },
-            'onAddComponent': refreshWelcome
+    function refreshWelcomeLandingPage() {
+        refreshLandingPage(function () {
+            Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+            name: 'welcomeLandingPage',
+                Title: '',
+                onLinkClick: handleItemSelect,
+                onAddClick: function (itemData) {
+                    $.CswDialog('AddNodeDialog', {
+                        text: itemData.Text,
+                        nodetypeid: itemData.NodeTypeId,
+                        onAddNode: function (nodeid, nodekey) {
+                            clear({ all: true });
+                            refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                        }
+                    });
+                },
+                onTabClick: function (itemData) {
+                    Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                    handleItemSelect(itemData);
+                },
+                onAddComponent: refreshWelcomeLandingPage,
+                landingPageRequestData: {
+                    RoleId: ''
+                }
+            });
         });
+    }
+
+    function refreshLandingPage(loadLandingPage) {
+        clear({ all: true });
+        loadLandingPage();
         refreshMainMenu();
         refreshViewSelect();
     }
-
-    // refreshWelcome()
 
     function handleItemSelect(options) {
         //if (debugOn()) Csw.debug.log('Main.handleItemSelect()');
         var o = {
             type: 'view', // Action, Report, View, Search
             mode: 'tree', // Grid, Tree, List
-            linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
+            linktype: 'link', // LandingPageItemType: Link, Text, Add
             itemid: '',
             name: '',
             url: '',
             iconurl: '',
             nodeid: '',
-            cswnbtnodekey: ''
+            nodekey: ''
         };
         if (options) {
             Csw.extend(o, options);
@@ -396,14 +413,14 @@ window.initMain = window.initMain || function (undefined) {
 
         var type = Csw.string(o.type).toLowerCase();
 
-//        function itemIsSupported() {
-//            var ret = (linkType === 'search' ||
-//                //false === Csw.isNullOrEmpty(o.itemid) ||
-//                type === 'action' ||
-//                type === 'search' ||
-//                type === 'report');
-//            return ret;
-//        }
+        //        function itemIsSupported() {
+        //            var ret = (linkType === 'search' ||
+        //                //false === Csw.isNullOrEmpty(o.itemid) ||
+        //                type === 'action' ||
+        //                type === 'search' ||
+        //                type === 'report');
+        //            return ret;
+        //        }
 
         if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
 
@@ -443,13 +460,13 @@ window.initMain = window.initMain || function (undefined) {
                             var viewMode = Csw.string(o.mode).toLowerCase();
                             switch (viewMode) {
                                 case 'grid':
-                                    getViewGrid({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+                                    getViewGrid({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'nodekey': o.nodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                                     break;
                                 case 'table':
-                                    getViewTable({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+                                    getViewTable({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'nodekey': o.nodekey });
                                     break;
                                 default:
-                                    refreshNodesTree({ 'viewid': o.itemid, 'viewmode': o.mode, 'nodeid': o.nodeid, 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+                                    refreshNodesTree({ 'viewid': o.itemid, 'viewmode': o.mode, 'nodeid': o.nodeid, 'nodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                                     break;
                             }
                         };
@@ -485,7 +502,7 @@ window.initMain = window.initMain || function (undefined) {
             viewid: '',
             viewmode: '',
             nodeid: '',
-            cswnbtnodekey: '',
+            nodekey: '',
             nodetypeid: '',
             propid: '',
             grid: '',
@@ -502,16 +519,16 @@ window.initMain = window.initMain || function (undefined) {
                 urlMethod: 'getMainMenu',
                 data: {
                     ViewId: o.viewid,
-                    SafeNodeKey: o.cswnbtnodekey,
+                    SafeNodeKey: o.nodekey,
                     NodeTypeId: o.nodetypeid,
                     PropIdAttr: o.propid,
                     LimitMenuTo: o.limitMenuTo,
                     ReadOnly: o.readonly
                 }
             },
-            onAlterNode: function (nodeid, cswnbtnodekey) {
+            onAlterNode: function (nodeid, nodekey) {
                 var state = Csw.clientState.getCurrent();
-                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true, 'searchid': state.searchid });
+                refreshSelected({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true, 'searchid': state.searchid });
             },
             onMultiEdit: function () {
                 switch (o.viewmode) {
@@ -525,7 +542,7 @@ window.initMain = window.initMain || function (undefined) {
                             nodeid: o.nodeid,
                             viewid: o.viewid
                         });
-                        //refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
+                        //refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, nodekey: o.nodekey });
                         break;
                 } // switch
             },
@@ -560,13 +577,13 @@ window.initMain = window.initMain || function (undefined) {
         o.parent.menu(menuOpts);
 
     }
-
+    
     function getViewGrid(options) {
         var o = {
             viewid: '',
             nodeid: '',
             showempty: false,
-            cswnbtnodekey: '',
+            nodekey: '',
             doMenuRefresh: true,
             onAddNode: '',
             onEditNode: '',
@@ -574,22 +591,22 @@ window.initMain = window.initMain || function (undefined) {
             onRefresh: ''
         };
 
-        if (options) Csw.extend(o, options);
+        Csw.extend(o, options);
 
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
         if (Csw.isNullOrEmpty(o.nodeid)) {
             o.nodeid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
         }
-        if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
+        if (Csw.isNullOrEmpty(o.nodekey)) {
+            o.nodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
         }
         if (false === Csw.isNullOrEmpty(o.viewid)) {
             Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
 
-        o.onEditNode = function () { getViewGrid(o); };
-        o.onDeleteNode = function () { getViewGrid(o); };
+        o.onEditNode = function () { grid.reload(); };
+        o.onDeleteNode = function () { grid.reload(); };
         o.onRefresh = function (options) {
             clear({ centertop: true, centerbottom: true });
             Csw.clientChanges.unsetChanged();
@@ -598,8 +615,8 @@ window.initMain = window.initMain || function (undefined) {
         };
         clear({ centertop: true, centerbottom: true });
 
-        var viewfilters = Csw.nbt.viewFilters({
-            ID: 'main_viewfilters',
+        Csw.nbt.viewFilters({
+            name: 'main_viewfilters',
             parent: Csw.main.centerTopDiv,
             viewid: o.viewid,
             onEditFilters: function (newviewid) {
@@ -610,13 +627,14 @@ window.initMain = window.initMain || function (undefined) {
                 getViewGrid(newopts);
             } // onEditFilters
         }); // viewFilters
-
-        Csw.main.centerBottomDiv.$.CswNodeGrid('init', {
+        var div = Csw.main.centerBottomDiv.div({ suffix: window.Ext.id() });
+        div.empty();
+        var grid = Csw.nbt.nodeGrid(div, {
             viewid: o.viewid,
             nodeid: o.nodeid,
-            cswnbtnodekey: o.cswnbtnodekey,
+            nodekey: o.nodekey,
             showempty: getEmptyGrid,
-            ID: mainGridId,
+            name: mainGridId,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
@@ -628,7 +646,7 @@ window.initMain = window.initMain || function (undefined) {
                         viewmode: Csw.enums.viewMode.grid.name,
                         grid: grid//,
                         //nodeid: o.nodeid,  // case 26914
-                        //cswnbtnodekey: o.cswnbtnodekey
+                        //nodekey: o.nodekey
                     });
                 }
             },
@@ -651,7 +669,7 @@ window.initMain = window.initMain || function (undefined) {
         var o = {
             viewid: '',
             nodeid: '',
-            cswnbtnodekey: '',
+            nodekey: '',
             //			doMenuRefresh: true,
             //			onAddNode: '',
             onEditNode: '',
@@ -665,8 +683,8 @@ window.initMain = window.initMain || function (undefined) {
         if (Csw.isNullOrEmpty(o.nodeid)) {
             o.nodeid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
         }
-        if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
+        if (Csw.isNullOrEmpty(o.nodekey)) {
+            o.nodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
         }
         if (false === Csw.isNullOrEmpty(o.viewid)) {
             Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
@@ -677,8 +695,8 @@ window.initMain = window.initMain || function (undefined) {
 
         clear({ centertop: true, centerbottom: true });
 
-        var viewfilters = Csw.nbt.viewFilters({
-            ID: 'main_viewfilters',
+        Csw.nbt.viewFilters({
+        name: 'main_viewfilters',
             parent: Csw.main.centerTopDiv,
             viewid: o.viewid,
             onEditFilters: function (newviewid) {
@@ -694,8 +712,8 @@ window.initMain = window.initMain || function (undefined) {
 
             viewid: o.viewid,
             nodeid: o.nodeid,
-            cswnbtnodekey: o.cswnbtnodekey,
-            ID: mainTableId,
+            nodekey: o.nodekey,
+            name: mainTableId,
             Multi: multi,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
@@ -705,7 +723,7 @@ window.initMain = window.initMain || function (undefined) {
                     viewid: o.viewid,
                     viewmode: Csw.enums.viewMode.table.name//,
                     //                    nodeid: o.nodeid,
-                    //                    cswnbtnodekey: o.cswnbtnodekey
+                    //                    nodekey: o.nodekey
                 });
             },
             onNoResults: showDefaultContentTable
@@ -721,23 +739,25 @@ window.initMain = window.initMain || function (undefined) {
                 nodeid: '',
                 nodename: '',
                 iconurl: '',
-                cswnbtnodekey: ''
+                nodekey: ''
             };
-            if (options) {
-                Csw.extend(o, options);
-            }
+            Csw.extend(o, options);
 
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, o.nodeid);
-            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, o.cswnbtnodekey);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, o.nodekey);
 
             if (o.nodeid !== '' && o.nodeid !== 'root') {
-                getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+                getTabs({
+                    viewid: o.viewid,
+                    nodeid: o.nodeid,
+                    nodekey: o.nodekey
+                });
                 refreshMainMenu({
                     parent: o.tree.menuDiv,
                     viewid: o.viewid,
                     viewmode: Csw.enums.viewMode.tree.name,
                     nodeid: o.nodeid,
-                    cswnbtnodekey: o.cswnbtnodekey
+                    nodekey: o.nodekey
                 });
             } else {
                 showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
@@ -746,7 +766,7 @@ window.initMain = window.initMain || function (undefined) {
                     viewid: o.viewid,
                     viewmode: Csw.enums.viewMode.tree.name,
                     nodeid: '',
-                    cswnbtnodekey: ''
+                    nodekey: ''
                 });
             }
         }
@@ -756,8 +776,8 @@ window.initMain = window.initMain || function (undefined) {
         var v = {
             viewid: '',
             viewmode: '',
-            onAddNode: function (nodeid, cswnbtnodekey) {
-                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+            onAddNode: function (nodeid, nodekey) {
+                refreshSelected({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
             }
         };
         if (viewopts) Csw.extend(v, viewopts);
@@ -770,14 +790,14 @@ window.initMain = window.initMain || function (undefined) {
         var v = {
             viewid: '',
             viewmode: '',
-            onAddNode: function (nodeid, cswnbtnodekey) {
-                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+            onAddNode: function (nodeid, nodekey) {
+                refreshSelected({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
             }
         };
         if (viewopts) Csw.extend(v, viewopts);
         clear({ centerbottom: true });
         var div = Csw.main.centerBottomDiv.div({
-            ID: 'deftbldiv',
+            name: 'deftbldiv',
             align: 'center'
         });
         div.css({ textAlign: 'center' });
@@ -786,57 +806,64 @@ window.initMain = window.initMain || function (undefined) {
         div.$.CswDefaultContent(v);
 
     } // showDefaultContentTable()
-
+    
     function getTabs(options) {
         Csw.publish('initPropertyTearDown');
         var o = {
             nodeid: '',
-            cswnbtnodekey: ''
+            nodekey: '',
+            viewid: ''
         };
         Csw.extend(o, options);
 
         clear({ right: true });
 
-        Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
-            ID: 'nodetabs',
-            globalState: {
-                nodeids: [o.nodeid],
-                nodekeys: [o.cswnbtnodekey]
-            },
-            tabState: {
-                ShowCheckboxes: multi,
-                tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
-            },
-            onSave: function () {
-                Csw.clientChanges.unsetChanged();
-            },
-            onBeforeTabSelect: function () {
-                return Csw.clientChanges.manuallyCheckChanges();
-            },
-            Refresh: function (options) {
-                Csw.clientChanges.unsetChanged();
-                multi = false;    // semi-kludge for multi-edit batch op
-                refreshSelected(options);
-            },
-            onTabSelect: function (tabid) {
-                Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
-            },
-            onPropertyChange: function () {
-                Csw.clientChanges.setChanged();
-            },
-            onEditView: function (viewid) {
-                handleAction({
-                    actionname: 'Edit_View',
-                    ActionOptions: {
-                        viewid: viewid,
-                        viewmode: Csw.enums.viewMode.grid.name,
-                        startingStep: 2,
-                        IgnoreReturn: true
-                    }
-                });
-            },
-            nodeTreeCheck: mainTree
-        });
+        if (Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
+            o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
+            cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
+                name: 'nodetabs',
+                globalState: {
+                    viewid: o.viewid,
+                    currentNodeId: o.nodeid,
+                    currentNodeKey: o.nodekey
+                },
+                tabState: {
+                    ShowCheckboxes: multi,
+                    tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                },
+                onSave: function() {
+                    Csw.clientChanges.unsetChanged();
+                },
+                onBeforeTabSelect: function() {
+                    return Csw.clientChanges.manuallyCheckChanges();
+                },
+                Refresh: function(options) {
+                    Csw.clientChanges.unsetChanged();
+                    multi = false; // semi-kludge for multi-edit batch op
+                    refreshSelected(options);
+                },
+                onTabSelect: function(tabid) {
+                    Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
+                },
+                onPropertyChange: function() {
+                    Csw.clientChanges.setChanged();
+                },
+                onEditView: function(viewid) {
+                    handleAction({
+                        actionname: 'Edit_View',
+                        ActionOptions: {
+                            viewid: viewid,
+                            viewmode: Csw.enums.viewMode.grid.name,
+                            startingStep: 2,
+                            IgnoreReturn: true
+                        }
+                    });
+                },
+                nodeTreeCheck: mainTree
+            });
+        } else {
+            cswPrivate.tabsAndProps.resetTabs(o.nodeid, o.nodekey);
+        }
     }
 
     function refreshSelected(options) {
@@ -844,7 +871,7 @@ window.initMain = window.initMain || function (undefined) {
         if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
                 nodeid: '',
-                cswnbtnodekey: '',
+                nodekey: '',
                 nodename: '',
                 iconurl: '',
                 viewid: '',
@@ -872,7 +899,7 @@ window.initMain = window.initMain || function (undefined) {
                         getViewGrid({
                             viewid: o.viewid,
                             nodeid: o.nodeid,
-                            cswnbtnodekey: o.cswnbtnodekey,
+                            nodekey: o.nodekey,
                             showempty: o.showempty,
                             forsearch: o.forsearch
                         });
@@ -880,7 +907,7 @@ window.initMain = window.initMain || function (undefined) {
                     case 'list':
                         refreshNodesTree({
                             nodeid: o.nodeid,
-                            cswnbtnodekey: o.cswnbtnodekey,
+                            nodekey: o.nodekey,
                             nodename: o.nodename,
                             viewid: o.viewid,
                             viewmode: o.viewmode,
@@ -893,13 +920,13 @@ window.initMain = window.initMain || function (undefined) {
                         getViewTable({
                             viewid: o.viewid,
                             nodeid: o.nodeid,
-                            cswnbtnodekey: o.cswnbtnodekey
+                            nodekey: o.nodekey
                         });
                         break;
                     case 'tree':
                         refreshNodesTree({
                             nodeid: o.nodeid,
-                            cswnbtnodekey: o.cswnbtnodekey,
+                            nodekey: o.nodekey,
                             nodename: o.nodename,
                             viewid: o.viewid,
                             viewmode: o.viewmode,
@@ -909,7 +936,7 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     default:
-                        refreshWelcome();
+                        refreshWelcomeLandingPage();
                         break;
                 } // switch
             } // if (false === Csw.isNullOrEmpty(o.searchid))
@@ -922,7 +949,7 @@ window.initMain = window.initMain || function (undefined) {
     function refreshNodesTree(options) {
         var o = {
             'nodeid': '',
-            'cswnbtnodekey': '',
+            'nodekey': '',
             'nodename': '',
             'showempty': false,
             'forsearch': false,
@@ -933,11 +960,10 @@ window.initMain = window.initMain || function (undefined) {
         };
         Csw.extend(o, options);
 
-        var getEmptyTree = (Csw.bool(o.showempty));
         if (Csw.isNullOrEmpty(o.nodeid)) {
             o.nodeid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
-            if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
-                o.cswnbtnodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
+            if (Csw.isNullOrEmpty(o.nodekey)) {
+                o.nodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
             }
         }
         if (Csw.isNullOrEmpty(o.viewid)) {
@@ -946,8 +972,8 @@ window.initMain = window.initMain || function (undefined) {
 
         clear({ left: true });
 
-        var viewfilters = Csw.nbt.viewFilters({
-            ID: 'main_viewfilters',
+        Csw.nbt.viewFilters({
+            name: 'main_viewfilters',
             parent: Csw.main.leftDiv,
             viewid: o.viewid,
             onEditFilters: function (newviewid) {
@@ -960,7 +986,7 @@ window.initMain = window.initMain || function (undefined) {
         }); // viewFilters
 
         mainTree = Csw.nbt.nodeTree({
-            ID: 'main',
+            name: 'main',
             parent: Csw.main.leftDiv,
             forsearch: o.forsearch,
             onSelectNode: function (optSelect) {
@@ -968,7 +994,7 @@ window.initMain = window.initMain || function (undefined) {
                     tree: mainTree,
                     viewid: optSelect.viewid,
                     nodeid: optSelect.nodeid,
-                    cswnbtnodekey: optSelect.cswnbtnodekey
+                    nodekey: optSelect.nodekey
                 });
             },
             ShowCheckboxes: multi
@@ -977,7 +1003,7 @@ window.initMain = window.initMain || function (undefined) {
             viewid: o.viewid,
             viewmode: o.viewmode,
             nodeid: o.nodeid,
-            cswnbtnodekey: o.cswnbtnodekey,
+            nodekey: o.nodekey,
             IncludeNodeRequired: o.IncludeNodeRequired,
             onViewChange: function (newviewid, newviewmode) {
                 Csw.clientState.setCurrentView(newviewid, newviewmode);
@@ -1012,7 +1038,7 @@ window.initMain = window.initMain || function (undefined) {
         switch (actionName) {
             case 'create inspection':
                 designOpt = {
-                    ID: 'cswInspectionDesignWizard',
+                    name: 'cswInspectionDesignWizard',
                     viewid: o.ActionOptions.viewid,
                     viewmode: o.ActionOptions.viewmode,
                     onCancel: function () {
@@ -1027,7 +1053,7 @@ window.initMain = window.initMain || function (undefined) {
                             mode: 'tree',
                             itemid: viewid
                         });
-                        
+
                     },
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected
@@ -1043,13 +1069,55 @@ window.initMain = window.initMain || function (undefined) {
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
-                    onFinish: function (viewid) {
-                        clear({ 'all': true });
-                        handleItemSelect({
-                            type: 'view',
-                            mode: 'tree',
-                            itemid: viewid
-                        });
+                    onFinish: function (actionData) {
+                        var createMaterialLandingPage = function () {
+                            refreshLandingPage(function() {
+                                Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+                                    name: 'createMaterialLandingPage',
+                                    Title: 'Created:',                                    
+                                    ActionId: actionData.ActionId,
+                                    ObjectClassId: actionData.RelatedObjectClassId,
+                                    onLinkClick: handleItemSelect,
+                                    onAddClick: function (itemData) {
+                                        $.CswDialog('AddNodeDialog', {
+                                            text: itemData.Text,
+                                            nodetypeid: itemData.NodeTypeId,
+                                            relatednodeid: actionData.RelatedNodeId,
+                                            relatednodename: actionData.RelatedNodeName,
+                                            relatednodetypeid: actionData.RelatedNodeTypeId,
+                                            relatedobjectclassid: actionData.RelatedObjectClassId,
+                                            onAddNode: function (nodeid, nodekey) {
+                                                clear({ all: true });
+                                                refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                                            }
+                                        });
+                                    },
+                                    onTabClick: function (itemData) {
+                                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                                        handleItemSelect(itemData);
+                                    },
+                                    onButtonClick: function (itemData) {
+                                        Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
+                                            name: itemData.Text,
+                                            value: itemData.ActionName,
+                                            mode: 'landingpage',                                            
+                                            propId: itemData.NodeTypePropId
+                                        });
+                                    },
+                                    onAddComponent: createMaterialLandingPage,
+                                    landingPageRequestData: actionData,
+                                    onActionLinkClick: function (viewId) {
+                                        handleItemSelect({
+                                            type: 'view',
+                                            mode: 'tree',
+                                            itemid: viewId
+                                        });
+                                    },
+                                    isConfigurable: actionData.isConfigurable
+                                });
+                            });
+                        };
+                        createMaterialLandingPage();
                     },
                     startingStep: o.ActionOptions.startingStep
                 };
@@ -1068,7 +1136,6 @@ window.initMain = window.initMain || function (undefined) {
                     title += 'Selected Container';
                 }
                 designOpt = {
-                    ID: Csw.makeId('cswDispenseContainerWizard'),
                     state: {
                         sourceContainerNodeId: o.sourceContainerNodeId,
                         currentQuantity: o.currentQuantity,
@@ -1150,10 +1217,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                                                            
-            //				break;                                                                                            
-            //			case 'Inspection_Design':                                                                                            
-            //				break;                                                                                            
+            //			case 'Import_Fire_Extinguisher_Data':                                                                                                
+            //				break;                                                                                                
+            //			case 'Inspection_Design':                                                                                                
+            //				break;                                                                                                
             case 'quotas':
                 Csw.actions.quotas(Csw.main.centerTopDiv, {
                     onQuotaChange: function () {

@@ -9,7 +9,7 @@
             ///<summary>Creates a basic grid with an Add menu.</summary>
 
             var cswPrivate = {
-                ID: 'wizardNodeTypeSelect',
+                name: 'wizardNodeTypeSelect',
                 labelText: '',
                 objectClassName: '',
                 onSelect: null,
@@ -34,7 +34,7 @@
                 cswPrivate.outerTbl.cell(1, 1);
                 cswPrivate.label = cswPrivate.outerTbl.cell(1, 2).span({ text: cswPrivate.labelText });
                 cswPublic.select = cswPrivate.outerTbl.cell(1, 3).nodeTypeSelect({
-                    ID: cswPrivate.ID,
+                    name: cswPrivate.name,
                     useWide: true,
                     objectClassName: cswPrivate.objectClassName,
                     onSelect: function (selectedid, nodetypecount) {

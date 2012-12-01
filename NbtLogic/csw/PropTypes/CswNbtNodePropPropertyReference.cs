@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -14,6 +12,13 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropPropertyReference : CswNbtNodeProp
     {
+        private CswNbtFieldTypeRulePropertyReference _FieldTypeRule;
+        private CswNbtSubField _CachedValueSubField;
+
+        private CswNbtSequenceValue _SequenceValue;
+        private CswNbtSubField _SequenceSubField;
+        private CswNbtSubField _SequenceNumberSubField;
+
         public static implicit operator CswNbtNodePropPropertyReference( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsPropertyReference;
@@ -24,9 +29,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             _FieldTypeRule = (CswNbtFieldTypeRulePropertyReference) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _CachedValueSubField = _FieldTypeRule.CachedValueSubField;
+
+            _SequenceSubField = _FieldTypeRule.SequenceSubField;
+            _SequenceNumberSubField = _FieldTypeRule.SequenceNumberSubField;
+            _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
         }
-        private CswNbtFieldTypeRulePropertyReference _FieldTypeRule;
-        private CswNbtSubField _CachedValueSubField;
+
+        #region Generic Properties
 
         override public bool Empty
         {
@@ -36,15 +45,23 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
         override public string Gestalt
         {
             get
             {
                 return _CswNbtNodePropData.Gestalt;
             }
+        }
 
-        }//Gestalt
+        private void _setGestalt( string PropRefVal, string SeqVal )
+        {
+            string NewGestalt = PropRefVal;
+            if( UseSequence && false == String.IsNullOrEmpty( PropRefVal ) )
+            {
+                NewGestalt = PropRefVal + "-" + SeqVal;
+            }
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, NewGestalt );
+        }
 
         public string CachedValue
         {
@@ -59,22 +76,23 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, DBNull.Value );
         }
 
+        #endregion Generic Properties
+
+        #region Relationship Properties and Functions
+
         public Int32 RelationshipId
         {
             get
             {
                 return _CswNbtMetaDataNodeTypeProp.FKValue;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.FKValue = value;
-            //}
         }
+
         public NbtViewPropIdType RelationshipType
         {
             get
             {
-                return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.FKType;
+                return _CswNbtMetaDataNodeTypeProp.FKType;
             }
         }
 
@@ -84,27 +102,15 @@ namespace ChemSW.Nbt.PropTypes
             {
                 return _CswNbtMetaDataNodeTypeProp.ValuePropId;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.ValuePropId = value;
-            //}
         }
+
         public NbtViewPropIdType RelatedPropType
         {
             get
             {
-                //if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
-                //    return (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
-                //else
-                //    return NbtViewPropIdType.Unknown;
-                return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.ValuePropType;
+                return _CswNbtMetaDataNodeTypeProp.ValuePropType;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.ValuePropType = value.ToString();
-            //}
         }
-
 
         public string RecalculateReferenceValue()
         {
@@ -114,52 +120,14 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( _CswNbtResources == null )
                     throw new CswDniException( "RecalculateReferenceValue(): _CswNbtResources is null" );
-
                 if( _CswNbtMetaDataNodeTypeProp == null )
                     throw new CswDniException( "RecalculateReferenceValue(): _CswNbtMetaDataNodeTypeProp is null" );
-
-                Int32 NodeTypeId = this.NodeTypeProp.getNodeType().NodeTypeId;
-                CswNbtMetaDataNodeTypeProp RelationshipProp = null;
-                if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
-                {
-                    RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropVersion( NodeTypeId, RelationshipId );
-                }
-                else if( RelationshipType == NbtViewPropIdType.ObjectClassPropId )
-                {
-                    RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, RelationshipId );
-                }
-                if( RelationshipProp == null )
-                {
-                    throw new CswDniException( "RecalculateReferenceValue(): RelationshipId is not valid:" + RelationshipId.ToString() );
-                }
-
-                //ICswNbtMetaDataProp RelatedProp = null;
-                //if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
-                //    RelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
-                //else
-                //    RelatedProp = _CswNbtResources.MetaData.getObjectClassProp( RelatedPropId );
-
-                //if( RelatedProp == null )
-                //    throw new CswDniException( "RecalculateReferenceValue(): RelatedPropId is not valid:" + RelatedPropId.ToString() );
-
-                CswNbtView ReferenceView = new CswNbtView( _CswNbtResources );
-                ReferenceView.Root.Selectable = false;
-                ReferenceView.ViewName = "CswNbtNodePropPropertyReference.RecalculateReferenceValue()";
-
-                CswNbtViewRelationship ThisNodeRelationship = ReferenceView.AddViewRelationship( _CswNbtMetaDataNodeTypeProp.getNodeType(), false );
-                ThisNodeRelationship.NodeIdsToFilterIn.Add( _CswNbtNodePropData.NodeId );
-
-                ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, RelationshipProp, false );
-
-                //ReferenceView.Root.NodeIdsToFilterIn.Add(_CswNbtNodePropData.NodeId);
-                //ReferenceView.Root.FilterInNodesRecursively = false;
-                //ICswNbtTree ReferenceTree = _CswNbtResources.Trees.getTreeFromView(ReferenceView, _CswNbtNodePropData.NodeId, true);
-                ICswNbtTree ReferenceTree = _CswNbtResources.Trees.getTreeFromView( ReferenceView, true, true, false, false );
+                CswNbtView ReferenceView = _getReferenceView();
+                ICswNbtTree ReferenceTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ReferenceView, true, false, false );
                 if( ReferenceTree == null )
                     throw new CswDniException( "RecalculateReferenceValue(): ReferenceTree is null" );
 
                 ReferenceTree.goToRoot();
-
                 if( ReferenceTree.getChildNodeCount() > 0 )
                 {
                     ReferenceTree.goToNthChild( 0 );
@@ -167,21 +135,6 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         ReferenceTree.goToNthChild( 0 );
                         CswNbtNode RelatedNode = ReferenceTree.getNodeForCurrentPosition();
-                        //if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
-                        //{
-                        //    Value = ( (CswNbtNodePropWrapper) RelatedNode.Properties[_CswNbtResources.MetaData.getNodeTypePropVersion( RelatedNode.NodeTypeId, RelatedPropId )] ).Gestalt;
-                        //}
-                        //else
-                        //{
-                        //    foreach( CswNbtNodePropWrapper Prop in RelatedNode.Properties )
-                        //    {
-                        //        if( Prop.ObjectClassPropId == RelatedPropId )
-                        //            Value = Prop.Gestalt;
-                        //    }
-                        //}
-
-                        // Match by propname
-
                         CswNbtMetaDataNodeTypeProp StoredRelatedProp = null;
                         if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
                         {
@@ -191,7 +144,6 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             StoredRelatedProp = RelatedNode.getNodeType().getNodeTypePropByObjectClassProp( RelatedPropId );
                         }
-
                         if( null != StoredRelatedProp )
                         {
                             CswNbtMetaDataNodeTypeProp ActualRelatedProp = RelatedNode.getNodeType().getNodeTypeProp( StoredRelatedProp.PropName );
@@ -205,37 +157,133 @@ namespace ChemSW.Nbt.PropTypes
             } // if (RelationshipId > 0 && RelatedPropId > 0)
 
             _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+            _setGestalt( Value, Sequence );
             _CswNbtNodePropData.PendingUpdate = false;
 
             return Value;
         }
 
-        public override void ToXml( XmlNode ParentNode )
+        private CswNbtView _getReferenceView()
         {
-            CswXmlDocument.AppendXmlNode( ParentNode, _CachedValueSubField.ToXmlNodeName(), CachedValue );
+            CswNbtView ReferenceView = new CswNbtView( _CswNbtResources );
+            ReferenceView.Root.Selectable = false;
+            ReferenceView.ViewName = "CswNbtNodePropPropertyReference.RecalculateReferenceValue()";
+            CswNbtViewRelationship ThisNodeRelationship = ReferenceView.AddViewRelationship( _CswNbtMetaDataNodeTypeProp.getNodeType(), false );
+            ThisNodeRelationship.NodeIdsToFilterIn.Add( _CswNbtNodePropData.NodeId );
+            CswNbtMetaDataNodeTypeProp RelationshipProp = _getRelationshipProp();
+            ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, RelationshipProp, false );
+            return ReferenceView;
         }
 
-        public override void ToXElement( XElement ParentNode )
+        private CswNbtMetaDataNodeTypeProp _getRelationshipProp()
         {
-            ParentNode.Add( new XElement( _CachedValueSubField.ToXmlNodeName( true ), CachedValue ) );
+            CswNbtMetaDataNodeTypeProp RelationshipProp = null;
+            Int32 NodeTypeId = this.NodeTypeProp.getNodeType().NodeTypeId;
+            if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
+            {
+                RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropVersion( NodeTypeId, RelationshipId );
+            }
+            else if( RelationshipType == NbtViewPropIdType.ObjectClassPropId )
+            {
+                RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, RelationshipId );
+            }
+            if( RelationshipProp == null )
+            {
+                throw new CswDniException( "RecalculateReferenceValue(): RelationshipId is not valid:" + RelationshipId.ToString() );
+            }
+            return RelationshipProp;
         }
+
+        #endregion Relationship Properties and Functions
+
+        #region Sequence Properties and Functions
+
+        public string Sequence
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValue( _SequenceSubField.Column );
+            }
+        }
+
+        public string SequenceNumber
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column );
+            }
+        }
+
+        /// <summary>
+        /// When set to true, display Sequence alongside PropertyReference value
+        /// </summary>
+        public bool UseSequence
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+            }
+        }
+
+        /// <summary>
+        /// Sets Sequence to the next sequence value
+        /// </summary>
+        public void setSequenceValue()
+        {
+            if( UseSequence && Sequence.Trim() == string.Empty )
+            {
+                string value = _SequenceValue.Next;
+                setSequenceValueOverride( value, false );
+            }
+        }
+
+        /// <summary>
+        /// Sets Sequence to the provided value.  
+        /// This allows manually overriding automatically generated sequence values.  Use carefully.
+        /// </summary>
+        /// <param name="SeqValue">Value to set for Sequence</param>
+        /// <param name="ResetSequence">True if the sequence needs to be reset to this value 
+        /// (set true if the value was not just generated from the sequence)</param>
+        public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
+        {
+            if( UseSequence )
+            {
+                _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
+                Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
+                _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+                _setGestalt( CachedValue, SeqValue );
+
+                if( ResetSequence )
+                {
+                    // Keep the sequence up to date
+                    _SequenceValue.reSync( ThisSeqValue );
+                }
+            }
+        }
+
+        override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            // Automatically generate a value.  This will not overwrite existing values.
+            setSequenceValue();
+            base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+        }
+
+        public override void Copy( CswNbtNodePropData Source )
+        {
+            // Don't copy, just generate a new value
+            setSequenceValue();
+        }
+
+        #endregion Sequence Properties and Functions
+
+        #region Serialization
 
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_CachedValueSubField.ToXmlNodeName( true )] = CachedValue;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //nothing to restore
-            PendingUpdate = true;
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //nothing to restore
-            PendingUpdate = true;
+            ParentObject["useSequence"] = UseSequence.ToString();
+            ParentObject[_SequenceSubField.ToXmlNodeName( true )] = Sequence;
+            ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -246,9 +294,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //nothing to restore
+            if( null != JObject[_SequenceSubField.ToXmlNodeName( true )] && false == String.IsNullOrEmpty( JObject[_SequenceSubField.ToXmlNodeName( true )].ToString() ) )
+            {
+                setSequenceValueOverride( JObject[_SequenceSubField.ToXmlNodeName( true )].ToString(), false );
+            }
             PendingUpdate = true;
         }
+
+        #endregion Serialization
+
     }//CswNbtNodePropPropertyReference
 
 }//namespace ChemSW.Nbt.PropTypes
