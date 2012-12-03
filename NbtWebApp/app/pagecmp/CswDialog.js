@@ -966,7 +966,7 @@
                         url: Csw.enums.ajaxUrlPrefix + 'RunStructureSearch',
                         data: {
                             molData: molText.val(),
-                            exact: exactSearchChkBox.val()
+                            exact: exactSearchChkBox.checked()
                         },
                         success: function (data) {
                             Csw.tryExec(cswPrivate.loadView, data.viewId, data.viewMode);
