@@ -40,21 +40,6 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        public void _removeRunNowOnGenerators()
-        {
-            #region case 28146 - Remove 'Run Now' on Generators
-            _acceptBlame( CswDeveloper.SS, 28146 );
-
-            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataObjectClassProp RunNowOCP = GeneratorOC.getObjectClassProp( "Run Now" );
-            if( null != RunNowOCP )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( RunNowOCP, true );
-            }
-            _resetBlame();
-            #endregion case 28146 - Remove 'Run Now' on Generators
-        }
-
         #region Ursula Methods
 
         public void _makeContainerGroup()
@@ -1097,6 +1082,10 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Ursula Methods
 
+        #region VIOLA Methods
+        
+
+        #endregion VIOLA Methods
 
         /// <summary>
         /// The actual update call
@@ -1129,6 +1118,12 @@ namespace ChemSW.Nbt.Schema
             _makePendingFeedbackCountProp( CswDeveloper.MB, 28079 );
 
             #endregion URSULA
+
+            #region VIOLA
+
+
+            #endregion VIOLA
+
 
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
