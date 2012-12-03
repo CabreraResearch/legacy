@@ -894,39 +894,49 @@
             var div = Csw.literals.div(),
                 newNode;
 
-            var table = div.table({ cellpadding: '2px' });
+            var table = div.table({ cellpadding: '2px', align: 'left' });
 
-            var exactSearchChkBox = table.cell(1, 2).input({
-                labelText: "Extact Search",
-                type: Csw.enums.inputTypes.checkbox
-            });
-
-            var useNodeBtn = table.cell(1, 1).button({
-                name: 'ssSearch',
-                enabledText: 'Use Current Node',
-                onClick: function () {
-                    var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
-                    getMolImgFromText('', currentNodeId);
+            table.cell(3, 1).span({ text: 'MOL Text (Paste from Clipboard):' });
+            var molText = table.cell(4, 1).textArea({
+                name: '',
+                rows: 12,
+                cols: 50,
+                onChange: function () {
+                    getMolImgFromText(molText.val(), '');
                 }
             });
 
-            var maxResultsTxtBox = table.cell(2, 2).input({
-                labelText: "Max Results",
-                size: '5',
-                maxlength: 3
-            });
+            var getMolImgFromText = function (molTxt, nodeId) {
+                var ret = '';
+                Csw.ajax.post({
+                    async: false,
+                    url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromText',
+                    data: {
+                        molData: molTxt,
+                        nodeId: nodeId
+                    },
+                    success: function (data) {
+                        table.cell(4, 2).empty();
+                        if (false == Csw.isNullOrEmpty(data.molstring)) {
+                            molText.val(data.molstring);
+                            table.cell(4, 2).img({
+                                labelText: "Query Image",
+                                src: "data:image/jpeg;base64," + data.bin
+                            });
+                        }
+                    }
+                });
+                return ret;
+            }
 
-            var maxScreenedTxtBox = table.cell(3, 2).input({
-                labelText: "Max Screened",
-                size: '5',
-                maxlength: 3
-            });
+            var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
+            getMolImgFromText('', currentNodeId);
 
             var uploadBtn = table.cell(2, 1).input({
                 name: 'fileupload',
                 labelText: "Mol File",
                 type: Csw.enums.inputTypes.file
-            });
+            }).css('float', 'left');
             uploadBtn.$.fileupload({
                 datatype: 'json',
                 url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromFile',
@@ -941,29 +951,22 @@
                 }
             });
 
-            table.cell(3, 1).span({ text: 'MOL Text (Paste from Clipboard):' });
-            var molText = table.cell(4, 1).textArea({
-                name: '',
-                rows: 12,
-                cols: 50,
-                onChange: function () {
-                    getMolImgFromText(molText.val(), '');
-                }
+            var exactSearchChkBox = table.cell(5, 1).input({
+                labelText: "Exact Search",
+                useWide: true,
+                type: Csw.enums.inputTypes.checkbox
             });
 
-            table.cell(7, 1).button({
+            table.cell(6, 1).button({
                 name: 'ssSearchBtn',
                 enabledText: 'Search',
                 disabledText: "Searching...",
                 onClick: function () {
-
                     Csw.ajax.post({
                         url: Csw.enums.ajaxUrlPrefix + 'RunStructureSearch',
                         data: {
                             molData: molText.val(),
-                            maxScreened: maxScreenedTxtBox.val(),
-                            maxResults: maxResultsTxtBox.val(),
-                            exact: exactSearchChkBox.val() + 'true'
+                            exact: exactSearchChkBox.val()
                         },
                         success: function (data) {
                             Csw.tryExec(cswPrivate.loadView, data.viewId, data.viewMode);
@@ -973,30 +976,9 @@
                 }
             });
 
-            var getMolImgFromText = function (molTxt, nodeId) {
-                var ret = '';
-                Csw.ajax.post({
-                    async: false,
-                    url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromText',
-                    data: {
-                        molData: molTxt,
-                        nodeId: nodeId
-                    },
-                    success: function (data) {
-                        if (false == Csw.isNullOrEmpty(data.molstring)) {
-                            molText.val(data.molstring);
-                            table.cell(4, 2).empty();
-                            table.cell(4, 2).img({
-                                labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + data.bin
-                            });
-                        } else {
-                            alert("selected node does not have a mol prop");
-                        }
-                    }
-                });
-                return ret;
-            }
+            table.cell(9, 1).span({
+                text: "please note that larger molecules can extend the search time"
+            });
 
             openDialog(div, 750, 500, null, cswPrivate.title);
         },

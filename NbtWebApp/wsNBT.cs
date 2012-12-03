@@ -2814,7 +2814,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string RunStructureSearch( string molData, string maxScreened, string maxResults, string exact )
+        public string RunStructureSearch( string molData, string exact )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2825,7 +2825,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    Dictionary<int, string> results = _CswNbtResources.StructureSearchManager.RunSearch( molData );
+                    bool exactAsBool = CswConvert.ToBoolean( exact );
+                    Dictionary<int, string> results = _CswNbtResources.StructureSearchManager.RunSearch( molData, exactAsBool );
                     CswNbtView searchView = new CswNbtView( _CswNbtResources );
                     searchView.SetViewMode( NbtViewRenderingMode.Table );
                     searchView.Category = "Recent";

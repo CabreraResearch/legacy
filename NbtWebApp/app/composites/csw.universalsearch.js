@@ -39,7 +39,7 @@
                 buttonMultiColumn: ''
             };
             Csw.extend(cswPrivate, params);
-            
+
             if (false === Csw.isNullOrEmpty(cswParent)) {
                 cswPrivate.table = cswParent.table({
                     cellpadding: '2px'
@@ -67,19 +67,23 @@
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2)
-                    .div()
-                    .buttonExt({
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
-                        width: ('Search'.length * 11) + 16,
-                        enabledText: 'Search',
-                        disabledText: 'Searching...',
-                        bindOnEnter: true,
-                        onClick: function () {
-                            Csw.publish('initPropertyTearDown');
-                            cswPrivate.searchterm = cswPrivate.searchinput.val();
-                            cswPrivate.newsearch();
+                cswPrivate.searchButton = cswtable.cell(1, 2).menuButton({
+                    name: 'searchBtn',
+                    menuOptions: ['Search', 'Structure Search'],
+                    selectedText: 'Search',
+                    size: 'small',
+                    onClick: function (selectedOption) {
+                        switch (selectedOption) {
+                            case 'Structure Search':
+                                $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                                break;
+                            default:
+                                Csw.publish('initPropertyTearDown');
+                                cswPrivate.searchterm = cswPrivate.searchinput.val();
+                                cswPrivate.newsearch();
                         }
+
+                    }
                 });
             })();
 
@@ -138,29 +142,29 @@
                             }
                         });
                     }
-//                    resultstable.cell(1, 3).css({ width: '18px' });
-//                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
-//                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
-//                        Active: (columns === 1),
-//                        AlternateText: 'Single Column',
-//                        onClick: function () {
-//                            setTimeout(function () { // so we see the clear immediately
-//                                _renderResultsTable(1);
-//                            }, 0);
-//                        }
-//                    });
+                    //                    resultstable.cell(1, 3).css({ width: '18px' });
+                    //                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
+                    //                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
+                    //                        Active: (columns === 1),
+                    //                        AlternateText: 'Single Column',
+                    //                        onClick: function () {
+                    //                            setTimeout(function () { // so we see the clear immediately
+                    //                                _renderResultsTable(1);
+                    //                            }, 0);
+                    //                        }
+                    //                    });
 
-//                    resultstable.cell(1, 4).css({ width: '18px' });
-//                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
-//                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
-//                        Active: (columns !== 1),
-//                        AlternateText: 'Multi Column',
-//                        onClick: function () {
-//                            setTimeout(function () { // so we see the clear immediately
-//                                _renderResultsTable(3);
-//                            }, 0);
-//                        }
-//                    });
+                    //                    resultstable.cell(1, 4).css({ width: '18px' });
+                    //                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
+                    //                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
+                    //                        Active: (columns !== 1),
+                    //                        AlternateText: 'Multi Column',
+                    //                        onClick: function () {
+                    //                            setTimeout(function () { // so we see the clear immediately
+                    //                                _renderResultsTable(3);
+                    //                            }, 0);
+                    //                        }
+                    //                    });
 
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
@@ -264,11 +268,11 @@
                     var moreDiv = fdiv.moreDiv();
                     var filterName = '';
 
-                    var nameSpan = moreDiv.shownDiv.span({ }).css({ fontWeight: 'bold' });
+                    var nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
                     moreDiv.shownDiv.br();
                     var thisdiv = moreDiv.shownDiv;
                     moreDiv.moreLink.hide();
-                    Csw.each(thisFilterSet, function(thisFilter) {
+                    Csw.each(thisFilterSet, function (thisFilter) {
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
                         }
@@ -355,7 +359,7 @@
                 });
             }; // restoreSearch()
 
-            cswPublic.getFilterToNodeTypeId = function() {
+            cswPublic.getFilterToNodeTypeId = function () {
                 var ret = '';
 
                 function findFilterToNodeTypeId(thisFilter) {
