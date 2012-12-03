@@ -1617,7 +1617,7 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
             } );
 
-            if( _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Containers in Location" ).Count > 0 )
+            if( _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Containers in Location" ).Count == 0 )
             {
                 CswNbtView containersView = _CswNbtSchemaModTrnsctn.makeNewView( "Containers in Location", NbtViewVisibility.Property );
                 containersView.SetViewMode( NbtViewRenderingMode.Grid );
