@@ -194,45 +194,6 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        private CswNbtView _cisproRequestCartView( bool ReInit )
-        {
-            CswNbtView Ret = new CswNbtView( _CswNbtResources )
-            {
-                Category = "Request Configuration",
-                Visibility = NbtViewVisibility.Hidden,
-                ViewMode = NbtViewRenderingMode.Grid
-            };
-
-            Ret.Root.ChildRelationships.Clear();
-
-            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
-            CswNbtViewRelationship RootVr = Ret.AddViewRelationship( RequestOc, IncludeDefaultFilters: true );
-
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
-            {
-                CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
-                CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
-                CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
-                                                                                 NbtViewPropOwnerType.Second,
-                                                                                 RequestOcp, IncludeDefaultFilters: true );
-
-                CswNbtViewProperty Vp1 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
-                Vp1.Order = 1;
-                CswNbtViewProperty Vp2 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
-                Vp2.Order = 2;
-                CswNbtViewProperty Vp3 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
-                Vp3.Order = 3;
-                CswNbtViewProperty Vp4 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
-                Vp4.Order = 4;
-                CswNbtViewProperty Vp5 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
-                Vp5.Order = 5;
-                CswNbtViewProperty Vp6 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
-                Vp6.Order = 6;
-            }
-            Ret.SaveToCache( IncludeInQuickLaunch: false );
-            return Ret;
-        }
-
         private CswNbtMetaDataObjectClass _EnforceObjectClassRelationship = null;
 
         #endregion Private, core methods
@@ -243,11 +204,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView RetView = null;
 
-            if( ViewName == SystemViewName.CISProRequestCart )
-            {
-                RetView = _cisproRequestCartView( ReInit );
-            }
-            else if( ViewName == SystemViewName.SILocationsList )
+            if( ViewName == SystemViewName.SILocationsList )
             {
                 RetView = _siLocationsListView( ReInit );
             }
@@ -371,8 +328,6 @@ namespace ChemSW.Nbt.Actions
         public static readonly SystemViewName SIInspectionsbyBarcode = new SystemViewName( "SI Inspections by Barcode" );
         public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
         public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
-        public static readonly SystemViewName CISProRequestCart = new SystemViewName( "CISPro Request Cart" );
-        public static readonly SystemViewName CISProRequestHistory = new SystemViewName( "CISPro Request History" );
         public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
     }
 }

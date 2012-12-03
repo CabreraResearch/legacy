@@ -282,7 +282,6 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCP.PropName )
                 {
                     case PropertyName.Fulfill:
-                        CswNbtObjClassContainer NodeAsContainer = null;
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Order:
@@ -526,7 +525,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             CswNbtViewProperty FavoriteVp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsFavoriteOcp );
             FavoriteVp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( FavoriteVp, Tristate.False.ToString() );
+            ParentRelationship.View.AddViewPropertyFilter( FavoriteVp, Value: Tristate.False.ToString() );
         }
 
         #endregion
