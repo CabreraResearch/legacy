@@ -842,14 +842,13 @@
 
                         labelCell = cswPrivate.getLabelCell(cellSet);
 
-                        labelCell.addClass('propertylabel');
                         if (Csw.bool(propData.highlight)) {
                             labelCell.addClass('ui-state-highlight');
                         }
 
                         if (false === Csw.isNullOrEmpty(helpText)) {
                             labelCell.a({
-                                cssclass: 'cswprop_helplink',
+                                cssclass: 'cswprop_helplink propertylabel',
                                 title: helpText,
                                 onClick: function () {
                                     return false;

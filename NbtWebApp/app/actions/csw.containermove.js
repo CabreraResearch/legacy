@@ -85,8 +85,8 @@
             (function _postCtor() {
 
                 cswPrivate.action = Csw.layouts.action(cswParent, {
-                    Title: cswPrivate.title || 'Fulfill Material Request by Size',
-                    FinishText: 'Fulfill Request',
+                    title: cswPrivate.title || 'Fulfill Material Request by Size',
+                    finishText: 'Fulfill Request',
                     onFinish: cswPrivate.submitRequest,
                     onCancel: function() {
                         Csw.clientDb.removeItem(cswPrivate.name + '_clientDb');

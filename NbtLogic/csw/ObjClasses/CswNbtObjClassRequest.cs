@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Name = "Name";
             public const string SubmittedDate = "Submitted Date";
             public const string CompletedDate = "Completed Date";
+            public const string IsFavorite = "Is Favorite";
         }
 
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
@@ -89,13 +90,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            IsFavorite.SetOnPropChange( onIsFavortiteChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
-            CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor.ToString() );
+            CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
+            CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, "me" );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Tristate.False.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -179,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
-
+        
         public CswNbtNodePropDateTime SubmittedDate
         {
             get { return _CswNbtNode.Properties[PropertyName.SubmittedDate]; }
@@ -188,6 +192,24 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime CompletedDate
         {
             get { return _CswNbtNode.Properties[PropertyName.CompletedDate]; }
+        }
+
+        public CswNbtNodePropLogical IsFavorite
+        {
+            get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; }
+        }
+        private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
+        {
+            if( IsFavorite.Checked == Tristate.True )
+            {
+                SubmittedDate.setHidden( value: true, SaveToDb: true );
+                CompletedDate.setHidden( value: true, SaveToDb: true );
+            }
+            else
+            {
+                SubmittedDate.setHidden( value: false, SaveToDb: true );
+                CompletedDate.setHidden( value: false, SaveToDb: true );
+            }
         }
 
         #endregion

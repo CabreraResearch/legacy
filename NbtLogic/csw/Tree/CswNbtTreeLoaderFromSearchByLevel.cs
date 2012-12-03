@@ -185,21 +185,31 @@ namespace ChemSW.Nbt
 
         private bool _canViewProp( int NodeTypePropId, int NodeId )
         {
-            bool canView = true;
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-            #region Container Request Button Inventory Group Permission
             
-            CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            if( null != ContainerClass )
-            {
-                CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
-                if( NTProp.ObjectClassPropId == RequestProp.PropId )
-                {
-                    CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                    if( null != CswNbtObjClassContainerInstance )
-                    {
+            // Must have permission to at least one tab where this property appears
+            Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> EditLayouts = NTProp.getEditLayouts();
+            bool canView = EditLayouts.Values.Aggregate( false,
+                                                        ( current, EditLayout ) => current || _CswNbtResources.Permit.canTab( 
+                                                            CswNbtPermit.NodeTypePermission.View, 
+                                                            NTProp.getNodeType(), 
+                                                            _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId ) ) );
 
-                    canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
+            #region Container Request Button Inventory Group Permission
+
+            if( canView )
+            {
+                CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                if( null != ContainerClass )
+                {
+                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
+                    if( NTProp.ObjectClassPropId == RequestProp.PropId )
+                    {
+                        CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                        if( null != CswNbtObjClassContainerInstance )
+                        {
+                            canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
+                        }
                     }
                 }
             }

@@ -17,6 +17,21 @@
             };
             cswPublic = cswPublic || {};
 
+            cswPrivate.domNodeProcessing = function (control) {
+                control = Csw.dom(control);
+                cswPrivate.count += 1;
+                control.$parent = cswPublic.$.parent();
+                control.root = control;
+                control.ID = control.getId();
+                control.parent = function () {
+                    return Csw.domNode(control.$parent[0].id);
+                };
+                $element = control.$;
+                
+                cswPrivate.controlPostProcessing(control);
+                return control;
+            };
+
             cswPrivate.controlPreProcessing = function (opts, controlName) {
                 /* 
                 This is our last chance to capture context for chaining. 
@@ -28,6 +43,8 @@
                 opts.controlName = controlName;
                 opts.$parent = $element;
                 opts.root = cswPublic.root;
+                opts.cssclass = opts.cssclass || '';
+                
                 //This seemed like a good idea, but it fails far too often.
                 //  Since these failures don't correspond to faults in the page, it's not clear that they are meaningful.
                 //Csw.debug.assert(false === Csw.isNullOrEmpty(cswPublic.getId()), 'Parent\'s element id was null or empty.');
@@ -39,6 +56,7 @@
                 //opts.ID = window.Ext.id();
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
                     cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide, isRequired: opts.isRequired });
+                    opts.cssclass += ' CswLabelValue ';
                 }
                 opts.parent = function () {
                     return cswPublic;
@@ -80,11 +98,14 @@
                 return ret;
             };
 
-            if (Csw.isJQuery($element)) {
+            if (null === $element && cswPublic.$ && cswPublic[0]) {
+                cswPrivate.domNodeProcessing(cswPublic);
+            }
+            else if (Csw.isJQuery($element)) {
                 cswPublic = Csw.dom(cswPublic, $element);
                 cswPrivate.controlPostProcessing(cswPublic);
             } else {
-                throw new Error('Cannot directly instance a literals factory without a jQuery element.');
+                Csw.debug.error('Cannot directly instance a literals factory without a DOM element.');
             }
 
             //#endregion cswPrivate

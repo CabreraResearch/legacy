@@ -31,21 +31,21 @@
 
             //constructor
             (function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
+                Csw.extend(cswPrivate, options);
+                
                 cswParent.empty();
+                cswPublic = cswParent.div();
 
                 Csw.each(cswPrivate.menuOptions, function (val, key) {
                     //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
                     cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
                 });
 
-                if (Csw.isElementInDom(cswParent.getId())) {
+                if (Csw.isElementInDom(cswPublic.getId())) {
                     try {
                         cswPublic.menu = window.Ext.create('Ext.button.Split', {
-                            id: cswPrivate.ID + 'splitmenu',
-                            renderTo: cswParent.getId(),
+                            id: cswPublic.getId() + 'splitmenu',
+                            renderTo: cswPublic.getId(),
                             text: cswPrivate.selectedText,
                             handler: cswPrivate.handleMenuItemClick,
                             scale: Csw.string(cswPrivate.size, 'medium'),

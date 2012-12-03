@@ -59,7 +59,7 @@
             var cswPublic = {};
             try {
                 if (Csw.isNullOrEmpty(cswParent)) {
-                    Csw.error.throwException('Cannot create a Button Group without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
+                    Csw.error.throwException('Cannot create a Button Group without a valid Csw Parent object.', 'Csw.controls.buttonGroup', 'csw.buttongroup.js', 62);
                 }
 
                 if (options) {
