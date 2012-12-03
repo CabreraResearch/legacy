@@ -1617,19 +1617,22 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
             } );
 
-            CswNbtView containersView = _CswNbtSchemaModTrnsctn.makeNewView( "Containers", NbtViewVisibility.Property );
-            containersView.SetViewMode( NbtViewRenderingMode.Grid );
+            if( _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Containers in Location" ).Count > 0 )
+            {
+                CswNbtView containersView = _CswNbtSchemaModTrnsctn.makeNewView( "Containers in Location", NbtViewVisibility.Property );
+                containersView.SetViewMode( NbtViewRenderingMode.Grid );
 
-            CswNbtViewRelationship parent = containersView.AddViewRelationship( locationOC, true );
-            CswNbtViewRelationship containerParent = containersView.AddViewRelationship( parent, NbtViewPropOwnerType.Second, containerLocationOCP, true );
-            containersView.AddViewProperty( containerParent, containerBarcodeOCP );
-            containersView.AddViewProperty( containerParent, containerExpirationDateOCP );
-            containersView.AddViewProperty( containerParent, containerMissingOCP );
-            containersView.AddViewProperty( containerParent, containerOwnerOCP );
-            containersView.AddViewProperty( containerParent, containerStatusOCP );
-            containersView.save();
+                CswNbtViewRelationship parent = containersView.AddViewRelationship( locationOC, true );
+                CswNbtViewRelationship containerParent = containersView.AddViewRelationship( parent, NbtViewPropOwnerType.Second, containerLocationOCP, true );
+                containersView.AddViewProperty( containerParent, containerBarcodeOCP );
+                containersView.AddViewProperty( containerParent, containerExpirationDateOCP );
+                containersView.AddViewProperty( containerParent, containerMissingOCP );
+                containersView.AddViewProperty( containerParent, containerOwnerOCP );
+                containersView.AddViewProperty( containerParent, containerStatusOCP );
+                containersView.save();
 
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( containersOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, containersView.ToString() );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( containersOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, containersView.ToString() );
+            }
 
             _resetBlame();
         }
