@@ -47,18 +47,6 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( UriTemplate = "End" )]
-        [FaultContract( typeof( FaultException ) )]
-        [Description( "Terminate the current session" )]
-        public void endPost()
-        {
-            End();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [OperationContract]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
         public void End()
