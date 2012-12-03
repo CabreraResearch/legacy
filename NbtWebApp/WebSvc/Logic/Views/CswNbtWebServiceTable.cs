@@ -9,6 +9,8 @@ using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using ChemSW.Nbt.Search;
+using ChemSW.DB;
+using System.Data;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -16,13 +18,13 @@ namespace ChemSW.Nbt.WebServices
     {
         private const Int32 _MaxLength = 35;
         private const Int32 _NodePerNodeTypeLimit = 3;
-        
+
         private Int32 _FilterToNodeTypeId;
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtView _View;
         private readonly CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private readonly CswNbtSearchPropOrder _CswNbtSearchPropOrder;
-        
+
         public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, CswNbtView View, Int32 NodeTypeId )
         {
             _CswNbtResources = CswNbtResources;
@@ -40,15 +42,15 @@ namespace ChemSW.Nbt.WebServices
             if( _View != null )
             {
                 // Find current max order set in view
-                Int32 maxOrder = ( from ViewRel in _View.Root.ChildRelationships 
-                                   from ViewProp in ViewRel.Properties 
-                                 select ViewProp.Order ).Concat( new[] {0} ).Max();  // thanks Resharper!
+                Int32 maxOrder = ( from ViewRel in _View.Root.ChildRelationships
+                                   from ViewProp in ViewRel.Properties
+                                   select ViewProp.Order ).Concat( new[] { 0 } ).Max();  // thanks Resharper!
 
                 // Set default order for properties in the view without one
-                foreach( CswNbtViewProperty ViewProp in from ViewRel in _View.Root.ChildRelationships 
-                                                        from ViewProp in ViewRel.Properties 
-                                                       where Int32.MinValue == ViewProp.Order 
-                                                      select ViewProp )
+                foreach( CswNbtViewProperty ViewProp in from ViewRel in _View.Root.ChildRelationships
+                                                        from ViewProp in ViewRel.Properties
+                                                        where Int32.MinValue == ViewProp.Order
+                                                        select ViewProp )
                 {
                     ViewProp.Order = maxOrder + 1;
                     maxOrder++;
@@ -203,12 +205,12 @@ namespace ChemSW.Nbt.WebServices
                 TableNode thisNode = new TableNode();
 
                 thisNode.NodeKey = Tree.getNodeKeyForCurrentPosition();
-                
+
                 // Note on FilterToNodeTypeId: 
                 // It would be better to filter inside the view, 
                 // but it's also much more work, and I'm not even sure this feature will be used.
-                
-                if( null != thisNode.NodeKey && 
+
+                if( null != thisNode.NodeKey &&
                     ( Int32.MinValue == _FilterToNodeTypeId || _FilterToNodeTypeId == thisNode.NodeKey.NodeTypeId ) )
                 {
                     thisNode.NodeType = _CswNbtResources.MetaData.getNodeType( thisNode.NodeKey.NodeTypeId );
@@ -219,15 +221,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
-                        // default image, overridden below
-                        if( thisNode.NodeType.IconFileName != string.Empty )
-                        {
-                            thisNode.ThumbnailUrl = CswNbtMetaDataObjectClass.IconPrefix100 + thisNode.NodeType.IconFileName;
-                        }
-                        else
-                        {
-                            thisNode.ThumbnailUrl = "Images/icons/300/_placeholder.gif";
-                        }
+                        thisNode.ThumbnailUrl = _getThumbnailUrl( thisNode.NodeType, thisNode.NodeId );
 
                         thisNode.AllowView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
                         thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
