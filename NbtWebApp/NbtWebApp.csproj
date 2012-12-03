@@ -90,6 +90,7 @@
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -133,6 +134,7 @@
     <Compile Include="Services\Views.svc.cs">
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
+    <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
