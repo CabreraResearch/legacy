@@ -5,6 +5,7 @@ using System.Xml;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -16,8 +17,8 @@ namespace ChemSW.Nbt.PropTypes
             return PropWrapper.AsTimeInterval;
         }
 
-        public CswNbtNodePropTimeInterval( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        public CswNbtNodePropTimeInterval( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             //_RateInterval = new CswRateInterval(CswNbtNodePropData.Gestalt);   //this should be backwards compatible...
             if( CswNbtNodePropData.ClobData.ToString() != string.Empty )

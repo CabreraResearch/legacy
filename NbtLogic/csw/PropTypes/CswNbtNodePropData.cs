@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="column">Target column</param>
         /// <param name="value">New value</param>
         /// <returns>True if any changes were made</returns>
-        public bool SetPropRowValue( CswNbtSubField.PropColumn column, object value )
+        public bool SetPropRowValue( CswNbtSubField.PropColumn column, object value, bool IsNonModifying = false )
         {
             bool ret = false;
             object dbval;
@@ -77,10 +77,13 @@ namespace ChemSW.Nbt.PropTypes
                 if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
                 {
                     _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
-                    WasModified = true;
-                    // don't mark modified if all we're doing is changing PendingUpdate
-                    // see case 27652
-                    WasModifiedForNotification = ( column != CswNbtSubField.PropColumn.PendingUpdate );
+                    if( false == IsNonModifying )
+                    {
+                        WasModified = true;
+                        // don't mark modified if all we're doing is changing PendingUpdate
+                        // see case 27652
+                        WasModifiedForNotification = ( column != CswNbtSubField.PropColumn.PendingUpdate );
+                    }
                     ret = true;
                 }
             }

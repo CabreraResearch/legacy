@@ -21,8 +21,8 @@ namespace ChemSW.Nbt.PropTypes
             return PropWrapper.AsPassword;
         }
 
-        public CswNbtNodePropPassword( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        public CswNbtNodePropPassword( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             _FieldTypeRule = (CswNbtFieldTypeRulePassword) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _EncryptedPasswordSubField = _FieldTypeRule.EncryptedPasswordSubField;
@@ -77,9 +77,11 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 }
 
-                _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
-                ChangedDate = DateTime.Now;
+                if( _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
+                {
+                    _CswNbtNodePropData.Gestalt = value;
+                    ChangedDate = DateTime.Now;
+                }
             }
         }
 

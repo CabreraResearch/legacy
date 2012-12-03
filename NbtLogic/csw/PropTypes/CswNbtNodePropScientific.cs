@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -16,8 +17,8 @@ namespace ChemSW.Nbt.PropTypes
             return PropWrapper.AsScientific;
         }
 
-        public CswNbtNodePropScientific( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        public CswNbtNodePropScientific( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             _FieldTypeRule = (CswNbtFieldTypeRuleScientific) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _BaseSubField = _FieldTypeRule.BaseSubField;

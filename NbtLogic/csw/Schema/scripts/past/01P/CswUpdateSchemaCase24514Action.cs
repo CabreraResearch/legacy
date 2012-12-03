@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Schema
             Int32 SubmitRequestActionId = _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Submit_Request, true, "", "Requests" );
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.Submit_Request );
 
-            CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, null );
+            CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, SystemViewName.CISProRequestCart, null );
 
         }//Update()
 

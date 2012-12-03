@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt
 {
@@ -39,6 +40,9 @@ namespace ChemSW.Nbt
                 deficientInspectionsNode.Hidden = false;
                 deficientInspectionsNode.postChanges( false );
             }
+
+            //Case 28117 - show Future Scheduling
+            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Future_Scheduling );
         }
 
         public override void OnDisable()
@@ -63,6 +67,12 @@ namespace ChemSW.Nbt
             {
                 deficientInspectionsNode.Hidden = true;
                 deficientInspectionsNode.postChanges( false );
+            }
+
+            //Case 28117 - hide Future Scheduling
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) && false   == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            {
+                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
             }
         }
 

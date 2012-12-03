@@ -48,17 +48,17 @@ fields : {
      */
 
     /**
-     * @cfg {Object} itemIconCls
-     * The itemIconCls to be applied to each comparator field item.
+     * @cfg {Object} iconCls
+     * The iconCls to be applied to each comparator field item.
      * Defaults to:<pre>
-itemIconCls : {
+iconCls : {
     gt : 'ux-rangemenu-gt',
     lt : 'ux-rangemenu-lt',
     eq : 'ux-rangemenu-eq'
 }
      * </pre>
      */
-    itemIconCls : {
+    iconCls : {
         gt : 'ux-rangemenu-gt',
         lt : 'ux-rangemenu-lt',
         eq : 'ux-rangemenu-eq'
@@ -136,7 +136,7 @@ menuItemCfgs : {
                     enableKeyEvents: true,
                     hideLabel: false,
                     fieldLabel: me.iconTpl.apply({
-                        cls: me.itemIconCls[item] || 'no-icon',
+                        cls: me.iconCls[item] || 'no-icon',
                         text: me.fieldLabels[item] || '',
                         src: Ext.BLANK_IMAGE_URL
                     }),

@@ -64,7 +64,7 @@
 
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
                 
-                var parent = Csw.literals.factory($('#rptDiv'));
+                var parent = Csw.domNode({ ID: 'rptDiv' });
                 
                 parent.grid({
                     name: 'reportGrid',

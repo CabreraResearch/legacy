@@ -35,22 +35,33 @@
                     cswPrivate.cssclass += ' textinput ';
 
                     cswPrivate.input = cswParent.input(cswPrivate);
+                    cswPrivate.badCheckSumTxt = cswParent.span({ text: 'Checksum is invalid' }).css('color', 'Red').hide();
+                    cswPrivate.invalidTxt = cswParent.span({ text: 'Input is not a valid CASno' }).css('color', 'Red').hide();
+
+                    var highLightInvalid = function (value) {
+                        if ((false == Csw.validateCASNo(value)) && false == (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired)) {
+                            cswPrivate.input.css('background-color', '#FF4000');
+                            cswPrivate.badCheckSumTxt.hide();
+                            cswPrivate.invalidTxt.show();
+                        } else if (false == Csw.checkSumCASNo(value) && false == (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired)) {
+                            cswPrivate.input.css('background-color', '#FF4000');
+                            cswPrivate.invalidTxt.hide();
+                            cswPrivate.badCheckSumTxt.show();
+                        } else {
+                            cswPrivate.input.css('background-color', 'White');
+                            cswPrivate.invalidTxt.hide();
+                            cswPrivate.badCheckSumTxt.hide();
+                        }
+                    }
+
+                    highLightInvalid(cswPrivate.input.val());
+
                     cswPublic = Csw.dom({}, cswPrivate.input);
 
                     cswPublic.bind('change', function () {
                         cswPrivate.value = cswPublic.val();
+                        highLightInvalid(cswPrivate.value);
                     });
-
-                    $.validator.addMethod(cswPrivate.name + '_validateCASNo', function (value, element) {
-                        return Csw.validateCASNo(value) || (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired);
-                    }, "Input must be a valid CASNo");
-                    cswPublic.addClass(cswPrivate.name + '_validateCASNo');
-
-                    $.validator.addMethod(cswPrivate.name + '_CASNoCheckSum', function (value, element) {
-                        return Csw.checkSumCASNo(value) || (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired);
-                    }, "CASNo checksum is invalid");
-                    cswPublic.addClass(cswPrivate.name + '_CASNoCheckSum');
-
 
                     cswPublic.required(cswPrivate.isRequired);
                 } /* else */

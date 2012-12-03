@@ -33,6 +33,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Comments = "Comments";
 
             /// <summary>
+            /// A composite description (<see cref="CswNbtNodePropComposite"/>) of the item.
+            /// </summary>
+            public const string Description = "Description";
+
+            /// <summary>
             /// External Order Number(<see cref="CswNbtNodePropText"/>)
             /// </summary>
             public const string ExternalOrderNumber = "External Order Number";
@@ -98,10 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Type = "Type";
 
-            /// <summary>
-            /// A composite description (<see cref="CswNbtNodePropComposite"/>) of the item.
-            /// </summary>
-            public const string Description = "Description";
+
         }
 
         /// <summary>
@@ -195,8 +197,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Abstract Methods
 
-
-
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
         {
             ItemInstance.Request.setReadOnly( value: IsReadOnly, SaveToDb: true );
@@ -215,6 +215,46 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public abstract string setRequestDescription();
 
+        /// <summary>
+        /// Before write node event for derived classes to implement
+        /// </summary>
+        public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
+
+        /// <summary>
+        /// After write node event for derived classes to implement
+        /// </summary>
+        public abstract void afterPropertySetWriteNode();
+
+        /// <summary>
+        /// Populate props event for derived classes to implement
+        /// </summary>
+        public abstract void afterPropertySetPopulateProps();
+
+        /// <summary>
+        /// Button click event for derived classes to implement
+        /// </summary>
+        public abstract bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData );
+
+        /// <summary>
+        /// Status change event for derived classes to implement
+        /// </summary>
+        public abstract void onStatusPropChange( CswNbtNodeProp Prop );
+
+        /// <summary>
+        /// Type change event for derived classes to implement
+        /// </summary>
+        public abstract void onTypePropChange( CswNbtNodeProp Prop );
+
+        /// <summary>
+        /// Request change event for derived classes to implement
+        /// </summary>
+        public abstract void onRequestPropChange( CswNbtNodeProp Prop );
+
+        /// <summary>
+        /// Mechanism to add default filters in derived classes
+        /// </summary>
+        public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
+
         #endregion Abstract Methods
 
 
@@ -224,7 +264,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
             {
-                CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
                 Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
@@ -240,8 +280,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
-
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
@@ -249,8 +287,6 @@ namespace ChemSW.Nbt.ObjClasses
             Description.StaticText = setRequestDescription();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
-
-        public abstract void afterPropertySetWriteNode();
 
         public override void afterWriteNode()
         {
@@ -288,8 +324,6 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: HideMenuButton, SaveToDb: false );
         }
 
-        public abstract void afterPropertySetPopulateProps();
-
         public override void afterPopulateProps()
         {
             //TODO: Create Mail Report for Status Changes
@@ -298,15 +332,15 @@ namespace ChemSW.Nbt.ObjClasses
             setFulfillVisibility();
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
+            Request.SetOnPropChange( _onRequestPropChange );
             CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            onPropertySetAddDefaultViewFilters( ParentRelationship );
             CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
-
-        public abstract bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData );
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
@@ -381,13 +415,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
-        /// <summary>
-        /// Status change event for derived classes to implement
-        /// </summary>
-        public abstract void onStatusPropChange( CswNbtNodeProp Prop );
-
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
+
+        public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
+        private void _onRequestPropChange( CswNbtNodeProp Prop )
+        {
+            onRequestPropChange( Prop );
+        }
 
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         private void _onTypePropChange( CswNbtNodeProp Prop )
@@ -395,16 +430,16 @@ namespace ChemSW.Nbt.ObjClasses
             onTypePropChange( Prop );
         }
 
-        public abstract void onTypePropChange( CswNbtNodeProp Prop );
+
+
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-        public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
-        public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropRelationship Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
+        public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropSequence Number { get { return _CswNbtNode.Properties[PropertyName.Number]; } }
         public CswNbtNodePropStatic Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }

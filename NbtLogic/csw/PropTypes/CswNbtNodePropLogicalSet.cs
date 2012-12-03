@@ -26,8 +26,8 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Represents the data of a set of checkboxes
         /// </summary>
-        public CswNbtNodePropLogicalSet( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        public CswNbtNodePropLogicalSet( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             if( Empty )
             {
