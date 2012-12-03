@@ -1,17 +1,23 @@
 .CswAction_ActionTable
 {
-    border: 1px solid #99ccff;
+    border: 1px solid #99bce8;
     margin: 10px 0px 0px 10px;
     width: 100%;
 }
 .CswAction_TitleCell
 {
-    background-color: #bbddff;
+    background-color: #D3E1F1;
     font-weight: bold;
     font-size: 1.2em;
     padding: 0px 0px 0px 10px;
     text-align: center;
 }
+.CswAction_HeaderText
+{
+	font-weight: bold;
+	font-size: 18px;
+}
+
 .CswAction_LabelCell
 {
     font-weight: bold;
@@ -19,18 +25,23 @@
 }
 .CswAction_IndexCell
 {
-    background-color: #ddeeff;
+    background-color: #DEECFD;
     width: 0px;
     height: 400px;
 }
 .CswAction_ContentCell
 {
-    border: 10px solid #ddeeff;
-    height: 380px;
+    border: 10px solid #DEECFD;
+    height: 380px; 
+}
+.CswAction_ContentTable
+{
+    margin: 10px;
+    text-align: left;
 }
 .CswAction_ButtonsCell
 {
-    background-color: #ddeeff;
+    background-color: #DEECFD;
     height: 20px;
     padding: 0px 10px 10px 10px;
 }

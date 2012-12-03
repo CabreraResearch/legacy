@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Constructor
         /// </summary>
-        protected CswNbtNodeProp( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp MetaDataNodeTypeProp )
+        protected CswNbtNodeProp( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp MetaDataNodeTypeProp, CswNbtNode Node )
         {
             _CswNbtNodePropData = CswNbtNodePropData;
             //_CswNbtNode = CswNbtNodePropData.Node;

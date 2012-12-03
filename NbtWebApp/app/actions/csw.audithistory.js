@@ -22,10 +22,12 @@
             };
             Csw.extend(cswPrivate, options);
 
-            var cswPublic = { };
+            var cswPublic = {};
             cswParent.empty();
 
             var gridId = cswPrivate.name + '_auditGrid';
+
+
             cswParent.grid({
                 name: gridId,
                 storeId: gridId,
@@ -49,8 +51,7 @@
                         JustDateColumn: cswPrivate.JustDateColumn
                     }
                 },
-                onLoad: function(grid)
-                {
+                onLoad: function (grid) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedDate)) {
                         cswPrivate.preventSelectTrigger = true;
                         var rowid = grid.getRowIdForVal('changedate', cswPrivate.selectedDate.toString());

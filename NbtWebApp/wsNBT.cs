@@ -1415,36 +1415,6 @@ namespace ChemSW.Nbt.WebServices
 
         } // getTreeOfNode()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass, string RelatedToObjectClass, string RelatedToNodeId )
-        {
-            JObject ReturnVal = new JObject();
-
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.getNodes( NodeTypeId, ObjectClassId, ObjectClass, RelatedToObjectClass, RelatedToNodeId );
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-
-        } // getNodes()
-
         #endregion Render Core UI
 
         #region View Editing
@@ -4120,7 +4090,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, SystemViewName.CISProRequestHistory );
                 ReturnVal = ws.getRequestHistory();
 
                 _deInitResources();
@@ -4135,34 +4105,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getRequestHistory()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string submitRequest( string RequestId, string RequestName )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswPrimaryKey NodeId = _getNodeId( RequestId );
-                if( null != NodeId )
-                {
-                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
-                    ReturnVal = ws.submitRequest( NodeId, RequestName );
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // submitRequest()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -4179,7 +4121,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey CopyToNodeId = _getNodeId( CopyToRequestId );
                 if( null != CopyFromNodeId && null != CopyToNodeId )
                 {
-                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, CopyFromNodeId );
+                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, SystemViewName.CISProRequestCart, CopyFromNodeId );
                     ReturnVal = ws.copyRequest( CopyFromNodeId, CopyToNodeId );
                 }
                 _deInitResources();

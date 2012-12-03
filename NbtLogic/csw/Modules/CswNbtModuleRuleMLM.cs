@@ -21,12 +21,13 @@ namespace ChemSW.Nbt
             }
 
             //Turn on all views in the MLM (demo) category
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", NbtViewVisibility.Global);
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", NbtViewVisibility.Global );
 
-            //Case 27866 on enable show Container props...
+            //Case 27866/28156 on enable show Container props...
             //   Lot Controlled
             //   Requisitionable
             //   Reserved For
+            //   Receipt Lot
             CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             foreach( CswNbtMetaDataNodeType containerNT in containerOC.getNodeTypes() )
             {
@@ -43,6 +44,10 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
                 reservedForNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: cmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp receiptLotNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReceiptLot );
+                CswNbtMetaDataNodeTypeTab firstTab = containerNT.getFirstNodeTypeTab();
+                receiptLotNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: firstTab.TabId );
             }
 
             //Case 27864 on enable show Material props...
@@ -83,7 +88,6 @@ namespace ChemSW.Nbt
                     ReceiveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ReceiveTab.TabId );
                 }
             }
-
         }
 
         public override void OnDisable()
@@ -109,6 +113,9 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
                 _CswNbtResources.MetaData.DeleteNodeTypeTab( cmgTab );
+
+                CswNbtMetaDataNodeTypeProp receiptLotNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReceiptLot );
+                receiptLotNTP.removeFromAllLayouts();
             }
 
             //Case 27864 on enable hide Material props...
@@ -123,7 +130,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
                 uNCodeNTP.removeFromAllLayouts();
             }
-            
+
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
             {

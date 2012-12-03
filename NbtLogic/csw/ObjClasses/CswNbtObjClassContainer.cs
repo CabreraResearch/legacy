@@ -202,8 +202,8 @@ namespace ChemSW.Nbt.ObjClasses
             Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );
             Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: true );
             Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: true );
-            Request.setHidden( value: ( IsDisposed || 
-                false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) || 
+            Request.setHidden( value: ( IsDisposed ||
+                false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ||
                 Requisitionable.Checked == Tristate.False ), SaveToDb: true );
 
             _CswNbtObjClassDefault.afterPopulateProps();
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Request:
                         if( canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
                         {
-                            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
                             HasPermission = true;
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
@@ -897,7 +897,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                 {
-                    _createContainerLocationNode(CswNbtObjClassContainerLocation.TypeOptions.Move);
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
                 }
             }
 
@@ -1010,12 +1010,12 @@ namespace ChemSW.Nbt.ObjClasses
                 //}
                 //else
                 //{
-                    Status.Value = Statuses.LabUseOnly;
-                    CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes.GetNode( ReceiptLot.RelatedNodeId );
-                    if( null != ReceiptLotNode )
-                    {
-                        ExpirationDate.DateTimeValue = ReceiptLotNode.ExpirationDate.DateTimeValue;
-                    }
+                Status.Value = Statuses.LabUseOnly;
+                CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes.GetNode( ReceiptLot.RelatedNodeId );
+                if( null != ReceiptLotNode )
+                {
+                    ExpirationDate.DateTimeValue = ReceiptLotNode.ExpirationDate.DateTimeValue;
+                }
                 //}
             }
         }

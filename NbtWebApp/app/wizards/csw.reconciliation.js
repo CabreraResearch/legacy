@@ -593,7 +593,7 @@
             cswPrivate.makeActionPicklist = function (cellId, record) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
-                    var cell = Csw.literals.factory($('#' + cellId));
+                    var cell = Csw.domNode({ ID: cellId });
                     cell.empty();
                     var actionOptions = record.data.actionoptions.split(',');
                     var selectedOption = record.data.currentaction;

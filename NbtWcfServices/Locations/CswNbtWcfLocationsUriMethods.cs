@@ -37,7 +37,7 @@ namespace NbtWebAppServices.WebServices
                 if( Ret.SessionAuthenticationStatus.AuthenticationStatus == AuthenticationStatus.Authenticated.ToString() )
                 {
                     CswNbtResources NbtResources = _CswNbtWcfSessionResources.CswNbtResources;
-                    CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( NbtResources, CswNbtActSystemViews.SystemViewName.SILocationsList, null );
+                    CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( NbtResources, SystemViewName.SILocationsList, null );
                     CswNbtView LocationsListView = LocationSystemView.SystemView;
                     ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( LocationsListView, true, false, false );
                     Int32 LocationCount = Tree.getChildNodeCount();

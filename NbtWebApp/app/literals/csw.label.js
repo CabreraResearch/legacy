@@ -39,9 +39,6 @@
                 Csw.extend(cswPrivate, options);
                 
                 var cssClass = 'CswLabel ' + cswPrivate.cssclass;
-                if (cswPrivate.useWide) {
-                    cssClass += ' CswLabelWide';
-                }
                 
                 html += '<label ';
                 attr.add('id', cswPrivate.ID);

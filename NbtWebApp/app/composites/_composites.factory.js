@@ -110,6 +110,15 @@
                     return Csw.composites.quantity(cswParent, opts);
                 };
 
+                cswParent.tabStrip = function (opts) {
+                    /// <summary> Creates a Csw.tabStrip on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the tabStrip.</param>
+                    /// <returns type="Csw.composites.tabStrip">A Csw.composites.tabStrip</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'tabStrip');
+                    return Csw.composites.tabStrip(cswParent, opts);
+                };
+
+
                 cswParent.thinGrid = function (opts) {
                     /// <summary> Creates a Csw.thinGrid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the thinGrid.</param>

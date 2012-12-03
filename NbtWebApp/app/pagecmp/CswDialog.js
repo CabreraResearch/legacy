@@ -575,7 +575,8 @@
                 onRefresh: null,
                 onClose: null,
                 onAfterButtonClick: null,
-                date: '' // viewing audit records
+                date: '', // viewing audit records
+                editMode: Csw.enums.editMode.EditInPopup
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
@@ -596,21 +597,7 @@
             cswPublic.title = title;
 
             cswDlgPrivate.onOpen = function () {
-                var myEditMode = Csw.enums.editMode.EditInPopup;
                 var table = cswPublic.div.table({ width: '100%' });
-                if (false === Csw.isNullOrEmpty(cswDlgPrivate.date) && false === cswDlgPrivate.Multi) {
-                    myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
-                    Csw.actions.auditHistory(table.cell(1, 1), {
-                        name: 'history',
-                        nodeid: cswDlgPrivate.currentNodeId,
-                        nodekey: cswDlgPrivate.currentNodeKey,
-                        onEditNode: cswDlgPrivate.onEditNode,
-                        JustDateColumn: true,
-                        selectedDate: cswDlgPrivate.date,
-                        onSelectRow: function (date) { setupTabs(date); },
-                        allowEditRow: false
-                    });
-                }
                 var tabCell = table.cell(1, 2);
 
                 setupTabs(cswDlgPrivate.date);
@@ -631,7 +618,7 @@
                         },
                         tabState: {
                             ReadOnly: cswDlgPrivate.ReadOnly,
-                            EditMode: myEditMode,
+                            EditMode: cswDlgPrivate.editMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                         },
 

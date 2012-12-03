@@ -93,7 +93,7 @@
                 return cswPublic;
             };
 
-            cswPublic.removeOption = function (valueToRemove) {
+            cswPublic.removeOption = function(valueToRemove) {
                 cswPrivate.values.splice(cswPrivate.values.indexOf(valueToRemove), 1); //removes the item from the list
                 var selectControl = document.getElementById(cswPrivate.ID);
                 for (var i = 0; i < selectControl.length; i++) {
@@ -101,7 +101,7 @@
                         selectControl.remove(i);
                     }
                 }
-            }
+            };
 
             cswPublic.option = function (optionOpts) {
                 var optInternal = {

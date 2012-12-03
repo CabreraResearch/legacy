@@ -5,7 +5,6 @@ using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
-
     /// <summary>
     /// Nbt Object Class Name
     /// </summary>
@@ -106,7 +105,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public static implicit operator string( NbtObjectClass item )
         {
-            return item.Value;
+            return ( null != item ) ? item.Value : CswNbtResources.UnknownEnum;
         }
 
         /// <summary>
@@ -121,9 +120,6 @@ namespace ChemSW.Nbt.MetaData
 
         #region Enum members
 
-        /// <summary>
-        /// Enum member 1
-        /// </summary>
         public const string AliquotClass = "AliquotClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
