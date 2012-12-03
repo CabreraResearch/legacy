@@ -9,7 +9,7 @@
     <AssemblyName>NbtLogic</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <JSLintSkip>\csw\Schema\scripts\tests\</JSLintSkip>
+    <JSLintSkip>\csw\Schema\scripts\tests\|\csw\Schema\scripts\past\01P\</JSLintSkip>
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>ChemSW.Nbt</RootNamespace>
@@ -71,6 +71,19 @@
     <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
@@ -100,14 +113,184 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
+    <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28254.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28260.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27947_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27867_part2.cs" />
+    <Compile Include="csw\Actions\CswNbtContainerDataContract.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerDispense.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpContainerReconciliationActions.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassContainerGroup.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28146.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerUpdate.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropCASNo.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassContainerLocation.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerReconciliationActions.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRequestMaterialCreate.cs" />
+    <Compile Include="csw\PropertySets\CswNbtPropertySetGeneratorTarget.cs" />
+    <Compile Include="csw\PropertySets\CswNbtPropertySetRequestItem.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24441.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24446Action.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24446Action2.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24446Container.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24485.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24486.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24507.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24508.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24508B.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24508C.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24508D.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24514Action.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24514NodeType.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24514NodeType1.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24514ObjectClass.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24514RequestButton.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24517CurrentQuantity.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24517InventoryLevels.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24517InventoryLevelsViews.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24523.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24645.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25118.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25291GHS.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25449.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25759.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25814.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25815.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25838.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25898.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase25978.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26111.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26410.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26423.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26471.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26523.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26524.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26550.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26572.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26575.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26579.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26584.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26609.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26665.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26683.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26692SetPreferred.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26697.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26714.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26714MakeUserManaged.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26720.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26731.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26757.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26758Fix.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26758RequestButton.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26763.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26772.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26806.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26829.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26831.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26833.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26834.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26835.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26837.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26867.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26887.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26896.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26965.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26965B.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26974.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase26975.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27045.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27046.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27055.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27063.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27064.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27071RequestFulfillment.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27071RequestItem.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27071RequestItem2.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27071RequestItemProps.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27071RequestItemProps2.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27077.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27088.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27119.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27145.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27147.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27155.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27178.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27223.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27230.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27263.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27263Case27153.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27270.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27327.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27330.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27391.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27423.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27423Part1.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27423Part2.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase27434.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase7608.cs" />
+    <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase9111.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchemaCase27145.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchemaCase27401.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchemaCase27513.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchemaCase27523.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchemaCase27612.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchema_MaterialComponents_Case27462.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchema_PrintLabels_Case26704.cs" />
+    <Content Include="csw\Schema\scripts\past\01Q\CswUpdateSchema_Requesting_Case27470.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase24525.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase24632.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase26924.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27145.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27274.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27278.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27401.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27401_part2.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27431.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27432.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27439.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27439_Part2.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27493.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27500.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27513.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27523.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27538.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27548.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27549.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27551.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27612.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27622.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27628.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase27939.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchemaCase_GridsAndButtons_27479.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Documents_Case27435.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Logging_Case27504.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_MaterialComponents_Case27462.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_MSDS_Case27435.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_PrintLabels_Case26704.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Requesting_Case27470.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Requesting_Case27542.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_RequestItem_Case27488.cs" />
+    <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Size_Case27438.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27551.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28156.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28117.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28075.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28249.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28196.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27864_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27864.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24524.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28020.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489_Part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28069.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27866.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27912.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27920.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
@@ -120,14 +303,18 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemType.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27881.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27876.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28046.cs" />
+    <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27884.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27709.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28016_2.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28016.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27742.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28002.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27709.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28016_2.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28016.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27742.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28002.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
     <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
@@ -242,7 +429,6 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleFactory.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleIMCS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleMLM.cs" />
-    <Compile Include="csw\Modules\CswNbtModuleRuleMobile.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleNBTManager.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSI.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />
@@ -290,7 +476,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryList.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassReport.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequest.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassRequestItem.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRequestMaterialDispense.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassResult.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRole.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassSample.cs" />
@@ -338,7 +524,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropSequence.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropStatic.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropText.cs" />
-    <Compile Include="csw\PropTypes\CswNbtNodePropTime.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropTimeInterval.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropUserSelect.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropViewPickList.cs" />
@@ -348,7 +533,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOptions.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropSetCaster.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
-    <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
@@ -385,37 +569,37 @@
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case26760.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchemaCaseXXXXX.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case26760.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27528.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27551_part2.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27578.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27578_part2.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27629.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27632.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27646.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27647.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27648.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27665.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27670.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27691.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27703.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720_part2.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720_part3.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720_part4.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27751.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27769.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27779_part1.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27779_part2.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27780.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27800.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27858.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27904.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_DevModule_Case27759.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_MobileModule_Case27859.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27551_part2.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27578.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27578_part2.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27629.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27632.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27646.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27647.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27648.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27665.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27670.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27691.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27703.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720_part2.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720_part3.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27720_part4.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27751.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27769.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27779_part1.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27779_part2.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27780.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27800.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27858.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27904.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_DevModule_Case27759.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_MobileModule_Case27859.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27606.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27694.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27740.cs" />
@@ -690,7 +874,7 @@
     </Compile>
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
-    <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
+    <Compile Include="csw\Actions\CswNbtActRequesting.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Batch\CswNbtBatchEnums.cs" />
     <Compile Include="csw\Batch\CswNbtBatchManager.cs" />

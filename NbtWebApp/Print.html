@@ -33,7 +33,7 @@
 
             cswPrivate.table = cswPublic.table();
             cswPrivate.queryString = Csw.queryString();
-            cswPrivate.processingDiv = Csw.literals.factory($('#processing'));
+            cswPrivate.processingDiv = Csw.domNode({ ID: 'processing' });
 
             cswPrivate.doPrint = function () {
                 var processingNow = cswPrivate.processingDiv.div();
@@ -82,7 +82,7 @@
                             }
                         });
 
-                        var refresh = Csw.literals.factory($('#footer'));
+                        var refresh = Csw.domNode({ ID: 'footer' });
                         refresh.buttonExt({
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
                             size: 'small',

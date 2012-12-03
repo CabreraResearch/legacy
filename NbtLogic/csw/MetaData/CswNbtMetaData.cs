@@ -729,8 +729,8 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         /// <param name="NodeType">Node Type for new tab</param>
         /// <param name="TabName">Name of new tab</param>
-        /// <param name="TabOrder">Order value for new tab</param>
-        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder )
+        /// <param name="TabOrder">(Optional) Order value for new tab. If omitted, tab order will use getNextTabOrder().</param>
+        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder = Int32.MinValue )
         {
             if( TabName == "" )
                 throw new CswDniException( ErrorType.Warning, "New Tabs must have a non-blank name",
@@ -750,7 +750,7 @@ namespace ChemSW.Nbt.MetaData
             Row["tabname"] = TabName;
             if( Int32.MinValue == TabOrder )
             {
-                TabOrder = NodeType.GetMaximumTabOrder() + 1;
+                TabOrder = NodeType.getNextTabOrder();
             }
             Row["taborder"] = CswConvert.ToDbVal( TabOrder );
             Row["includeinnodereport"] = CswConvert.ToDbVal( true );
@@ -1443,7 +1443,6 @@ namespace ChemSW.Nbt.MetaData
                 prop.ValidateValues();
             }
 
-
         }//DeleteNodeType()
 
 
@@ -1529,6 +1528,7 @@ namespace ChemSW.Nbt.MetaData
                         Table.Rows.Remove( DoomedRow );
                     }
                 }
+
 
                 CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
                 DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );

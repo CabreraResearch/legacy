@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
             CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
 
             #region PART 1 - BUTTON NAMING AND LIST OPTIONS

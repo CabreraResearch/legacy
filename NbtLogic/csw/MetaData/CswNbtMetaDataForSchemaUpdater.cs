@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -14,13 +15,14 @@ namespace ChemSW.Nbt.MetaData
         // the CswNbtResources.MetaData collection does.  This ensures that the 
         // two collections will be using the same source data and will 
         // remain in synch when changes are made.
-
+        private CswNbtSchemaModTrnsctn _SchemaModTrnsctn = null;
         /// <summary>
         /// Meta data collection with extra functionality for schema updater
         /// </summary>
-        public CswNbtMetaDataForSchemaUpdater( CswNbtResources Resources, CswNbtMetaDataResources MetaDataResources )
+        public CswNbtMetaDataForSchemaUpdater( CswNbtResources Resources, CswNbtMetaDataResources MetaDataResources, CswNbtSchemaModTrnsctn SchemaModTrnsctn )
             : base( Resources, MetaDataResources, false )  // Schema updater should always see all object classes, regardless of modules
         {
+            _SchemaModTrnsctn = SchemaModTrnsctn;
         }
 
         /// <summary>
@@ -159,6 +161,7 @@ namespace ChemSW.Nbt.MetaData
         } // makeMissingNodeTypeProps()
 
 
+
         /// <summary>
         /// Deletes an object class prop and all nodetype props from the database and metadata collection
         /// </summary>
@@ -218,6 +221,8 @@ namespace ChemSW.Nbt.MetaData
 
             _CswNbtMetaDataResources.ObjectClassPropsCollection.clearCache();
 
+            //Delete associated modules
+            _SchemaModTrnsctn.deleteAllModuleObjectClassJunctions( ObjectClass );
             // Delete the Object Class
             ObjectClass._DataRow.Delete();
             _CswNbtMetaDataResources.ObjectClassTableUpdate.update( ObjectClass._DataRow.Table );

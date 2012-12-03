@@ -19,7 +19,7 @@
                 relatednodetypeid: '',
                 relatedobjectclassid: '',
                 hasMenu: true,
-                ReadOnly: false,
+                readonly: false,
                 height: 200
             };
             if (options) Csw.extend(cswPrivate, options);
@@ -67,10 +67,11 @@
                     viewid: viewid,
                     nodeid: cswPrivate.nodeid,
                     nodekey: cswPrivate.nodekey,
-                    readonly: cswPrivate.ReadOnly,
+                    readonly: cswPrivate.readonly,
                     canSelectRow: cswPrivate.canSelectRow,
                     forceFit: cswPrivate.forceFit,
                     onSelect: cswPrivate.onSelect,
+                    showCheckboxes: cswPrivate.showCheckboxes,
                     showActionColumn: cswPrivate.showActionColumn,
                     showEdit: cswPrivate.showEdit,
                     showDelete: cswPrivate.showDelete,

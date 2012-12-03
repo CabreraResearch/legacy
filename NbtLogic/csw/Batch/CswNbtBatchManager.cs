@@ -130,6 +130,19 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpExpiredContainers( CswNbtResources );
                 }
+                else if( OpName == NbtBatchOpName.MolFingerprints )
+                {
+                    op = new CswNbtBatchOpMolFingerprints( CswNbtResources );
+                }
+                else if( OpName == NbtBatchOpName.ContainerReconciliationActions )
+                {
+                    op = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
+                }
+                                else if( OpName == NbtBatchOpName.SyncLocation )
+                {
+                    op = new CswNbtBatchOpSyncLocation( CswNbtResources );
+                }
+
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )

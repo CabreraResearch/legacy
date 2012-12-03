@@ -106,6 +106,12 @@ namespace ChemSW.Nbt.PropTypes
         public string ObjectClassPropName { get { return ( _CswNbtNodeProp.ObjectClassPropName ); } }
         public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
         public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } }
+
+        /// <summary>
+        /// Mark a Node's property as Hidden. 
+        /// </summary>
+        /// <param name="value">True to hide, false to show</param>
+        /// <param name="SaveToDb">If true and the value is different from the value in the database, write this to jct_nodes_props</param>
         public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
         public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
         public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } set { _CswNbtNodePropData.Field2 = value; } }
@@ -195,6 +201,11 @@ namespace ChemSW.Nbt.PropTypes
                 return _CswNbtNodePropData.ReadOnly;
             }
         }
+        /// <summary>
+        /// Mark a Node's property as ReadOnly. 
+        /// </summary>
+        /// <param name="value">True to write protect, false to enable write</param>
+        /// <param name="SaveToDb">If true and the value is different from the value in the database, write this to jct_nodes_props</param>
         public void setReadOnly( bool value, bool SaveToDb )
         {
             _CswNbtNodePropData.setReadOnly( value, SaveToDb );
@@ -364,6 +375,16 @@ namespace ChemSW.Nbt.PropTypes
                 if( !( _CswNbtNodeProp is CswNbtNodePropBlob ) )
                     throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropBlob ) ) ) );
                 return ( (CswNbtNodePropBlob) _CswNbtNodeProp );
+            }
+        }//Blob
+
+        public CswNbtNodePropCASNo AsCASNo
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropCASNo ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropCASNo ) ) ) );
+                return ( (CswNbtNodePropCASNo) _CswNbtNodeProp );
             }
         }//Blob
 

@@ -127,13 +127,15 @@
 
     Csw.enums.nbtButtonAction = Csw.enums.nbtButtonAction ||
         Csw.enums.register('nbtButtonAction', {
+            creatematerial: 'creatematerial',
             dispense: 'dispense',
             reauthenticate: 'reauthenticate',
-            //home: 'home',
+            move: 'move',
             receive: 'receive',
             refresh: 'refresh',
             popup: 'popup',
             request: 'request',
+            landingPage: 'landingpage',
             loadView: 'loadview',
             editprop: 'editprop',
             nothing: 'nothing'
@@ -410,6 +412,12 @@
             },
             Button: {
                 name: 'Button',
+                subfields: {
+                    Text: Csw.enums.subFieldNames.Text
+                }
+            },
+            CASNo: {
+                name: 'CASNo',
                 subfields: {
                     Text: Csw.enums.subFieldNames.Text
                 }

@@ -1,3 +1,4 @@
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt
 {
@@ -30,6 +31,9 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( false, "equipmgr" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "equipuser" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "technician" );
+
+            //Case 28117 - show Future Scheduling
+            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Future_Scheduling );
         }
 
         public override void OnDisable()
@@ -50,7 +54,11 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "equipuser" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "technician" );
 
-
+            //Case 28117 - hide Future Scheduling
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            {
+                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
+            }
 
         }
 

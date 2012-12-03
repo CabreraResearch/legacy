@@ -1,6 +1,7 @@
 
 using System;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -79,6 +80,12 @@ namespace ChemSW.Nbt.Schema
 
             #endregion TITANIA
 
+            #region URSULA
+
+            _makeMolKeysTable();
+
+            #endregion URSULA
+
         }//Update()
 
         private void _changeWelcomeTableToLandingPageTable()
@@ -123,6 +130,25 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.renameColumn( "landingpage", OldName, NewName );
             }
+        }
+
+        private void _makeMolKeysTable()
+        {
+            #region Create fingerprint table
+            _acceptBlame( CswDeveloper.MB, 24524 );
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "mol_keys" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( "mol_keys", "nodeid" );
+
+                for( int i = 0; i < CswStructureSearch.keySize; i++ )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "mol_keys", "key" + i, "key" + i + "for the mol fingerprint", false, false );
+                }
+
+                _CswNbtSchemaModTrnsctn.addLongColumn( "mol_keys", "atomcount", "the total number of atoms in this mol fingerprint", false, false );
+            }
+            _resetBlame();
+            #endregion
         }
 
     }//class RunBeforeEveryExecutionOfUpdater_01

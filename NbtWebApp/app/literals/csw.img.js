@@ -39,12 +39,8 @@
 
             var $img;
 
-            if (options) {
-                Csw.extend(cswPrivate, options);
-            }
-
-            cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
-
+            Csw.extend(cswPrivate, options);
+            
             html += '<img ';
             attr.add('id', cswPrivate.ID);
             attr.add('class', cswPrivate.cssclass);

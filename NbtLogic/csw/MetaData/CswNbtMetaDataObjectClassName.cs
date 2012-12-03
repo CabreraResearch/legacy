@@ -5,7 +5,6 @@ using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
-
     /// <summary>
     /// Nbt Object Class Name
     /// </summary>
@@ -21,7 +20,9 @@ namespace ChemSW.Nbt.MetaData
             { CofAMethodClass                   , CofAMethodClass                    },
             { CofAMethodTemplateClass           , CofAMethodTemplateClass            },
             { ContainerClass                    , ContainerClass                     },
+            { ContainerLocationClass            , ContainerLocationClass             },
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
+            { ContainerGroupClass               , ContainerGroupClass                },
             { CustomerClass                     , CustomerClass                      },
             { DocumentClass                     , DocumentClass                      },
             { EnterprisePartClass               , EnterprisePartClass                },
@@ -39,7 +40,7 @@ namespace ChemSW.Nbt.MetaData
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
-            {ManufacturerEquivalentPartClass    , ManufacturerEquivalentPartClass    },
+            { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
             { MaterialClass                     , MaterialClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
@@ -54,7 +55,10 @@ namespace ChemSW.Nbt.MetaData
             { ReportClass                       , ReportClass                        },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
-            { RequestItemClass                  , RequestItemClass                   },
+            { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
+            { RequestContainerUpdateClass       , RequestContainerUpdateClass        },
+            { RequestMaterialCreateClass        , RequestMaterialCreateClass         },
+            { RequestMaterialDispenseClass      , RequestMaterialDispenseClass       },
             { RoleClass                         , RoleClass                          },
             { SampleClass                       , SampleClass                        },
             { SizeClass                         , SizeClass                          },
@@ -63,7 +67,7 @@ namespace ChemSW.Nbt.MetaData
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
-            {  WorkUnitClass                    , WorkUnitClass                     }
+            {  WorkUnitClass                    , WorkUnitClass                      }
         };
         /// <summary>
         /// The string value of the current instance
@@ -101,7 +105,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public static implicit operator string( NbtObjectClass item )
         {
-            return item.Value;
+            return ( null != item ) ? item.Value : CswNbtResources.UnknownEnum;
         }
 
         /// <summary>
@@ -116,16 +120,15 @@ namespace ChemSW.Nbt.MetaData
 
         #region Enum members
 
-        /// <summary>
-        /// Enum member 1
-        /// </summary>
         public const string AliquotClass = "AliquotClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
         public const string CofAMethodClass = "CofAMethodClass";
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
         public const string ContainerClass = "ContainerClass";
+        public const string ContainerLocationClass = "ContainerLocationClass";
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
+        public const string ContainerGroupClass = "ContainerGroupClass";
         public const string CustomerClass = "CustomerClass";
         public const string DocumentClass = "DocumentClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
@@ -159,7 +162,10 @@ namespace ChemSW.Nbt.MetaData
         public const string ReportClass = "ReportClass";
         public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";
-        public const string RequestItemClass = "RequestItemClass";
+        public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";
+        public const string RequestContainerUpdateClass = "RequestContainerUpdateClass";
+        public const string RequestMaterialDispenseClass = "RequestMaterialDispenseClass";
+        public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
         public const string SampleClass = "SampleClass";
         public const string SizeClass = "SizeClass";

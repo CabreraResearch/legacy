@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Name = "Name";
             public const string SubmittedDate = "Submitted Date";
             public const string CompletedDate = "Completed Date";
+            public const string IsFavorite = "Is Favorite";
         }
 
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
@@ -61,9 +62,9 @@ namespace ChemSW.Nbt.ObjClasses
                     for( Int32 N = 0; N < RequestItemNodeCount; N += 1 )
                     {
                         Tree.goToNthChild( N );
-                        CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes.GetNode( Tree.getNodeIdForCurrentPosition() );
-                        NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Submitted;
-                        NodeAsRequestItem.postChanges( true );
+                        CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes.GetNode( Tree.getNodeIdForCurrentPosition() );
+                        NodeAsPropSet.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
+                        NodeAsPropSet.postChanges( true );
                         Tree.goToParentNode();
                     }
                 }
@@ -89,13 +90,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            IsFavorite.SetOnPropChange( onIsFavortiteChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
-            CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor.ToString() );
+            CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
+            CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, "me" );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Tristate.False.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -122,18 +126,24 @@ namespace ChemSW.Nbt.ObjClasses
         private ICswNbtTree _getRelatedRequestItemsTree( bool FilterByPending = false )
         {
             CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
-            CswNbtMetaDataObjectClassProp RequestOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
-            CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RequestItemOc, false );
-            if( FilterByPending )
+
+            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
-                RequestItemView.AddViewPropertyAndFilter( RiRelationship,
-                                                          RequestItemOc.getObjectClassProp(
-                                                              CswNbtObjClassRequestItem.PropertyName.Status ),
-                                                          CswNbtObjClassRequestItem.Statuses.Pending,
-                                                          FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
+                CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
+                CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( MemberOc, false );
+                if( FilterByPending )
+                {
+                    RequestItemView.AddViewPropertyAndFilter( RiRelationship,
+                                                              MemberOc.getObjectClassProp(
+                                                                  CswNbtPropertySetRequestItem.PropertyName.Status ),
+                                                              CswNbtPropertySetRequestItem.Statuses.Pending,
+                                                              FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                }
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, RequestOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
             }
-            RequestItemView.AddViewPropertyAndFilter( RiRelationship, RequestOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
+
+
             ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
             return RequestItemTree;
         }
@@ -146,10 +156,10 @@ namespace ChemSW.Nbt.ObjClasses
                 for( Int32 N = 0; N < RequestItemTree.getChildNodeCount(); N += 1 )
                 {
                     RequestItemTree.goToNthChild( N );
-                    CswNbtObjClassRequestItem NodeAsRequestItem = RequestItemTree.getNodeForCurrentPosition();
-                    if( null != NodeAsRequestItem )
+                    CswNbtPropertySetRequestItem NodeAsPropSet = RequestItemTree.getNodeForCurrentPosition();
+                    if( null != NodeAsPropSet )
                     {
-                        if( ChemSW.Nbt.ObjClasses.CswNbtObjClassRequestItem.Statuses.Completed != NodeAsRequestItem.Status.Value )
+                        if( CswNbtPropertySetRequestItem.Statuses.Completed != NodeAsPropSet.Status.Value )
                         {
                             allRequestItemsCompleted = false;
                         }
@@ -173,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
-
+        
         public CswNbtNodePropDateTime SubmittedDate
         {
             get { return _CswNbtNode.Properties[PropertyName.SubmittedDate]; }
@@ -182,6 +192,24 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime CompletedDate
         {
             get { return _CswNbtNode.Properties[PropertyName.CompletedDate]; }
+        }
+
+        public CswNbtNodePropLogical IsFavorite
+        {
+            get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; }
+        }
+        private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
+        {
+            if( IsFavorite.Checked == Tristate.True )
+            {
+                SubmittedDate.setHidden( value: true, SaveToDb: true );
+                CompletedDate.setHidden( value: true, SaveToDb: true );
+            }
+            else
+            {
+                SubmittedDate.setHidden( value: false, SaveToDb: true );
+                CompletedDate.setHidden( value: false, SaveToDb: true );
+            }
         }
 
         #endregion

@@ -108,13 +108,16 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly NbtButtonAction Unknown = new NbtButtonAction( "Unknown" );
 
             public static readonly NbtButtonAction editprop = new NbtButtonAction( "editprop" );
+            public static readonly NbtButtonAction creatematerial = new NbtButtonAction( "creatematerial" );
             public static readonly NbtButtonAction dispense = new NbtButtonAction( "dispense" );
+            public static readonly NbtButtonAction move = new NbtButtonAction( "move" );
             public static readonly NbtButtonAction reauthenticate = new NbtButtonAction( "reauthenticate" );
             public static readonly NbtButtonAction refresh = new NbtButtonAction( "refresh" );
             public static readonly NbtButtonAction receive = new NbtButtonAction( "receive" );
             public static readonly NbtButtonAction request = new NbtButtonAction( "request" );
             public static readonly NbtButtonAction popup = new NbtButtonAction( "popup" );
-            public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadView" );
+            public static readonly NbtButtonAction landingpage = new NbtButtonAction( "landingpage" );
+            public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadview" );
             public static readonly NbtButtonAction nothing = new NbtButtonAction( "nothing" );
         }
 

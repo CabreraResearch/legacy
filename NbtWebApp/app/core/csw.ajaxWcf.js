@@ -135,18 +135,18 @@
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
         cswInternal.startTime = new Date();
         if(false === Csw.isNullOrEmpty(cswInternal.data)) {
-            if (verb === 'POST') {
-                cswInternal.data = Csw.serialize(cswInternal.data);
+            if (verb === 'GET') {
+                cswInternal.data = Csw.params(cswInternal.data);
             }
             else {
-                cswInternal.data = Csw.params(cswInternal.data);
+                cswInternal.data = Csw.serialize(cswInternal.data);
             }
         }
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
         cswExternal.ajax = $.ajax({
             type: verb,
-            url: cswInternal.urlMethod,
+            url: 'Services/' + cswInternal.urlMethod,
             xhrFields: {
                 withCredentials: true
             },

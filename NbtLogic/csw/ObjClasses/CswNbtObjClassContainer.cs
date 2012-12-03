@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -8,10 +9,7 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
-using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using ChemSW.Config;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -36,12 +34,15 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Undispose = "Undispose";
             public const string Owner = "Owner";
             public const string ContainerFamily = "Container Family";
+            public const string ReceiptLot = "Receipt Lot";
+            public const string LotControlled = "Lot Controlled";
+            public const string Requisitionable = "Requisitionable";
+            public const string ContainerGroup = "Container Group";
+            public const string LabelFormat = "Label Format";
+            public const string ReservedFor = "Reserved For";
+            public const string DateCreated = "Date Created";
         }
 
-        private bool _IsDisposed
-        {
-            get { return Disposed.Checked == Tristate.True; }
-        }
         public sealed class RequestMenu
         {
             public const string Move = "Request Move";
@@ -110,14 +111,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public void updateRequestMenu()
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            bool IsDisposed = Disposed.Checked == Tristate.True;
+            // update Request Menu
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
-            if( false == IsDisposed )
+            if( Tristate.True != Disposed.Checked )
             {
                 MenuOpts.Add( RequestMenu.Move );
-                if( Missing.Checked != Tristate.True && Quantity.Quantity > 0 )
+                if( Tristate.True != Missing.Checked && Quantity.Quantity > 0 )
                 {
                     MenuOpts.Add( RequestMenu.Dispense );
                 }
@@ -125,11 +126,43 @@ namespace ChemSW.Nbt.ObjClasses
             }
             Request.State = RequestMenu.Move;
             Request.MenuOptions = MenuOpts.ToString();
-        }
+            if( DateTime.MinValue == DateCreated.DateTimeValue )
+            {
+                DateCreated.DateTimeValue = DateTime.Now;
+            }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            updateRequestMenu();
+            // Case 28206: Setting Location of Container based on Container Group
+            // Note: If the Location and Container Group are both set on a Container,
+            // then the Container Group location overrides the user set location.
+            if( this.ContainerGroup.WasModified &&
+                this.ContainerGroup.RelatedNodeId != null &&
+                ( this.ContainerGroup.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
+            {
+                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
+
+                if( null != NewGroupNode )
+                {
+                    if( Tristate.True == NewGroupNode.SyncLocation.Checked )
+                    {
+                        this.Location.SelectedNodeId = NewGroupNode.Location.SelectedNodeId;
+                        this.Location.RefreshNodeName();
+                    }
+                }
+            }
+            else if( this.Location.WasModified &&
+                     this.Location.SelectedNodeId != null &&
+                     ( this.Location.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
+            {
+                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
+
+                if( null != NewGroupNode )
+                {
+                    if( Tristate.True == NewGroupNode.SyncLocation.Checked && ( this.Location.SelectedNodeId != NewGroupNode.Location.SelectedNodeId ) )
+                    {
+                        this.ContainerGroup.RelatedNodeId = null;
+                    }
+                }
+            }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -140,7 +173,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {            
+        {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
@@ -157,31 +190,29 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Material.SetOnPropChange( OnMaterialPropChange );
             Dispose.SetOnPropChange( OnDisposedPropChange );
-            OnDisposedPropChange( Dispose );
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
             SourceContainer.SetOnPropChange( OnSourceContainerChange );
             Barcode.SetOnPropChange( OnBarcodePropChange );
-            _toggleButtonVisibility();
+            LotControlled.SetOnPropChange( OnLotControlledPropChange );
+
+            bool IsDisposed = ( Disposed.Checked == Tristate.True );
+            //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
+            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );
+            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: true );
+            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: true );
+            Request.setHidden( value: ( IsDisposed ||
+                false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ||
+                Requisitionable.Checked == Tristate.False ), SaveToDb: true );
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
-
-        private void _toggleButtonVisibility( bool SaveToDb = false )
-        {
-            Dispense.setHidden( value: ( _IsDisposed || false == canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: SaveToDb );
-            Dispose.setHidden( value: ( _IsDisposed || false == canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: SaveToDb );
-            Undispose.setHidden( value: ( false == _IsDisposed || false == canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: SaveToDb );
-            Request.setHidden( value: ( _IsDisposed || false == canContainer( NodeId, CswNbtPermit.NodeTypePermission.View, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: SaveToDb );
-        }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             // Disposed == false
             CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( PropertyName.Disposed );
-
-            //ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, DisposedOCP, Tristate.False.ToString() );
-
             CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
             viewProp.ShowInGrid = false;
             ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, Value: Tristate.False.ToString() );
@@ -198,7 +229,7 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCP.PropName )
                 {
                     case PropertyName.Dispose:
-                        if( canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
                         {
                             HasPermission = true;
                             DisposeContainer(); //case 26665
@@ -207,7 +238,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Undispose:
-                        if( canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
                         {
                             HasPermission = true;
                             UndisposeContainer();
@@ -216,7 +247,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Dispense:
-                        if( canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) )
                         {
                             HasPermission = true;
                             //ActionData = this.NodeId.ToString();
@@ -225,17 +256,17 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Request:
-                        if( canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
                         {
-                            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
                             HasPermission = true;
 
-                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
+                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
 
-                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsRequestItem.Type.Value + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                            ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
+                            ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
                         }
                         break;
                     case PropertyName.ContainerFamily:
@@ -264,21 +295,34 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        public bool canContainer( CswPrimaryKey ContainerNodeId, CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action )
+        public bool canContainer( CswNbtPermit.NodeTypePermission Permission, ICswNbtUser User = null )
         {
-            return canContainer( ContainerNodeId, Permission, Action, _CswNbtResources.CurrentNbtUser );
+            return _canContainer( Permission, null, User );
+        }
+        /// <summary>
+        /// Check container permissions.  Provide one of Permission or Action.
+        /// </summary>
+        public bool canContainer( CswNbtAction Action, ICswNbtUser User = null )
+        {
+            if( null == Action )
+            {
+                throw new CswDniException( ErrorType.Warning, "You do not have appropriate permissions", "canContainer called with null Action" );
+            }
+            return _canContainer( CswNbtPermit.NodeTypePermission.View, Action, User );
         }
 
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        public bool canContainer( CswPrimaryKey ContainerNodeId, CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
+        private bool _canContainer( CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
         {
-            
             bool ret = true;
-            if( false == ( User is CswNbtSystemUser ) &&
-                null != ContainerNodeId &&
-                Int32.MinValue != ContainerNodeId.PrimaryKey )
+
+            if( null == User )
+            {
+                User = _CswNbtResources.CurrentNbtUser;
+            }
+            if( false == ( User is CswNbtSystemUser ) )
             {
                 // Special container permissions, based on Inventory Group                
 
@@ -291,145 +335,106 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = false;
 
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClass InvGrpOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
-                CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupPermissionClass );
-
-                CswNbtMetaDataObjectClassProp ContainerLocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
-                CswNbtMetaDataObjectClassProp LocationInvGrpOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
-                CswNbtMetaDataObjectClassProp PermInvGrpOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.InventoryGroup );
-                CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
-                CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.WorkUnit );
-
-                CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
-                InvGrpPermView.ViewName = "CswNbtPermit_InventoryGroupPermCheck";
-                CswNbtViewRelationship ContainerVR = InvGrpPermView.AddViewRelationship( ContainerOC, false );
-                CswNbtViewRelationship LocationVR = InvGrpPermView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, ContainerLocationOCP, false );
-                CswNbtViewRelationship InvGrpVR = InvGrpPermView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.First, LocationInvGrpOCP, false );
-                CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, false );
-
-                // filter to container id
-                ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
-                // filter to role and workunit
-                InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-
-                if( null != User.WorkUnitId )
+                CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes[this.Location.SelectedNodeId];
+                if( null != LocationNode )
                 {
-                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                }
-                ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
-
-                if( InvGrpPermTree.getChildNodeCount() > 0 )
-                {
-                    InvGrpPermTree.goToNthChild( 0 ); // container
-                    if( InvGrpPermTree.getChildNodeCount() > 0 )
+                    CswNbtObjClassInventoryGroup InventoryGroupNode = _CswNbtResources.Nodes[LocationNode.InventoryGroup.RelatedNodeId];
+                    if( null != InventoryGroupNode )
                     {
-                        InvGrpPermTree.goToNthChild( 0 ); // location
-                        if( InvGrpPermTree.getChildNodeCount() > 0 )
+                        //if the user has no workunit, but the location does belong to an inventory group, you don't get permission.
+                        if( null != User.WorkUnitId )
                         {
-                            InvGrpPermTree.goToNthChild( 0 ); // inventory group
+                            CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupPermissionClass );
+
+                            CswNbtMetaDataObjectClassProp PermInvGrpOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.InventoryGroup );
+                            CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
+                            CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.WorkUnit );
+
+                            CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
+                            InvGrpPermView.ViewName = "CswNbtPermit_InventoryGroupPermCheck";
+                            CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpPermOC, false );
+
+                            // filter to inventory group, role, and workunit
+                            InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermInvGrpOCP, InventoryGroupNode.NodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                            InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                            InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+
+                            ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
                             if( InvGrpPermTree.getChildNodeCount() > 0 )
                             {
-                                //if the user has no workunit, but the location does belong to an inventory group, 
-                                //you don't get permission. There's nothing to check -- it's not controlled
-                                if( null == User.WorkUnitId )
+                                InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
+                                CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
+                                if( Action != null )
                                 {
-                                    ret = false; //reset to false to be explicit
-                                }
-                                else
-                                {
-
-                                    InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
-                                    CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                                    CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = PermNode;
-                                    if( Action != null )
+                                    if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNode.Dispense.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.DisposeContainer && PermNode.Dispose.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.Submit_Request && PermNode.Request.Checked == Tristate.True ) )
                                     {
-                                        if( ( Action.Name == CswNbtActionName.DispenseContainer &&
-                                             PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
-                                            ( Action.Name == CswNbtActionName.DisposeContainer &&
-                                             PermNodeAsPerm.Dispose.Checked == Tristate.True ) ||
-                                            ( Action.Name == CswNbtActionName.UndisposeContainer &&
-                                             PermNodeAsPerm.Undispose.Checked == Tristate.True ) ||
-                                            ( Action.Name == CswNbtActionName.Submit_Request &&
-                                             PermNodeAsPerm.Request.Checked == Tristate.True ) )
+                                        ret = true;
+                                    }
+                                    else if( Action.Name == CswNbtActionName.Receiving )
+                                    {
+                                        foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
                                         {
-                                            ret = true;
-                                        }
-                                        else if( Action.Name == CswNbtActionName.Receiving )
-                                        {
-                                            foreach(
-                                                CswNbtMetaDataNodeType ContainerNt in
-                                                    ContainerOC.getLatestVersionNodeTypes() )
+                                            ret = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, ContainerNt );
+                                            if( ret )
                                             {
-
-                                                ret = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, ContainerNt );
-                                                if( ret )
-                                                {
-                                                    break;
-                                                }
+                                                break;
                                             }
                                         }
                                     }
-                                    else
-                                    {   //there's only edit, so edit applies to all three
-                                        if( ( Permission == CswNbtPermit.NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
-                                            ( Permission == CswNbtPermit.NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                            ( Permission == CswNbtPermit.NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                            ( Permission == CswNbtPermit.NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
-                                        {
-                                            ret = true;
-                                        }
+                                }
+                                else
+                                { //there's only edit, so edit applies to all three
+                                    if( ( Permission == CswNbtPermit.NodeTypePermission.View && PermNode.View.Checked == Tristate.True ) ||
+                                        PermNode.Edit.Checked == Tristate.True )
+                                    {
+                                        ret = true;
+                                    }
 
-                                    }//if-else action is not null
-
-                                }//if else work unit id is not null
-
-                            } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group permission
-
-                        } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group
-                        else
-                        {
-                            // location has no inventory group, no permissions to enforce
-                            ret = true;
-                        }
-                    } // if( InvGrpPermTree.getChildNodeCount() > 0 ) location
+                                } //if-else action is not null
+                            } // if( InvGrpPermTree.getChildNodeCount() > 0 )
+                        }//if( null != User.WorkUnitId )
+                    } // if( null != InventoryGroupNode )
                     else
                     {
-                        // container has no location, no permissions to enforce
+                        // location has no inventory group, no permissions to enforce
                         ret = true;
                     }
-
-                } // if( InvGrpPermTree.getChildNodeCount() > 0 ) container
-
-            } // if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass )
-
+                } // if(null != LocationNode )
+                else
+                {
+                    // container has no location, no permissions to enforce
+                    ret = true;
+                }
+            } // if( false == ( User is CswNbtSystemUser ) )
             return ret;
-
-        } // canContainer
+        } // canContainer()
 
         /// <summary>
         /// Checks permission and disposes a container (does not post changes!)
         /// </summary>
-        public void DisposeContainer()
+        public void DisposeContainer( bool OverridePermissions = false )
         {
-
-            if( canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
+            if( OverridePermissions || canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
             {
-                _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SourceContainer: this );
+                _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer: this );
                 this.Quantity.Quantity = 0;
                 this.Disposed.Checked = Tristate.True;
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
+                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
             }
         }
 
         /// <summary>
         /// Checks permission and undisposes a container
         /// </summary>
-        public void UndisposeContainer()
+        public void UndisposeContainer( bool OverridePermissions = false, bool CreateContainerLocation = true )
         {
 
-            if( canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
+            if( OverridePermissions || canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
             {
                 CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
                 CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
@@ -442,6 +447,10 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 this.Disposed.Checked = Tristate.False;
                 _setDisposedReadOnly( false );
+                if( CreateContainerLocation )
+                {
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
+                }
             }
         }
 
@@ -472,6 +481,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
             }
+            _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispense );
         } // DispenseOut()
 
         /// <summary>
@@ -496,6 +506,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, RealQuantityToAdd, Quantity.UnitId, RequestItemId, SourceContainer, this );
             }
+            CswNbtObjClassContainerLocation.TypeOptions ContainerLocationType =
+                SourceContainer == null ? CswNbtObjClassContainerLocation.TypeOptions.Receipt
+                                        : CswNbtObjClassContainerLocation.TypeOptions.Dispense;
+            _createContainerLocationNode( ContainerLocationType );
         } // DispenseIn()
 
         /// <summary>
@@ -541,13 +555,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Private Helper Methods
 
-        private double _getDispenseAmountInProperUnits( double Quantity, CswPrimaryKey OldUnitId, CswPrimaryKey NewUnitId )
+        private double _getDispenseAmountInProperUnits( double Amount, CswPrimaryKey OldUnitId, CswPrimaryKey NewUnitId )
         {
-            double convertedValue = Quantity;
+            double convertedValue = Amount;
             if( OldUnitId != NewUnitId )
             {
                 CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, Material.RelatedNodeId );
-                convertedValue = ConversionObj.convertUnit( Quantity );
+                convertedValue = ConversionObj.convertUnit( Amount );
             }
             return convertedValue;
         }
@@ -560,6 +574,7 @@ namespace ChemSW.Nbt.ObjClasses
             ActionDataObj["containernodetypeid"] = NodeTypeId;
             ActionDataObj["barcode"] = Barcode.Barcode;
             ActionDataObj["materialname"] = Material.CachedNodeName;
+            ActionDataObj["materialid"] = Material.RelatedNodeId.ToString();
             ActionDataObj["location"] = Location.CachedFullPath;
             ActionDataObj["sizeid"] = Size.RelatedNodeId.ToString();
 
@@ -650,25 +665,25 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="RequestItemId"></param>
         /// <param name="SourceContainer"></param>
         /// <param name="DestinationContainer"></param>
-        private void _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double Quantity, CswPrimaryKey UnitId, CswPrimaryKey RequestItemId = null,
-                                                      CswNbtObjClassContainer SourceContainer = null, CswNbtObjClassContainer DestinationContainer = null )
+        private void _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double Amount, CswPrimaryKey UnitId, CswPrimaryKey RequestItemId = null,
+                                                      CswNbtObjClassContainer SrcContainer = null, CswNbtObjClassContainer DestinationContainer = null )
         {
             CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
             if( ContDispTransNT != null )
             {
                 CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
 
-                if( SourceContainer != null )
+                if( SrcContainer != null )
                 {
-                    ContDispTransNode.SourceContainer.RelatedNodeId = SourceContainer.NodeId;
-                    ContDispTransNode.RemainingSourceContainerQuantity.Quantity = SourceContainer.Quantity.Quantity;
-                    ContDispTransNode.RemainingSourceContainerQuantity.UnitId = SourceContainer.Quantity.UnitId;
+                    ContDispTransNode.SourceContainer.RelatedNodeId = SrcContainer.NodeId;
+                    ContDispTransNode.RemainingSourceContainerQuantity.Quantity = SrcContainer.Quantity.Quantity;
+                    ContDispTransNode.RemainingSourceContainerQuantity.UnitId = SrcContainer.Quantity.UnitId;
                 }
                 if( DestinationContainer != null )
                 {
                     ContDispTransNode.DestinationContainer.RelatedNodeId = DestinationContainer.NodeId;
                 }
-                ContDispTransNode.QuantityDispensed.Quantity = Quantity;
+                ContDispTransNode.QuantityDispensed.Quantity = Amount;
                 ContDispTransNode.QuantityDispensed.UnitId = UnitId;
                 ContDispTransNode.Type.Value = DispenseType.ToString();
                 ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Now;
@@ -679,6 +694,32 @@ namespace ChemSW.Nbt.ObjClasses
                 ContDispTransNode.postChanges( false );
             } // if( ContDispTransNT != null )
         } // _createContainerTransactionNode
+
+        private void _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type )
+        {
+            CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
+            if( ContLocNT != null )
+            {
+                CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                ContLocNode.Type.Value = Type.ToString();
+                ContLocNode.Container.RelatedNodeId = NodeId;
+                if( null != Location )
+                {
+                    ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
+                    ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
+                    ContLocNode.Location.CachedPath = Location.CachedPath;
+                }
+                ContLocNode.ActionApplied.Checked = Tristate.False;
+                ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
+                ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                ContLocNode.postChanges( false );
+                LocationVerified.DateTimeValue = DateTime.Now;
+                if( Missing.Checked == Tristate.True )
+                {
+                    Missing.Checked = Tristate.False;
+                }
+            }
+        }
 
 
         private void _setDisposedReadOnly( bool isReadOnly )//case 25814
@@ -692,7 +733,6 @@ namespace ChemSW.Nbt.ObjClasses
             ExpirationDate.setReadOnly( value: isReadOnly, SaveToDb: true );
             Size.setReadOnly( value: isReadOnly, SaveToDb: true );
             Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
-            _toggleButtonVisibility( true );
         }
 
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
@@ -744,23 +784,23 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateRequestItems( string RequestItemType )
         {
-            if( RequestItemType == CswNbtObjClassRequestItem.Types.Move ||
-             RequestItemType == CswNbtObjClassRequestItem.Types.Dispose )
+            if( RequestItemType == CswNbtObjClassRequestContainerUpdate.Types.Move ||
+             RequestItemType == CswNbtObjClassRequestContainerUpdate.Types.Dispose )
             {
                 CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
                 CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RequestItemOc, false );
-                CswNbtMetaDataObjectClassProp StatusOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status );
-                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
-                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
+                CswNbtMetaDataObjectClassProp StatusOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Status );
+                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Container );
+                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Type );
 
-                RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestItem.Statuses.Submitted );
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestContainerUpdate.Statuses.Submitted );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
 
-                if( RequestItemType == CswNbtObjClassRequestItem.Types.Move )
+                if( RequestItemType == CswNbtObjClassRequestContainerUpdate.Types.Move )
                 {
-                    CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
+                    CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Location );
                     RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
                 }
 
@@ -770,16 +810,16 @@ namespace ChemSW.Nbt.ObjClasses
                     for( Int32 N = 0; N < Tree.getChildNodeCount(); N += 1 )
                     {
                         Tree.goToNthChild( N );
-                        CswNbtObjClassRequestItem NodeAsRequestItem = Tree.getNodeForCurrentPosition();
+                        CswNbtObjClassRequestContainerUpdate NodeAsRequestItem = Tree.getNodeForCurrentPosition();
                         if( null != NodeAsRequestItem )
                         {
                             switch( RequestItemType )
                             {
-                                case CswNbtObjClassRequestItem.Types.Move:
-                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Moved;
+                                case CswNbtObjClassRequestContainerUpdate.Types.Move:
+                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestContainerUpdate.Statuses.Moved;
                                     break;
-                                case CswNbtObjClassRequestItem.Types.Dispose:
-                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Disposed;
+                                case CswNbtObjClassRequestContainerUpdate.Types.Dispose:
+                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestContainerUpdate.Statuses.Disposed;
                                     break;
                             }
                             NodeAsRequestItem.postChanges( false );
@@ -842,8 +882,25 @@ namespace ChemSW.Nbt.ObjClasses
                         _InventoryLevelModified = Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
                     }
                 }
-                _updateRequestItems( CswNbtObjClassRequestItem.Types.Move );
+                _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
             }
+            if( null != Location.SelectedNodeId )
+            {
+                if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
+                {
+                    CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
+                    CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
+                    if( null != InvGroupNode )
+                    {
+                        LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
+                    }
+                }
+                else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
+                {
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
+                }
+            }
+
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[PropertyName.LocationVerified] ); } }
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
@@ -874,9 +931,8 @@ namespace ChemSW.Nbt.ObjClasses
             if( CswConvert.ToTristate( Disposed.GetOriginalPropRowValue() ) != Disposed.Checked &&
                 Disposed.Checked == Tristate.True )
             {
-                _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
+                _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Dispose );
             }
-            updateRequestMenu();
         }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[PropertyName.SourceContainer] ); } }
         private void OnSourceContainerChange( CswNbtNodeProp Prop )
@@ -893,7 +949,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[PropertyName.Quantity] ); } }
         private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {
-            updateRequestMenu();
             if( false == _InventoryLevelModified )
             {
                 CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
@@ -932,6 +987,43 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[PropertyName.Undispose] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         public CswNbtNodePropButton ContainerFamily { get { return ( _CswNbtNode.Properties[PropertyName.ContainerFamily] ); } }
+        public CswNbtNodePropRelationship ReceiptLot { get { return ( _CswNbtNode.Properties[PropertyName.ReceiptLot] ); } }
+        public CswNbtNodePropLogical LotControlled { get { return ( _CswNbtNode.Properties[PropertyName.LotControlled] ); } }
+        private void OnLotControlledPropChange( CswNbtNodeProp Prop )
+        {
+            if( LotControlled.Checked == Tristate.True )
+            {
+                //DispenseForCertificate.RelatedNodeId = null;//TODO - uncomment when DispenseForCertificate is created
+                Status.Value = String.Empty;
+            }
+            else if( LotControlled.Checked == Tristate.False )
+            {
+                //TODO - uncomment this if-else condition when Certificates have been implemented
+                //if( null != Certificate.RelatedNodeId )
+                //{ 
+                //    CswNbtObjClassCertificate CertificateNode = _CswNbtResources.Nodes.GetNode( Certificate.RelatedNodeId );
+                //    if( null != CertificateNode )
+                //    {
+                //        Status.Value = CertificateNode.Status.Value;
+                //        ExpirationDate.DateTimeValue = CertificateNode.ExpirationDate.DateTimeValue;
+                //    }
+                //}
+                //else
+                //{
+                Status.Value = Statuses.LabUseOnly;
+                CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes.GetNode( ReceiptLot.RelatedNodeId );
+                if( null != ReceiptLotNode )
+                {
+                    ExpirationDate.DateTimeValue = ReceiptLotNode.ExpirationDate.DateTimeValue;
+                }
+                //}
+            }
+        }
+        public CswNbtNodePropRelationship ContainerGroup { get { return ( _CswNbtNode.Properties[PropertyName.ContainerGroup] ); } }
+        public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
+        public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
+        public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
+        public CswNbtNodePropDateTime DateCreated { get { return ( _CswNbtNode.Properties[PropertyName.DateCreated] ); } }
         #endregion
 
 

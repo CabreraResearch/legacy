@@ -23,8 +23,8 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtNodePropUserSelect( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        public CswNbtNodePropUserSelect( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
             _FieldTypeRule = (CswNbtFieldTypeRuleUserSelect) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _SelectedUserIdsSubField = _FieldTypeRule.SelectedUserIdsSubField;

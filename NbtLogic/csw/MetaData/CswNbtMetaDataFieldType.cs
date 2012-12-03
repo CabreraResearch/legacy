@@ -12,6 +12,7 @@ namespace ChemSW.Nbt.MetaData
                                                                {
                                                                    { NbtFieldType.Barcode, NbtFieldType.Barcode },                          //public const string Barcode = "Barcode";
                                                                     { NbtFieldType.Button, NbtFieldType.Button }   ,                        //public const string Button = "Button";
+                                                                    { NbtFieldType.CASNo, NbtFieldType.CASNo }   ,                          //public const string CASNo = "CASNo";
                                                                     { NbtFieldType.Comments, NbtFieldType.Comments },                       //public const string Comments = "Comments";
                                                                     { NbtFieldType.Composite, NbtFieldType.Composite },                     //public const string Composite = "Composite";
                                                                     { NbtFieldType.DateTime, NbtFieldType.DateTime },                       //public const string DateTime = "DateTime";
@@ -84,6 +85,7 @@ namespace ChemSW.Nbt.MetaData
 
             public const string Barcode = "Barcode";
             public const string Button = "Button";
+            public const string CASNo = "CASNo";
             public const string Comments = "Comments";
             public const string Composite = "Composite";
             public const string DateTime = "DateTime";

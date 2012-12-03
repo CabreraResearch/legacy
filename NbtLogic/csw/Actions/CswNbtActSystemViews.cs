@@ -14,25 +14,7 @@ namespace ChemSW.Nbt.Actions
 
         public CswNbtView SystemView { get; private set; }
         public static readonly string SiViewCategory = "SI Configuration";
-        public sealed class SystemViewName : CswEnum<SystemViewName>
-        {
-            private SystemViewName( String Name ) : base( Name ) { }
-            public static IEnumerable<SystemViewName> all { get { return All; } }
-            public static explicit operator SystemViewName( string Str )
-            {
-                SystemViewName Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
-            public static readonly SystemViewName SILocationsList = new SystemViewName( "SI Locations List" );
-            public static readonly SystemViewName SILocationsTree = new SystemViewName( "SI Locations Tree" );
-            public static readonly SystemViewName SIInspectionsbyDate = new SystemViewName( "SI Inspections by Date" );
-            public static readonly SystemViewName SIInspectionsbyBarcode = new SystemViewName( "SI Inspections by Barcode" );
-            public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
-            public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
-            public static readonly SystemViewName CISProRequestCart = new SystemViewName( "CISPro Request Cart" );
-            public static readonly SystemViewName CISProRequestHistory = new SystemViewName( "CISPro Request History" );
-            public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
-        }
+
         #endregion Public, Definitional props
 
         #region Private, core methods
@@ -73,7 +55,7 @@ namespace ChemSW.Nbt.Actions
 
         private void _addDefaultInspectionDesignViewPropsAndFilters( CswNbtView View, CswNbtViewRelationship InspectionDesignVr, CswNbtMetaDataObjectClass InspectionDesignOc )
         {
-            CswNbtViewProperty DueDateVp = View.AddViewPropertyByName( InspectionDesignVr, InspectionDesignOc, CswNbtObjClassInspectionDesign.PropertyName.Date );
+            CswNbtViewProperty DueDateVp = View.AddViewPropertyByName( InspectionDesignVr, InspectionDesignOc, CswNbtObjClassInspectionDesign.PropertyName.DueDate );
             DueDateVp.SortBy = true;
 
             CswNbtViewProperty LocationVp = View.AddViewPropertyByName( InspectionDesignVr, InspectionDesignOc, CswNbtObjClassInspectionDesign.PropertyName.Location );
@@ -214,71 +196,58 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _cisproRequestCartView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.CISProRequestCart );
-            if( null == Ret )
+            CswNbtView Ret = new CswNbtView( _CswNbtResources )
             {
-                Ret = new CswNbtView( _CswNbtResources );
-                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                Ret.saveNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                ReInit = true;
-            }
-            if( ReInit )
+                Category = "Request Configuration",
+                Visibility = NbtViewVisibility.Hidden,
+                ViewMode = NbtViewRenderingMode.Grid
+            };
+
+            Ret.Root.ChildRelationships.Clear();
+
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtViewRelationship RootVr = Ret.AddViewRelationship( RequestOc, true );
+
+            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
-                Ret.Category = "Request Configuration";
-                Ret.ViewMode = NbtViewRenderingMode.Grid;
+                CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
+                CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
+                CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
+                                                                                 NbtViewPropOwnerType.Second,
+                                                                                 RequestOcp, false );
 
-                Ret.Root.ChildRelationships.Clear();
-
-                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
-                CswNbtViewRelationship RequestItemVr = Ret.AddViewRelationship( RequestItemOc, true );
-
-                CswNbtMetaDataObjectClassProp NumberOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
-                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
-                CswNbtMetaDataObjectClassProp QuantityOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Quantity );
-                CswNbtMetaDataObjectClassProp CountOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Count );
-                CswNbtMetaDataObjectClassProp SizeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size );
-                CswNbtMetaDataObjectClassProp MaterialOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
-                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
-                CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
-
-                Ret.AddViewProperty( RequestItemVr, NumberOcp );
-                Ret.AddViewProperty( RequestItemVr, TypeOcp );
-                Ret.AddViewProperty( RequestItemVr, QuantityOcp );
-                Ret.AddViewProperty( RequestItemVr, CountOcp );
-                Ret.AddViewProperty( RequestItemVr, SizeOcp );
-                Ret.AddViewProperty( RequestItemVr, MaterialOcp );
-                Ret.AddViewProperty( RequestItemVr, ContainerOcp );
-                Ret.AddViewProperty( RequestItemVr, LocationOcp );
-
-                Ret.save();
+                CswNbtViewProperty Vp1 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                Vp1.Order = 1;
+                CswNbtViewProperty Vp2 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
+                Vp2.Order = 2;
+                CswNbtViewProperty Vp3 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
+                Vp3.Order = 3;
+                CswNbtViewProperty Vp4 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
+                Vp4.Order = 4;
+                CswNbtViewProperty Vp5 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
+                Vp5.Order = 5;
+                CswNbtViewProperty Vp6 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
+                Vp6.Order = 6;
             }
+            Ret.SaveToCache( IncludeInQuickLaunch: false );
             return Ret;
         }
 
         private CswNbtView _cisproRequestHistoryView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.CISProRequestHistory );
-            if( null == Ret )
-            {
-                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                Ret = new CswNbtView( _CswNbtResources );
-                Ret.saveNew( SystemViewName.CISProRequestHistory.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "Request Configuration";
-                Ret.ViewMode = NbtViewRenderingMode.Tree;
-                ReInit = true;
-            }
-            if( ReInit )
-            {
-                Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
-                CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
-                CswNbtMetaDataObjectClassProp NameOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name.ToString() );
-                CswNbtViewRelationship RequestVr = Ret.AddViewRelationship( RequestOc, true ); //default filter says Requestor == me
-                Ret.AddViewProperty( RequestVr, SubmittedDateOcp );
-                Ret.AddViewPropertyAndFilter( RequestVr, NameOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CswNbtView Ret = new CswNbtView( _CswNbtResources );
 
-                Ret.save();
-            }
+            Ret.Visibility = NbtViewVisibility.Hidden;
+            Ret.Category = "Request Configuration";
+            Ret.ViewMode = NbtViewRenderingMode.Tree;
+            Ret.Root.ChildRelationships.Clear();
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
+            CswNbtMetaDataObjectClassProp NameOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name.ToString() );
+            CswNbtViewRelationship RequestVr = Ret.AddViewRelationship( RequestOc, true ); //default filter says Requestor == me
+            Ret.AddViewProperty( RequestVr, SubmittedDateOcp );
+            Ret.AddViewPropertyAndFilter( RequestVr, NameOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+
             return Ret;
         }
 
@@ -409,5 +378,23 @@ namespace ChemSW.Nbt.Actions
 
     }
 
-
+    public sealed class SystemViewName : CswEnum<SystemViewName>
+    {
+        private SystemViewName( String Name ) : base( Name ) { }
+        public static IEnumerable<SystemViewName> all { get { return All; } }
+        public static explicit operator SystemViewName( string Str )
+        {
+            SystemViewName Ret = Parse( Str );
+            return Ret ?? Unknown;
+        }
+        public static readonly SystemViewName SILocationsList = new SystemViewName( "SI Locations List" );
+        public static readonly SystemViewName SILocationsTree = new SystemViewName( "SI Locations Tree" );
+        public static readonly SystemViewName SIInspectionsbyDate = new SystemViewName( "SI Inspections by Date" );
+        public static readonly SystemViewName SIInspectionsbyBarcode = new SystemViewName( "SI Inspections by Barcode" );
+        public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
+        public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
+        public static readonly SystemViewName CISProRequestCart = new SystemViewName( "CISPro Request Cart" );
+        public static readonly SystemViewName CISProRequestHistory = new SystemViewName( "CISPro Request History" );
+        public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
+    }
 }

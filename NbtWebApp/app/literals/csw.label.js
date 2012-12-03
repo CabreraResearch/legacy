@@ -36,16 +36,10 @@
                     attr = Csw.makeAttr();
                 var $label;
 
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
+                Csw.extend(cswPrivate, options);
+                
                 var cssClass = 'CswLabel ' + cswPrivate.cssclass;
-                if (cswPrivate.useWide) {
-                    cssClass += ' CswLabelWide';
-                }
-
-                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
-
+                
                 html += '<label ';
                 attr.add('id', cswPrivate.ID);
                 attr.add('class', cssClass);

@@ -133,7 +133,7 @@
                                         data.barcodes.length > 0) {
 
                                         $.CswDialog('PrintLabelDialog', {
-                                            nodeid: data.barcodes,
+                                            nodeids: data.barcodes,
                                             nodetypeid: cswPrivate.state.containerNodeTypeId
                                         });
                                     } else {
@@ -191,31 +191,40 @@
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
-                        cswPrivate.divStep1.label({
+                        cswPrivate.divStep1.span({
                             text: 'Select the number of containers and their quantities to receive.',
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep1.br({ number: 2 });
 
+                        var tbl = cswPrivate.divStep1.table({
+                            FirstCellRightAlign: true
+                        });
+
                         //If multiple container nodetypes exist
                         cswPrivate.container = {};
-                        var containerSelect = Csw.wizard.nodeTypeSelect(cswPrivate.divStep1, {
-                            labelText: 'Select a Container: ',
+
+                        var label = tbl.cell(1, 1).span().hide();
+                        var containerSelect = Csw.wizard.nodeTypeSelect(tbl.cell(1, 2), {
                             objectClassName: 'ContainerClass',
                             data: cswPrivate.state.container,
-                            onSelect: function () {
+                            onSelect: function() {
                                 if (cswPrivate.state.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
                                     cswPrivate.reinitSteps(2);
                                     cswPrivate.state.containerAddLayout = null;
                                 }
                                 cswPrivate.state.containerNodeTypeId = containerSelect.selectedNodeTypeId;
                             },
-                            onSuccess: function (types, nodetypecount) {
+                            onSuccess: function(types, nodetypecount) {
                                 makeAmountsGrid();
                                 makeBarcodeCheckBox();
+                                if (nodetypecount > 1) {
+                                    label.show();
+                                    label.setLabelText('Select a Container: ', true);
+                                }
                             }
                         });
-
+                        
                         var makeAmountsGrid = function () {
                             cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate.divStep1.div();
                             cswPrivate.amountsDiv.empty();
@@ -306,13 +315,13 @@
                         cswPrivate.divStep3.empty();
 
                         if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
-                            cswPrivate.divStep3.label({
+                            cswPrivate.divStep3.span({
                                 text: 'No Material Documents have been defined. Click Finish to complete the wizard.',
                                 cssclass: 'wizardHelpDesc'
                             });
                         } else {
 
-                            cswPrivate.divStep3.label({
+                            cswPrivate.divStep3.span({
                                 text: 'Define a Material Safety Data Sheet to attach to ' + cswPrivate.state.tradeName,
                                 cssclass: 'wizardHelpDesc'
                             });

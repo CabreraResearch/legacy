@@ -54,6 +54,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassContainerDispenseTransaction( CswNbtResources, Node );
                     break;
 
+                case NbtObjectClass.ContainerGroupClass:
+                    ReturnVal = new CswNbtObjClassContainerGroup( CswNbtResources, Node );
+                    break;
+                    
+                case NbtObjectClass.ContainerLocationClass:
+                    ReturnVal = new CswNbtObjClassContainerLocation( CswNbtResources, Node );
+                    break;
+
                 case NbtObjectClass.CustomerClass:
                     ReturnVal = new CswNbtObjClassCustomer( CswNbtResources, Node );
                     break;
@@ -117,12 +125,10 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
 
                 case NbtObjectClass.JurisdictionClass:
-
                     ReturnVal = new CswNbtObjClassJurisdiction( CswNbtResources, Node );
                     break;
 
-case NbtObjectClass.LocationClass:
-
+                case NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
 
@@ -146,17 +152,9 @@ case NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources, Node );
                     break;
 
-case NbtObjectClass.MethodClass:
-
+                case NbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
-
-//case NbtObjectClass.NotificationClass:
-
-                //    ReturnVal = new CswNbtObjClassNotification( CswNbtResources, Node );
-                //    break;
-
-
 
                 case NbtObjectClass.ParameterClass:
                     ReturnVal = new CswNbtObjClassParameter( CswNbtResources, Node );
@@ -186,8 +184,20 @@ case NbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassRequest( CswNbtResources, Node );
                     break;
 
-                case NbtObjectClass.RequestItemClass:
-                    ReturnVal = new CswNbtObjClassRequestItem( CswNbtResources, Node );
+                case NbtObjectClass.RequestContainerDispenseClass:
+                    ReturnVal = new CswNbtObjClassRequestContainerDispense( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.RequestContainerUpdateClass:
+                    ReturnVal = new CswNbtObjClassRequestContainerUpdate( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.RequestMaterialCreateClass:
+                    ReturnVal = new CswNbtObjClassRequestMaterialCreate( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.RequestMaterialDispenseClass:
+                    ReturnVal = new CswNbtObjClassRequestMaterialDispense( CswNbtResources, Node );
                     break;
 
                 case NbtObjectClass.ResultClass:

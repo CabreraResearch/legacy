@@ -170,6 +170,17 @@
             case Csw.enums.nbtButtonAction.nothing:
                 //Do nothing
                 break;
+            case Csw.enums.nbtButtonAction.creatematerial:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                actionJson.actionname = 'create material';
+                actionJson.state.request = actionJson.request;
+                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                break;
+            case Csw.enums.nbtButtonAction.move:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                actionJson.actionname = 'MoveContainer';
+                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                break;
             case Csw.enums.nbtButtonAction.dispense:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'DispenseContainer';
@@ -186,6 +197,10 @@
                 });
                 break;
 
+            case Csw.enums.nbtButtonAction.landingPage:
+                Csw.publish('refreshLandingPage', actionJson.landingpage);
+                break;
+                
             case Csw.enums.nbtButtonAction.loadView:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');

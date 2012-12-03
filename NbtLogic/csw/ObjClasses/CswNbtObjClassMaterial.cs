@@ -39,6 +39,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ExpirationInterval = "Expiration Interval";
             public const string Request = "Request";
             public const string Receive = "Receive";
+            public const string MaterialId = "Material Id";
+            public const string Approved = "Approved";
+            public const string ManufacturingSites = "Manufacturing Sites";
+            public const string UNCode = "UN Code";
         }
 
         public sealed class PhysicalStates
@@ -48,6 +52,14 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Solid = "solid";
             public const string Gas = "gas";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, NA };
+        }
+
+        public sealed class Requests
+        {
+            public const string Bulk = "Request By Bulk";
+            public const string Size = "Request By Size";
+
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Bulk, Size };
         }
 
         /// <summary>
@@ -67,8 +79,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            Request.MenuOptions = CswNbtObjClassRequestItem.RequestsBy.Options.ToString();
-            Request.State = CswNbtObjClassRequestItem.RequestsBy.Size;
+            Request.MenuOptions = Requests.Options.ToString();
+            Request.State = Requests.Size;
 
             if( ApprovalStatus.WasModified )
             {
@@ -100,6 +112,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
+            _CswNbtResources.StructureSearchManager.DeleteFingerprintRecord( this.NodeId.PrimaryKey );
+
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
@@ -139,26 +153,15 @@ namespace ChemSW.Nbt.ObjClasses
                         if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
                         {
                             HasPermission = true;
-                            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
 
-                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, ButtonData );
-                            NodeAsRequestItem.RequestBy.Value = ButtonData.SelectedText;
-                            if( ButtonData.SelectedText.Equals( CswNbtObjClassRequestItem.RequestsBy.Size ) )
-                            {
-                                NodeAsRequestItem.Quantity.setHidden( true, true );
-                            }
-                            else
-                            {
-                                NodeAsRequestItem.Size.setHidden( true, true );
-                                NodeAsRequestItem.Count.setHidden( true, true );
-                            }
-                            NodeAsRequestItem.RequestBy.setHidden( true, true );
-                            NodeAsRequestItem.postChanges( false );
+                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActRequesting.RequestItem( CswNbtActRequesting.RequestItem.Material ), NodeId, ButtonData );
+                            NodeAsPropSet.postChanges( false );
 
                             ButtonData.Data["requestaction"] = OCP.PropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                            ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
+                            ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
                             ButtonData.Action = NbtButtonAction.request;
                         }
                         break;
@@ -300,6 +303,73 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, CswNbtNode MaterialNode )
+        {
+            CswNbtView Ret = null;
+            if( MaterialNode != null )
+            {
+                Ret = MaterialNode.getViewOfNode();
+                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
+                Ret.ViewName = "New Material: " + MaterialNode.NodeName;
+            }
+            return Ret;
+        }
+
+        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, Int32 NodeTypeId, string Tradename, CswPrimaryKey SupplierId, string PartNo = "" )
+        {
+            if( Int32.MinValue == NodeTypeId ||
+                false == CswTools.IsPrimaryKey( SupplierId ) ||
+                String.IsNullOrEmpty( Tradename ) )
+            {
+                throw new CswDniException( ErrorType.Error,
+                                           "Cannot get a material without a type, a supplier and a tradename.",
+                                           "Attempted to call _getMaterialNodeView with invalid or empty parameters. Type: " + NodeTypeId + ", Tradename: " + Tradename + ", SupplierId: " + SupplierId );
+            }
+
+            CswNbtView Ret = new CswNbtView( NbtResources );
+            Ret.ViewMode = NbtViewRenderingMode.Tree;
+            Ret.Visibility = NbtViewVisibility.User;
+            Ret.VisibilityUserId = NbtResources.CurrentNbtUser.UserId;
+            CswNbtMetaDataNodeType MaterialNt = NbtResources.MetaData.getNodeType( NodeTypeId );
+            CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( MaterialNt, false );
+            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.Tradename );
+            CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.Supplier );
+            CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.PartNumber );
+
+            Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
+            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+            Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
+
+            CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+            Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
+
+            Ret.ViewName = "New Material: " + Tradename;
+
+            return Ret;
+        }
+
+        /// <summary>
+        /// Fetch a Material node by NodeTypeId, TradeName, Supplier and PartNo (Optional). This method will throw if required parameters are null or empty.
+        /// </summary>
+        public static CswNbtObjClassMaterial getExistingMaterial( CswNbtResources NbtResources, Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo )
+        {
+            CswNbtObjClassMaterial Ret = null;
+
+            CswNbtView MaterialNodeView = getMaterialNodeView( NbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo );
+            ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( MaterialNodeView, false, false, false );
+            bool MaterialExists = Tree.getChildNodeCount() > 0;
+
+            if( MaterialExists )
+            {
+                Tree.goToNthChild( 0 );
+                Ret = Tree.getNodeForCurrentPosition();
+            }
+            return Ret;
+        }
+
         #endregion Custom Logic
 
         #region Object class specific properties
@@ -309,7 +379,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText PartNumber { get { return ( _CswNbtNode.Properties[PropertyName.PartNumber] ); } }
         public CswNbtNodePropNumber SpecificGravity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificGravity] ); } }
         public CswNbtNodePropList PhysicalState { get { return ( _CswNbtNode.Properties[PropertyName.PhysicalState] ); } }
-        public CswNbtNodePropText CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
+        public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
         public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryLists] ); } }
         public CswNbtNodePropText TradeName { get { return ( _CswNbtNode.Properties[PropertyName.Tradename] ); } }
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
@@ -317,7 +387,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[PropertyName.Request] ); } }
         private void _physicalStatePropChangeHandler( CswNbtNodeProp prop )
         {
-            if( false == string.IsNullOrEmpty( PhysicalState.Value ) )
+            if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
             {
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                 CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
@@ -328,9 +398,12 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
+        public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
+        public CswNbtNodePropLogical Approved { get { return ( _CswNbtNode.Properties[PropertyName.Approved] ); } }
+        public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
+        public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
 
         #endregion
-
     }//CswNbtObjClassMaterial
 
 }//namespace ChemSW.Nbt.ObjClasses

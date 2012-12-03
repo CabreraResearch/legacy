@@ -43,6 +43,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// Truncated
         /// </summary>
         public bool Truncated = false;
+        /// <summary>
+        /// GroupByCol
+        /// </summary>
+        public string GroupByCol = "";
 
         public CswNbtGridExtJsGrid( string UniquePrefix )
         {
@@ -127,6 +131,11 @@ namespace ChemSW.Nbt.Grid.ExtJs
             Jret["grid"]["data"] = new JObject();
             Jret["grid"]["data"]["items"] = Jdataitems;
             Jret["grid"]["data"]["buttons"] = Jdatabuttons;
+
+            if( false == String.IsNullOrEmpty( GroupByCol ) )
+            {
+                Jret["grid"]["groupfield"] = GroupByCol.ToLower();
+            }
 
             return Jret;
         } // ToJson()

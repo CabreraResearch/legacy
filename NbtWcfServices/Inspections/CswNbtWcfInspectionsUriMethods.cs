@@ -24,7 +24,7 @@ namespace NbtWebAppServices.WebServices
         [Description( "Get all Inspections whose Due Date is greater than or equals the StartingDate and less than or equals the EndingDate (optional, defaults to today+2 days)" )]
         public CswNbtWcfInspectionsResponseWithDesigns byDateRange( string StartingDate, string EndingDate )
         {
-            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyDate );
+            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, SystemViewName.SIInspectionsbyDate );
             DateTime Start = CswConvert.ToDateTime( StartingDate );
             DateTime Today = DateTime.Today; //Today's time is 00:00:00 vs Now's time which is.. now
             if( DateTime.MinValue == Start )
@@ -51,8 +51,8 @@ namespace NbtWebAppServices.WebServices
             //In case we were provided valid dates, grab just the Day @midnight
             Start = Start.Date;
             End = End.Date;
-            WcfInspectionsGet.addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Date, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            WcfInspectionsGet.addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Date, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            WcfInspectionsGet.addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            WcfInspectionsGet.addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
 
             return WcfInspectionsGet.finalize();
         }
@@ -62,7 +62,7 @@ namespace NbtWebAppServices.WebServices
         [Description( "Get all Inspections whose Inspector is the current user." )]
         public CswNbtWcfInspectionsResponseWithDesigns byUser()
         {
-            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyUser );
+            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, SystemViewName.SIInspectionsbyUser );
             return WcfInspectionsGet.finalize();
         } // get()
 
@@ -72,7 +72,7 @@ namespace NbtWebAppServices.WebServices
         public CswNbtWcfInspectionsResponseWithDesigns byLocation( string LocationName )
         {
             LocationName = LocationName ?? "null";
-            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyLocation );
+            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, SystemViewName.SIInspectionsbyLocation );
             WcfInspectionsGet.addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
             return WcfInspectionsGet.finalize();
         } // get()
@@ -83,7 +83,7 @@ namespace NbtWebAppServices.WebServices
         public CswNbtWcfInspectionsResponseWithDesigns byBarcode( string Barcode )
         {
             Barcode = Barcode ?? "null";
-            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyBarcode );
+            CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, SystemViewName.SIInspectionsbyBarcode );
             WcfInspectionsGet.addSystemViewBarcodeFilter( Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, CswNbtMetaDataFieldType.NbtFieldType.Barcode );
             return WcfInspectionsGet.finalize();
         } // get()

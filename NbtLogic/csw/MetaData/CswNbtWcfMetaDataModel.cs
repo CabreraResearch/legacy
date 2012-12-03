@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.MetaData
         [DataContract]
         public class ObjectClassProp
         {
-            public ObjectClassProp(CswNbtMetaDataObjectClass NbtObjectClass = null )
+            public ObjectClassProp( CswNbtMetaDataObjectClass NbtObjectClass = null )
             {
                 ObjectClass = NbtObjectClass;
             }
@@ -38,8 +38,21 @@ namespace ChemSW.Nbt.MetaData
             public bool AuditLevel;
             [DataMember]
             public bool IsBatchEntry;
+
             [DataMember]
-            public bool IsRequired;
+            public bool IsRequired
+            {
+                get { return _IsRequired; }
+                set
+                {
+                    if( false == string.IsNullOrEmpty( Filter ) && value )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Conditional properties cannot be required", "Attempted to require a conditional property " + PropName );
+                    }
+                    _IsRequired = value;
+                }
+            }
+
             [DataMember]
             public bool IsUnique;
             [DataMember]
@@ -80,8 +93,21 @@ namespace ChemSW.Nbt.MetaData
             public Int32 NumberMaxValue = Int32.MinValue;
             [DataMember]
             public string StaticText = string.Empty;
+
             [DataMember]
-            public string Filter = string.Empty;
+            public string Filter
+            {
+                get { return _filter; }
+                set
+                {
+                    if( false == string.IsNullOrEmpty( value ) && IsRequired )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Required properties cannot be conditional", "Attempted to assign a filter to required property " + PropName );
+                    }
+                    _filter = value;
+                }
+            }
+
             [DataMember]
             public Int32 FilterPropId = Int32.MinValue;
             [DataMember]
@@ -92,6 +118,9 @@ namespace ChemSW.Nbt.MetaData
             public bool IsGlobalUnique;
             [DataMember]
             public string Extended = string.Empty;
+
+            private string _filter;
+            private bool _IsRequired;
         }
 
         [DataContract]

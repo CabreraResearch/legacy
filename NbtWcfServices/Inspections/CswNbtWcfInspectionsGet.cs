@@ -24,7 +24,7 @@ namespace NbtWebAppServices.Response
         private CswNbtActSystemViews _NbtSystemView;
         private CswNbtWcfInspectionsResponseWithDesigns _InspectionsResponse;
 
-        private void _initInspectionResources( CswNbtActSystemViews.SystemViewName ViewName )
+        private void _initInspectionResources( SystemViewName ViewName )
         {
             _CswNbtWcfSessionResources = _InspectionsResponse.CswNbtWcfSessionResources;
             _InspectionDesignOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
@@ -164,7 +164,7 @@ namespace NbtWebAppServices.Response
                 {
                     DesignId = InspectionNode.NodeTypeId,
 
-                    DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
+                    DueDate = NodeAsInspectionDesign.DueDate.DateTimeValue,
                     InspectionId = NodeAsInspectionDesign.NodeId.PrimaryKey,
                     InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
                     LocationPath = NodeAsInspectionDesign.Location.Gestalt,
@@ -252,7 +252,7 @@ namespace NbtWebAppServices.Response
             }
         }
 
-        public CswNbtWcfInspectionsGet( HttpContext Context, CswNbtActSystemViews.SystemViewName ViewName, bool IsMobile = true )
+        public CswNbtWcfInspectionsGet( HttpContext Context, SystemViewName ViewName, bool IsMobile = true )
         {
             _Context = Context;
             _InspectionsResponse = new CswNbtWcfInspectionsResponseWithDesigns( _Context, IsMobile );

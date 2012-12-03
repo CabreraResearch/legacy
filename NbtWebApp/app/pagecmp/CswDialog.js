@@ -11,16 +11,16 @@
 
         return function () {
             return {
-                origXAccessor: function() {
+                origXAccessor: function () {
                     return origX;
                 },
-                origYAccessor: function() {
+                origYAccessor: function () {
                     return origY;
                 },
-                windowWidth: function() {
+                windowWidth: function () {
                     return document.documentElement.clientWidth;
                 },
-                windowHeight: function() {
+                windowHeight: function () {
                     return document.documentElement.clientHeight;
                 }
             };
@@ -28,7 +28,7 @@
     }());
     var cswPrivate = cswPrivateInit();
     cswPrivate.div = Csw.literals.div();
-    
+
     var posX = cswPrivate.origXAccessor();
     var posY = cswPrivate.origYAccessor();
     var incrPosBy = 30;
@@ -575,7 +575,8 @@
                 onRefresh: null,
                 onClose: null,
                 onAfterButtonClick: null,
-                date: '' // viewing audit records
+                date: '', // viewing audit records
+                editMode: Csw.enums.editMode.EditInPopup
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
@@ -596,21 +597,7 @@
             cswPublic.title = title;
 
             cswDlgPrivate.onOpen = function () {
-                var myEditMode = Csw.enums.editMode.EditInPopup;
-                var table = cswPublic.div.table();
-                if (false === Csw.isNullOrEmpty(cswDlgPrivate.date) && false === cswDlgPrivate.Multi) {
-                    myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
-                    Csw.actions.auditHistory(table.cell(1, 1), {
-                        name: 'history',
-                        nodeid: cswDlgPrivate.currentNodeId,
-                        nodekey: cswDlgPrivate.currentNodeKey,
-                        onEditNode: cswDlgPrivate.onEditNode,
-                        JustDateColumn: true,
-                        selectedDate: cswDlgPrivate.date,
-                        onSelectRow: function (date) { setupTabs(date); },
-                        allowEditRow: false
-                    });
-                }
+                var table = cswPublic.div.table({ width: '100%' });
                 var tabCell = table.cell(1, 2);
 
                 setupTabs(cswDlgPrivate.date);
@@ -631,7 +618,7 @@
                         },
                         tabState: {
                             ReadOnly: cswDlgPrivate.ReadOnly,
-                            EditMode: myEditMode,
+                            EditMode: cswDlgPrivate.editMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                         },
 
@@ -1030,7 +1017,7 @@
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswDlgPrivate = {
                 name: 'print_label',
-                GetPrintLabelsUrl: 'Labels/type/',
+                GetPrintLabelsUrl: 'Labels/list',
                 nodes: {},
                 nodeids: [],
                 nodetypeid: ''
@@ -1076,16 +1063,20 @@
                 name: cswDlgPrivate.name + '_labelsel'
             });
 
-            Csw.ajaxWcf.get({
-                urlMethod: cswDlgPrivate.GetPrintLabelsUrl + cswDlgPrivate.nodetypeid,
+            Csw.ajaxWcf.post({
+                urlMethod: cswDlgPrivate.GetPrintLabelsUrl,
+                data: {
+                    TargetTypeId: cswDlgPrivate.nodetypeid,
+                    TargetId: cswDlgPrivate.nodeids[0]
+                },
                 success: function (data) {
                     if (data.Labels && data.Labels.length > 0) {
                         for (var i = 0; i < data.Labels.length; i += 1) {
                             var label = data.Labels[i];
-                            labelSel.option({ value: label.Id, display: label.Name });
+                            var isSelected = Csw.bool(label.Id === data.SelectedLabelId);
+                            labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
                         }
                     } else {
-
                         labelSelDiv.span({ text: 'No labels have been assigned!' });
                     }
                 } // success

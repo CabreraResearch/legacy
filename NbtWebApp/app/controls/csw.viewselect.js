@@ -8,7 +8,6 @@
         Csw.controls.register('viewSelect', function (cswParent, params) {
 
             var cswPrivate = {
-                uri: 'Views',
                 viewMethod: 'Views/ViewSelect',
                 name: 'viewselect',
                 onSelect: null,

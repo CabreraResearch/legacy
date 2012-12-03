@@ -437,14 +437,14 @@ namespace ChemSW.Nbt.MetaData
             if( NodeTypeTableUpdate != null )
                 ChangesMade = NodeTypeTableUpdate.updateAll() || ChangesMade;
             if( NodeTypeTabTableUpdate != null )
-                ChangesMade = NodeTypeTabTableUpdate.updateAll() || ChangesMade;
+                ChangesMade = NodeTypeTabTableUpdate.updateAll() || ChangesMade;    
             if( NodeTypePropTableUpdate != null )
                 ChangesMade = NodeTypePropTableUpdate.updateAll() || ChangesMade;
             if( JctNodesPropsTableUpdate != null )
                 ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
 
             if( ChangesMade )
-            {
+            {   
                 CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
                 //_CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
             }

@@ -116,11 +116,11 @@ namespace ChemSW.Nbt.WebServices
             _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
 
-        public JObject runGrid( bool IncludeInQuickLaunch, bool GetAllRowsNow = false )
+        public JObject runGrid( bool IncludeInQuickLaunch, bool GetAllRowsNow = false, bool IsPropertyGrid = false, string GroupByCol = "" )
         {
             _View.SaveToCache( IncludeInQuickLaunch );
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
-            return _CswNbtGrid.TreeToJson( _View, Tree, ( _View.Visibility == NbtViewVisibility.Property ) );
+            return _CswNbtGrid.TreeToJson( _View, Tree, IsPropertyGrid: ( IsPropertyGrid || _View.Visibility == NbtViewVisibility.Property ), GroupByCol: GroupByCol );
         } // runGrid()
 
         private void _getGridProperties( IEnumerable<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )

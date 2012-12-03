@@ -67,4 +67,17 @@
             cswPrivate.bindingObj.trigger.apply(cswPrivate.bindingObj, arguments);
         });
 
+    
+        Csw.pubsSubs = Csw.pubsSubs || function() {
+            if (Csw.clientSession.isDebug()) {
+                for (var prop in cswPrivate.bindingObj[0]) {
+                    if (cswPrivate.bindingObj[0].hasOwnProperty(prop)) {
+                        if (cswPrivate.bindingObj[0][prop].events) {
+                            return cswPrivate.bindingObj[0][prop].events;
+                        }
+                    }
+                }
+            }
+        };
+    
 } ());

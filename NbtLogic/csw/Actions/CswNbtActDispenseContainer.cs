@@ -4,7 +4,6 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Actions
@@ -166,7 +165,7 @@ namespace ChemSW.Nbt.Actions
                 ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 ChildContainer.Quantity.Quantity = 0;
                 ChildContainer.Quantity.UnitId = UnitId;
-                ChildContainer.Disposed.Checked = Tristate.False;                
+                ChildContainer.Disposed.Checked = Tristate.False;
                 ChildContainer.postChanges( false );
                 ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                 _ContainersToView.Add( ChildContainer.NodeId );
@@ -200,38 +199,59 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
 
-            CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItemId];
+            CswNbtPropertySetRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItemId];
             if( null != NodeAsRequestItem )
             {
-                CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes[NodeAsRequestItem.Material.RelatedNodeId];
-                if( null != NodeAsMaterial )
+                CswNbtObjClassRequestMaterialDispense RequestMaterialDispense = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NodeAsRequestItem );
+                if( null != RequestMaterialDispense )
                 {
-                    Ret.ViewName = "Containers of " + NodeAsMaterial.TradeName.Text;
-                    Ret.ViewMode = NbtViewRenderingMode.Grid;
-                    Ret.Category = "Dispensing";
+                    CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes[RequestMaterialDispense.Material.RelatedNodeId];
+                    if( null != NodeAsMaterial )
+                    {
+                        Ret.ViewName = "Containers of " + NodeAsMaterial.TradeName.Text;
+                        Ret.ViewMode = NbtViewRenderingMode.Grid;
+                        Ret.Category = "Dispensing";
 
-                    CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-                    CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
-                    CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
-                    CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );
-                    Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
-                    MaterialVp.ShowInGrid = false;
+                        CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                        CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
+                        CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
+                        CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );
+                        Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
+                        MaterialVp.ShowInGrid = false;
 
-                    CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
-                    Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
-                    MissingVp.ShowInGrid = false;
+                        CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
+                        Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
+                        MissingVp.ShowInGrid = false;
 
-                    CswNbtViewProperty LocationVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
+                        CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
+                        Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
 
-                    CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
-                    Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
+                        CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
+                        Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
+                        StatusVp.ShowInGrid = false;
 
-                    CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
-                    Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
-                    StatusVp.ShowInGrid = false;
+                        Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
+
+                        CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                        CswNbtMetaDataObjectClassProp InventoryGroupOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
+                        CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( ContainerRel, NbtViewPropOwnerType.First, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ), IncludeDefaultFilters: true );
+
+                        if( CswTools.IsPrimaryKey( RequestMaterialDispense.InventoryGroup.RelatedNodeId ) )
+                        {
+                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RequestMaterialDispense.InventoryGroup.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
+                        }
+                        else
+                        {
+                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                        }
+
+                        if( RequestMaterialDispense.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
+                        {
+                            Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Size ), SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RequestMaterialDispense.Size.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
+                        }
+                    }
                 }
             }
-
             return Ret;
         }
 
