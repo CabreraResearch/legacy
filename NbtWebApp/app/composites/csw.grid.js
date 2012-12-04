@@ -445,6 +445,7 @@
                             }
                             cswPrivate.fields = result.grid.fields;
                             cswPrivate.columns = result.grid.columns;
+                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.data = result.grid.data;
                             cswPrivate.ajaxResult = result;
                             cswPrivate.init();
@@ -569,7 +570,6 @@
             });
 
             //#endregion Public methods
-                            cswPrivate.groupField = result.grid.groupfield;
 
             //#region _postCtor
 
