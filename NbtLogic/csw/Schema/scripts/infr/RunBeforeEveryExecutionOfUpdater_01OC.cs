@@ -1126,7 +1126,6 @@ namespace ChemSW.Nbt.Schema
                 containersView.AddViewProperty( containerParent, containerMissingOCP );
                 containersView.AddViewProperty( containerParent, containerOwnerOCP );
                 containersView.AddViewProperty( containerParent, containerStatusOCP );
-                containersView.save();
 
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( containersOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, containersView.ToString() );
             }
