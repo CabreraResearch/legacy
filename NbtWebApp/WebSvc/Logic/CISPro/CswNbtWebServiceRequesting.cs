@@ -40,17 +40,20 @@ namespace ChemSW.Nbt.WebServices
         {
             RequestAct = RequestAct ?? _RequestAct;
             JObject ret = new JObject();
-            CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, RequestAct.OpenCartsView, ForReport: false );
+
+            CswNbtView CurrentRequestView = RequestAct.getCurrentRequestView();
+            CurrentRequestView.SaveToCache( IncludeInQuickLaunch: false );
+            CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CurrentRequestView, ForReport: false );
             ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true );
-            ret["cartnodeid"] = RequestAct.CurrentRequestNode().NodeId.ToString();
-            ret["cartviewid"] = RequestAct.OpenCartsView.SessionViewId.ToString();
+            ret["cartnodeid"] = RequestAct.getCurrentRequestNode().NodeId.ToString();
+            ret["cartviewid"] = CurrentRequestView.SessionViewId.ToString();
             return ret;
         }
 
         public JObject getCurrentRequestId()
         {
             JObject ret = new JObject();
-            CswNbtObjClassRequest CurrentRequest = _RequestAct.CurrentRequestNode();
+            CswNbtObjClassRequest CurrentRequest = _RequestAct.getCurrentRequestNode();
             ret["cartnodeid"] = CurrentRequest.NodeId.ToString();
             return ret;
         }
@@ -100,7 +103,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, false );
-            Ret.Data.FavoriteItemsViewId = ActRequesting.getFavoriteRequests().SessionViewId.ToString();
+            CswNbtView FavoritesView = ActRequesting.getFavoriteRequests();
+            FavoritesView.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.FavoriteItemsViewId = FavoritesView.SessionViewId.ToString();
         }
 
         /// <summary>

@@ -525,7 +525,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             CswNbtViewProperty FavoriteVp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsFavoriteOcp );
             FavoriteVp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( FavoriteVp, Value: Tristate.False.ToString() );
+            ParentRelationship.View.AddViewPropertyFilter( FavoriteVp, Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.False ) );
         }
 
         #endregion
