@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.Actions
                         FinalMaterial.SupplierId = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
                         FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
 
-                        CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit();
+                        CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit( UpversionTemp: true );
 
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
                         if( RequestObj.HasValues )
