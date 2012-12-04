@@ -19,23 +19,20 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtActRequesting _RequestAct;
 
-        private void _initOrderingResources( SystemViewName ViewName, CswPrimaryKey RequestNodeId = null )
+        private void _initOrderingResources( CswPrimaryKey RequestNodeId = null )
         {
-            _RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true, RequestViewName: ViewName, RequestNodeId: RequestNodeId );
+            _RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true, RequestNodeId: RequestNodeId );
         }
 
-        public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, SystemViewName ViewName = null, CswPrimaryKey RequestNodeId = null )
+        public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, CswPrimaryKey RequestNodeId = null )
         {
             _CswNbtResources = CswNbtResources;
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
             }
-            if( ViewName != SystemViewName.CISProRequestCart && ViewName != SystemViewName.CISProRequestHistory )
-            {
-                ViewName = SystemViewName.CISProRequestCart;
-            }
-            _initOrderingResources( ViewName, RequestNodeId );
+
+            _initOrderingResources( RequestNodeId );
 
         } //ctor
 

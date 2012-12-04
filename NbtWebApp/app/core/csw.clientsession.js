@@ -192,7 +192,7 @@
                 Csw.extend(cswPrivate, options);
             }
             cswPrivate.isAuthenticated = false;
-            Csw.ajaxWcf['get']({
+            Csw.ajaxWcf.post({
                 urlMethod: cswPrivate.DeauthenticateUrl,
                 data: {},
                 success: function () {
