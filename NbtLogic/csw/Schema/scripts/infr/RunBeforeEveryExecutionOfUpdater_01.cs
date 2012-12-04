@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Schema
             // or other changes that must take place before any other schema script.
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
-            
+
             #region URSULA
 
             _makeMolKeysTable();
@@ -52,7 +52,6 @@ namespace ChemSW.Nbt.Schema
             #endregion URSULA
 
             #region VIOLA
-
 
             #endregion VIOLA
 
