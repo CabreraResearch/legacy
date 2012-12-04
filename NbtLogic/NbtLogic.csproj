@@ -307,6 +307,7 @@
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
+    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_CaseXXXXX.cs" />
     <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -916,6 +917,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="csw\Schema\scripts\prod\01V\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
   </ItemGroup>

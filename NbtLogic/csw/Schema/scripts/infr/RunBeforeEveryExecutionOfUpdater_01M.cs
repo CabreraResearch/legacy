@@ -46,6 +46,10 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.deleteModule( "mobile" );
 
             #endregion URSULA
+
+            #region VIOLA
+
+            #endregion VIOLA
             
             #region VIOLA
             

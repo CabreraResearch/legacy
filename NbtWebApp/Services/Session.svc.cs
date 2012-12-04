@@ -47,7 +47,6 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet(  )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
         public void End()
