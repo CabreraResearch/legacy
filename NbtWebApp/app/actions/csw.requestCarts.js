@@ -48,7 +48,7 @@
                 });
             };
 
-            cswPrivate.makeRequestCreateMaterial = function () {
+            cswPrivate.makeRequestCreateMaterial = function (grid) {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/findMaterialCreate',
                     success: function (data) {
@@ -57,7 +57,7 @@
                                 text: 'New Create Material Request',
                                 nodetypeid: data.NodeTypeId,
                                 onAddNode: function () {
-                                    cswPublic.grid.reload();
+                                    grid.reload();
                                     Csw.publish(Csw.enums.events.main.refreshHeader);
                                 }
                             });
@@ -136,12 +136,15 @@
                             break;
                         case 'Submitted':
                             cswPrivate.action.finish.disable();
+                            cswPrivate.makeSubmittedTab();
                             break;
                         case 'Recurring':
                             cswPrivate.action.finish.disable();
+                            cswPrivate.makeRecurringTab();
                             break;
                         case 'Favorites':
                             cswPrivate.action.finish.disable();
+                            cswPrivate.makeFavoritesTab();
                             break;
                         }
                 }
@@ -166,10 +169,10 @@
                             SessionViewId: opts.sessionViewId
                         }
                     },
-                    showCheckboxes: true,
+                    showCheckboxes: opts.showCheckboxes,
                     showActionColumn: true,
                     canSelectRow: false,
-
+                    groupField: opts.groupField || '',
                     onLoad: function(grid, json) {
                         cswPrivate.cartnodeid = json.cartnodeid;
                         cswPrivate.cartviewid = json.cartviewid;
@@ -271,10 +274,14 @@
                 inpTbl.cell(1, 3)
                     .css({ 'text-align': 'center' })
                     .buttonExt({
-                    enabledText: 'Request Create Material',
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cart),
-                    onClick: cswPrivate.makeRequestCreateMaterial
-                });
+                        enabledText: 'Request Create Material',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cart),
+                        onClick: function() {
+                            if (cswPublic.pendingGrid) {
+                                cswPrivate.makeRequestCreateMaterial(cswPublic.pendingGrid);
+                            }
+                        }
+                    });
                 
                 ol.li().br({ number: 1 });
 
@@ -302,13 +309,15 @@
                 opts.sessionViewId = cswPrivate.state.pendingItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_srgrid';
-                opts.onSelectChange = function(rowCount) {
+                opts.showCheckboxes = true;
+
+                opts.onSelectChange = function (rowCount) {
                     hasOneRowSelected = rowCount > 0;
                     toggleSaveBtn();
                 };
                 opts.onEditNode = cswPrivate.makePendingTab;
 
-                cswPublic.grid = cswPrivate.makeGridForTab(opts);
+                cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
 
                 ol.li().br();
                 
@@ -318,7 +327,7 @@
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     onClick: function () {
                         var nodes = [];
-                        cswPublic.grid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
+                        cswPublic.pendingGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
                         cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes);
@@ -350,24 +359,64 @@
             }; // cswPrivate.makePendingTab()
 
             cswPrivate.makeSubmittedTab = function() {
-                var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Submitted Request Itens', 'View any previously submitted Request Items.');
+                var ol = cswPrivate.prepTab(cswPrivate.submittedTab, 'Submitted Request Itens', 'View any previously submitted Request Items.');
 
                 Csw.nbt.viewFilters({
                     name: 'submitted_viewfilters',
                     parent: ol.li(),
-                    viewid: o.viewid,
+                    viewid: cswPrivate.state.submittedItemsViewId,
                     onEditFilters: function (newviewid) {
-                        var newopts = o;
-                        newopts.viewid = newviewid;
-                        // set the current view to be the session view, so filters are saved
-                        Csw.clientState.setCurrentView(newviewid, Csw.enums.viewMode.grid.name);
-                        //getViewGrid(newopts);
+                        cswPrivate.state.submittedItemsViewId = newviewid;
+                        cswPrivate.makeSubmittedTab();
                     } // onEditFilters
                 }); // viewFilters
 
+                ol.br();
+
+                var opts = {
+                    onSuccess: function () { }
+                };
+                opts.sessionViewId = cswPrivate.state.submittedItemsViewId;
+                opts.parent = ol.li();
+                opts.gridId = cswPrivate.name + '_submittedItemsGrid';
+                opts.groupField = 'Name';
+                opts.onEditNode = cswPrivate.makeSubmittedTab;
+
+                cswPublic.submittedGrid = cswPrivate.makeGridForTab(opts);
+
             };
 
-            //#endregion Tab construction  
+            cswPrivate.makeRecurringTab = function() {
+                var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Itens', 'View any recurring Request Items.');
+            };
+
+            cswPrivate.makeFavoritesTab = function() {
+                var ol = cswPrivate.prepTab(cswPrivate.favoritesTab, 'Favorite Request Itens', 'View any favorite Request Items.');
+                Csw.nbt.viewFilters({
+                    name: 'favorites_viewfilters',
+                    parent: ol.li(),
+                    viewid: cswPrivate.state.favoriteItemsViewId,
+                    onEditFilters: function (newviewid) {
+                        cswPrivate.state.favoriteItemsViewId = newviewid;
+                        cswPrivate.makeFavoritesTab();
+                    } // onEditFilters
+                }); // viewFilters
+
+                ol.br();
+
+                var opts = {
+                    onSuccess: function () { }
+                };
+                opts.sessionViewId = cswPrivate.state.favoriteItemsViewId;
+                opts.parent = ol.li();
+                opts.gridId = cswPrivate.name + '_favoriteItemsGrid';
+                opts.groupField = 'Name';
+                opts.onEditNode = cswPrivate.makeFavoritesTab;
+
+                cswPublic.favoritesGrid = cswPrivate.makeGridForTab(opts);
+            };
+
+            //#endregion Tab construction
 
             //#region _postCtor            
 
