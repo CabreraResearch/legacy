@@ -42,11 +42,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28156() ) );                         //01U-014
 
             #endregion URSULA
-
-            #region VIOLA
-
-            #endregion VIOLA
-
+            
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
