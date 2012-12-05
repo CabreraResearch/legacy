@@ -29,7 +29,7 @@ $param .= extractPath("$dir\\app\\view");
 $param .= extractPath("$dir\\app\\wizards");
 $param .= "--js $dir\\app\\Main.js ";
 
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --compilation_level=WHITESPACE_ONLY --language_in=ECMASCRIPT5 --js_output_file $destfile`;
+`java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --compilation_level=WHITESPACE_ONLY --language_in=ECMASCRIPT5 --create_source_map $dir/app/app.js.map --source_map_format=V3 --js_output_file $destfile`;
 
 my $vsparam = "";
 $vsparam .= extractFile("$dir\\app\\_first-vsdoc.js");
