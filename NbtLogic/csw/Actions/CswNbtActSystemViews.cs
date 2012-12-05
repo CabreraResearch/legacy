@@ -14,25 +14,7 @@ namespace ChemSW.Nbt.Actions
 
         public CswNbtView SystemView { get; private set; }
         public static readonly string SiViewCategory = "SI Configuration";
-        public sealed class SystemViewName : CswEnum<SystemViewName>
-        {
-            private SystemViewName( String Name ) : base( Name ) { }
-            public static IEnumerable<SystemViewName> all { get { return All; } }
-            public static explicit operator SystemViewName( string Str )
-            {
-                SystemViewName Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
-            public static readonly SystemViewName SILocationsList = new SystemViewName( "SI Locations List" );
-            public static readonly SystemViewName SILocationsTree = new SystemViewName( "SI Locations Tree" );
-            public static readonly SystemViewName SIInspectionsbyDate = new SystemViewName( "SI Inspections by Date" );
-            public static readonly SystemViewName SIInspectionsbyBarcode = new SystemViewName( "SI Inspections by Barcode" );
-            public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
-            public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
-            public static readonly SystemViewName CISProRequestCart = new SystemViewName( "CISPro Request Cart" );
-            public static readonly SystemViewName CISProRequestHistory = new SystemViewName( "CISPro Request History" );
-            public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
-        }
+
         #endregion Public, Definitional props
 
         #region Private, core methods
@@ -396,5 +378,23 @@ namespace ChemSW.Nbt.Actions
 
     }
 
-
+    public sealed class SystemViewName : CswEnum<SystemViewName>
+    {
+        private SystemViewName( String Name ) : base( Name ) { }
+        public static IEnumerable<SystemViewName> all { get { return All; } }
+        public static explicit operator SystemViewName( string Str )
+        {
+            SystemViewName Ret = Parse( Str );
+            return Ret ?? Unknown;
+        }
+        public static readonly SystemViewName SILocationsList = new SystemViewName( "SI Locations List" );
+        public static readonly SystemViewName SILocationsTree = new SystemViewName( "SI Locations Tree" );
+        public static readonly SystemViewName SIInspectionsbyDate = new SystemViewName( "SI Inspections by Date" );
+        public static readonly SystemViewName SIInspectionsbyBarcode = new SystemViewName( "SI Inspections by Barcode" );
+        public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
+        public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
+        public static readonly SystemViewName CISProRequestCart = new SystemViewName( "CISPro Request Cart" );
+        public static readonly SystemViewName CISProRequestHistory = new SystemViewName( "CISPro Request History" );
+        public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
+    }
 }

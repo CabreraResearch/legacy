@@ -75,8 +75,6 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp RequestRequestorNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 CswNbtMetaDataNodeTypeProp RequestSubmittedNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
                 RequestNt.addNameTemplateText( RequestNameNtp.PropName );
-                RequestNt.addNameTemplateText( RequestRequestorNtp.PropName );
-                RequestNt.addNameTemplateText( RequestSubmittedNtp.PropName );
 
                 CswNbtMetaDataNodeTypeTab RequestItemsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RequestNt, "Request Items", Int32.MinValue );
 
@@ -282,6 +280,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RmdFulfillNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Fulfill );
             CswNbtMetaDataNodeTypeProp RmdIGroupNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.InventoryGroup );
             CswNbtMetaDataNodeTypeProp RmdTotalDispNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.TotalDispensed );
+            CswNbtMetaDataNodeTypeProp RmdTotalMoveNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.TotalMoved );
             CswNbtMetaDataNodeTypeProp RmdLevelNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Level );
             CswNbtMetaDataNodeTypeProp RmdIsBatchNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsBatch );
             CswNbtMetaDataNodeTypeProp RmdBatchNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Batch );
@@ -328,6 +327,7 @@ namespace ChemSW.Nbt.Schema
             RmdIGroupNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 6, DisplayColumn: 1 );
             RmdStatusNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 7, DisplayColumn: 1 );
             RmdTotalDispNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 8, DisplayColumn: 2 );
+            RmdTotalMoveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 9, DisplayColumn: 2 );
             RmdFulfillNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 9, DisplayColumn: 1 );
 
             //Preview Layout
@@ -632,11 +632,11 @@ namespace ChemSW.Nbt.Schema
             #endregion Size Relationship
 
             //Nuke the System Views from the DB
-            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( CswNbtActSystemViews.SystemViewName.CISProRequestCart.ToString() ) )
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( SystemViewName.CISProRequestCart.ToString() ) )
             {
                 View.Delete();
             }
-            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( CswNbtActSystemViews.SystemViewName.CISProRequestHistory.ToString() ) )
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( SystemViewName.CISProRequestHistory.ToString() ) )
             {
                 View.Delete();
             }

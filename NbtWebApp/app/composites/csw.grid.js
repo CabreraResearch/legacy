@@ -7,10 +7,12 @@
     Csw.composites.grid = Csw.composites.grid ||
         Csw.composites.register('grid', function (cswParent, options) {
 
+            //#region _preCtor
+
             var cswPrivate = {
                 name: 'extjsGrid',
                 //storeId: '',
-                title: 'Untitled Grid',
+                title: '',
                 truncated: false,
                 //stateId: '',
                 usePaging: true,
@@ -30,12 +32,13 @@
 
                 canSelectRow: false,
 
-                onLoad: null,   // function(grid, ajaxResult)
-                onEdit: null,   // function(rows)
-                onDelete: null, // function(rows)
-                onSelect: null, // function(row)
-                onDeselect: null, // function(row)
-
+                onLoad: function(grid, ajaxResult) {},
+                onEdit: function (rows) { },   
+                onDelete: function (rows) { }, 
+                onSelect: function (rows) { }, 
+                onDeselect: function (row) { },
+                onSelectChange: function (rowCount) { },
+                
                 height: '',  // overridden by webservice if paging is on
                 //width: '100%',
                 width: '',
@@ -55,10 +58,31 @@
 
             window.Ext.require('Ext.ux.grid.FiltersFeature');
 
+            //#endregion _preCtor
+
+            //#region AJAX
+
+            cswPrivate.getData = function (onSuccess) {
+                cswPublic.ajax = Csw.ajax.post({
+                    url: cswPrivate.ajax.url,
+                    urlMethod: cswPrivate.ajax.urlMethod,
+                    data: cswPrivate.ajax.data,
+                    success: function (result) {
+                        if (false === Csw.isNullOrEmpty(result.grid)) {
+                            Csw.tryExec(onSuccess, result);
+                        } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+                    } // success
+                }); // ajax.post()
+            };
+
+            //#endregion AJAX
+
+            //#region Grid Control Constructors
+
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
-                    var cell = Csw.literals.factory($('#' + cellId));
+                    var cell = Csw.domNode({ ID: cellId });
                     cell.empty();
                     var iconopts = {
                         name: cswPrivate.name + cellId + buttonName,
@@ -169,8 +193,7 @@
                 };
 
                 // Action column
-                if (cswPrivate.showActionColumn &&
-                    false === cswPrivate.showCheckboxes) {
+                if (cswPrivate.showActionColumn) { //&& false === cswPrivate.showCheckboxes
 
                     var newcol = {
                         header: 'Action',
@@ -209,7 +232,11 @@
                             return ret;
                         } // renderer()
                     }; // newcol
-                    gridopts.columns.splice(0, 0, newcol);
+                    var position = 0;
+                    if (cswPrivate.showCheckboxes) {
+                        position = gridopts.columns.length;
+                    }
+                    gridopts.columns.splice(position, 0, newcol);
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
 
                 //Render buttons in a callback
@@ -236,7 +263,7 @@
                             });
                             if (thisBtn.length === 1) {
                                 Csw.defer(function () {
-                                    var div = Csw.literals.factory($('#' + id));
+                                    var div = Csw.domNode({ ID: id });
                                     div.nodeButton({
                                         value: colObj.header,
                                         size: 'small',
@@ -349,18 +376,13 @@
                 return cswPublic.extGrid;
             }); // makeGrid()
 
-            cswPublic.reload = function () {
-                cswPrivate.getData(function (result) {
-                    if (result && result.grid && result.grid.data && result.grid.data.items) {
-                        cswPrivate.data = result.grid.data;
-                        cswPrivate.store.destroy();
-                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
-                        cswPrivate.grid.reconfigure(cswPrivate.store);
-                    } else {
-                        Csw.debug.error('Failed to reload grid');
-                    }
-                });
-            };
+            cswPrivate.calculateHeight = Csw.method(function (rows) {
+                return 25 + // title bar
+                       23 + // grid header
+                       (rows * 28) + // rows
+                       14 + // horizontal scrollbar
+                       27;  // grid footer
+            });
 
             cswPrivate.removeAll = function () {
                 if (cswPrivate.store) {
@@ -373,6 +395,10 @@
                 }
                 cswParent.empty();
             };
+
+            //#endregion Grid Control Constructors
+
+            //#region Grid Init
 
             cswPrivate.init = Csw.method(function () {
                 cswPrivate.removeAll();
@@ -389,6 +415,9 @@
                     deselect: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
                     },
+                    selectionchange: function(rowModel, selected, eOpts) {
+                        Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
+                    },
                     afterrender: function (component) {
                         var bottomToolbar = component.getDockedComponent('bottomtoolbar');
                         if (false === Csw.isNullOrEmpty(bottomToolbar)) {
@@ -403,6 +432,47 @@
 
             }); // init()
 
+            cswPrivate.reInit = function (forceRefresh) {
+                if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
+                    cswPrivate.getData(function (result) {
+                        if (false === Csw.isNullOrEmpty(result.grid)) {
+                            cswPrivate.pageSize = Csw.number(result.grid.pageSize);
+                            if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
+                                cswPrivate.truncated = result.grid.truncated;
+                            }
+                            if (false === Csw.isNullOrEmpty(result.grid.title)) {
+                                cswPrivate.title = result.grid.title;
+                            }
+                            cswPrivate.fields = result.grid.fields;
+                            cswPrivate.columns = result.grid.columns;
+                            cswPrivate.data = result.grid.data;
+                            cswPrivate.groupField = result.grid.groupfield;
+                            cswPrivate.ajaxResult = result;
+                            cswPrivate.init();
+
+                        } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+                    });
+                } else {
+                    cswPrivate.init();
+                }
+            };
+            
+            //#endregion Grid Init
+
+            //#region Public methods
+
+            cswPublic.reload = function () {
+                cswPrivate.getData(function (result) {
+                    if (result && result.grid && result.grid.data && result.grid.data.items) {
+                        cswPrivate.data = result.grid.data;
+                        cswPrivate.store.destroy();
+                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
+                        cswPrivate.grid.reconfigure(cswPrivate.store);
+                    } else {
+                        Csw.debug.error('Failed to reload grid');
+                    }
+                });
+            };
 
             cswPublic.getCell = Csw.method(function (rowindex, key) {
                 ///<summary>Gets the contents of a jqGrid cell by rowid and column key</summary>
@@ -411,6 +481,10 @@
 
             cswPublic.getSelectedRowId = Csw.method(function () {
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
+            });
+
+            cswPublic.getSelectedRowCount = Csw.method(function() {
+                return cswPrivate.grid.getSelectionModel().getSelection().length;
             });
 
             cswPublic.getSelectedRows = Csw.method(function () {
@@ -495,51 +569,10 @@
                 cswPrivate.init();
             });
 
-            cswPrivate.calculateHeight = Csw.method(function (rows) {
-                return 25 + // title bar
-                       23 + // grid header
-                       (rows * 28) + // rows
-                       14 + // horizontal scrollbar
-                       27;  // grid footer
-            });
+            //#endregion Public methods
+                            
 
-            cswPrivate.getData = function (onSuccess) {
-                cswPublic.ajax = Csw.ajax.post({
-                    url: cswPrivate.ajax.url,
-                    urlMethod: cswPrivate.ajax.urlMethod,
-                    data: cswPrivate.ajax.data,
-                    success: function (result) {
-                        if (false === Csw.isNullOrEmpty(result.grid)) {
-                            Csw.tryExec(onSuccess, result);
-                        } // if(false === Csw.isNullOrEmpty(data.griddata)) {
-                    } // success
-                }); // ajax.post()
-            };
-
-            cswPrivate.reInit = function (forceRefresh) {
-                if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
-                    cswPrivate.getData(function (result) {
-                        if (false === Csw.isNullOrEmpty(result.grid)) {
-                            cswPrivate.pageSize = Csw.number(result.grid.pageSize);
-                            if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
-                                cswPrivate.truncated = result.grid.truncated;
-                            }
-                            if (false === Csw.isNullOrEmpty(result.grid.title)) {
-                                cswPrivate.title = result.grid.title;
-                            }
-                            cswPrivate.fields = result.grid.fields;
-                            cswPrivate.columns = result.grid.columns;
-                            cswPrivate.data = result.grid.data;
-                            cswPrivate.groupField = result.grid.groupfield;
-                            cswPrivate.ajaxResult = result;
-                            cswPrivate.init();
-
-                        } // if(false === Csw.isNullOrEmpty(data.griddata)) {
-                    });
-                } else {
-                    cswPrivate.init();
-                }
-            };
+            //#region _postCtor
 
             //constructor
             (function () {
@@ -550,6 +583,8 @@
             } ());
 
             return cswPublic;
+            
+            //#endregion _postCtor
         });
 
 } ());

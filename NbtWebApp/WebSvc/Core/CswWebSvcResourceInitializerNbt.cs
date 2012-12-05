@@ -5,13 +5,6 @@ using ChemSW.Nbt;
 using ChemSW.Security;
 using ChemSW.Session;
 
-// supports ScriptService attribute
-// supports ScriptService attribute
-
-// supports ScriptService attribute
-
-
-
 namespace ChemSW.WebSvc
 {
     public class CswWebSvcResourceInitializerNbt : ICswWebSvcResourceInitializer

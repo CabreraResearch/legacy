@@ -279,16 +279,20 @@
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
-                        cswPrivate.divStep1.label({
+                        cswPrivate.divStep1.span({
                             text: "This wizard will guide you through the process of creating a new material. If the attributes below match an existing material, you will be given the option to view that material.",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep1.br({ number: 4 });
 
-                        cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
+                        var tbl = cswPrivate.divStep1.table({
+                            FirstCellRightAlign: true,
+                        });
+
+                        //Material
+                        tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true);
+                        cswPrivate.materialTypeSelect = tbl.cell(1,2).nodeTypeSelect({
                             name: 'nodeTypeSelect',
-                            useWide: true,
-                            labelText: 'Select a Material Type:',
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
@@ -297,13 +301,11 @@
                             onSuccess: changeMaterial,
                             isRequired: true
                         });
-                        cswPrivate.divStep1.br({ number: 1 });
-
-                        /* TRADENAME */
-                        cswPrivate.tradeNameInput = cswPrivate.divStep1.input({
+                        
+                        // TRADENAME
+                        tbl.cell(2, 1).span().setLabelText('Tradename: ', true);
+                        cswPrivate.tradeNameInput = tbl.cell(2,2).input({
                             name: 'tradename',
-                            useWide: true,
-                            labelText: 'Tradename:',
                             cssclass: 'required',
                             value: cswPrivate.state.tradeName,
                             onChange: function () {
@@ -311,29 +313,30 @@
                             },
                             isRequired: true
                         });
-                        cswPrivate.divStep1.br({ number: 1 });
+                        
 
-                        /* SUPPLIER */
-                        cswPrivate.supplierSelect = cswPrivate.divStep1.nodeSelect({
+                        // SUPPLIER
+                        tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
+                        cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
                             name: 'supplier',
                             cssclass: 'required',
-                            objectClassName: 'VendorClass',
+                            ajaxData: {
+                                ObjectClass: 'VendorClass'
+                            },
+                            width: '200px',
+                            showSelectOnLoad: true,
                             addNodeDialogTitle: 'Vendor',
-                            useWide: true,
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
-                            labelText: 'Supplier: ',
                             onChange: changeMaterial,
                             onSuccess: changeMaterial,
                             isRequired: true
                         });
-                        //cswPrivate.divStep1.br({ number: 1 });
 
-                        /* PARTNO */
-                        cswPrivate.partNoInput = cswPrivate.divStep1.input({
+                        // PARTNO
+                        tbl.cell(4, 1).span().setLabelText('Part No:  ');
+                        cswPrivate.partNoInput = tbl.cell(4,2).input({
                             name: 'partno',
-                            useWide: true,
                             value: cswPrivate.state.partNo,
-                            labelText: 'Part No:',
                             onChange: function () {
                                 changeMaterial();
                             }

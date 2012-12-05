@@ -37,9 +37,11 @@
  *
  * ##Server side code examples:##
  *
- * - [PHP](http://www.vinylfox.com/extjs/grid-filter-php-backend-code.php) - (Thanks VinylFox)
- * - [Ruby on Rails](http://extjs.com/forum/showthread.php?p=77326#post77326) - (Thanks Zyclops)
- * - [Ruby on Rails](http://extjs.com/forum/showthread.php?p=176596#post176596) - (Thanks Rotomaul)
+ * - [PHP](http://www.vinylfox.com/extjs/grid-filter-php-backend-code.php) - (Thanks VinylFox)</li>
+ * - [Ruby on Rails](http://extjs.com/forum/showthread.php?p=77326#post77326) - (Thanks Zyclops)</li>
+ * - [Ruby on Rails](http://extjs.com/forum/showthread.php?p=176596#post176596) - (Thanks Rotomaul)</li>
+ * - [Python](http://www.debatablybeta.com/posts/using-extjss-grid-filtering-with-django/) - (Thanks Matt)</li>
+ * - [Grails](http://mcantrell.wordpress.com/2008/08/22/extjs-grids-and-grails/) - (Thanks Mike)</li>
  *
  * #Example usage:#
  *
@@ -80,7 +82,7 @@
  *     var grid = Ext.create('Ext.grid.Panel', {
  *          store: store,
  *          columns: ...,
- *          features: [filtersCfg],
+ *          filters: [filtersCfg],
  *          height: 400,
  *          width: 700,
  *          bbar: Ext.create('Ext.PagingToolbar', {
@@ -671,28 +673,35 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
 
     /**
      * Function to take the active filters data and build it into a query.
-     * The format of the query depends on the {@link #encode} configuration:
+     * The format of the query depends on the <code>{@link #encode}</code>
+     * configuration:
+     * <div class="mdetail-params"><ul>
      *
-     *   - `false` (Default) :
-     *     Flatten into query string of the form (assuming <code>{@link #paramPrefix}='filters'</code>:
-     *
-     *         filters[0][field]="someDataIndex"&
-     *         filters[0][data][comparison]="someValue1"&
-     *         filters[0][data][type]="someValue2"&
-     *         filters[0][data][value]="someValue3"&
-     *
-     *
-     *   - `true` :
-     *     JSON encode the filter data
-     *
-     *         {filters:[{"field":"someDataIndex","comparison":"someValue1","type":"someValue2","value":"someValue3"}]}
-     *
+     * <li><b><tt>false</tt></b> : <i>Default</i>
+     * <div class="sub-desc">
+     * Flatten into query string of the form (assuming <code>{@link #paramPrefix}='filters'</code>:
+     * <pre><code>
+filters[0][field]="someDataIndex"&
+filters[0][data][comparison]="someValue1"&
+filters[0][data][type]="someValue2"&
+filters[0][data][value]="someValue3"&
+     * </code></pre>
+     * </div></li>
+     * <li><b><tt>true</tt></b> :
+     * <div class="sub-desc">
+     * JSON encode the filter data
+     * <pre><code>
+filters[0][field]="someDataIndex"&
+filters[0][data][comparison]="someValue1"&
+filters[0][data][type]="someValue2"&
+filters[0][data][value]="someValue3"&
+     * </code></pre>
+     * </div></li>
+     * </ul></div>
      * Override this method to customize the format of the filter query for remote requests.
-     *
      * @param {Array} filters A collection of objects representing active filters and their configuration.
-     * Each element will take the form of {field: dataIndex, data: filterConf}. dataIndex is not assured
-     * to be unique as any one filter may be a composite of more basic filters for the same dataIndex.
-     *
+     *    Each element will take the form of {field: dataIndex, data: filterConf}. dataIndex is not assured
+     *    to be unique as any one filter may be a composite of more basic filters for the same dataIndex.
      * @return {Object} Query keys and values
      */
     buildQuery : function (filters) {

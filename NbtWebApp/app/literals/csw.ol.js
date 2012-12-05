@@ -5,30 +5,47 @@
     'use strict';
 
     Csw.literals.ol = Csw.literals.ol ||
-        Csw.literals.register('ol', function (options) {
+        Csw.literals.register('ol', function (cswPrivate) {
             /// <summary> Create an <ol /> </summary>
             /// <param name="options" type="Object">Options to define the ol.</param>
             /// <returns type="ol">A ol object</returns>
-            var cswPrivate = {
-                $parent: '',
-                number: 1
-            };
+            
             var cswPublic = {};
 
-            cswPublic.li = function (liOptions) {
+            (function _preCtor() {
+                cswPrivate = cswPrivate || {};
+                cswPrivate.$parent = cswPrivate.$parent || {};
+                cswPrivate.ID = cswPrivate.ID || '';
+                cswPrivate.name = cswPrivate.name || '';
+                cswPrivate.cssclass = cswPrivate.cssclass || '';
+            }());
+            
+            cswPrivate.count = 1;
+
+            cswPublic.li = function (liInternal) {
                 /// <summary> Create a <li /> </summary>
                 /// <param name="options" type="Object">Options to define the li.</param>
                 /// <returns type="li">A li object</returns>
-                var liInternal = {
-                    number: 1
-                };
+                liInternal = liInternal || {};
+                liInternal.text = liInternal.text || '';
+                liInternal.cssclass = liInternal.cssclass || '';
+
                 var liExternal = {};
 
-                (function() {
-                    Csw.extend(liInternal, liOptions);
-
+                (function () {
+                    
                     var $li,
-                        html = '<li>';
+                        html = '',
+                        attr = Csw.makeAttr();
+
+                    cswPrivate.count += 1;
+                    attr.add('id', cswPrivate.ID + '_' + cswPrivate.count);
+                    attr.add('class', cswPrivate.cssclass);
+                    attr.add('name', cswPrivate.name + '_' + cswPrivate.count);
+
+                    html += '<li';
+                    html += attr.get();
+                    html += '>';
                     html += Csw.string(liInternal.text);
                     html += '</li>';
 
@@ -40,15 +57,19 @@
                 return liExternal;
             };
 
-            (function () {
-                var html = '<ol></ol>';
-                var $ol;
+            (function _postCtor() {
+                var html = '',
+                    attr = Csw.makeAttr();
 
-                Csw.extend(cswPrivate, options);
+                attr.add('id', cswPrivate.ID);
+                attr.add('class', cswPrivate.cssclass);
 
-                $ol = $(html);
+                html += '<ol';
+                html += attr.get();
+                html += '></ol>';
+                var $ol = $(html);
+
                 Csw.literals.factory($ol, cswPublic);
-
                 cswPrivate.$parent.append(cswPublic.$);
             } ());
 

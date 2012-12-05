@@ -14,7 +14,7 @@
 //    {
 //        private XmlDocument RelationshipXmlDoc;
 
-//        public CswNbtNodePropMultiRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+//        public CswNbtNodePropMultiRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
 //            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
 //        {
 //            RelationshipXmlDoc = new XmlDocument();

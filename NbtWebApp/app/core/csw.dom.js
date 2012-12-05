@@ -52,7 +52,7 @@
     }
 
     Csw.dom = Csw.dom ||
-        Csw.register('dom', function (options, element) {
+        Csw.register('dom', function (cswPublic, $element) {
             ///<summary>Extend an object with Csw DOM methods and properties</summary>
             ///<param name="options" type="Object">Object defining paramaters for dom construction.</param>
             ///<param name="element" type="Object">Object to extend</param>
@@ -63,16 +63,18 @@
                 data: {},
                 enabled: true
             };
-            var cswPublic = options || {
-                parentId: ''
-            };
+            cswPublic = cswPublic || {};
 
-            if (Csw.isJQuery(element)) {
-                cswPublic.$ = element;
+            if (cswPublic && cswPublic[0] && cswPublic.$) {
                 cswPublic.isValid = true;
-            } else if (false === Csw.isNullOrEmpty(element) && Csw.isJQuery(element.$)) {
+            }
+            else if (Csw.isJQuery($element)) {
+                cswPublic.$ = $element;
+                cswPublic.isValid = true;
+            } 
+            else if (false === Csw.isNullOrEmpty($element) && Csw.isJQuery($element.$)) {
                 /*This is already a Csw dom object*/
-                return element;
+                return $element;
             } else {
                 cswPublic.$ = {};
             }
@@ -157,7 +159,7 @@
                 /// <param name='isReadOnly" type="Object">whether or not this property is read only</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
-                    cswPublic.append(propName).required(isRequired, true);
+                    cswPublic.append(propName).addClass('propertylabel').required(isRequired, true);
                 }
                 return cswPublic;
             };
@@ -436,6 +438,7 @@
                     ret = cswPublic;
                     var prop;
 
+                    //TODO: this try..catch.. shouldn't be here.
                     try {
                         if (typeof name === "object") {
                             for (prop in name) {
@@ -466,6 +469,7 @@
 
                     ret = cswPublic;
                     var prop;
+                    //TODO: this try..catch.. shouldn't be here.
                     try {
                         if (typeof name === "object") {
                             for (prop in name) {
@@ -490,10 +494,11 @@
                 /// <returns type="null"></returns> 
                 if (cswPrivate.isControlStillValid()) {
                     cswPublic.$.remove();
-                    Csw.each(cswPublic, function (name) {
-                        cswPublic[name] = null;
-                        delete cswPublic[name];
-                    });
+                    //Nice try, but this doesn't nuke outstanding references--only the assignment of the reference to the property on this object.
+                    //Csw.each(cswPublic, function (name) {
+                        //cswPublic[name] = null;
+                        //delete cswPublic[name];
+                    //});
                     cswPublic = null;
                 }
                 return null;

@@ -41,26 +41,20 @@ namespace ChemSW.Nbt.Schema
             // This script is for adding Modules, 
             // which often become required by other business logic and can cause prior scripts to fail.
 
-            #region TITANIA
-
-            Int32 MlmId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.MLM );
-            if( Int32.MinValue == MlmId )
-            {
-                _CswNbtSchemaModTrnsctn.createModule( "Material Life-Cycle Management", CswNbtModuleName.MLM.ToString(), false );
-            }
-            else if( _CswNbtSchemaModTrnsctn.isMaster() && false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
-            {
-                _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
-            }
-
-            #endregion TITANIA
-
             #region URSULA
 
             _CswNbtSchemaModTrnsctn.deleteModule( "mobile" );
 
             #endregion URSULA
 
+            #region VIOLA
+
+            #endregion VIOLA
+            
+            #region VIOLA
+            
+
+            #endregion VIOLA
         }
 
 
