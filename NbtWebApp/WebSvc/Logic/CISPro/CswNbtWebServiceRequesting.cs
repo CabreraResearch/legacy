@@ -36,17 +36,21 @@ namespace ChemSW.Nbt.WebServices
 
         } //ctor
 
-        public JObject getCurrentRequest( CswNbtActRequesting RequestAct = null )
+        public JObject getRequestViewGrid( string SessionViewId )
         {
-            RequestAct = RequestAct ?? _RequestAct;
             JObject ret = new JObject();
 
-            CswNbtView CurrentRequestView = RequestAct.getCurrentRequestView();
-            CurrentRequestView.SaveToCache( IncludeInQuickLaunch: false );
-            CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CurrentRequestView, ForReport: false );
-            ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true );
-            ret["cartnodeid"] = RequestAct.getCurrentRequestNode().NodeId.ToString();
-            ret["cartviewid"] = CurrentRequestView.SessionViewId.ToString();
+            CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( SessionViewId );
+            if( SessionDataId.isSet() )
+            {
+                CswNbtView CartView = _CswNbtResources.ViewSelect.getSessionView( SessionDataId );
+                if( null != CartView )
+                {
+                    CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
+                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true );
+                    ret["cartnodeid"] = _RequestAct.getCurrentRequestNode().NodeId.ToString();
+                }
+            }
             return ret;
         }
 
@@ -103,9 +107,26 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, false );
-            CswNbtView FavoritesView = ActRequesting.getFavoriteRequests();
+
+            CswNbtView PendingItemsView = ActRequesting.getPendingItemsView();
+            PendingItemsView.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.PendingItemsView = PendingItemsView;
+
+            CswNbtView FavoritesView = ActRequesting.getFavoriteRequestNamesView();
             FavoritesView.SaveToCache( IncludeInQuickLaunch: false );
-            Ret.Data.FavoriteItemsViewId = FavoritesView.SessionViewId.ToString();
+            Ret.Data.FavoritesView = FavoritesView;
+
+            CswNbtView SubmittedItems = ActRequesting.getSubmittedRequestItemsView();
+            SubmittedItems.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.SubmittedItemsView = SubmittedItems;
+
+            CswNbtView RecurringItems = ActRequesting.getRecurringRequestsItemsView();
+            RecurringItems.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.RecurringItemsView = RecurringItems;
+
+            CswNbtView FavoriteItems = ActRequesting.getFavoriteRequestsItemsView();
+            FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.FavoriteItemsView = FavoriteItems;
         }
 
         /// <summary>

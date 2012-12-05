@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -17,7 +18,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents an NBT View based on Relationships
     /// </summary>
-    [Serializable()]
+    [DataContract]
     public class CswNbtView : IEquatable<CswNbtView>
     {
         /// <summary>
@@ -40,14 +41,78 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtViewRoot Root;
 
+        #region DataMembers
+
         /// <summary>
         /// Name of View
         /// </summary>
+        [DataMember]
         public string ViewName
         {
             get { return Root.ViewName; }
             set { Root.ViewName = value; }
         }
+
+        [DataMember( Name = "SessionViewId" )]
+        public string NbtSessionViewId
+        {
+            get { return SessionViewId.ToString(); }
+            set { SessionViewId = new CswNbtSessionDataId( value ); }
+        }
+
+        [DataMember( Name = "Visibility" )]
+        public string ViewVisibility
+        {
+            get { return Visibility.ToString(); }
+            set { Visibility = (NbtViewVisibility) value; }
+        }
+
+        /// <summary>
+        /// Is Demo View
+        /// </summary>
+        [DataMember]
+        public bool IsDemo
+        {
+            get { return Root.IsDemo; }
+            set { Root.IsDemo = value; }
+        }
+
+        [DataMember( Name = "ViewMode" )]
+        public string NbtViewMode
+        {
+            get { return ViewMode.ToString(); }
+            set { ViewMode = (NbtViewRenderingMode) value; }
+        }
+
+        /// <summary>
+        /// Category name (arbitrary string) 
+        /// </summary>
+        [DataMember]
+        public string Category
+        {
+            get { return Root.Category; }
+            set { Root.Category = value; }
+        }
+
+        /// <summary>
+        /// Grid Width
+        /// </summary>
+        [DataMember]
+        public Int32 Width
+        {
+            get { return Root.Width; }
+            set { Root.Width = value; }
+        }
+
+        [DataMember( Name = "ViewId" )]
+        public string NbtViewId
+        {
+            get { return ViewId.ToString(); }
+            set { ViewId = new CswNbtViewId( value ); }
+        }
+
+        #endregion DataMembers
+
 
         /// <summary>
         /// Icon for View
@@ -102,6 +167,7 @@ namespace ChemSW.Nbt
             get { return Root.Visibility; }
             set { Root.Visibility = value; }
         }
+
         /// <summary>
         /// Visibility permission setting (restrict to user)
         /// </summary>
@@ -120,15 +186,6 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Is Demo View
-        /// </summary>
-        public bool IsDemo
-        {
-            get { return Root.IsDemo; }
-            set { Root.IsDemo = value; }
-        }
-
-        /// <summary>
         /// Use view in Mobile
         /// </summary>
         public bool ForMobile
@@ -137,14 +194,6 @@ namespace ChemSW.Nbt
             set { Root.ForMobile = value; }
         }
 
-        /// <summary>
-        /// Category name (arbitrary string) 
-        /// </summary>
-        public string Category
-        {
-            get { return Root.Category; }
-            set { Root.Category = value; }
-        }
         /// <summary>
         /// Sets the View's Visibility
         /// </summary>
@@ -162,6 +211,7 @@ namespace ChemSW.Nbt
             get { return Root.ViewMode; }
             set { Root.ViewMode = value; }
         }
+
         /// <summary>
         /// Sets the ViewMode
         /// </summary>
@@ -169,14 +219,7 @@ namespace ChemSW.Nbt
         {
             Root.ViewMode = value;
         }
-        /// <summary>
-        /// Grid Width
-        /// </summary>
-        public Int32 Width
-        {
-            get { return Root.Width; }
-            set { Root.Width = value; }
-        }
+
         /// <summary>
         /// Database Primary Key
         /// </summary>
@@ -1671,6 +1714,8 @@ namespace ChemSW.Nbt
             }
             set { _SessionViewId = value; }
         }
+
+
 
         #endregion Session Cache functions
 
