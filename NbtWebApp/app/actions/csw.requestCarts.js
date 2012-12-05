@@ -124,67 +124,102 @@
                         cswPrivate.action.finish.disable();
                         break;
                 }
+            };
+
+            cswPrivate.makeGridForTab = function(opts) {
+                opts = opts || {
+                    urlMethod: '',
+                    data: {},
+                    onSuccess: function() {},
+                    onSelectChange: function() {}
+                };
+
+                ol.li().grid({
+                    name: opts.gridId,
+                    storeId: opts.gridId + '_store',
+                    stateId: opts.gridId,
+                    usePaging: true,
+                    height: 180,
+                    width: cswPrivate.tabs.getWidth() - 20,
+                    ajax: {
+                        urlMethod: opts.urlMethod,
+                        data: opts.data
+                    },
+
+                    showCheckboxes: true,
+                    showActionColumn: true,
+                    canSelectRow: false,
+
+                    onLoad: function(grid, json) {
+                        cswPrivate.cartnodeid = json.cartnodeid;
+                        cswPrivate.cartviewid = json.cartviewid;
+                        Csw.tryExec(opts.onSuccess);
+                    },
+                    onEdit: function(rows) {
+                        // this works for both Multi-edit and regular
+                        var nodekeys = Csw.delimitedString(),
+                            nodeids = Csw.delimitedString(),
+                            nodenames = [],
+                            currentNodeId, currentNodeKey;
 
 
-                /*
-            
-            cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
-      cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
-      cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
-          name: cswPrivate.gridId
-      }); //, align: 'center' });
+                        Csw.each(rows, function(row) {
+                            currentNodeId = currentNodeId || row.nodeid;
+                            currentNodeKey = currentNodeKey || row.nodekey;
+                            nodekeys.add(row.nodekey);
+                            nodeids.add(row.nodeid);
+                            nodenames.push(row.nodename);
+                        });
 
-      cswPrivate.initGrid();
+                        $.CswDialog('EditNodeDialog', {
+                            currentNodeId: currentNodeId,
+                            currentNodeKey: currentNodeKey,
+                            selectedNodeIds: nodeids,
+                            selectedNodeKeys: nodekeys,
+                            nodenames: nodenames,
+                            Multi: (nodeids.length > 1),
+                            title: 'Request',
+                            onEditNode: function() {
+                                Csw.tryExec(opts.onEditNode); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
+                            }
+                        });
+                    }, // onEdit
+                    onDelete: function(rows) {
+                        // this works for both Multi-edit and regular
+                        var cswnbtnodekeys = [],
+                            nodeids = [],
+                            nodenames = [];
 
-      cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
-      Csw.ajax.post({
-          urlMethod: 'getRequestHistory',
-          data: {},
-          success: function (json) {
-              if (json.count > 0) {
-                  delete json.count;
-                  cswPrivate.historyTbl.cell(1, 1).span({ text: '</br>&nbsp;Past Requests: ' });
-                  cswPrivate.historySelect = cswPrivate.historyTbl.cell(2, 1).select({
-                      onChange: function () {
-                          cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                      }
-                  });
-                  json = json || {};
+                        Csw.each(rows, function(row) {
+                            cswnbtnodekeys.push(row.nodekey);
+                            nodeids.push(row.nodeid);
+                            nodenames.push(row.nodename);
+                        });
 
-                  Csw.each(json, function (prop, name) {
-                      var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
-                      cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
-                  });
-                  cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                  cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(2, 2).buttonExt({
-                      icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
-                      size: 'small',
-                      enabledText: 'Copy to Cart',
-                      disabledText: 'Copying...',
-                      onClick: cswPrivate.copyRequest
-                  });
-              }
-          }
-                   
-            
-            */
-
+                        $.CswDialog('DeleteNodeDialog', {
+                            nodeids: nodeids,
+                            nodepks: nodeids,
+                            nodekeys: cswnbtnodekeys,
+                            nodenames: nodenames,
+                            onDeleteNode: Csw.method(function() {
+                                Csw.publish(Csw.enums.events.main.refreshHeader);
+                                Csw.tryExec(opts.onEditNode);
+                            }),
+                            Multi: (nodeids.length > 1),
+                            publishDeleteEvent: false
+                        });                                  
+                    }, // onDelete
+                    onSelectChange: function(rowCount) {
+                        Csw.tryExec(opts.onSelectChange, rowCount);
+                    }
+                });
             };
 
             cswPrivate.makePendingTab = function (opts) {
                 cswPrivate.action.finish.enable();
                 cswPrivate.tabs.setTitle('Request Items Pending Submission');
 
-                // This really ought to be a CswNodeGrid
-                opts = opts || {
-                    urlMethod: 'getCurrentRequest',
-                    data: {},
-                    onSuccess: null
-                };
-
-                var gridId = cswPrivate.name + '_srgrid';
-
-                cswPrivate.pendingTab.csw.empty().css({margin: '10px'});
+                cswPrivate.pendingTab.csw.empty().css({ margin: '10px' });
                 
                 var ol = cswPrivate.pendingTab.csw.ol();
 
@@ -193,17 +228,20 @@
                 });
                 ol.li().br({ number: 2 });
                 
-                var inpTbl = ol.li().table({ width: '100%' });
-                
-                inpTbl.cell(1,1).ol().li().input({
-                    labelText: 'Request Name:',
+                var inpTbl = ol.li().table({
+                    width: '100%',
+                    FirstCellRightAlign: true
+                });
+
+                inpTbl.cell(1, 1).span().setLabelText('Request Name: ');
+                inpTbl.cell(1,2).input({
                     value: cswPrivate.requestName,
                     onChange: function(val) {
                         cswPrivate.requestName = val;
                     }
                 });
 
-                inpTbl.cell(1, 2)
+                inpTbl.cell(1, 3)
                     .css({ 'text-align': 'center' })
                     .buttonExt({
                     enabledText: 'Request Create Material',
@@ -230,87 +268,20 @@
                     }  
                 };
 
-                cswPublic.grid = ol.li().grid({
-                    name: gridId,
-                    storeId: gridId + '_store',
-                    stateId: gridId,
-                    usePaging: true,
-                    height: 180,
-                    width: cswPrivate.tabs.getWidth() - 20,
-                    ajax: {
-                        urlMethod: opts.urlMethod,
-                        data: opts.data
-                    },
+                // This really ought to be a CswNodeGrid
+                opts = opts || {
+                    urlMethod: 'getCurrentRequest',
+                    data: {},
+                    onSuccess: function () { }
+                };
+                opts.gridId = cswPrivate.name + '_srgrid';
+                opts.onSelectChange = function(rowCount) {
+                    hasOneRowSelected = rowCount > 0;
+                    toggleSaveBtn();
+                };
+                opts.onEditNode = cswPrivate.makePendingTab;
 
-                    showCheckboxes: true,
-                    showActionColumn: true,
-                    canSelectRow: false,
-
-                    onLoad: function (grid, json) {
-                        cswPrivate.cartnodeid = json.cartnodeid;
-                        cswPrivate.cartviewid = json.cartviewid;
-                        Csw.tryExec(opts.onSuccess);
-                        window.requestGrid = cswPublic.grid;
-                    },
-                    onEdit: function (rows) {
-                        // this works for both Multi-edit and regular
-                        var nodekeys = Csw.delimitedString(),
-                            nodeids = Csw.delimitedString(),
-                            nodenames = [],
-                            currentNodeId, currentNodeKey;
-
-
-                        Csw.each(rows, function (row) {
-                            currentNodeId = currentNodeId || row.nodeid;
-                            currentNodeKey = currentNodeKey || row.nodekey;
-                            nodekeys.add(row.nodekey);
-                            nodeids.add(row.nodeid);
-                            nodenames.push(row.nodename);
-                        });
-
-                        $.CswDialog('EditNodeDialog', {
-                            currentNodeId: currentNodeId,
-                            currentNodeKey: currentNodeKey,
-                            selectedNodeIds: nodeids,
-                            selectedNodeKeys: nodekeys,
-                            nodenames: nodenames,
-                            Multi: (nodeids.length > 1),
-                            title: 'Request',
-                            onEditNode: function () {
-                                cswPrivate.makePendingTab(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
-                            }
-                        });
-                    }, // onEdit
-                    onDelete: function (rows) {
-                        // this works for both Multi-edit and regular
-                        var cswnbtnodekeys = [],
-                            nodeids = [],
-                            nodenames = [];
-
-                        Csw.each(rows, function (row) {
-                            cswnbtnodekeys.push(row.nodekey);
-                            nodeids.push(row.nodeid);
-                            nodenames.push(row.nodename);
-                        });
-
-                        $.CswDialog('DeleteNodeDialog', {
-                            nodeids: nodeids,
-                            nodepks: nodeids,
-                            nodekeys: cswnbtnodekeys,
-                            nodenames: nodenames,
-                            onDeleteNode: Csw.method(function () {
-                                Csw.publish(Csw.enums.events.main.refreshHeader);
-                                cswPrivate.makePendingTab();
-                            }),
-                            Multi: (nodeids.length > 1),
-                            publishDeleteEvent: false
-                        });
-                    }, // onDelete
-                    onSelectChange: function(rowCount) {
-                        hasOneRowSelected = rowCount > 0;
-                        toggleSaveBtn();
-                    }
-                });
+                cswPublic.grid = cswPrivate.makeGridForTab(opts);
 
                 ol.li().br();
                 
