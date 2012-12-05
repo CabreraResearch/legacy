@@ -1,12 +1,9 @@
 using System;
-using System.Data;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Batch;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -35,17 +32,11 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtActGenerateFutureNodes CswNbtActGenerateFutureNodes = new CswNbtActGenerateFutureNodes( _CswNbtResources );
 
-            //Int32 TotalNodes = 0;
-            //Collection<CswNbtNode> SelectedGeneratorNodes = new Collection<CswNbtNode>();
             Collection<CswNbtObjClassBatchOp> BatchNodes = new Collection<CswNbtObjClassBatchOp>();
             foreach( string NodeKeyStr in SelectedGeneratorNodeKeys )
             {
                 CswNbtNodeKey CurrentNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKeyStr );
-
                 CswNbtNode CurrentGeneratorNode = _CswNbtResources.Nodes[CurrentNodeKey.NodeId];
-                //SelectedGeneratorNodes.Add( CurrentGeneratorNode );
-
-                //TotalNodes += CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate );
                 BatchNodes.Add( CswNbtActGenerateFutureNodes.makeNodesBatch( CurrentGeneratorNode, EndDate ) );
                 
             }//iterate selected Generator notes
@@ -60,7 +51,10 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( BatchNodes[0].NodeType, false );
                 foreach( CswNbtObjClassBatchOp BatchNode in BatchNodes )
                 {
-                    BatchRel.NodeIdsToFilterIn.Add( BatchNode.NodeId );
+                    if( BatchNode != null )
+                    {
+                        BatchRel.NodeIdsToFilterIn.Add( BatchNode.NodeId );
+                    }
                 }
 
                 CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources, BatchOpsView );
@@ -70,18 +64,6 @@ namespace ChemSW.Nbt.WebServices
                 ret["sessionviewid"] = BatchOpsView.SessionViewId.ToString();
                 ret["viewmode"] = BatchOpsView.ViewMode.ToString();
             }
-
-            //ret["result"] = TotalNodes.ToString();
-            //if( TotalNodes > 0 )
-            //{
-            //    CswNbtView NodesView = CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes( SelectedGeneratorNodes );
-            //    CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources, NodesView );
-            //    ret["treedata"] = ws.runTree( null, null, false, true, string.Empty );
-
-            //    NodesView.SaveToCache( true );
-            //    ret["sessionviewid"] = NodesView.SessionViewId.ToString();
-            //    ret["viewmode"] = NodesView.ViewMode.ToString();
-            //}
 
             return ret;
         } // futureScheduling()
