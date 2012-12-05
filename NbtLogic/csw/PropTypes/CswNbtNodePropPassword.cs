@@ -175,6 +175,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["passwordlength"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length );
             ParentObject["newpassword"] = string.Empty;
             ParentObject["isexpired"] = IsExpired.ToString().ToLower();
+            ParentObject["expire"] = false;
             ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();
         }
 
@@ -193,9 +194,9 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _saveProp( JObject["newpassword"].ToString() );
             }
-            if( null != JObject["isexpired"] )
+            if( null != JObject["expire"] )
             {
-                bool inIsExpired = CswConvert.ToBoolean( JObject["isexpired"].ToString() );
+                bool inIsExpired = CswConvert.ToBoolean( JObject["expire"].ToString() );
                 if( inIsExpired && !IsExpired )
                 {
                     ChangedDate = DateTime.MinValue;
