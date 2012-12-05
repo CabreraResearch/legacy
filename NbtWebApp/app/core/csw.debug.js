@@ -71,198 +71,219 @@
     cswPublic.assert = function (truth, msg) {
         /// <summary>Evaluates the truthiness of truth and throws an exception with msg val if false.</summary>
         if (Csw.clientSession.isDebug()) {
-            try {
-                console.assert(truth, msg);
-            } catch(e) {
-                /* Do nothing */
-            }
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    console.assert(truth, msg);
+                }
+            );
         }
     };
 
     cswPublic.count = function (msg) {
         /// <summary>Displays a count of the number of time the msg has been met in the console log(Webkit,FF).</summary>
-        if (Csw.clientSession.isDebug()) {
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    console.count(msg);
+                }
+            );
+        }
+    };
+
+    cswPrivate.tryExecSwallow = function(first, second, third) {
+        var failed = false;
+        try {
+            first();
+        } catch(e) {
+            failed = true;
+        }
+        try {
+            second();
+        } catch(e) {
+            failed = true;
+        }
+        if (failed) {
             try {
-                console.count(msg);
+                third();
             } catch(e) {
-                /* Do nothing */
+                
             }
         }
     };
 
     cswPublic.error = function (msg) {
         /// <summary>Outputs an error message to the console log(Webkit,FF)</summary>
-        try {
-            if(Csw.clientSession.isDebug()) {
-                console.error(msg);
-            }
-            try {
+        cswPrivate.tryExecSwallow(
+            function first() {
+                if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('error')) {
+                    console.error(msg);
+                }
+            },
+            function second() {
                 if (cswPrivate.isLogLevelSupported('error')) {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Error';
                     Csw.debug.loggly.error.error(Csw.serialize(msg));
                 }
-            } catch(e) {}
-        } catch (e) {
-            Csw.debug.log(msg);
-        }
+            },
+            function third() {
+                Csw.debug.log(msg);
+            }
+        );
     };
 
     cswPublic.group = function (name) {
         /// <summary>Begins a named message group in console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                name = name || '';
-                console.group(name);
-            } catch(e) {
-                /* Do nothing */
-            }
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    name = name || '';
+                    console.group(name);
+                }
+            );
         }
     };
 
     cswPublic.groupCollapsed = function (name) {
         /// <summary>Creates a named, collapsed message group in the console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                name = name || '';
-                console.groupCollapsed(name);
-            } catch(e) {
-                /* Do nothing */
-            }
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    name = name || '';
+                    console.groupCollapsed(name);
+                }
+            );
         }
     };
 
     cswPublic.groupEnd = function (name) {
         /// <summary>Ends a named message group in the console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                name = name || '';
-                console.groupEnd(name);
-            } catch(e) {
-                /* Do nothing */
-            }
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    name = name || '';
+                    console.groupEnd(name);
+                }
+            );
         }
     };
 
     cswPublic.perf = function (msg) {
         /// <summary>Outputs an info message to the console log(Webkit,FF)</summary>
-        try {
-            if(Csw.clientSession.isDebug()) {
-                console.info(msg);
-            }
-            try {
-                if (cswPrivate.isLogLevelSupported('performance')) {
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    console.info(msg);
+                },
+                function second() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Performance';
                     Csw.debug.loggly.perf.info(Csw.serialize(msg));
+                },
+                function third() {
+                    Csw.debug.log(msg);
                 }
-            } catch(e) {}
-
-        } catch (e) {
-            Csw.debug.log(msg);
+            );
         }
     };
 
     cswPublic.log = function (msg) {
         /// <summary>Outputs an unstyled message to the console log(Webkit,FF)</summary>
-        try {
-            if (Csw.clientSession.isDebug()) {
-                console.log(msg);
-            }
-            try {
-                if (cswPrivate.isLogLevelSupported('info')) {
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('info')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    console.log(msg);
+                },
+                function second() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Info';
                     Csw.debug.loggly.info.debug(Csw.serialize(msg));
+                },
+                function third() {
+                    window.dump(msg);
                 }
-            } catch (e) { }
-        } catch (e) {
-            try {
-                window.dump(msg);
-            } catch (e) {
-                /* Do nothing */
-            }
+            );
         }
     };
 
     cswPublic.profile = function (name) {
         /// <summary>Beginds a named profile in the console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                name = name || '';
-                if (window.internetExplorerVersionNo === -1) {
-                    console.profile(name);
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    name = name || '';
+                    if (window.internetExplorerVersionNo === -1) {
+                        console.profile(name);
+                    }
                 }
-            } catch(e) {
-                /* Do nothing */
-            }
+            );
         }
     };
 
     cswPublic.profileEnd = function (name) {
         /// <summary>Ends a named profile in the console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                name = name || '';
-                if (window.internetExplorerVersionNo === -1) {
-                    console.profileEnd(name);
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    name = name || '';
+                    if (window.internetExplorerVersionNo === -1) {
+                        console.profileEnd(name);
+                    }
                 }
-            } catch(e) {
-                /* Do nothing */
-            }
+            );
         }
     };
 
     cswPublic.time = function (name) {
         /// <summary>Begins a named timer in the console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                name = name || '';
-                console.time(name);
-            } catch(e) {
-                /* Do nothing */
-            }
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    name = name || '';
+                    console.time(name);
+                }
+            );
         }
     };
 
     cswPublic.timeEnd = function (name) {
         /// <summary>Ends a named timer in the console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                name = name || '';
-                console.timeEnd(name);
-            } catch(e) {
-                /* Do nothing */
-            }
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    name = name || '';
+                    console.timeEnd(name);
+                }
+            );
         }
     };
     cswPublic.trace = function () {
         /// <summary>Dumps the stack to the console log(Webkit,FF)</summary>
-        if (Csw.clientSession.isDebug()) {
-            try {
-                console.trace();
-                ;
-            } catch(e) {
-                /* Do nothing */
-            }
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    console.trace();
+                }
+            );
         }
     };
 
     cswPublic.warn = function (msg) {
         /// <summary>Outputs an warning message to the console log(Webkit,FF)</summary>
-        try {
-            if (Csw.clientSession.isDebug()) {
-                console.warn(msg);
-            }
-            try {
-                if (cswPrivate.isLogLevelSupported('warn')) {
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('warn')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
+                    console.warn(msg);
+                },
+                function second() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Warning';
                     Csw.debug.loggly.warn.warn(Csw.serialize(msg));
+                },
+                function third() {
+                    Csw.debug.log(msg);
                 }
-            } catch (e) { }
-        } catch (e) {
-            Csw.debug.log(msg);
+            );
         }
     };
 
