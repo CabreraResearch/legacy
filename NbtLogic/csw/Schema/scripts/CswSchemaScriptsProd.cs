@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28075() ) );                         //01U-012
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28117() ) );                         //01U-013
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28156() ) );                         //01U-014
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28229() ) );                         //01U-015
 
             #endregion URSULA
             
