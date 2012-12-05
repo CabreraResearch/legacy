@@ -1082,10 +1082,60 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Ursula Methods
 
-        #region VIOLA Methods
-        
+        #region Viola Methods
 
-        #endregion VIOLA Methods
+        #region Case 28281
+        private void _addHazardousReoprtingProp( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClassProp HazardousReportingOCP =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialComponentOC )
+            {
+                PropName = CswNbtObjClassMaterialComponent.PropertyName.HazardousReporting,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HazardousReportingOCP, false );
+
+            _resetBlame();
+        }
+        
+        private void _addContainerFireReportingProps( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.StoragePressure,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = "1 = Atmospheric,2 = Pressurized,3 = Subatmospheric",
+                SetValOnAdd = false
+            } );
+
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.StorageTemperature,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = "4 = Room Temperature,5 = Greater than Room Temperature,6 = Less than Room Temperature,7 = Cryogenic",
+                SetValOnAdd = false
+            } );
+
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.UseType,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = "Storage,Use Closed,Use Open",
+                SetValOnAdd = false
+            } );
+
+            _resetBlame();
+        }
+        #endregion Case 28281
+
+        #endregion Viola Methods
 
         /// <summary>
         /// The actual update call
@@ -1121,6 +1171,8 @@ namespace ChemSW.Nbt.Schema
 
             #region VIOLA
 
+            _addHazardousReoprtingProp( CswDeveloper.BV, 28281 );
+            _addContainerFireReportingProps( CswDeveloper.BV, 28281 );
 
             #endregion VIOLA
 

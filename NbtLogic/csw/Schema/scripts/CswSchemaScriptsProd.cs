@@ -45,6 +45,8 @@ namespace ChemSW.Nbt.Schema
 
             #region VIOLA
 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28281() ) );                         //01U-015      //01V-001
+
             #endregion VIOLA
 
             // This automatically detects the latest version

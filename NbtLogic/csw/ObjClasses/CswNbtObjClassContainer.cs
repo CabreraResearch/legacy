@@ -41,6 +41,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LabelFormat = "Label Format";
             public const string ReservedFor = "Reserved For";
             public const string DateCreated = "Date Created";
+            public const string StoragePressure = "Storage Pressure";
+            public const string StorageTemperature = "Storage Temperature";
+            public const string UseType = "Use Type";
         }
 
         public sealed class RequestMenu
@@ -1024,6 +1027,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
         public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
         public CswNbtNodePropDateTime DateCreated { get { return ( _CswNbtNode.Properties[PropertyName.DateCreated] ); } }
+        public CswNbtNodePropList StoragePressure { get { return ( _CswNbtNode.Properties[PropertyName.StoragePressure] ); } }
+        public CswNbtNodePropList StorageTemperature { get { return ( _CswNbtNode.Properties[PropertyName.StorageTemperature] ); } }
+        public CswNbtNodePropList UseType { get { return ( _CswNbtNode.Properties[PropertyName.UseType] ); } }
         #endregion
 
 

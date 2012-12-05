@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Mixture = "Mixture";
             public const string Constituent = "Constituent";
             public const string Active = "Active";
+            public const string HazardousReporting = "Hazardous Reporting";
         }
 
         /// <summary>
@@ -125,6 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Constituent { get { return ( _CswNbtNode.Properties[PropertyName.Constituent] ); } }
         public CswNbtNodePropLogical Active { get { return ( _CswNbtNode.Properties[PropertyName.Active] ); } }
+        public CswNbtNodePropLogical HazardousReporting { get { return ( _CswNbtNode.Properties[PropertyName.HazardousReporting] ); } }
 
         #endregion
 
