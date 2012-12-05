@@ -1100,22 +1100,24 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             CswNbtMetaDataObjectClass locationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp containerLocationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
-            CswNbtMetaDataObjectClassProp containerBarcodeOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode );
-            CswNbtMetaDataObjectClassProp containerExpirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
-            CswNbtMetaDataObjectClassProp containerMissingOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
-            CswNbtMetaDataObjectClassProp containerOwnerOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
-            CswNbtMetaDataObjectClassProp containerStatusOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status );
+            CswNbtMetaDataObjectClassProp containersOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Containers );
 
-            CswNbtMetaDataObjectClassProp containersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( locationOC )
+            if( null == containersOCP )
             {
-                PropName = CswNbtObjClassLocation.PropertyName.Containers,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
-            } );
+                CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClassProp containerLocationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+                CswNbtMetaDataObjectClassProp containerBarcodeOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode );
+                CswNbtMetaDataObjectClassProp containerExpirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
+                CswNbtMetaDataObjectClassProp containerMissingOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
+                CswNbtMetaDataObjectClassProp containerOwnerOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
+                CswNbtMetaDataObjectClassProp containerStatusOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status );
 
-            if( _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Containers in Location" ).Count == 0 )
-            {
+                containersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( locationOC )
+                {
+                    PropName = CswNbtObjClassLocation.PropertyName.Containers,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+                } );
+
                 CswNbtView containersView = _CswNbtSchemaModTrnsctn.makeNewView( "Containers in Location", NbtViewVisibility.Property );
                 containersView.SetViewMode( NbtViewRenderingMode.Grid );
 
