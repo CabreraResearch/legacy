@@ -468,9 +468,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                     case PropertyName.SetPreferred:
                         CswNbtPropEnmrtrFiltered QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                        QuestionsFlt.Reset();
-                        foreach( CswNbtNodePropQuestion QuestionProp in QuestionsFlt )
+                        foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                         {
+                            CswNbtNodePropQuestion QuestionProp = PropWrapper;  // don't refactor this into the foreach.  it doesn't work. case 28300.
                             if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
                             {
                                 QuestionProp.Answer = QuestionProp.PreferredAnswer;
