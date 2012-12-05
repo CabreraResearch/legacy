@@ -57,15 +57,13 @@ namespace ChemSW.Nbt.WebServices
 
             if( String.IsNullOrEmpty( molData ) && false == String.IsNullOrEmpty( nodeId ) ) //if we only have a nodeid, get the mol text from the mol property if there is one
             {
-                //----------------------THIS NEEDS TO BE BETTER ------------INSTANCE NODE, ITERATE PROPS, GET MOL PROP------
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( nodeId );
-                CswTableSelect ts = NbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
-                DataTable dt = ts.getTable( "where nodeid = " + pk.PrimaryKey + " and field1 = 'mol.jpeg'" );
-                if( dt.Rows.Count > 0 )
+                CswNbtNode node = NbtResources.Nodes[pk];
+                CswNbtMetaDataNodeTypeProp molNTP = node.getNodeType().getMolProperty();
+                if( null != molNTP )
                 {
-                    molData = dt.Rows[0]["clobdata"].ToString();
+                    molData = node.Properties[molNTP].AsMol.Mol;
                 }
-                //----------------------THIS NEEDS TO BE BETTER ------------------------------------------------------------
             }
 
             if( false == String.IsNullOrEmpty( molData ) )
