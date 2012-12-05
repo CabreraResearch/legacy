@@ -31,7 +31,9 @@
                                     currentNodeId: cswPublic.data.tabState.nodeid,
                                     currentNodeKey: cswPublic.data.tabState.nodekey,
                                     onEditNode: cswPublic.data.onEditNode,
-                                    date: date
+                                    date: date,
+                                    ReadOnly: true,
+                                    editMode: Csw.enums.editMode.AuditHistoryInPopup
                                 });
                             }
                         });
