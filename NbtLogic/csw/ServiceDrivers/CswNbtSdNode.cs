@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
@@ -27,30 +26,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( null != OriginalNode )
             {
-                CswNbtNode NewNode = null;
-                CswNbtActCopyNode CswNbtActCopyNode = new CswNbtActCopyNode( _CswNbtResources );
-                switch( OriginalNode.getObjectClass().ObjectClass )
-                {
-                    case NbtObjectClass.EquipmentClass:
-                        NewNode = CswNbtActCopyNode.CopyEquipmentNode( OriginalNode );
-                        break;
-                    case NbtObjectClass.EquipmentAssemblyClass:
-                        NewNode = CswNbtActCopyNode.CopyEquipmentAssemblyNode( OriginalNode );
-                        break;
-                    case NbtObjectClass.GeneratorClass:
-                        NewNode = CswNbtActCopyNode.CopyGeneratorNode( OriginalNode );
-                        break;
-                    case NbtObjectClass.InspectionTargetClass:
-                        NewNode = CswNbtActCopyNode.CopyInspectionTargetNode( OriginalNode );
-                        break;
-                    case NbtObjectClass.InspectionDesignClass:
-                        NewNode = CswNbtActCopyNode.CopyInspectionDesignNode( OriginalNode );
-                        break;
-                    default:
-                        NewNode = CswNbtActCopyNode.CopyNode( OriginalNode );
-                        break;
-                }
-
+                CswNbtNode NewNode = OriginalNode.ObjClass.CopyNode();
                 if( NewNode != null && null != _CswNbtStatisticsEvents )
                 {
                     _CswNbtStatisticsEvents.OnCopyNode( OriginalNode, NewNode );

@@ -318,7 +318,6 @@
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27742.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28002.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
-    <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateNodes.cs" />
     <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />

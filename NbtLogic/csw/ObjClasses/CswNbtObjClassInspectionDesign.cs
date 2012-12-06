@@ -520,6 +520,16 @@ namespace ChemSW.Nbt.ObjClasses
             return 0 < NumOfSiblings || Status.Value.Equals( InspectionStatus.ActionRequired );
         }
 
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassInspectionDesign CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.Node.copyPropertyValues( Node );
+            CopiedIDNode.Generator.RelatedNodeId = null;
+            CopiedIDNode.Generator.RefreshNodeName();
+            CopiedIDNode.postChanges( true );
+            return CopiedIDNode.Node;
+        }
+
         #endregion
 
         #region Object class specific properties
