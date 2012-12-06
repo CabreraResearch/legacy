@@ -87,7 +87,7 @@
                 type: 'js',
                 message: exception.message,
                 detail: 'JS Error type: ' + exception.type + '<br/>\n' + 'Stack: ' + exception.stack,
-                display: Csw.displayAllExceptions === true
+                display: Csw.debug.showExceptions() === true
             };
             
             var _errs = ["4ff2f798551a4ccb08002430"]; 
