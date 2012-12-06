@@ -17,7 +17,7 @@
                 onNoResults: null,  // function({viewid, viewmode})
                 //columns: 3,      // number of columns to use
                 pagenodelimit: 20,
-                rowpadding: 25,  // padding between table rows, in pixels
+                rowpadding: 10,  // padding between table rows, in pixels
                 //maxheight: 600,   // maximum display height of table, in pixels
                 tabledata: null,
                 allowEdit: true,
@@ -104,37 +104,26 @@
                         (cswPrivate.pagenodecount < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
                         var nodeid = nodeObj.nodeid;
 
-                        //                    if (nodeObj.nodename === "Results Truncated") {
-                        //                        cswPrivate.c = 1;
-                        //                        cswPrivate.r += 1;
-                        //                    }
                         var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
-                        var thumbwidth = (1 / (cswPrivate.columns + 1) * 100) + '%';
                         var textwidth = (1 / (cswPrivate.columns + 1) * 100) + '%';
-                        var imgwidth = '75%';
                         var imgheight = '';
                         var thumbverticalAlign = 'middle';
                         var thumbhorizontalAlign = 'center';
                         var thumbBackgroundColor = '#ffffff';
-                        //var bborder = '1px solid #cccccc';
                         var cellpad = cswPrivate.rowpadding + 'px';
                         if (cswPrivate.singleColumn) {
-                            thumbwidth = '25%';
                             textwidth = '75%';
-                            imgwidth = '90%';
                             cellpad = '10px';
                             thumbverticalAlign = 'top';
                             thumbhorizontalAlign = '';
                             thumbBackgroundColor = '';
                         }
                         if (Csw.bool(cswPrivate.compactResults)) {
-                            thumbwidth = '10%';
                             cellpad = '0px';
                         }
 
                         var thumbnailCell = cswPrivate.getThumbnailCell(cellSet)
                                 .css({
-                                    width: thumbwidth,
                                     verticalAlign: thumbverticalAlign,
                                     backgroundColor: thumbBackgroundColor,
                                     textAlign: thumbhorizontalAlign,
@@ -148,17 +137,14 @@
                                 });
                         if (cswPrivate.singleColumn) {
                             thumbnailCell.css({
-                                //borderBottom: bborder,
                                 paddingBottom: cellpad
                             });
                             textCell.css({
-                                //borderBottom: bborder,
                                 paddingBottom: cellpad
                             });
                         }
                         var btncell = cswPrivate.getButtonCell(cellSet)
                                 .css({
-                                    //borderBottom: bborder,
                                     paddingBottom: cellpad
                                 });
 
@@ -190,14 +176,15 @@
                         if (Csw.bool(cswPrivate.compactResults)) {
                             texttable.css({ paddingBottom: '10px' });
                             texttable.hide();
-                            imgwidth = '';
                             imgheight = '18px';
                         }
 
                         if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                             thumbnailCell.img({
                                 src: nodeObj.thumbnailurl
-                            }).css({ width: imgwidth, height: imgheight });
+                            }).css({
+                                 height: imgheight
+                            });
                         }
 
                         thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
@@ -323,10 +310,6 @@
                         } else {
                             cswPrivate.c += 1;
                         }
-                        //                        if (cswPrivate.c > cswPrivate.columns) {
-                        //                            cswPrivate.c = 1;
-                        //                            cswPrivate.r += 1;
-                        //                        }
                     } // if((pagenodecount < pagenodelimit * (currentpage - 1))
                     cswPrivate.pagenodecount += 1;
                 } // if (cswPrivate.c <= cswPrivate.columns) {
