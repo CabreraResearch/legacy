@@ -136,6 +136,8 @@ namespace ChemSW.Nbt.MetaData
         public const string EquipmentClass = "EquipmentClass";
         public const string EquipmentTypeClass = "EquipmentTypeClass";
         public const string FeedbackClass = "FeedbackClass";
+        public const string FireClassExemptAmountClass = "FireClassExemptAmountClass";
+        public const string FireClassExemptAmountSetClass = "FireClassExemptAmountSetClass";
         public const string GeneratorClass = "GeneratorClass";
         public const string GenericClass = "GenericClass";
         public const string InspectionDesignClass = "InspectionDesignClass";
