@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Nbt;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
 
@@ -110,11 +111,19 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
             [DataMember]
             public Ret Data;
 
+            [DataContract]
             public class Ret
             {
-                public string PendingItemsViewId = string.Empty;
-                public string FavoriteItemsViewId = string.Empty;
-                public string SubmittedItemsViewId = string.Empty;
+                [DataMember]
+                public CswNbtView PendingItemsView;
+                [DataMember]
+                public CswNbtView FavoritesView;
+                [DataMember]
+                public CswNbtView SubmittedItemsView;
+                [DataMember]
+                public CswNbtView RecurringItemsView;
+                [DataMember]
+                public CswNbtView FavoriteItemsView;
             }
 
         }

@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -632,11 +631,11 @@ namespace ChemSW.Nbt.Schema
             #endregion Size Relationship
 
             //Nuke the System Views from the DB
-            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( SystemViewName.CISProRequestCart.ToString() ) )
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "CISPro Request Cart" ) )
             {
                 View.Delete();
             }
-            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( SystemViewName.CISProRequestHistory.ToString() ) )
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "CISPro Request History" ) )
             {
                 View.Delete();
             }

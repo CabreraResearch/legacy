@@ -56,8 +56,6 @@
             };
             var cswPublic = {};
 
-            window.Ext.require('Ext.ux.grid.FiltersFeature');
-
             //#endregion _preCtor
 
             //#region AJAX
@@ -571,7 +569,6 @@
             });
 
             //#endregion Public methods
-                            
 
             //#region _postCtor
 
