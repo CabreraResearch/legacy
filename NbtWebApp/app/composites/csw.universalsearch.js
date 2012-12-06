@@ -59,9 +59,11 @@
                     if (false === Csw.isNullOrEmpty(nodetypeObj)) {
                         cswPrivate.preFilterSelect.setText('');
                         cswPrivate.preFilterSelect.setIcon(nodetypeObj.iconfilename);
+                        cswPrivate.nodetypeid = nodetypeObj.id;
                     } else {
                         cswPrivate.preFilterSelect.setText('All');
                         cswPrivate.preFilterSelect.setIcon('');
+                        cswPrivate.nodetypeid = '';
                     }
                 }; // onFilterClick()
 
@@ -84,6 +86,8 @@
                             handler: function () { onPreFilterClick(null); }
                         });
 
+                        var selectedText = 'All';
+                        var selectedIcon = '';
                         Csw.each(data, function (nt) {
                             if(false === Csw.isNullOrEmpty(nt.name)) {
                                 items.push({
@@ -91,11 +95,16 @@
                                     icon: nt.iconfilename,
                                     handler: function() { onPreFilterClick(nt); }
                                 });
+                                if(cswPrivate.nodetypeid === nt.id) {
+                                    selectedText = '';
+                                    selectedIcon = nt.iconfilename;
+                                }
                             }
                         });
 
                         cswPrivate.preFilterSelect = window.Ext.create('Ext.SplitButton', {
-                            text: 'All',
+                            text: selectedText,
+                            icon: selectedIcon,
                             renderTo: cswtable.cell(1, 1).getId(),
                             menu: {
                                 items: items
