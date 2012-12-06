@@ -183,6 +183,7 @@ namespace ChemSW.Nbt.WebServices
             ReturnVal[NtName] = new JObject();
             ReturnVal[NtName]["id"] = NodeType.NodeTypeId;
             ReturnVal[NtName]["name"] = NodeType.NodeTypeName;
+            ReturnVal[NtName]["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.IconFileName;
             ReturnVal[NtName]["objectclass"] = ObjectClass.ObjectClass.ToString();
             ReturnVal[NtName]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
 

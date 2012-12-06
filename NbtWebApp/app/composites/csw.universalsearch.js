@@ -55,10 +55,10 @@
                 cswPrivate.searchBoxParent.empty();
                 var cswtable = cswPrivate.searchBoxParent.table();
 
-                var onPreFilterClick = function (objectclass) {
-                    if (false === Csw.isNullOrEmpty(objectclass)) {
+                var onPreFilterClick = function (nodetypeObj) {
+                    if (false === Csw.isNullOrEmpty(nodetypeObj)) {
                         cswPrivate.preFilterSelect.setText('');
-                        cswPrivate.preFilterSelect.setIcon(objectclass.iconfilename);
+                        cswPrivate.preFilterSelect.setIcon(nodetypeObj.iconfilename);
                     } else {
                         cswPrivate.preFilterSelect.setText('All');
                         cswPrivate.preFilterSelect.setIcon('');
@@ -66,29 +66,39 @@
                 }; // onFilterClick()
 
                 Csw.ajax.post({
-                    urlMethod: 'getObjectClasses',
+                    urlMethod: 'getNodeTypes',
+                    data: {
+                        ObjectClassName: '', 
+                        ObjectClassId: '', 
+                        ExcludeNodeTypeIds: '', 
+                        RelatedToNodeTypeId: '',
+                        RelatedObjectClassPropName: '',
+                        FilterToPermission: ''
+                    },
                     success: function (data) {
-                        var objclassItems = [];
+                        var items = [];
 
-                        objclassItems.push({
+                        items.push({
                             text: 'All',
                             icon: '',
                             handler: function () { onPreFilterClick(null); }
                         });
 
-                        Csw.each(data, function (oc) {
-                            objclassItems.push({
-                                text: oc.objectclass,
-                                icon: oc.iconfilename,
-                                handler: function () { onPreFilterClick(oc); }
-                            });
+                        Csw.each(data, function (nt) {
+                            if(false === Csw.isNullOrEmpty(nt.name)) {
+                                items.push({
+                                    text: nt.name,
+                                    icon: nt.iconfilename,
+                                    handler: function() { onPreFilterClick(nt); }
+                                });
+                            }
                         });
 
                         cswPrivate.preFilterSelect = window.Ext.create('Ext.SplitButton', {
                             text: 'All',
                             renderTo: cswtable.cell(1, 1).getId(),
                             menu: {
-                                items: objclassItems
+                                items: items
                             }
                         }); // toolbar
 
