@@ -106,8 +106,11 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -117,6 +120,29 @@
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
+    <Compile Include="Service References\ChemCatCentral\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjArbitraryClass.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ChemCatCentral\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ChemCatCentral\configuration.svcinfo" />
+    <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
+    <None Include="Service References\ChemCatCentral\Search.disco" />
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28254.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28260.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947_part2.cs" />
@@ -887,6 +913,11 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Resources\SqlRptViewDict.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -895,6 +926,19 @@
     </Compile>
     <None Include="ChemSW.snk" />
     <None Include="csw\Actions\Example.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search.wsdl" />
+    <None Include="Service References\ChemCatCentral\Search.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search3.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -917,7 +961,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="csw\Schema\scripts\prod\01V\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
   </ItemGroup>
@@ -939,6 +982,15 @@
   <ItemGroup>
     <Content Include="Resources\SMTP.Net.dll" />
     <Content Include="Resources\SMTP.Net.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ChemCatCentral\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
