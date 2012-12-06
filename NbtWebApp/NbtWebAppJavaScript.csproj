@@ -718,6 +718,14 @@
     <Content Include="vendor\multiselect\jquery.multiselect.filter.min.js" />
     <Content Include="vendor\multiselect\jquery.multiselect.js" />
     <Content Include="vendor\multiselect\jquery.multiselect.min.js" />
+    <Content Include="vendor\xstats\.gitattributes" />
+    <Content Include="vendor\xstats\.gitignore" />
+    <Content Include="vendor\xstats\LICENSE.txt" />
+    <Content Include="vendor\xstats\test\bunnymark.js" />
+    <Content Include="vendor\xstats\test\index.html" />
+    <Content Include="vendor\xstats\vendor\docdown\LICENSE.txt" />
+    <Content Include="vendor\xstats\xstats.js" />
+    <Content Include="vendor\xstats\xstats.png" />
     <Content Include="wsTests1.html" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.thingrid.css" />
@@ -845,6 +853,14 @@
     <None Include="vendor\jQueryFileUpload_2011.12.15\php\index.php" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\php\thumbnails\.htaccess" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\README.md" />
+    <None Include="vendor\xstats\doc\parse.php" />
+    <None Include="vendor\xstats\doc\README.md" />
+    <None Include="vendor\xstats\README.md" />
+    <None Include="vendor\xstats\vendor\docdown\docdown.php" />
+    <None Include="vendor\xstats\vendor\docdown\README.md" />
+    <None Include="vendor\xstats\vendor\docdown\src\DocDown\Alias.php" />
+    <None Include="vendor\xstats\vendor\docdown\src\DocDown\Entry.php" />
+    <None Include="vendor\xstats\vendor\docdown\src\DocDown\Generator.php" />
   </ItemGroup>
   <ItemGroup>
     <None Include="css\_compressor.pl" />
