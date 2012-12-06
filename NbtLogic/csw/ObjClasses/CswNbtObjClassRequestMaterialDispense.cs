@@ -523,9 +523,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
-            CswNbtViewProperty FavoriteVp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsFavoriteOcp );
-            FavoriteVp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( FavoriteVp, Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.False ) );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp,
+                Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.False ),
+                ShowInGrid: false );
         }
 
         #endregion

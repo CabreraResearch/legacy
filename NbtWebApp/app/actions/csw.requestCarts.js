@@ -156,7 +156,7 @@
                     onSelectChange: function() {}
                 };
 
-                opts.parent.grid({
+                return opts.parent.grid({
                     name: opts.gridId,
                     storeId: opts.gridId + '_store',
                     stateId: opts.gridId,
@@ -376,6 +376,7 @@
                 var opts = {
                     onSuccess: function () { }
                 };
+                opts.showCheckboxes = false;
                 opts.sessionViewId = cswPrivate.state.submittedItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_submittedItemsGrid';
@@ -388,6 +389,19 @@
 
             cswPrivate.makeRecurringTab = function() {
                 var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Itens', 'View any recurring Request Items.');
+                ol.br();
+
+                var opts = {
+                    onSuccess: function () { }
+                };
+                opts.showCheckboxes = false;
+                opts.sessionViewId = cswPrivate.state.recurringItemsViewId;
+                opts.parent = ol.li();
+                opts.gridId = cswPrivate.name + '_recurringItemsGrid';
+                opts.groupField = 'Name';
+                opts.onEditNode = cswPrivate.makeRecurringTab;
+
+                cswPublic.recurringGrid = cswPrivate.makeGridForTab(opts);
             };
 
             cswPrivate.makeFavoritesTab = function() {
@@ -407,6 +421,7 @@
                 var opts = {
                     onSuccess: function () { }
                 };
+                opts.showCheckboxes = true;
                 opts.sessionViewId = cswPrivate.state.favoriteItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_favoriteItemsGrid';

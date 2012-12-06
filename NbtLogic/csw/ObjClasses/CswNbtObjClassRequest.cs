@@ -98,10 +98,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, "me" );
-            CswNbtViewProperty FavoriteVp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsFavoriteOcp );
-            FavoriteVp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( FavoriteVp, Value: Tristate.False.ToString() );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Value: Tristate.False.ToString(), ShowInGrid: false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -185,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
-        
+
         public CswNbtNodePropDateTime SubmittedDate
         {
             get { return _CswNbtNode.Properties[PropertyName.SubmittedDate]; }
