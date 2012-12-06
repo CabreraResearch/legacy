@@ -6,7 +6,6 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
-using NbtWebApp;
 using NbtWebApp.WebSvc.Logic.CISPro;
 using Newtonsoft.Json.Linq;
 
@@ -21,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _initOrderingResources( CswPrimaryKey RequestNodeId = null )
         {
-            _RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true, RequestNodeId: RequestNodeId );
+            _RequestAct = new CswNbtActRequesting( _CswNbtResources, RequestNodeId: RequestNodeId );
         }
 
         public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, CswPrimaryKey RequestNodeId = null )
@@ -46,9 +45,20 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView CartView = _CswNbtResources.ViewSelect.getSessionView( SessionDataId );
                 if( null != CartView )
                 {
+                    string GroupByName = "";
+                    if( CartView.ViewName == CswNbtActRequesting.FavoriteItemsViewName ||
+                        CartView.ViewName == CswNbtActRequesting.SubmittedItemsViewName ||
+                        CartView.ViewName == CswNbtActRequesting.RecurringItemsViewName )
+                    {
+                        //GroupByName = "Name";
+                        //Group By is broken for now.
+                    }
                     CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
-                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true );
-                    ret["cartnodeid"] = _RequestAct.getCurrentRequestNode().NodeId.ToString();
+                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true, GroupByCol: GroupByName );
+                    if( CartView.ViewName == CswNbtActRequesting.PendingItemsViewName )
+                    {
+                        ret["cartnodeid"] = _RequestAct.getCurrentRequestNode().NodeId.ToString();
+                    }
                 }
             }
             return ret;
@@ -79,10 +89,10 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        public static void submitRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, NodeSelect.Node Request )
+        public static void submitRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtNode.Node Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, false );
+            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, RequestNodeId: Request.NodePk );
             Ret.Data.Succeeded = ActRequesting.submitRequest( Request.NodePk, Request.NodeName );
         }
 
@@ -106,27 +116,18 @@ namespace ChemSW.Nbt.WebServices
         public static void getCart( ICswResources CswResources, CswNbtRequestDataModel.RequestCart Ret, object Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, false );
+            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
+            ActRequesting.getCart( Ret.Data );
+        }
 
-            CswNbtView PendingItemsView = ActRequesting.getPendingItemsView();
-            PendingItemsView.SaveToCache( IncludeInQuickLaunch: false );
-            Ret.Data.PendingItemsView = PendingItemsView;
-
-            CswNbtView FavoritesView = ActRequesting.getFavoriteRequestNamesView();
-            FavoritesView.SaveToCache( IncludeInQuickLaunch: false );
-            Ret.Data.FavoritesView = FavoritesView;
-
-            CswNbtView SubmittedItems = ActRequesting.getSubmittedRequestItemsView();
-            SubmittedItems.SaveToCache( IncludeInQuickLaunch: false );
-            Ret.Data.SubmittedItemsView = SubmittedItems;
-
-            CswNbtView RecurringItems = ActRequesting.getRecurringRequestsItemsView();
-            RecurringItems.SaveToCache( IncludeInQuickLaunch: false );
-            Ret.Data.RecurringItemsView = RecurringItems;
-
-            CswNbtView FavoriteItems = ActRequesting.getFavoriteRequestsItemsView();
-            FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
-            Ret.Data.FavoriteItemsView = FavoriteItems;
+        /// <summary>
+        /// WCF method to get current User's cart data
+        /// </summary>
+        public static void getCartCounts( ICswResources CswResources, CswNbtRequestDataModel.RequestCart Ret, string Request )
+        {
+            CswNbtResources NbtResources = _validate( CswResources );
+            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, CswConvert.ToPrimaryKey( Request ) );
+            ActRequesting.getCart( Ret.Data );
         }
 
         /// <summary>
@@ -179,7 +180,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassRequest RequestNode = NbtResources.Nodes[Request.CswRequestId];
                 if( null != RequestNode )
                 {
-                    foreach( NodeSelect.Node Item in Request.RequestItems )
+                    foreach( CswNbtNode.Node Item in Request.RequestItems )
                     {
                         CswNbtPropertySetRequestItem PropertySetRequest = NbtResources.Nodes[Item.NodePk];
                         if( null != PropertySetRequest && (
@@ -192,6 +193,7 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 CswNbtPropertySetRequestItem NewPropSetRequest = MaterialDispense.copyNode();
                                 CswNbtObjClassRequestMaterialDispense NewMaterialDispense = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest );
+                                NewMaterialDispense.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
                                 NewMaterialDispense.Request.RelatedNodeId = RequestNode.NodeId;
                                 NewMaterialDispense.postChanges( ForceUpdate: false );
                                 Succeeded = true;

@@ -107,60 +107,14 @@ namespace NbtWebApp
                 public Int32 ObjectClassId = Int32.MinValue;
 
                 [DataMember]
-                public Collection<Node> Nodes = new Collection<Node>();
+                public Collection<CswNbtNode.Node> Nodes = new Collection<CswNbtNode.Node>();
             }
 
             [DataMember]
             public Ret Data = null;
         }
 
-        [DataContract]
-        public class Node
-        {
-            public Node( CswNbtNode NbtNode )
-            {
-                if( null != NbtNode )
-                {
-                    _NodeId = NbtNode.NodeId.ToString();
-                    _NodePk = NbtNode.NodeId;
-                    NodeName = NbtNode.NodeName;
-                }
-            }
 
-            private string _NodeId = string.Empty;
-            private CswPrimaryKey _NodePk = null;
-
-            public CswPrimaryKey NodePk
-            {
-                get { return _NodePk; }
-                set
-                {
-                    _NodePk = value;
-                    if( CswTools.IsPrimaryKey( value ) )
-                    {
-                        _NodeId = _NodePk.ToString();
-                    }
-                    else
-                    {
-                        _NodeId = string.Empty;
-                    }
-                }
-            }
-
-            [DataMember]
-            public string NodeId
-            {
-                get { return _NodeId; }
-                set
-                {
-                    _NodeId = value;
-                    _NodePk = CswConvert.ToPrimaryKey( _NodeId );
-                }
-            }
-
-            [DataMember( IsRequired = false )]
-            public string NodeName = String.Empty;
-        }
     }
 
 

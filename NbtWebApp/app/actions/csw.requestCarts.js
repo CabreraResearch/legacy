@@ -16,8 +16,6 @@
                 cswPrivate.name = cswPrivate.name || 'CswSubmitRequest';
                 cswPrivate.onSubmit = cswPrivate.onSubmit || function() {};
                 cswPrivate.onCancel = cswPrivate.onCancel || function () {};
-                cswPrivate.cartnodeid = cswPrivate.cartnodeid || '';
-                cswPrivate.cartviewid = cswPrivate.cartviewid || '';
                 cswPrivate.materialnodeid = cswPrivate.materialnodeid || '';
                 cswPrivate.containernodeid = cswPrivate.containernodeid || '';
                 
@@ -42,8 +40,26 @@
                         cswPrivate.state.favoriteItemsViewId = data.FavoriteItemsView.SessionViewId;
                         cswPrivate.state.recurringItemsViewId = data.RecurringItemsView.SessionViewId;
                         cswPrivate.state.submittedItemsViewId = data.SubmittedItemsView.SessionViewId;
+                        cswPrivate.state.pendingCartId = data.CurrentRequest.NodeId;
 
                         cswPrivate.onTabSelect(cswPrivate.currentTab);
+
+                        cswPrivate.getCartCounts();
+                    }
+                });
+            };
+
+            cswPrivate.getCartCounts = function () {
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Requests/counts',
+                    data: {
+                        CartId: cswPrivate.state.pendingCartId
+                    },
+                    success: function (data) {
+                        cswPrivate.pendingTab.ext.setTitle('Pending (' + data.Counts.PendingRequestItems + ')');
+                        cswPrivate.submittedTab.ext.setTitle('Submitted (' + data.Counts.SubmittedRequestItems + ')');
+                        cswPrivate.recurringTab.ext.setTitle('Recurring (' + data.Counts.RecurringRequestItems + ')');
+                        cswPrivate.favoritesTab.ext.setTitle('Favorites (' + data.Counts.FavoriteRequestItems + ')');
                     }
                 });
             };
@@ -70,7 +86,7 @@
                 Csw.ajaxWcf.post({
                     urlMethod: 'Requests/place',
                     data: {
-                        NodeId: cswPrivate.cartnodeid,
+                        NodeId: cswPrivate.state.pendingCartId,
                         NodeName: cswPrivate.requestName
                     },
                     success: function (json) {
@@ -127,8 +143,8 @@
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
                 if (tabName && tabName.length > 0) {
-                    cswPrivate.currentTab = tabName;
-                    switch (tabName) {
+                    cswPrivate.currentTab = tabName.split(' ')[0];
+                    switch (cswPrivate.currentTab) {
                         case 'Pending':
                             cswPrivate.action.finish.enable();
                             cswPrivate.tabs.setTitle('Request Items Pending Submission');
@@ -174,8 +190,6 @@
                     canSelectRow: false,
                     groupField: opts.groupField || '',
                     onLoad: function(grid, json) {
-                        cswPrivate.cartnodeid = json.cartnodeid;
-                        cswPrivate.cartviewid = json.cartviewid;
                         Csw.tryExec(opts.onSuccess);
                     },
                     onEdit: function(rows) {
@@ -331,6 +345,7 @@
                             nodes.push({ NodeId: nodeId });
                         });
                         cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes);
+                        toggleSaveBtn();
                     }
                 }).disable();
                 
@@ -418,6 +433,16 @@
 
                 ol.br();
 
+                var hasOneRowSelected = false;
+
+                var toggleSaveBtn = function () {
+                    if (hasOneRowSelected) {
+                        copyBtn.enable();
+                    } else {
+                        copyBtn.disable();
+                    }
+                };
+
                 var opts = {
                     onSuccess: function () { }
                 };
@@ -427,8 +452,26 @@
                 opts.gridId = cswPrivate.name + '_favoriteItemsGrid';
                 opts.groupField = 'Name';
                 opts.onEditNode = cswPrivate.makeFavoritesTab;
-
+                opts.onSelectChange = function (rowCount) {
+                    hasOneRowSelected = rowCount > 0;
+                    toggleSaveBtn();
+                };
                 cswPublic.favoritesGrid = cswPrivate.makeGridForTab(opts);
+                
+                var copyBtn = ol.li().buttonExt({
+                    enabledText: 'Copy to Current Cart',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
+                    onClick: function () {
+                        var nodes = [];
+                        cswPublic.favoritesGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
+                            nodes.push({ NodeId: nodeId });
+                        });
+                        cswPrivate.copyToRequest(cswPrivate.state.pendingCartId, nodes);
+                        Csw.publish(Csw.enums.events.main.refreshHeader);
+                        toggleSaveBtn();
+                    }
+                }).disable();
+
             };
 
             //#endregion Tab construction

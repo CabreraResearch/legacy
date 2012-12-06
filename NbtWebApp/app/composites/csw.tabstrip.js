@@ -101,7 +101,7 @@
 
             cswPublic.setTitle = function (title) {
                 /// <summary>
-                /// Takes a tab instance, id or index and sets it as active/selected
+                /// Sets the title of a Tab Panel
                 /// </summary>
                 /// <returns type="Ext.tab">ExtJS tab instance</returns>
                 title = title || 'Tab Title';
