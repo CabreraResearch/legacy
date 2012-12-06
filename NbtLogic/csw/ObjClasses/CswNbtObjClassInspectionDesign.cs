@@ -378,12 +378,6 @@ namespace ChemSW.Nbt.ObjClasses
                 _genFutureNodes();
             }
 
-            // case 26584
-            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-            {
-                Status.setReadOnly( value: false, SaveToDb: false );
-            }
-
             foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
@@ -428,6 +422,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             SetPreferred.setReadOnly( value: _InspectionState.AllAnswered, SaveToDb: true );
+            // case 26584, 28155
+            Status.setReadOnly( value: false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb: false );
 
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
@@ -472,9 +468,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                     case PropertyName.SetPreferred:
                         CswNbtPropEnmrtrFiltered QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                        QuestionsFlt.Reset();
-                        foreach( CswNbtNodePropQuestion QuestionProp in QuestionsFlt )
+                        foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                         {
+                            CswNbtNodePropQuestion QuestionProp = PropWrapper;  // don't refactor this into the foreach.  it doesn't work. case 28300.
                             if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
                             {
                                 QuestionProp.Answer = QuestionProp.PreferredAnswer;
