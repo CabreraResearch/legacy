@@ -319,6 +319,8 @@ namespace ChemSW.Nbt.Actions
             _addAllRequestItemsToView( Ret );
 
             CswNbtViewProperty NameVp = Ret.AddViewProperty( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name ) );
+            NameVp.ShowInGrid = false;
+            NameVp.Order = 6;
             CswNbtViewPropertyFilter NameVpf = Ret.AddViewPropertyFilter( NameVp, ShowAtRuntime: true );
 
             CswNbtViewProperty Vp5 = Ret.AddViewProperty( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate ) );
@@ -360,6 +362,7 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtViewProperty NameVp = Ret.AddViewProperty( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name ) );
             NameVp.Order = 1;
+            NameVp.ShowInGrid = false;
             Ret.AddViewPropertyFilter( NameVp, ShowAtRuntime: true );
 
             CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
@@ -387,6 +390,7 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtViewProperty NameVp = Ret.AddViewProperty( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name ) );
             NameVp.Order = 1;
+            NameVp.ShowInGrid = false;
             CswNbtViewPropertyFilter NameVpf = Ret.AddViewPropertyFilter( NameVp, ShowAtRuntime: true );
 
             CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );

@@ -127,6 +127,7 @@
                     window.Ext.tip.QuickTipManager.init();
 
                     cswPublic.tabPanel = window.Ext.create('Ext.tab.Panel', {
+                        id: cswPrivate.ID,
                         height: cswPrivate.tabPanel.height,
                         width: cswPrivate.tabPanel.width,
                         renderTo: cswPublic.getId(),

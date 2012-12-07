@@ -146,20 +146,16 @@
                     cswPrivate.currentTab = tabName.split(' ')[0];
                     switch (cswPrivate.currentTab) {
                         case 'Pending':
-                            cswPrivate.action.finish.enable();
                             cswPrivate.tabs.setTitle('Request Items Pending Submission');
                             cswPrivate.makePendingTab();
                             break;
                         case 'Submitted':
-                            cswPrivate.action.finish.disable();
                             cswPrivate.makeSubmittedTab();
                             break;
                         case 'Recurring':
-                            cswPrivate.action.finish.disable();
                             cswPrivate.makeRecurringTab();
                             break;
                         case 'Favorites':
-                            cswPrivate.action.finish.disable();
                             cswPrivate.makeFavoritesTab();
                             break;
                         }
@@ -253,8 +249,7 @@
             };
 
             cswPrivate.prepTab = function(tab, title, headerText) {
-                cswPrivate.tabs.setTitle(title);
-
+                
                 tab.csw.empty().css({ margin: '10px' });
 
                 var ol = tab.csw.ol();
@@ -268,25 +263,22 @@
             };
 
             cswPrivate.makePendingTab = function (opts) {
-                cswPrivate.action.finish.enable();
-
                 var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.');
                 
                 var inpTbl = ol.li().table({
-                    width: '100%',
-                    FirstCellRightAlign: true
+                    width: '99%'
                 });
 
                 inpTbl.cell(1, 1).span().setLabelText('Request Name: ');
-                inpTbl.cell(1,2).input({
+                inpTbl.cell(1, 1).input({
                     value: cswPrivate.requestName,
                     onChange: function(val) {
                         cswPrivate.requestName = val;
                     }
                 });
 
-                inpTbl.cell(1, 3)
-                    .css({ 'text-align': 'center' })
+                inpTbl.cell(1, 2)
+                    .css({ 'text-align': 'right' })
                     .buttonExt({
                         enabledText: 'Request Create Material',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cart),
@@ -316,13 +308,12 @@
                     }  
                 };
 
-                // This really ought to be a CswNodeGrid
                 opts = opts || {
                     onSuccess: function () { }
                 };
                 opts.sessionViewId = cswPrivate.state.pendingItemsViewId;
                 opts.parent = ol.li();
-                opts.gridId = cswPrivate.name + '_srgrid';
+                opts.gridId = cswPrivate.name + '_pendingGrid';
                 opts.showCheckboxes = true;
 
                 opts.onSelectChange = function (rowCount) {
@@ -354,7 +345,7 @@
                 var makePicklist = function () {
                     picklistCell.empty();
                     favoriteSelect = picklistCell.nodeSelect({
-                        width: '50px',
+                        width: '100px',
                         selectedNodeId: cswPrivate.lastCreatedFavorite || '',
                         showSelectOnLoad: true,
                         viewid: cswPrivate.state.favoritesListViewId,
@@ -371,10 +362,14 @@
                     }
                 });
 
+                ol.li().br();
+
+                cswPrivate.addBtnGroup(ol.li(), true);
+
             }; // cswPrivate.makePendingTab()
 
             cswPrivate.makeSubmittedTab = function() {
-                var ol = cswPrivate.prepTab(cswPrivate.submittedTab, 'Submitted Request Itens', 'View any previously submitted Request Items.');
+                var ol = cswPrivate.prepTab(cswPrivate.submittedTab, 'Submitted Request Items', 'View any previously submitted Request Items.');
 
                 Csw.nbt.viewFilters({
                     name: 'submitted_viewfilters',
@@ -395,15 +390,18 @@
                 opts.sessionViewId = cswPrivate.state.submittedItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_submittedItemsGrid';
-                opts.groupField = 'Name';
+                
                 opts.onEditNode = cswPrivate.makeSubmittedTab;
 
                 cswPublic.submittedGrid = cswPrivate.makeGridForTab(opts);
 
+                ol.li().br();
+
+                cswPrivate.addBtnGroup(ol.li(), false);
             };
 
             cswPrivate.makeRecurringTab = function() {
-                var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Itens', 'View any recurring Request Items.');
+                var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Items', 'View any recurring Request Items.');
                 ol.br();
 
                 var opts = {
@@ -413,10 +411,15 @@
                 opts.sessionViewId = cswPrivate.state.recurringItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_recurringItemsGrid';
-                opts.groupField = 'Name';
+                
                 opts.onEditNode = cswPrivate.makeRecurringTab;
 
                 cswPublic.recurringGrid = cswPrivate.makeGridForTab(opts);
+                
+                ol.li().br();
+
+                cswPrivate.addBtnGroup(ol.li(), false);
+
             };
 
             cswPrivate.makeFavoritesTab = function() {
@@ -450,14 +453,16 @@
                 opts.sessionViewId = cswPrivate.state.favoriteItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_favoriteItemsGrid';
-                opts.groupField = 'Name';
+                
                 opts.onEditNode = cswPrivate.makeFavoritesTab;
                 opts.onSelectChange = function (rowCount) {
                     hasOneRowSelected = rowCount > 0;
                     toggleSaveBtn();
                 };
                 cswPublic.favoritesGrid = cswPrivate.makeGridForTab(opts);
-                
+
+                ol.li().br();
+
                 var copyBtn = ol.li().buttonExt({
                     enabledText: 'Copy to Current Cart',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
@@ -472,6 +477,31 @@
                     }
                 }).disable();
 
+                ol.li().br();
+
+                cswPrivate.addBtnGroup(ol.li(), false);
+
+            };
+
+            cswPrivate.addBtnGroup = function(el, hasFinish) {
+                var tbl = el.table({ width: '99%' });
+
+                if (hasFinish) {
+                    tbl.cell(1, 1).buttonExt({
+                        enabledText: 'Place Request',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
+                        onClick: function () {
+                            Csw.tryExec(cswPrivate.onFinish);
+                        }
+                    });
+                }
+                tbl.cell(1, 2).css({'text-align': 'right'}).buttonExt({
+                    enabledText: 'Close',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cancel),
+                    onClick: function () {
+                        Csw.tryExec(cswPrivate.onCancel);
+                    }
+                });
             };
 
             //#endregion Tab construction
@@ -480,26 +510,12 @@
 
             (function _postCtor() {
 
-                cswPrivate.action = Csw.layouts.action(cswParent, {
-                    title: 'Requests',
-                    finishText: 'Place Request',
-                    cancelText: 'Close',
-                    onFinish: cswPrivate.submitRequest,
-                    onCancel: cswPrivate.onCancel
-                });
-                cswPrivate.action.finish.disable();
-
-                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({
-                    name: cswPrivate.name + '_tbl',
-                    align: 'center'
-                }).css('width', '95%');
-
-                cswPrivate.action.setHeader('Pending Request Items');
-
-                cswPrivate.tabs = cswPrivate.actionTbl.cell(2, 1).tabStrip({
+                cswParent.empty();
+                cswPrivate.tabs = cswParent.tabStrip({
                     onTabSelect: cswPrivate.onTabSelect
                 });
-
+                cswPrivate.tabs.setTitle('Requests');
+                
                 cswPrivate.pendingTab = cswPrivate.tabs.addTab({
                     title: 'Pending'
                 });

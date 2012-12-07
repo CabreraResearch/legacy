@@ -49,12 +49,12 @@ namespace ChemSW.Nbt.Grid
                     if( null != FirstVr )
                     {
                         GroupByCol = FirstVr.GroupByPropName;
-                        if( false == string.IsNullOrEmpty( GroupByCol ) &&
-                            IsPropertyGrid &&
-                            Tree.getChildNodeCount() > 0 )
-                        {
-                            Tree.goToNthChild( 0 );
-                        }
+                        //if( false == string.IsNullOrEmpty( GroupByCol ) &&
+                        //    IsPropertyGrid &&
+                        //    Tree.getChildNodeCount() > 0 )
+                        //{
+                        //    Tree.goToNthChild( 0 );
+                        //}
                     }
                 }
                 grid.GroupByCol = GroupByCol;

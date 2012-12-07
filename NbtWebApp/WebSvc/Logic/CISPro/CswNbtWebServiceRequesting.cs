@@ -16,23 +16,13 @@ namespace ChemSW.Nbt.WebServices
     {
         private readonly CswNbtResources _CswNbtResources;
 
-        private CswNbtActRequesting _RequestAct;
-
-        private void _initOrderingResources( CswPrimaryKey RequestNodeId = null )
-        {
-            _RequestAct = new CswNbtActRequesting( _CswNbtResources, RequestNodeId: RequestNodeId );
-        }
-
-        public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, CswPrimaryKey RequestNodeId = null )
+        public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
             }
-
-            _initOrderingResources( RequestNodeId );
-
         } //ctor
 
         public JObject getRequestViewGrid( string SessionViewId )
@@ -55,23 +45,11 @@ namespace ChemSW.Nbt.WebServices
                     }
                     CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
                     ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true, GroupByCol: GroupByName );
-                    if( CartView.ViewName == CswNbtActRequesting.PendingItemsViewName )
-                    {
-                        ret["cartnodeid"] = _RequestAct.getCurrentRequestNode().NodeId.ToString();
-                    }
+                    ret["grid"]["title"] = "";
                 }
             }
             return ret;
         }
-
-        public JObject getCurrentRequestId()
-        {
-            JObject ret = new JObject();
-            CswNbtObjClassRequest CurrentRequest = _RequestAct.getCurrentRequestNode();
-            ret["cartnodeid"] = CurrentRequest.NodeId.ToString();
-            return ret;
-        }
-
 
         #region WCF
 
