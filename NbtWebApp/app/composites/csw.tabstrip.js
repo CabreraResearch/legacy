@@ -18,9 +18,9 @@
                 cswPrivate.tabPanel.title = cswPrivate.tabPanel.title || 'Tabs';
                 cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 400;
                 //cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
-                cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable || true;
-                cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful || true;
-                cswPrivate.tabPanel.stateId = cswPrivate.tabPanel.stateId || 'CswRequestCart';
+                cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable; // || true
+                cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful;  // || true
+                cswPrivate.tabPanel.stateId = cswPrivate.tabPanel.stateId || 'CswTabStrip';
                 cswPrivate.tabs = cswPrivate.tabs || [];
                 //    [{
                 //    title: 'First tab',
@@ -129,7 +129,8 @@
                     cswPublic.tabPanel = window.Ext.create('Ext.tab.Panel', {
                         id: cswPrivate.ID,
                         height: cswPrivate.tabPanel.height,
-                        width: cswPrivate.tabPanel.width,
+                        //width: cswPrivate.tabPanel.width,
+                        maxWidth: cswPublic.css('width'),
                         renderTo: cswPublic.getId(),
                         title: cswPrivate.tabPanel.title,
                         resizable: cswPrivate.tabPanel.resizable,
@@ -139,8 +140,8 @@
                                 ptype: 'tabscrollermenu',
                                 maxText: 15,
                                 pageSize: 5
-                            },
-                            new window.Ext.ux.TabReorderer() //there is no ptype for this plugin. Pass in an instance instead.
+                            }
+                            //new window.Ext.ux.TabReorderer() //there is no ptype for this plugin. Pass in an instance instead.
                         ],
                         listeners: {
                             click: {

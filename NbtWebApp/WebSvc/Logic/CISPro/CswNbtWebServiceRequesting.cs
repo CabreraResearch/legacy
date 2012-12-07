@@ -35,16 +35,18 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView CartView = _CswNbtResources.ViewSelect.getSessionView( SessionDataId );
                 if( null != CartView )
                 {
+                    bool IsPropertyGrid = true;
                     string GroupByName = "";
                     if( CartView.ViewName == CswNbtActRequesting.FavoriteItemsViewName ||
                         CartView.ViewName == CswNbtActRequesting.SubmittedItemsViewName ||
                         CartView.ViewName == CswNbtActRequesting.RecurringItemsViewName )
                     {
-                        //GroupByName = "Name";
+                        GroupByName = "Name";
+                        IsPropertyGrid = false;
                         //Group By is broken for now.
                     }
                     CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
-                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true, GroupByCol: GroupByName );
+                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid, GroupByCol: GroupByName );
                     ret["grid"]["title"] = "";
                 }
             }

@@ -293,7 +293,6 @@ namespace ChemSW.Nbt.Actions
                 NameVp.ShowInGrid = true;
                 NameVp.Order = 1;
                 CswNbtViewPropertyFilter NameVpf = Ret.AddViewPropertyFilter( NameVp, ShowAtRuntime: true );
-                RequestItemRel.setGroupByProp( MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
 
                 CswNbtViewProperty Vp1 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
                 Vp1.Order = 2;
@@ -361,7 +360,6 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewProperty NameVp = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
             NameVp.Order = 1;
             Ret.AddViewPropertyFilter( NameVp, ShowAtRuntime: true );
-            RequestItemRel.setGroupByProp( MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
 
             CswNbtViewProperty Vp2 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
             Vp2.Order = 2;
@@ -390,7 +388,6 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewProperty NameVp = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
             NameVp.Order = 1;
             Ret.AddViewPropertyFilter( NameVp, ShowAtRuntime: true );
-            RequestItemRel.setGroupByProp( MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
 
             CswNbtViewProperty Vp2 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
             Vp2.Order = 2;

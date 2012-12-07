@@ -542,6 +542,11 @@
                 return ret;
             });
 
+            cswPublic.deselectAll = Csw.method(function () {
+                ///<summary>Deselect all records</summary>
+                cswPrivate.grid.getSelectionModel().deselectAll();
+            });
+
             cswPublic.setSelection = Csw.method(function (rowindex) {
                 ///<summary>Sets the selected row by index</summary>
                 if (rowindex > -1) {

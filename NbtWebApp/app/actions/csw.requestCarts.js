@@ -105,6 +105,7 @@
                                 onAddNode: function () {
                                     grid.reload();
                                     Csw.publish(Csw.enums.events.main.refreshHeader);
+                                    cswPrivate.getCartCounts();
                                 }
                             });
                         }
@@ -152,7 +153,7 @@
                 });
             };
 
-            cswPrivate.copyToRequest = function (copyToRequest, copyRequestItems) {
+            cswPrivate.copyToRequest = function (copyToRequest, copyRequestItems, onSuccess) {
                 if (copyToRequest && copyRequestItems) {
                     Csw.ajaxWcf.post({
                         urlMethod: 'Requests/Favorites/copy',
@@ -160,9 +161,10 @@
                             RequestItems: copyRequestItems,
                             RequestId: copyToRequest
                         },
-                        onSuccess: function () {
+                        success: function () {
                             Csw.publish(Csw.enums.events.main.refreshHeader);
                             cswPrivate.getCartCounts();
+                            onSuccess();
                         }
                     });
                 }
@@ -258,7 +260,7 @@
                     stateId: opts.gridId,
                     usePaging: true,
                     height: 180,
-                    width: cswPrivate.tabs.getWidth() - 100,
+                    //width: cswPrivate.tabs.getWidth() - 400,
                     ajax: {
                         urlMethod: 'getRequestItemGrid',
                         data: {
@@ -406,7 +408,7 @@
                 };
                 opts.onEditNode = cswPrivate.makePendingTab;
 
-                cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
+                //cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
 
                 ol.li().br();
 
@@ -419,7 +421,10 @@
                         cswPublic.pendingGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
-                        cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes);
+                        cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes, function() {
+                            cswPublic.pendingGrid.deselectAll();
+                            toggleSaveBtn();
+                        });
                         toggleSaveBtn();
                     }
                 }).disable();
@@ -456,6 +461,7 @@
 
                 Csw.nbt.viewFilters({
                     name: 'submitted_viewfilters',
+                    isTreeView: false,
                     parent: ol.li(),
                     viewid: cswPrivate.state.submittedItemsViewId,
                     onEditFilters: function (newviewid) {
@@ -509,6 +515,7 @@
                 var ol = cswPrivate.prepTab(cswPrivate.favoritesTab, 'Favorite Request Itens', 'View any favorite Request Items.');
                 Csw.nbt.viewFilters({
                     name: 'favorites_viewfilters',
+                    isTreeView: false,
                     parent: ol.li(),
                     viewid: cswPrivate.state.favoriteItemsViewId,
                     onEditFilters: function (newviewid) {
@@ -521,7 +528,7 @@
 
                 var hasOneRowSelected = false;
 
-                var toggleSaveBtn = function () {
+                var toggleCopyBtn = function () {
                     if (hasOneRowSelected) {
                         copyBtn.enable();
                     } else {
@@ -540,7 +547,7 @@
                 opts.onEditNode = cswPrivate.makeFavoritesTab;
                 opts.onSelectChange = function (rowCount) {
                     hasOneRowSelected = rowCount > 0;
-                    toggleSaveBtn();
+                    toggleCopyBtn();
                 };
                 cswPublic.favoritesGrid = cswPrivate.makeGridForTab(opts);
 
@@ -554,9 +561,11 @@
                         cswPublic.favoritesGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
-                        cswPrivate.copyToRequest(cswPrivate.state.pendingCartId, nodes);
-                        Csw.publish(Csw.enums.events.main.refreshHeader);
-                        toggleSaveBtn();
+                        cswPrivate.copyToRequest(cswPrivate.state.pendingCartId, nodes, function() {
+                            cswPublic.favoritesGrid.deselectAll();
+                            toggleCopyBtn();
+                        });
+                        toggleCopyBtn();
                     }
                 }).disable();
 
