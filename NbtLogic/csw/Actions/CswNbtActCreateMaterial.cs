@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.Actions
                     if( null != Ret )
                     {
                         Ret.IsTemp = false;
-                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null, IsIdentityTab: false );
+                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
 
                         NewMaterial FinalMaterial = new NewMaterial( _CswNbtResources, Ret );
                         FinalMaterial.TradeName = CswConvert.ToString( MaterialObj["tradename"] );
