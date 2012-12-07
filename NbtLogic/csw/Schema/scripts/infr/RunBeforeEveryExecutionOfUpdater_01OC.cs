@@ -1103,7 +1103,6 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassFireClassExemptAmountSet.PropertyName.SetName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
                 IsUnique = true
             } );
 

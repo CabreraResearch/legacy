@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -73,6 +74,41 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
+        }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedFireClassExemptAmountSetNode.copyPropertyValues( Node );
+            CopiedFireClassExemptAmountSetNode.postChanges( true, true );
+
+            // Copy all Related FireClassExemptAmount Nodes
+            CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+            CswNbtView FCEAView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship FCEARelationship = FCEAView.AddViewRelationship( FireClassExemptAmountObjectClass, false );
+            CswNbtViewProperty SetNameProperty = FCEAView.AddViewProperty( FCEARelationship, FireClassExemptAmountObjectClass.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.SetName ) );
+            FCEAView.AddViewPropertyFilter(
+                SetNameProperty,
+                CswNbtSubField.SubFieldName.NodeID,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                NodeId.PrimaryKey.ToString() );
+
+            ICswNbtTree FCEATree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, FCEAView, true, false, false );
+            FCEATree.goToRoot();
+            Int32 ChildrenCopied = 0;
+            while( ChildrenCopied < FCEATree.getChildNodeCount() )
+            {
+                FCEATree.goToNthChild( ChildrenCopied );
+                CswNbtObjClassFireClassExemptAmount OriginalFCEANode = FCEATree.getNodeForCurrentPosition();
+                CswNbtObjClassFireClassExemptAmount CopiedFCEANode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalFCEANode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CopiedFCEANode.Node.copyPropertyValues( OriginalFCEANode.Node );
+                CopiedFCEANode.SetName.RelatedNodeId = CopiedFireClassExemptAmountSetNode.NodeId;
+                CopiedFCEANode.postChanges( true );
+                FCEATree.goToParentNode();
+                ChildrenCopied++;
+            }
+
+            return CopiedFireClassExemptAmountSetNode;
         }
         #endregion
 
