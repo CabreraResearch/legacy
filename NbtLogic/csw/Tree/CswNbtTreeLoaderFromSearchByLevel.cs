@@ -238,9 +238,6 @@ namespace ChemSW.Nbt
             // Filter out disabled nodetypes/object classes (see case 26029)
             Where += "where t.enabled = '1' ";
             
-            // Only searchable nodetypes (case 26827)
-            Where += " and t.searchdeferpropid <> '" + CswNbtMetaDataObjectClass.NotSearchableValue + "' ";
-
             Select += ",lower(n.nodename) mssqlorder ";
             OrderBy = " order by lower(n.nodename)";
             OrderBy += ",n.nodeid,lower(props.propname) "; // for property multiplexing
@@ -275,12 +272,27 @@ namespace ChemSW.Nbt
                     Where += @" and ";
                 }
 
-                Where += @" n.nodeid in (select nodeid 
-                                                from jct_nodes_props jnp 
-                                                join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
-                                                join field_types f on (p.fieldtypeid = f.fieldtypeid) 
-                                               where f.searchable = '1' 
-                                                 and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" ))";
+                // case 26827 - search deferment
+                Where += @" n.nodeid in (select jnp.nodeid
+                                           from jct_nodes_props jnp
+                                           join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
+                                           join nodetypes t on (p.nodetypeid = t.nodetypeid)
+                                           join field_types f on (p.fieldtypeid = f.fieldtypeid)
+                                          where f.searchable = '1'
+                                            and t.searchdeferpropid is null
+                                            and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" )
+                                      UNION
+                                         select rn.nodeid
+                                           from nodes n
+                                           join jct_nodes_props jnp on jnp.nodeid = n.nodeid
+                                           join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
+                                           join field_types f on (p.fieldtypeid = f.fieldtypeid)
+                                           join nodetypes t on t.nodetypeid = p.nodetypeid
+                                           join nodetype_props r on t.searchdeferpropid = r.nodetypepropid
+                                           join jct_nodes_props rj on (r.nodetypepropid = rj.nodetypepropid and rj.nodeid = n.nodeid)
+                                           join nodes rn on rj.field1_fk = rn.nodeid
+                                          where f.searchable = '1'
+                                            and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" )) ";
             }
             From += @"                                                              ))
                                                            )
