@@ -175,24 +175,6 @@ namespace NbtWebApp
             [DataMember]
             public string TargetNodeTypeName = string.Empty;
         }
-
-        [DataContract]
-        public class PropertyViewResponse : CswWebSvcReturn
-        {
-            public PropertyViewResponse()
-            {
-                Data = new Ret();
-            }
-
-            public class Ret
-            {
-                [DataMember]
-                public string options = string.Empty;
-            }
-
-            [DataMember]
-            public Ret Data = null;
-        }
     }
 
 
