@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.SchedService
 
 
             //Uri baseAddress = new Uri( "http://localhost:8080/SchedService" );
-            //using( ServiceHost host = new ServiceHost( typeof( CswSchedSvcAdmin ), baseAddress ) )
+            //using( ServiceHost host = new ServiceHost( typeof( CswSchedSvcAdminEndPoint ), baseAddress ) )
             //{
             //    // Enable metadata publishing.
             //    ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.SchedService
             {
                 serviceHost.Close();
             }
-            serviceHost = new WebServiceHost( typeof( CswSchedSvcAdmin ), new Uri( "http://localhost:8010/SchedService" ) );
+            serviceHost = new WebServiceHost( typeof( CswSchedSvcAdminEndPoint ), new Uri( "http://localhost:8010/SchedService" ) );
             ServiceEndpoint serviceEndpoint = serviceHost.AddServiceEndpoint( typeof( ICswSchedSvcAdmin ), new WebHttpBinding(), "" );
             ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
             serviceDebugBehavior.HttpHelpPageEnabled = false;
