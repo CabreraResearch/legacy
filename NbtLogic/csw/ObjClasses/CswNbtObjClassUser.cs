@@ -297,6 +297,11 @@ namespace ChemSW.Nbt.ObjClasses
 
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
 
+            // BZ 6941, 8288
+            // Set the Default View to use the selected User, rather than the logged in User
+            //DefaultView.User = this;
+            FavoriteViews.User = this;
+
             // BZ 8288
             // Favorite Actions options should derive from Role's Action Permissions
             if( _RoleNode != null )
