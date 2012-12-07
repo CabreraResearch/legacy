@@ -29,7 +29,8 @@
                     selectedSizeId: '',
                     customBarcodes: false,
                     documentTypeId: '',
-                    documentId: ''
+                    documentId: '',
+                    nodetypename: ''
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -235,7 +236,8 @@
                                 containerlimit: cswPrivate.state.containerlimit,
                                 materialId: cswPrivate.state.materialId,
                                 action: 'Receive',
-                                customBarcodes: cswPrivate.state.customBarcodes
+                                customBarcodes: cswPrivate.state.customBarcodes,
+                                nodeTypeName: cswPrivate.state.nodetypename
                             });
                         };
 

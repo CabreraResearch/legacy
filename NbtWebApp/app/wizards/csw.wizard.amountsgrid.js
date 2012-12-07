@@ -48,7 +48,8 @@
                         quantityName: 'Net Quantity',
                         barcodeName: 'Barcodes (Optional)'
                     },
-                    customBarcodes: false
+                    customBarcodes: false,
+                    nodeTypeName: ''
                 };
                 Csw.extend(cswPrivate, options);
 
@@ -205,7 +206,7 @@
                                         nodesUrlMethod: 'Nodes/getRelationshipOpts',
                                         ajaxData: {
                                             NodeId: cswPrivate.materialId,
-                                            PropName: 'Chemical Sizes',
+                                            PropName: cswPrivate.nodeTypeName +  ' Sizes',
                                             TargetNodeTypeName: 'Size'
                                         },
                                         showSelectOnLoad: true,
