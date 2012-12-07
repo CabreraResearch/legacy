@@ -119,21 +119,6 @@
                     4: 'Attach MSDS'
                 };
 
-                cswPrivate.getSupplierViewid = function(NodeTypeId){
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Nodes/getRelationshipOpts',
-                        async: false,
-                        data:{
-                            NodeTypeId: NodeTypeId,
-                            PropName: 'Supplier'
-                        },
-                        success: function(data){
-                            var opts = JSON.parse(data.options);
-                            cswPrivate.makeSupplierCtrl(opts);
-                        }
-                    });
-                };
-
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.handleStep = function (newStepNo) {
@@ -262,7 +247,7 @@
 
                             hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
-                            cswPrivate.getSupplierViewid(cswPrivate.state.materialType.val);
+                            cswPrivate.makeSupplierCtrl(cswPrivate.state.materialType.val);
                         }
                         if (cswPrivate.tradeNameInput &&
                             cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
@@ -334,19 +319,26 @@
                         
 
                         // SUPPLIER
-                        cswPrivate.makeSupplierCtrl = function(options){
+                        cswPrivate.makeSupplierCtrl = function(NodeTypeId){
+                            tbl.cell(3,1).empty();
+                            tbl.cell(3,2).empty();
                             tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
                             cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
                                 name: 'supplier',
                                 cssclass: 'required',
                                 width: '200px',
+                                nodesUrlMethod: 'Nodes/getRelationshipOpts',
+                                ajaxData:{
+                                    NodeTypeId: NodeTypeId,
+                                    PropName: 'Supplier',
+                                    TargetNodeTypeName: 'Vendor'
+                                },
                                 showSelectOnLoad: true,
                                 addNodeDialogTitle: 'Vendor',
                                 selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                                 onChange: changeMaterial,
                                 onSuccess: changeMaterial,
-                                isRequired: true,
-                                options: options
+                                isRequired: true
                             });
                         };
 

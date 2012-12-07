@@ -202,8 +202,11 @@
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
                                         name: 'sizes',
                                         async: false,
+                                        nodesUrlMethod: 'Nodes/getRelationshipOpts',
                                         ajaxData: {
-                                            ObjectClass: 'SizeClass'
+                                            NodeId: cswPrivate.materialId,
+                                            PropName: 'Chemical Sizes',
+                                            TargetNodeTypeName: 'Size'
                                         },
                                         showSelectOnLoad: true,
                                         addNodeDialogTitle: 'Size',
@@ -238,6 +241,7 @@
                                     }
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
+                                    
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
                                     break;

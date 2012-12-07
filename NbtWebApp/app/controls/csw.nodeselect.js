@@ -6,7 +6,7 @@
     Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
         Csw.controls.register('nodeSelect', function (cswParent, cswPrivate) {
             'use strict';
-            
+
             //#region _preCtor
 
             var cswPublic = {};
@@ -15,7 +15,7 @@
                 cswPrivate.$parent = cswPrivate.$parent || cswParent.$;
                 cswPrivate.name = cswPrivate.name || '';
                 cswPrivate.async = cswPrivate.async; // || true;
-                cswPrivate.nodesUrlMethod = cswPrivate.nodesUrlMethod || 'Nodes/get';
+                cswPrivate.nodesUrlMethod = cswPrivate.nodesUrlMethod || 'Nodes/getRelationshipOpts';
 
                 cswPrivate.labelText = cswPrivate.labelText || null;
                 cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
@@ -26,31 +26,31 @@
                 cswPrivate.objectClassId = cswPrivate.objectClassId || '';
                 cswPrivate.objectClassName = cswPrivate.objectClassName || '';
                 cswPrivate.addNodeDialogTitle = cswPrivate.addNodeDialogTitle || '';
-                
+
                 cswPrivate.relatedTo = cswPrivate.relatedTo || {};
                 cswPrivate.relatedTo.relatednodeid = cswPrivate.relatedTo.relatednodeid || '';
                 cswPrivate.relatedTo.relatednodename = cswPrivate.relatedTo.relatednodename || '';
                 cswPrivate.relatedTo.relatednodetypeid = cswPrivate.relatedTo.relatednodetypeid || '';
                 cswPrivate.relatedTo.relatedobjectclassid = cswPrivate.relatedTo.relatedobjectclassid || '';
-                
+
                 cswPrivate.cellCol = cswPrivate.cellCol || 1;
                 cswPrivate.width = cswPrivate.width || '200px';
-                
-                cswPrivate.onSelectNode = cswPrivate.onSelectNode || function() {};
+
+                cswPrivate.onSelectNode = cswPrivate.onSelectNode || function () { };
                 cswPrivate.onSuccess = cswPrivate.onSuccess || function () { };
-                
+
                 cswPrivate.addNewOption = cswPrivate.addNewOption; // || false;
                 cswPrivate.allowAdd = cswPrivate.allowAdd; // || false;
                 cswPrivate.isRequired = cswPrivate.isRequired; // || false;
                 cswPrivate.isMulti = cswPrivate.isMulti; // || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
-                
-                cswPrivate.options = cswPrivate.options|| [];
+
+                cswPrivate.options = cswPrivate.options || [];
 
                 cswPublic = cswParent.div();
                 cswPrivate.table = cswPublic.table();
-                
+
                 // Default to selected node as relationship value for new nodes being added
                 if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
                     Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
@@ -63,37 +63,19 @@
                 }
 
                 cswPrivate.relationships = [];
-            }());
-            
+            } ());
+
             //#endregion _preCtor
 
             //#region AJAX
 
-            cswPrivate.getNodes = function() {
-                
+            cswPrivate.getNodes = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     async: Csw.bool(cswPrivate.async),
-                    data: cswPrivate.ajaxData || {
-                        NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
-                        ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
-                        ObjectClass: Csw.string(cswPrivate.objectClassName),
-                        RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
-                        RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId),
-                        ViewId: Csw.string(cswPrivate.viewid)
-                    },
+                    data: cswPrivate.ajaxData,
                     success: function (data) {
-                        var options = [];
-                        data.Nodes.forEach(function(obj) {
-                            options.push({id: obj.NodeId, value: obj.NodeName});
-                        });
-                        cswPrivate.options = options;
-                        cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
-                        cswPrivate.useSearch = Csw.bool(data.UseSearch);
-                        cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
-                        cswPrivate.objectClassId = cswPrivate.objectClassId || data.ObjectClassId;
-                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId;
-                        
+                        cswPrivate.options = JSON.parse(data.options);
                         cswPrivate.makeControl();
                     }
                 });
@@ -131,7 +113,7 @@
 
             //#region Control Construction
 
-            cswPrivate.makeControl = function() {
+            cswPrivate.makeControl = function () {
                 if (cswPrivate.useSearch) {
                     cswPrivate.makeSearch();
                 } else {
@@ -141,7 +123,7 @@
                 Csw.tryExec(cswPrivate.onSuccess, cswPrivate.relationships);
             };
 
-            cswPrivate.bindSelectMethods = function() {
+            cswPrivate.bindSelectMethods = function () {
                 cswPublic.val = cswPublic.select.val;
                 cswPublic.selectedText = cswPublic.select.selectedText;
                 cswPublic.selectedVal = cswPublic.select.selectedVal;
@@ -153,7 +135,7 @@
                 cswPublic.option = cswPublic.select.option;
             };
 
-            cswPrivate.makeSelect = function() {
+            cswPrivate.makeSelect = function () {
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
@@ -190,7 +172,7 @@
                     Csw.tryExec(cswPrivate.onChange, cswPublic.select);
                     Csw.tryExec(cswPrivate.onSelect, val);
                 });
-                
+
                 cswPrivate.cellCol += 1;
                 cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.cellCol);
                 cswPrivate.cellCol += 1;
@@ -208,7 +190,7 @@
                     }
                 });
                 cswPrivate.cellCol += 1;
-                
+
                 cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
 
                 cswPublic.select.required(cswPrivate.isRequired);
@@ -217,7 +199,7 @@
                                 function (event) { Csw.nodeHoverOut(event, cswPublic.select.val()); });
             };
 
-            cswPrivate.makeSearch = function() {
+            cswPrivate.makeSearch = function () {
                 if (cswPrivate.useSearch) {
                     // Find value by using search in a dialog
 
@@ -238,12 +220,12 @@
                         hovertext: "Search " + cswPrivate.name,
                         size: 16,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             $.CswDialog('SearchDialog', {
                                 propname: cswPrivate.name,
                                 nodetypeid: cswPrivate.nodeTypeId,
                                 objectclassid: cswPrivate.objectClassId,
-                                onSelectNode: function(nodeObj) {
+                                onSelectNode: function (nodeObj) {
                                     cswPrivate.nameSpan.text(nodeObj.nodename);
                                     cswPrivate.hiddenValue.val(nodeObj.nodeid);
                                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
@@ -253,8 +235,8 @@
                     });
                     cswPrivate.cellCol += 1;
 
-                    cswPrivate.nameSpan.$.hover(function(event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
-                        function(event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
+                    cswPrivate.nameSpan.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
+                        function (event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
                 }
             };
 
@@ -297,7 +279,7 @@
                     text: cswPrivate.name
                 });
             };
-            
+
             cswPrivate.makeAddImage = function () {
                 cswPrivate.addImage = cswPrivate.table.cell(1, cswPrivate.cellCol).div()
                     .buttonExt({
@@ -316,7 +298,7 @@
                 cswPrivate.cellCol += 1;
             };
 
-            cswPrivate.makeAdd = function() {
+            cswPrivate.makeAdd = function () {
                 if (cswPrivate.allowAdd) {
                     cswPrivate.makeAddImage();
                 } //if (allowAdd)
@@ -325,9 +307,9 @@
             //#endregion Add
 
             //#region Public
-            
+
             cswPublic.selectedNodeId = function () {
-                if(cswPublic && cswPublic.select && cswPublic.select.val) {
+                if (cswPublic && cswPublic.select && cswPublic.select.val) {
                     cswPrivate.selectedNodeId = cswPublic.select.val();
                 }
                 return cswPrivate.selectedNodeId;
@@ -352,10 +334,10 @@
                         cswPrivate.getNodes();
                     }
                 } // if-else (o.ReadOnly) {
-            }());
+            } ());
 
             return cswPublic;
-            
+
             //#endregion _postCtor
         });
 } ());

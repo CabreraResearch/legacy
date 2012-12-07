@@ -168,6 +168,12 @@ namespace NbtWebApp
             public string PropName = string.Empty;
             [DataMember]
             public string NodeTypeId = string.Empty;
+            [DataMember]
+            public string NodeId = string.Empty;
+            [DataMember]
+            public string TargetNodeTypeId = string.Empty;
+            [DataMember]
+            public string TargetNodeTypeName = string.Empty;
         }
 
         [DataContract]

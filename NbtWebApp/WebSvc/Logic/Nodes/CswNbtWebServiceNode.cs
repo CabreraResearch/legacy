@@ -578,7 +578,33 @@ namespace ChemSW.Nbt.WebServices
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                int nodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
+
+                int nodeTypeId;
+                CswPrimaryKey pk = new CswPrimaryKey();
+                if( false == String.IsNullOrEmpty( Request.NodeId ) )
+                {
+                    pk = CswConvert.ToPrimaryKey( Request.NodeId );
+                    nodeTypeId = NbtResources.Nodes[pk].NodeTypeId;
+                }
+                else
+                {
+                    nodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
+                }
+
+                int targetNodeTypeId = CswConvert.ToInt32( nodeTypeId );
+                if( false == String.IsNullOrEmpty( Request.TargetNodeTypeName ) )
+                {
+                    CswNbtMetaDataNodeType targetNT = NbtResources.MetaData.getNodeType( Request.TargetNodeTypeName );
+                    if( null != targetNT )
+                    {
+                        targetNodeTypeId = targetNT.NodeTypeId;
+                    }
+                }
+                else if( false == String.IsNullOrEmpty( Request.TargetNodeTypeId ) )
+                {
+                    targetNodeTypeId = CswConvert.ToInt32( Request.TargetNodeTypeId );
+                }
+
                 CswNbtMetaDataNodeType metaDataNodeType = NbtResources.MetaData.getNodeType( nodeTypeId );
                 if( null != metaDataNodeType )
                 {
@@ -588,20 +614,34 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtView view = NbtResources.ViewSelect.restoreView( ntp.ViewId );
                         ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
                         JArray JOptions = new JArray();
-                        for( int i = 0; i < tree.getChildNodeCount(); i++ )
-                        {
-                            tree.goToNthChild( i );
-                            JObject JOption = new JObject();
-                            JOption["id"] = tree.getNodeIdForCurrentPosition().ToString();
-                            JOption["value"] = tree.getNodeNameForCurrentPosition();
-                            JOptions.Add( JOption );
-                            tree.goToParentNode();
-                        }
+                        _getOptsRecursive( JOptions, tree, targetNodeTypeId, pk );
                         Response.Data.options = JOptions.ToString();
                     }
                 }
             }
         }
+
+        private static void _getOptsRecursive( JArray JOptions, ICswNbtTree tree, Int32 TargetNodeTypeId, CswPrimaryKey targetNodeId )
+        {
+            for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
+            {
+                tree.goToNthChild( c );
+                if( tree.getNodeKeyForCurrentPosition().NodeTypeId == TargetNodeTypeId )
+                {
+                    JObject JOption = new JObject();
+                    JOption["id"] = tree.getNodeIdForCurrentPosition().ToString();
+                    JOption["value"] = tree.getNodeNameForCurrentPosition();
+                    JOptions.Add( JOption );
+                }
+
+                if( false == CswTools.IsPrimaryKey( targetNodeId ) || tree.getNodeIdForCurrentPosition() == targetNodeId )
+                {
+                    _getOptsRecursive( JOptions, tree, TargetNodeTypeId, targetNodeId );
+                }
+
+                tree.goToParentNode();
+            } // for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
+        } // _addOptionsRecurse()
 
     } // class CswNbtWebServiceNode
 
