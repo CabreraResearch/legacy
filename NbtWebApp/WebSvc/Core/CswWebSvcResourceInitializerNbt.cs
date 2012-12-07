@@ -11,7 +11,7 @@ namespace ChemSW.WebSvc
     {
         private CswTimer _Timer = new CswTimer();
         private HttpContext _HttpContext = null;
-        private CswNbtSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
+        private CswWebSvcSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
         private delegate void _OnDeInitDelegate();
         private _OnDeInitDelegate _OnDeInit;
 
@@ -28,10 +28,10 @@ namespace ChemSW.WebSvc
             _AuthenticationRequest.IpAddress = CswWebSvcCommonMethods.getIpAddress();
         }
 
-        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext, CswNbtSessionAuthenticateData.Authentication.Request AuthenticationRequest ) //TODO: add Username/Password
+        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest ) //TODO: add Username/Password
         {
             _HttpContext = HttpContext;
-            _AuthenticationRequest = AuthenticationRequest ?? new CswNbtSessionAuthenticateData.Authentication.Request();
+            _AuthenticationRequest = AuthenticationRequest ?? new CswWebSvcSessionAuthenticateData.Authentication.Request();
             _setHttpContextOnRequest();
         }
 
