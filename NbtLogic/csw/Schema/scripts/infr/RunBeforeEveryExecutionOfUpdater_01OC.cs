@@ -1301,6 +1301,50 @@ namespace ChemSW.Nbt.Schema
         }
         #endregion Case 28281
 
+        #region Case 28282
+
+        private void _addControlZoneNT( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass GenericOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GenericClass );
+            if( null != GenericOc )
+            {
+                //ControlZone NodeType
+                CswNbtMetaDataNodeType ControlZoneNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Control Zone" );
+                if( null == ControlZoneNt )
+                {
+                    ControlZoneNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "Control Zone", "Materials" );
+                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, ControlZoneNt.NodeTypeId );                    
+
+                    CswNbtMetaDataNodeTypeProp NameNTP = _createNewProp( ControlZoneNt, "Name", CswNbtMetaDataFieldType.NbtFieldType.Text );
+                    NameNTP.IsRequired = true;
+                    CswNbtMetaDataNodeTypeProp MAQOffsetNTP = _createNewProp( ControlZoneNt, "MAQ Offset %", CswNbtMetaDataFieldType.NbtFieldType.Number, false );
+                    MAQOffsetNTP.DefaultValue.AsNumber.Value = 100;
+                    CswNbtMetaDataObjectClass FCEASOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
+                    CswNbtMetaDataNodeTypeProp FCEASNameNTP = _createNewProp( ControlZoneNt, "Fire Class Set Name", CswNbtMetaDataFieldType.NbtFieldType.Relationship );
+                    FCEASNameNTP.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), FCEASOC.ObjectClassId );
+
+                    ControlZoneNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Name" ) );
+
+                    //Update Location to include Control Zone
+                    CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( LocationOC )
+                    {
+                        PropName = CswNbtObjClassLocation.PropertyName.ControlZone,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = NbtViewRelatedIdType.NodeTypeId.ToString(),
+                        FkValue = ControlZoneNt.NodeTypeId
+                    } );
+                }
+            }
+
+            _resetBlame();
+        }
+
+        #endregion Case 28282
+
         #endregion Viola Methods
 
         /// <summary>
@@ -1339,7 +1383,8 @@ namespace ChemSW.Nbt.Schema
 
             _addFireClassExemptAmountProps( CswDeveloper.BV, 28283 );
             _addHazardousReoprtingProp( CswDeveloper.BV, 28281 );
-            _addContainerFireReportingProps( CswDeveloper.BV, 28281 );            
+            _addContainerFireReportingProps( CswDeveloper.BV, 28281 );
+            _addControlZoneNT( CswDeveloper.BV, 28282 );
 
             #endregion VIOLA
 
