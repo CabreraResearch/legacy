@@ -62,69 +62,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Properties and ctor
 
-        #region Enums
-
-        public sealed class FireHazardClassTypes : CswEnum<FireHazardClassTypes>
-        {
-            private FireHazardClassTypes( string Name ) : base( Name ) { }
-            public static IEnumerable<FireHazardClassTypes> _All { get { return All; } }
-            public static implicit operator FireHazardClassTypes( string str )
-            {
-                FireHazardClassTypes ret = Parse( str );
-                return ret;
-            }
-            public static readonly FireHazardClassTypes Aero1 = new FireHazardClassTypes( "Aero-1" );
-            public static readonly FireHazardClassTypes Aero2 = new FireHazardClassTypes( "Aero-2" );
-            public static readonly FireHazardClassTypes Aero3 = new FireHazardClassTypes( "Aero-3" );
-            public static readonly FireHazardClassTypes Carc = new FireHazardClassTypes( "Carc" );
-            public static readonly FireHazardClassTypes CFDBalled = new FireHazardClassTypes( "CF/D (balled)" );
-            public static readonly FireHazardClassTypes CFDLoose = new FireHazardClassTypes( "CF/D (loose)" );
-            public static readonly FireHazardClassTypes CLII = new FireHazardClassTypes( "CL-II" );
-            public static readonly FireHazardClassTypes CLIIIA = new FireHazardClassTypes( "CL-IIIA" );
-            public static readonly FireHazardClassTypes CLIIIB = new FireHazardClassTypes( "CL-IIIB" );
-            public static readonly FireHazardClassTypes Corr = new FireHazardClassTypes( "Corr" );
-            public static readonly FireHazardClassTypes CRYFG = new FireHazardClassTypes( "CRY-FG" );
-            public static readonly FireHazardClassTypes CRYOXY = new FireHazardClassTypes( "CRY-OXY" );
-            public static readonly FireHazardClassTypes Exp = new FireHazardClassTypes( "Exp" );
-            public static readonly FireHazardClassTypes FGGas = new FireHazardClassTypes( "FG (gaseous)" );
-            public static readonly FireHazardClassTypes FGLiquid = new FireHazardClassTypes( "FG (liquified)" );
-            public static readonly FireHazardClassTypes FL1A = new FireHazardClassTypes( "FL-1A" );
-            public static readonly FireHazardClassTypes FL1B = new FireHazardClassTypes( "FL-1B" );
-            public static readonly FireHazardClassTypes FL1C = new FireHazardClassTypes( "FL-1C" );
-            public static readonly FireHazardClassTypes FLComb = new FireHazardClassTypes( "FL-Comb" );
-            public static readonly FireHazardClassTypes FS = new FireHazardClassTypes( "FS" );
-            public static readonly FireHazardClassTypes HT = new FireHazardClassTypes( "H.T." );
-            public static readonly FireHazardClassTypes Irr = new FireHazardClassTypes( "Irr" );
-            public static readonly FireHazardClassTypes OHH = new FireHazardClassTypes( "OHH" );
-            public static readonly FireHazardClassTypes Oxy1 = new FireHazardClassTypes( "Oxy1" );
-            public static readonly FireHazardClassTypes Oxy2 = new FireHazardClassTypes( "Oxy2" );
-            public static readonly FireHazardClassTypes Oxy3 = new FireHazardClassTypes( "Oxy3" );
-            public static readonly FireHazardClassTypes Oxy4 = new FireHazardClassTypes( "Oxy4" );
-            public static readonly FireHazardClassTypes OxyGas = new FireHazardClassTypes( "Oxy-Gas" );
-            public static readonly FireHazardClassTypes OxyGasLiquid = new FireHazardClassTypes( "Oxy-Gas (liquid)" );
-            public static readonly FireHazardClassTypes PeroxDet = new FireHazardClassTypes( "Perox-Det" );
-            public static readonly FireHazardClassTypes PeroxI = new FireHazardClassTypes( "Perox-I" );
-            public static readonly FireHazardClassTypes PeroxII = new FireHazardClassTypes( "Perox-II" );
-            public static readonly FireHazardClassTypes PeroxIII = new FireHazardClassTypes( "Perox-III" );
-            public static readonly FireHazardClassTypes PeroxIV = new FireHazardClassTypes( "Perox-IV" );
-            public static readonly FireHazardClassTypes PeroxV = new FireHazardClassTypes( "Perox-V" );
-            public static readonly FireHazardClassTypes Pyro = new FireHazardClassTypes( "Pyro" );
-            public static readonly FireHazardClassTypes RADAlpha = new FireHazardClassTypes( "RAD-Alpha" );
-            public static readonly FireHazardClassTypes RADBeta = new FireHazardClassTypes( "RAD-Beta" );
-            public static readonly FireHazardClassTypes RADGamma = new FireHazardClassTypes( "RAD-Gamma" );
-            public static readonly FireHazardClassTypes Sens = new FireHazardClassTypes( "Sens" );
-            public static readonly FireHazardClassTypes Tox = new FireHazardClassTypes( "Tox" );
-            public static readonly FireHazardClassTypes UR1 = new FireHazardClassTypes( "UR-1" );
-            public static readonly FireHazardClassTypes UR2 = new FireHazardClassTypes( "UR-2" );
-            public static readonly FireHazardClassTypes UR3 = new FireHazardClassTypes( "UR-3" );
-            public static readonly FireHazardClassTypes UR4 = new FireHazardClassTypes( "UR-4" );
-            public static readonly FireHazardClassTypes WR1 = new FireHazardClassTypes( "WR-1" );
-            public static readonly FireHazardClassTypes WR2 = new FireHazardClassTypes( "WR-2" );
-            public static readonly FireHazardClassTypes WR3 = new FireHazardClassTypes( "WR-3" );
-        }
-
-        #endregion Enums
-
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )

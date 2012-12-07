@@ -105,104 +105,103 @@ namespace ChemSW.Nbt.Schema
                 #endregion Quantity Views
 
                 #region FireClassExemptAmount Nodes
-
+                
                 if( null != SetNodeId && null != FireClassExemptAmountNT )
                 {
                     _setUnitNodeIds();
-                    _createFireClassExemptAmountNode( 290.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Aero1.ToString(), "Physical", "Aerosols" );
-                    _createFireClassExemptAmountNode( 290.2, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Aero2.ToString(), "Physical", "Aerosols" );
-                    _createFireClassExemptAmountNode( 290.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Aero3.ToString(), "Physical", "Aerosols" );
-                    _createFireClassExemptAmountNode( 301, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Carc.ToString(), "Health", "Carcinogenic",
+                    _createFireClassExemptAmountNode( 290.1, "Aero-1", "Physical", "Aerosols" );
+                    _createFireClassExemptAmountNode( 290.2, "Aero-2", "Physical", "Aerosols" );
+                    _createFireClassExemptAmountNode( 290.3, "Aero-3", "Physical", "Aerosols" );
+                    _createFireClassExemptAmountNode( 301, "Carc", "Health", "Carcinogenic",
                         SSEF: "9", SLEF: "9", SGEF: "6,9", CSEF: "9", CLEF: "9", CGEF: "6,9", OSEA: "10000", OSEF: "10", OLEF: "10");
-                    _createFireClassExemptAmountNode( 211.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.CFDBalled.ToString(), "Physical", "Combustible Fiber/Dust",
+                    _createFireClassExemptAmountNode( 211.1, "CF/D (balled)", "Physical", "Combustible Fiber/Dust",
                         SSEA: "-1000", CSEA: "-100", OSEA: "-20" );
-                    _createFireClassExemptAmountNode( 211.2, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.CFDLoose.ToString(), "Physical", "Combustible Fiber/Dust",
+                    _createFireClassExemptAmountNode( 211.2, "CF/D (loose)", "Physical", "Combustible Fiber/Dust",
                         SSEA: "-100", CSEA: "-1000", OSEA: "-200" );
-                    _createFireClassExemptAmountNode( 210.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.CLII.ToString(), "Physical", "Combustible Liquids",
+                    _createFireClassExemptAmountNode( 210.1, "CL-II", "Physical", "Combustible Liquids",
                         SLEA: "240", SLEF: "10", CLEA: "240", OLEA: "60" );
-                    _createFireClassExemptAmountNode( 210.2, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.CLIIIA.ToString(), "Physical", "Combustible Liquids",
+                    _createFireClassExemptAmountNode( 210.2, "CL-IIIA", "Physical", "Combustible Liquids",
                         SLEA: "660", CLEA: "660", OLEA: "160" );
-                    _createFireClassExemptAmountNode( 210.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.CLIIIB.ToString(), "Physical", "Combustible Liquids",
+                    _createFireClassExemptAmountNode( 210.3, "CL-IIIB", "Physical", "Combustible Liquids",
                         SLEF: "10,11", CLEF: "11", OLEF: "11" );
-                    _createFireClassExemptAmountNode( 301.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Corr.ToString(), "Health", "Corrosives",
+                    _createFireClassExemptAmountNode( 301.1, "Corr", "Health", "Corrosives",
                         SSEA: "10000", SLEA: "1000", SGEA: "1620", SGEF: "6", CSEA: "10000", CLEA: "1000", CGEA: "1620", CGEF: "6", OSEA: "2000", OSEF: "5", OLEA: "200", OLEF: "5" );
-                    _createFireClassExemptAmountNode( 212.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.CRYFG.ToString(), "Physical", "Cryogenic",
+                    _createFireClassExemptAmountNode( 212.1, "CRY-FG", "Physical", "Cryogenic",
                         SLEA: "45", CLEA: "45", OLEA: "10" );
-                    _createFireClassExemptAmountNode( 212.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.CRYOXY.ToString(), "Physical", "Cryogenic",
+                    _createFireClassExemptAmountNode( 212.3, "CRY-OXY", "Physical", "Cryogenic",
                         SLEA: "45", CLEA: "45", OLEA: "10" );
-                    _createFireClassExemptAmountNode( 213, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Exp.ToString(), "Physical", "Explosive",
+                    _createFireClassExemptAmountNode( 213, "Exp", "Physical", "Explosive",
                         SSEA: "1", SSEF: "10,13", SLEA: "-1", SLEF: "10,13", CSEA: "0.25", CSEF: "12", CLEA: "-0.25", CLEF: "12", OSEA: "0.25", OSEF: "12", OLEA: "-0.25", OLEF: "12" );
-                    _createFireClassExemptAmountNode( 214.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.FGGas.ToString(), "Physical", "Flammable Gas",
+                    _createFireClassExemptAmountNode( 214.1, "FG (gaseous)", "Physical", "Flammable Gas",
                         SGEA: "1500", SGEF: "6,10", CGEA: "1500", CGEF: "6,10" );
-                    _createFireClassExemptAmountNode( 214.2, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.FGLiquid.ToString(), "Physical", "Flammable Gas",
+                    _createFireClassExemptAmountNode( 214.2, "FG (liquified)", "Physical", "Flammable Gas",
                         SLEA: "30", SLEF: "6,10", CLEA: "30", CLEF: "6,10" );
-                    _createFireClassExemptAmountNode( 214.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.FL1A.ToString(), "Physical", "Flammable Liquids",
+                    _createFireClassExemptAmountNode( 214.3, "FL-1A", "Physical", "Flammable Liquids",
                         SLEA: "60", SLEF: "10", CLEA: "60", OLEA: "20" );
-                    _createFireClassExemptAmountNode( 214.4, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.FL1B.ToString(), "Physical", "Flammable Liquids",
+                    _createFireClassExemptAmountNode( 214.4, "FL-1B", "Physical", "Flammable Liquids",
                         SLEA: "120", SLEF: "10", CLEA: "120", OLEA: "30" );
-                    _createFireClassExemptAmountNode( 214.5, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.FL1C.ToString(), "Physical", "Flammable Liquids",
+                    _createFireClassExemptAmountNode( 214.5, "FL-1C", "Physical", "Flammable Liquids",
                         SLEA: "180", SLEF: "10", CLEA: "180", OLEA: "40" );
-                    _createFireClassExemptAmountNode( 214.6, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.FLComb.ToString(), "Physical", "Flammable Liquids",
+                    _createFireClassExemptAmountNode( 214.6, "FL-Comb", "Physical", "Flammable Liquids",
                         SLEA: "240", SLEF: "10", CLEA: "240", OLEA: "60" );
-                    _createFireClassExemptAmountNode( 214, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.FS.ToString(), "Physical", "Flammable Solid",
+                    _createFireClassExemptAmountNode( 214, "FS", "Physical", "Flammable Solid",
                         SSEA: "250", SSEF: "6,10", SLEF: "6,10", CSEA: "125", CSEF: "6,10", OSEA: "125", OSEF: "6,10" );
-                    _createFireClassExemptAmountNode( 301.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.HT.ToString(), "Health", "Highly Toxic",
+                    _createFireClassExemptAmountNode( 301.3, "H.T.", "Health", "Highly Toxic",
                         SSEA: "20", SLEA: "-20", SGEA: "40", SGEF: "12", CSEA: "20", CLEA: "-20", CGEA: "40", CGEF: "12", OSEA: "6", OSEF: "5", OLEA: "-6", OLEF: "5" );
-                    _createFireClassExemptAmountNode( 302, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Irr.ToString(), "Health", "Irritant",
+                    _createFireClassExemptAmountNode( 302, "Irr", "Health", "Irritant",
                         SGEF: "6,9", CGEF: "9", OSEF: "9", OLEF: "9" );
-                    _createFireClassExemptAmountNode( 307.5, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.OHH.ToString(), "Health", "Other Health Hazard",
+                    _createFireClassExemptAmountNode( 307.5, "OHH", "Health", "Other Health Hazard",
                         SGEF: "6,9", CGEF: "6,9", OSEF: "9", OLEF: "9" );
-                    _createFireClassExemptAmountNode( 217.6, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Oxy1.ToString(), "Physical", "Oxidizer",
+                    _createFireClassExemptAmountNode( 217.6, "Oxy1", "Physical", "Oxidizer",
                         SSEA: "8000", SSEF: "6,10", SLEA: "-8000", SLEF: "10,12", CSEA: "8000", CSEF: "6", CLEA: "-8000", OSEA: "2000", OSEF: "6", OLEA: "-2000", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 217.5, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Oxy2.ToString(), "Physical", "Oxidizer",
+                    _createFireClassExemptAmountNode( 217.5, "Oxy2", "Physical", "Oxidizer",
                         SSEA: "500", SSEF: "6,10", SLEA: "-500", SLEF: "6,10", CSEA: "500", CSEF: "6", CLEA: "-500", OSEA: "100", OSEF: "6", OLEA: "-100", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 217.4, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Oxy3.ToString(), "Physical", "Oxidizer",
+                    _createFireClassExemptAmountNode( 217.4, "Oxy3", "Physical", "Oxidizer",
                         SSEA: "20", SSEF: "6,10", SLEA: "-20", SLEF: "6,10", CSEA: "4", CSEF: "6", CLEA: "-4", OSEA: "4", OSEF: "6", OLEA: "-4", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 217.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Oxy4.ToString(), "Physical", "Oxidizer",
+                    _createFireClassExemptAmountNode( 217.3, "Oxy4", "Physical", "Oxidizer",
                         SSEA: "1", SSEF: "10,12", SLEA: "-1", SLEF: "6,10", CSEA: "0.25", CSEF: "12", CLEA: "-0.25", OSEA: "0.25", OSEF: "12", OLEA: "-0.25", OLEF: "12" );
-                    _createFireClassExemptAmountNode( 217.7, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.OxyGas.ToString(), "Physical", "Oxidizer - Gas",
+                    _createFireClassExemptAmountNode( 217.7, "Oxy-Gas", "Physical", "Oxidizer - Gas",
                         SGEA: "3000", CGEA: "3000" );
-                    _createFireClassExemptAmountNode( 217.8, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.OxyGasLiquid.ToString(), "Physical", "Oxidizer - Gas",
+                    _createFireClassExemptAmountNode( 217.8, "Oxy-Gas (liquid)", "Physical", "Oxidizer - Gas",
                         SLEA: "30", CLEA: "30" );
-                    _createFireClassExemptAmountNode( 216.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.PeroxDet.ToString(), "Physical", "Organic Peroxide",
+                    _createFireClassExemptAmountNode( 216.1, "Perox-Det", "Physical", "Organic Peroxide",
                         SSEA: "1", SSEF: "10,12", SLEA: "-1", SLEF: "12,12", CSEA: "0.25", CSEF: "12", CLEA: "-0.25", CLEF: "12", OSEA: "0.25", OSEF: "12", OLEA: "-0.25", OLEF: "12" );
-                    _createFireClassExemptAmountNode( 216.2, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.PeroxI.ToString(), "Physical", "Organic Peroxide",
+                    _createFireClassExemptAmountNode( 216.2, "Perox-I", "Physical", "Organic Peroxide",
                         SSEA: "10", SSEF: "6,10", SLEA: "-10", SLEF: "6,10", CSEA: "2", CSEF: "6", CLEA: "-2", CLEF: "6", OSEA: "2", OSEF: "6", OLEA: "-2", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 216.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.PeroxII.ToString(), "Physical", "Organic Peroxide",
+                    _createFireClassExemptAmountNode( 216.3, "Perox-II", "Physical", "Organic Peroxide",
                         SSEA: "100", SSEF: "6,10", SLEA: "-100", SLEF: "6,10", CSEA: "100", CSEF: "6", CLEA: "-100", CLEF: "6", OSEA: "20", OSEF: "6", OLEA: "-20", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 216.4, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.PeroxIII.ToString(), "Physical", "Organic Peroxide",
+                    _createFireClassExemptAmountNode( 216.4, "Perox-III", "Physical", "Organic Peroxide",
                         SSEA: "250", SSEF: "6,10", SLEA: "-250", SLEF: "6,10", CSEA: "250", CSEF: "6", CLEA: "-250", CLEF: "6", OSEA: "50", OSEF: "6", OLEA: "-50", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 216.5, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.PeroxIV.ToString(), "Physical", "Organic Peroxide",
+                    _createFireClassExemptAmountNode( 216.5, "Perox-IV", "Physical", "Organic Peroxide",
                         SSEA: "1000", SSEF: "6,10", SLEA: "-1000", SLEF: "6,10", CSEA: "1000", CSEF: "6", CLEA: "-1000", CLEF: "6", OSEA: "200", OSEF: "6", OLEA: "-200", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 216.6, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.PeroxV.ToString(), "Physical", "Organic Peroxide" );
-                    _createFireClassExemptAmountNode( 218, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Pyro.ToString(), "Physical", "Pyrophoric",
+                    _createFireClassExemptAmountNode( 216.6, "Perox-V", "Physical", "Organic Peroxide" );
+                    _createFireClassExemptAmountNode( 218, "Pyro", "Physical", "Pyrophoric",
                         SSEA: "4", SSEF: "10,12", SLEA: "-4", SLEF: "10,12", SGEA: "50", SGEF: "10,12", CSEA: "1", CSEF: "12", CLEA: "-1", CLEF: "12", CGEA: "10", OSEA: "0", OLEA: "0" );
-                    _createFireClassExemptAmountNode( 304, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.RADAlpha.ToString(), "Health", "Radioactive",
+                    _createFireClassExemptAmountNode( 304, "RAD-Alpha", "Health", "Radioactive",
                         SSEA: "2", SLEA: "2", SGEA: "0.2", SGEF: "6", CSEA: "2", CLEA: "2", CGEA: "0.2", OSEA: "1", OLEA: "1", isRadioactive: true );
-                    _createFireClassExemptAmountNode( 305, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.RADBeta.ToString(), "Health", "Radioactive",
+                    _createFireClassExemptAmountNode( 305, "RAD-Beta", "Health", "Radioactive",
                         SSEA: "200", SLEA: "200", SGEA: "20", SGEF: "6", CSEA: "200", CLEA: "200", CGEA: "20", OSEA: "100", OLEA: "100", isRadioactive: true );
-                    _createFireClassExemptAmountNode( 306, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.RADGamma.ToString(), "Health", "Radioactive",
+                    _createFireClassExemptAmountNode( 306, "RAD-Gamma", "Health", "Radioactive",
                         SSEA: "14", SLEA: "14", SGEA: "1.4", SGEF: "6", CSEA: "14", CLEA: "14", CGEA: "1.4", OSEA: "0.1", OLEA: "0.1", isRadioactive: true );
-                    _createFireClassExemptAmountNode( 307, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Sens.ToString(), "Health", "Sensitizer",
+                    _createFireClassExemptAmountNode( 307, "Sens", "Health", "Sensitizer",
                         SGEF: "6,9", CGEF: "6,9", OSEF: "9", OLEF: "9" );
-                    _createFireClassExemptAmountNode( 308, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.Tox.ToString(), "Health", "Toxic",
+                    _createFireClassExemptAmountNode( 308, "Tox", "Health", "Toxic",
                         SSEA: "1000", SLEA: "-1000", SGEA: "1620", SGEF: "6", CSEA: "1000", CLEA: "-1000", CGEA: "1620", CGEF: "12", OSEA: "250", OSEF: "5", OLEA: "-250", OLEF: "5" );
-                    _createFireClassExemptAmountNode( 219.4, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.UR1.ToString(), "Physical", "Unstable Reactive",
+                    _createFireClassExemptAmountNode( 219.4, "UR-1", "Physical", "Unstable Reactive",
                         SGEA: "1500", SGEF: "6,10" );
-                    _createFireClassExemptAmountNode( 219.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.UR2.ToString(), "Physical", "Unstable Reactive",
+                    _createFireClassExemptAmountNode( 219.3, "UR-2", "Physical", "Unstable Reactive",
                         SSEA: "100", SSEF: "6,10", SLEA: "-100", SLEF: "6,10", SGEA: "500", SGEF: "6,10", CSEA: "100", CSEF: "6", CLEA: "-100", CLEF: "6", CGEA: "500", CGEF: "6,10", OSEA: "20", OSEF: "6", OLEA: "-20", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 219.2, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.UR3.ToString(), "Physical", "Unstable Reactive",
+                    _createFireClassExemptAmountNode( 219.2, "UR-3", "Physical", "Unstable Reactive",
                         SSEA: "10", SSEF: "6,10", SLEA: "-10", SLEF: "6,10", SGEA: "100", SGEF: "6,10", CSEA: "2", CSEF: "6", CLEA: "-2", CLEF: "6", CGEA: "20", CGEF: "6,10", OSEA: "2", OSEF: "6", OLEA: "-2", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 219.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.UR4.ToString(), "Physical", "Unstable Reactive",
+                    _createFireClassExemptAmountNode( 219.1, "UR-4", "Physical", "Unstable Reactive",
                         SSEA: "1", SSEF: "10,12", SLEA: "-1", SLEF: "10,13", SGEA: "10", SGEF: "10,12", CSEA: "0.25", CSEF: "12", CLEA: "-0.25", CLEF: "12", CGEA: "2", CGEF: "10,12", OSEA: "0.25", OSEF: "12", OLEA: "-0.25", OLEF: "12" );
-                    _createFireClassExemptAmountNode( 220.3, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.WR1.ToString(), "Physical", "Water Reactive",
+                    _createFireClassExemptAmountNode( 220.3, "WR-1", "Physical", "Water Reactive",
                         SSEF: "10,11", SLEF: "10,11", CSEF: "11", OSEF: "11", OLEF: "11" );
-                    _createFireClassExemptAmountNode( 220.2, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.WR2.ToString(), "Physical", "Water Reactive",
+                    _createFireClassExemptAmountNode( 220.2, "WR-2", "Physical", "Water Reactive",
                         SSEA: "100", SSEF: "6,10", SLEA: "-100", SLEF: "6,10", CSEA: "100", CSEF: "6", CLEA: "-100", OSEA: "20", OSEF: "6", OLEA: "-20", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 220.1, CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.WR3.ToString(), "Physical", "Water Reactive",
+                    _createFireClassExemptAmountNode( 220.1, "WR-3", "Physical", "Water Reactive",
                         SSEA: "10", SSEF: "6,10", SLEA: "-10", SLEF: "6,10", CSEA: "10", CSEF: "6", CLEA: "-10", OSEA: "2", OSEF: "6", OLEA: "-2", OLEF: "6" );
                 }
-
                 #endregion FireClassExemptAmount Nodes
             }
 
@@ -216,7 +215,7 @@ namespace ChemSW.Nbt.Schema
             string CSEA = "", string CSEF = "", string CLEA = "", string CLEF = "", string CGEA = "", string CGEF = "",
             string OSEA = "", string OSEF = "", string OLEA = "", string OLEF = "", bool isRadioactive = false)
         {
-            CswPrimaryKey RadioactiveId = FireHazardClassType == CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes.RADAlpha.ToString() ? MilliCurieId : CurieId;
+            CswPrimaryKey RadioactiveId = FireHazardClassType == "RAD-Alpha" ? MilliCurieId : CurieId;
             CswPrimaryKey SolidId = isRadioactive ? RadioactiveId : PoundsId;
             CswPrimaryKey LiquidId = isRadioactive ? RadioactiveId : GallonsId;
             CswPrimaryKey GasId = isRadioactive ? RadioactiveId : CubicFeetId;

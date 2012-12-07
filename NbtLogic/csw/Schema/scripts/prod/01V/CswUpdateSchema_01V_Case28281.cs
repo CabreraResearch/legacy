@@ -81,7 +81,12 @@ namespace ChemSW.Nbt.Schema
                 ChemicalSpecialFlagsNTP.DefaultValue.AsMultiList.Value = SpecialFlags;
 
                 ChemicalHazardCategoriesNTP.ListOptions = "F = Fire,C = Chronic (delayed),I = Immediate (acute),R = Reactive,P = Pressure";
-                ChemicalHazardClassesNTP.ListOptions = String.Join( ",", CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes._All );
+
+                String FireHazardClassTypes = @"Aero-1,Aero-2,Aero-3,Carc,CF/D (balled),CF/D (loose),CL-II,CL-IIIA,CL-IIIB,
+                    Corr,CRY-FG,CRY-OXY,Exp,FG (gaseous),FG (liquified),FL-1A,FL-1B,FL-1C,FL-Comb,FS,H.T.,Irr,OHH,
+                    Oxy1,Oxy2,Oxy3,Oxy4,Oxy-Gas,Oxy-Gas (liquid),Perox-Det,Perox-I,Perox-II,Perox-III,Perox-IV,Perox-V,Pyro,
+                    RAD-Alpha,RAD-Beta,RAD-Gamma,Sens,Tox,UR-1,UR-2,UR-3,UR-4,WR-1,WR-2,WR-3";
+                ChemicalHazardClassesNTP.ListOptions = FireHazardClassTypes;
 
                 ChemicalMaterialTypeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                 ChemicalSpecialFlagsNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );

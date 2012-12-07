@@ -102,6 +102,23 @@ namespace ChemSW.Nbt.ObjClasses
                     _updateRegulatoryLists();
                 }
             }
+
+            CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
+            if( null != ChemicalHazardClassesNTP )
+            {
+                CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+                CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
+                if( null != FireClassExemptAmountNT )
+                {
+                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
+                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp(
+                            FireClassExemptAmountNT.NodeTypeId, 
+                            CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType 
+                            );
+                    ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
+                }                
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
