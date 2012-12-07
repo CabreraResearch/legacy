@@ -5,7 +5,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case XXXXX
     /// </summary>
-    public class CswUpdateSchemaCase_01V_XXXXX : CswUpdateSchemaTo
+    public class CswUpdateSchema_01V_CaseXXXXX : CswUpdateSchemaTo
     {
         public override CswDeveloper Author
         {
@@ -20,10 +20,8 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // This is a placeholder script that does nothing.
-        }
+        } //Update()
 
-        //Update()
-
-    }//class CswUpdateSchemaCase_01V_XXXXX
+    }//class CswUpdateSchema_01V_CaseXXXXX
 
 }//namespace ChemSW.Nbt.Schema
