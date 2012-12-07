@@ -43,6 +43,12 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28229() ) );                         //01U-015
 
             #endregion URSULA
+
+            #region VIOLA
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case26827() ) );                         //01U-016 //01V-001
+
+            #endregion VIOLA
             
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

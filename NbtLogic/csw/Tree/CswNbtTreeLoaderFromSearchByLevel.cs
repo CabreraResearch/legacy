@@ -237,6 +237,9 @@ namespace ChemSW.Nbt
 
             // Filter out disabled nodetypes/object classes (see case 26029)
             Where += "where t.enabled = '1' ";
+            
+            // Only searchable nodetypes (case 26827)
+            Where += " and t.searchdeferpropid <> '" + CswNbtMetaDataObjectClass.NotSearchableValue + "' ";
 
             Select += ",lower(n.nodename) mssqlorder ";
             OrderBy = " order by lower(n.nodename)";

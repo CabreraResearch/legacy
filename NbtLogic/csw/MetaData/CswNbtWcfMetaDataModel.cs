@@ -136,6 +136,7 @@ namespace ChemSW.Nbt.MetaData
                 ObjectClass = NbtObjectClass;
                 ObjectClassId = ObjectClass.ObjectClassId;
                 IconFileName = ObjectClass.IconFileName;
+                SearchDeferObjectClassPropId = ObjectClass.SearchDeferPropId;
             }
 
             [DataMember( IsRequired = true )]
@@ -150,6 +151,10 @@ namespace ChemSW.Nbt.MetaData
             public string Category = string.Empty;
             [DataMember]
             public string NameTemplate = string.Empty;
+            [DataMember]
+            public Int32 SearchDeferObjectClassPropId = Int32.MinValue;
+            [DataMember]
+            public Int32 SearchDeferNodeTypePropId = Int32.MinValue;
         }
 
         [DataContract]

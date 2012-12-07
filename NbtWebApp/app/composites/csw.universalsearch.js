@@ -75,7 +75,8 @@
                         ExcludeNodeTypeIds: '', 
                         RelatedToNodeTypeId: '',
                         RelatedObjectClassPropName: '',
-                        FilterToPermission: ''
+                        FilterToPermission: '',
+                        Searchable: true
                     },
                     success: function (data) {
                         var items = [];
