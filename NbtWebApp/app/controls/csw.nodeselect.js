@@ -15,7 +15,7 @@
                 cswPrivate.$parent = cswPrivate.$parent || cswParent.$;
                 cswPrivate.name = cswPrivate.name || '';
                 cswPrivate.async = cswPrivate.async; // || true;
-                cswPrivate.nodesUrlMethod = cswPrivate.nodesUrlMethod || 'Nodes/getRelationshipOpts';
+                cswPrivate.nodesUrlMethod = cswPrivate.nodesUrlMethod || 'Nodes/get';
 
                 cswPrivate.labelText = cswPrivate.labelText || null;
                 cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
@@ -73,9 +73,27 @@
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     async: Csw.bool(cswPrivate.async),
-                    data: cswPrivate.ajaxData,
+                    data: cswPrivate.ajaxData || {
+                        NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
+                        ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
+                        ObjectClass: Csw.string(cswPrivate.objectClassName),
+                        RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
+                        RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId),
+                        ViewId: Csw.string(cswPrivate.viewid)
+                    },
                     success: function (data) {
-                        cswPrivate.options = JSON.parse(data.options);
+                        //cswPrivate.options = JSON.parse(data.options);
+                        var options = [];
+                        data.Nodes.forEach(function (obj) {
+                            options.push({ id: obj.NodeId, value: obj.NodeName });
+                        });
+                        cswPrivate.options = options;
+                        cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
+                        cswPrivate.useSearch = Csw.bool(data.UseSearch);
+                        cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
+                        cswPrivate.objectClassId = cswPrivate.objectClassId || data.ObjectClassId;
+                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId
+
                         cswPrivate.makeControl();
                     }
                 });

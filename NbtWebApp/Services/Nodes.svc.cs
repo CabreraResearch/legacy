@@ -232,11 +232,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Get the viewid of a property view" )]
-        public NodeSelect.PropertyViewResponse getRelationshipOpts( NodeSelect.PropertyView Request )
+        public NodeSelect.Response getRelationshipOpts( NodeSelect.PropertyView Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            NodeSelect.PropertyViewResponse Ret = new NodeSelect.PropertyViewResponse();
-            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.PropertyViewResponse, NodeSelect.PropertyView>(
+            NodeSelect.Response Ret = new NodeSelect.Response();
+            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, NodeSelect.PropertyView>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.getRelationshipOpts,

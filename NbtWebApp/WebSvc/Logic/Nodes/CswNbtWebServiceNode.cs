@@ -573,11 +573,13 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void getRelationshipOpts( ICswResources CswResources, NodeSelect.PropertyViewResponse Response, NodeSelect.PropertyView Request )
+        public static void getRelationshipOpts( ICswResources CswResources, NodeSelect.Response Response, NodeSelect.PropertyView Request )
         {
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+                NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
 
                 int nodeTypeId;
                 CswPrimaryKey pk = new CswPrimaryKey();
@@ -613,30 +615,30 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtView view = NbtResources.ViewSelect.restoreView( ntp.ViewId );
                         ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
-                        JArray JOptions = new JArray();
-                        _getOptsRecursive( JOptions, tree, targetNodeTypeId, pk );
-                        Response.Data.options = JOptions.ToString();
+                        _getOptsRecursive( Ret, tree, targetNodeTypeId, pk );
                     }
                 }
+                Response.Data = Ret;
             }
         }
 
-        private static void _getOptsRecursive( JArray JOptions, ICswNbtTree tree, Int32 TargetNodeTypeId, CswPrimaryKey targetNodeId )
+        private static void _getOptsRecursive( NodeSelect.Response.Ret Ret, ICswNbtTree tree, Int32 TargetNodeTypeId, CswPrimaryKey targetNodeId )
         {
             for( Int32 c = 0; c < tree.getChildNodeCount(); c++ )
             {
                 tree.goToNthChild( c );
                 if( tree.getNodeKeyForCurrentPosition().NodeTypeId == TargetNodeTypeId )
                 {
-                    JObject JOption = new JObject();
-                    JOption["id"] = tree.getNodeIdForCurrentPosition().ToString();
-                    JOption["value"] = tree.getNodeNameForCurrentPosition();
-                    JOptions.Add( JOption );
+                    Ret.Nodes.Add( new NodeSelect.Node( null )
+                    {
+                        NodePk = tree.getNodeIdForCurrentPosition(),
+                        NodeName = tree.getNodeNameForCurrentPosition()
+                    } );
                 }
 
                 if( false == CswTools.IsPrimaryKey( targetNodeId ) || tree.getNodeIdForCurrentPosition() == targetNodeId )
                 {
-                    _getOptsRecursive( JOptions, tree, TargetNodeTypeId, targetNodeId );
+                    _getOptsRecursive( Ret, tree, TargetNodeTypeId, targetNodeId );
                 }
 
                 tree.goToParentNode();
