@@ -236,18 +236,18 @@
                 return function () {
                     function changeMaterial() {
                         var hasChanged = false;
-                        if (cswPrivate.supplierSelect &&
-                            cswPrivate.state.supplier.val !== cswPrivate.supplierSelect.val()) {
-
-                            hasChanged = true;
-                            cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
-                        }
                         if (cswPrivate.materialTypeSelect &&
                             cswPrivate.state.materialType.val !== cswPrivate.materialTypeSelect.val()) {
 
                             hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                             cswPrivate.makeSupplierCtrl(cswPrivate.state.materialType.val);
+                        }
+                        if (cswPrivate.supplierSelect &&
+                            cswPrivate.state.supplier.val !== cswPrivate.supplierSelect.val()) {
+
+                            hasChanged = true;
+                            cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
                         }
                         if (cswPrivate.tradeNameInput &&
                             cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
@@ -299,7 +299,7 @@
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
-                            onSelect: changeMaterial,
+                            //onSelect: changeMaterial,
                             onChange: changeMaterial,
                             onSuccess: changeMaterial,
                             isRequired: true
@@ -325,6 +325,7 @@
                             tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
                             cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
                                 name: 'supplier',
+                                async: false,
                                 cssclass: 'required',
                                 width: '200px',
                                 nodesUrlMethod: 'Nodes/getRelationshipOpts',
@@ -337,7 +338,6 @@
                                 addNodeDialogTitle: 'Vendor',
                                 selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                                 onChange: changeMaterial,
-                                onSuccess: changeMaterial,
                                 isRequired: true
                             });
                         };
