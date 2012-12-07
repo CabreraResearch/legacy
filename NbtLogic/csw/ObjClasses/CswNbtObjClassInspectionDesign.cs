@@ -386,6 +386,11 @@ namespace ChemSW.Nbt.ObjClasses
                     QuestionProp.CorrectiveAction = string.Empty;
                 }
             }
+
+            // !!!
+            // Don't clear IsFuture here, like we do with Tasks.  See case 28317.
+            // !!!
+
         } // beforeWriteNode()
 
         /// <summary>
