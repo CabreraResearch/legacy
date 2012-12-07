@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Actions
                 return _ExistingNode;
             }
 
-            public CswNbtObjClassMaterial commit( bool UpversionTemp = false )
+            public CswNbtObjClassMaterial commit( bool RemoveTempStatus = false )
             {
                 CswNbtObjClassMaterial Ret = null;
                 if( null == Node ) //Don't commit twice
@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.Actions
                 Ret.PartNumber.Text = PartNo;
                 Ret.Supplier.RelatedNodeId = SupplierId;
 
-                Ret.IsTemp = ( false == UpversionTemp );
+                Ret.IsTemp = ( false == RemoveTempStatus );
                 Ret.postChanges( ForceUpdate: false );
 
                 return Ret;
@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.Actions
                         FinalMaterial.SupplierId = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
                         FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
 
-                        CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit( UpversionTemp: true );
+                        CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
 
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
                         if( RequestObj.HasValues )

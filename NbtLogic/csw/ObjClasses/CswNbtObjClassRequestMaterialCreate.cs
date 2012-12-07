@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 {
-                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit( UpversionTemp: true );
+                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit( RemoveTempStatus: true );
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
