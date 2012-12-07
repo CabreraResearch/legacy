@@ -16,7 +16,7 @@
                 cswPrivate.name = cswPrivate.name || '';
                 cswPrivate.tabPanel = cswPrivate.tabPanel || {};
                 cswPrivate.tabPanel.title = cswPrivate.tabPanel.title || 'Tabs';
-                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 400;
+                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 450;
                 //cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
                 cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable; // || true
                 cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful;  // || true
@@ -103,7 +103,7 @@
                 /// <summary>
                 /// Sets the title of a Tab Panel
                 /// </summary>
-                /// <returns type="Ext.tab">ExtJS tab instance</returns>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
                 title = title || 'Tab Title';
                 cswPublic.tabPanel.setTitle(title);
                 return cswPublic;
@@ -115,6 +115,24 @@
                 /// </summary>
                 /// <returns type="Number">Width</returns>
                 return cswPublic.tabPanel.getWidth();
+            };
+
+            cswPublic.setWidth = function (width) {
+                /// <summary>
+                /// Sets the width of the tab strip
+                /// </summary>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
+                cswPublic.tabPanel.setWidth(width);
+                return cswPublic;
+            };
+
+            cswPublic.resetWidth = function () {
+                /// <summary>
+                /// Reset the tab strip to its original width
+                /// </summary>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
+                cswPublic.setWidth(cswPrivate.width);
+                return cswPublic;
             };
 
             //#endregion Define Class Members
@@ -153,7 +171,7 @@
                             }
                         }
                     });
-
+                    cswPrivate.width = cswPublic.getWidth();
                     cswPublic.addTabs(cswPrivate.tabs);
 
                 }());

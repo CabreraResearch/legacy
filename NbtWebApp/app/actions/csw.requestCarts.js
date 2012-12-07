@@ -90,6 +90,7 @@
                         cswPrivate.submittedTab.ext.setTitle('Submitted (' + cswPrivate.state.cartCounts.SubmittedRequestItems + ')');
                         cswPrivate.recurringTab.ext.setTitle('Recurring (' + cswPrivate.state.cartCounts.RecurringRequestItems + ')');
                         cswPrivate.favoritesTab.ext.setTitle('Favorites (' + cswPrivate.state.cartCounts.FavoriteRequestItems + ')');
+                        cswPrivate.tabs.resetWidth();
                     }
                 });
             };
@@ -174,7 +175,7 @@
 
             //#region Tab construction
 
-            cswPrivate.destroyOtherTabs = function(preserveTabName) {
+            cswPrivate.destroyOtherTabs = function (preserveTabName) {
                 if (preserveTabName !== 'Favorites' && cswPublic.favoritesGrid) {
                     cswPublic.favoritesGrid.destroy();
                     cswPrivate.favoritesTab.csw.empty();
@@ -195,7 +196,7 @@
 
             cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];
 
-            cswPrivate.tryParseTabName = function(tabName, elTarget, eventObjText) {
+            cswPrivate.tryParseTabName = function (tabName, elTarget, eventObjText) {
                 var tab = '', ret = '';
                 if (tabName) {
                     tab = tabName.split(' ')[0].trim();
@@ -260,7 +261,7 @@
                     stateId: opts.gridId,
                     usePaging: true,
                     height: 180,
-                    //width: cswPrivate.tabs.getWidth() - 400,
+                    width: cswPrivate.tabs.getWidth() - 20,
                     ajax: {
                         urlMethod: 'getRequestItemGrid',
                         data: {
@@ -352,7 +353,8 @@
                 var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.');
 
                 var inpTbl = ol.li().table({
-                    width: '99%'
+                    width: '99%',
+                    cellpadding: '5px'
                 });
 
                 inpTbl.cell(1, 1).span().setLabelText('Request Name: ');
@@ -408,7 +410,7 @@
                 };
                 opts.onEditNode = cswPrivate.makePendingTab;
 
-                //cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
+                cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
 
                 ol.li().br();
 
@@ -421,7 +423,7 @@
                         cswPublic.pendingGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
-                        cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes, function() {
+                        cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes, function () {
                             cswPublic.pendingGrid.deselectAll();
                             toggleSaveBtn();
                         });
@@ -561,7 +563,7 @@
                         cswPublic.favoritesGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
-                        cswPrivate.copyToRequest(cswPrivate.state.pendingCartId, nodes, function() {
+                        cswPrivate.copyToRequest(cswPrivate.state.pendingCartId, nodes, function () {
                             cswPublic.favoritesGrid.deselectAll();
                             toggleCopyBtn();
                         });
@@ -576,7 +578,7 @@
             };
 
             cswPrivate.addBtnGroup = function (el, hasFinish) {
-                var tbl = el.table({ width: '99%' });
+                var tbl = el.table({ width: '99%', cellpadding: '5px' });
 
                 if (hasFinish) {
                     tbl.cell(1, 1).buttonExt({
