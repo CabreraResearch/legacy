@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -1084,6 +1085,172 @@ namespace ChemSW.Nbt.Schema
 
         #region Viola Methods
 
+        #region Case 28283
+
+        private void _addFireClassExemptAmountProps( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            #region FireClassExemptAmountSet
+
+            CswNbtMetaDataObjectClass FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
+            if( null == FireClassExemptAmountSetOC )
+            {
+                FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountSetClass, "explode.png", false );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountSetOC.ObjectClassId );
+            }
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountSetOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmountSet.PropertyName.SetName,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                IsRequired = true,
+                IsUnique = true
+            } );
+
+            #endregion FireClassExemptAmountSet
+
+            #region FireClassExemptAmount
+
+            CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+            if( null == FireClassExemptAmountOC )
+            {
+                FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountClass, "explode.png", false );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountOC.ObjectClassId );
+            }
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.SetName,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = FireClassExemptAmountSetOC.ObjectClassId,
+                SetValOnAdd = true,
+                DisplayColAdd = 1,
+                DisplayRowAdd = 1
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.SortOrder,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                SetValOnAdd = true,
+                DisplayColAdd = 1,
+                DisplayRowAdd = 2
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                SetValOnAdd = true,
+                IsRequired = true,
+                ListOptions = String.Join(",", CswNbtObjClassFireClassExemptAmount.FireHazardClassTypes._All ),
+                DisplayColAdd = 1,
+                DisplayRowAdd = 3
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.HazardType,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                SetValOnAdd = true,
+                ListOptions = "Physical,Health",
+                DisplayColAdd = 1,
+                DisplayRowAdd = 4
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.Material,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                SetValOnAdd = true,
+                DisplayColAdd = 1,
+                DisplayRowAdd = 5
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageSolidExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageSolidExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageLiquidExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageLiquidExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageGasExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageGasExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedSolidExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedSolidExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedLiquidExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedLiquidExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedGasExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedGasExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenSolidExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenSolidExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenLiquidExemptAmount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenLiquidExemptFootnotes,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+            } );
+
+            #endregion FireClassExemptAmount
+
+            _resetBlame();
+        }
+
+        #endregion Case 28283
+
         #region Case 28281
         private void _addHazardousReoprtingProp( CswDeveloper Dev, Int32 CaseNum )
         {
@@ -1135,235 +1302,6 @@ namespace ChemSW.Nbt.Schema
         }
         #endregion Case 28281
 
-        #region Case 28283
-
-        private void _addFireClassExemptAmountProps(CswDeveloper Dev, Int32 CaseNum)
-        {
-            _acceptBlame( Dev, CaseNum );
-
-            #region FireClassExemptAmountSet
-
-            CswNbtMetaDataObjectClass FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
-            if( null == FireClassExemptAmountSetOC )
-            {
-                FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountSetClass, "explode.png", false );
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountSetOC.ObjectClassId );
-            }
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountSetOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmountSet.PropertyName.SetName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true
-            } );
-
-            #endregion FireClassExemptAmountSet
-
-            #region FireClassExemptAmount
-
-            CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
-            if( null == FireClassExemptAmountOC )
-            {
-                FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountClass, "explode.png", false );
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountOC.ObjectClassId );
-            }
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.SetName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                IsFk = true,
-                FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = FireClassExemptAmountSetOC.ObjectClassId,
-                SetValOnAdd = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 1
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.SortOrder,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
-                SetValOnAdd = true,
-                DisplayColAdd = 2,
-                DisplayRowAdd = 1
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                SetValOnAdd = true,
-                IsRequired = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 2
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.HazardType,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                SetValOnAdd = true,
-                ListOptions = "Physical,Health",
-                DisplayColAdd = 2,
-                DisplayRowAdd = 2
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.Material,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                SetValOnAdd = true,
-                DisplayColAdd = 3,
-                DisplayRowAdd = 1
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageSolidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 3
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageSolidExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 4
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageLiquidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 2,
-                DisplayRowAdd = 3
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageLiquidExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 2,
-                DisplayRowAdd = 4
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageGasExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 3,
-                DisplayRowAdd = 3
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageGasExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 3,
-                DisplayRowAdd = 4
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedSolidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 5
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedSolidExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 6
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedLiquidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 2,
-                DisplayRowAdd = 5
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedLiquidExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 2,
-                DisplayRowAdd = 6
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedGasExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 3,
-                DisplayRowAdd = 5
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedGasExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 3,
-                DisplayRowAdd = 6
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenSolidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 7
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenSolidExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 1,
-                DisplayRowAdd = 8
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenLiquidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 2,
-                DisplayRowAdd = 7
-            } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
-            {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenLiquidExemptFootnotes,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = true,
-                IsUnique = true,
-                DisplayColAdd = 2,
-                DisplayRowAdd = 8
-            } );
-
-            #endregion FireClassExemptAmount
-
-            _resetBlame();
-        }
-
-        #endregion Case 28283
-
         #endregion Viola Methods
 
         /// <summary>
@@ -1400,9 +1338,9 @@ namespace ChemSW.Nbt.Schema
 
             #region VIOLA
 
-            _addHazardousReoprtingProp( CswDeveloper.BV, 28281 );
-            _addContainerFireReportingProps( CswDeveloper.BV, 28281 );
             _addFireClassExemptAmountProps( CswDeveloper.BV, 28283 );
+            _addHazardousReoprtingProp( CswDeveloper.BV, 28281 );
+            _addContainerFireReportingProps( CswDeveloper.BV, 28281 );            
 
             #endregion VIOLA
 

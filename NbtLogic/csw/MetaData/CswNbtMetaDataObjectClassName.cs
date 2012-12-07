@@ -30,6 +30,8 @@ namespace ChemSW.Nbt.MetaData
             { EquipmentClass                    , EquipmentClass                     },
             { EquipmentTypeClass                , EquipmentTypeClass                 },
             { FeedbackClass                     , FeedbackClass                      },
+            { FireClassExemptAmountClass        , FireClassExemptAmountClass         },
+            { FireClassExemptAmountSetClass     , FireClassExemptAmountSetClass      },
             { GeneratorClass                    , GeneratorClass                     },
             { GenericClass                      , GenericClass                       },
             { InspectionDesignClass             , InspectionDesignClass              },

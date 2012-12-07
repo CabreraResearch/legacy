@@ -45,7 +45,9 @@ namespace ChemSW.Nbt.Schema
 
             #region VIOLA
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28281() ) );                         //01U-015      //01V-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part1() ) );                    //01U-015      //01V-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part2() ) );                    //01U-016      //01V-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28281() ) );                         //01U-017      //01V-003
 
             #endregion VIOLA
 
