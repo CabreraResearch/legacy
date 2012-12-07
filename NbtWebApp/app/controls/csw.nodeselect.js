@@ -346,7 +346,7 @@
                     cswPublic.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                     function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
                 } else {
-                    if (cswPrivate.options.length > 0 || false == cswPrivate.doGetNodes) {
+                    if (cswPrivate.options.length > 0 || false === cswPrivate.doGetNodes) {
                         cswPrivate.makeControl();
                     } else {
                         cswPrivate.getNodes();
