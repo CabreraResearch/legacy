@@ -34,11 +34,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass ComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataObjectClass SizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClass DispTransOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerDispenseTransactionClass );
+            CswNbtMetaDataObjectClass ContLocOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
 
             CswNbtMetaDataObjectClassProp SynonymMaterialOCP = SynonymOC.getObjectClassProp( CswNbtObjClassMaterialSynonym.PropertyName.Material );
             CswNbtMetaDataObjectClassProp ComponentMaterialOCP = ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
             CswNbtMetaDataObjectClassProp SizeMaterialOCP = SizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtMetaDataObjectClassProp DispTransContainerOCP = DispTransOC.getObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.DestinationContainer );
+            CswNbtMetaDataObjectClassProp ContLocContainerOCP = ContLocOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
 
 
             StringCollection NotSearchableOCs = new StringCollection
@@ -52,7 +54,8 @@ namespace ChemSW.Nbt.Schema
                                                         { NbtObjectClass.MaterialSynonymClass, SynonymMaterialOCP.PropId },
                                                         { NbtObjectClass.MaterialComponentClass, ComponentMaterialOCP.PropId },
                                                         { NbtObjectClass.SizeClass, SizeMaterialOCP.PropId },
-                                                        { NbtObjectClass.ContainerDispenseTransactionClass, DispTransContainerOCP.PropId }
+                                                        { NbtObjectClass.ContainerDispenseTransactionClass, DispTransContainerOCP.PropId },
+                                                        { NbtObjectClass.ContainerLocationClass, ContLocContainerOCP.PropId }
                                                     };
 
             CswTableUpdate OCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "26827_OC_update", "object_class" );
