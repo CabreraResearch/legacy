@@ -8,30 +8,57 @@
             //#region _preCtor
 
             var cswPublic = {};
-            
+
             if (Csw.isNullOrEmpty(cswParent)) {
                 Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.requestCarts', 'csw.requestCarts.js', 14);
             }
             (function _preCtor() {
                 cswPrivate.name = cswPrivate.name || 'CswSubmitRequest';
-                cswPrivate.onSubmit = cswPrivate.onSubmit || function() {};
-                cswPrivate.onCancel = cswPrivate.onCancel || function () {};
+                cswPrivate.onSubmit = cswPrivate.onSubmit || function () { };
+                cswPrivate.onCancel = cswPrivate.onCancel || function () { };
                 cswPrivate.materialnodeid = cswPrivate.materialnodeid || '';
                 cswPrivate.containernodeid = cswPrivate.containernodeid || '';
-                
+
                 cswParent.empty();
             }());
 
             cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
             cswPrivate.gridOpts = {};
-            cswPrivate.state = {};
+
             cswPrivate.currentTab = 'Pending';
-            
+
+            cswPrivate.restoreState = function () {
+                var state = Csw.clientDb.getItem(cswPrivate.name + '_state');
+                cswPrivate.state = state || {
+                    pendingItemsViewId: '',
+                    favoritesListViewId: '',
+                    favoriteItemsViewId: '',
+                    recurringItemsViewId: '',
+                    submittedItemsViewId: '',
+                    pendingCartId: '',
+                    cartCounts: {
+                        PendingRequestItems: 0,
+                        SubmittedRequestItems: 0,
+                        RecurringRequestItems: 0,
+                        FavoriteRequestItems: 0
+                    }
+                };
+            };
+            cswPrivate.restoreState();
+
+            cswPrivate.saveState = function () {
+                Csw.clientDb.setItem(cswPrivate.name + '_state', cswPrivate.state);
+            };
+
+            cswPrivate.clearState = function () {
+                Csw.cliendDb.removeItem(cswPrivate.name + '_state');
+            };
+
             //#endregion _preCtor
-            
+
             //#region AJAX methods
 
-            cswPrivate.getCart = function() {
+            cswPrivate.getCart = function () {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/cart',
                     success: function (data) {
@@ -42,6 +69,7 @@
                         cswPrivate.state.submittedItemsViewId = data.SubmittedItemsView.SessionViewId;
                         cswPrivate.state.pendingCartId = data.CurrentRequest.NodeId;
 
+                        cswPrivate.saveState();
                         cswPrivate.onTabSelect(cswPrivate.currentTab);
 
                         cswPrivate.getCartCounts();
@@ -56,10 +84,12 @@
                         CartId: cswPrivate.state.pendingCartId
                     },
                     success: function (data) {
-                        cswPrivate.pendingTab.ext.setTitle('Pending (' + data.Counts.PendingRequestItems + ')');
-                        cswPrivate.submittedTab.ext.setTitle('Submitted (' + data.Counts.SubmittedRequestItems + ')');
-                        cswPrivate.recurringTab.ext.setTitle('Recurring (' + data.Counts.RecurringRequestItems + ')');
-                        cswPrivate.favoritesTab.ext.setTitle('Favorites (' + data.Counts.FavoriteRequestItems + ')');
+                        cswPrivate.state.cartCounts = data.Counts;
+                        cswPrivate.saveState();
+                        cswPrivate.pendingTab.ext.setTitle('Pending (' + cswPrivate.state.cartCounts.PendingRequestItems + ')');
+                        cswPrivate.submittedTab.ext.setTitle('Submitted (' + cswPrivate.state.cartCounts.SubmittedRequestItems + ')');
+                        cswPrivate.recurringTab.ext.setTitle('Recurring (' + cswPrivate.state.cartCounts.RecurringRequestItems + ')');
+                        cswPrivate.favoritesTab.ext.setTitle('Favorites (' + cswPrivate.state.cartCounts.FavoriteRequestItems + ')');
                     }
                 });
             };
@@ -97,7 +127,7 @@
                 });
             }; // cswPrivate.submitRequest
 
-            cswPrivate.addFavorite = function(callBack) {
+            cswPrivate.addFavorite = function (callBack) {
                 Csw.ajaxWcf.put({
                     urlMethod: 'Requests/Favorites/create',
                     success: function (json) {
@@ -130,7 +160,7 @@
                             RequestItems: copyRequestItems,
                             RequestId: copyToRequest
                         },
-                        onSuccess: function() {
+                        onSuccess: function () {
                             Csw.publish(Csw.enums.events.main.refreshHeader);
                         }
                     });
@@ -141,12 +171,58 @@
 
             //#region Tab construction
 
+            cswPrivate.destroyOtherTabs = function(preserveTabName) {
+                if (preserveTabName !== 'Favorites' && cswPublic.favoritesGrid) {
+                    cswPublic.favoritesGrid.destroy();
+                    cswPrivate.favoritesTab.csw.empty();
+                }
+                if (preserveTabName !== 'Recurring' && cswPublic.recurringGrid) {
+                    cswPublic.recurringGrid.destroy();
+                    cswPrivate.recurringTab.csw.empty();
+                }
+                if (preserveTabName !== 'Submitted' && cswPublic.submittedGrid) {
+                    cswPublic.submittedGrid.destroy();
+                    cswPrivate.submittedTab.csw.empty();
+                }
+                if (preserveTabName !== 'Pending' && cswPublic.pendingGrid) {
+                    cswPublic.pendingGrid.destroy();
+                    cswPrivate.pendingTab.csw.empty();
+                }
+            };
+
+            cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];
+
+            cswPrivate.tryParseTabName = function(tabName, elTarget, eventObjText) {
+                var tab = '';
+                if (tabName) {
+                    tab = tabName.split(' ')[0].trim();
+                    if (cswPrivate.tabNames.indexOf(tab) === -1) {
+                        if (eventObjText) {
+                            tab = cswPrivate.tryParseTabName(eventObjText, elTarget);
+                            if (cswPrivate.tabNames.indexOf(tab) === -1) {
+                                tab = cswPrivate.tryParseTabName(elTarget);
+                            }                            
+                        } 
+                    }
+                }
+                return tab;
+            };
+
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
-                if (tabName && tabName.length > 0) {
-                    cswPrivate.currentTab = tabName.split(' ')[0];
+                var tgtTxt = null;
+                if (el) {
+                    tgtTxt = el.target.innerText;
+                }
+                var evtTxt = null;
+                if (eventObj) {
+                    evtTxt = eventObj.innerText;
+                }
+                var tab = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
+                if (tab.length > 0) {
+                    cswPrivate.currentTab = tab;
+                    cswPrivate.destroyOtherTabs(cswPrivate.currentTab);
                     switch (cswPrivate.currentTab) {
                         case 'Pending':
-                            cswPrivate.tabs.setTitle('Request Items Pending Submission');
                             cswPrivate.makePendingTab();
                             break;
                         case 'Submitted':
@@ -158,14 +234,14 @@
                         case 'Favorites':
                             cswPrivate.makeFavoritesTab();
                             break;
-                        }
+                    }
                 }
             };
 
-            cswPrivate.makeGridForTab = function(opts) {
+            cswPrivate.makeGridForTab = function (opts) {
                 opts = opts || {
-                    onSuccess: function() {},
-                    onSelectChange: function() {}
+                    onSuccess: function () { },
+                    onSelectChange: function () { }
                 };
 
                 return opts.parent.grid({
@@ -174,7 +250,7 @@
                     stateId: opts.gridId,
                     usePaging: true,
                     height: 180,
-                    width: cswPrivate.tabs.getWidth() - 20,
+                    width: cswPrivate.tabs.getWidth() - 100,
                     ajax: {
                         urlMethod: 'getRequestItemGrid',
                         data: {
@@ -185,10 +261,10 @@
                     showActionColumn: true,
                     canSelectRow: false,
                     groupField: opts.groupField || '',
-                    onLoad: function(grid, json) {
+                    onLoad: function (grid, json) {
                         Csw.tryExec(opts.onSuccess);
                     },
-                    onEdit: function(rows) {
+                    onEdit: function (rows) {
                         // this works for both Multi-edit and regular
                         var nodekeys = Csw.delimitedString(),
                             nodeids = Csw.delimitedString(),
@@ -196,7 +272,7 @@
                             currentNodeId, currentNodeKey;
 
 
-                        Csw.each(rows, function(row) {
+                        Csw.each(rows, function (row) {
                             currentNodeId = currentNodeId || row.nodeid;
                             currentNodeKey = currentNodeKey || row.nodekey;
                             nodekeys.add(row.nodekey);
@@ -212,18 +288,18 @@
                             nodenames: nodenames,
                             Multi: (nodeids.length > 1),
                             title: 'Request',
-                            onEditNode: function() {
+                            onEditNode: function () {
                                 Csw.tryExec(opts.onEditNode); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
                             }
                         });
                     }, // onEdit
-                    onDelete: function(rows) {
+                    onDelete: function (rows) {
                         // this works for both Multi-edit and regular
                         var cswnbtnodekeys = [],
                             nodeids = [],
                             nodenames = [];
 
-                        Csw.each(rows, function(row) {
+                        Csw.each(rows, function (row) {
                             cswnbtnodekeys.push(row.nodekey);
                             nodeids.push(row.nodeid);
                             nodenames.push(row.nodename);
@@ -234,22 +310,22 @@
                             nodepks: nodeids,
                             nodekeys: cswnbtnodekeys,
                             nodenames: nodenames,
-                            onDeleteNode: Csw.method(function() {
+                            onDeleteNode: Csw.method(function () {
                                 Csw.publish(Csw.enums.events.main.refreshHeader);
                                 Csw.tryExec(opts.onEditNode);
                             }),
                             Multi: (nodeids.length > 1),
                             publishDeleteEvent: false
-                        });                                  
+                        });
                     }, // onDelete
-                    onSelectChange: function(rowCount) {
+                    onSelectChange: function (rowCount) {
                         Csw.tryExec(opts.onSelectChange, rowCount);
                     }
                 });
             };
 
-            cswPrivate.prepTab = function(tab, title, headerText) {
-                
+            cswPrivate.prepTab = function (tab, title, headerText) {
+
                 tab.csw.empty().css({ margin: '10px' });
 
                 var ol = tab.csw.ol();
@@ -264,7 +340,7 @@
 
             cswPrivate.makePendingTab = function (opts) {
                 var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.');
-                
+
                 var inpTbl = ol.li().table({
                     width: '99%'
                 });
@@ -272,7 +348,7 @@
                 inpTbl.cell(1, 1).span().setLabelText('Request Name: ');
                 inpTbl.cell(1, 1).input({
                     value: cswPrivate.requestName,
-                    onChange: function(val) {
+                    onChange: function (val) {
                         cswPrivate.requestName = val;
                     }
                 });
@@ -282,19 +358,19 @@
                     .buttonExt({
                         enabledText: 'Request Create Material',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cart),
-                        onClick: function() {
+                        onClick: function () {
                             if (cswPublic.pendingGrid) {
                                 cswPrivate.makeRequestCreateMaterial(cswPublic.pendingGrid);
                             }
                         }
                     });
-                
+
                 ol.li().br({ number: 1 });
 
                 var hasOneRowSelected = false;
                 var favoriteSelect;
-                
-                var toggleSaveBtn = function() {
+
+                var toggleSaveBtn = function () {
                     if (favoriteSelect) {
                         var nodeId = favoriteSelect.selectedNodeId();
                         if (nodeId) {
@@ -305,7 +381,7 @@
                         saveBtn.enable();
                     } else {
                         saveBtn.disable();
-                    }  
+                    }
                 };
 
                 opts = opts || {
@@ -325,7 +401,7 @@
                 cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
 
                 ol.li().br();
-                
+
                 var btmTbl = ol.li().table();
                 var saveBtn = btmTbl.cell(1, 1).buttonExt({
                     enabledText: 'Save to Favorites',
@@ -339,7 +415,7 @@
                         toggleSaveBtn();
                     }
                 }).disable();
-                
+
                 var picklistCell = btmTbl.cell(1, 2);
 
                 var makePicklist = function () {
@@ -368,7 +444,7 @@
 
             }; // cswPrivate.makePendingTab()
 
-            cswPrivate.makeSubmittedTab = function() {
+            cswPrivate.makeSubmittedTab = function () {
                 var ol = cswPrivate.prepTab(cswPrivate.submittedTab, 'Submitted Request Items', 'View any previously submitted Request Items.');
 
                 Csw.nbt.viewFilters({
@@ -390,7 +466,7 @@
                 opts.sessionViewId = cswPrivate.state.submittedItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_submittedItemsGrid';
-                
+
                 opts.onEditNode = cswPrivate.makeSubmittedTab;
 
                 cswPublic.submittedGrid = cswPrivate.makeGridForTab(opts);
@@ -400,7 +476,7 @@
                 cswPrivate.addBtnGroup(ol.li(), false);
             };
 
-            cswPrivate.makeRecurringTab = function() {
+            cswPrivate.makeRecurringTab = function () {
                 var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Items', 'View any recurring Request Items.');
                 ol.br();
 
@@ -411,18 +487,18 @@
                 opts.sessionViewId = cswPrivate.state.recurringItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_recurringItemsGrid';
-                
+
                 opts.onEditNode = cswPrivate.makeRecurringTab;
 
                 cswPublic.recurringGrid = cswPrivate.makeGridForTab(opts);
-                
+
                 ol.li().br();
 
                 cswPrivate.addBtnGroup(ol.li(), false);
 
             };
 
-            cswPrivate.makeFavoritesTab = function() {
+            cswPrivate.makeFavoritesTab = function () {
                 var ol = cswPrivate.prepTab(cswPrivate.favoritesTab, 'Favorite Request Itens', 'View any favorite Request Items.');
                 Csw.nbt.viewFilters({
                     name: 'favorites_viewfilters',
@@ -453,7 +529,7 @@
                 opts.sessionViewId = cswPrivate.state.favoriteItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_favoriteItemsGrid';
-                
+
                 opts.onEditNode = cswPrivate.makeFavoritesTab;
                 opts.onSelectChange = function (rowCount) {
                     hasOneRowSelected = rowCount > 0;
@@ -483,7 +559,7 @@
 
             };
 
-            cswPrivate.addBtnGroup = function(el, hasFinish) {
+            cswPrivate.addBtnGroup = function (el, hasFinish) {
                 var tbl = el.table({ width: '99%' });
 
                 if (hasFinish) {
@@ -492,14 +568,16 @@
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                         onClick: function () {
                             Csw.tryExec(cswPrivate.onFinish);
+                            cswPrivate.clearState();
                         }
                     });
                 }
-                tbl.cell(1, 2).css({'text-align': 'right'}).buttonExt({
+                tbl.cell(1, 2).css({ 'text-align': 'right' }).buttonExt({
                     enabledText: 'Close',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cancel),
                     onClick: function () {
                         Csw.tryExec(cswPrivate.onCancel);
+                        cswPrivate.clearState();
                     }
                 });
             };
@@ -515,31 +593,31 @@
                     onTabSelect: cswPrivate.onTabSelect
                 });
                 cswPrivate.tabs.setTitle('Requests');
-                
+
                 cswPrivate.pendingTab = cswPrivate.tabs.addTab({
-                    title: 'Pending'
+                    title: 'Pending (' + cswPrivate.state.cartCounts.PendingRequestItems + ')'
                 });
 
                 cswPrivate.submittedTab = cswPrivate.tabs.addTab({
-                    title: 'Submitted'
+                    title: 'Submitted (' + cswPrivate.state.cartCounts.SubmittedRequestItems + ')'
                 });
 
                 cswPrivate.recurringTab = cswPrivate.tabs.addTab({
-                    title: 'Recurring'
+                    title: 'Recurring (' + cswPrivate.state.cartCounts.RecurringRequestItems + ')'
                 });
 
                 cswPrivate.favoritesTab = cswPrivate.tabs.addTab({
-                    title: 'Favorites'
+                    title: 'Favorites (' + cswPrivate.state.cartCounts.FavoriteRequestItems + ')'
                 });
 
                 cswPrivate.tabs.setActiveTab(0);
 
                 cswPrivate.getCart();
-                
+
             }());
 
             return cswPublic;
-            
+
             //#endregion _postCtor
         });
 }());
