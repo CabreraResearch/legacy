@@ -162,6 +162,7 @@
                         },
                         onSuccess: function () {
                             Csw.publish(Csw.enums.events.main.refreshHeader);
+                            cswPrivate.getCartCounts();
                         }
                     });
                 }
@@ -428,7 +429,6 @@
                 var makePicklist = function () {
                     picklistCell.empty();
                     favoriteSelect = picklistCell.nodeSelect({
-                        width: '100px',
                         selectedNodeId: cswPrivate.lastCreatedFavorite || '',
                         showSelectOnLoad: true,
                         viewid: cswPrivate.state.favoritesListViewId,

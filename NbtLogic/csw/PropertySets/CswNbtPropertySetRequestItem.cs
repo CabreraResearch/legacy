@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Material = "Material";
 
             /// <summary>
-            /// Name(<see cref="CswNbtNodePropText"/>) of this Item
+            /// Name(<see cref="CswNbtNodePropPropertyReference"/>) of this Item's Request
             /// </summary>
             public const string Name = "Name";
 
@@ -422,6 +422,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _onRequestPropChange( CswNbtNodeProp Prop )
         {
             onRequestPropChange( Prop );
+            Name.RecalculateReferenceValue();
         }
 
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
@@ -429,9 +430,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             onTypePropChange( Prop );
         }
-
-
-
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
@@ -443,7 +441,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropSequence Number { get { return _CswNbtNode.Properties[PropertyName.Number]; } }
         public CswNbtNodePropStatic Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }
-        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+        public CswNbtNodePropPropertyReference Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
 
         #endregion
 

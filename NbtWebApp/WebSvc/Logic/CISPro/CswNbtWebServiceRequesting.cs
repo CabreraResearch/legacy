@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.WebServices
         public static void submitRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtNode.Node Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, RequestNodeId: Request.NodePk );
+            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
             Ret.Data.Succeeded = ActRequesting.submitRequest( Request.NodePk, Request.NodeName );
         }
 
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.WebServices
         public static void getCartCounts( ICswResources CswResources, CswNbtRequestDataModel.RequestCart Ret, string Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, CswConvert.ToPrimaryKey( Request ) );
+            CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
             ActRequesting.getCart( Ret.Data );
         }
 
