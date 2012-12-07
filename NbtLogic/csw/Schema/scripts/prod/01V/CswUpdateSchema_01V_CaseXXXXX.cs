@@ -20,10 +20,8 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // This is a placeholder script that does nothing.
-        }
+        } //Update()
 
-        //Update()
-
-    }//class CswUpdateSchemaCase_01V_XXXXX
+    }//class CswUpdateSchema_01V_CaseXXXXX
 
 }//namespace ChemSW.Nbt.Schema

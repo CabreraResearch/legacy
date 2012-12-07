@@ -2032,14 +2032,25 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
                     CswNbtView View = _getView( ViewId );
-                    //Identity
+
+                    JObject NewPropsObj = CswConvert.ToJObject( NewPropsJson );
+
+                    // To prevent the same property from saving twice (and from triggering business logic twice), 
+                    // we need to collapse the Identity tab propJson into the regular tab propJson.
                     if( false == string.IsNullOrEmpty( IdentityTabJson ) &&
                         IdentityTabJson != "null" ) //null can be deserialized to string
                     {
-                        ws.saveProps( NodePk, Int32.MinValue, IdentityTabJson, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: true );
+                        JObject IdentityPropsObj = CswConvert.ToJObject( IdentityTabJson );
+                        foreach( JProperty RootIdentityProp in IdentityPropsObj.Children() )
+                        {
+                            if( false == NewPropsJson.Contains(RootIdentityProp.Name) )
+                            {
+                                NewPropsObj.Add( RootIdentityProp );
+                            }
+                        }
                     }
-                    //Return
-                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: false );
+
+                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsObj, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: false );
                 }
                 _deInitResources();
             }
@@ -2221,7 +2232,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string FilterToPermission )
+        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string FilterToPermission, string Searchable )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2247,7 +2258,7 @@ namespace ChemSW.Nbt.WebServices
                         ObjectClass = _CswNbtResources.MetaData.getObjectClass( OCId );
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, FilterToPermission );
+                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
                 }
 
                 _deInitResources();

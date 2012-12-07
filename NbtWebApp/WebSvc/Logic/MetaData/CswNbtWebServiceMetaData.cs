@@ -54,8 +54,14 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="FilterToCreate">(Optional) 
         /// <para>When set to true, only gets NodeTypes user has permission to create</para>
         /// </param>
+        /// <param name="Searchable">If true, only include searchable nodetypes</param>
         /// <returns></returns>
-        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, string ExcludeNodeTypeIds = "", Int32 RelationshipTargetNodeTypeId = Int32.MinValue, string RelationshipObjectClassPropName = "", string FilterToPermission = "" )
+        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, 
+                                     string ExcludeNodeTypeIds = "", 
+                                     Int32 RelationshipTargetNodeTypeId = Int32.MinValue, 
+                                     string RelationshipObjectClassPropName = "", 
+                                     string FilterToPermission = "",
+                                     bool Searchable = false)
         {
             JObject ReturnVal = new JObject();
 
@@ -79,7 +85,9 @@ namespace ChemSW.Nbt.WebServices
 
             Int32 NodeTypeCount = 0;
 
-            foreach( CswNbtMetaDataNodeType RetNodeType in from _RetNodeType in NodeTypes orderby _RetNodeType.NodeTypeName select _RetNodeType )
+            foreach( CswNbtMetaDataNodeType RetNodeType in NodeTypes
+                                                            .Where( _RetNodeType => ( false == Searchable || CswNbtMetaDataObjectClass.NotSearchableValue != _RetNodeType.SearchDeferPropId ) )
+                                                            .OrderBy( _RetNodeType => _RetNodeType.NodeTypeName ) )
             {
                 bool AddThisNodeType = false;
                 if( false == ExcludedIds.Contains( RetNodeType.NodeTypeId ) )

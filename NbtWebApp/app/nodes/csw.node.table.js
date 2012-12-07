@@ -357,6 +357,15 @@
 
                         Csw.eachRecursive(nodetypeObj.nodes, cswPrivate.makeNodeCell);
 
+                        // empty cells if no results, to keep image in place
+                        while(false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
+                            var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
+                            var textCell = cswPrivate.getTextCell(cellSet);
+                            textCell.append('&nbsp;');
+                            cswPrivate.c += 1;
+                        }
+
+
                         var nodetypeid = nodetypeObj["nodetypeid"];
                         var nodetypename = nodetypeObj["nodetypename"];
 

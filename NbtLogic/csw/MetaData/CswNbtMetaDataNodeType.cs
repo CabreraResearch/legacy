@@ -122,6 +122,12 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
+
+        public Int32 SearchDeferPropId
+        {
+            get { return CswConvert.ToInt32( _NodeTypeRow["searchdeferpropid"] ); }
+            set { _NodeTypeRow["searchdeferpropid"] = CswConvert.ToDbVal( value ); }
+        }
         public Int32 Quota
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["quota"] ); }
