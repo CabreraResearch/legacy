@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != thisNode.NodeType )
                     {
                         thisNode.NodeId = Tree.getNodeIdForCurrentPosition();
-                        thisNode.NodeName = _Truncate( Tree.getNodeNameForCurrentPosition() );
+                        thisNode.NodeName = Tree.getNodeNameForCurrentPosition();
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 

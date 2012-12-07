@@ -26,12 +26,29 @@
 
             cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
             cswPrivate.gridOpts = {};
-
+            cswPrivate.state = {};
+            cswPrivate.currentTab = 'Pending';
+            
             //#endregion _preCtor
             
             //#region AJAX methods
 
-            cswPrivate.makeRequestCreateMaterial = function () {
+            cswPrivate.getCart = function() {
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Requests/cart',
+                    success: function (data) {
+                        cswPrivate.state.pendingItemsViewId = data.PendingItemsView.SessionViewId;
+                        cswPrivate.state.favoritesListViewId = data.FavoritesView.SessionViewId;
+                        cswPrivate.state.favoriteItemsViewId = data.FavoriteItemsView.SessionViewId;
+                        cswPrivate.state.recurringItemsViewId = data.RecurringItemsView.SessionViewId;
+                        cswPrivate.state.submittedItemsViewId = data.SubmittedItemsView.SessionViewId;
+
+                        cswPrivate.onTabSelect(cswPrivate.currentTab);
+                    }
+                });
+            };
+
+            cswPrivate.makeRequestCreateMaterial = function (grid) {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/findMaterialCreate',
                     success: function (data) {
@@ -40,7 +57,7 @@
                                 text: 'New Create Material Request',
                                 nodetypeid: data.NodeTypeId,
                                 onAddNode: function () {
-                                    cswPublic.grid.reload();
+                                    grid.reload();
                                     Csw.publish(Csw.enums.events.main.refreshHeader);
                                 }
                             });
@@ -109,107 +126,162 @@
             //#region Tab construction
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
-                switch (tabName) {
-                    case 'Pending':
-                        cswPrivate.action.finish.enable();
-                        cswPrivate.tabs.setTitle('Request Items Pending Submission');
-                        break;
-                    case 'Submitted':
-                        cswPrivate.action.finish.disable();
-                        break;
-                    case 'Recurring':
-                        cswPrivate.action.finish.disable();
-                        break;
-                    case 'Favorites':
-                        cswPrivate.action.finish.disable();
-                        break;
+                if (tabName && tabName.length > 0) {
+                    cswPrivate.currentTab = tabName;
+                    switch (tabName) {
+                        case 'Pending':
+                            cswPrivate.action.finish.enable();
+                            cswPrivate.tabs.setTitle('Request Items Pending Submission');
+                            cswPrivate.makePendingTab();
+                            break;
+                        case 'Submitted':
+                            cswPrivate.action.finish.disable();
+                            cswPrivate.makeSubmittedTab();
+                            break;
+                        case 'Recurring':
+                            cswPrivate.action.finish.disable();
+                            cswPrivate.makeRecurringTab();
+                            break;
+                        case 'Favorites':
+                            cswPrivate.action.finish.disable();
+                            cswPrivate.makeFavoritesTab();
+                            break;
+                        }
                 }
+            };
+
+            cswPrivate.makeGridForTab = function(opts) {
+                opts = opts || {
+                    onSuccess: function() {},
+                    onSelectChange: function() {}
+                };
+
+                return opts.parent.grid({
+                    name: opts.gridId,
+                    storeId: opts.gridId + '_store',
+                    stateId: opts.gridId,
+                    usePaging: true,
+                    height: 180,
+                    width: cswPrivate.tabs.getWidth() - 20,
+                    ajax: {
+                        urlMethod: 'getRequestItemGrid',
+                        data: {
+                            SessionViewId: opts.sessionViewId
+                        }
+                    },
+                    showCheckboxes: opts.showCheckboxes,
+                    showActionColumn: true,
+                    canSelectRow: false,
+                    groupField: opts.groupField || '',
+                    onLoad: function(grid, json) {
+                        cswPrivate.cartnodeid = json.cartnodeid;
+                        cswPrivate.cartviewid = json.cartviewid;
+                        Csw.tryExec(opts.onSuccess);
+                    },
+                    onEdit: function(rows) {
+                        // this works for both Multi-edit and regular
+                        var nodekeys = Csw.delimitedString(),
+                            nodeids = Csw.delimitedString(),
+                            nodenames = [],
+                            currentNodeId, currentNodeKey;
 
 
-                /*
-            
-            cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
-      cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
-      cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
-          name: cswPrivate.gridId
-      }); //, align: 'center' });
+                        Csw.each(rows, function(row) {
+                            currentNodeId = currentNodeId || row.nodeid;
+                            currentNodeKey = currentNodeKey || row.nodekey;
+                            nodekeys.add(row.nodekey);
+                            nodeids.add(row.nodeid);
+                            nodenames.push(row.nodename);
+                        });
 
-      cswPrivate.initGrid();
+                        $.CswDialog('EditNodeDialog', {
+                            currentNodeId: currentNodeId,
+                            currentNodeKey: currentNodeKey,
+                            selectedNodeIds: nodeids,
+                            selectedNodeKeys: nodekeys,
+                            nodenames: nodenames,
+                            Multi: (nodeids.length > 1),
+                            title: 'Request',
+                            onEditNode: function() {
+                                Csw.tryExec(opts.onEditNode); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
+                            }
+                        });
+                    }, // onEdit
+                    onDelete: function(rows) {
+                        // this works for both Multi-edit and regular
+                        var cswnbtnodekeys = [],
+                            nodeids = [],
+                            nodenames = [];
 
-      cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
-      Csw.ajax.post({
-          urlMethod: 'getRequestHistory',
-          data: {},
-          success: function (json) {
-              if (json.count > 0) {
-                  delete json.count;
-                  cswPrivate.historyTbl.cell(1, 1).span({ text: '</br>&nbsp;Past Requests: ' });
-                  cswPrivate.historySelect = cswPrivate.historyTbl.cell(2, 1).select({
-                      onChange: function () {
-                          cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                      }
-                  });
-                  json = json || {};
+                        Csw.each(rows, function(row) {
+                            cswnbtnodekeys.push(row.nodekey);
+                            nodeids.push(row.nodeid);
+                            nodenames.push(row.nodename);
+                        });
 
-                  Csw.each(json, function (prop, name) {
-                      var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
-                      cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
-                  });
-                  cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                  cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(2, 2).buttonExt({
-                      icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
-                      size: 'small',
-                      enabledText: 'Copy to Cart',
-                      disabledText: 'Copying...',
-                      onClick: cswPrivate.copyRequest
-                  });
-              }
-          }
-                   
-            
-            */
+                        $.CswDialog('DeleteNodeDialog', {
+                            nodeids: nodeids,
+                            nodepks: nodeids,
+                            nodekeys: cswnbtnodekeys,
+                            nodenames: nodenames,
+                            onDeleteNode: Csw.method(function() {
+                                Csw.publish(Csw.enums.events.main.refreshHeader);
+                                Csw.tryExec(opts.onEditNode);
+                            }),
+                            Multi: (nodeids.length > 1),
+                            publishDeleteEvent: false
+                        });                                  
+                    }, // onDelete
+                    onSelectChange: function(rowCount) {
+                        Csw.tryExec(opts.onSelectChange, rowCount);
+                    }
+                });
+            };
 
+            cswPrivate.prepTab = function(tab, title, headerText) {
+                cswPrivate.tabs.setTitle(title);
+
+                tab.csw.empty().css({ margin: '10px' });
+
+                var ol = tab.csw.ol();
+
+                ol.li().span({
+                    text: headerText
+                });
+                ol.li().br({ number: 2 });
+
+                return ol;
             };
 
             cswPrivate.makePendingTab = function (opts) {
                 cswPrivate.action.finish.enable();
-                cswPrivate.tabs.setTitle('Request Items Pending Submission');
 
-                // This really ought to be a CswNodeGrid
-                opts = opts || {
-                    urlMethod: 'getCurrentRequest',
-                    data: {},
-                    onSuccess: null
-                };
-
-                var gridId = cswPrivate.name + '_srgrid';
-
-                cswPrivate.pendingTab.csw.empty().css({margin: '10px'});
+                var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.');
                 
-                var ol = cswPrivate.pendingTab.csw.ol();
-
-                ol.li().span({
-                    text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.'
+                var inpTbl = ol.li().table({
+                    width: '100%',
+                    FirstCellRightAlign: true
                 });
-                ol.li().br({ number: 2 });
-                
-                var inpTbl = ol.li().table({ width: '100%' });
-                
-                inpTbl.cell(1,1).ol().li().input({
-                    labelText: 'Request Name:',
+
+                inpTbl.cell(1, 1).span().setLabelText('Request Name: ');
+                inpTbl.cell(1,2).input({
                     value: cswPrivate.requestName,
                     onChange: function(val) {
                         cswPrivate.requestName = val;
                     }
                 });
 
-                inpTbl.cell(1, 2)
+                inpTbl.cell(1, 3)
                     .css({ 'text-align': 'center' })
                     .buttonExt({
-                    enabledText: 'Request Create Material',
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cart),
-                    onClick: cswPrivate.makeRequestCreateMaterial
-                });
+                        enabledText: 'Request Create Material',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cart),
+                        onClick: function() {
+                            if (cswPublic.pendingGrid) {
+                                cswPrivate.makeRequestCreateMaterial(cswPublic.pendingGrid);
+                            }
+                        }
+                    });
                 
                 ol.li().br({ number: 1 });
 
@@ -230,87 +302,22 @@
                     }  
                 };
 
-                cswPublic.grid = ol.li().grid({
-                    name: gridId,
-                    storeId: gridId + '_store',
-                    stateId: gridId,
-                    usePaging: true,
-                    height: 180,
-                    width: cswPrivate.tabs.getWidth() - 20,
-                    ajax: {
-                        urlMethod: opts.urlMethod,
-                        data: opts.data
-                    },
+                // This really ought to be a CswNodeGrid
+                opts = opts || {
+                    onSuccess: function () { }
+                };
+                opts.sessionViewId = cswPrivate.state.pendingItemsViewId;
+                opts.parent = ol.li();
+                opts.gridId = cswPrivate.name + '_srgrid';
+                opts.showCheckboxes = true;
 
-                    showCheckboxes: true,
-                    showActionColumn: true,
-                    canSelectRow: false,
+                opts.onSelectChange = function (rowCount) {
+                    hasOneRowSelected = rowCount > 0;
+                    toggleSaveBtn();
+                };
+                opts.onEditNode = cswPrivate.makePendingTab;
 
-                    onLoad: function (grid, json) {
-                        cswPrivate.cartnodeid = json.cartnodeid;
-                        cswPrivate.cartviewid = json.cartviewid;
-                        Csw.tryExec(opts.onSuccess);
-                        window.requestGrid = cswPublic.grid;
-                    },
-                    onEdit: function (rows) {
-                        // this works for both Multi-edit and regular
-                        var nodekeys = Csw.delimitedString(),
-                            nodeids = Csw.delimitedString(),
-                            nodenames = [],
-                            currentNodeId, currentNodeKey;
-
-
-                        Csw.each(rows, function (row) {
-                            currentNodeId = currentNodeId || row.nodeid;
-                            currentNodeKey = currentNodeKey || row.nodekey;
-                            nodekeys.add(row.nodekey);
-                            nodeids.add(row.nodeid);
-                            nodenames.push(row.nodename);
-                        });
-
-                        $.CswDialog('EditNodeDialog', {
-                            currentNodeId: currentNodeId,
-                            currentNodeKey: currentNodeKey,
-                            selectedNodeIds: nodeids,
-                            selectedNodeKeys: nodekeys,
-                            nodenames: nodenames,
-                            Multi: (nodeids.length > 1),
-                            title: 'Request',
-                            onEditNode: function () {
-                                cswPrivate.makePendingTab(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
-                            }
-                        });
-                    }, // onEdit
-                    onDelete: function (rows) {
-                        // this works for both Multi-edit and regular
-                        var cswnbtnodekeys = [],
-                            nodeids = [],
-                            nodenames = [];
-
-                        Csw.each(rows, function (row) {
-                            cswnbtnodekeys.push(row.nodekey);
-                            nodeids.push(row.nodeid);
-                            nodenames.push(row.nodename);
-                        });
-
-                        $.CswDialog('DeleteNodeDialog', {
-                            nodeids: nodeids,
-                            nodepks: nodeids,
-                            nodekeys: cswnbtnodekeys,
-                            nodenames: nodenames,
-                            onDeleteNode: Csw.method(function () {
-                                Csw.publish(Csw.enums.events.main.refreshHeader);
-                                cswPrivate.makePendingTab();
-                            }),
-                            Multi: (nodeids.length > 1),
-                            publishDeleteEvent: false
-                        });
-                    }, // onDelete
-                    onSelectChange: function(rowCount) {
-                        hasOneRowSelected = rowCount > 0;
-                        toggleSaveBtn();
-                    }
-                });
+                cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
 
                 ol.li().br();
                 
@@ -320,44 +327,111 @@
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     onClick: function () {
                         var nodes = [];
-                        cswPublic.grid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
+                        cswPublic.pendingGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
                         cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes);
                     }
                 }).disable();
+                
+                var picklistCell = btmTbl.cell(1, 2);
 
-                Csw.ajaxWcf.get({
-                    urlMethod: 'Requests/cart',
-                    success: function(data) {
-                        var picklistCell = btmTbl.cell(1, 2);
-                        
-                        var makePicklist = function () {
-                            picklistCell.empty();
-                            favoriteSelect = picklistCell.nodeSelect({
-                                width: '50px',
-                                selectedNodeId: cswPrivate.lastCreatedFavorite || '',
-                                showSelectOnLoad: true,
-                                viewid: data.FavoriteItemsViewId,
-                                allowAdd: false,
-                                onSelectNode: toggleSaveBtn,
-                                onSuccess: toggleSaveBtn
-                            });
-                        };
-                        makePicklist();
-                        btmTbl.cell(1, 3).buttonExt({
-                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
-                            onClick: function() {
-                                Csw.tryExec(cswPrivate.addFavorite, makePicklist);
-                            }
-                        });
+                var makePicklist = function () {
+                    picklistCell.empty();
+                    favoriteSelect = picklistCell.nodeSelect({
+                        width: '50px',
+                        selectedNodeId: cswPrivate.lastCreatedFavorite || '',
+                        showSelectOnLoad: true,
+                        viewid: cswPrivate.state.favoritesListViewId,
+                        allowAdd: false,
+                        onSelectNode: toggleSaveBtn,
+                        onSuccess: toggleSaveBtn
+                    });
+                };
+                makePicklist();
+                btmTbl.cell(1, 3).buttonExt({
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                    onClick: function () {
+                        Csw.tryExec(cswPrivate.addFavorite, makePicklist);
                     }
                 });
 
-                
             }; // cswPrivate.makePendingTab()
 
-            //#endregion Tab construction  
+            cswPrivate.makeSubmittedTab = function() {
+                var ol = cswPrivate.prepTab(cswPrivate.submittedTab, 'Submitted Request Itens', 'View any previously submitted Request Items.');
+
+                Csw.nbt.viewFilters({
+                    name: 'submitted_viewfilters',
+                    parent: ol.li(),
+                    viewid: cswPrivate.state.submittedItemsViewId,
+                    onEditFilters: function (newviewid) {
+                        cswPrivate.state.submittedItemsViewId = newviewid;
+                        cswPrivate.makeSubmittedTab();
+                    } // onEditFilters
+                }); // viewFilters
+
+                ol.br();
+
+                var opts = {
+                    onSuccess: function () { }
+                };
+                opts.showCheckboxes = false;
+                opts.sessionViewId = cswPrivate.state.submittedItemsViewId;
+                opts.parent = ol.li();
+                opts.gridId = cswPrivate.name + '_submittedItemsGrid';
+                opts.groupField = 'Name';
+                opts.onEditNode = cswPrivate.makeSubmittedTab;
+
+                cswPublic.submittedGrid = cswPrivate.makeGridForTab(opts);
+
+            };
+
+            cswPrivate.makeRecurringTab = function() {
+                var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Itens', 'View any recurring Request Items.');
+                ol.br();
+
+                var opts = {
+                    onSuccess: function () { }
+                };
+                opts.showCheckboxes = false;
+                opts.sessionViewId = cswPrivate.state.recurringItemsViewId;
+                opts.parent = ol.li();
+                opts.gridId = cswPrivate.name + '_recurringItemsGrid';
+                opts.groupField = 'Name';
+                opts.onEditNode = cswPrivate.makeRecurringTab;
+
+                cswPublic.recurringGrid = cswPrivate.makeGridForTab(opts);
+            };
+
+            cswPrivate.makeFavoritesTab = function() {
+                var ol = cswPrivate.prepTab(cswPrivate.favoritesTab, 'Favorite Request Itens', 'View any favorite Request Items.');
+                Csw.nbt.viewFilters({
+                    name: 'favorites_viewfilters',
+                    parent: ol.li(),
+                    viewid: cswPrivate.state.favoriteItemsViewId,
+                    onEditFilters: function (newviewid) {
+                        cswPrivate.state.favoriteItemsViewId = newviewid;
+                        cswPrivate.makeFavoritesTab();
+                    } // onEditFilters
+                }); // viewFilters
+
+                ol.br();
+
+                var opts = {
+                    onSuccess: function () { }
+                };
+                opts.showCheckboxes = true;
+                opts.sessionViewId = cswPrivate.state.favoriteItemsViewId;
+                opts.parent = ol.li();
+                opts.gridId = cswPrivate.name + '_favoriteItemsGrid';
+                opts.groupField = 'Name';
+                opts.onEditNode = cswPrivate.makeFavoritesTab;
+
+                cswPublic.favoritesGrid = cswPrivate.makeGridForTab(opts);
+            };
+
+            //#endregion Tab construction
 
             //#region _postCtor            
 
@@ -401,8 +475,8 @@
 
                 cswPrivate.tabs.setActiveTab(0);
 
-                cswPrivate.makePendingTab();
-
+                cswPrivate.getCart();
+                
             }());
 
             return cswPublic;

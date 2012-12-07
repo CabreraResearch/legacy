@@ -40,16 +40,13 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28075() ) );                         //01U-012
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28117() ) );                         //01U-013
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28156() ) );                         //01U-014
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28229() ) );                         //01U-015
 
             #endregion URSULA
-
-            #region VIOLA
-
+            
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part1() ) );                    //01U-015      //01V-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part2() ) );                    //01U-016      //01V-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28281() ) );                         //01U-017      //01V-003
-
-            #endregion VIOLA
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

@@ -753,9 +753,10 @@
                     }
                 }
 
-                if (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
-                    (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
-                    cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp)) {
+                if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
+                    (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
+                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add && 
+                      cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp))) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,

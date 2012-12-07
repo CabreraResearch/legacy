@@ -64,6 +64,10 @@
         return cswPrivate.logLevels.indexOf(maxLevel) <= cswPrivate.logLevels.indexOf(requestLevel);
     };
 
+    cswPublic.showExceptions = function() {
+        return (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('error'));
+    };
+
     cswPublic.logLevels = function() {
         return cswPrivate.logLevels.slice(0);
     };

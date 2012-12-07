@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
@@ -36,150 +37,162 @@ namespace ChemSW.Nbt.Grid
 
         public JObject TreeToJson( CswNbtView View, ICswNbtTree Tree, bool IsPropertyGrid = false, string GroupByCol = "" )
         {
-            string gridUniquePrefix = _getUniquePrefix( View );
-
-            CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid( gridUniquePrefix );
-            grid.GroupByCol = GroupByCol;
-            grid.title = View.ViewName;
-            if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
+            JObject Ret = new JObject();
+            if( null != View )
             {
-                grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
-            }
+                string gridUniquePrefix = _getUniquePrefix( View );
 
-            if( IsPropertyGrid && Tree.getChildNodeCount() > 0 )
-            {
-                Tree.goToNthChild( 0 );
-            }
-
-            grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
-
-            CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodeId" );
-            CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField { dataIndex = nodeIdDataIndex };
-            grid.fields.Add( nodeIdFld );
-            CswNbtGridExtJsColumn nodeIdCol = new CswNbtGridExtJsColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
-            grid.columns.Add( nodeIdCol );
-
-            CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodekey" );
-            CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField { dataIndex = nodekeyDataIndex };
-            grid.fields.Add( nodekeyFld );
-            CswNbtGridExtJsColumn nodekeyCol = new CswNbtGridExtJsColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
-            grid.columns.Add( nodekeyCol );
-
-            CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodename" );
-            CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField { dataIndex = nodenameDataIndex };
-            grid.fields.Add( nodenameFld );
-            CswNbtGridExtJsColumn nodenameCol = new CswNbtGridExtJsColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
-            grid.columns.Add( nodenameCol );
-
-            // View Properties determine Columns and Fields
-            foreach( CswNbtViewProperty ViewProp in View.getOrderedViewProps( true ) )
-            {
-                if( null != ViewProp )
+                CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid( gridUniquePrefix );
+                if( string.IsNullOrEmpty( GroupByCol ) )
                 {
-                    ICswNbtMetaDataProp MetaDataProp = null;
-                    if( ViewProp.Type == NbtViewPropType.NodeTypePropId )
+                    CswNbtViewRelationship FirstVr = View.Root.ChildRelationships.FirstOrDefault();
+                    if( null != FirstVr )
                     {
-                        MetaDataProp = ViewProp.NodeTypeProp;
+                        GroupByCol = FirstVr.GroupByPropName;
                     }
-                    else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId )
-                    {
-                        MetaDataProp = ViewProp.ObjectClassProp;
-                    }
+                }
+                grid.GroupByCol = GroupByCol;
+                grid.title = View.ViewName;
+                if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
+                {
+                    grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
+                }
 
-                    // Because properties in the view might be by object class, but properties on the tree will always be by nodetype,
-                    // we have to use name, not id, as the dataIndex
-                    if( null != MetaDataProp )
-                    {
-                        string header = MetaDataProp.PropNameWithQuestionNo;
-                        CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
+                if( IsPropertyGrid && Tree.getChildNodeCount() > 0 )
+                {
+                    Tree.goToNthChild( 0 );
+                }
 
-                        // Potential bug here!
-                        // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
-                        if( false == grid.columnsContains( header ) )
+                grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
+
+                CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodeId" );
+                CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField { dataIndex = nodeIdDataIndex };
+                grid.fields.Add( nodeIdFld );
+                CswNbtGridExtJsColumn nodeIdCol = new CswNbtGridExtJsColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
+                grid.columns.Add( nodeIdCol );
+
+                CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodekey" );
+                CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField { dataIndex = nodekeyDataIndex };
+                grid.fields.Add( nodekeyFld );
+                CswNbtGridExtJsColumn nodekeyCol = new CswNbtGridExtJsColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
+                grid.columns.Add( nodekeyCol );
+
+                CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodename" );
+                CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField { dataIndex = nodenameDataIndex };
+                grid.fields.Add( nodenameFld );
+                CswNbtGridExtJsColumn nodenameCol = new CswNbtGridExtJsColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
+                grid.columns.Add( nodenameCol );
+
+                // View Properties determine Columns and Fields
+                foreach( CswNbtViewProperty ViewProp in View.getOrderedViewProps( true ) )
+                {
+                    if( null != ViewProp )
+                    {
+                        ICswNbtMetaDataProp MetaDataProp = null;
+                        if( ViewProp.Type == NbtViewPropType.NodeTypePropId )
                         {
-                            CswNbtGridExtJsField fld = new CswNbtGridExtJsField { dataIndex = dataIndex };
-                            CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
-                            switch( ViewProp.FieldType )
-                            {
-                                case CswNbtMetaDataFieldType.NbtFieldType.Number:
-                                    fld.type = "number";
-                                    col.xtype = extJsXType.numbercolumn;
-                                    break;
-                                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
-                                    fld.type = "date";
-                                    col.xtype = extJsXType.datecolumn;
+                            MetaDataProp = ViewProp.NodeTypeProp;
+                        }
+                        else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId )
+                        {
+                            MetaDataProp = ViewProp.ObjectClassProp;
+                        }
 
-                                    // case 26782 - Set dateformat as client date format
-                                    string dateformat = string.Empty;
-                                    string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
-                                    if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
-                                    {
-                                        DateDisplayMode = ViewProp.NodeTypeProp.Extended;
-                                    }
-                                    else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
-                                    {
-                                        DateDisplayMode = ViewProp.ObjectClassProp.Extended;
-                                    }
-                                    if( DateDisplayMode == string.Empty ||
-                                        DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
-                                        DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
-                                    {
-                                        dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.DateFormat );
-                                        if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                        // Because properties in the view might be by object class, but properties on the tree will always be by nodetype,
+                        // we have to use name, not id, as the dataIndex
+                        if( null != MetaDataProp )
+                        {
+                            string header = MetaDataProp.PropNameWithQuestionNo;
+                            CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, MetaDataProp.PropName ); // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
+
+                            // Potential bug here!
+                            // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
+                            if( false == grid.columnsContains( header ) )
+                            {
+                                CswNbtGridExtJsField fld = new CswNbtGridExtJsField { dataIndex = dataIndex };
+                                CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
+                                switch( ViewProp.FieldType )
+                                {
+                                    case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                                        fld.type = "number";
+                                        col.xtype = extJsXType.numbercolumn;
+                                        break;
+                                    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                                        fld.type = "date";
+                                        col.xtype = extJsXType.datecolumn;
+
+                                        // case 26782 - Set dateformat as client date format
+                                        string dateformat = string.Empty;
+                                        string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
+                                        if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
                                         {
-                                            dateformat += " ";
+                                            DateDisplayMode = ViewProp.NodeTypeProp.Extended;
                                         }
-                                    }
-                                    if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
-                                        DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
-                                    {
-                                        dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.TimeFormat );
-                                    }
-                                    col.dateformat = dateformat;
-                                    break;
-                            }
-                            if( ViewProp.Width > 0 )
-                            {
-                                col.width = ViewProp.Width * 7; // approx. characters to pixels
-                            }
-                            grid.columns.Add( col );
-                            grid.fields.Add( fld );
-                        } // if( false == grid.columnsContains( header ) )
-                    } // if(null != MetaDataProp )
-                } // if( ViewProp != null )
-            } // foreach( CswNbtViewProperty ViewProp in View.getOrderedViewProps() )
+                                        else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
+                                        {
+                                            DateDisplayMode = ViewProp.ObjectClassProp.Extended;
+                                        }
+                                        if( DateDisplayMode == string.Empty ||
+                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
+                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                        {
+                                            dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.DateFormat );
+                                            if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                            {
+                                                dateformat += " ";
+                                            }
+                                        }
+                                        if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
+                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                        {
+                                            dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.TimeFormat );
+                                        }
+                                        col.dateformat = dateformat;
+                                        break;
+                                }
+                                if( ViewProp.Width > 0 )
+                                {
+                                    col.width = ViewProp.Width * 7; // approx. characters to pixels
+                                }
+                                grid.columns.Add( col );
+                                grid.fields.Add( fld );
+                            } // if( false == grid.columnsContains( header ) )
+                        } // if(null != MetaDataProp )
+                    } // if( ViewProp != null )
+                } // foreach( CswNbtViewProperty ViewProp in View.getOrderedViewProps() )
 
-            // Nodes in the Tree determine Rows
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
-            {
-                CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow( c );
-                Tree.goToNthChild( c );
+                // Nodes in the Tree determine Rows
+                for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+                {
+                    CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow( c );
+                    Tree.goToNthChild( c );
 
-                gridrow.data.Add( nodeIdDataIndex, Tree.getNodeIdForCurrentPosition().ToString() );
-                gridrow.data.Add( nodekeyDataIndex, Tree.getNodeKeyForCurrentPosition().ToString() );
-                gridrow.data.Add( nodenameDataIndex, Tree.getNodeNameForCurrentPosition().ToString() );
+                    gridrow.data.Add( nodeIdDataIndex, Tree.getNodeIdForCurrentPosition().ToString() );
+                    gridrow.data.Add( nodekeyDataIndex, Tree.getNodeKeyForCurrentPosition().ToString() );
+                    gridrow.data.Add( nodenameDataIndex, Tree.getNodeNameForCurrentPosition().ToString() );
 
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
-                gridrow.canView = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.View,
-                                                               NodeType,
-                                                               NodeId: Tree.getNodeIdForCurrentPosition() );
-                gridrow.canEdit = ( _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Edit,
-                                                                NodeType,
-                                                               NodeId: Tree.getNodeIdForCurrentPosition() ) &&
-                                    false == Tree.getNodeLockedForCurrentPosition() );
-                gridrow.canDelete = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Delete,
-                                                                 NodeType,
-                                                                 NodeId: Tree.getNodeIdForCurrentPosition() );
-                gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
-                gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
+                    gridrow.canView = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.View,
+                                                                              NodeType,
+                                                                              NodeId: Tree.getNodeIdForCurrentPosition() );
+                    gridrow.canEdit = ( _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Edit,
+                                                                                NodeType,
+                                                                                NodeId: Tree.getNodeIdForCurrentPosition() ) &&
+                                        false == Tree.getNodeLockedForCurrentPosition() );
+                    gridrow.canDelete = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Delete,
+                                                                                NodeType,
+                                                                                NodeId: Tree.getNodeIdForCurrentPosition() );
+                    gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
+                    gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
-                _TreeNodeToGrid( View, Tree, grid, gridrow );
+                    _TreeNodeToGrid( View, Tree, grid, gridrow );
 
-                Tree.goToParentNode();
-                grid.rows.Add( gridrow );
+                    Tree.goToParentNode();
+                    grid.rows.Add( gridrow );
+                }
+                Ret = grid.ToJson();
             }
-
-            return grid.ToJson();
+            return Ret;
         } // TreeToJson()
 
         private void _TreeNodeToGrid( CswNbtView View, ICswNbtTree Tree, CswNbtGridExtJsGrid grid, CswNbtGridExtJsRow gridrow )
