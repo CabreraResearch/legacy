@@ -259,6 +259,7 @@
                     name: opts.gridId,
                     storeId: opts.gridId + '_store',
                     stateId: opts.gridId,
+                    title: opts.title,
                     usePaging: true,
                     height: 180,
                     width: cswPrivate.tabs.getWidth() - 20,
@@ -403,7 +404,7 @@
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_pendingGrid';
                 opts.showCheckboxes = true;
-
+                opts.title = 'Select any Pending items to save to a Favorite list';
                 opts.onSelectChange = function (rowCount) {
                     hasOneRowSelected = rowCount > 0;
                     toggleSaveBtn();
@@ -411,10 +412,8 @@
                 opts.onEditNode = cswPrivate.makePendingTab;
 
                 cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
-
-                ol.li().br();
-
-                var btmTbl = ol.li().table();
+                
+                var btmTbl = ol.li().table({cellpadding: '2px'});
                 var saveBtn = btmTbl.cell(1, 1).buttonExt({
                     enabledText: 'Save to Favorites',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
@@ -452,7 +451,7 @@
                     }
                 });
 
-                ol.li().br();
+                ol.li().br({ number: 2 });
 
                 cswPrivate.addBtnGroup(ol.li(), true);
 
