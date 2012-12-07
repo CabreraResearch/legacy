@@ -237,11 +237,7 @@
                             return ret;
                         } // renderer()
                     }; // newcol
-                    var position = 0;
-                    if (cswPrivate.showCheckboxes) {
-                        position = gridopts.columns.length;
-                    }
-                    gridopts.columns.splice(position, 0, newcol);
+                    gridopts.columns.splice(0, 0, newcol);
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
 
                 //Render buttons in a callback
@@ -372,7 +368,6 @@
                         items: cswPrivate.topToolbar
                     }); // panelopts.dockedItems
                 }
-
                 
                 if (Csw.isElementInDom(cswPublic.getId())) {
                     cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);

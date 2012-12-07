@@ -613,6 +613,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Status.setHidden( value: true, SaveToDb: true );
                 Fulfill.setHidden( value: true, SaveToDb: true );
                 AssignedTo.setHidden( value: true, SaveToDb: true );
+                Number.setHidden( value: true, SaveToDb: true );
                 NeededBy.setHidden( value: true, SaveToDb: true );
                 TotalMoved.setHidden( value: true, SaveToDb: true );
                 TotalDispensed.setHidden( value: true, SaveToDb: true );

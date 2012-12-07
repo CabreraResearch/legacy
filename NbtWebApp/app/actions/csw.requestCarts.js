@@ -51,7 +51,7 @@
             };
 
             cswPrivate.clearState = function () {
-                Csw.cliendDb.removeItem(cswPrivate.name + '_state');
+                Csw.clientDb.removeItem(cswPrivate.name + '_state');
             };
 
             //#endregion _preCtor
@@ -193,7 +193,7 @@
             cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];
 
             cswPrivate.tryParseTabName = function(tabName, elTarget, eventObjText) {
-                var tab = '';
+                var tab = '', ret = '';
                 if (tabName) {
                     tab = tabName.split(' ')[0].trim();
                     if (cswPrivate.tabNames.indexOf(tab) === -1) {
@@ -201,11 +201,18 @@
                             tab = cswPrivate.tryParseTabName(eventObjText, elTarget);
                             if (cswPrivate.tabNames.indexOf(tab) === -1) {
                                 tab = cswPrivate.tryParseTabName(elTarget);
-                            }                            
-                        } 
+                                if (cswPrivate.tabNames.indexOf(tab) !== -1) {
+                                    ret = tab;
+                                }
+                            } else {
+                                ret = tab;
+                            }
+                        }
+                    } else {
+                        ret = tab;
                     }
                 }
-                return tab;
+                return ret;
             };
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
@@ -567,7 +574,7 @@
                         enabledText: 'Place Request',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                         onClick: function () {
-                            Csw.tryExec(cswPrivate.onFinish);
+                            cswPrivate.submitRequest();
                             cswPrivate.clearState();
                         }
                     });
