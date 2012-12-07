@@ -150,8 +150,24 @@ namespace ChemSW.Nbt.Actions
                     {
                         Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp, OverrideUniqueValidation: false );
                         Node = Ret.Node;
-                        //TODO: Improve default handling here
-                        Ret.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.NA; //case 28311 - assume material is a Supply, users can select physical state for bio and chem
+
+                        bool InAddLayout = false;
+                        CswNbtMetaDataNodeType metaDataNT = _NbtResources.MetaData.getNodeType( NodeTypeId );
+                        foreach( CswNbtMetaDataNodeTypeProp ntp in _NbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeTypeId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
+                        {
+                            if( Ret.PhysicalState.NodeTypePropId == ntp.PropId )
+                            {
+                                InAddLayout = true;
+                            }
+                        }
+                        if( InAddLayout )
+                        {
+                            Ret.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                        }
+                        else
+                        {
+                            Ret.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.NA;
+                        }
                     }
                     else
                     {

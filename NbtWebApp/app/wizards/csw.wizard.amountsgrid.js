@@ -89,7 +89,7 @@
                             data: { SizeId: cswPrivate.selectedSizeId, Action: cswPrivate.action },
                             success: function (data) {
                                 cswPrivate.quantity = data;
-                                cswPrivate.quantity.options = [];
+                                //cswPrivate.quantity.options = [];
                                 if (Csw.bool(cswPrivate.quantity.quantityoptional)) {
                                     cswPrivate.quantity.options.push({ value: '', display: '', frac: true });
                                 }
