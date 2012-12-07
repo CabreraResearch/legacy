@@ -547,7 +547,9 @@ namespace ChemSW.Nbt.ObjClasses
                               String.Empty == NodeStatus ) &&
                             //Inspections have the same target, and we're comparing different Inspection nodes
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
-                              this.Node != InspectionNode ) )
+                              this.Node != InspectionNode ) &&
+                            // Other inspection isn't future (case 28317)
+                            Tristate.True != PriorInspection.IsFuture.Checked )
                         {
                             PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
                             // Case 20755
