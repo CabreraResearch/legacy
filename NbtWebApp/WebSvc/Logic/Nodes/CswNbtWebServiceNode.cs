@@ -573,6 +573,35 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        public static void getRelationshipOpts( ICswResources CswResources, NodeSelect.PropertyViewResponse Response, NodeSelect.PropertyView Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                int nodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
+                CswNbtMetaDataNodeType metaDataNodeType = NbtResources.MetaData.getNodeType( nodeTypeId );
+                if( null != metaDataNodeType )
+                {
+                    CswNbtMetaDataNodeTypeProp ntp = metaDataNodeType.getNodeTypeProp( Request.PropName );
+                    if( null != ntp )
+                    {
+                        CswNbtView view = NbtResources.ViewSelect.restoreView( ntp.ViewId );
+                        ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
+                        JArray JOptions = new JArray();
+                        for( int i = 0; i < tree.getChildNodeCount(); i++ )
+                        {
+                            tree.goToNthChild( i );
+                            JObject JOption = new JObject();
+                            JOption["id"] = tree.getNodeIdForCurrentPosition().ToString();
+                            JOption["value"] = tree.getNodeNameForCurrentPosition();
+                            JOptions.Add( JOption );
+                            tree.goToParentNode();
+                        }
+                        Response.Data.options = JOptions.ToString();
+                    }
+                }
+            }
+        }
 
     } // class CswNbtWebServiceNode
 

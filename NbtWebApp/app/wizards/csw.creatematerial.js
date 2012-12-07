@@ -119,6 +119,21 @@
                     4: 'Attach MSDS'
                 };
 
+                cswPrivate.getSupplierViewid = function(NodeTypeId){
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Nodes/getRelationshipOpts',
+                        async: false,
+                        data:{
+                            NodeTypeId: NodeTypeId,
+                            PropName: 'Supplier'
+                        },
+                        success: function(data){
+                            var opts = JSON.parse(data.options);
+                            cswPrivate.makeSupplierCtrl(opts);
+                        }
+                    });
+                };
+
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.handleStep = function (newStepNo) {
@@ -247,6 +262,7 @@
 
                             hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
+                            cswPrivate.getSupplierViewid(cswPrivate.state.materialType.val);
                         }
                         if (cswPrivate.tradeNameInput &&
                             cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
@@ -289,6 +305,8 @@
                             FirstCellRightAlign: true,
                         });
 
+                        
+
                         //Material
                         tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true);
                         cswPrivate.materialTypeSelect = tbl.cell(1,2).nodeTypeSelect({
@@ -316,21 +334,21 @@
                         
 
                         // SUPPLIER
-                        tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
-                        cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
-                            name: 'supplier',
-                            cssclass: 'required',
-                            ajaxData: {
-                                ObjectClass: 'VendorClass'
-                            },
-                            width: '200px',
-                            showSelectOnLoad: true,
-                            addNodeDialogTitle: 'Vendor',
-                            selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
-                            onChange: changeMaterial,
-                            onSuccess: changeMaterial,
-                            isRequired: true
-                        });
+                        cswPrivate.makeSupplierCtrl = function(options){
+                            tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
+                            cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
+                                name: 'supplier',
+                                cssclass: 'required',
+                                width: '200px',
+                                showSelectOnLoad: true,
+                                addNodeDialogTitle: 'Vendor',
+                                selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
+                                onChange: changeMaterial,
+                                onSuccess: changeMaterial,
+                                isRequired: true,
+                                options: options
+                            });
+                        };
 
                         // PARTNO
                         tbl.cell(4, 1).span().setLabelText('Part No:  ');

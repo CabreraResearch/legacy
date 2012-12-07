@@ -914,16 +914,21 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( approvedOCP, false );
 
             CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
-            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
-            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeView();
+            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier123", NbtViewVisibility.Property );
             CswNbtViewRelationship supplierParent = supplierView.AddViewRelationship( vendorOC, true );
             supplierView.AddViewPropertyAndFilter( supplierParent,
                 MetaDataProp: vendorNameOCP,
                 Value: "Corporate",
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            supplierView.save();
 
             CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToXml().ToString() );
+            foreach( CswNbtMetaDataNodeTypeProp supplierNTP in supplierOCP.getNodeTypeProps() )
+            {
+                supplierNTP.ViewId = supplierView.ViewId;
+            }
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToString() );
 
             CswNbtMetaDataNodeType unCodeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
             if( null != unCodeNT )
