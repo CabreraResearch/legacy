@@ -51,10 +51,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion URSULA
 
-            #region VIOLA
-
-            #endregion VIOLA
-
         }//Update()
 
         private void _makeMolKeysTable()
