@@ -917,7 +917,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
             CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier123", NbtViewVisibility.Property );
+            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier", NbtViewVisibility.Property );
             CswNbtViewRelationship supplierParent = supplierView.AddViewRelationship( vendorOC, true );
             supplierView.AddViewPropertyAndFilter( supplierParent,
                 MetaDataProp: vendorNameOCP,
