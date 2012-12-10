@@ -334,7 +334,6 @@
     <Compile Include="csw\Actions\CswNbtActionCollection.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryListsForMaterials.cs" />
     <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
-    <Compile Include="csw\CswNbtNotificationKey.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\Dev\CswDeveloper.cs" />
@@ -476,7 +475,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialComponent.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSynonym.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassNotification.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassParameter.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassPrintLabel.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassProblem.cs" />
