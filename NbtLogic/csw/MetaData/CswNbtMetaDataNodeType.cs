@@ -580,6 +580,24 @@ namespace ChemSW.Nbt.MetaData
             return _BarcodeProperty;
         } // getBarcodeProperty()
 
+        private CswNbtMetaDataNodeTypeProp _MolProperty;
+        public CswNbtMetaDataNodeTypeProp getMolProperty()
+        {
+            if( _MolProperty == null )
+            {
+                foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
+                {
+                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL )
+                    {
+                        if( _MolProperty != null )
+                            throw new CswDniException( ErrorType.Warning, "Multiple Mol Props Found", "Nodetype " + NodeTypeName + " has more than one Mol property" );
+                        _MolProperty = Prop;
+                    }
+                }
+            }
+            return _MolProperty;
+        } // getBarcodeProperty()
+
         private IEnumerable<CswNbtMetaDataNodeTypeProp> _ButtonProperties = null;
         private IEnumerable<CswNbtMetaDataNodeTypeProp> _getButtonProperties()
         {

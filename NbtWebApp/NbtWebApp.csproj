@@ -90,6 +90,7 @@
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -111,6 +112,9 @@
   <ItemGroup>
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Mol.svc.cs">
+      <DependentUpon>Mol.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\Nodes.svc.cs">
       <DependentUpon>Nodes.svc</DependentUpon>
@@ -136,8 +140,11 @@
     <Compile Include="Services\Views.svc.cs">
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
+    <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\MolDataContract.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceMols.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
@@ -157,6 +164,7 @@
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\Mol.svc" />
     <Content Include="Services\Nodes.svc" />
     <Content Include="Services\LandingPages.svc" />
     <Content Include="Services\Containers.svc" />
@@ -1365,7 +1373,6 @@
     <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
     <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />
     <Compile Include="WebSvc\Returns\CswWebSvcReturnError.cs" />
-    <Compile Include="WebSvc\Returns\CswWebSvcReturnBase.cs" />
     <Compile Include="WebSvc\Returns\CswWebSvcReturn.cs" />
     <Compile Include="wsNBT.cs">
       <DependentUpon>wsNBT.asmx</DependentUpon>

@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
                         {
                             HasPermission = true;
-                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActRequesting.RequestItem( CswNbtActRequesting.RequestItem.Material ), NodeId, ButtonData );
                             NodeAsPropSet.postChanges( false );
@@ -200,6 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
+                            ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
 
                             CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
                             if( false == CswDate.IsNull )

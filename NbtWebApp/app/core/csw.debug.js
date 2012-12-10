@@ -40,24 +40,28 @@
         cswPublic.loggly.error = new window.loggly({ url: url, level: 'error' });
     });
 
-    $(document).ready(function () {
-        (function() {
+    cswPrivate.initLoggly = function(keepTrying) {
+        try {
             var key = Csw.clientSession.getLogglyInput();
             var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
             var url = host + '/inputs/' + key + '?rt=1';
-            try {
-                if (loggly) {
-                    cswPrivate.prepareLoggly(url);
-                } else {
-                    Csw.defer(function() {
-                        cswPrivate.prepareLoggly(url);
-                    }, 5000);
-                }
-            } catch(e) {
-                //Swallow
+            if (loggly) {
+                cswPrivate.prepareLoggly(url);
+            } else {
+                window.setTimeout(function () {
+                    cswPrivate.initLoggly();
+                }, 5000);
             }
-        }());
-    });
+        } catch(e) {
+            //This kludge is for Dev. getLogglyInput() won't fail in compiled code.
+            if (keepTrying !== false) {
+                window.setTimeout(function () {
+                    cswPrivate.initLoggly(false);
+                }, 5000);
+            }
+        }
+    };
+    cswPrivate.initLoggly();
 
     cswPrivate.isLogLevelSupported = function (requestLevel) {
         var maxLevel = Csw.clientSession.getLogglyLevel();
@@ -117,23 +121,21 @@
 
     cswPublic.error = function (msg) {
         /// <summary>Outputs an error message to the console log(Webkit,FF)</summary>
-        cswPrivate.tryExecSwallow(
-            function first() {
-                if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('error')) {
+        if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('error')) {
+            cswPrivate.tryExecSwallow(
+                function first() {
                     console.error(msg);
-                }
-            },
-            function second() {
-                if (cswPrivate.isLogLevelSupported('error')) {
+                },
+                function second() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Error';
                     Csw.debug.loggly.error.error(Csw.serialize(msg));
+                },
+                function third() {
+                    Csw.debug.log(msg);
                 }
-            },
-            function third() {
-                Csw.debug.log(msg);
-            }
-        );
+            );
+        }
     };
 
     cswPublic.group = function (name) {

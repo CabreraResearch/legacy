@@ -25,7 +25,8 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Nbt.PropTypes;
+using ChemSW.StructureSearch;
 
 
 
@@ -2671,6 +2672,57 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
+        } // saveMolProp()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public void getMolImgFromFile()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
+                    Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
+
+                    if( null != MolStream )
+                    {
+                        // Read the binary data
+                        BinaryReader br = new BinaryReader( MolStream );
+                        long Length = MolStream.Length;
+                        byte[] FileData = new byte[Length];
+                        for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
+                        {
+                            FileData[CurrentIndex] = br.ReadByte();
+                        }
+                        string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
+                        byte[] bytes = CswStructureSearch.GetImage( MolData );
+                        string base64String = Convert.ToBase64String( bytes );
+                        ReturnVal["bin"] = base64String;
+                        ReturnVal["molstring"] = MolData;
+                    }
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal["success"] = false;
+            }
+
+            //This is the only way to get the content back down to the client using jQuery File Upload.
+            //DO NOT TOUCH.
+            Context.Response.Clear();
+            Context.Response.ContentType = "image/JPEG";
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
+            //return ReturnVal.ToString();
         } // saveMolProp()
 
         [WebMethod( EnableSession = false )]

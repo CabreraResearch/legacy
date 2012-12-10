@@ -236,17 +236,18 @@
                 return function () {
                     function changeMaterial() {
                         var hasChanged = false;
-                        if (cswPrivate.supplierSelect &&
-                            cswPrivate.state.supplier.val !== cswPrivate.supplierSelect.val()) {
-
-                            hasChanged = true;
-                            cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
-                        }
                         if (cswPrivate.materialTypeSelect &&
                             cswPrivate.state.materialType.val !== cswPrivate.materialTypeSelect.val()) {
 
                             hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
+                            cswPrivate.makeSupplierCtrl(cswPrivate.state.materialType.val);
+                        }
+                        if (cswPrivate.supplierSelect &&
+                            cswPrivate.state.supplier.val !== cswPrivate.supplierSelect.val()) {
+
+                            hasChanged = true;
+                            cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
                         }
                         if (cswPrivate.tradeNameInput &&
                             cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
@@ -289,6 +290,8 @@
                             FirstCellRightAlign: true,
                         });
 
+                        
+
                         //Material
                         tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true);
                         cswPrivate.materialTypeSelect = tbl.cell(1,2).nodeTypeSelect({
@@ -296,7 +299,7 @@
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
-                            onSelect: changeMaterial,
+                            //onSelect: changeMaterial,
                             onChange: changeMaterial,
                             onSuccess: changeMaterial,
                             isRequired: true
@@ -316,21 +319,28 @@
                         
 
                         // SUPPLIER
-                        tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
-                        cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
-                            name: 'supplier',
-                            cssclass: 'required',
-                            ajaxData: {
-                                ObjectClass: 'VendorClass'
-                            },
-                            width: '200px',
-                            showSelectOnLoad: true,
-                            addNodeDialogTitle: 'Vendor',
-                            selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
-                            onChange: changeMaterial,
-                            onSuccess: changeMaterial,
-                            isRequired: true
-                        });
+                        cswPrivate.makeSupplierCtrl = function(NodeTypeId){
+                            tbl.cell(3,1).empty();
+                            tbl.cell(3,2).empty();
+                            tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
+                            cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
+                                name: 'supplier',
+                                async: false,
+                                cssclass: 'required',
+                                width: '200px',
+                                nodesUrlMethod: 'Nodes/getRelationshipOpts',
+                                ajaxData:{
+                                    NodeTypeId: NodeTypeId,
+                                    PropName: 'Supplier',
+                                    TargetNodeTypeName: 'Vendor'
+                                },
+                                showSelectOnLoad: true,
+                                addNodeDialogTitle: 'Vendor',
+                                selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
+                                onChange: changeMaterial,
+                                isRequired: true
+                            });
+                        };
 
                         // PARTNO
                         tbl.cell(4, 1).span().setLabelText('Part No:  ');

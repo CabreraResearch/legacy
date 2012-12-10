@@ -186,7 +186,7 @@ namespace ChemSW.WebSvc
             // ******************************************
             if( null != SvcReturn )
             {
-                SvcReturn.Authentication = SvcReturn.Authentication ?? new CswNbtSessionAuthenticateData.Authentication.Response();
+                SvcReturn.Authentication = SvcReturn.Authentication ?? new CswWebSvcSessionAuthenticateData.Authentication.Response();
                 SvcReturn.Authentication.AuthenticationStatus = AuthenticationStatusIn;
                 if( null != CswNbtResources )
                 {
@@ -196,7 +196,7 @@ namespace ChemSW.WebSvc
                     }
                     if( SvcReturn.Authentication.AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
                     {
-                        SvcReturn.Authentication.ExpirationReset = new CswNbtSessionAuthenticateData.Authentication.Response.Expired();
+                        SvcReturn.Authentication.ExpirationReset = new CswWebSvcSessionAuthenticateData.Authentication.Response.Expired();
 
                         ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
                         SvcReturn.Authentication.ExpirationReset.UserId = CurrentUser.UserId.ToString();

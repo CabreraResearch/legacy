@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 {
-                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit();
+                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit( RemoveTempStatus: true );
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
@@ -326,7 +326,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onRequestPropChange( CswNbtNodeProp Prop )
         {
-        
+
         }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
