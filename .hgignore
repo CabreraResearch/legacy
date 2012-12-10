@@ -30,3 +30,5 @@ glob:TestResults/*
 syntax: regexp
 NbtLogic/csw/Batch/CswNbtBatchOpUpdateRegulatoryLists.cs.orig
 .*\.orig
+.*\.vsp
+.*\.psess
