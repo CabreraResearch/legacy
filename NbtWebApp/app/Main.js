@@ -1383,10 +1383,7 @@ window.initMain = window.initMain || function (undefined) {
                 case 'submit request':
                     Csw.actions.requestCarts(Csw.main.centerTopDiv, {
                         onSubmit: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                            refreshHeaderMenu();
+                            //Nada
                         },
                         onCancel: function() {
                             clear({ 'all': true });
