@@ -249,12 +249,6 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Name,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
-                } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Description,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static
                 } );
@@ -314,7 +308,7 @@ namespace ChemSW.Nbt.Schema
                     FkValue = MaterialOc.ObjectClassId
                 } );
 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                CswNbtMetaDataObjectClassProp RequestOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Request,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -327,12 +321,21 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    FkValue = RequestOcp.PropId,
+                    ValuePropId = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name ).PropId,
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                     SetValOnAdd = false
                 } );
-
-
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
@@ -359,7 +362,6 @@ namespace ChemSW.Nbt.Schema
                     StaticText = CswNbtPropertySetRequestItem.FulfillMenu.Complete,
                     SetValOnAdd = false
                 } );
-
             }
             return Ret;
         }
@@ -900,16 +902,21 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( approvedOCP, false );
 
             CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
-            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
-            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeView();
+            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier", NbtViewVisibility.Property );
             CswNbtViewRelationship supplierParent = supplierView.AddViewRelationship( vendorOC, true );
             supplierView.AddViewPropertyAndFilter( supplierParent,
                 MetaDataProp: vendorNameOCP,
                 Value: "Corporate",
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            supplierView.save();
 
             CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToXml().ToString() );
+            foreach( CswNbtMetaDataNodeTypeProp supplierNTP in supplierOCP.getNodeTypeProps() )
+            {
+                supplierNTP.ViewId = supplierView.ViewId;
+            }
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToString() );
 
             CswNbtMetaDataNodeType unCodeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
             if( null != unCodeNT )
@@ -1086,22 +1093,24 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             CswNbtMetaDataObjectClass locationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp containerLocationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
-            CswNbtMetaDataObjectClassProp containerBarcodeOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode );
-            CswNbtMetaDataObjectClassProp containerExpirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
-            CswNbtMetaDataObjectClassProp containerMissingOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
-            CswNbtMetaDataObjectClassProp containerOwnerOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
-            CswNbtMetaDataObjectClassProp containerStatusOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status );
+            CswNbtMetaDataObjectClassProp containersOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Containers );
 
-            CswNbtMetaDataObjectClassProp containersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( locationOC )
+            if( null == containersOCP )
             {
-                PropName = CswNbtObjClassLocation.PropertyName.Containers,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
-            } );
+                CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClassProp containerLocationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+                CswNbtMetaDataObjectClassProp containerBarcodeOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode );
+                CswNbtMetaDataObjectClassProp containerExpirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
+                CswNbtMetaDataObjectClassProp containerMissingOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
+                CswNbtMetaDataObjectClassProp containerOwnerOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
+                CswNbtMetaDataObjectClassProp containerStatusOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status );
 
-            if( _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Containers in Location" ).Count == 0 )
-            {
+                containersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( locationOC )
+                {
+                    PropName = CswNbtObjClassLocation.PropertyName.Containers,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+                } );
+
                 CswNbtView containersView = _CswNbtSchemaModTrnsctn.makeNewView( "Containers in Location", NbtViewVisibility.Property );
                 containersView.SetViewMode( NbtViewRenderingMode.Grid );
 
@@ -1112,7 +1121,6 @@ namespace ChemSW.Nbt.Schema
                 containersView.AddViewProperty( containerParent, containerMissingOCP );
                 containersView.AddViewProperty( containerParent, containerOwnerOCP );
                 containersView.AddViewProperty( containerParent, containerStatusOCP );
-                containersView.save();
 
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( containersOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, containersView.ToString() );
             }

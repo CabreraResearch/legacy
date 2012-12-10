@@ -812,7 +812,6 @@
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswPropIdAttr.cs" />
     <Compile Include="csw\Session\CswNbtSessionAuthenticate.cs" />
-    <Compile Include="csw\Session\CswNbtSessionAuthenticateData.cs" />
     <Compile Include="csw\Session\CswNbtSessionDataId.cs" />
     <Compile Include="csw\Session\CswNbtSessionDataItem.cs" />
     <Compile Include="csw\Session\CswNbtSessionDataMgr.cs" />

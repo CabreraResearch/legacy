@@ -908,20 +908,22 @@
 
             var getMolImgFromText = function (molTxt, nodeId) {
                 var ret = '';
-                Csw.ajax.post({
+
+                Csw.ajaxWcf.post({
                     async: false,
-                    url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromText',
+                    urlMethod: 'Mol/getImg',
                     data: {
-                        molData: molTxt,
-                        nodeId: nodeId
+                        molString: molTxt,
+                        nodeId: nodeId,
+                        molImgAsBase64String: ''
                     },
                     success: function (data) {
                         table.cell(4, 2).empty();
-                        if (false == Csw.isNullOrEmpty(data.molstring)) {
-                            molText.val(data.molstring);
+                        if (data.MolImgDataCollection.length > 0) {
+                            molText.val(data.MolImgDataCollection[0].molString);
                             table.cell(4, 2).img({
                                 labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + data.bin
+                                src: "data:image/jpeg;base64," + data.MolImgDataCollection[0].molImgAsBase64String
                             });
                         }
                     }
@@ -940,7 +942,7 @@
             uploadBtn.$.fileupload({
                 datatype: 'json',
                 url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromFile',
-                paramName: 'fileupload',
+                paramName: 'filename',
                 done: function (e, data) {
                     molText.val(JSON.parse(data.result).molstring);
                     table.cell(4, 2).empty();
@@ -962,15 +964,21 @@
                 enabledText: 'Search',
                 disabledText: "Searching...",
                 onClick: function () {
-                    Csw.ajax.post({
-                        url: Csw.enums.ajaxUrlPrefix + 'RunStructureSearch',
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Mol/runStructureSearch',
                         data: {
-                            molData: molText.val(),
+                            viewId: '',
+                            viewMode: '',
+                            molString: molText.val(),
                             exact: exactSearchChkBox.checked()
                         },
                         success: function (data) {
-                            Csw.tryExec(cswPrivate.loadView, data.viewId, data.viewMode);
-                            div.$.dialog('close');
+                            if (data.StructureSearchViewDataCollection.length > 0) {
+                                var viewId = data.StructureSearchViewDataCollection[0].viewId;
+                                var viewMode = data.StructureSearchViewDataCollection[0].viewMode;
+                                Csw.tryExec(cswPrivate.loadView, viewId, viewMode);
+                                div.$.dialog('close');
+                            }
                         }
                     });
                 }

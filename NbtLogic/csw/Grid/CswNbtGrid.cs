@@ -49,6 +49,12 @@ namespace ChemSW.Nbt.Grid
                     if( null != FirstVr )
                     {
                         GroupByCol = FirstVr.GroupByPropName;
+                        //if( false == string.IsNullOrEmpty( GroupByCol ) &&
+                        //    IsPropertyGrid &&
+                        //    Tree.getChildNodeCount() > 0 )
+                        //{
+                        //    Tree.goToNthChild( 0 );
+                        //}
                     }
                 }
                 grid.GroupByCol = GroupByCol;
@@ -189,6 +195,7 @@ namespace ChemSW.Nbt.Grid
 
                     Tree.goToParentNode();
                     grid.rows.Add( gridrow );
+
                 }
                 Ret = grid.ToJson();
             }

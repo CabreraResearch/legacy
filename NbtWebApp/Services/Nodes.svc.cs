@@ -76,7 +76,6 @@ namespace NbtWebApp
                 }
             }
 
-
             public CswNbtSessionDataId NbtViewId = null;
 
             public CswPrimaryKey RelatedNodeId = null;
@@ -107,59 +106,28 @@ namespace NbtWebApp
                 public Int32 ObjectClassId = Int32.MinValue;
 
                 [DataMember]
-                public Collection<Node> Nodes = new Collection<Node>();
+                public Collection<CswNbtNode.Node> Nodes = new Collection<CswNbtNode.Node>();
             }
 
             [DataMember]
             public Ret Data = null;
         }
 
+
+
         [DataContract]
-        public class Node
+        public class PropertyView
         {
-            public Node( CswNbtNode NbtNode )
-            {
-                if( null != NbtNode )
-                {
-                    _NodeId = NbtNode.NodeId.ToString();
-                    _NodePk = NbtNode.NodeId;
-                    NodeName = NbtNode.NodeName;
-                }
-            }
-
-            private string _NodeId = string.Empty;
-            private CswPrimaryKey _NodePk = null;
-
-            public CswPrimaryKey NodePk
-            {
-                get { return _NodePk; }
-                set
-                {
-                    _NodePk = value;
-                    if( CswTools.IsPrimaryKey( value ) )
-                    {
-                        _NodeId = _NodePk.ToString();
-                    }
-                    else
-                    {
-                        _NodeId = string.Empty;
-                    }
-                }
-            }
-
             [DataMember]
-            public string NodeId
-            {
-                get { return _NodeId; }
-                set
-                {
-                    _NodeId = value;
-                    _NodePk = CswConvert.ToPrimaryKey( _NodeId );
-                }
-            }
-
-            [DataMember( IsRequired = false )]
-            public string NodeName = String.Empty;
+            public string PropName = string.Empty;
+            [DataMember]
+            public string NodeTypeId = string.Empty;
+            [DataMember]
+            public string NodeId = string.Empty;
+            [DataMember]
+            public string TargetNodeTypeId = string.Empty;
+            [DataMember]
+            public string TargetNodeTypeName = string.Empty;
         }
     }
 
@@ -195,5 +163,25 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the viewid of a property view" )]
+        public NodeSelect.Response getRelationshipOpts( NodeSelect.PropertyView Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            NodeSelect.Response Ret = new NodeSelect.Response();
+            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, NodeSelect.PropertyView>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.getRelationshipOpts,
+                ParamObj: Request
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
     }
 }

@@ -1367,10 +1367,12 @@ ul li div {
 {
     padding: 2px;
     text-align: right;
-    width: 242px;
-    max-height: 70px;
     font-size: 9px;
     overflow: auto; 
+}
+.viewfiltersdivtree {
+    width: 242px;
+    max-height: 70px;
 }
 
 .truncated

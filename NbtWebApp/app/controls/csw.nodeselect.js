@@ -71,7 +71,6 @@
             //#region AJAX
 
             cswPrivate.getNodes = function () {
-
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     async: Csw.bool(cswPrivate.async),
@@ -84,6 +83,7 @@
                         ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
+                        //cswPrivate.options = JSON.parse(data.options);
                         var options = [];
                         data.Nodes.forEach(function (obj) {
                             options.push({ id: obj.NodeId, value: obj.NodeName });
@@ -93,7 +93,7 @@
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
                         cswPrivate.objectClassId = cswPrivate.objectClassId || data.ObjectClassId;
-                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId;
+                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId
 
                         cswPrivate.makeControl();
                     }
@@ -352,7 +352,7 @@
                     cswPublic.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                     function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
                 } else {
-                    if (cswPrivate.options.length > 0) {
+                    if (cswPrivate.options.length > 0 || false === cswPrivate.doGetNodes) {
                         cswPrivate.makeControl();
                     } else {
                         cswPrivate.getNodes();

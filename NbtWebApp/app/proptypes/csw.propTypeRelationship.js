@@ -24,6 +24,7 @@
                     nodeSelect.selectedNodeLink = Csw.string(cswPrivate.propVals.relatednodelink).trim();
                     nodeSelect.selectedName = Csw.string(cswPrivate.propVals.name).trim();
                     nodeSelect.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
+                    nodeSelect.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     nodeSelect.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     nodeSelect.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
                     nodeSelect.options = cswPrivate.propVals.options;
@@ -47,6 +48,8 @@
                     nodeSelect.isMulti = cswPublic.data.isMulti();
                     nodeSelect.isReadOnly = cswPublic.data.isReadOnly();
                     nodeSelect.isClickable = cswPublic.data.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
+
+                    nodeSelect.doGetNodes = false;
 
                     nodeSelect.showSelectOnLoad = (function () {
                         return cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add ||
