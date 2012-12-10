@@ -163,7 +163,7 @@ namespace NbtWebApp
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
-        [Description( "Get the viewid of a property view" )]
+        [Description( "Get the options for a relationship property" )]
         public NodeSelect.Response getRelationshipOpts( NodeSelect.PropertyView Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
@@ -178,6 +178,5 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
-
     }
 }
