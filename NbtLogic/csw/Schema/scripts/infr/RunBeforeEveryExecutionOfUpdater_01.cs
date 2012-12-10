@@ -57,6 +57,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
             _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
 
+            _createTierIITable( CswDeveloper.BV, 28247 );
+
             #endregion VIOLA
 
         }//Update()
@@ -78,6 +80,50 @@ namespace ChemSW.Nbt.Schema
             }
             _resetBlame();
             #endregion
+        }
+
+        private void _createTierIITable( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( "tier2", "tier2id" );
+            }
+
+            if( _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
+            {
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "dateadded" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addDateColumn( "tier2", "dateadded", "Date added", false, false );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "locationid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "locationid", "PK of the Location", false, false );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "parentlocationid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "parentlocationid", "PK of the parent Location", false, false );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "materialid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "materialid", "PK of the Material", false, false );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "casno" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( "tier2", "casno", "Material's CASNo", false, false, 20 );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "quantity" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addDoubleColumn( "tier2", "quantity", "Quantity of the Material in the given Location", false, false, 6 );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "totalquantity" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addDoubleColumn( "tier2", "totalquantity", "Quantity of the Material in the given Location and all child locations", false, false, 6 );
+                }
+            }
+
+            _resetBlame();
         }
 
     }//class RunBeforeEveryExecutionOfUpdater_01
