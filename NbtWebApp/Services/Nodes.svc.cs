@@ -178,5 +178,24 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get all sizes related to a given node" )]
+        public NodeSelect.Response getSizes( CswNbtNode.Node Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            NodeSelect.Response Ret = new NodeSelect.Response();
+            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, CswNbtNode.Node>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.getSizes,
+                ParamObj: Request
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
     }
 }

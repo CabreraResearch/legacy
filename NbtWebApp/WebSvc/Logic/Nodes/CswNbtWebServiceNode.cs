@@ -613,6 +613,46 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        public static void getSizes( ICswResources CswResources, NodeSelect.Response Response, CswNbtNode.Node Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+                NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
+
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtMetaDataObjectClass sizeOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+
+                    CswNbtView sizesView = new CswNbtView( NbtResources );
+                    CswNbtViewRelationship parent = sizesView.AddViewRelationship( sizeOC, true );
+                    sizesView.AddViewPropertyAndFilter( parent,
+                        MetaDataProp: materialOCP,
+                        Value: pk.PrimaryKey.ToString(),
+                        SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                    ICswNbtTree tree = NbtResources.Trees.getTreeFromView( sizesView, true, false, false );
+                    for( int i = 0; i < tree.getChildNodeCount(); i++ )
+                    {
+                        tree.goToNthChild( i );
+                        Ret.Nodes.Add( new CswNbtNode.Node( null )
+                        {
+                            NodePk = tree.getNodeIdForCurrentPosition(),
+                            NodeName = tree.getNodeNameForCurrentPosition()
+                        } );
+                        tree.goToParentNode();
+                    }
+
+                }
+
+                Response.Data = Ret;
+            }
+        }
+
     } // class CswNbtWebServiceNode
 
 } // namespace ChemSW.Nbt.WebServices
