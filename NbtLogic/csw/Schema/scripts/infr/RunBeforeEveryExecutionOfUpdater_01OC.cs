@@ -263,12 +263,6 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Name,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
-                } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Description,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static
                 } );
@@ -328,7 +322,7 @@ namespace ChemSW.Nbt.Schema
                     FkValue = MaterialOc.ObjectClassId
                 } );
 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                CswNbtMetaDataObjectClassProp RequestOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Request,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -341,12 +335,21 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    FkValue = RequestOcp.PropId,
+                    ValuePropId = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name ).PropId,
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                     SetValOnAdd = false
                 } );
-
-
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
@@ -373,7 +376,6 @@ namespace ChemSW.Nbt.Schema
                     StaticText = CswNbtPropertySetRequestItem.FulfillMenu.Complete,
                     SetValOnAdd = false
                 } );
-
             }
             return Ret;
         }

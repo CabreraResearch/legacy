@@ -175,7 +175,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
-                CswNbtActRequesting RequestAction = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: false );
+                CswNbtActRequesting RequestAction = new CswNbtActRequesting( _CswNbtResources );
                 Int32 CartCount = RequestAction.getCartContentCount();
                 Ret["Cart (" + CartCount + ")"] = new JObject();
                 Ret["Cart (" + CartCount + ")"]["action"] = "Submit_Request";

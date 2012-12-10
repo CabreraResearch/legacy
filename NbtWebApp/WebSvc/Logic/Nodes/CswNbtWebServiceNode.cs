@@ -542,7 +542,7 @@ namespace ChemSW.Nbt.WebServices
                 for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
                 {
                     Tree.goToNthChild( N );
-                    Ret.Nodes.Add( new NodeSelect.Node( null )
+                    Ret.Nodes.Add( new CswNbtNode.Node( null )
                     {
                         NodePk = Tree.getNodeIdForCurrentPosition(),
                         NodeName = Tree.getNodeNameForCurrentPosition()
@@ -554,7 +554,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.UseSearch = Ret.UseSearch || Nodes.Count > SearchThreshold;
             foreach( CswNbtNode Node in ( from _Node in Nodes orderby _Node.NodeName select _Node ).Take( SearchThreshold ) )
             {
-                Ret.Nodes.Add( new NodeSelect.Node( Node ) );
+                Ret.Nodes.Add( new CswNbtNode.Node( Node ) );
             }
 
             return Ret;

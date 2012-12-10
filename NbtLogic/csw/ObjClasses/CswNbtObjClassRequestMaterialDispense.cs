@@ -233,22 +233,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            //case 2753 - naming logic
-            if( false == IsTemp )
-            {
-                if( Type.Value.Equals( Types.Size ) && CswTools.IsPrimaryKey( Size.RelatedNodeId ) ) //request material by size
-                {
-                    CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
-                    if( null != sizeNode )
-                    {
-                        Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
-                    }
-                }
-                else //request material by bulk
-                {
-                    Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
-                }
-            }
             IsFavorite.setHidden( value: true, SaveToDb: true );
         }
 
@@ -613,6 +597,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Status.setHidden( value: true, SaveToDb: true );
                 Fulfill.setHidden( value: true, SaveToDb: true );
                 AssignedTo.setHidden( value: true, SaveToDb: true );
+                Number.setHidden( value: true, SaveToDb: true );
                 NeededBy.setHidden( value: true, SaveToDb: true );
                 TotalMoved.setHidden( value: true, SaveToDb: true );
                 TotalDispensed.setHidden( value: true, SaveToDb: true );
