@@ -331,8 +331,7 @@
                                 nodesUrlMethod: 'Nodes/getRelationshipOpts',
                                 ajaxData:{
                                     NodeTypeId: NodeTypeId,
-                                    PropName: 'Supplier',
-                                    TargetNodeTypeName: 'Vendor'
+                                    ObjClassPropName: 'Supplier'
                                 },
                                 showSelectOnLoad: true,
                                 addNodeDialogTitle: 'Vendor',

@@ -119,15 +119,11 @@ namespace NbtWebApp
         public class PropertyView
         {
             [DataMember]
-            public string PropName = string.Empty;
+            public string ObjClassPropName = string.Empty;
             [DataMember]
             public string NodeTypeId = string.Empty;
             [DataMember]
             public string NodeId = string.Empty;
-            [DataMember]
-            public string TargetNodeTypeId = string.Empty;
-            [DataMember]
-            public string TargetNodeTypeName = string.Empty;
         }
     }
 
