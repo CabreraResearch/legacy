@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Search" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/c3WebServii" />
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="Search_authenticateUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:authenticateUser" />
+  </wsdl:message>
+  <wsdl:message name="Search_authenticateUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:authenticateUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_authenticateUser_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q1:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_getDataSources_InputMessage">
+    <wsdl:part name="parameters" element="tns:getDataSources" />
+  </wsdl:message>
+  <wsdl:message name="Search_getDataSources_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getDataSourcesResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getDataSources_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q2:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_getUsers_InputMessage">
+    <wsdl:part name="parameters" element="tns:getUsers" />
+  </wsdl:message>
+  <wsdl:message name="Search_getUsers_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getUsersResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getUsers_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q3:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_editUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:editUser" />
+  </wsdl:message>
+  <wsdl:message name="Search_editUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:editUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_editUser_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q4:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_deleteUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:deleteUser" />
+  </wsdl:message>
+  <wsdl:message name="Search_deleteUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:deleteUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_deleteUser_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q5:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_updateImportStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:updateImportStatus" />
+  </wsdl:message>
+  <wsdl:message name="Search_updateImportStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:updateImportStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_updateImportStatus_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q6:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_search_InputMessage">
+    <wsdl:part name="parameters" element="tns:search" />
+  </wsdl:message>
+  <wsdl:message name="Search_search_OutputMessage">
+    <wsdl:part name="parameters" element="tns:searchResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_search_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q7:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:portType name="Search">
+    <wsdl:operation name="authenticateUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/authenticateUser" message="tns:Search_authenticateUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/authenticateUserResponse" message="tns:Search_authenticateUser_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/authenticateUserSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_authenticateUser_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getDataSources">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getDataSources" message="tns:Search_getDataSources_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getDataSourcesResponse" message="tns:Search_getDataSources_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getDataSourcesSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getDataSources_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getUsers">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getUsers" message="tns:Search_getUsers_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getUsersResponse" message="tns:Search_getUsers_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getUsersSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getUsers_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="editUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/editUser" message="tns:Search_editUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/editUserResponse" message="tns:Search_editUser_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/editUserSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_editUser_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="deleteUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/deleteUser" message="tns:Search_deleteUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/deleteUserResponse" message="tns:Search_deleteUser_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/deleteUserSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_deleteUser_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="updateImportStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/updateImportStatus" message="tns:Search_updateImportStatus_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/updateImportStatusResponse" message="tns:Search_updateImportStatus_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/updateImportStatusSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_updateImportStatus_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="search">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/search" message="tns:Search_search_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/searchResponse" message="tns:Search_search_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/searchSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_search_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:service name="Search" />
+</wsdl:definitions>

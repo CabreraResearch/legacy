@@ -125,9 +125,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjArbitraryClass.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -985,9 +982,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\ChemCatCentral\" />
