@@ -19,58 +19,49 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtActRequesting _RequestAct;
 
-        private void _initOrderingResources( SystemViewName ViewName, CswPrimaryKey RequestNodeId = null )
+        private void _initOrderingResources( CswPrimaryKey RequestNodeId = null )
         {
-            _RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true, RequestViewName: ViewName, RequestNodeId: RequestNodeId );
+            _RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true, RequestNodeId: RequestNodeId );
         }
 
-        public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, SystemViewName ViewName = null, CswPrimaryKey RequestNodeId = null )
+        public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, CswPrimaryKey RequestNodeId = null )
         {
             _CswNbtResources = CswNbtResources;
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
             }
-            if( ViewName != SystemViewName.CISProRequestCart && ViewName != SystemViewName.CISProRequestHistory )
-            {
-                ViewName = SystemViewName.CISProRequestCart;
-            }
-            _initOrderingResources( ViewName, RequestNodeId );
+
+            _initOrderingResources( RequestNodeId );
 
         } //ctor
 
-        public JObject getCurrentRequest( CswNbtActRequesting RequestAct = null )
+        public JObject getRequestViewGrid( string SessionViewId )
         {
-            RequestAct = RequestAct ?? _RequestAct;
             JObject ret = new JObject();
-            CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, RequestAct.CurrentCartView, ForReport: false );
-            ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true );
-            ret["cartnodeid"] = RequestAct.CurrentRequestNode().NodeId.ToString();
-            ret["cartviewid"] = RequestAct.CurrentCartView.SessionViewId.ToString();
+
+            CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( SessionViewId );
+            if( SessionDataId.isSet() )
+            {
+                CswNbtView CartView = _CswNbtResources.ViewSelect.getSessionView( SessionDataId );
+                if( null != CartView )
+                {
+                    CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
+                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true );
+                    ret["cartnodeid"] = _RequestAct.getCurrentRequestNode().NodeId.ToString();
+                }
+            }
             return ret;
         }
 
         public JObject getCurrentRequestId()
         {
             JObject ret = new JObject();
-            CswNbtNode CurrentRequest = _RequestAct.CurrentRequestNode();
+            CswNbtObjClassRequest CurrentRequest = _RequestAct.getCurrentRequestNode();
             ret["cartnodeid"] = CurrentRequest.NodeId.ToString();
             return ret;
         }
 
-        public JObject getRequestHistory()
-        {
-            return _RequestAct.getRequestHistory();
-        }
-
-        public JObject copyRequest( CswPrimaryKey CopyFromNodeId, CswPrimaryKey CopyToNodeId )
-        {
-            /* We're need two instances of CswNbtActSubmitRequest. 
-             * The current instance was loaded with CopyFromNodeId
-             * For the response we need a new instance with the current RequestNodeId, CopyToNodeId */
-            CswNbtActRequesting CopyRequest = _RequestAct.copyRequest( CopyFromNodeId, CopyToNodeId );
-            return getCurrentRequest( CopyRequest );
-        }
 
         #region WCF
 
@@ -116,7 +107,26 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, false );
-            Ret.Data.FavoriteItemsViewId = ActRequesting.getFavoriteRequests().SessionViewId.ToString();
+
+            CswNbtView PendingItemsView = ActRequesting.getPendingItemsView();
+            PendingItemsView.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.PendingItemsView = PendingItemsView;
+
+            CswNbtView FavoritesView = ActRequesting.getFavoriteRequestNamesView();
+            FavoritesView.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.FavoritesView = FavoritesView;
+
+            CswNbtView SubmittedItems = ActRequesting.getSubmittedRequestItemsView();
+            SubmittedItems.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.SubmittedItemsView = SubmittedItems;
+
+            CswNbtView RecurringItems = ActRequesting.getRecurringRequestsItemsView();
+            RecurringItems.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.RecurringItemsView = RecurringItems;
+
+            CswNbtView FavoriteItems = ActRequesting.getFavoriteRequestsItemsView();
+            FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
+            Ret.Data.FavoriteItemsView = FavoriteItems;
         }
 
         /// <summary>

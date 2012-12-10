@@ -40,6 +40,13 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterPopulateProps();
         public abstract bool onButtonClick( NbtButtonData ButtonData );
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
+        public virtual CswNbtNode CopyNode( )
+        {
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedNode.copyPropertyValues( Node );
+            CopiedNode.postChanges( true, true );
+            return CopiedNode;
+        }
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
         public CswNbtMetaDataNodeType NodeType { get { return _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId ); } }

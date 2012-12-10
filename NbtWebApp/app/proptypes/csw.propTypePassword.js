@@ -35,8 +35,8 @@
                         cswPublic.control.cell(2, 1).text('Confirm');
                         cswPrivate.cell22 = cswPublic.control.cell(2, 2);
                         cswPrivate.cell31 = cswPublic.control.cell(3, 1);
-                        cswPublic.control.cell(3, 2).text('Expired');
-
+                        cswPrivate.cell32 = cswPublic.control.cell(3, 2);
+                        
                         cswPrivate.textBox1 = cswPrivate.cell12.input({
                             name: cswPublic.data.name + '_pwd1',
                             type: Csw.enums.inputTypes.password,
@@ -58,6 +58,7 @@
                             onChange: cswPublic.data.onChange
                         });
                         if (cswPrivate.isAdmin) {
+                            cswPrivate.cell32.text('Expired');
                             cswPrivate.expiredChk = cswPrivate.cell31.input({
                                 name: cswPublic.data.name + '_exp',
                                 type: Csw.enums.inputTypes.checkbox,
@@ -65,7 +66,7 @@
                                 onChange: function () {
                                     var val = cswPrivate.expiredChk.$.is(':checked');
                                     Csw.tryExec(cswPublic.data.onChange, val);
-                                    cswPublic.data.onPropChange({ isexpired: val });
+                                    cswPublic.data.onPropChange({ expire: val });
                                 }
                             });
                         }

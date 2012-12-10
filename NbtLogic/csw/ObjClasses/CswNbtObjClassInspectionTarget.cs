@@ -16,9 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InspectionTargetGroup = "Inspection Target Group";
         }
 
-        //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return PropertyName.Status; } }
-        //public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -80,27 +78,21 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
+        }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedInspectionTargetNode.Node.copyPropertyValues( Node );
+            CopiedInspectionTargetNode.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+            CopiedInspectionTargetNode.postChanges( true );
+            return CopiedInspectionTargetNode.Node;
         }
         #endregion
 
         #region Object class specific properties
-        /*
-        /// <summary>
-        /// Date of last Inspection
-        /// </summary>
-        public CswNbtNodePropDateTime LastInspectionDate
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[LastInspectionDatePropertyName].AsDateTime );
-            }
-        }
-        */
 
         /// <summary>
         /// Inspection Target Inspection Status (OK, Deficient)

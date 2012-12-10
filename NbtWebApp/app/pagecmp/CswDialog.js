@@ -557,7 +557,7 @@
                 Csw.tryExec(cswDlgPrivate.Refresh);
             }
 
-            openDialog(div, 900, 600, _onclose, 'Edit Layout', cswDlgPrivate.onOpen);
+            openDialog(div, 900, 600, _onclose, 'Configure Layouts', cswDlgPrivate.onOpen);
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var cswDlgPrivate = {

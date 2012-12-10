@@ -122,6 +122,8 @@
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947_part2.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27867_part2.cs" />
     <Compile Include="csw\Actions\CswNbtContainerDataContract.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassFireClassExemptAmount.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassFireClassExemptAmountSet.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerDispense.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpContainerReconciliationActions.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
@@ -279,6 +281,7 @@
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Size_Case27438.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27551.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28229.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28156.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28117.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28075.cs" />
@@ -308,6 +311,11 @@
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case26827.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28282.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28281.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_CaseXXXXX.cs" />
     <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -318,7 +326,6 @@
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27742.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28002.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
-    <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateNodes.cs" />
     <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
@@ -917,7 +924,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="csw\Schema\scripts\prod\01V\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
   </ItemGroup>

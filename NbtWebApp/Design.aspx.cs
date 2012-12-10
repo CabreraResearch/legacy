@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -727,6 +728,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         SelectedNodeType.IsLocked = LockedCheckbox.Checked;
                     }
+                    SelectedNodeType.SearchDeferPropId = CswConvert.ToInt32( SearchDeferSelect.SelectedValue );
                     SelectedNodeType.NodeTypeName = EditNodeTypeName.Text;
                     SelectedNodeType.Category = EditNodeTypeCategory.Text;
                     SelectedNodeType.IconFileName = IconSelect.SelectedValue;
@@ -1080,6 +1082,8 @@ namespace ChemSW.Nbt.WebPages
         //private Literal Spacer4;
         private Literal CopiedNodeTypeNameLabel;
         private TextBox CopiedNodeTypeName;
+        private Literal SearchDeferSelectLabel;
+        private DropDownList SearchDeferSelect;
         private CheckBox LockedCheckbox;
         private TableRow _ViewXmlRow;
         private CswViewStructureTree _RelationshipViewTree;
@@ -1148,6 +1152,14 @@ namespace ChemSW.Nbt.WebPages
             LockedCheckbox.Text = "Locked";
             LockedCheckbox.EnableViewState = false;
 
+            SearchDeferSelectLabel = new Literal();
+            SearchDeferSelectLabel.Text = "Defer Search To:";
+
+            SearchDeferSelect = new DropDownList();
+            SearchDeferSelect.ID = "SearchDeferSelect_" + _SelectedValue;
+            SearchDeferSelect.CssClass = "selectinput";
+            SearchDeferSelect.AutoPostBack = false;
+
             if( _CanThisNodeTypeVersion )
             {
                 NodeTypeVersionLabel = new Label();
@@ -1214,15 +1226,17 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 4, 1, AddToNameTemplatePropSelect );
             TabTable.addControl( 5, 0, AuditLevelLabel );
             TabTable.addControl( 5, 1, AuditLevelDropDownList );
-            TabTable.addControl( 6, 1, LockedCheckbox );
+            TabTable.addControl( 6, 0, SearchDeferSelectLabel );
+            TabTable.addControl( 6, 1, SearchDeferSelect );
+            TabTable.addControl( 7, 1, LockedCheckbox );
             if( _CanThisNodeTypeVersion )
             {
-                TabTable.addControl( 7, 0, NodeTypeVersionLabel );
-                TabTable.addControl( 7, 1, NodeTypeVersionSelect );
+                TabTable.addControl( 8, 0, NodeTypeVersionLabel );
+                TabTable.addControl( 8, 1, NodeTypeVersionSelect );
             }
-            TabTable.addControl( 8, 1, _SaveButton );
-            TabTable.addControl( 9, 0, new CswLiteralNbsp() );
-            TableCell SpacerCell = TabTable.getCell( 9, 0 );
+            TabTable.addControl( 9, 1, _SaveButton );
+            TabTable.addControl( 10, 0, new CswLiteralNbsp() );
+            TableCell SpacerCell = TabTable.getCell( 10, 0 );
             SpacerCell.ColumnSpan = 2;
             SpacerCell.Controls.Add( Spacer2 );
             TabTable.addControl( 11, 0, CopiedNodeTypeNameLabel );
@@ -1336,14 +1350,25 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 LockedCheckbox.Checked = SelectedNodeType.IsLocked;
-            }
+                
+                SearchDeferSelect.Items.Clear();
+                SearchDeferSelect.Items.Add( new ListItem( "", "" ) );
+                SearchDeferSelect.Items.Add( new ListItem( "Not Searchable", CswNbtMetaDataObjectClass.NotSearchableValue.ToString() ) );
+                foreach( CswNbtMetaDataNodeTypeProp Prop in SelectedNodeType.getNodeTypeProps()
+                            .Where( Prop => Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
+                                    Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location ) )
+                {
+                    SearchDeferSelect.Items.Add( new ListItem( Prop.PropName, Prop.PropId.ToString() ) );
+                }
+                SearchDeferSelect.SelectedValue = CswConvert.ToString( SelectedNodeType.SearchDeferPropId );
+            } // if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && CswConvert.ToInt32( _SelectedValue ) > 0 )
 
             if( _Mode == NbtDesignMode.Inspection )
             {
                 NodeTypeObjectClassLabel.Visible = false;
                 NodeTypeObjectClass.Visible = false;
             }
-        }
+        } // init_editNodeTypePage()
 
         private string _ReturnURLForQueryString()
         {
