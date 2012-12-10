@@ -605,17 +605,17 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 case InspectionStatus.Completed:
                 case InspectionStatus.CompletedLate:
+                    InspectionDate.DateTimeValue = DateTime.Now;
+                    if( false == _CswNbtResources.IsSystemUser )
+                    {
+                        Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                    }
                     if( _InspectionState.Deficient )
                     {
                         Status.Value = InspectionStatus.ActionRequired;
                     }
                     else
                     {
-                        if( InspectionDate.Empty )
-                        {
-                            InspectionDate.DateTimeValue = DateTime.Now;
-                            Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                        }
                         Finish.setReadOnly( true, true );
                         SetPreferred.setReadOnly( true, true );
                         Cancel.setReadOnly( true, true );
@@ -625,6 +625,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case InspectionStatus.Cancelled:
                 case InspectionStatus.Missed:
+                    InspectionDate.DateTimeValue = DateTime.Now;
                     Finish.setReadOnly( true, true );
                     SetPreferred.setReadOnly( true, true );
                     Cancel.setReadOnly( true, true );
