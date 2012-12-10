@@ -508,7 +508,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp,
-                Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.False ),
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ),
                 ShowInGrid: false );
         }
 
