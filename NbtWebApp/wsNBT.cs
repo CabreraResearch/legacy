@@ -1158,8 +1158,9 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         //CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-                        CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, View, CswConvert.ToInt32( NodeTypeId ) );
-                        ReturnVal = wsTable.getTable();
+                        //CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, View, CswConvert.ToInt32( NodeTypeId ) );
+                        CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToInt32( NodeTypeId ) );
+                        ReturnVal = wsTable.getTable( View );
                         View.SaveToCache( true );
                     }
                 }
@@ -3201,6 +3202,34 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         } // saveSearchAsView()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string doChemCatCentralSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ReturnVal = ws.doChemCatCentralSearch( SearchTerm, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ) );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // doUniversalSearch()
 
         #endregion Search
 
