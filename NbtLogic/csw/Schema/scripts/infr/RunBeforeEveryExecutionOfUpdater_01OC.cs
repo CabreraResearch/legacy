@@ -1349,6 +1349,27 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28282
 
+        #region Case 28247
+
+        private void _addMaterialTierIIOCP( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp IsTierIIOCP =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
+                {
+                    PropName = CswNbtObjClassMaterial.PropertyName.IsTierII,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsTierIIOCP, false );
+
+            _resetBlame();
+        }
+
+        #endregion Case 28247
+
         #endregion Viola Methods
 
         /// <summary>
@@ -1389,6 +1410,7 @@ namespace ChemSW.Nbt.Schema
             _addHazardousReoprtingProp( CswDeveloper.BV, 28281 );
             _addContainerFireReportingProps( CswDeveloper.BV, 28281 );
             _addControlZoneNT( CswDeveloper.BV, 28282 );
+            _addMaterialTierIIOCP( CswDeveloper.BV, 28247 );
 
             #endregion VIOLA
 
