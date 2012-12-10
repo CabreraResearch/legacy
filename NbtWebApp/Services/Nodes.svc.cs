@@ -76,7 +76,6 @@ namespace NbtWebApp
                 }
             }
 
-
             public CswNbtSessionDataId NbtViewId = null;
 
             public CswPrimaryKey RelatedNodeId = null;
@@ -115,6 +114,21 @@ namespace NbtWebApp
         }
 
 
+
+        [DataContract]
+        public class PropertyView
+        {
+            [DataMember]
+            public string PropName = string.Empty;
+            [DataMember]
+            public string NodeTypeId = string.Empty;
+            [DataMember]
+            public string NodeId = string.Empty;
+            [DataMember]
+            public string TargetNodeTypeId = string.Empty;
+            [DataMember]
+            public string TargetNodeTypeName = string.Empty;
+        }
     }
 
 
@@ -149,5 +163,25 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the viewid of a property view" )]
+        public NodeSelect.Response getRelationshipOpts( NodeSelect.PropertyView Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            NodeSelect.Response Ret = new NodeSelect.Response();
+            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, NodeSelect.PropertyView>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.getRelationshipOpts,
+                ParamObj: Request
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
     }
 }
