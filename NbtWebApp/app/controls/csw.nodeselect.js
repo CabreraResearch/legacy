@@ -339,7 +339,7 @@
             //#region _postCtor
 
             (function _relationship() {
-                if (false == cswPrivate.isClickable) { //case 28180 - relationships not clickable from audit history grid
+                if (false === cswPrivate.isClickable) { //case 28180 - relationships not clickable from audit history grid
                     cswPrivate.nodeTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
                     cswPrivate.nodeText = cswPrivate.nodeTextCell.span({
                         text: cswPrivate.selectedName
