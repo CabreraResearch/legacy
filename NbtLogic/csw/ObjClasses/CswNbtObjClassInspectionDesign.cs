@@ -378,12 +378,6 @@ namespace ChemSW.Nbt.ObjClasses
                 _genFutureNodes();
             }
 
-            // case 26584
-            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-            {
-                Status.setReadOnly( value: false, SaveToDb: false );
-            }
-
             foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
@@ -392,6 +386,11 @@ namespace ChemSW.Nbt.ObjClasses
                     QuestionProp.CorrectiveAction = string.Empty;
                 }
             }
+
+            // !!!
+            // Don't clear IsFuture here, like we do with Tasks.  See case 28317.
+            // !!!
+
         } // beforeWriteNode()
 
         /// <summary>
@@ -428,6 +427,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             SetPreferred.setReadOnly( value: _InspectionState.AllAnswered, SaveToDb: true );
+            // case 26584, 28155
+            Status.setReadOnly( value: false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb: false );
 
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
@@ -472,9 +473,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                     case PropertyName.SetPreferred:
                         CswNbtPropEnmrtrFiltered QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                        QuestionsFlt.Reset();
-                        foreach( CswNbtNodePropQuestion QuestionProp in QuestionsFlt )
+                        foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                         {
+                            CswNbtNodePropQuestion QuestionProp = PropWrapper;  // don't refactor this into the foreach.  it doesn't work. case 28300.
                             if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
                             {
                                 QuestionProp.Answer = QuestionProp.PreferredAnswer;
@@ -520,6 +521,16 @@ namespace ChemSW.Nbt.ObjClasses
             return 0 < NumOfSiblings || Status.Value.Equals( InspectionStatus.ActionRequired );
         }
 
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassInspectionDesign CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.Node.copyPropertyValues( Node );
+            CopiedIDNode.Generator.RelatedNodeId = null;
+            CopiedIDNode.Generator.RefreshNodeName();
+            CopiedIDNode.postChanges( true );
+            return CopiedIDNode.Node;
+        }
+
         #endregion
 
         #region Object class specific properties
@@ -551,7 +562,9 @@ namespace ChemSW.Nbt.ObjClasses
                               String.Empty == NodeStatus ) &&
                             //Inspections have the same target, and we're comparing different Inspection nodes
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
-                              this.Node != InspectionNode ) )
+                              this.Node != InspectionNode ) &&
+                            // Other inspection isn't future (case 28317)
+                            Tristate.True != PriorInspection.IsFuture.Checked )
                         {
                             PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
                             // Case 20755

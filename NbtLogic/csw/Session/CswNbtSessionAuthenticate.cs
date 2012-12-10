@@ -2,6 +2,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Security;
 using ChemSW.Session;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt
 {
@@ -10,10 +11,10 @@ namespace ChemSW.Nbt
 
         private CswNbtResources _CswNbtResources;
         private CswSessionManager _CswSessionManager;
-        private CswNbtSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
+        private CswWebSvcSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
         private AuthenticationStatus _AuthenticationStatus = AuthenticationStatus.Unknown;
 
-        public CswNbtSessionAuthenticate( CswNbtResources Resources, CswSessionManager SessionManager, CswNbtSessionAuthenticateData.Authentication.Request AuthenticationRequest )
+        public CswNbtSessionAuthenticate( CswNbtResources Resources, CswSessionManager SessionManager, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
             _CswNbtResources = Resources;
             _CswSessionManager = SessionManager;

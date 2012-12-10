@@ -38,7 +38,6 @@ namespace NbtWebAppServices.WebServices
             {
                 Ret = new CswNbtWcfResponseBase( _Context, request.IsMobile );
 
-
                 try
                 {
                     _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;

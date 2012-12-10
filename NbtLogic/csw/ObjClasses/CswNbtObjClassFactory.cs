@@ -90,6 +90,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassFeedback( CswNbtResources, Node );
                     break;
 
+                case NbtObjectClass.FireClassExemptAmountClass:
+                    ReturnVal = new CswNbtObjClassFireClassExemptAmount( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.FireClassExemptAmountSetClass:
+                    ReturnVal = new CswNbtObjClassFireClassExemptAmountSet( CswNbtResources, Node );
+                    break;
+
                 case NbtObjectClass.GenericClass:
                     ReturnVal = new CswNbtObjClassGeneric( CswNbtResources, Node );
                     break;

@@ -24,6 +24,7 @@
                     nodeSelect.selectedNodeLink = Csw.string(cswPrivate.propVals.relatednodelink).trim();
                     nodeSelect.selectedName = Csw.string(cswPrivate.propVals.name).trim();
                     nodeSelect.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
+                    nodeSelect.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     nodeSelect.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     nodeSelect.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
                     nodeSelect.options = cswPrivate.propVals.options;
@@ -31,8 +32,8 @@
                     nodeSelect.cellCol = 1;
                     nodeSelect.selectedNodeType = {};
                     nodeSelect.addImage = {};
-                    nodeSelect.onAddNodeFunc = function() {};
-                    nodeSelect.onSelectNode = function(nodeObj) {
+                    nodeSelect.onAddNodeFunc = function () { };
+                    nodeSelect.onSelectNode = function (nodeObj) {
                         Csw.tryExec(cswPublic.data.onChange, nodeObj.nodeid);
                         cswPublic.data.onPropChange({ nodeid: nodeObj.nodeid });
                     };
@@ -46,12 +47,14 @@
                     nodeSelect.isRequired = cswPublic.data.isRequired();
                     nodeSelect.isMulti = cswPublic.data.isMulti();
                     nodeSelect.isReadOnly = cswPublic.data.isReadOnly();
-                    
+
+                    nodeSelect.doGetNodes = false;
+
                     nodeSelect.showSelectOnLoad = (function () {
                         return cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add ||
                                cswPublic.data.isMulti() ||
                             (cswPublic.data.isRequired() && Csw.isNullOrEmpty(nodeSelect.selectedNodeId));
-                    }());
+                    } ());
 
                     cswPublic.control = cswPrivate.parent.nodeSelect(nodeSelect);
 
@@ -66,4 +69,4 @@
                 return cswPublic;
             }));
 
-}());        
+} ());        

@@ -25,7 +25,7 @@
                 }
             };
         };
-    }());
+    } ());
     var cswPrivate = cswPrivateInit();
     cswPrivate.div = Csw.literals.div();
 
@@ -109,7 +109,7 @@
                 }
             });
 
-            openDialog(div, 400, 400, null, 'New Landing Page Item');//should this be page-specific?
+            openDialog(div, 400, 400, null, 'New Landing Page Item'); //should this be page-specific?
         }, // AddLandingPageItemDialog
         AddViewDialog: function (options) {
             var o = {
@@ -531,7 +531,7 @@
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
-                            var propOpts = [{ value: '', display: 'Select...' }];
+                            var propOpts = [{ value: '', display: 'Select...'}];
                             Csw.each(data.add, function (p) {
                                 var display = p.propname;
                                 if (Csw.bool(p.hidden)) {
@@ -557,7 +557,7 @@
                 Csw.tryExec(cswDlgPrivate.Refresh);
             }
 
-            openDialog(div, 900, 600, _onclose, 'Edit Layout', cswDlgPrivate.onOpen);
+            openDialog(div, 900, 600, _onclose, 'Configure Layouts', cswDlgPrivate.onOpen);
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var cswDlgPrivate = {
@@ -880,6 +880,115 @@
             });
 
             openDialog(div, 400, 300, null, 'Upload');
+        },
+        StructureSearchDialog: function (options) {
+            var cswPrivate = {
+                title: "Structure Search",
+                loadView: null //function () { }
+            };
+
+            if (options) {
+                Csw.extend(cswPrivate, options);
+            }
+
+            var div = Csw.literals.div(),
+                newNode;
+
+            var table = div.table({ cellpadding: '2px', align: 'left' });
+
+            table.cell(3, 1).span({ text: 'MOL Text (Paste from Clipboard):' });
+            var molText = table.cell(4, 1).textArea({
+                name: '',
+                rows: 12,
+                cols: 50,
+                onChange: function () {
+                    getMolImgFromText(molText.val(), '');
+                }
+            });
+
+            var getMolImgFromText = function (molTxt, nodeId) {
+                var ret = '';
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'Mol/getImg',
+                    data: {
+                        molString: molTxt,
+                        nodeId: nodeId,
+                        molImgAsBase64String: ''
+                    },
+                    success: function (data) {
+                        table.cell(4, 2).empty();
+                        if (data.MolImgDataCollection.length > 0) {
+                            molText.val(data.MolImgDataCollection[0].molString);
+                            table.cell(4, 2).img({
+                                labelText: "Query Image",
+                                src: "data:image/jpeg;base64," + data.MolImgDataCollection[0].molImgAsBase64String
+                            });
+                        }
+                    }
+                });
+                return ret;
+            }
+
+            var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
+            getMolImgFromText('', currentNodeId);
+
+            var uploadBtn = table.cell(2, 1).input({
+                name: 'fileupload',
+                labelText: "Mol File",
+                type: Csw.enums.inputTypes.file
+            }).css('float', 'left');
+            uploadBtn.$.fileupload({
+                datatype: 'json',
+                url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromFile',
+                paramName: 'filename',
+                done: function (e, data) {
+                    molText.val(JSON.parse(data.result).molstring);
+                    table.cell(4, 2).empty();
+                    table.cell(4, 2).img({
+                        labelText: "Query Image",
+                        src: "data:image/jpeg;base64," + JSON.parse(data.result).bin
+                    });
+                }
+            });
+
+            var exactSearchChkBox = table.cell(5, 1).input({
+                labelText: "Exact Search",
+                useWide: true,
+                type: Csw.enums.inputTypes.checkbox
+            });
+
+            table.cell(6, 1).button({
+                name: 'ssSearchBtn',
+                enabledText: 'Search',
+                disabledText: "Searching...",
+                onClick: function () {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Mol/runStructureSearch',
+                        data: {
+                            viewId: '',
+                            viewMode: '',
+                            molString: molText.val(),
+                            exact: exactSearchChkBox.checked()
+                        },
+                        success: function (data) {
+                            if (data.StructureSearchViewDataCollection.length > 0) {
+                                var viewId = data.StructureSearchViewDataCollection[0].viewId;
+                                var viewMode = data.StructureSearchViewDataCollection[0].viewMode;
+                                Csw.tryExec(cswPrivate.loadView, viewId, viewMode);
+                                div.$.dialog('close');
+                            }
+                        }
+                    });
+                }
+            });
+
+            table.cell(9, 1).span({
+                text: "please note that larger molecules can extend the search time"
+            });
+
+            openDialog(div, 750, 500, null, cswPrivate.title);
         },
         EditMolDialog: function (options) {
             var o = {

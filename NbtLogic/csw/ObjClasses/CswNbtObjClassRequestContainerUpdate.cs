@@ -146,29 +146,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 InventoryGroup.setHidden( value: true, SaveToDb: true );
             }
-
-
-            //case 2753 - naming logic
-            if( false == IsTemp )
-            {
-                switch( Type.Value )
-                {
-                    case Types.Dispose:
-                        if( null != Container.RelatedNodeId )
-                        {
-                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                            Name.Text = "Dispose Container " + containerNode.Barcode.Barcode;
-                        }
-                        break;
-                    case Types.Move:
-                        if( null != Container.RelatedNodeId )
-                        {
-                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                            Name.Text = "Move Container " + containerNode.Barcode.Barcode;
-                        }
-                        break;
-                }
-            }
         }
 
         public override void afterPropertySetWriteNode()

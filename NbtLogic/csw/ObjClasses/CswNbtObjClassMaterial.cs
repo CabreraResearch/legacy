@@ -102,6 +102,23 @@ namespace ChemSW.Nbt.ObjClasses
                     _updateRegulatoryLists();
                 }
             }
+
+            CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
+            if( null != ChemicalHazardClassesNTP )
+            {
+                CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+                CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
+                if( null != FireClassExemptAmountNT )
+                {
+                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
+                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp(
+                            FireClassExemptAmountNT.NodeTypeId, 
+                            CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType 
+                            );
+                    ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
+                }                
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -153,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
                         {
                             HasPermission = true;
-                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActRequesting.RequestItem( CswNbtActRequesting.RequestItem.Material ), NodeId, ButtonData );
                             NodeAsPropSet.postChanges( false );
@@ -183,6 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
+                            ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
 
                             CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
                             if( false == CswDate.IsNull )

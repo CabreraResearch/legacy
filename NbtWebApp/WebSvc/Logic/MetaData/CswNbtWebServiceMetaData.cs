@@ -23,6 +23,24 @@ namespace ChemSW.Nbt.WebServices
         } //ctor
 
         /// <summary>
+        /// Get a list of all Object Classes
+        /// </summary>
+        public JObject getObjectClasses()
+        {
+            JObject ReturnVal = new JObject();
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses().OrderBy( ObjectClass => ObjectClass.ObjectClass.ToString() ) )
+            {
+                string ObjectClassName = ObjectClass.ObjectClass.ToString();
+                ReturnVal[ObjectClassName] = new JObject();
+                ReturnVal[ObjectClassName]["objectclass"] = ObjectClassName;
+                ReturnVal[ObjectClassName]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
+                ReturnVal[ObjectClassName]["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + ObjectClass.IconFileName;
+            }
+            return ReturnVal;
+        } // getObjectClasses()
+
+
+        /// <summary>
         /// Get a list of all NodeTypes, optionally limited according to supplied parameters
         /// </summary>
         /// <param name="ObjectClass">(Optional) An Object Class to constrain results.</param>
@@ -36,8 +54,14 @@ namespace ChemSW.Nbt.WebServices
         /// <param name="FilterToCreate">(Optional) 
         /// <para>When set to true, only gets NodeTypes user has permission to create</para>
         /// </param>
+        /// <param name="Searchable">If true, only include searchable nodetypes</param>
         /// <returns></returns>
-        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, string ExcludeNodeTypeIds = "", Int32 RelationshipTargetNodeTypeId = Int32.MinValue, string RelationshipObjectClassPropName = "", string FilterToPermission = "" )
+        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, 
+                                     string ExcludeNodeTypeIds = "", 
+                                     Int32 RelationshipTargetNodeTypeId = Int32.MinValue, 
+                                     string RelationshipObjectClassPropName = "", 
+                                     string FilterToPermission = "",
+                                     bool Searchable = false)
         {
             JObject ReturnVal = new JObject();
 
@@ -61,7 +85,9 @@ namespace ChemSW.Nbt.WebServices
 
             Int32 NodeTypeCount = 0;
 
-            foreach( CswNbtMetaDataNodeType RetNodeType in from _RetNodeType in NodeTypes orderby _RetNodeType.NodeTypeName select _RetNodeType )
+            foreach( CswNbtMetaDataNodeType RetNodeType in NodeTypes
+                                                            .Where( _RetNodeType => ( false == Searchable || CswNbtMetaDataObjectClass.NotSearchableValue != _RetNodeType.SearchDeferPropId ) )
+                                                            .OrderBy( _RetNodeType => _RetNodeType.NodeTypeName ) )
             {
                 bool AddThisNodeType = false;
                 if( false == ExcludedIds.Contains( RetNodeType.NodeTypeId ) )
@@ -165,6 +191,7 @@ namespace ChemSW.Nbt.WebServices
             ReturnVal[NtName] = new JObject();
             ReturnVal[NtName]["id"] = NodeType.NodeTypeId;
             ReturnVal[NtName]["name"] = NodeType.NodeTypeName;
+            ReturnVal[NtName]["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.IconFileName;
             ReturnVal[NtName]["objectclass"] = ObjectClass.ObjectClass.ToString();
             ReturnVal[NtName]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
 

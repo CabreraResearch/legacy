@@ -3,6 +3,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.CISPro;
@@ -64,11 +65,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "place" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Place a Request" )]
-        public CswNbtRequestDataModel.CswRequestReturn submitRequest( NodeSelect.Node Request )
+        public CswNbtRequestDataModel.CswRequestReturn submitRequest( CswNbtNode.Node Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtRequestDataModel.CswRequestReturn Ret = new CswNbtRequestDataModel.CswRequestReturn();
-            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, NodeSelect.Node>(
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, CswNbtNode.Node>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceRequesting.submitRequest,
@@ -91,6 +92,25 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceRequesting.getCart,
+                ParamObj: null
+                );
+
+            InitDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "counts?CartId={CartId}" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the Count Current User's Request Items by Tab" )]
+        public CswNbtRequestDataModel.RequestCart getCartCounts( string CartId )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtRequestDataModel.RequestCart Ret = new CswNbtRequestDataModel.RequestCart();
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.RequestCart, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRequesting.getCartCounts,
                 ParamObj: null
                 );
 

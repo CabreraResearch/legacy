@@ -11,6 +11,8 @@ using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using ChemSW.DB;
+using System.Data;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -138,6 +140,31 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // makeTableFromTree()
 
+        private string _getThumbnailUrl( CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId )
+        {
+            string ret = "";
+
+            CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
+            DataTable dt = ts.getTable( "where nodeid = " + NodeId.PrimaryKey + " and field1 = 'mol.jpeg' and blobdata is not null" );
+
+            if( dt.Rows.Count > 0 ) //if there's a mol prop, use that as the image
+            {
+                int jctnodepropid = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
+                int nodetypepropid = CswConvert.ToInt32( dt.Rows[0]["nodetypepropid"] );
+                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
+            }
+            // default image, overridden below
+            else if( NodeType.IconFileName != string.Empty )
+            {
+                ret = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
+            }
+            else
+            {
+                ret = "Images/icons/300/_placeholder.gif";
+            }
+            return ret;
+        }
+        
         /// <summary>
         /// Make a z
         /// </summary>
@@ -286,19 +313,11 @@ namespace ChemSW.Nbt.WebServices
                     if( null != thisNode.NodeType )
                     {
                         thisNode.NodeId = Tree.getNodeIdForCurrentPosition();
-                        thisNode.NodeName = _Truncate( Tree.getNodeNameForCurrentPosition() );
+                        thisNode.NodeName = Tree.getNodeNameForCurrentPosition();
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
-                        // default image, overridden below
-                        if( thisNode.NodeType.IconFileName != string.Empty )
-                        {
-                            thisNode.ThumbnailUrl = CswNbtMetaDataObjectClass.IconPrefix100 + thisNode.NodeType.IconFileName;
-                        }
-                        else
-                        {
-                            thisNode.ThumbnailUrl = "Images/icons/300/_placeholder.gif";
-                        }
+                        thisNode.ThumbnailUrl = _getThumbnailUrl( thisNode.NodeType, thisNode.NodeId );
 
                         thisNode.AllowView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
                         thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );

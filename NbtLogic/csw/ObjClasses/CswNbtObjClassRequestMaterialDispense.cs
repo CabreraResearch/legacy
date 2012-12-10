@@ -233,22 +233,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            //case 2753 - naming logic
-            if( false == IsTemp )
-            {
-                if( Type.Value.Equals( Types.Size ) && CswTools.IsPrimaryKey( Size.RelatedNodeId ) ) //request material by size
-                {
-                    CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
-                    if( null != sizeNode )
-                    {
-                        Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
-                    }
-                }
-                else //request material by bulk
-                {
-                    Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
-                }
-            }
+            IsFavorite.setHidden( value: true, SaveToDb: true );
         }
 
         /// <summary>
@@ -281,7 +266,6 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCP.PropName )
                 {
                     case PropertyName.Fulfill:
-                        CswNbtObjClassContainer NodeAsContainer = null;
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Order:
@@ -523,7 +507,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Tristate.False.ToString() );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp,
+                Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.False ),
+                ShowInGrid: false );
         }
 
         #endregion
@@ -611,6 +597,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Status.setHidden( value: true, SaveToDb: true );
                 Fulfill.setHidden( value: true, SaveToDb: true );
                 AssignedTo.setHidden( value: true, SaveToDb: true );
+                Number.setHidden( value: true, SaveToDb: true );
                 NeededBy.setHidden( value: true, SaveToDb: true );
                 TotalMoved.setHidden( value: true, SaveToDb: true );
                 TotalDispensed.setHidden( value: true, SaveToDb: true );
@@ -619,7 +606,6 @@ namespace ChemSW.Nbt.ObjClasses
                 ReceiptLotsReceived.setHidden( value: true, SaveToDb: true );
                 NextReorderDate.setHidden( value: true, SaveToDb: true );
                 GoodsReceived.setHidden( value: true, SaveToDb: true );
-                IsFavorite.setHidden( value: true, SaveToDb: true );
             }
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }

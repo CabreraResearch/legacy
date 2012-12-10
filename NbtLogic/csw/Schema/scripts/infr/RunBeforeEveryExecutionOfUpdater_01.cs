@@ -53,6 +53,10 @@ namespace ChemSW.Nbt.Schema
 
             #region VIOLA
 
+            // case 26827
+            _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
+            _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
+
             #endregion VIOLA
 
         }//Update()

@@ -622,10 +622,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             return _addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
         {
             JObject ret = new JObject();
-            JObject PropsObj = CswConvert.ToJObject( NewPropsJson );
             if( PropsObj.HasValues )
             {
                 CswNbtNodeKey RetNbtNodeKey = null;

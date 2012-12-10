@@ -479,12 +479,7 @@
 
             cswPrivate.onRemove = function (tabid, onRemoveData) {
                 'use strict';
-                var propid = '';
-                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
-                if (false === Csw.isNullOrEmpty(propDiv)) {
-                    propid = propDiv.first().data('propId');
-                }
-
+                var propid = onRemoveData.cellSet[1][1].data('propId');
                 cswPrivate.ajax.layoutRemove = Csw.ajax.post({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: cswPrivate.urls.RemovePropUrlMethod,
@@ -753,9 +748,10 @@
                     }
                 }
 
-                if (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
-                    (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
-                    cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp)) {
+                if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
+                    (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
+                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add && 
+                      cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp))) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
