@@ -121,7 +121,7 @@
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchButton = cswtable.cell(1, 2).menuButton({
+                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
                     name: 'searchBtn',
                     menuOptions: ['Search', 'Structure Search'],
                     selectedText: 'Search',
