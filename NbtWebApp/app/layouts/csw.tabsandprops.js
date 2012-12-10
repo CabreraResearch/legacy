@@ -479,12 +479,7 @@
 
             cswPrivate.onRemove = function (tabid, onRemoveData) {
                 'use strict';
-                var propid = '';
-                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
-                if (false === Csw.isNullOrEmpty(propDiv)) {
-                    propid = propDiv.first().data('propId');
-                }
-
+                var propid = onRemoveData.cellSet[1][1].data('propId');
                 cswPrivate.ajax.layoutRemove = Csw.ajax.post({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: cswPrivate.urls.RemovePropUrlMethod,
