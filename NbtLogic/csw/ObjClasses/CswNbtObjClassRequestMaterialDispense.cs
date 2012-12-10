@@ -74,12 +74,12 @@ namespace ChemSW.Nbt.ObjClasses
             /// <summary>
             /// Whether or no to reorder this item
             /// </summary>
-            public const string Reorder = "Reorder";
+            public const string Recurring = "Recurring";
 
             /// <summary>
             /// The frequency to reorder this item(<see cref="CswNbtNodePropTimeInterval"/>) to request. 
             /// </summary>
-            public const string ReorderFrequency = "Reorder Frequency";
+            public const string RecurringFrequency = "Recurring Frequency";
 
             /// <summary>
             /// For "Request By Size" items, a relationship(<see cref="CswNbtNodePropRelationship"/>) to the Size(<see cref="CswNbtObjClassSize"/>) to request. 
@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //MLM
                 if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
                 {
-                    Reorder.setHidden( value: true, SaveToDb: true );
+                    Recurring.setHidden( value: true, SaveToDb: true );
                     foreach( string PropName in PropertyName.MLMCmgTabProps )
                     {
                         _CswNbtNode.Properties[PropName].setHidden( value: true, SaveToDb: true );
@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //MLM
                 if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
                 {
-                    Reorder.setHidden( value: false, SaveToDb: true );
+                    Recurring.setHidden( value: false, SaveToDb: true );
                     foreach( string PropName in PropertyName.MLMCmgTabProps )
                     {
                         _CswNbtNode.Properties[PropName].setHidden( value: false, SaveToDb: true );
@@ -586,7 +586,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime NextReorderDate { get { return _CswNbtNode.Properties[PropertyName.NextReorderDate]; } }
         public CswNbtNodePropLogical IsBatch { get { return _CswNbtNode.Properties[PropertyName.IsBatch]; } }
         public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
-        public CswNbtNodePropLogical Reorder { get { return _CswNbtNode.Properties[PropertyName.Reorder]; } }
+        public CswNbtNodePropLogical Recurring { get { return _CswNbtNode.Properties[PropertyName.Recurring]; } }
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
         private void onIsFavoritePropChange( CswNbtNodeProp NodeProp )
@@ -594,6 +594,9 @@ namespace ChemSW.Nbt.ObjClasses
             bool Fave = CswConvert.ToBoolean( IsFavorite.Gestalt );
             if( Fave )
             {
+                //Name is normally shown on status change, which doesn't happen for Favs
+                Name.setHidden( value: false, SaveToDb: true );
+
                 Status.setHidden( value: true, SaveToDb: true );
                 Fulfill.setHidden( value: true, SaveToDb: true );
                 AssignedTo.setHidden( value: true, SaveToDb: true );
@@ -601,7 +604,7 @@ namespace ChemSW.Nbt.ObjClasses
                 NeededBy.setHidden( value: true, SaveToDb: true );
                 TotalMoved.setHidden( value: true, SaveToDb: true );
                 TotalDispensed.setHidden( value: true, SaveToDb: true );
-                Reorder.setHidden( value: true, SaveToDb: true );
+                Recurring.setHidden( value: true, SaveToDb: true );
                 ReceiptLotToDispense.setHidden( value: true, SaveToDb: true );
                 ReceiptLotsReceived.setHidden( value: true, SaveToDb: true );
                 NextReorderDate.setHidden( value: true, SaveToDb: true );
@@ -610,7 +613,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
-        public CswNbtNodePropTimeInterval ReorderFrequency { get { return _CswNbtNode.Properties[PropertyName.ReorderFrequency]; } }
+        public CswNbtNodePropTimeInterval RecurringFrequency { get { return _CswNbtNode.Properties[PropertyName.RecurringFrequency]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialDispense

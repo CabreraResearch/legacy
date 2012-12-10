@@ -338,6 +338,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
+
             onPropertySetAddDefaultViewFilters( ParentRelationship );
             CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
