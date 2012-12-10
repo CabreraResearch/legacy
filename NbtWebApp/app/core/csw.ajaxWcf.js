@@ -132,7 +132,8 @@
         Csw.extend(cswInternal, options);
         
         var cswExternal = { };
-        cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
+        cswInternal.urlMethod = 'Services/' + cswInternal.urlMethod;
+        cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlMethod);
         cswInternal.startTime = new Date();
         if(false === Csw.isNullOrEmpty(cswInternal.data)) {
             if (verb === 'GET') {
@@ -146,7 +147,7 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
         cswExternal.ajax = $.ajax({
             type: verb,
-            url: 'Services/' + cswInternal.urlMethod,
+            url: cswInternal.urlMethod,
             xhrFields: {
                 withCredentials: true
             },
@@ -155,10 +156,13 @@
             //processdata: false,
             data: cswInternal.data,
             success: function (data) {
-                cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
+                cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus, param1) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, param1, cswInternal);
+                cswPrivate.onJsonError(xmlHttpRequest, textStatus, param1, { data: cswInternal.data, urlMethod: document.location + '/' + cswInternal.urlMethod });
+            },
+            complete: function(xmlHttpRequest, textStatus) {
+                Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);
             }
         }); /* $.ajax({ */
         return cswExternal;
