@@ -629,7 +629,7 @@ namespace ChemSW.Nbt.WebServices
                 tree.goToNthChild( c );
                 if( tree.getNodeKeyForCurrentPosition().NodeTypeId == TargetNodeTypeId )
                 {
-                    Ret.Nodes.Add( new NodeSelect.Node( null )
+                    Ret.Nodes.Add( new CswNbtNode.Node( null )
                     {
                         NodePk = tree.getNodeIdForCurrentPosition(),
                         NodeName = tree.getNodeNameForCurrentPosition()
