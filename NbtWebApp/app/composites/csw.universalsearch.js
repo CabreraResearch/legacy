@@ -121,19 +121,23 @@
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 3)
-                    .div()
-                    .buttonExt({
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
-                        width: ('Search'.length * 11) + 16,
-                        enabledText: 'Search',
-                        disabledText: 'Searching...',
-                        bindOnEnter: true,
-                        onClick: function () {
-                            Csw.publish('initPropertyTearDown');
-                            cswPrivate.searchterm = cswPrivate.searchinput.val();
-                            cswPrivate.newsearch();
+                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
+                    name: 'searchBtn',
+                    menuOptions: ['Search', 'Structure Search'],
+                    selectedText: 'Search',
+                    size: 'small',
+                    onClick: function (selectedOption) {
+                        switch (selectedOption) {
+                            case 'Structure Search':
+                                $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                                break;
+                            default:
+                                Csw.publish('initPropertyTearDown');
+                                cswPrivate.searchterm = cswPrivate.searchinput.val();
+                                cswPrivate.newsearch();
                         }
+
+                    }
                     });
             })();
 

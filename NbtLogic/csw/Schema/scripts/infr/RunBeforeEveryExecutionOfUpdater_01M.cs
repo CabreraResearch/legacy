@@ -51,10 +51,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion VIOLA
             
-            #region VIOLA
-            
-
-            #endregion VIOLA
         }
 
 

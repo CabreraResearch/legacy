@@ -19,6 +19,7 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Labels", Factory, typeof( Labels ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Containers", Factory, typeof( Containers ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/LandingPages", Factory, typeof( LandingPages ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Mol", Factory, typeof( Mol ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Nodes", Factory, typeof( Nodes ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Reports", Factory, typeof( Reports ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Requests", Factory, typeof( Requests ) ) );
@@ -45,7 +46,7 @@ namespace NbtWebApp
             HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Origin", "*" );
             if( HttpContext.Current.Request.HttpMethod == "OPTIONS" )
             {
-                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Methods", "GET, POST" );
+                HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Methods", "GET, POST, DELETE, PUT" );
                 HttpContext.Current.Response.AddHeader( "Access-Control-Allow-Headers", "Content-Type, Accept" );
                 HttpContext.Current.Response.AddHeader( "Access-Control-Max-Age", "1728000" );
                 HttpContext.Current.Response.End();

@@ -13,7 +13,8 @@
                 filtersMethod: 'getRuntimeViewFilters',
                 applyMethod: 'updateRuntimeViewFilters',
                 viewid: '',
-                onEditFilters: null
+                onEditFilters: null,
+                isTreeView: true
             };
             var cswPublic = {};
 
@@ -26,6 +27,9 @@
                 var outercell12 = outertbl.cell(1,2);
                 var outercell11div = outercell11.div()
                     .addClass('viewfiltersdiv');
+                if (cswPrivate.isTreeView) {
+                    outercell11div.addClass('viewfiltersdivtree');
+                }
                 var tbl = outercell11div.table({ cellpadding: '2px' });
 
                 outercell12.css({ width: '100%', textAlign: 'right' });

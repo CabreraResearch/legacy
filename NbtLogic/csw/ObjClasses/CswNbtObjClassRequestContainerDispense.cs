@@ -183,16 +183,6 @@ namespace ChemSW.Nbt.ObjClasses
                                               "Attempted to edit node without matching Container and Request Inventory Group relationships." );
                 }
             }
-
-            //case 2753 - naming logic
-            if( false == IsTemp )
-            {
-                if( null != Container.RelatedNodeId )
-                {
-                    CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                    Name.Text = "Dispense " + containerNode.Quantity.Quantity + containerNode.Quantity.CachedUnitName + " from Container " + containerNode.Barcode.Barcode;
-                }
-            }
         }
 
         /// <summary>
@@ -343,7 +333,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onRequestPropChange( CswNbtNodeProp Prop )
         {
-        
+
         }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

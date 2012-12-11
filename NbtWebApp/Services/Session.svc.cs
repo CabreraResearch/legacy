@@ -27,11 +27,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Initiate a new session" )]
-        public CswWebSvcReturn Init( CswNbtSessionAuthenticateData.Authentication.Request Request )
+        public CswWebSvcReturn Init( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswWebSvcReturn Ret = new CswWebSvcReturn();
-            var InitDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswNbtSessionAuthenticateData.Authentication.Request>(
+            var InitDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswWebSvcSessionAuthenticateData.Authentication.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, Request ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceSession.doNothing,
@@ -64,12 +64,12 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Reset a user's password" )]
-        public CswNbtWebServiceSession.CswNbtSessionReturn ResetPassword( CswNbtSessionAuthenticateData.Authentication.Response.Expired Request )
+        public CswNbtWebServiceSession.CswNbtSessionReturn ResetPassword( CswWebSvcSessionAuthenticateData.Authentication.Response.Expired Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtWebServiceSession.CswNbtSessionReturn Ret = new CswNbtWebServiceSession.CswNbtSessionReturn();
             CswWebSvcResourceInitializerNbt ResourceInitializerNbt = new CswWebSvcResourceInitializerNbt( _Context, null );
-            var InitDriverType = new CswWebSvcDriver<CswNbtWebServiceSession.CswNbtSessionReturn, CswNbtSessionAuthenticateData.Authentication.Response.Expired>(
+            var InitDriverType = new CswWebSvcDriver<CswNbtWebServiceSession.CswNbtSessionReturn, CswWebSvcSessionAuthenticateData.Authentication.Response.Expired>(
                 CswWebSvcResourceInitializer: ResourceInitializerNbt,
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceSession.resetPassword,

@@ -48,7 +48,8 @@
                         quantityName: 'Net Quantity',
                         barcodeName: 'Barcodes (Optional)'
                     },
-                    customBarcodes: false
+                    customBarcodes: false,
+                    nodeTypeName: ''
                 };
                 Csw.extend(cswPrivate, options);
 
@@ -88,14 +89,20 @@
                             data: { SizeId: cswPrivate.selectedSizeId, Action: cswPrivate.action },
                             success: function (data) {
                                 cswPrivate.quantity = data;
+                                //cswPrivate.quantity.options = [];
+                                if (Csw.bool(cswPrivate.quantity.quantityoptional)) {
+                                    cswPrivate.quantity.options.push({ value: '', display: '', frac: true });
+                                }
                                 ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
                             }
                         });
                     }
                     if (false === ret) {
                         cswPrivate.quantity = {
-                            qtyReadonly: true,
-                            unitReadonly: true
+                            //qtyReadonly: true,
+                            //unitReadonly: true
+                            quantityoptional: false,
+                            isReadOnly: false
                         };
                     }
                     return ret;
@@ -107,7 +114,7 @@
                     }
                     cswPublic.containerCount = 0;
 
-                    var containerNoSpan = cswParent.span(); 
+                    var containerNoSpan = cswParent.span();
                     containerNoSpan.setLabelText('Total number of containers: ' + cswPublic.containerCount);
 
                     var containerLimitExceededSpan = cswParent.span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' The limit for containers created at receipt is [' + cswPublic.containerlimit + '].' });
@@ -150,9 +157,9 @@
                             };
                             var updateColumnVals = function (changeContainerNo) {
                                 if (false === Csw.isNullOrEmpty(cswPublic.rows[rowid].qtyControl)) {
-                                    cswPublic.rows[rowid].quantityValues.quantity = cswPublic.rows[rowid].qtyControl.quantityValue;
-                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.unitText;
-                                    cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.unitVal;
+                                    cswPublic.rows[rowid].quantityValues.quantity = cswPublic.rows[rowid].qtyControl.value();
+                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.selectedUnit();
+                                    cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.selectedNodeId();
                                 }
                                 if (changeContainerNo) {
                                     cswPublic.rows[rowid].containerNoControl.val(Csw.number(cswPrivate.quantity.unitCount, 1));
@@ -196,8 +203,11 @@
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
                                         name: 'sizes',
                                         async: false,
+                                        nodesUrlMethod: 'Nodes/getRelationshipOpts',
                                         ajaxData: {
-                                            ObjectClass: 'SizeClass'
+                                            NodeId: cswPrivate.materialId,
+                                            PropName: cswPrivate.nodeTypeName +  ' Sizes',
+                                            TargetNodeTypeName: 'Size'
                                         },
                                         showSelectOnLoad: true,
                                         addNodeDialogTitle: 'Size',
@@ -211,22 +221,28 @@
                                             cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                             updateColumnVals(true);
                                         },
-                                        onSuccess: function() {
+                                        onSuccess: function () {
                                             updateSizeVals();
+                                            cswPrivate.getQuantity();
+                                            cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
+                                            updateColumnVals(true);
                                         },
                                         allowAdd: true
                                     });
-                                    
                                     break;
                                 case cswPrivate.config.quantityName:
                                     cswPrivate.getQuantity();
                                     cswPrivate.quantity.minvalue = 0;
                                     cswPrivate.quantity.excludeRangeLimits = true;
-                                    cswPrivate.quantity.onChange = function () {
+                                    cswPrivate.quantity.onNumberChange = function () {
                                         updateColumnVals(false);
                                     };
+                                    cswPrivate.quantity.onQuantityChange = function () {
+                                        updateColumnVals(false);
+                                    }
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
+                                    
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
                                     break;
