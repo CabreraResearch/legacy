@@ -190,6 +190,7 @@ namespace ChemSW.Nbt.WebServices
                 ThisProp["gestalt"] = Gestalt;
                 ThisProp["fieldtype"] = FieldType;
                 ThisProp["propData"] = PropData;
+                ThisProp["source"] = Source.ToString();
                 return ThisProp;
             } // ToJson()
         } // class TableProp

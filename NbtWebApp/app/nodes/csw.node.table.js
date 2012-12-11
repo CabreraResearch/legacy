@@ -222,7 +222,15 @@
                                 btncol += 1;
 
                             } else {
-                                texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1)).span({ text: propObj.propname + ': ' + propObj.gestalt });
+                                var propCell = texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1));
+                                var cssclass = 'searchResult';
+                                if(propObj.source === 'Results') {
+                                    cssclass = 'searchResultDeemph';
+                                }
+                                propCell.span({ 
+                                    text: propObj.propname + ': ' + propObj.gestalt,
+                                    cssclass: cssclass
+                                });
                                 row += 1;
                                 //maintextcell.br();
                             }
