@@ -71,8 +71,6 @@
 
                         cswPrivate.saveState();
                         cswPrivate.onTabSelect(cswPrivate.currentTab);
-
-                        cswPrivate.getCartCounts();
                     }
                 });
             };
@@ -84,6 +82,8 @@
                         CartId: cswPrivate.state.pendingCartId
                     },
                     success: function (data) {
+                        Csw.publish(Csw.enums.events.main.refreshHeader);
+                        
                         cswPrivate.state.cartCounts = data.Counts;
                         cswPrivate.saveState();
                         cswPrivate.pendingTab.ext.setTitle('Pending (' + cswPrivate.state.cartCounts.PendingRequestItems + ')');
@@ -105,7 +105,6 @@
                                 nodetypeid: data.NodeTypeId,
                                 onAddNode: function () {
                                     grid.reload();
-                                    Csw.publish(Csw.enums.events.main.refreshHeader);
                                     cswPrivate.getCartCounts();
                                 }
                             });
@@ -123,6 +122,8 @@
                     },
                     success: function (json) {
                         if (json.Succeeded) {
+                            cswPrivate.tabs.setActiveTab(1);                            
+                            cswPrivate.onTabSelect('Submitted');
                             Csw.tryExec(cswPrivate.onSubmit);
                         }
                     }
@@ -163,7 +164,6 @@
                             RequestId: copyToRequest
                         },
                         success: function () {
-                            Csw.publish(Csw.enums.events.main.refreshHeader);
                             cswPrivate.getCartCounts();
                             onSuccess();
                         }
@@ -246,6 +246,7 @@
                             cswPrivate.makeFavoritesTab();
                             break;
                     }
+                    cswPrivate.getCartCounts();
                 }
             };
 
@@ -261,7 +262,7 @@
                     stateId: opts.gridId,
                     title: opts.title,
                     usePaging: true,
-                    height: 180,
+                    height: 350,
                     width: cswPrivate.tabs.getWidth() - 20,
                     ajax: {
                         urlMethod: 'getRequestItemGrid',
@@ -302,6 +303,7 @@
                             title: 'Request',
                             onEditNode: function () {
                                 Csw.tryExec(opts.onEditNode); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
+                                cswPrivate.getCartCounts();
                             }
                         });
                     }, // onEdit
@@ -323,8 +325,8 @@
                             nodekeys: cswnbtnodekeys,
                             nodenames: nodenames,
                             onDeleteNode: Csw.method(function () {
-                                Csw.publish(Csw.enums.events.main.refreshHeader);
                                 Csw.tryExec(opts.onEditNode);
+                                cswPrivate.getCartCounts();
                             }),
                             Multi: (nodeids.length > 1),
                             publishDeleteEvent: false
@@ -416,6 +418,8 @@
                 var btmTbl = ol.li().table({cellpadding: '2px'});
                 var saveBtn = btmTbl.cell(1, 1).buttonExt({
                     enabledText: 'Save to Favorites',
+                    disabledText: 'Save to Favorites',
+                    disableOnClick: true,
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     onClick: function () {
                         var nodes = [];
@@ -426,7 +430,7 @@
                             cswPublic.pendingGrid.deselectAll();
                             toggleSaveBtn();
                         });
-                        toggleSaveBtn();
+                        saveBtn.disable();
                     }
                 }).disable();
 
@@ -443,6 +447,7 @@
                         onSuccess: toggleSaveBtn
                     });
                 };
+                
                 makePicklist();
                 btmTbl.cell(1, 3).buttonExt({
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
@@ -556,6 +561,8 @@
 
                 var copyBtn = ol.li().buttonExt({
                     enabledText: 'Copy to Current Cart',
+                    disabledText: 'Copy to Current Cart',
+                    disableOnClick: true,
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
                     onClick: function () {
                         var nodes = [];
@@ -566,7 +573,7 @@
                             cswPublic.favoritesGrid.deselectAll();
                             toggleCopyBtn();
                         });
-                        toggleCopyBtn();
+                        copyBtn.disable();
                     }
                 }).disable();
 
@@ -582,6 +589,8 @@
                 if (hasFinish) {
                     tbl.cell(1, 1).buttonExt({
                         enabledText: 'Place Request',
+                        disabledText: 'Place Request',
+                        disableOnClick: true,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                         onClick: function () {
                             cswPrivate.submitRequest();
