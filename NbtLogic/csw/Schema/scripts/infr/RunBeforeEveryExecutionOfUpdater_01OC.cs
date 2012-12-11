@@ -76,7 +76,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp containerGroupLocationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGoupOC )
                 {
                     PropName = CswNbtObjClassContainerGroup.PropertyName.Location,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
+                    FkValue = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass ).ObjectClassId
                 } );
 
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, containerGoupOC.ObjectClassId );
@@ -204,6 +205,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Location,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
+                    FkValue = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass ).ObjectClassId,
                     SetValOnAdd = true,
                     DisplayColAdd = 1,
                     DisplayRowAdd = StartAddRowAt
@@ -991,6 +993,7 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassContainerLocation.PropertyName.Location,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
+                FkValue = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass ).ObjectClassId
                 ServerManaged = true
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
