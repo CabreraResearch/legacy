@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Nbt.Grid.ExtJs;
+using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.Grid
                                     RowNo = gridrow.RowNo,
                                     MenuOptions = "",
                                     SelectedText = oldValue ?? PropName,
-                                    PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId )
+                                    PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId ).ToString()
                                 } );
                             }
                             break;

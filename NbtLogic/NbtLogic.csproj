@@ -332,13 +332,6 @@
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\Dev\CswDeveloper.cs" />
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
-    <Compile Include="csw\Grid\CswGridExtJsButton.cs" />
-    <Compile Include="csw\Grid\CswGridExtJsColumn.cs" />
-    <Compile Include="csw\Grid\CswGridExtJsDataIndex.cs" />
-    <Compile Include="csw\Grid\CswGridExtJsEnums.cs" />
-    <Compile Include="csw\Grid\CswGridExtJsField.cs" />
-    <Compile Include="csw\Grid\CswGridExtJsGrid.cs" />
-    <Compile Include="csw\Grid\CswGridExtJsRow.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
     <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />
     <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
