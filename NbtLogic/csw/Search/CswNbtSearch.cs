@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.Search
                 // Filter on property values in the results
                 Collection<Int32> FilteredPropIds = getFilteredPropIds();
                 Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
-                Dictionary<Int32, Int32> PropOrder = null;
+                SortedSet<CswNbtSearchPropOrder.SearchOrder> PropOrder = null;
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
@@ -315,7 +315,7 @@ namespace ChemSW.Nbt.Search
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
-                foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder[NodeTypePropId] ) )
+                foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder.First(Order => Order.NodeTypePropId == NodeTypePropId).Order) )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
 
