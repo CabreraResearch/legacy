@@ -265,13 +265,18 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function () {
-                                    var div = Csw.domNode({ ID: id });
-                                    div.nodeButton({
-                                        value: colObj.header,
-                                        size: 'small',
-                                        propId: thisBtn[0].propattr
-                                    });
+                                Csw.defer(function _tryMakeBtn(keepTrying) {
+                                    if (false !== keepTrying)
+                                        if (Csw.isElementInDom(id)) {
+                                            var div = Csw.domNode({ ID: id });
+                                            div.nodeButton({
+                                                value: colObj.header,
+                                                size: 'small',
+                                                propId: thisBtn[0].propattr
+                                            });
+                                        } else {
+                                            _tryMakeBtn(false);
+                                        }
                                 }, 100);
                             }
                             return '<div id="' + id + '"></div>';
