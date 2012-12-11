@@ -29,15 +29,27 @@
                 cssclass: 'morelink',
                 onClick: function () {
                     if (cswPublic.moreLink.toggleState === Csw.enums.toggleState.on) {
-                        cswPublic.moreLink.text(cswPrivate.lesstext);
-                        cswPublic.hiddenDiv.show();
+                        cswPublic.showHidden();
                     } else {
-                        cswPublic.moreLink.text(cswPrivate.moretext);
-                        cswPublic.hiddenDiv.hide();
+                        cswPublic.hideHidden();
                     }
                     return false;
                 } // onClick()
             });
+
+            cswPublic.showHidden = function() {
+                if (false === Csw.isNullOrEmpty(cswPrivate.lesstext)) {
+                    cswPublic.moreLink.text(cswPrivate.lesstext);
+                } else {
+                    cswPublic.moreLink.hide();
+                }
+                cswPublic.hiddenDiv.show();
+            };
+
+            cswPublic.hideHidden = function() {
+                cswPublic.moreLink.text(cswPrivate.moretext);
+                cswPublic.hiddenDiv.hide();
+            };
 
             return cswPublic;
         });

@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Search
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             if( null != NodeType )
             {
-                addFilter( makeFilter( NodeType, Int32.MinValue, true ) );
+                addFilter( makeFilter( NodeType, Int32.MinValue, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
             }
         } // addNodeTypeFilter()
 
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.Search
                         // add the filter to the filters list for display
                         Int32 NodeTypeId = NodeTypeIds.Keys.First();
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, NodeTypeIds[NodeTypeId], false );
+                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, NodeTypeIds[NodeTypeId], false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         addFilter( NodeTypeFilter );
                     }
                     SingleNodeType = true;
@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.Search
                     {
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                         Int32 Count = sortedDict[NodeTypeId];
-                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, Count, true );
+                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, Count, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         FilterSet.Add( NodeTypeFilter.ToJObject() );
                     }
                 }
@@ -277,13 +277,13 @@ namespace ChemSW.Nbt.Search
                 // Filter on property values in the results
                 Collection<Int32> FilteredPropIds = getFilteredPropIds();
                 Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
-                SortedSet<CswNbtSearchPropOrder.SearchOrder> PropOrder = null;
+                SortedSet<CswNbtSearchPropOrder.SearchOrder> PropOrder = new SortedSet<CswNbtSearchPropOrder.SearchOrder>();
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
                     Tree.goToNthChild( n );
 
-                    if( null == PropOrder )
+                    if( 0 == PropOrder.Count )
                     {
                         PropOrder = _CswNbtSearchPropOrder.getPropOrderDict( Tree.getNodeKeyForCurrentPosition() );
                     }
@@ -318,6 +318,7 @@ namespace ChemSW.Nbt.Search
                 foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder.First(Order => Order.NodeTypePropId == NodeTypePropId).Order) )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
+                    CswNbtSearchPropOrder.SearchOrder order = PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId );
 
                     JArray FilterSet = new JArray();
                     FiltersArr.Add( FilterSet );
@@ -331,7 +332,7 @@ namespace ChemSW.Nbt.Search
                     foreach( string Value in sortedDict.Keys )
                     {
                         Int32 Count = sortedDict[Value];
-                        CswNbtSearchFilterWrapper Filter = makeFilter( NodeTypeProp, Value, Count, true );
+                        CswNbtSearchFilterWrapper Filter = makeFilter( NodeTypeProp, Value, Count, true, order.Source );
                         FilterSet.Add( Filter.ToJObject() );
                     }
                 }
@@ -414,7 +415,7 @@ namespace ChemSW.Nbt.Search
             return ret;
         } // saveSearchAsView()
 
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable )
+        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
             CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
                                                   CswNbtSearchFilterType.nodetype,
@@ -422,12 +423,13 @@ namespace ChemSW.Nbt.Search
                                                   NodeType.NodeTypeName,
                                                   ResultCount,
                                                   NodeType.IconFileName,
-                                                  Removeable );
+                                                  Removeable,
+                                                  Source );
             ret.FirstVersionId = NodeType.FirstVersionNodeTypeId;
             return ret;
         }
 
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable )
+        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
             CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
                                                   CswNbtSearchFilterType.objectclass,
@@ -435,12 +437,13 @@ namespace ChemSW.Nbt.Search
                                                   "All " + ObjectClass.ObjectClass.ToString(),
                                                   ResultCount,
                                                   ObjectClass.IconFileName,
-                                                  Removeable );
+                                                  Removeable,
+                                                  Source );
             ret.ObjectClassId = ObjectClass.ObjectClassId;
             return ret;
         }
 
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable )
+        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
             CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( NodeTypeProp.PropName,
                                                   CswNbtSearchFilterType.propval,
@@ -448,7 +451,8 @@ namespace ChemSW.Nbt.Search
                                                   Value,
                                                   ResultCount,
                                                   string.Empty,
-                                                  Removeable );
+                                                  Removeable,
+                                                  Source );
             ret.FirstPropVersionId = NodeTypeProp.FirstPropVersionId;
             return ret;
         }
