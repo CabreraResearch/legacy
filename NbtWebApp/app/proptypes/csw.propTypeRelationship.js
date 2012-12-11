@@ -30,8 +30,8 @@
                     nodeSelect.options = cswPrivate.propVals.options;
                     nodeSelect.useSearch = Csw.bool(cswPrivate.propVals.usesearch);
                     nodeSelect.cellCol = 1;
-                    nodeSelect.selectedNodeType = {};
-                    nodeSelect.addImage = {};
+                    nodeSelect.selectedNodeType = null;
+                    nodeSelect.addImage = null;
                     nodeSelect.onAddNodeFunc = function () { };
                     nodeSelect.onSelectNode = function (nodeObj) {
                         Csw.tryExec(cswPublic.data.onChange, nodeObj.nodeid);
