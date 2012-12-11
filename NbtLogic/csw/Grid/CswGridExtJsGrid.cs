@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
-    public class CswNbtGridExtJsGrid
+    public class CswGridExtJsGrid
     {
         /// <summary>
         /// Header Title for Grid
@@ -22,19 +22,19 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// Field definitions
         /// </summary>
-        public Collection<CswNbtGridExtJsField> fields = new Collection<CswNbtGridExtJsField>();
+        public Collection<CswGridExtJsField> fields = new Collection<CswGridExtJsField>();
         /// <summary>
         /// Column definitions
         /// </summary>
-        public Collection<CswNbtGridExtJsColumn> columns = new Collection<CswNbtGridExtJsColumn>();
+        public Collection<CswGridExtJsColumn> columns = new Collection<CswGridExtJsColumn>();
         /// <summary>
         /// Row data
         /// </summary>
-        public Collection<CswNbtGridExtJsRow> rows = new Collection<CswNbtGridExtJsRow>();
+        public Collection<CswGridExtJsRow> rows = new Collection<CswGridExtJsRow>();
         /// <summary>
         /// Button data
         /// </summary>
-        public Collection<CswNbtGridExtJsButton> buttons = new Collection<CswNbtGridExtJsButton>();
+        public Collection<CswGridExtJsButton> buttons = new Collection<CswGridExtJsButton>();
         /// <summary>
         /// Page size
         /// </summary>
@@ -48,19 +48,19 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public string GroupByCol = "";
 
-        public CswNbtGridExtJsGrid( string UniquePrefix )
+        public CswGridExtJsGrid( string UniquePrefix )
         {
             // add hidden canview/canedit/candelete columns
             string[] columnNames = new string[] { "canView", "canEdit", "canDelete", "isLocked" };
             foreach( string columnName in columnNames )
             {
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( UniquePrefix, columnName );
-                CswNbtGridExtJsField fld = new CswNbtGridExtJsField()
+                CswGridExtJsDataIndex dataIndex = new CswGridExtJsDataIndex( UniquePrefix, columnName );
+                CswGridExtJsField fld = new CswGridExtJsField()
                 {
                     dataIndex = dataIndex,
                 };
                 // we don't need a column definition for these -- we'll never display them
-                //CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn()
+                //CswGridExtJsColumn col = new CswGridExtJsColumn()
                 //{
                 //    dataIndex = dataIndex,
                 //    header = columnName,
@@ -75,17 +75,17 @@ namespace ChemSW.Nbt.Grid.ExtJs
         public bool columnsContains( string header )
         {
             bool ret = false;
-            foreach( CswNbtGridExtJsColumn col in columns )
+            foreach( CswGridExtJsColumn col in columns )
             {
                 ret = ret || ( col.header.ToLower() == header.ToLower() );
             }
             return ret;
         } // columnsContains()
 
-        public CswNbtGridExtJsColumn getColumn( string header )
+        public CswGridExtJsColumn getColumn( string header )
         {
-            CswNbtGridExtJsColumn ret = null;
-            foreach( CswNbtGridExtJsColumn col in columns )
+            CswGridExtJsColumn ret = null;
+            foreach( CswGridExtJsColumn col in columns )
             {
                 if( col.header.ToLower() == header.ToLower() )
                 {
@@ -102,19 +102,19 @@ namespace ChemSW.Nbt.Grid.ExtJs
             JArray Jdataitems = new JArray();
             JArray Jdatabuttons = new JArray();
 
-            foreach( CswNbtGridExtJsField fld in fields )
+            foreach( CswGridExtJsField fld in fields )
             {
                 Jfields.Add( fld.ToJson() );
             }
-            foreach( CswNbtGridExtJsColumn col in columns )
+            foreach( CswGridExtJsColumn col in columns )
             {
                 Jcolumns.Add( col.ToJson() );
             }
-            foreach( CswNbtGridExtJsRow Row in rows )
+            foreach( CswGridExtJsRow Row in rows )
             {
                 Jdataitems.Add( Row.ToJson() );
             }
-            foreach( CswNbtGridExtJsButton Button in buttons )
+            foreach( CswGridExtJsButton Button in buttons )
             {
                 Jdatabuttons.Add( Button.ToJson() );
             }
@@ -140,6 +140,6 @@ namespace ChemSW.Nbt.Grid.ExtJs
             return Jret;
         } // ToJson()
 
-    } // class CswNbtGridExtJsGrid
+    } // class CswGridExtJsGrid
 
 } // namespace ChemSW.Nbt.Grid.ExtJs

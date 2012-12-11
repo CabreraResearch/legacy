@@ -13,18 +13,18 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
-    public class CswNbtGridExtJsDataIndex : IEquatable<CswNbtGridExtJsDataIndex>
+    public class CswGridExtJsDataIndex : IEquatable<CswGridExtJsDataIndex>
     {
         private string _prefix;
         private string _dataIndex;
 
-        public CswNbtGridExtJsDataIndex( string UniquePrefix, string dataIndex )
+        public CswGridExtJsDataIndex( string UniquePrefix, string dataIndex )
         {
             _prefix = _makeSafe( UniquePrefix );
             _dataIndex = _makeSafe( dataIndex );
         }
 
-        private string _makeSafe(string str)
+        private string _makeSafe( string str )
         {
             string ret = str.ToLower();
             ret = ret.Replace( " ", "_" );
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// IEquatable: ==
         /// </summary>
-        public static bool operator ==( CswNbtGridExtJsDataIndex dataIndex1, CswNbtGridExtJsDataIndex dataIndex2 )
+        public static bool operator ==( CswGridExtJsDataIndex dataIndex1, CswGridExtJsDataIndex dataIndex2 )
         {
             // If both are null, or both are same instance, return true.
             if( System.Object.ReferenceEquals( dataIndex1, dataIndex2 ) )
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// IEquatable: !=
         /// </summary>
-        public static bool operator !=( CswNbtGridExtJsDataIndex dataIndex1, CswNbtGridExtJsDataIndex dataIndex2 )
+        public static bool operator !=( CswGridExtJsDataIndex dataIndex1, CswGridExtJsDataIndex dataIndex2 )
         {
             return !( dataIndex1 == dataIndex2 );
         }
@@ -84,17 +84,17 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public override bool Equals( object obj )
         {
-            if( !( obj is CswNbtGridExtJsDataIndex ) )
+            if( !( obj is CswGridExtJsDataIndex ) )
                 return false;
-            return this == (CswNbtGridExtJsDataIndex) obj;
+            return this == (CswGridExtJsDataIndex) obj;
         }
 
         /// <summary>
         /// IEquatable: Equals
         /// </summary>
-        public bool Equals( CswNbtGridExtJsDataIndex obj )
+        public bool Equals( CswGridExtJsDataIndex obj )
         {
-            return this == (CswNbtGridExtJsDataIndex) obj;
+            return this == (CswGridExtJsDataIndex) obj;
         }
 
         /// <summary>
@@ -108,6 +108,6 @@ namespace ChemSW.Nbt.Grid.ExtJs
         #endregion IEquatable
 
 
-    } // class CswNbtGridExtJsDataIndex
+    } // class CswGridExtJsDataIndex
 
 } // namespace ChemSW.Nbt.Grid.ExtJs

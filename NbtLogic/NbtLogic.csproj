@@ -332,13 +332,13 @@
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\Dev\CswDeveloper.cs" />
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsColumn.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsEnums.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsField.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
+    <Compile Include="csw\Grid\CswGridExtJsButton.cs" />
+    <Compile Include="csw\Grid\CswGridExtJsColumn.cs" />
+    <Compile Include="csw\Grid\CswGridExtJsDataIndex.cs" />
+    <Compile Include="csw\Grid\CswGridExtJsEnums.cs" />
+    <Compile Include="csw\Grid\CswGridExtJsField.cs" />
+    <Compile Include="csw\Grid\CswGridExtJsGrid.cs" />
+    <Compile Include="csw\Grid\CswGridExtJsRow.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
     <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />
     <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
@@ -915,7 +915,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="csw\Schema\scripts\prod\01V\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
   </ItemGroup>

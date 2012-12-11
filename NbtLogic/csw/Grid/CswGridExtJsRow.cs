@@ -13,12 +13,12 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
-    public class CswNbtGridExtJsRow
+    public class CswGridExtJsRow
     {
         /// <summary>
-        /// Instance a CswNbtGridExtJsRow with a Row Number
+        /// Instance a CswGridExtJsRow with a Row Number
         /// </summary>
-        public CswNbtGridExtJsRow( Int32 RowNo )
+        public CswGridExtJsRow( Int32 RowNo )
         {
             this.RowNo = RowNo;
         }
@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// Name - value pairs that encompass the row data
         /// </summary>
-        public Dictionary<CswNbtGridExtJsDataIndex, string> data = new Dictionary<CswNbtGridExtJsDataIndex, string>();
+        public Dictionary<CswGridExtJsDataIndex, string> data = new Dictionary<CswGridExtJsDataIndex, string>();
 
         /// <summary>
         /// Allow view on this row
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         public JObject ToJson()
         {
             JObject Jrow = new JObject();
-            foreach( CswNbtGridExtJsDataIndex Key in data.Keys )
+            foreach( CswGridExtJsDataIndex Key in data.Keys )
             {
                 Jrow[Key.ToString()] = data[Key];
             }
@@ -86,6 +86,6 @@ namespace ChemSW.Nbt.Grid.ExtJs
             return Jrow;
         } // ToJson()
 
-    } // class CswNbtGridExtJsRow
+    } // class CswGridExtJsRow
 
 } // namespace ChemSW.Nbt.Grid.ExtJs

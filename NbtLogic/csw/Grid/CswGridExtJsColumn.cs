@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
-    public class CswNbtGridExtJsColumn
+    public class CswGridExtJsColumn
     {
         /// <summary>
         /// Display name for the column
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// Internal column name (matches field definition's dataIndex)
         /// </summary>
-        public CswNbtGridExtJsDataIndex dataIndex;
+        public CswGridExtJsDataIndex dataIndex;
         /// <summary>
         /// Width in pixels (default is 100)
         /// </summary>
@@ -89,6 +89,6 @@ namespace ChemSW.Nbt.Grid.ExtJs
             return Jcol;
         } // ToJson()
 
-    } // class CswNbtGridExtJsColumn
+    } // class CswGridExtJsColumn
 
 } // namespace ChemSW.Nbt.Grid.ExtJs

@@ -13,12 +13,12 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
-    public class CswNbtGridExtJsField
+    public class CswGridExtJsField
     {
         /// <summary>
         /// Name for the field (matches column definition's dataIndex)
         /// </summary>
-        public CswNbtGridExtJsDataIndex dataIndex;
+        public CswGridExtJsDataIndex dataIndex;
 
         /// <summary>
         /// Data type
@@ -38,5 +38,5 @@ namespace ChemSW.Nbt.Grid.ExtJs
             return Jfield;
         } // ToJson()
 
-    } // class CswNbtGridExtJsField
+    } // class CswGridExtJsField
 } // namespace ChemSW.Nbt.Grid.ExtJs

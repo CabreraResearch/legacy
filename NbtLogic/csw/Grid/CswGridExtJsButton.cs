@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
-    public class CswNbtGridExtJsButton
+    public class CswGridExtJsButton
     {
         /// <summary>
         /// Unique key to enable Object Class logic
@@ -57,15 +57,15 @@ namespace ChemSW.Nbt.Grid.ExtJs
                 {
                     JButton["selectedtext"] = SelectedText;
                 }
-                if(false == string.IsNullOrEmpty(MenuOptions))
+                if( false == string.IsNullOrEmpty( MenuOptions ) )
                 {
-                    JButton["menuoptions"] = MenuOptions;    
+                    JButton["menuoptions"] = MenuOptions;
                 }
-                
+
             }
             return JButton;
         } // ToJson()
 
-    } // class CswNbtGridExtJsRow
+    } // class CswGridExtJsRow
 
 } // namespace ChemSW.Nbt.Grid.ExtJs
