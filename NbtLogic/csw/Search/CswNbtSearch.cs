@@ -315,27 +315,30 @@ namespace ChemSW.Nbt.Search
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
-                foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder.First(Order => Order.NodeTypePropId == NodeTypePropId).Order) )
+                foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId ).Order ) )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
-                    CswNbtSearchPropOrder.SearchOrder order = PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId );
-
-                    JArray FilterSet = new JArray();
-                    FiltersArr.Add( FilterSet );
-
-                    // Sort by count descending, then alphabetically by gestalt
-                    Dictionary<string, Int32> sortedDict = ( from entry
-                                                               in PropCounts[NodeTypePropId]
-                                                             orderby entry.Value descending, entry.Key ascending
-                                                             select entry
-                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
-                    foreach( string Value in sortedDict.Keys )
+                    if( false == NodeTypeProp.IsUnique() )   // case 27649
                     {
-                        Int32 Count = sortedDict[Value];
-                        CswNbtSearchFilterWrapper Filter = makeFilter( NodeTypeProp, Value, Count, true, order.Source );
-                        FilterSet.Add( Filter.ToJObject() );
-                    }
-                }
+                        CswNbtSearchPropOrder.SearchOrder order = PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId );
+
+                        JArray FilterSet = new JArray();
+                        FiltersArr.Add( FilterSet );
+
+                        // Sort by count descending, then alphabetically by gestalt
+                        Dictionary<string, Int32> sortedDict = ( from entry
+                                                                     in PropCounts[NodeTypePropId]
+                                                                 orderby entry.Value descending , entry.Key ascending
+                                                                 select entry
+                                                               ).ToDictionary( pair => pair.Key, pair => pair.Value );
+                        foreach( string Value in sortedDict.Keys )
+                        {
+                            Int32 Count = sortedDict[Value];
+                            CswNbtSearchFilterWrapper Filter = makeFilter( NodeTypeProp, Value, Count, true, order.Source );
+                            FilterSet.Add( Filter.ToJObject() );
+                        }
+                    } // if( false == NodeTypeProp.IsUnique() )
+                } // foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId ).Order ) )
             } // if( SingleNodeType )
 
             return FiltersArr;
