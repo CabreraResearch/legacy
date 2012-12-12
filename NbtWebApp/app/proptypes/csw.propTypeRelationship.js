@@ -47,6 +47,7 @@
                     nodeSelect.isRequired = cswPublic.data.isRequired();
                     nodeSelect.isMulti = cswPublic.data.isMulti();
                     nodeSelect.isReadOnly = cswPublic.data.isReadOnly();
+                    nodeSelect.isClickable = cswPublic.data.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
 
                     nodeSelect.doGetNodes = false;
 

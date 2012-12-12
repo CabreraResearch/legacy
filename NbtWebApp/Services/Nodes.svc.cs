@@ -119,15 +119,11 @@ namespace NbtWebApp
         public class PropertyView
         {
             [DataMember]
-            public string PropName = string.Empty;
+            public string ObjClassPropName = string.Empty;
             [DataMember]
             public string NodeTypeId = string.Empty;
             [DataMember]
             public string NodeId = string.Empty;
-            [DataMember]
-            public string TargetNodeTypeId = string.Empty;
-            [DataMember]
-            public string TargetNodeTypeName = string.Empty;
         }
     }
 
@@ -167,7 +163,7 @@ namespace NbtWebApp
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
-        [Description( "Get the viewid of a property view" )]
+        [Description( "Get the options for a relationship property" )]
         public NodeSelect.Response getRelationshipOpts( NodeSelect.PropertyView Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
@@ -183,5 +179,23 @@ namespace NbtWebApp
             return ( Ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get all sizes related to a given node" )]
+        public NodeSelect.Response getSizes( CswNbtNode.Node Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            NodeSelect.Response Ret = new NodeSelect.Response();
+            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, CswNbtNode.Node>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.getSizes,
+                ParamObj: Request
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
     }
 }
