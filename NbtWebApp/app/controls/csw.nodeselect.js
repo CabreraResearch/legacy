@@ -45,6 +45,7 @@
                 cswPrivate.isMulti = cswPrivate.isMulti; // || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
+                cswPrivate.isClickable = cswPrivate.isClickable; // ||true;
 
                 cswPrivate.options = cswPrivate.options || [];
 
@@ -338,7 +339,12 @@
             //#region _postCtor
 
             (function _relationship() {
-                if (cswPrivate.isReadOnly) {
+                if (false === cswPrivate.isClickable) { //case 28180 - relationships not clickable from audit history grid
+                    cswPrivate.nodeTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
+                    cswPrivate.nodeText = cswPrivate.nodeTextCell.span({
+                        text: cswPrivate.selectedName
+                    });
+                } else if (cswPrivate.isReadOnly) {
                     cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink
