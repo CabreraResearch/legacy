@@ -42,12 +42,14 @@
                 var table = parent.table().css('margin', '5px');
 
                 var makeCtrl = function (i) {
+                    var spanCell = table.cell(i, 1).span({ text: reportParams[i - 1] }).css('margin', '5px');
+                    var paramName = '{' + reportParams[i - 1] + '}';
+
                     var OnChange = function (text) {
-                        params['{' + spanCell.text() + '}'] = text;
+                        params[paramName] = text;
                     };
 
-                    var spanCell = table.cell(i, 1).span({ text: reportParams[i - 1] }).css('margin', '5px');
-                    params['{' + reportParams[i - 1] + '}'] = '';
+                    params[paramName] = '';
 
                     var inputCell = table.cell(i, 2).input({
                         onChange: OnChange,
@@ -55,7 +57,6 @@
                     }).css('margin', '5px');
                 };
 
-                var i = 0;
                 for (var i = 1; i <= reportParams.length; i++) {
                     makeCtrl(i);
                 }
