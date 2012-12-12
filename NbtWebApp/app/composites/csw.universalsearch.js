@@ -240,6 +240,7 @@
 
                 // Filters in use
                 var hasFilters = false;
+                var atLeastOneShown = false;
                 var ftable_row = 1;
 
                 function showFilter(thisFilter) {
@@ -281,45 +282,61 @@
                 fdiv.br();
 
                 // Filters to add
-
-                function makeFilterLink(thisFilter, div, filterCount) {
-                    var flink = div.a({
-                        text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
-                        onClick: function () {
-                            cswPrivate.filter(thisFilter, 'add');
-                            return false;
-                        }
-                    });
-                    div.br();
-                } // makeFilterLink()
+                var filtersDiv = fdiv.moreDiv({
+                    moretext: 'More Filters...',
+                    lesstext: ''
+                });
+                filtersDiv.moreLink.hide();
 
                 function makeFilterSet(thisFilterSet) {
 
                     var filterCount = 0;
-                    var moreDiv = fdiv.moreDiv();
-                    var filterName = '';
+                    var destDiv, moreDiv, thisdiv, filterName = '', filterSource, nameSpan;
 
-                    var nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
-                    moreDiv.shownDiv.br();
-                    var thisdiv = moreDiv.shownDiv;
-                    moreDiv.moreLink.hide();
                     Csw.each(thisFilterSet, function (thisFilter) {
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
+                            filterSource = thisFilter.source;
+                            if(filterSource === 'Results') {
+                                destDiv = filtersDiv.hiddenDiv;
+                                filtersDiv.moreLink.show();
+                            } else {
+                                destDiv = filtersDiv.shownDiv;
+                                atLeastOneShown = true;
+                            }
+                            moreDiv = destDiv.moreDiv();
+                            moreDiv.moreLink.hide();
+
+                            nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
+                            moreDiv.shownDiv.br();
+                            thisdiv = moreDiv.shownDiv;
                         }
                         if (filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }
-                        makeFilterLink(thisFilter, thisdiv, filterCount);
+                        
+                        thisdiv.a({
+                            text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
+                            onClick: function () {
+                                cswPrivate.filter(thisFilter, 'add');
+                                return false;
+                            }
+                        });
+                        thisdiv.br();
+
                         filterCount++;
                     });
                     nameSpan.text(filterName);
-                    fdiv.br();
-                    fdiv.br();
+
+                    destDiv.br();
+                    destDiv.br();
                 } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
+                if(false === atLeastOneShown) {
+                    filtersDiv.showHidden();
+                }
 
                 cswPrivate.data = data;
 
