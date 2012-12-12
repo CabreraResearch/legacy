@@ -64,27 +64,23 @@
         });
 
         var postForm = function (reportid, params, action) {
-            var form = document.createElement("form");
-            form.setAttribute("method", "post");
-            form.setAttribute("action", action);
 
+            var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+            var form = Csw.literals.factory($form);
+            
             for (var param in params) {
-                var field = document.createElement("input");
-                field.setAttribute("type", "text");
-                field.setAttribute("name", param);
-                field.setAttribute("value", params[param]);
-                form.appendChild(field);
+                form.input({
+                    name: param,
+                    value: params[param]
+                });
             }
 
-            var reportField = document.createElement("input");
-            reportField.setAttribute("type", "text");
-            reportField.setAttribute("name", "reportid");
-            reportField.setAttribute("value", reportid);
-            form.appendChild(reportField);
-
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
+            form.input({
+                name: 'reportid',
+                value: reportid
+            });
+            form.$.submit();
+            form.remove();
         }
 
         function runReport(reportid, rformat, params) {
