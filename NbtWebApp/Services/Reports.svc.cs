@@ -6,6 +6,12 @@ using System.Web;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Reports;
 using NbtWebApp.WebSvc.Returns;
+using ChemSW.Nbt.WebServices;
+using System.IO;
+using System.Data;
+using System.Text;
+using ChemSW;
+using System.ServiceModel.Channels;
 
 namespace NbtWebApp
 {
@@ -58,5 +64,62 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Generate a report" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceReport.ReportReturn report( CswNbtWebServiceReport.ReportData Request )
+        {
+            CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceReport.runReport,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Generate a csv report file" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream reportCSV( CswNbtWebServiceReport.ReportData Request )
+        {
+            CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+            //CswNbtWebServiceReport.ReportData Request = new CswNbtWebServiceReport.ReportData();
+            //Request.reportFormat = reportFormat;
+            //Request.nodeId = nodeId;
+            ////Request.reportParams = reportParams;
+            //Request.gridJSON = gridJSON;
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceReport.runReportCSV,
+                ParamObj: Request
+                );
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=export.csv;" );
+            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+
+            return Request.stream;
+        }
+
+        [OperationContract, WebGet]
+        public Stream GetValue()
+        {
+            string result = "Hello world";
+            byte[] resultBytes = Encoding.UTF8.GetBytes( result );
+            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=export.csv;" );
+            return new MemoryStream( resultBytes );
+        }
+
     }
 }

@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassReport reportNode = NbtResources.Nodes[pk];
                 if( string.Empty != reportNode.SQL.Text )
                 {
-                    //reportNode.SQL.Text = ReplaceReportParams( reportParams.reportParams, reportNode );
+                    reportNode.SQL.Text = ReplaceReportParams( reportParams.reportParams, reportNode );
                     string ReportSql = reportNode.getUserContextSql( NbtResources.CurrentNbtUser.Username );
                     CswArbitrarySelect cswRptSql = NbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
                     rptDataTbl = cswRptSql.getTable();
