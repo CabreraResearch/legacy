@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.WebServices
             string replacedSQL = reportNode.SQL.Text;
             foreach( CswNbtWebServiceReport.ReportData.ReportParam param in reportParams )
             {
-                replacedSQL = replacedSQL.Replace( param.name, "'" + param.value + "'" );
+                replacedSQL = replacedSQL.Replace( "{" + param.name + "}", "'" + param.value + "'" );
             }
             return replacedSQL;
         }

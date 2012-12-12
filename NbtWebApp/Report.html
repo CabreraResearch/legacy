@@ -36,8 +36,8 @@
                     for (var i = 0; i < data.reportParams.length; i++) {
 
                         (function () {
-                            var spanCell = table.cell(i + 1, 1).span({ text: data.reportParams[i].name }).css('margin', '5px');
-                            var paramName = '{' + data.reportParams[i].name + '}';
+                            var paramName = data.reportParams[i].name;
+                            var spanCell = table.cell(i + 1, 1).span({ text: paramName }).css('margin', '5px');
                             params[paramName] = '';
 
                             var OnChange = function (text) {
