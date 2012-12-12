@@ -286,7 +286,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RmdReceiptLotsReceivedNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotsReceived );
             CswNbtMetaDataNodeTypeProp RmdGoodsReceivedNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.GoodsReceived );
             CswNbtMetaDataNodeTypeProp RmdReceiptLotsToDispenseNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotToDispense );
-            CswNbtMetaDataNodeTypeProp RmdReorderFreqNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReorderFrequency );
+            CswNbtMetaDataNodeTypeProp RmdReorderFreqNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
             CswNbtMetaDataNodeTypeProp RmdNextReorderDateNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
             CswNbtMetaDataNodeTypeProp RmdDescriptionNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Description );
             CswNbtMetaDataNodeTypeProp RmdSizeNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Size );
@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RmdCommentsNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Comments );
             CswNbtMetaDataNodeTypeProp RmdLocationNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Location );
             CswNbtMetaDataNodeTypeProp RmdRequestedForNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RequestedFor );
-            CswNbtMetaDataNodeTypeProp RmdReorderNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Reorder );
+            CswNbtMetaDataNodeTypeProp RmdReorderNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Recurring );
 
             //Add Layout: Case 27263
             //Nothing to add to this Layout

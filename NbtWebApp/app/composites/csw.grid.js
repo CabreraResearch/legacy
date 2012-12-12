@@ -87,23 +87,25 @@
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
-                    var cell = Csw.domNode({ ID: cellId });
-                    cell.empty();
-                    var iconopts = {
-                        name: cswPrivate.name + cellId + buttonName,
-                        hovertext: buttonName,
-                        iconType: iconType,
-                        state: Csw.enums.iconState.normal,
-                        isButton: false,
-                        size: 18
-                    };
-                    if (false === Csw.isNullOrEmpty(clickFunc)) {
-                        iconopts.isButton = true;
-                        iconopts.onClick = function () {
-                            Csw.tryExec(clickFunc, [record.data]);
+                    if (Csw.isElementInDom(cellId)) {
+                        var cell = Csw.domNode({ ID: cellId });
+                        cell.empty();
+                        var iconopts = {
+                            name: cswPrivate.name + cellId + buttonName,
+                            hovertext: buttonName,
+                            iconType: iconType,
+                            state: Csw.enums.iconState.normal,
+                            isButton: false,
+                            size: 18
                         };
+                        if (false === Csw.isNullOrEmpty(clickFunc)) {
+                            iconopts.isButton = true;
+                            iconopts.onClick = function() {
+                                Csw.tryExec(clickFunc, [record.data]);
+                            };
+                        }
+                        cell.icon(iconopts);
                     }
-                    cell.icon(iconopts);
                 }, 50);
             }; // makeActionButton()
 
@@ -263,13 +265,18 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function () {
-                                    var div = Csw.domNode({ ID: id });
-                                    div.nodeButton({
-                                        value: colObj.header,
-                                        size: 'small',
-                                        propId: thisBtn[0].propattr
-                                    });
+                                Csw.defer(function _tryMakeBtn(keepTrying) {
+                                    if (false !== keepTrying)
+                                        if (Csw.isElementInDom(id)) {
+                                            var div = Csw.domNode({ ID: id });
+                                            div.nodeButton({
+                                                value: colObj.header,
+                                                size: 'small',
+                                                propId: thisBtn[0].propattr
+                                            });
+                                        } else {
+                                            _tryMakeBtn(false);
+                                        }
                                 }, 100);
                             }
                             return '<div id="' + id + '"></div>';
@@ -372,7 +379,7 @@
                 if (Csw.isElementInDom(cswPublic.getId())) {
                     cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
                 } else {
-                    cswPublic.extGrid = window.Ext.create('Ext.grid.Panel');
+                    cswPublic.extGrid = window.Ext.create('Ext.panel.Panel');
                 }
                 return cswPublic.extGrid;
             }); // makeGrid()

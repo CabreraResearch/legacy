@@ -175,6 +175,7 @@ namespace ChemSW.Nbt.WebServices
                                 CswNbtObjClassRequestMaterialDispense NewMaterialDispense = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest );
                                 NewMaterialDispense.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
                                 NewMaterialDispense.Request.RelatedNodeId = RequestNode.NodeId;
+                                NewMaterialDispense.Requestor.RelatedNodeId = NbtResources.CurrentNbtUser.UserId;
                                 NewMaterialDispense.postChanges( ForceUpdate: false );
                                 Succeeded = true;
                             }
