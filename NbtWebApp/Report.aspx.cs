@@ -3,10 +3,12 @@ using System.Data;
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.WebServices;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Web;
 
@@ -81,10 +83,10 @@ namespace ChemSW.Nbt.WebPages
         private void LoadReport()
         {
             //_LoadingLiteral.Visible = false;
-            if( Request.QueryString["reportid"] != string.Empty )
+            if( Request.Form["reportid"] != string.Empty )
             {
                 CswPrimaryKey ReportId = new CswPrimaryKey();
-                ReportId.FromString( Request.QueryString["reportid"] );
+                ReportId.FromString( Request.Form["reportid"] );
                 CswNbtNode Node = Master.CswNbtResources.Nodes.GetNode( ReportId );
                 CswNbtObjClassReport ReportNode = (CswNbtObjClassReport) Node;
 
@@ -93,6 +95,19 @@ namespace ChemSW.Nbt.WebPages
                 //if( View == null )
                 //    throw new CswDniException( ErrorType.Warning, "Report has invalid View", "Report received a null view" );
 
+                Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams = new Collection<CswNbtWebServiceReport.ReportData.ReportParam>();
+                foreach( string key in Request.Form.AllKeys )
+                {
+                    if( false == key.Equals( "reportid" ) ) //reportid is a special case and is used above
+                    {
+                        CswNbtWebServiceReport.ReportData.ReportParam param = new CswNbtWebServiceReport.ReportData.ReportParam();
+                        param.name = key;
+                        param.value = Request.Form[key];
+                        reportParams.Add( param );
+                    }
+                }
+
+                ReportNode.SQL.Text = CswNbtWebServiceReport.ReplaceReportParams( reportParams, ReportNode );
                 string ReportSql = ReportNode.getUserContextSql( Master.CswNbtResources.CurrentNbtUser.Username );
                 CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                 DataTable ReportTable = ReportSelect.getTable();

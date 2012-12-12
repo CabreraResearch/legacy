@@ -33,49 +33,123 @@
             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
             var qs = Csw.queryString();
+
+            if (false == Csw.isNullOrEmpty(qs.reportParams)) {
+                var reportParams = qs.reportParams.split(',');
+                var params = [];
+
+                var parent = Csw.domNode({ ID: 'rptDiv' });
+                var table = parent.table().css('margin', '5px');
+
+                var makeCtrl = function (i) {
+                    var OnChange = function (text) {
+                        params['{' + spanCell.text() + '}'] = text;
+                    };
+
+                    var spanCell = table.cell(i, 1).span({ text: reportParams[i - 1] }).css('margin', '5px');
+                    params['{' + reportParams[i - 1] + '}'] = '';
+
+                    var inputCell = table.cell(i, 2).input({
+                        onChange: OnChange,
+                        isRequired: true
+                    }).css('margin', '5px');
+                };
+
+                var i = 0;
+                for (var i = 1; i <= reportParams.length; i++) {
+                    makeCtrl(i);
+                }
+            }
+
             if (false == Csw.isNullOrEmpty(qs.reportid)) {
                 showCrystal(qs.reportid);
                 if (false == Csw.isNullOrEmpty(qs.rformat)) {
                     runReport(qs.reportid, qs.rformat);
                 } else {
-                    $('#btnGrid').click(function () { 
-                        $('#btnGrid').attr('disabled','disabled'); 
-                        runReport(qs.reportid, 'grid'); 
+                    $('#btnGrid').click(function () {
+                        $('#btnGrid').attr('disabled', 'disabled');
+                        runReport(qs.reportid, 'grid', params);
                     });
-                    $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
-                    $('#btnCrystal').click(function () { Csw.window.location('report.aspx?reportid=' + qs.reportid); });
+                    $('#btnCsv').click(function () { runReport(qs.reportid, 'csv', params); });
+                    $('#btnCrystal').click(function () { runReport(qs.reportid, 'crystal', params) });
                 }
             }
         });
 
+        var postForm = function (reportid, params) {
+            var form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("action", "report.aspx");
 
+            for (var param in params) {
+                var field = document.createElement("input");
+                field.setAttribute("type", "text");
+                field.setAttribute("name", param);
+                field.setAttribute("value", params[param]);
+                form.appendChild(field);
+            }
 
-        function runReport(reportid, rformat) {
+            var reportField = document.createElement("input");
+            reportField.setAttribute("type", "text");
+            reportField.setAttribute("name", "reportid");
+            reportField.setAttribute("value", reportid);
+            form.appendChild(reportField);
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        function runReport(reportid, rformat, params) {
 
             function startSpinner() {
                 $('#spinner').show();
             }
 
+            var reportParams = [];
+            //var paramsString = ''
+            for (var item in params) {
+                reportParams.push({ name: '{' + item + '}', value: params[item] });
+                //paramsString += '{' + item + '}=' + params[item] + ','; 
+            }
+            //paramsString = paramsString.slice(0, paramsString.length - 1);
 
             if ('csv' == rformat.toLowerCase()) {
-                Csw.window.location('wsNBT.asmx/report?rformat=csv&reportid=' + reportid);
-            }
-            else {
+                //Csw.window.location('services/reports/reportCSV?reportFormat=csv&nodeId=' + reportid + "&reportParams=" + reportParams.toString());
+
+                $.ajax({
+                    url: 'Services/Reports/GetValue',
+                    success: function (data) {
+                        var x = data;
+                    },
+                    error: function (data) {
+                        alert(data);
+                    }
+                });
+
+            } else if ('crystal' == rformat.toLowerCase()) {
+                //Csw.window.location('report.aspx?reportid=' + reportid + "&reportParams=" + paramsString);
+                postForm(reportid, params);
+            } else {
 
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
-                
-                var parent = Csw.domNode({ ID: 'rptDiv' });
-                
-                parent.grid({
-                    name: 'reportGrid',
-                    readonly: true,
-                    ajax: {
-                        urlMethod: 'report',
-                        data: { reportid: reportid, rformat: 'grid' },
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Reports/report',
+                    data: {
+                        reportFormat: rformat,
+                        nodeId: reportid,
+                        reportParams: reportParams
                     },
-                    showActionColumn: false,
-                    storeId: reportid,
-                    usePaging: false
+                    success: function (data) {
+                        var parent = Csw.domNode({ ID: 'rptDiv' });
+
+                        var gridData = JSON.parse(data.gridJSON);
+                        gridData.grid.showActionColumn = false;
+                        gridData.grid.storeid = reportid;
+                        gridData.grid.usePaging = false;
+                        parent.grid(gridData.grid).css('margin', '20px');
+                    }
                 });
             }
         }
@@ -93,6 +167,7 @@
         <img src="images/ajax/progress.gif" /></div>
     <div id="rptDiv">
     </div>
-    <div id="DialogErrorDiv"></div>
+    <div id="DialogErrorDiv">
+    </div>
 </body>
 </html>
