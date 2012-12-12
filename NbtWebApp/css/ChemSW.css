@@ -1398,10 +1398,10 @@ ul li div {
 
 .NodeTableOddRow
 {
-    background-color: #dddddd;
 }
 .NodeTableEvenRow
 {
+    background-color: #eeeeee;
 }
 
 .searchResult {
