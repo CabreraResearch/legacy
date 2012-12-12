@@ -52,7 +52,9 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public Stream stream = null;
             [DataMember]
-            public Collection<ReportParam> reportParams;
+            public Collection<ReportParam> reportParams = new Collection<ReportParam>();
+            [DataMember]
+            public bool doesSupportCrystal = false;
 
             [DataContract]
             public class ReportParam
@@ -192,7 +194,7 @@ namespace ChemSW.Nbt.WebServices
             return replacedSQL;
         }
 
-        public static Collection<CswNbtWebServiceReport.ReportData.ReportParam> FormReportParamsToCollection(NameValueCollection FormData)
+        public static Collection<CswNbtWebServiceReport.ReportData.ReportParam> FormReportParamsToCollection( NameValueCollection FormData )
         {
             Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams = new Collection<CswNbtWebServiceReport.ReportData.ReportParam>();
             foreach( string key in FormData.AllKeys )
@@ -206,6 +208,28 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
             return reportParams;
+        }
+
+        public static void getReportProps( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData reportParams )
+        {
+            CswNbtResources NBTResources = (CswNbtResources) CswResources;
+            CswPrimaryKey pk = new CswPrimaryKey();
+            pk = CswConvert.ToPrimaryKey( reportParams.nodeId );
+            if( CswTools.IsPrimaryKey( pk ) )
+            {
+                CswNbtObjClassReport reportNode = NBTResources.Nodes[pk];
+
+                reportParams.doesSupportCrystal = ( false == reportNode.RPTFile.Empty );
+
+                reportParams.reportParams = new Collection<ReportData.ReportParam>();
+                foreach( string param in reportNode.ExtractReportParams() )
+                {
+                    ReportData.ReportParam paramObj = new ReportData.ReportParam();
+                    paramObj.name = param;
+                    reportParams.reportParams.Add( paramObj );
+                }
+            }
+            Return.Data = reportParams;
         }
 
     } // class CswNbtWebServiceReport

@@ -17,64 +17,50 @@
             function stopSpinner() {
                 $('#spinner').hide();
             }
-
-            function showCrystal(reportid) {
-                Csw.ajax.post({
-                    url: 'wsNBT.asmx/doesReportSupportCrystal',
-                    data: { reportid: reportid },
-                    success: function (data) {
-                        if (Csw.bool(data.result)) {
-                            $('#btnCrystal').css('display', '');
-                        }
-                    }
-                });
-            }
-
             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
             var qs = Csw.queryString();
 
-            if (false == Csw.isNullOrEmpty(qs.reportParams)) {
-                var reportParams = qs.reportParams.split(',');
-                var params = [];
+            Csw.ajaxWcf.post({
+                urlMethod: 'Reports/getReportProps',
+                async: false,
+                data: { nodeId: qs.reportid },
+                success: function (data) {
+                    var params = [];
+                    if (data.doesSupportCrystal) {
+                        $('#btnCrystal').css('display', '');
+                    }
 
-                var parent = Csw.domNode({ ID: 'rptDiv' });
-                var table = parent.table().css('margin', '5px');
+                    var parent = Csw.domNode({ ID: 'rptDiv' });
+                    var table = parent.table().css('margin', '5px');
+                    for (var i = 0; i < data.reportParams.length; i++) {
 
-                var makeCtrl = function (i) {
-                    var spanCell = table.cell(i, 1).span({ text: reportParams[i - 1] }).css('margin', '5px');
-                    var paramName = '{' + reportParams[i - 1] + '}';
+                        (function () {
+                            var spanCell = table.cell(i + 1, 1).span({ text: data.reportParams[i].name }).css('margin', '5px');
+                            var paramName = '{' + data.reportParams[i].name + '}';
+                            params[paramName] = '';
 
-                    var OnChange = function (text) {
-                        params[paramName] = text;
-                    };
+                            var OnChange = function (text) {
+                                params[paramName] = text;
+                            };
 
-                    params[paramName] = '';
+                            var inputCell = table.cell(i + 1, 2).input({
+                                onChange: OnChange,
+                                isRequired: true
+                            }).css('margin', '5px');
+                        })();
+                    }
 
-                    var inputCell = table.cell(i, 2).input({
-                        onChange: OnChange,
-                        isRequired: true
-                    }).css('margin', '5px');
-                };
-
-                for (var i = 1; i <= reportParams.length; i++) {
-                    makeCtrl(i);
+                    if (false == Csw.isNullOrEmpty(qs.reportid)) {
+                        $('#btnGrid').click(function () {
+                            $('#btnGrid').attr('disabled', 'disabled');
+                            runReport(qs.reportid, 'grid', params);
+                        });
+                        $('#btnCsv').click(function () { runReport(qs.reportid, 'csv', params); });
+                        $('#btnCrystal').click(function () { runReport(qs.reportid, 'crystal', params) });
+                    }
                 }
-            }
-
-            if (false == Csw.isNullOrEmpty(qs.reportid)) {
-                showCrystal(qs.reportid);
-                if (false == Csw.isNullOrEmpty(qs.rformat)) {
-                    runReport(qs.reportid, qs.rformat);
-                } else {
-                    $('#btnGrid').click(function () {
-                        $('#btnGrid').attr('disabled', 'disabled');
-                        runReport(qs.reportid, 'grid', params);
-                    });
-                    $('#btnCsv').click(function () { runReport(qs.reportid, 'csv', params); });
-                    $('#btnCrystal').click(function () { runReport(qs.reportid, 'crystal', params) });
-                }
-            }
+            });
         });
 
         var postForm = function (reportid, params, action) {

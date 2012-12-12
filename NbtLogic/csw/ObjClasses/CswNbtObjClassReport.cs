@@ -71,8 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                string reportParams = _extractReportParams();
-                return "Report.html?reportid=" + NodeId.ToString() + ( reportParams.Length > 0 ? "&reportParams=" + reportParams : "" );
+                return "Report.html?reportid=" + NodeId.ToString();
             }
         }
 
@@ -165,7 +164,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region custom logic
 
-        private string _extractReportParams()
+        public CswCommaDelimitedString ExtractReportParams()
         {
             CswCommaDelimitedString reportParams = new CswCommaDelimitedString();
 
@@ -176,7 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
                 reportParams.Add( paramName );
             }
 
-            return reportParams.ToString();
+            return reportParams;
         }
 
         #endregion
