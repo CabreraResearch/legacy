@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Search;
@@ -143,51 +142,9 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
+
+
         #endregion UniversalSearch
-
-        #region ChemCatCentral Search
-
-        public JObject doChemCatCentralSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
-        {
-            JObject ret = new JObject();
-
-            //**** Example of how to set the variables dynamically in the web.config file
-            //var binding = new WSHttpBinding();
-            //binding.SendTimeout = new TimeSpan( 0, 0, 0, 0, 100000 );
-            //binding.OpenTimeout = new TimeSpan( 0, 0, 0, 0, 100000 );
-            //binding.MaxReceivedMessageSize = 10000;
-            //binding.ReaderQuotas.MaxStringContentLength = 10000;
-            //binding.ReaderQuotas.MaxDepth = 10000;
-            //binding.ReaderQuotas.MaxArrayLength = 10000;
-            //var endpoint = new EndpointAddress( "http://localhost:57102/MyService.svc" );
-            //var myClient = new WebServiceclient( binding, endpoint );
-
-            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-            CswC3SearchParams.AccessId = "chemcatcentral";
-            CswC3SearchParams.CustomerLoginName = "g";
-            CswC3SearchParams.LoginPassword = "g";
-            CswC3SearchParams.Field = "CatalogNo";
-            CswC3SearchParams.Query = SearchTerm;
-            CswC3SearchParams.SearchOperator = "begins";
-            CswC3SearchParams.SourceName = "Fisher";
-            CswC3SearchParams.MaxRows = 10;
-
-            ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
-            CswRetObjSearchResults SearchResults = C3Search.search( CswC3SearchParams );
-
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, Int32.MinValue );
-            ret["table"] = wsTable.getTable( SearchResults );
-            ret["filters"] = "";
-            ret["searchterm"] = SearchTerm;
-            ret["filtersapplied"] = "";
-            //Search.SaveToCache( true );
-            ret["sessiondataid"] = "";
-
-            return ret;
-        }
-
-        #endregion
-
 
     } // class CswNbtWebServiceSearch
 

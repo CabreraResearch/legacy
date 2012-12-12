@@ -3,9 +3,12 @@
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
       <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/c3WebServii" />
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/c3WebServii" />
       <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" />
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Exceptions" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="Search_authenticateUser_InputMessage">

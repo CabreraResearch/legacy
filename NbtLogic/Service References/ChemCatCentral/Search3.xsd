@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
+  <xs:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:complexType name="CswC3Params">
     <xs:sequence>
       <xs:element minOccurs="0" name="AccessId" nillable="true" type="xs:string" />
@@ -9,7 +11,6 @@
       <xs:element minOccurs="0" name="ImportSetId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="LoginPassword" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="customername" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="datasources" nillable="true" type="xs:anyType" />
       <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="status" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="userid" nillable="true" type="xs:string" />
@@ -19,11 +20,16 @@
   <xs:complexType name="CswRetObjSearchResults">
     <xs:sequence>
       <xs:element minOccurs="0" name="Authenticated" type="xs:boolean" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Authentication" nillable="true" type="q1:CswWebSvcSessionAuthenticateData.Authentication.Response" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="AvailableDataSources" nillable="true" type="q2:ArrayOfstring" />
       <xs:element minOccurs="0" name="CswC3SearchResults" nillable="true" type="tns:ArrayOfCswC3Product" />
       <xs:element minOccurs="0" name="DataSources" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Error" nillable="true" type="xs:string" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Logging" nillable="true" type="q3:CswWebSvcReturnBase.Logging" />
       <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Performance" nillable="true" type="q4:CswWebSvcReturnBase.Performance" />
       <xs:element minOccurs="0" name="Role" nillable="true" type="xs:string" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Status" nillable="true" type="q5:CswWebSvcReturnBase.Status" />
       <xs:element minOccurs="0" name="Users" nillable="true">
         <xs:complexType>
           <xs:sequence>

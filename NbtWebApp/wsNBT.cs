@@ -23,10 +23,9 @@ using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
+using ChemSW.StructureSearch;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.StructureSearch;
 
 
 
@@ -2045,7 +2044,7 @@ namespace ChemSW.Nbt.WebServices
                         JObject IdentityPropsObj = CswConvert.ToJObject( IdentityTabJson );
                         foreach( JProperty RootIdentityProp in IdentityPropsObj.Children() )
                         {
-                            if( false == NewPropsJson.Contains(RootIdentityProp.Name) )
+                            if( false == NewPropsJson.Contains( RootIdentityProp.Name ) )
                             {
                                 NewPropsObj.Add( RootIdentityProp );
                             }
@@ -3295,34 +3294,6 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         } // saveSearchAsView()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doChemCatCentralSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.doChemCatCentralSearch( SearchTerm, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ) );
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // doUniversalSearch()
 
         #endregion Search
 

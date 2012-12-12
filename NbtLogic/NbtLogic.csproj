@@ -945,6 +945,15 @@
     <None Include="Service References\ChemCatCentral\Search3.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\ChemCatCentral\Search4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search41.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search42.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
