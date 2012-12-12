@@ -67,25 +67,39 @@ namespace NbtWebAppServices.Response
             }
         }
 
+        [DataContract]
         public class CswNbtInspection
         {
             public CswNbtInspection()
             {
                 Questions = new Collection<QuestionAnswer>();
             }
+            public DateTime DueDateAsDate { get { return DateTime.Parse( DueDate ); } set { DueDate = value.ToShortDateString(); } }
 
+            [DataMember]
             public Int32 DesignId { get; set; }
-            public DateTime DueDate { get; set; }
+            [DataMember]
+            public string DueDate { get; set; }
+            [DataMember]
             public Int32 InspectionId { get; set; }
+            [DataMember]
             public string InspectionPointName { get; set; }
+            [DataMember]
             public string LocationPath { get; set; }
+            [DataMember]
             public string RouteName { get; set; }
+            [DataMember]
             public string Status { get; set; }
+            [DataMember]
             public string Action { get; set; }
+            [DataMember]
             public bool ReadOnly { get; set; }
+            [DataMember]
             public QuestionCounts Counts { get; set; }
+            [DataMember]
             public Collection<QuestionAnswer> Questions { get; set; }
 
+            [DataContract]
             public class QuestionCounts
             {
                 public QuestionCounts()
@@ -95,21 +109,34 @@ namespace NbtWebAppServices.Response
                     UnAnswered = 0;
                     Ooc = 0;
                 }
+                [DataMember]
                 public Int32 Total { get; set; }
+                [DataMember]
                 public Int32 Answered { get; set; }
+                [DataMember]
                 public Int32 UnAnswered { get; set; }
+                [DataMember]
                 public Int32 Ooc { get; set; }
             }
 
+            [DataContract]
             public class QuestionAnswer
             {
+                [DataMember]
                 public string Answer { get; set; }
+                [DataMember]
                 public Int32 AnswerId { get; set; }
+                [DataMember]
                 public string Comments { get; set; }
+                [DataMember]
                 public string CorrectiveAction { get; set; }
+                [DataMember]
                 public DateTime DateAnswered { get; set; }
+                [DataMember]
                 public DateTime DateCorrected { get; set; }
+                [DataMember]
                 public Int32 QuestionId { get; set; }
+                [DataMember]
                 public string Status { get; set; }
             }
         }
