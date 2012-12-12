@@ -881,6 +881,120 @@
 
             openDialog(div, 400, 300, null, 'Upload');
         },
+        C3SearchDialog: function (options) {
+
+            var cswPrivate = {
+                title: "ChemCatCentral Search",
+                c3searchterm: options.c3searchterm,
+                c3handleresults: options.c3handleresults,
+                loadView: null //function () { }
+            };
+
+            if (options) {
+                Csw.extend(cswPrivate, options);
+            }
+
+            var div = Csw.literals.div(),
+                newNode;
+
+            var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
+
+            tableOuter.cell(1, 1).p({ text: 'To perform a search of the ChemCatCentral database, select a data source, search type, and search operator.' });
+
+            var tableInner = div.table({ cellpadding: '2px' });
+
+            var sourceSelect = tableInner.cell(1, 1).select({
+                name: 'C3Search_sourceSelect',
+                selected: 'All Sources',
+                values: ['All Sources']
+            });
+
+            function getAvailableDataSources() {
+
+
+                console.log("in function");
+                var ret = '';
+
+                var CswC3Params = {
+                    AccessId: 'chemcatcentral',
+                    CustomerLoginName: 'g',
+                    LoginPassword: 'g'
+                };
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
+                    data: CswC3Params,
+                    success: function (data) {
+                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
+                    }
+                });
+                return ret;
+            };
+
+            getAvailableDataSources(); //call function
+
+
+            var searchTypeSelect = tableInner.cell(1, 2).select({
+                name: 'C3Search_sourceSelect'
+            });
+            searchTypeSelect.option({ display: 'Catalog Number', value: 'CatalogNo' });
+            searchTypeSelect.option({ display: 'Name (Including Synonyms)', value: 'Name' });
+            searchTypeSelect.option({ display: 'Tradename (No Synonyms)', value: 'Tradename' });
+            searchTypeSelect.option({ display: 'CAS Number', value: 'CasNo' });
+            searchTypeSelect.option({ display: 'Formula', value: 'Formula' });
+            searchTypeSelect.option({ display: 'Suppliername', value: 'Suppliername' });
+
+            var searchOperatorSelect = tableInner.cell(1, 3).select({
+                name: 'C3Search_searchOperatorSelect'
+            });
+            searchOperatorSelect.option({ display: 'Begins', value: 'begins' });
+            searchOperatorSelect.option({ display: 'Contains', value: 'contains' });
+            searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
+
+            var searchTermField = tableInner.cell(1, 4).input({
+                value: options.c3searchterm
+            });
+
+            tableInner.cell(1, 5).button({
+                name: 'c3SearchBtn',
+                enabledText: 'Search',
+                disabledText: "Searching...",
+                onClick: function () {
+
+                    var CswC3SearchParams = {
+                        AccessId: 'chemcatcentral',
+                        CustomerLoginName: 'g',
+                        LoginPassword: 'g',
+                        Field: searchTypeSelect.selectedVal(),
+                        Query: searchTermField.val(),
+                        SearchOperator: searchOperatorSelect.selectedVal(),
+                        SourceName: sourceSelect.selectedVal(),
+                        MaxRows: 10
+                    };
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ChemCatCentral/Search',
+                        data: CswC3SearchParams,
+                        success: function (data) {
+                            //Convert to object from string
+                            console.log(data);
+                            var obj = eval("(" + data.SearchResults + ')');
+                            console.log(obj);
+                            //Need to load empty view and then put table view on top of it
+                            //Csw.tryExec(cswPrivate.loadView, '','');
+                            Csw.tryExec(options.c3handleresults.handleResults(obj));
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+
+
+            tableOuter.cell(2, 1).div(tableInner);
+
+            openDialog(div, 750, 300, null, cswPrivate.title);
+        },
         StructureSearchDialog: function (options) {
             var cswPrivate = {
                 title: "Structure Search",

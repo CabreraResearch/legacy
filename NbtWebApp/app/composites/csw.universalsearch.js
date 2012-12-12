@@ -70,9 +70,9 @@
                 Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
-                        ObjectClassName: '', 
-                        ObjectClassId: '', 
-                        ExcludeNodeTypeIds: '', 
+                        ObjectClassName: '',
+                        ObjectClassId: '',
+                        ExcludeNodeTypeIds: '',
                         RelatedToNodeTypeId: '',
                         RelatedObjectClassPropName: '',
                         FilterToPermission: '',
@@ -90,13 +90,13 @@
                         var selectedText = 'All';
                         var selectedIcon = '';
                         Csw.each(data, function (nt) {
-                            if(false === Csw.isNullOrEmpty(nt.name)) {
+                            if (false === Csw.isNullOrEmpty(nt.name)) {
                                 items.push({
                                     text: nt.name,
                                     icon: nt.iconfilename,
-                                    handler: function() { onPreFilterClick(nt); }
+                                    handler: function () { onPreFilterClick(nt); }
                                 });
-                                if(cswPrivate.nodetypeid === nt.id) {
+                                if (cswPrivate.nodetypeid === nt.id) {
                                     selectedText = '';
                                     selectedIcon = nt.iconfilename;
                                 }
@@ -123,7 +123,7 @@
 
                 cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
                     name: 'searchBtn',
-                    menuOptions: ['Search', 'Structure Search'],
+                    menuOptions: ['Search', 'Structure Search', 'C3 Search'],
                     selectedText: 'Search',
                     size: 'small',
                     onClick: function (selectedOption) {
@@ -131,14 +131,16 @@
                             case 'Structure Search':
                                 $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                                 break;
+                            case 'C3 Search':
+                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic });
+                                break;
                             default:
                                 Csw.publish('initPropertyTearDown');
                                 cswPrivate.searchterm = cswPrivate.searchinput.val();
                                 cswPrivate.newsearch();
                         }
-
                     }
-                    });
+                });
             })();
 
             // Handle search submission
@@ -153,13 +155,13 @@
                         ObjectClassId: cswPrivate.objectclassid
                     },
                     success: function (data) {
-                        cswPrivate.handleResults(data);
+                        cswPublic.handleResults(data);
                         Csw.tryExec(cswPrivate.onAfterNewSearch, cswPrivate.sessiondataid);
                     }
                 });
             }; // search()
 
-            cswPrivate.handleResults = function (data) {
+            cswPublic.handleResults = function (data) {
                 var fdiv, ftable;
 
                 cswPrivate.sessiondataid = data.sessiondataid;
@@ -336,7 +338,7 @@
                         Filter: JSON.stringify(thisFilter),
                         Action: action
                     },
-                    success: cswPrivate.handleResults
+                    success: cswPublic.handleResults
                 });
             }; // filter()
 
@@ -348,7 +350,7 @@
                         SessionDataId: cswPrivate.sessiondataid,
                         NodeTypeId: nodetypeid
                     },
-                    success: cswPrivate.handleResults
+                    success: cswPublic.handleResults
                 });
             }; // filter()
 
@@ -384,7 +386,7 @@
                         SessionDataId: cswPrivate.sessiondataid
                     },
                     success: function (data) {
-                        cswPrivate.handleResults(data);
+                        cswPublic.handleResults(data);
                         Csw.tryExec(cswPrivate.onAfterNewSearch, cswPrivate.sessiondataid);
                     }
                 });
