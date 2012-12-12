@@ -12,6 +12,7 @@ using System.Data;
 using System.Text;
 using ChemSW;
 using System.ServiceModel.Channels;
+using System.Collections.Specialized;
 
 namespace NbtWebApp
 {
@@ -85,17 +86,22 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( BodyStyle = WebMessageBodyStyle.Bare, Method = "POST" )]
         [Description( "Generate a csv report file" )]
         [FaultContract( typeof( FaultException ) )]
-        public Stream reportCSV( CswNbtWebServiceReport.ReportData Request )
+        public Stream reportCSV( Stream dataStream )
         {
+
+            string body = new StreamReader( dataStream ).ReadToEnd();
+            NameValueCollection formData = HttpUtility.ParseQueryString( body );
+
             CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
-            //CswNbtWebServiceReport.ReportData Request = new CswNbtWebServiceReport.ReportData();
-            //Request.reportFormat = reportFormat;
-            //Request.nodeId = nodeId;
-            ////Request.reportParams = reportParams;
-            //Request.gridJSON = gridJSON;
+            CswNbtWebServiceReport.ReportData Request = new CswNbtWebServiceReport.ReportData();
+            Request.nodeId = formData["reportid"];
+            Request.reportFormat = formData["reportFormat"];
+            formData.Remove( "reportid" );
+            formData.Remove( "reportFormat" );
+            Request.reportParams = CswNbtWebServiceReport.FormReportParamsToCollection( formData );
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -106,20 +112,8 @@ namespace NbtWebApp
             SvcDriver.run();
 
             WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=export.csv;" );
-            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
 
             return Request.stream;
         }
-
-        [OperationContract, WebGet]
-        public Stream GetValue()
-        {
-            string result = "Hello world";
-            byte[] resultBytes = Encoding.UTF8.GetBytes( result );
-            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=export.csv;" );
-            return new MemoryStream( resultBytes );
-        }
-
     }
 }

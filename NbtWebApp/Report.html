@@ -76,10 +76,10 @@
             }
         });
 
-        var postForm = function (reportid, params) {
+        var postForm = function (reportid, params, action) {
             var form = document.createElement("form");
             form.setAttribute("method", "post");
-            form.setAttribute("action", "report.aspx");
+            form.setAttribute("action", action);
 
             for (var param in params) {
                 var field = document.createElement("input");
@@ -112,20 +112,9 @@
             }
 
             if ('csv' == rformat.toLowerCase()) {
-                //Csw.window.location('services/reports/reportCSV?reportFormat=csv&nodeId=' + reportid + "&reportParams=" + reportParams.toString());
-
-                $.ajax({
-                    url: 'Services/Reports/GetValue',
-                    success: function (data) {
-                        var x = data;
-                    },
-                    error: function (data) {
-                        alert(data);
-                    }
-                });
-
+                postForm(reportid, params, 'Services/Reports/reportCSV');
             } else if ('crystal' == rformat.toLowerCase()) {
-                postForm(reportid, params);
+                postForm(reportid, params, 'report.aspx');
             } else {
 
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);

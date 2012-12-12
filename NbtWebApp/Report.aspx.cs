@@ -95,17 +95,7 @@ namespace ChemSW.Nbt.WebPages
                 //if( View == null )
                 //    throw new CswDniException( ErrorType.Warning, "Report has invalid View", "Report received a null view" );
 
-                Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams = new Collection<CswNbtWebServiceReport.ReportData.ReportParam>();
-                foreach( string key in Request.Form.AllKeys )
-                {
-                    if( false == key.Equals( "reportid" ) ) //reportid is a special case and is used above
-                    {
-                        CswNbtWebServiceReport.ReportData.ReportParam param = new CswNbtWebServiceReport.ReportData.ReportParam();
-                        param.name = key;
-                        param.value = Request.Form[key];
-                        reportParams.Add( param );
-                    }
-                }
+                Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams = CswNbtWebServiceReport.FormReportParamsToCollection( Request.Form );
 
                 ReportNode.SQL.Text = CswNbtWebServiceReport.ReplaceReportParams( reportParams, ReportNode );
                 string ReportSql = ReportNode.getUserContextSql( Master.CswNbtResources.CurrentNbtUser.Username );

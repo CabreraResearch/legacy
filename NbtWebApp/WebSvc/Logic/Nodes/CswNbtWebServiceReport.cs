@@ -13,6 +13,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -63,18 +64,22 @@ namespace ChemSW.Nbt.WebServices
             }
 
             private Dictionary<string, string> _reportParamsDictionary = null;
-            public Dictionary<string, string> ReportParamDictionary{
-                get{ 
-                    if( null == _reportParamsDictionary){
-                        _reportParamsDictionary = new Dictionary<string,string>();
-                        foreach(ReportParam param in reportParams){
-                            _reportParamsDictionary.Add(param.name, param.value);
+            public Dictionary<string, string> ReportParamDictionary
+            {
+                get
+                {
+                    if( null == _reportParamsDictionary )
+                    {
+                        _reportParamsDictionary = new Dictionary<string, string>();
+                        foreach( ReportParam param in reportParams )
+                        {
+                            _reportParamsDictionary.Add( param.name, param.value );
                         }
                     }
-                    return _reportParamsDictionary; 
+                    return _reportParamsDictionary;
                 }
             }
-            
+
         }
 
         #endregion WCF Data Objects
@@ -177,7 +182,7 @@ namespace ChemSW.Nbt.WebServices
             return rptDataTbl;
         }
 
-        public static string ReplaceReportParams( Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams, CswNbtObjClassReport reportNode) //{param1}=someval,{param2}=anotherval
+        public static string ReplaceReportParams( Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams, CswNbtObjClassReport reportNode ) //{param1}=someval,{param2}=anotherval
         {
             string replacedSQL = reportNode.SQL.Text;
             foreach( CswNbtWebServiceReport.ReportData.ReportParam param in reportParams )
@@ -185,6 +190,22 @@ namespace ChemSW.Nbt.WebServices
                 replacedSQL = replacedSQL.Replace( param.name, "'" + param.value + "'" );
             }
             return replacedSQL;
+        }
+
+        public static Collection<CswNbtWebServiceReport.ReportData.ReportParam> FormReportParamsToCollection(NameValueCollection FormData)
+        {
+            Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams = new Collection<CswNbtWebServiceReport.ReportData.ReportParam>();
+            foreach( string key in FormData.AllKeys )
+            {
+                if( false == key.Equals( "reportid" ) ) //reportid is a special case and is used above
+                {
+                    CswNbtWebServiceReport.ReportData.ReportParam param = new CswNbtWebServiceReport.ReportData.ReportParam();
+                    param.name = key;
+                    param.value = FormData[key];
+                    reportParams.Add( param );
+                }
+            }
+            return reportParams;
         }
 
     } // class CswNbtWebServiceReport
