@@ -327,10 +327,11 @@
 
                         filterCount++;
                     });
-                    nameSpan.text(filterName);
-
-                    destDiv.br();
-                    destDiv.br();
+                    if(false === Csw.isNullOrEmpty(filterName)) {
+                        nameSpan.text(filterName);
+                        destDiv.br();
+                        destDiv.br();
+                    }
                 } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
