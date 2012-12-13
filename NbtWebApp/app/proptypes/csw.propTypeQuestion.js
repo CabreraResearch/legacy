@@ -23,10 +23,10 @@
                             (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
                     }
 
-                    cswPrivate.isAnswerCompliant = function () {
+                    cswPrivate.isAnswerCompliant = function (answer) {
                         var answerCompliant = false;
                         for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
-                            if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(cswPrivate.selectedAnswer).trim().toLowerCase()) {
+                            if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(answer).trim().toLowerCase()) {
                                 answerCompliant = true;
                             }
                         }
@@ -39,7 +39,7 @@
                         var isCompliant = true;
 
                         if (cswPrivate.selectedAnswer !== cswPrivate.defaultText && cswPrivate.correctiveAction === cswPrivate.defaultText) {
-                            isCompliant = cswPrivate.isAnswerCompliant();
+                            isCompliant = cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer);
                         }
 
                         if (isCompliant) {
@@ -70,6 +70,8 @@
                     cswPrivate.dateAnswered = Csw.string(cswPrivate.propVals.dateanswered.date).trim();
                     cswPrivate.dateCorrected = Csw.string(cswPrivate.propVals.datecorrected.date).trim();
                     cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
+                    cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.div();
@@ -78,10 +80,16 @@
                             CellCssClass: 'CSwFieldTypeQuestion_cell'
                         });
 
-                        cswPublic.table.cell(1, 1).label({
-                            text: cswPrivate.answer,
+                        var label = cswPublic.table.cell(1, 1).label({
+                            text: cswPrivate.answer + '   ',
                             cssclass: 'CswFieldTypeQuestion_answer'
                         });
+                        if (false == cswPrivate.isAnswerCompliant(cswPrivate.answer)) {
+                            label.img({
+                                src: "Images\\newicons\\18\\warning.png"
+                            });
+                            var x = 10;
+                        }
                         var answerCell = cswPublic.table.cell(2, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
                         answerCell.append('Answer: ' + cswPrivate.answer + ' ');
                         if (cswPrivate.dateAnswered !== '') {
@@ -157,9 +165,6 @@
 
                         cswPrivate.correctiveActionTextBox.hide();
                         cswPrivate.correctiveActionLabel.hide();
-
-                        cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
-                        cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
 
                         cswPrivate.checkCompliance();
 
