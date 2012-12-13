@@ -460,6 +460,7 @@
             cswPrivate.HandleTableData = function () {
                 cswParent.empty();
                 cswPrivate.results = Csw.number(cswPrivate.tabledata.results, -1);
+                cswPrivate.pagenodelimit = Csw.number(cswPrivate.tabledata.pagesize, 20);
 
                 // multi-nodetype
                 cswPrivate.singleColumn = false;
