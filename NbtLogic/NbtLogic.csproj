@@ -317,6 +317,7 @@
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28281.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28339.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_CaseXXXXX.cs" />
     <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
