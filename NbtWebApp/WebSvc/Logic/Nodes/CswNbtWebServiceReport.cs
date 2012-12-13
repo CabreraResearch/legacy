@@ -210,26 +210,26 @@ namespace ChemSW.Nbt.WebServices
             return reportParams;
         }
 
-        public static void getReportProps( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData reportParams )
+        public static void getReportInfo( ICswResources CswResources, CswNbtWebServiceReport.ReportReturn Return, CswNbtWebServiceReport.ReportData Request )
         {
             CswNbtResources NBTResources = (CswNbtResources) CswResources;
             CswPrimaryKey pk = new CswPrimaryKey();
-            pk = CswConvert.ToPrimaryKey( reportParams.nodeId );
+            pk = CswConvert.ToPrimaryKey( Request.nodeId );
             if( CswTools.IsPrimaryKey( pk ) )
             {
                 CswNbtObjClassReport reportNode = NBTResources.Nodes[pk];
 
-                reportParams.doesSupportCrystal = ( false == reportNode.RPTFile.Empty );
+                Request.doesSupportCrystal = ( false == reportNode.RPTFile.Empty );
 
-                reportParams.reportParams = new Collection<ReportData.ReportParam>();
+                Request.reportParams = new Collection<ReportData.ReportParam>();
                 foreach( string param in reportNode.ExtractReportParams() )
                 {
                     ReportData.ReportParam paramObj = new ReportData.ReportParam();
                     paramObj.name = param;
-                    reportParams.reportParams.Add( paramObj );
+                    Request.reportParams.Add( paramObj );
                 }
             }
-            Return.Data = reportParams;
+            Return.Data = Request;
         }
 
     } // class CswNbtWebServiceReport

@@ -120,14 +120,14 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [Description( "Gets a Reports parameters in the sql" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceReport.ReportReturn getReportProps( CswNbtWebServiceReport.ReportData Request )
+        public CswNbtWebServiceReport.ReportReturn getReportInfo( CswNbtWebServiceReport.ReportData Request )
         {
             CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceReport.getReportProps,
+                WebSvcMethodPtr: CswNbtWebServiceReport.getReportInfo,
                 ParamObj: Request
                 );
 

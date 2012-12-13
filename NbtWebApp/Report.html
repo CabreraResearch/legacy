@@ -22,7 +22,7 @@
             var qs = Csw.queryString();
 
             Csw.ajaxWcf.post({
-                urlMethod: 'Reports/getReportProps',
+                urlMethod: 'Reports/getReportInfo',
                 async: false,
                 data: { nodeId: qs.reportid },
                 success: function (data) {
@@ -33,10 +33,10 @@
 
                     var parent = Csw.domNode({ ID: 'rptDiv' });
                     var table = parent.table().css('margin', '5px');
-                    for (var i = 0; i < data.reportParams.length; i++) {
-
+                    var i = 0;
+                    Csw.each(data.reportParams, function (param) {
                         (function () {
-                            var paramName = data.reportParams[i].name;
+                            var paramName = param.name;
                             var spanCell = table.cell(i + 1, 1).span({ text: paramName }).css('margin', '5px');
                             params[paramName] = '';
 
@@ -48,8 +48,9 @@
                                 onChange: OnChange,
                                 isRequired: true
                             }).css('margin', '5px');
+                            i++;
                         })();
-                    }
+                    });
 
                     if (false == Csw.isNullOrEmpty(qs.reportid)) {
                         $('#btnGrid').click(function () {
@@ -67,7 +68,7 @@
 
             var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
             var form = Csw.literals.factory($form);
-            
+
             for (var param in params) {
                 form.input({
                     name: param,
