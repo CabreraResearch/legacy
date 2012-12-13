@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtPropertySetRequestItem( CswNbtNode Node )
         {
             CswNbtPropertySetRequestItem ret = null;
-            if( null != Node && Members().Contains( Node.ObjClass.ObjectClass.ObjectClass ) )
+            if ( null != Node && Members().Contains( Node.ObjClass.ObjectClass.ObjectClass ) )
             {
                 ret = (CswNbtPropertySetRequestItem) Node.ObjClass;
             }
@@ -262,17 +262,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDefaultValues()
         {
-            if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
+            if ( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
             {
                 CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                 Request.RelatedNodeId = RequestAct.getCurrentRequestNode().NodeId;
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
             }
-            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
+            if ( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
             {
                 CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                if( null != ThisRequest )
+                if ( null != ThisRequest )
                 {
                     Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
                     RequestedFor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
@@ -309,13 +309,13 @@ namespace ChemSW.Nbt.ObjClasses
         public void setFulfillVisibility()
         {
             bool HideMenuButton = ( Status.Value == Statuses.Pending );
-            if( false == HideMenuButton &&
+            if ( false == HideMenuButton &&
                 CswTools.IsPrimaryKey( Request.RelatedNodeId ) &&
                 Status.Value != Statuses.Cancelled &&
                 Status.Value != Statuses.Completed )
             {
                 CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                if( null != NodeAsRequest &&
+                if ( null != NodeAsRequest &&
                     _CswNbtResources.CurrentNbtUser.UserId == NodeAsRequest.Requestor.RelatedNodeId )
                 {
                     HideMenuButton = true;
@@ -338,6 +338,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            //CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
+            //ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
+
             onPropertySetAddDefaultViewFilters( ParentRelationship );
             CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -346,12 +349,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool Ret = false;
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if ( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                switch( OCP.PropName )
+                switch ( OCP.PropName )
                 {
                     case PropertyName.Fulfill:
-                        switch( ButtonData.SelectedText )
+                        switch ( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Cancel:
                                 Status.Value = Statuses.Cancelled;
@@ -394,7 +397,7 @@ namespace ChemSW.Nbt.ObjClasses
             ExternalOrderNumber.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
-            switch( Status.Value )
+            switch ( Status.Value )
             {
                 case Statuses.Submitted:
                     toggleReadOnlyProps( true, this );
@@ -402,7 +405,7 @@ namespace ChemSW.Nbt.ObjClasses
                 case Statuses.Cancelled: //This fallthrough is intentional
                 case Statuses.Completed:
                     CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                    if( null != NodeAsRequest )
+                    if ( null != NodeAsRequest )
                     {
                         NodeAsRequest.setCompletedDate();
                     }

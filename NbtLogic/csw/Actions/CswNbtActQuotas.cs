@@ -435,16 +435,18 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public bool CheckQuotaNT( CswNbtMetaDataNodeType NodeType )
         {
-            bool ret = false;
+            bool ret = true;
             if( null == NodeType )
             {
                 throw new CswDniException( ErrorType.Warning, "Could not check the quota of the provided object.", "The supplied NodeType was null." );
             }
-
-            Int32 NodeCount = GetNodeCountForNodeType( NodeType.NodeTypeId );
+            
             Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
-            ret = ( ( Quota <= 0 || NodeCount < Quota ) &&
-                    CheckQuotaOC( NodeType.ObjectClassId ) );
+            if( Quota > 0 )
+            {
+                ret = ( GetNodeCountForNodeType( NodeType.NodeTypeId ) < Quota );
+            }
+            ret = ret && CheckQuotaOC( NodeType.ObjectClassId );
 
             return ret;
         } // CheckQuota()
@@ -454,9 +456,13 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public bool CheckQuotaOC( Int32 ObjectClassId )
         {
+            bool ret = true;
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            Int32 NodeCount = GetNodeCountForObjectClass( ObjectClassId );
-            return ( ObjectClass.Quota <= 0 || NodeCount < ObjectClass.Quota );
+            if( ObjectClass.Quota > 0 )
+            {
+                ret = ( GetNodeCountForObjectClass( ObjectClassId ) < ObjectClass.Quota );
+            }
+            return ret;
         } // CheckQuota()
 
     } // class CswNbtActQuotas

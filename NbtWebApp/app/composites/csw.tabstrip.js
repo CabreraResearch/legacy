@@ -16,7 +16,7 @@
                 cswPrivate.name = cswPrivate.name || '';
                 cswPrivate.tabPanel = cswPrivate.tabPanel || {};
                 cswPrivate.tabPanel.title = cswPrivate.tabPanel.title || 'Tabs';
-                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 450;
+                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 600;
                 //cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
                 cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable; // || true
                 cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful;  // || true
@@ -32,7 +32,7 @@
                 };
                 
                 cswParent.empty();
-                cswPublic = cswParent.div();
+                cswPublic = cswParent.div().css({width: '100%', height: '100%'});
 
             }());
                 
@@ -53,6 +53,7 @@
                     html: 'Hi, I am tab ',
                     tooltip: title
                 };
+                tab.layout = 'fit';
                 var extTab = cswPublic.tabPanel.add([tab])[0];
 
                 var newTab = {
@@ -135,6 +136,20 @@
                 return cswPublic;
             };
 
+            cswPublic.setSize = function(def) {
+            	/// <summary>
+            	/// Set the heigth and width of the tab strip
+            	/// </summary>
+            	/// <param name="def">Object with 'width' and 'height' properties</param>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
+                def = def || {
+                    width: 800,
+                    height: 600
+                };
+                cswPublic.tabPanel.setSize(def);
+                return cswPublic;
+            };
+
             //#endregion Define Class Members
               
 
@@ -146,9 +161,9 @@
 
                     cswPublic.tabPanel = window.Ext.create('Ext.tab.Panel', {
                         id: cswPrivate.ID,
-                        height: cswPrivate.tabPanel.height,
-                        //width: cswPrivate.tabPanel.width,
-                        maxWidth: cswPublic.css('width'),
+                        layout: 'fit',
+                        height: cswPrivate.tabPanel.height, //no height will render as 0px
+                        //width: no width is fine
                         renderTo: cswPublic.getId(),
                         title: cswPrivate.tabPanel.title,
                         resizable: cswPrivate.tabPanel.resizable,
