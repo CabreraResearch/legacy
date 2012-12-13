@@ -71,7 +71,7 @@
                             onChange: function () {
                                 var val = cswPrivate.unitSelect.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ unit: val });
+                                cswPublic.data.onPropChange({ units: val });
                             },
                             values: cswPrivate.unitVals,
                             selected: cswPrivate.units
