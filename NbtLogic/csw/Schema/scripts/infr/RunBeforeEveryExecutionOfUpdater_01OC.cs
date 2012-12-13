@@ -542,7 +542,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataObjectClassProp ReorderOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
-                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Reorder,
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Recurring,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                     SetValOnAdd = false,
                     IsRequired = true
@@ -551,7 +551,7 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
-                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReorderFrequency,
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.TimeInterval,
                     SetValOnAdd = false,
                     IsFk = true,
@@ -598,13 +598,13 @@ namespace ChemSW.Nbt.Schema
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
-                 {
-                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotsReceived,
-                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid,
-                     SetValOnAdd = false,
-                     Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(),
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotsReceived,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid,
+                    SetValOnAdd = false,
+                    Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(),
 
-                 } );
+                } );
 
                 CswNbtMetaDataObjectClassProp GoodsReceivedOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
@@ -642,6 +642,20 @@ namespace ChemSW.Nbt.Schema
                     ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
                     SetValOnAdd = false
                 } );
+            }
+            else
+            {
+                CswNbtMetaDataObjectClassProp ReorderOcp = RequestMaterialDispenseOc.getObjectClassProp( "Reorder" );
+                if( null != ReorderOcp )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.Recurring );
+                }
+
+                CswNbtMetaDataObjectClassProp ReorderFreqOcp = RequestMaterialDispenseOc.getObjectClassProp( "Reorder Frequency" );
+                if( null != ReorderFreqOcp )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReorderFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
+                }
             }
             _resetBlame();
         }

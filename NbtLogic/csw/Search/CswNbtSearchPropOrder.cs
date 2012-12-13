@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using System.Linq;
 
@@ -12,20 +13,56 @@ namespace ChemSW.Nbt.Search
     {
         private CswNbtResources _CswNbtResources;
         private Dictionary<CswNbtMetaDataNodeType, IEnumerable<CswNbtMetaDataNodeTypeProp>> _TableLayoutDict = new Dictionary<CswNbtMetaDataNodeType, IEnumerable<CswNbtMetaDataNodeTypeProp>>();
-        private Dictionary<CswNbtMetaDataNodeType, Dictionary<Int32, Int32>> _PropOrderDict = new Dictionary<CswNbtMetaDataNodeType, Dictionary<Int32, Int32>>();
+        private Dictionary<CswNbtMetaDataNodeType, SortedSet<SearchOrder>> _PropOrderDict = new Dictionary<CswNbtMetaDataNodeType, SortedSet<SearchOrder>>();
+
+
+        /// <summary>
+        /// Enum: Source for the order of a property in a search
+        /// </summary>
+        public sealed class PropOrderSourceType : CswEnum<PropOrderSourceType>
+        {
+            private PropOrderSourceType( string Name ) : base( Name ) { }
+            public static IEnumerable<PropOrderSourceType> _All { get { return All; } }
+
+            public static explicit operator PropOrderSourceType( string str )
+            {
+                PropOrderSourceType ret = Parse( str );
+                return ret ?? Unknown;
+            }
+
+            public static readonly PropOrderSourceType Unknown = new PropOrderSourceType( "Unknown" );
+            public static readonly PropOrderSourceType View = new PropOrderSourceType( "View" );
+            public static readonly PropOrderSourceType Table = new PropOrderSourceType( "Table" );
+            public static readonly PropOrderSourceType Results = new PropOrderSourceType( "Results" );
+        }
 
         public CswNbtSearchPropOrder( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
         }
 
+        public class SearchOrder : IComparable<SearchOrder>
+        {
+            public Int32 NodeTypePropId;
+            public PropOrderSourceType Source;
+            public Int32 Order;
+
+            public int CompareTo( SearchOrder other )
+            {
+                return Order.CompareTo( other.Order );
+            }
+        } // SearchOrder
+
         public Int32 getPropOrder(Int32 NodeTypePropId, CswNbtNodeKey NodeKey, CswNbtView View = null)
         {
             Int32 ret = 0;
-            Dictionary<Int32, Int32> dict = getPropOrderDict( NodeKey, View );
+            SortedSet<SearchOrder> dict = getPropOrderDict( NodeKey, View );
             if( null != dict )
             {
-                ret = dict[NodeTypePropId];
+                foreach( SearchOrder ThisOrder in dict.Where( ThisOrder => ThisOrder.NodeTypePropId == NodeTypePropId ) )
+                {
+                    ret = ThisOrder.Order;
+                }
             }
             return ret;
         } // getPropOrder()
@@ -33,15 +70,15 @@ namespace ChemSW.Nbt.Search
         /// <summary>
         /// Returns the order in which properties should appear in the table
         /// </summary>
-        public Dictionary<Int32, Int32> getPropOrderDict(CswNbtNodeKey NodeKey, CswNbtView View = null)
+        public SortedSet<SearchOrder> getPropOrderDict( CswNbtNodeKey NodeKey, CswNbtView View = null )
         {
-            Dictionary<Int32, Int32> ret = null;
+            SortedSet<SearchOrder> ret = null;
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId );
             if( null != NodeType )
             {
                 if( false == _PropOrderDict.ContainsKey( NodeType ) )
                 {
-                    Dictionary<Int32, Int32> dict = new Dictionary<Int32, Int32>();
+                    ret = new SortedSet<SearchOrder>();
 
                     // View order goes first
                     if( View != null )
@@ -51,57 +88,71 @@ namespace ChemSW.Nbt.Search
                         {
                             foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
                             {
-                                Int32 ThisOrder = 0;
+                                SearchOrder ThisOrder = new SearchOrder
+                                                            {
+                                                                NodeTypePropId = ViewProp.NodeTypePropId,
+                                                                Source = PropOrderSourceType.View,
+                                                                Order = 0
+                                                            };
+                                
+                                
                                 foreach( CswNbtViewProperty OtherViewProp in ViewRel.Properties )
                                 {
                                     if( ( OtherViewProp.Order != Int32.MinValue && OtherViewProp.Order < ViewProp.Order ) ||
                                         ViewProp.Order == Int32.MinValue )
                                     {
-                                        ThisOrder++;
+                                        ThisOrder.Order += 1;
                                     }
                                 }
-                                while( dict.ContainsValue( ThisOrder ) )
-                                {
-                                    ThisOrder++;
-                                }
-                                dict.Add( ViewProp.NodeTypePropId, ThisOrder );
+                                ret.Add( ThisOrder );
                             } // foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
                         } // if( ViewRel != null )
                     } // if( _View != null )
 
 
                     // Table layout goes second
-                    Int32 maxOrder = ( dict.Values.Count > 0 ) ? dict.Values.Max() : 0;
+                    Int32 maxOrder = ( ret.Count > 0 ) ? ret.Max().Order : 0;
                     if( false == _TableLayoutDict.Keys.Contains( NodeType ) )
                     {
                         _TableLayoutDict[NodeType] = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeType.NodeTypeId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
                     }
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[NodeType]
-                                                                    .Where( Prop => false == dict.ContainsKey( Prop.PropId ) ) )
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[NodeType])
                     {
-                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout propTableLayout = Prop.getTableLayout();
-                        if( propTableLayout.DisplayRow > 0 )
+                        SearchOrder ThisOrder = new SearchOrder
+                                                    {
+                                                        NodeTypePropId = Prop.PropId,
+                                                        Source = PropOrderSourceType.Table,
+                                                    };
+                        if( false == ret.Contains( ThisOrder ) )
                         {
-                            Int32 ThisOrder = maxOrder + propTableLayout.DisplayRow;
-                            while( dict.ContainsValue( ThisOrder ) )
+                            CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout propTableLayout = Prop.getTableLayout();
+                            if( propTableLayout.DisplayRow > 0 )
                             {
-                                ThisOrder++;
+                                ThisOrder.Order = maxOrder + propTableLayout.DisplayRow;
+                                ret.Add( ThisOrder );
                             }
-                            dict.Add( Prop.PropId, ThisOrder );
                         }
                     } // foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[thisNode.NodeType] )
 
 
                     // Everything else in alphabetical order
-                    maxOrder = ( dict.Values.Count > 0 ) ? dict.Values.Max() : 0;
+                    maxOrder = ( ret.Count > 0 ) ? ret.Max().Order : 0;
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps()
-                                                                    .Where( Prop => false == dict.ContainsKey( Prop.PropId ) )
                                                                     .OrderBy( Prop => Prop.PropName ) )
                     {
-                        maxOrder++;
-                        dict.Add( Prop.PropId, maxOrder );
+                        SearchOrder ThisOrder = new SearchOrder
+                                                    {
+                                                        NodeTypePropId = Prop.PropId,
+                                                        Source = PropOrderSourceType.Results,
+                                                    };
+                        if( false == ret.Contains( ThisOrder ) )
+                        {
+                            maxOrder++;
+                            ThisOrder.Order = maxOrder;
+                            ret.Add( ThisOrder );
+                        }
                     }
-                    _PropOrderDict.Add( NodeType, dict );
+                    _PropOrderDict.Add( NodeType, ret );
                 } // if( false == _PropOrderDict.ContainsKey( thisNode.NodeType ) )
 
                 ret = _PropOrderDict[NodeType];

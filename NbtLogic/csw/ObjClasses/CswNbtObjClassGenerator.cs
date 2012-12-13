@@ -90,6 +90,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Enabled.Checked = Tristate.False;
             }
+            // case 28352
+            Int32 max = DueDateInterval.getMaximumWarningDays();
+            if( WarningDays.Value > max )
+            {
+                WarningDays.Value = max;
+            }
         } //beforeWriteNode()
 
         public override void afterWriteNode()
@@ -270,10 +276,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
 
-            // case 28146
-            WarningDays.MinValue = 0;
-            WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
-
+            if( _CswNbtResources.EditMode != NodeEditMode.Add )  // case 28352
+            {
+                // case 28146
+                WarningDays.MinValue = 0;
+                WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+            }
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -335,13 +343,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 RunTime.setHidden( value: false, SaveToDb: true );
             }
-
-            Int32 max = DueDateInterval.getMaximumWarningDays();
-            if( WarningDays.Value > max )
-            {
-                WarningDays.Value = max;
-            }
-
         } // OnDueDateIntervalChange
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }

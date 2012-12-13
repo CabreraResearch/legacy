@@ -63,7 +63,7 @@ window.initMain = window.initMain || function (undefined) {
 
             function refreshMain(eventObj, data) {
                 Csw.clientChanges.unsetChanged();
-                multi = false;
+                cswPrivate.multi = false;
                 clear({ all: true });
                 Csw.tryExec(refreshSelected, data);
             }
@@ -316,9 +316,7 @@ window.initMain = window.initMain || function (undefined) {
                 }); // CswLogin
 
             }
-
-            initAll();
-
+            
             function refreshDashboard() {
                 Csw.main.headerDashboard.empty().$.CswDashboard();
             }
@@ -485,7 +483,7 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.extend(o, options);
                 }
 
-                multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
+                cswPrivate.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
                 var linkType = Csw.string(o.linktype).toLowerCase();
 
                 var type = Csw.string(o.type).toLowerCase();
@@ -567,9 +565,7 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 } //if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
 
-            }
-
-            //handleItemSelect
+            } //handleItemSelect
 
             function handleReport(reportid) {
                 Csw.openPopup("Report.html?reportid=" + reportid);
@@ -615,9 +611,9 @@ window.initMain = window.initMain || function (undefined) {
                             o.grid.toggleShowCheckboxes();
                             break;
                         default:
-                            multi = (false === multi);
+                            cswPrivate.multi = (false === cswPrivate.multi);
                             Csw.publish('CswMultiEdit', {
-                                multi: multi,
+                                multi: cswPrivate.multi,
                                 nodeid: o.nodeid,
                                 viewid: o.viewid
                             });
@@ -649,7 +645,7 @@ window.initMain = window.initMain || function (undefined) {
                             break;
                         }
                     },
-                    Multi: multi,
+                    Multi: cswPrivate.multi,
                     nodeTreeCheck: mainTree
                 };
 
@@ -689,7 +685,7 @@ window.initMain = window.initMain || function (undefined) {
                 o.onRefresh = function(options) {
                     clear({ centertop: true, centerbottom: true });
                     Csw.clientChanges.unsetChanged();
-                    multi = false; // semi-kludge for multi-edit batch op
+                    cswPrivate.multi = false; // semi-kludge for multi-edit batch op
                     refreshSelected(options);
                 };
                 clear({ centertop: true, centerbottom: true });
@@ -792,7 +788,7 @@ window.initMain = window.initMain || function (undefined) {
 //            nodeid: o.nodeid,
 //            nodekey: o.nodekey,
                     name: mainTableId,
-                    Multi: multi,
+                    Multi: cswPrivate.multi,
                     //'onAddNode': o.onAddNode,
                     onEditNode: o.onEditNode,
                     onDeleteNode: o.onDeleteNode,
@@ -862,9 +858,7 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ right: true });
                 Csw.main.rightDiv.$.CswDefaultContent(v);
 
-            }
-
-            // showDefaultContentTree()
+            } // showDefaultContentTree()
 
             function showDefaultContentTable(viewopts) {
                 var v = {
@@ -885,9 +879,7 @@ window.initMain = window.initMain || function (undefined) {
 
                 div.$.CswDefaultContent(v);
 
-            }
-
-            // showDefaultContentTable()
+            } // showDefaultContentTable()
 
             function getTabs(options) {
                 Csw.publish('initPropertyTearDown');
@@ -910,7 +902,7 @@ window.initMain = window.initMain || function (undefined) {
                             currentNodeKey: o.nodekey
                         },
                         tabState: {
-                            ShowCheckboxes: multi,
+                            ShowCheckboxes: cswPrivate.multi,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                         },
                         onSave: function() {
@@ -921,7 +913,7 @@ window.initMain = window.initMain || function (undefined) {
                         },
                         Refresh: function(options) {
                             Csw.clientChanges.unsetChanged();
-                            multi = false; // semi-kludge for multi-edit batch op
+                            cswPrivate.multi = false; // semi-kludge for multi-edit batch op
                             refreshSelected(options);
                         },
                         onTabSelect: function(tabid) {
@@ -1026,15 +1018,13 @@ window.initMain = window.initMain || function (undefined) {
                         } // switch
                     } // if (false === Csw.isNullOrEmpty(o.searchid))
                 } // if (manuallyCheckChanges())
-            }
-
-            // refreshSelected()
+            } // refreshSelected()
             Csw.subscribe(Csw.enums.events.main.refreshSelected,
                 function(eventObj, opts) {
                     refreshSelected(opts);
                 });
 
-            var multi = false;
+            cswPrivate.multi = false;
 
             function refreshNodesTree(options) {
                 var o = {
@@ -1087,7 +1077,7 @@ window.initMain = window.initMain || function (undefined) {
                             nodekey: optSelect.nodekey
                         });
                     },
-                    ShowCheckboxes: multi
+                    ShowCheckboxes: cswPrivate.multi
                 });
                 mainTree.init({
                     viewid: o.viewid,
@@ -1099,9 +1089,7 @@ window.initMain = window.initMain || function (undefined) {
                         Csw.clientState.setCurrentView(newviewid, newviewmode);
                     }
                 });
-            }
-
-            // refreshNodesTree()
+            } // refreshNodesTree()
 
 
             function handleAction(options) {
@@ -1383,10 +1371,7 @@ window.initMain = window.initMain || function (undefined) {
                 case 'submit request':
                     Csw.actions.requestCarts(Csw.main.centerTopDiv, {
                         onSubmit: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                            refreshHeaderMenu();
+                            //Nada
                         },
                         onCancel: function() {
                             clear({ 'all': true });
@@ -1422,9 +1407,16 @@ window.initMain = window.initMain || function (undefined) {
 
             Csw.subscribe(Csw.enums.events.main.handleAction, function(eventObj, opts) {
                 handleAction(opts);
-            });
-            // _handleAction()
+            }); // _handleAction()
+
+
+            (function _postCtor() {
+                //Case 28307: don't exec anything until all function expressions have been read
+                initAll();
+            }());
+
         }
     });
 };
+
 
