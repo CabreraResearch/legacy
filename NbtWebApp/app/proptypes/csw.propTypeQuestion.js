@@ -73,20 +73,36 @@
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.div();
-                        cswPublic.control.append('Answer: ' + cswPrivate.answer);
+                        cswPublic.table = cswPublic.control.table({
+                            TableCssClass: 'CswFieldTypeQuestion_table',
+                            CellCssClass: 'CSwFieldTypeQuestion_cell'
+                        });
+
+                        cswPublic.table.cell(1, 1).label({
+                            text: cswPrivate.answer,
+                            cssclass: 'CswFieldTypeQuestion_answer'
+                        });
+                        var answerCell = cswPublic.table.cell(2, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                        answerCell.append('Answer: ' + cswPrivate.answer + ' ');
                         if (cswPrivate.dateAnswered !== '') {
-                            cswPublic.control.append(' (' + cswPrivate.dateAnswered + ')');
+                            answerCell.append(' (' + cswPrivate.dateAnswered + ')');
                         }
+                        var correctiveActionPresent = false;
                         if (false == Csw.isNullOrEmpty(cswPrivate.correctiveAction)) {
-                            cswPublic.control.br();
-                            cswPublic.control.append('Corrective Action: ' + cswPrivate.correctiveAction);
+                            cswPublic.table.cell(3, 1).append('Corrective Action: ' + cswPrivate.correctiveAction);
+                            var correctiveActionPresent = true;
                             if (cswPrivate.dateCorrected !== '') {
-                                cswPublic.control.append(' (' + cswPrivate.dateCorrected + ')');
+                                cswPublic.table.cell(3, 1).append(' (' + cswPrivate.dateCorrected + ')');
                             }
                         }
-                        cswPublic.control.br();
-                        cswPublic.control.append('Comments: ' + cswPrivate.comments);
-                        cswPublic.control.br();
+                        var commentsCell;
+                        if (correctiveActionPresent) {
+                            commentsCell = cswPublic.table.cell(4, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                        } else {
+                            commentsCell = cswPublic.table.cell(4, 1).span({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                        }
+                        commentsCell.append('Comments: ' + cswPrivate.comments);
+
                     } else {
                         cswPublic.control = cswPrivate.parent.table({
                             FirstCellRightAlign: true
@@ -98,7 +114,7 @@
                             cswPrivate.splitAnswers.push('');
                         }
 
-                        
+
                         cswPrivate.answerSel = cswPublic.control.cell(1, 2)
                                               .select({
                                                   name: cswPublic.data.name + '_ans',
