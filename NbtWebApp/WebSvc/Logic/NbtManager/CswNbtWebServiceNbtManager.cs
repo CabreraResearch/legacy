@@ -8,11 +8,15 @@ using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.NbtSchedSvcRef;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt;
+//using ChemSW.Nbt.NbtWebSvcSchedService;
+
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -72,6 +76,7 @@ namespace ChemSW.Nbt.WebServices
 
         public CswNbtResources makeOtherResources( string AccessId )
         {
+
             _ValidateAccessId( AccessId );
             CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( _NbtManagerResources );
             OtherResources.AccessId = AccessId;
@@ -103,44 +108,52 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getScheduledRulesGrid()
         {
-            JObject RetObj;
-            CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
-            DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
+            //JObject RetObj;
 
-            CswNbtGrid NbtActGrid = new CswNbtGrid( _OtherResources );
-            //string TablePkColumn = "scheduledruleid";
-            //NbtActGrid.PkColumn = TablePkColumn;
-            //NbtActGrid.HidePkColumn = true;
+            //CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
+            //DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
-                                                          {
-                                                              "THREADID"
-                                                          };
-            CswCommaDelimitedString ReadOnlyColumns = new CswCommaDelimitedString()
-                                                          {
-                                                              "RULENAME",
-                                                              "TOTALROGUECOUNT",
-                                                              "RUNSTARTTIME",
-                                                              "RUNENDTIME",
-                                                              "LASTRUN",
-                                                              "STATUSMESSAGE"
-                                                          };
+            //CswNbtGrid NbtActGrid = new CswNbtGrid( _OtherResources );
+            ////string TablePkColumn = "scheduledruleid";
+            ////NbtActGrid.PkColumn = TablePkColumn;
+            ////NbtActGrid.HidePkColumn = true;
 
-            foreach( string ColumnName in ExcludedColumns )
-            {
-                ScheduledRulesTable.Columns.Remove( ColumnName );
-            }
+            //CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
+            //                                              {
+            //                                                  "THREADID"
+            //                                              };
+            //CswCommaDelimitedString ReadOnlyColumns = new CswCommaDelimitedString()
+            //                                              {
+            //                                                  "RULENAME",
+            //                                                  "TOTALROGUECOUNT",
+            //                                                  "RUNSTARTTIME",
+            //                                                  "RUNENDTIME",
+            //                                                  "LASTRUN",
+            //                                                  "STATUSMESSAGE"
+            //                                              };
 
-            //NbtActGrid.EditableColumns = new CswCommaDelimitedString();
-            //foreach( DataColumn Column in ScheduledRulesTable.Columns )
+            //foreach( string ColumnName in ExcludedColumns )
             //{
-            //    if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
-            //    {
-            //        NbtActGrid.EditableColumns.Add( Column.ColumnName );
-            //    }
+            //    ScheduledRulesTable.Columns.Remove( ColumnName );
             //}
 
-            RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
+            ////NbtActGrid.EditableColumns = new CswCommaDelimitedString();
+            ////foreach( DataColumn Column in ScheduledRulesTable.Columns )
+            ////{
+            ////    if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
+            ////    {
+            ////        NbtActGrid.EditableColumns.Add( Column.ColumnName );
+            ////    }
+            ////}
+
+            //RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
+
+            JObject RetObj = new JObject();
+
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+            CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
+            RetObj = new JObject( svcReturn.ExtJsGrid );
+
 
             return RetObj;
         }

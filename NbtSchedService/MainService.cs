@@ -13,7 +13,8 @@ namespace ChemSW.Nbt.SchedService
         CswScheduleService _CswScheduleService = null;
 
 
-        public WebServiceHost serviceHost = null;
+        //public WebServiceHost serviceHost = null;
+        public ServiceHost serviceHost = null;
 
 
         public MainService()
@@ -54,10 +55,25 @@ namespace ChemSW.Nbt.SchedService
             {
                 serviceHost.Close();
             }
-            serviceHost = new WebServiceHost( typeof( CswSchedSvcAdminEndPoint ), new Uri( "http://localhost:8010/SchedService" ) );
-            ServiceEndpoint serviceEndpoint = serviceHost.AddServiceEndpoint( typeof( ICswSchedSvcAdmin ), new WebHttpBinding(), "" );
-            ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
-            serviceDebugBehavior.HttpHelpPageEnabled = false;
+
+            //serviceHost = new WebServiceHost( typeof( CswSchedSvcAdminEndPoint ), new Uri( "http://localhost:8010/SchedService" ) );
+            //Int32 Port = 8010;
+
+            //Uri uRi = new Uri( "http://localhost:8010/SchedService" );
+            //EndpointAddress endPoint = new EndpointAddress( uRi );
+            serviceHost = new System.ServiceModel.ServiceHost( typeof( CswSchedSvcAdminEndPoint ) );
+
+            //ServiceEndpoint serviceEndpoint = serviceHost.AddServiceEndpoint( typeof( CswSchedSvcAdminEndPoint ), new WebHttpBinding(), "" );
+            //ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
+            //serviceDebugBehavior.HttpHelpPageEnabled = false;
+            //serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
+
+            //ServiceMetadataBehavior mexBehavior = new ServiceMetadataBehavior();
+            //mexBehavior.HttpGetEnabled = true;
+            //serviceHost.Description.Behaviors.Add( mexBehavior );
+            //serviceHost.AddServiceEndpoint( typeof( CswSchedSvcAdminEndPoint ), MetadataExchangeBindings.CreateMexHttpBinding(), endPoint.Uri.AbsoluteUri + "/mex" );
+
+
 
             serviceHost.Open();
 
