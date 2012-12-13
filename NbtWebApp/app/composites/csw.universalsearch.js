@@ -115,19 +115,8 @@
                     } // success
                 }); // ajax
 
-                cswPrivate.searchinput = cswtable.cell(1, 2).input({
-                    type: Csw.enums.inputTypes.search,
-                    width: cswPrivate.searchbox_width,
-                    cssclass: 'mousetrap'
-                });
-
-                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
-                    name: 'searchBtn',
-                    menuOptions: ['Search', 'Structure Search'],
-                    selectedText: 'Search',
-                    size: 'small',
-                    onClick: function (selectedOption) {
-                        switch (selectedOption) {
+                var srchOnClick=function (selectedOption) {
+                    switch (selectedOption) {
                             case 'Structure Search':
                                 $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                                 break;
@@ -136,9 +125,24 @@
                                 cswPrivate.searchterm = cswPrivate.searchinput.val();
                                 cswPrivate.newsearch();
                         }
+                }
 
+                cswPrivate.searchinput = cswtable.cell(1, 2).input({
+                    type: Csw.enums.inputTypes.search,
+                    width: cswPrivate.searchbox_width,
+                    cssclass: 'mousetrap',
+                    onKeyEnter: function () {
+                        Csw.tryExec(srchOnClick, cswPrivate.searchButton.selectedOption);
                     }
-                    });
+                });
+
+                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
+                    name: 'searchBtn',
+                    menuOptions: ['Search', 'Structure Search'],
+                    selectedText: 'Search',
+                    size: 'small',
+                    onClick: srchOnClick
+                });
             })();
 
             // Handle search submission
