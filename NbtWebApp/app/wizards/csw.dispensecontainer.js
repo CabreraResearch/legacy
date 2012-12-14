@@ -377,9 +377,7 @@
                             };
 
                             var makeQuantityForm = function () {
-                                cswPrivate.state.initialQuantity.quantity = cswPrivate.state.initialQuantity.value;
-                                cswPrivate.state.initialQuantity.selectedNodeId = cswPrivate.state.initialQuantity.nodeid;
-                                cswPrivate.state.initialQuantity.isRequired = true;
+
                                 cswPrivate.amountsGrid = Csw.wizard.amountsGrid(quantityTable.cell(qtyTableRow, 1), {
                                     name: 'wizardAmountsThinGrid',
                                     onChange: function (quantities) {
@@ -422,8 +420,8 @@
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
                                 var quantities = [];
                                 quantities.push({
-                                    quantity: cswPrivate.quantityControl.value() * (deductingValue ? 1 : -1),
-                                    unitid: cswPrivate.quantityControl.selectedUnit(),
+                                    quantity: cswPrivate.quantityControl.quantityValue * (deductingValue ? 1 : -1),
+                                    unitid: cswPrivate.quantityControl.unitVal,
                                     containerNo: 1
                                 });
                                 cswPrivate.formIsValid = cswPrivate.updateQuantityAfterDispense(quantities);
@@ -438,19 +436,13 @@
                                 quantityTable.cell(qtyTableRow, 1).br();
                                 quantityTable.cell(qtyTableRow, 1).span({ text: 'Set quantity for dispense:' });                                
                                 qtyTableRow++;
-                                cswPrivate.state.initialQuantity.onNumberChange = function() {
+                                cswPrivate.state.initialQuantity.onChange = function() {
                                     getQuantityAfterDispense();
                                 };
-                                cswPrivate.state.initialQuantity.onQuantityChange = function () {
-                                    getQuantityAfterDispense();
-                                };
-                                cswPrivate.state.initialQuantity.quantity = cswPrivate.state.initialQuantity.value;
-                                cswPrivate.state.initialQuantity.selectedNodeId = cswPrivate.state.initialQuantity.nodeid;
-                                cswPrivate.state.initialQuantity.isRequired = true;
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
                                 qtyTableRow++;
-                                getQuantityAfterDispense();                                
+                                getQuantityAfterDispense();
                             }
                             cswPrivate.stepTwoComplete = true;
                         } else {
@@ -584,8 +576,8 @@
                         designGrid = Csw.serialize(cswPrivate.amountsGrid.quantities());
                     }
                     if (false === Csw.isNullOrEmpty(cswPrivate.quantityControl) && cswPrivate.state.dispenseType !== cswPrivate.dispenseTypes.Dispense) {
-                        finalQuantity = cswPrivate.quantityControl.value();
-                        finalUnit = cswPrivate.quantityControl.selectedUnit();
+                        finalQuantity = cswPrivate.quantityControl.quantityValue;
+                        finalUnit = cswPrivate.quantityControl.unitVal;
                         designGrid = '';
                     }
 
