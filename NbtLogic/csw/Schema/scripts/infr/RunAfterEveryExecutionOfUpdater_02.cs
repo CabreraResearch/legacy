@@ -74,21 +74,14 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Procedures
 
-            #region Package Headers
-
-            //Add Package Headers here
-
-            #endregion Package Headers
-
-            #region Package Bodies
-
-            //Add Package Bodies here
-
-            #endregion Package Bodies
-
             #region Type Headers
 
-            //Add Type Headers here
+            foreach( CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
+            {
+                _acceptBlame( TypeHeader._Dev, TypeHeader._CaseNo );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( TypeHeader.ToString() );
+                _resetBlame();
+            }
 
             #endregion Type Headers
 
@@ -100,9 +93,36 @@ namespace ChemSW.Nbt.Schema
 
             #region Nested Tables
 
-            //Add Nested Tables here
+            foreach( CswUpdateSchemaPLSQLTypes.NestedTables NestedTable in CswUpdateSchemaPLSQLTypes.NestedTables._All )
+            {
+                _acceptBlame( NestedTable._Dev, NestedTable._CaseNo );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( NestedTable.ToString() );
+                _resetBlame();
+            }
 
             #endregion Nested Tables
+
+            #region Package Headers
+
+            foreach( CswUpdateSchemaPLSQLPackages.PackageHeaders PackageHead in CswUpdateSchemaPLSQLPackages.PackageHeaders._All )
+            {
+                _acceptBlame( PackageHead._Dev, PackageHead._CaseNo );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( PackageHead.ToString() );
+                _resetBlame();
+            }
+
+            #endregion Package Headers
+
+            #region Package Bodies
+
+            foreach( CswUpdateSchemaPLSQLPackages.PackageBodies PackageBodies in CswUpdateSchemaPLSQLPackages.PackageBodies._All )
+            {
+                _acceptBlame( PackageBodies._Dev, PackageBodies._CaseNo );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( PackageBodies.ToString() );
+                _resetBlame();
+            }
+
+            #endregion Package Bodies
 
             #region Views
 

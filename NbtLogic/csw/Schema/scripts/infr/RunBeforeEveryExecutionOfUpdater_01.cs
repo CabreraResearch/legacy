@@ -89,6 +89,7 @@ namespace ChemSW.Nbt.Schema
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
             {
                 _CswNbtSchemaModTrnsctn.addTable( "tier2", "tier2id" );
+                _CswNbtSchemaModTrnsctn.getNewPrimeKey("tier2");
             }
 
             if( _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
