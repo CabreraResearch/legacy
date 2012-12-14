@@ -887,6 +887,7 @@
                 title: "ChemCatCentral Search",
                 c3searchterm: options.c3searchterm,
                 c3handleresults: options.c3handleresults,
+                clearview: options.clearview,
                 loadView: null //function () { }
             };
 
@@ -910,9 +911,6 @@
             });
 
             function getAvailableDataSources() {
-
-
-                console.log("in function");
                 var ret = '';
 
                 var CswC3Params = {
@@ -933,7 +931,6 @@
             };
 
             getAvailableDataSources(); //call function
-
 
             var searchTypeSelect = tableInner.cell(1, 2).select({
                 name: 'C3Search_sourceSelect'
@@ -978,11 +975,8 @@
                         data: CswC3SearchParams,
                         success: function (data) {
                             //Convert to object from string
-                            console.log(data);
                             var obj = eval("(" + data.SearchResults + ')');
-                            console.log(obj);
-                            //Need to load empty view and then put table view on top of it
-                            //Csw.tryExec(cswPrivate.loadView, '','');
+                            Csw.tryExec(options.clearview);
                             Csw.tryExec(options.c3handleresults.handleResults(obj));
                             div.$.dialog('close');
                         }
