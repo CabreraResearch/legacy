@@ -183,7 +183,8 @@
                             thumbnailCell.img({
                                 src: nodeObj.thumbnailurl
                             }).css({
-                                 height: imgheight
+                                 height: imgheight,
+                                 maxWidth: '100px'
                             });
                         }
 
