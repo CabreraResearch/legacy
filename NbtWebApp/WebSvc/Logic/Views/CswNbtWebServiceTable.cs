@@ -260,35 +260,18 @@ namespace ChemSW.Nbt.WebServices
             public JObject ToJson()
             {
                 JObject ThisProp = new JObject();
-                if( null == PropId )
-                {
-                    ThisProp["propid"] = "";
-                }
-                else
+                if( null != PropId )
                 {
                     ThisProp["propid"] = PropId.ToString();
                 }
 
                 ThisProp["propname"] = PropName;
                 ThisProp["gestalt"] = Gestalt;
-                if( null == FieldType )
-                {
-                    ThisProp["fieldtype"] = "";
-                }
-                else
-                {
-                    ThisProp["fieldtype"] = FieldType;
-                }
+                ThisProp["fieldtype"] = FieldType;
+                ThisProp["propData"] = PropData;
 
-                if( null == PropData )
+                if( null != Source )
                 {
-                    ThisProp["propData"] = "";
-                }
-                else
-                {
-                    ThisProp["propData"] = PropData;
-                }
-                if(null != Source){
                     ThisProp["source"] = Source.ToString();
                 }
 
@@ -361,7 +344,7 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.First( Order => Order.NodeTypePropId == thisProp.NodeTypePropId );
                                         thisProp.Source = thisOrder.Source;
-                                        
+
                                         if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
                                         {
                                             // Include full info for rendering the button
