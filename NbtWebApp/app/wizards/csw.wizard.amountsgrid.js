@@ -89,10 +89,6 @@
                             data: { SizeId: cswPrivate.selectedSizeId, Action: cswPrivate.action },
                             success: function (data) {
                                 cswPrivate.quantity = data;
-                                //cswPrivate.quantity.options = [];
-                                if (Csw.bool(cswPrivate.quantity.quantityoptional)) {
-                                    cswPrivate.quantity.options.push({ value: '', display: '', frac: true });
-                                }
                                 ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
                             }
                         });
@@ -158,8 +154,8 @@
                             var updateColumnVals = function (changeContainerNo) {
                                 if (false === Csw.isNullOrEmpty(cswPublic.rows[rowid].qtyControl)) {
                                     cswPublic.rows[rowid].quantityValues.quantity = cswPublic.rows[rowid].qtyControl.value();
-                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.selectedUnit();
-                                    cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.selectedNodeId();
+                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.selectedUnitText();
+                                    cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.selectedUnit();
                                 }
                                 if (changeContainerNo) {
                                     cswPublic.rows[rowid].containerNoControl.val(Csw.number(cswPrivate.quantity.unitCount, 1));
@@ -237,9 +233,11 @@
                                     cswPrivate.quantity.onNumberChange = function () {
                                         updateColumnVals(false);
                                     };
-                                    cswPrivate.quantity.onQuantityChange = function () {
+                                    cswPrivate.quantity.onQuantityChange = function() {
                                         updateColumnVals(false);
-                                    }
+                                    };
+                                    cswPrivate.quantity.quantity = cswPrivate.quantity.value;
+                                    cswPrivate.quantity.selectedNodeId = cswPrivate.quantity.nodeid;
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     
