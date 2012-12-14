@@ -158,6 +158,9 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( NBTResources, null, false, false );
                         ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", ImgData.propId, "blobdata", out Href );
                         ImgData.href = Href;
+
+                        //case 28364 - calculate fingerprint and save it
+                        NBTResources.StructureSearchManager.InsertFingerprintRecord( PropId.NodeId.PrimaryKey, ImgData.molString );
                     }
                 }
             }
