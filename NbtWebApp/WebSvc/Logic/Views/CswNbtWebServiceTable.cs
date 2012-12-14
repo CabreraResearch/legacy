@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -11,8 +13,6 @@ using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
-using ChemSW.DB;
-using System.Data;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -115,6 +115,9 @@ namespace ChemSW.Nbt.WebServices
             PropsToHide.Add( "ProductSize" );
             PropsToHide.Add( "SourceRowId" );
             PropsToHide.Add( "TemplateSelectedExtensionData" );
+            PropsToHide.Add( "TradeName" );
+            PropsToHide.Add( "ProductUrl" );
+            PropsToHide.Add( "MsdsUrl" );
 
             if( C3SearchResultsObj != null )
             {
@@ -164,7 +167,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return ret;
         }
-        
+
         /// <summary>
         /// Make a z
         /// </summary>
@@ -186,7 +189,6 @@ namespace ChemSW.Nbt.WebServices
             }
             return ret;
         }
-
 
         private class TableNode
         {
@@ -400,7 +402,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != thisNode.NodeType )
                 {
                     //thisNode.NodeId = Tree.getNodeIdForCurrentPosition();
-                    thisNode.NodeName = "ChemCatCentral Search Result " + i;
+                    //thisNode.NodeName = "ChemCatCentral Search Result " + i;
                     //thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                     //thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
@@ -429,6 +431,10 @@ namespace ChemSW.Nbt.WebServices
                     {
                         string name = prop.Name;
                         string value = prop.Value.ToString();
+                        if( prop.Name == "TradeName" )
+                        {
+                            thisNode.NodeName = prop.Value.ToString();
+                        }
 
                         TableProp thisProp = new TableProp();
                         if( PropsToHide == null || false == PropsToHide.Contains( name ) )
@@ -441,6 +447,8 @@ namespace ChemSW.Nbt.WebServices
                         propIndex++;
 
                     }
+
+
 
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
                     {
