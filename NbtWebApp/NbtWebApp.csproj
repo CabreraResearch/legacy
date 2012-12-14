@@ -167,6 +167,7 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
     <Content Include="Services\ChemCatCentral.svc" />
     <Content Include="Services\Mol.svc" />
@@ -1013,7 +1014,6 @@
     <Content Include="Images\menu\sub.gif" />
     <Content Include="Images\pagelayout\blank.gif" />
     <Content Include="Images\pagelayout\dash.gif" />
-    <Content Include="Images\pagelayout\header_logo.gif" />
     <Content Include="Images\pagelayout\header_logo32.gif" />
     <Content Include="Images\pagelayout\pagelayoutcorners.gif" />
     <Content Include="Images\pagelayout\pagelayoutx.gif" />
