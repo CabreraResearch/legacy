@@ -76,6 +76,7 @@ namespace ChemSW.Nbt.WebServices
             ret["filtersapplied"] = "";
             //Search.SaveToCache( true );
             ret["sessiondataid"] = "";
+            ret["searchtype"] = "chemcatcentral";
 
             Return.Data.SearchResults = ret.ToString();
 

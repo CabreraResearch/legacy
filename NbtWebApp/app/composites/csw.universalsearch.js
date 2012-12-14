@@ -123,7 +123,7 @@
 
                 cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
                     name: 'searchBtn',
-                    menuOptions: ['Search', 'Structure Search', 'C3 Search'],
+                    menuOptions: ['Search', 'Structure Search', 'ChemCatCentral Search'],
                     selectedText: 'Search',
                     size: 'small',
                     onClick: function (selectedOption) {
@@ -131,8 +131,8 @@
                             case 'Structure Search':
                                 $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                                 break;
-                            case 'C3 Search':
-                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic });
+                            case 'ChemCatCentral Search':
+                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic, clearview: cswPrivate.onBeforeSearch });
                                 break;
                             default:
                                 Csw.publish('initPropertyTearDown');
@@ -178,10 +178,39 @@
                         width: '100%'
                     });
 
-                    resultstable.cell(1, 1).div({
+                    var table2 = resultstable.cell(1, 1).table({
+                        cellvalign: 'bottom'
+                    }).css({'padding-bottom':'5px'});
+
+                    table2.cell(1, 1).div({
                         cssclass: 'SearchLabel',
                         text: 'Search Results: (' + data.table.results + ')'
                     });
+
+                    //If user is performing a universal search, direct them to C3 search
+                    if (data.searchtype == 'universal') {
+
+                        table2.cell(1, 2).div({
+                            text: '&nbsp; &nbsp;'
+                        });
+
+                        table2.cell(1, 3).div({
+                            cssclass: 'SearchC3Label',
+                            text: 'Not the results you wanted? Try searching'
+                        });
+
+                        table2.cell(1, 4).div({
+                            text: '&nbsp;'
+                        });
+
+                        table2.cell(1, 5).a({
+                            cssclass: 'SearchC3Label',
+                            text: 'ChemCatCentral.',
+                            onClick: function () {
+                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic });
+                            }
+                        });
+                    } //if (data.searchtype == 'universal')
 
                     if (Csw.bool(cswPrivate.compactResults)) {
                         resultstable.cell(1, 2).css({ width: '100px' });

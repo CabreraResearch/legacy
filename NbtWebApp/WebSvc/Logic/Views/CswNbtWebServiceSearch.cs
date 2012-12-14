@@ -123,6 +123,7 @@ namespace ChemSW.Nbt.WebServices
             ret["filtersapplied"] = Search.FiltersApplied;
             Search.SaveToCache( true );
             ret["sessiondataid"] = Search.SessionDataId.ToString();
+            ret["searchtype"] = "universal";
             return ret;
         }
 
