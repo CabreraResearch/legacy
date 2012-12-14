@@ -148,14 +148,16 @@ namespace ChemSW.Nbt.WebServices
 
             //RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
 
-            JObject RetObj = new JObject();
+            JObject RetObj = null;
 
             CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
             CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
-            RetObj = new JObject( svcReturn.ExtJsGrid );
+            //RetObj = new JObject( new JObject( svcReturn.ExtJsGrid ) );
+            RetObj = JObject.Parse( svcReturn.ExtJsGrid );
 
 
-            return RetObj;
+            //return RetObj;
+            return ( RetObj );
         }
 
         public bool updateScheduledRule( HttpContext Context )
