@@ -14,6 +14,8 @@ using ChemSW.StructureSearch;
 using NbtWebApp.WebSvc.Logic.CISPro;
 using ChemSW.Nbt.MetaData;
 using System.Collections.Generic;
+using ChemSW.Nbt.ServiceDrivers;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -43,11 +45,22 @@ namespace ChemSW.Nbt.WebServices
             public MolData Data;
         }
 
+        [DataContract]
+        public class StructureSearchDataReturn : CswWebSvcReturn
+        {
+            public StructureSearchDataReturn()
+            {
+                Data = new StructureSearchViewData();
+            }
+            [DataMember]
+            public StructureSearchViewData Data;
+        }
+
         #endregion
 
         #region Public
 
-        public static void getMolImg( ICswResources CswResources, MolDataReturn Return, MolData.MolImgData ImgData )
+        public static void getMolImg( ICswResources CswResources, MolDataReturn Return, MolData ImgData )
         {
             string molData = ImgData.molString;
             string nodeId = ImgData.nodeId;
@@ -74,10 +87,10 @@ namespace ChemSW.Nbt.WebServices
 
             ImgData.molImgAsBase64String = base64String;
             ImgData.molString = molData;
-            Return.Data.MolImgDataCollection.Add( ImgData );
+            Return.Data = ImgData;
         }
 
-        public static void RunStructureSearch( ICswResources CswResources, MolDataReturn Return, MolData.StructureSearchViewData StructureSearchData )
+        public static void RunStructureSearch( ICswResources CswResources, StructureSearchDataReturn Return, StructureSearchViewData StructureSearchData )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             string molData = StructureSearchData.molString;
@@ -105,7 +118,50 @@ namespace ChemSW.Nbt.WebServices
 
             StructureSearchData.viewId = searchView.SessionViewId.ToString();
             StructureSearchData.viewMode = searchView.ViewMode.ToString();
-            Return.Data.StructureSearchViewDataCollection.Add( StructureSearchData );
+            Return.Data = StructureSearchData;
+        }
+
+        public static void SaveMolPropFile( ICswResources CswResources, MolDataReturn Return, MolData ImgData )
+        {
+            CswNbtResources NBTResources = (CswNbtResources) CswResources;
+            CswPropIdAttr PropId = new CswPropIdAttr( ImgData.propId );
+            CswNbtMetaDataNodeTypeProp MetaDataProp = NBTResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+            if( Int32.MinValue != PropId.NodeId.PrimaryKey )
+            {
+                CswNbtNode Node = NBTResources.Nodes[PropId.NodeId];
+                if( null != Node )
+                {
+                    CswNbtNodePropMol PropMol = Node.Properties[MetaDataProp];
+                    if( null != PropMol )
+                    {
+                        // Do the update directly
+                        CswTableUpdate JctUpdate = NBTResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+                        if( PropMol.JctNodePropId > 0 )
+                        {
+                            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropMol.JctNodePropId );
+                            JctTable.Rows[0]["clobdata"] = ImgData.molString;
+                            JctUpdate.update( JctTable );
+                        }
+                        else
+                        {
+                            DataTable JctTable = JctUpdate.getEmptyTable();
+                            DataRow JRow = JctTable.NewRow();
+                            JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
+                            JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                            JRow["nodeidtablename"] = Node.NodeId.TableName;
+                            JRow["clobdata"] = ImgData.molString;
+                            JctTable.Rows.Add( JRow );
+                            JctUpdate.update( JctTable );
+                        }
+                        byte[] molImage = CswStructureSearch.GetImage( ImgData.molString );
+                        string Href;
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( NBTResources, null, false, false );
+                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", ImgData.propId, "blobdata", out Href );
+                        ImgData.href = Href;
+                    }
+                }
+            }
+            Return.Data = ImgData;
         }
 
         #endregion

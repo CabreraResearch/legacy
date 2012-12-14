@@ -17,7 +17,9 @@
             /// <returns type="form">A form object</returns>
             var cswPrivate = {
                 $parent: '',
-                ID: ''
+                ID: '',
+                action: '',
+                method: ''
             };
             var cswPublic = {};
 
@@ -32,6 +34,8 @@
 
                 html += '<form ';
                 attr.add('id', cswPrivate.ID);
+                attr.add('action', cswPrivate.action);
+                attr.add('method', cswPrivate.method);
                 html += attr.get();
                 html += '>';
                 html += '</form>';

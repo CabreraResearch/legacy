@@ -918,13 +918,11 @@
                     },
                     success: function (data) {
                         table.cell(4, 2).empty();
-                        if (data.MolImgDataCollection.length > 0) {
-                            molText.val(data.MolImgDataCollection[0].molString);
-                            table.cell(4, 2).img({
-                                labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + data.MolImgDataCollection[0].molImgAsBase64String
-                            });
-                        }
+                        molText.val(data.molString);
+                        table.cell(4, 2).img({
+                            labelText: "Query Image",
+                            src: "data:image/jpeg;base64," + data.molImgAsBase64String
+                        });
                     }
                 });
                 return ret;
@@ -940,14 +938,14 @@
             }).css('float', 'left');
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromFile',
+                url: 'Services/Mol/getImgFromFile',
                 paramName: 'filename',
                 done: function (e, data) {
-                    molText.val(JSON.parse(data.result).molstring);
+                    molText.val(data.result.Data.molString);
                     table.cell(4, 2).empty();
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + JSON.parse(data.result).bin
+                        src: "data:image/jpeg;base64," + data.result.Data.molImgAsBase64String
                     });
                 }
             });
@@ -1000,7 +998,7 @@
             if (options) {
                 Csw.extend(o, options);
             }
-            var div = Csw.literals.div(),
+            var div = Csw.literals.div({ ID: 'editmoldialogmasterdiv' }),
                 molTxtArea, saveBtn;
 
             div.label({
@@ -1014,14 +1012,13 @@
                 name: 'fileupload',
                 type: Csw.enums.inputTypes.file
             });
-
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.FileUrl + '?' + $.param({ PropId: o.PropId }),
+                url: 'Services/Mol/saveMolPropFile?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
                     div.$.dialog('close');
-                    o.onSuccess(data.result);
+                    o.onSuccess(data.result.Data);
                 }
             });
 
@@ -1031,8 +1028,8 @@
 
             molTxtArea = div.textArea({
                 name: '',
-                rows: 6,
-                cols: 40
+                rows: 12,
+                cols: 50,
             });
             molTxtArea.text(o.molData);
             div.br();
@@ -1044,11 +1041,11 @@
                 enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
-                    Csw.ajax.post({
-                        urlMethod: o.TextUrl,
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Mol/saveMolPropText',
                         data: {
-                            molData: molTxtArea.val(),
-                            PropId: o.PropId
+                            molString: molTxtArea.val(),
+                            propId: o.PropId
                         },
                         success: function (data) {
                             div.$.dialog('close');
@@ -1068,7 +1065,7 @@
                 }
             });
 
-            openDialog(div, 400, 300, null, 'Change MOL Data');
+            openDialog(div, 550, 400, null, 'Change MOL Data');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             var o = {
