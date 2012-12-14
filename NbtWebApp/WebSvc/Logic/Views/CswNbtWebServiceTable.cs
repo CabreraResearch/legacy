@@ -138,6 +138,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["results"] = results; // Tree.getChildNodeCount().ToString();
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
+                ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
             }
             return ret;
@@ -254,6 +255,7 @@ namespace ChemSW.Nbt.WebServices
             public string Gestalt;
             public Int32 JctNodePropId;
             public JObject PropData;
+            public CswNbtSearchPropOrder.PropOrderSourceType Source;
 
             public JObject ToJson()
             {
@@ -285,6 +287,9 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     ThisProp["propData"] = PropData;
+                }
+                if(null != Source){
+                    ThisProp["source"] = Source.ToString();
                 }
 
                 return ThisProp;
@@ -326,7 +331,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNode.NodeType );
 
                         // Properties
-                        Dictionary<Int32, Int32> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey, _View );
+                        SortedSet<CswNbtSearchPropOrder.SearchOrder> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey, _View );
 
                         foreach( JObject PropElm in Tree.getChildNodePropsOfNode() )
                         {
@@ -354,6 +359,9 @@ namespace ChemSW.Nbt.WebServices
                                     }
                                     else
                                     {
+                                        CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.First( Order => Order.NodeTypePropId == thisProp.NodeTypePropId );
+                                        thisProp.Source = thisOrder.Source;
+                                        
                                         if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
                                         {
                                             // Include full info for rendering the button
@@ -369,7 +377,7 @@ namespace ChemSW.Nbt.WebServices
                                             CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, CswConvert.ToString( PropElm["field2"] ), CswConvert.ToString( PropElm["field1"] ) );
                                             thisProp.PropData["values"] = PropValues;
                                         }
-                                        thisNode.Props.Add( orderDict[thisProp.NodeTypePropId], thisProp );
+                                        thisNode.Props.Add( thisOrder.Order, thisProp );
                                     }
                                 } // if( false == PropsToHide.Contains( NodeTypePropId ) )
                             } //if (false == CswConvert.ToBoolean(PropElm["hidden"]))

@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != NodeType )
                 {
-                    Search.addFilter( Search.makeFilter( NodeType, Int32.MinValue, false ) );
+                    Search.addFilter( Search.makeFilter( NodeType, Int32.MinValue, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
                 }
             }
             if( Int32.MinValue != ObjectClassId )
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
                 if( null != ObjectClass )
                 {
-                    Search.addFilter( Search.makeFilter( ObjectClass, Int32.MinValue, false ) );
+                    Search.addFilter( Search.makeFilter( ObjectClass, Int32.MinValue, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
                 }
             }
             return _finishUniversalSearch( Search );

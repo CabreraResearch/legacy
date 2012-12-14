@@ -23,12 +23,14 @@
                     quantity.precision = Csw.number(cswPrivate.propVals.precision, 6);
                     quantity.ceilingVal = Csw.number('999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision));
                     quantity.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
+                    cswPrivate.selectedName = Csw.string(cswPrivate.propVals.name).trim();
                     quantity.unit = Csw.string(cswPrivate.propVals.name).trim();
                     quantity.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     quantity.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     quantity.options = cswPrivate.propVals.options;
                     quantity.relationships = [];
                     quantity.quantity = Csw.string(cswPrivate.propVals.value).trim();
+                    cswPrivate.cellCol = 1;
                     quantity.minvalue = Csw.number(cswPrivate.propVals.minvalue);
                     quantity.maxvalue = Csw.number(cswPrivate.propVals.maxvalue);
                     quantity.excludeRangeLimits = Csw.bool(cswPrivate.propVals.excludeRangeLimits);
