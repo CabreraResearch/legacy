@@ -246,6 +246,7 @@
                                 onSelectNode: function (nodeObj) {
                                     cswPrivate.nameSpan.text(nodeObj.nodename);
                                     cswPrivate.hiddenValue.val(nodeObj.nodeid);
+                                    cswPrivate.selectedNodeId = nodeObj.nodeid;
                                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
                                 }
                             });
@@ -326,12 +327,18 @@
 
             //#region Public
 
-            cswPublic.selectedNodeId = function () {
-                if (cswPublic && cswPublic.select && cswPublic.select.val) {
-                    cswPrivate.selectedNodeId = cswPublic.select.val();
+            cswPublic.selectedNodeId = function (newvalue) {
+                if(false === Csw.isNullOrEmpty(newvalue)) {
+                    // assignment
+                    cswPrivate.selectedNodeId = newvalue;
+                    if (cswPrivate.useSearch) {
+                        cswPrivate.hiddenValue.val(newvalue);
+                    } else {
+                        cswPublic.select.val(newvalue);
+                    }
                 }
                 return cswPrivate.selectedNodeId;
-            };
+            }; // selectedNodeId
 
             //#endregion Public
 

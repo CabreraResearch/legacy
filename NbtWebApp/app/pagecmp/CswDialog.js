@@ -180,11 +180,10 @@
                         createData.ViewMode = o.viewmode;
                     }
 
-                    if (false === Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
-                        createData.Visibility = visSelect.$visibilityselect.val();
-                        createData.VisibilityRoleId = visSelect.$visroleselect.val();
-                        createData.VisibilityUserId = visSelect.$visuserselect.val();
-                    }
+                    var visValue = visSelect.getSelected();
+                    createData.Visibility = visValue.visibility;
+                    createData.VisibilityRoleId = visValue.roleid;
+                    createData.VisibilityUserId = visValue.userid;
 
                     Csw.ajax.post({
                         urlMethod: 'createView',

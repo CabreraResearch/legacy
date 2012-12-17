@@ -4,100 +4,109 @@
 (function () {
 
     Csw.controls.makeViewVisibilitySelect = Csw.controls.makeViewVisibilitySelect ||
-        Csw.controls.register('makeViewVisibilitySelect', function(table, rownum, label) {
+        Csw.controls.register('makeViewVisibilitySelect', function(table, rownum, label, options) {
             ///<summary>Make a View Visibility Select. Used by View Editor and Dialog.</summary>
             ///<param name="table" type="Object">A Csw.literals.table object.</param>
             ///<param name="rownum" type="Number">A row number.</param>
             ///<param name="label" type="String">A label.</param>
             ///<returns type="Object">
-            ///An object representing the new jQuery DOM elements.
-            /// <para>$visibilityselect: Visibility picklist</para>
-            /// <para>$visroleselect: Role picklist</para>
-            /// <para>$visuserselect: User picklist</para>
+            ///An object representing the visibility selector
             ///</returns>
             'use strict';
             var cswPrivate = {
+                visibility: '',
+                roleId: '',
+                userId: '',
                 
+                visibilitySelect: null,
+                roleSelect: null,
+                userSelect: null
             };
-            
-            var cswPublic = {
-                $visibilityselect: '',
-                get $visroleselect() {
-                    return cswPrivate.roleSelect.select.$; 
-                },
-                get $visuserselect() {
-                    return cswPrivate.userSelect.select.$;
-                }
-            };
+            Csw.extend(cswPrivate, options);
 
-            Csw.clientSession.isAdministrator({
-                'Yes': function() {
+            var cswPublic = {};
 
-                    table.cell(rownum, 1).text(label);
-                    var parent = table.cell(rownum, 2).table();
-                    
-                    var id = table.id;
-                    /* NO! Refactor to use Csw.literals and more wholesome methods. */
-                    cswPublic.$visibilityselect = $('<select id="' + id + '_vissel" />')
-                        .appendTo(parent.cell(1,1).$);
-                    cswPublic.$visibilityselect.append('<option value="User">User:</option>');
-                    cswPublic.$visibilityselect.append('<option value="Role">Role:</option>');
-                    cswPublic.$visibilityselect.append('<option value="Global">Global</option>');
-
-                    var showRole = false, showUser = false;
-
-                    cswPrivate.roleSelect = parent.cell(1, 3).nodeSelect({
-                        name: id + '_visrolesel',
-                        allowAdd: false,
-                        async: false,
-                        ajaxData: {
-                            ObjectClass: 'RoleClass'
-                        },
-                        showSelectOnLoad: true,
-                        onSuccess: function() {
-                             if (showRole) {
-                                 cswPrivate.roleSelect.show();
-                             }
-                        }
-                    });
+            cswPrivate.toggle = function() {
+                var visval = cswPrivate.visibilitySelect.val();
+                if (visval === 'Role') {
+                    cswPrivate.roleSelect.show();
+                    cswPrivate.userSelect.hide();
+                } else if (visval === 'User') {
                     cswPrivate.roleSelect.hide();
-                    
-                    cswPrivate.userSelect = parent.cell(1, 4).nodeSelect({
-                        name: id + '_visusersel',
-                        allowAdd: false,
-                        async: false,
-                        ajaxData: {
-                            ObjectClass: 'UserClass'
-                        },
-                        showSelectOnLoad: true,
-                        onSuccess: function() {
-                            if (showUser) {
-                                cswPrivate.userSelect.show();
-                            }
-                        }
-                    });
+                    cswPrivate.userSelect.show();
+                } else {
+                    cswPrivate.roleSelect.hide();
+                    cswPrivate.userSelect.hide();
+                }
+            }; // toggle()
 
 
-                    cswPublic.$visibilityselect.change(function() {
-                        var val = cswPublic.$visibilityselect.val();
-                        showRole = (val === 'Role');
-                        showUser = (val === 'User');
-                        if (showRole) {
-                            cswPrivate.roleSelect.show();
-                            cswPrivate.userSelect.hide();
-                        } else if (showUser) {
-                            cswPrivate.roleSelect.hide();
-                            cswPrivate.userSelect.show();
-                        } else {
-                            cswPrivate.roleSelect.hide();
-                            cswPrivate.userSelect.hide();
-                        }
-                    }); // change
-                } // yes
-            }); // IsAdministrator
+            // Constructor
+            (function() {
+                Csw.clientSession.isAdministrator({
+                    'Yes': function() {
+
+                        table.cell(rownum, 1).text(label);
+                        var parentTbl = table.cell(rownum, 2).table();
+
+                        cswPrivate.visibilitySelect = parentTbl.cell(1, 1).select({
+                            name: table.id + '_vissel',
+                            selected: cswPrivate.visibility,
+                            values: ['User', 'Role', 'Global'],
+                            onChange: cswPrivate.toggle
+                        });
+
+                        cswPrivate.roleSelect = parentTbl.cell(1, 3).nodeSelect({
+                            name: table.id + '_visrolesel',
+                            allowAdd: false,
+                            async: false,
+                            selectedNodeId: cswPrivate.roleId,
+                            ajaxData: {
+                                ObjectClass: 'RoleClass'
+                            },
+                            showSelectOnLoad: true
+                        });
+
+                        cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
+                            name: table.id + '_visusersel',
+                            allowAdd: false,
+                            async: false,
+                            selectedNodeId: cswPrivate.userId,
+                            ajaxData: {
+                                ObjectClass: 'UserClass'
+                            },
+                            showSelectOnLoad: true
+                        });
+
+                        cswPrivate.toggle();
+                    } // yes
+                }); // IsAdministrator
+            })();
+            
+
+            cswPublic.getSelected = function() {
+                var ret = {
+                    visibility: cswPrivate.visibilitySelect.val(),
+                    roleId: '',
+                    userId: ''
+                };
+                if (visibility === 'Role') {
+                    ret.roleId = cswPrivate.roleSelect.selectedNodeId();
+                } else if (visibility === 'User') {
+                    ret.userId = cswPrivate.userSelect.selectedNodeId();
+                }
+                return ret;
+            }; // getSelected()
+
+
+            cswPublic.setSelected = function(newval) {
+                cswPrivate.visibilitySelect.val(newval.visibility);
+                cswPrivate.roleSelect.selectedNodeId(newval.roleId);
+                cswPrivate.userSelect.selectedNodeId(newval.userId);
+                cswPrivate.toggle();
+            }; // setSelected()
 
             return cswPublic;
-
         });
 
 } ());
