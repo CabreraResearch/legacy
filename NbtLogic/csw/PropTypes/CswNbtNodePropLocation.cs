@@ -26,6 +26,7 @@ namespace ChemSW.Nbt.PropTypes
             _ColumnSubField = _FieldTypeRule.ColumnSubField;
             _PathSubField = _FieldTypeRule.PathSubField;
             _BarcodeSubField = _FieldTypeRule.BarcodeSubField;
+            TopLevelName = CswNbtResources.ConfigVbls.getConfigVariableValue( "LocationViewRootName" );
         }
 
         private CswNbtFieldTypeRuleLocation _FieldTypeRule;
@@ -36,7 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _PathSubField;
         private CswNbtSubField _BarcodeSubField;
 
-        public const string TopLevelName = "Top";
+        public static string TopLevelName = "Top";
         public bool CreateContainerLocation = true;
 
         override public bool Empty
