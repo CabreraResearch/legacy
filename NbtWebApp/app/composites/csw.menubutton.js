@@ -16,7 +16,7 @@
                 selectedText: '',
                 onClick: null,
                 state: '',
-                width: 240,
+                width: null,
                 disabled: false
             };
             var cswPublic = {};
