@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -994,7 +993,7 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassContainerLocation.PropertyName.Location,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
-                FkValue = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass ).ObjectClassId
+                FkValue = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass ).ObjectClassId,
                 ServerManaged = true
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
@@ -1158,7 +1157,7 @@ namespace ChemSW.Nbt.Schema
             #region FireClassExemptAmountSet
 
             CswNbtMetaDataObjectClass FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
-            if( null == FireClassExemptAmountSetOC )
+            if ( null == FireClassExemptAmountSetOC )
             {
                 FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountSetClass, "explode.png", false );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountSetOC.ObjectClassId );
@@ -1175,7 +1174,7 @@ namespace ChemSW.Nbt.Schema
             #region FireClassExemptAmount
 
             CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
-            if( null == FireClassExemptAmountOC )
+            if ( null == FireClassExemptAmountOC )
             {
                 FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountClass, "explode.png", false );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountOC.ObjectClassId );
@@ -1335,7 +1334,7 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
+
         private void _addContainerFireReportingProps( CswDeveloper Dev, Int32 CaseNum )
         {
             _acceptBlame( Dev, CaseNum );
@@ -1376,14 +1375,14 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNum );
 
             CswNbtMetaDataObjectClass GenericOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GenericClass );
-            if( null != GenericOc )
+            if ( null != GenericOc )
             {
                 //ControlZone NodeType
                 CswNbtMetaDataNodeType ControlZoneNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Control Zone" );
-                if( null == ControlZoneNt )
+                if ( null == ControlZoneNt )
                 {
                     ControlZoneNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "Control Zone", "Materials" );
-                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, ControlZoneNt.NodeTypeId );                    
+                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, ControlZoneNt.NodeTypeId );
 
                     CswNbtMetaDataNodeTypeProp NameNTP = _createNewProp( ControlZoneNt, "Name", CswNbtMetaDataFieldType.NbtFieldType.Text );
                     NameNTP.IsRequired = true;
