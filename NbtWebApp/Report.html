@@ -31,7 +31,7 @@
                         $('#btnCrystal').css('display', '');
                     }
 
-                    var parent = Csw.domNode({ ID: 'rptDiv' });
+                    var parent = Csw.domNode({ ID: 'paramsDiv' });
                     var table = parent.table().css('margin', '5px');
                     var i = 0;
                     Csw.each(data.reportParams, function (param) {
@@ -127,6 +127,7 @@
     </script>
 </head>
 <body>
+    <div id="paramsDiv"></div>
     <div id="formatChooser">
         <input type="button" value="View As Grid" id="btnGrid" />
         <input type="button" value="Save As CSV" id="btnCsv" />
