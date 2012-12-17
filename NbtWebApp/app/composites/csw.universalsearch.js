@@ -34,9 +34,9 @@
                 //filters: {},
                 sessiondataid: '',
                 searchterm: '',
-                filterHideThreshold: 5,
-                buttonSingleColumn: '',
-                buttonMultiColumn: ''
+                filterHideThreshold: 5 //,
+                //buttonSingleColumn: '',
+                //buttonMultiColumn: ''
             };
             Csw.extend(cswPrivate, params);
 

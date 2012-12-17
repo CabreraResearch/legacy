@@ -315,8 +315,10 @@
                     if (visibility !== 'Property') {
                         visSelect.setSelected({
                             visibility: visibility,
-                            roleId: 'nodes_' + currentViewJson.visibilityroleid,
-                            userId: 'nodes_' + currentViewJson.visibilityuserid
+                            roleid: 'nodes_' + currentViewJson.visibilityroleid,
+                            rolename: currentViewJson.visibilityrolename,
+                            userid: 'nodes_' + currentViewJson.visibilityuserid,
+                            username: currentViewJson.visibilityusername
                         });
                     }
 
@@ -347,13 +349,13 @@
                     var visValue = visSelect.getSelected();
                     currentViewJson.visibility = visValue.visibility;
 
-                    var rolenodeid = visValue.roleId;
+                    var rolenodeid = visValue.roleid;
                     if (false === Csw.isNullOrEmpty(rolenodeid)) {
                         rolenodeid = rolenodeid.substr('nodes_'.length);
                     }
                     currentViewJson.visibilityroleid = rolenodeid;
 
-                    var usernodeid = visValue.userId;
+                    var usernodeid = visValue.userid;
                     if (false === Csw.isNullOrEmpty(usernodeid)) {
                         usernodeid = usernodeid.substr('nodes_'.length);
                     }

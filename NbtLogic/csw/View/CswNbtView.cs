@@ -702,6 +702,15 @@ namespace ChemSW.Nbt
             if( Visibility == NbtViewVisibility.Unknown )
                 throw new CswDniException( ErrorType.Error, "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
 
+            if( Visibility == NbtViewVisibility.User && VisibilityUserId == null )
+            {
+                throw new CswDniException( ErrorType.Warning, "View Visibility User is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == User, but no user selected" );
+            }
+            if( Visibility == NbtViewVisibility.Role && VisibilityRoleId == null )
+            {
+                throw new CswDniException( ErrorType.Warning, "View Visibility Role is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Role, but no role selected" );
+            }
+
             if( !ViewIsUnique( _CswNbtResources, ViewId, ViewName, Visibility, VisibilityUserId, VisibilityRoleId ) )
                 throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
 

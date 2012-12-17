@@ -20,6 +20,7 @@
                 cswPrivate.labelText = cswPrivate.labelText || null;
                 cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
                 cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
+                cswPrivate.selectedName = cswPrivate.selectedName || '';
                 cswPrivate.viewid = cswPrivate.viewid || '';
 
                 cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
@@ -327,19 +328,24 @@
 
             //#region Public
 
-            cswPublic.selectedNodeId = function (newvalue) {
-                if(false === Csw.isNullOrEmpty(newvalue)) {
-                    // assignment
-                    cswPrivate.selectedNodeId = newvalue;
-                    if (cswPrivate.useSearch) {
-                        cswPrivate.hiddenValue.val(newvalue);
-                    } else {
-                        cswPublic.select.val(newvalue);
-                    }
+            cswPublic.setSelectedNode = function (nodeid, nodename) {
+                cswPrivate.selectedNodeId = nodeid;
+                cswPrivate.selectedName = nodename;
+                if (cswPrivate.useSearch) {
+                    cswPrivate.nameSpan.text(nodename);
+                    cswPrivate.hiddenValue.val(nodeid);
+                } else {
+                    cswPublic.select.val(nodeid);
                 }
+            }; // setSelectedNode
+
+            cswPublic.selectedNodeId = function () {
                 return cswPrivate.selectedNodeId;
             }; // selectedNodeId
-
+            cswPublic.selectedName = function () {
+                return cswPrivate.selectedName;
+            }; // selectedName
+                
             //#endregion Public
 
             //#region _postCtor

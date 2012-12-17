@@ -15,8 +15,10 @@
             'use strict';
             var cswPrivate = {
                 visibility: '',
-                roleId: '',
-                userId: '',
+                roleid: '',
+                rolename: '',
+                userid: '',
+                username: '',
                 
                 visibilitySelect: null,
                 roleSelect: null,
@@ -48,19 +50,22 @@
 
                         table.cell(rownum, 1).text(label);
                         var parentTbl = table.cell(rownum, 2).table();
+                        //var parentId = table.getId();
 
                         cswPrivate.visibilitySelect = parentTbl.cell(1, 1).select({
-                            name: table.id + '_vissel',
+                            name: 'View Visibility',
                             selected: cswPrivate.visibility,
                             values: ['User', 'Role', 'Global'],
                             onChange: cswPrivate.toggle
                         });
 
                         cswPrivate.roleSelect = parentTbl.cell(1, 3).nodeSelect({
-                            name: table.id + '_visrolesel',
+                            //name: parentId + '_visrolesel',
+                            name: 'View Visibility Role',
                             allowAdd: false,
                             async: false,
-                            selectedNodeId: cswPrivate.roleId,
+                            selectedNodeId: cswPrivate.roleid,
+                            selectedName: cswPrivate.rolename,
                             ajaxData: {
                                 ObjectClass: 'RoleClass'
                             },
@@ -68,10 +73,12 @@
                         });
 
                         cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
-                            name: table.id + '_visusersel',
+                            //name: parentId + '_visusersel',
+                            name: 'View Visibility User',
                             allowAdd: false,
                             async: false,
-                            selectedNodeId: cswPrivate.userId,
+                            selectedNodeId: cswPrivate.userid,
+                            selectedName: cswPrivate.username,
                             ajaxData: {
                                 ObjectClass: 'UserClass'
                             },
@@ -87,13 +94,15 @@
             cswPublic.getSelected = function() {
                 var ret = {
                     visibility: cswPrivate.visibilitySelect.val(),
-                    roleId: '',
-                    userId: ''
+                    roleid: '',
+                    userid: ''
                 };
-                if (visibility === 'Role') {
-                    ret.roleId = cswPrivate.roleSelect.selectedNodeId();
-                } else if (visibility === 'User') {
-                    ret.userId = cswPrivate.userSelect.selectedNodeId();
+                if (ret.visibility === 'Role') {
+                    ret.roleid = cswPrivate.roleSelect.selectedNodeId();
+                    ret.rolename = cswPrivate.roleSelect.selectedName();
+                } else if (ret.visibility === 'User') {
+                    ret.userid = cswPrivate.userSelect.selectedNodeId();
+                    ret.username = cswPrivate.userSelect.selectedName();
                 }
                 return ret;
             }; // getSelected()
@@ -101,8 +110,8 @@
 
             cswPublic.setSelected = function(newval) {
                 cswPrivate.visibilitySelect.val(newval.visibility);
-                cswPrivate.roleSelect.selectedNodeId(newval.roleId);
-                cswPrivate.userSelect.selectedNodeId(newval.userId);
+                cswPrivate.roleSelect.setSelectedNode(newval.roleid, newval.rolename);
+                cswPrivate.userSelect.setSelectedNode(newval.userid, newval.username);
                 cswPrivate.toggle();
             }; // setSelected()
 

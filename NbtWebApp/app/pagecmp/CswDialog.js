@@ -1277,6 +1277,8 @@
                 title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
+
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 name: cswDlgPrivate.name,
                 nodetypeid: cswDlgPrivate.nodetypeid,
@@ -1297,7 +1299,6 @@
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
                 }
             });
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
             return cswPublic;
         }, // SearchDialog
 
