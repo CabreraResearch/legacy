@@ -54,7 +54,6 @@
 
                     if (false == Csw.isNullOrEmpty(qs.reportid)) {
                         $('#btnGrid').click(function () {
-                            $('#btnGrid').attr('disabled', 'disabled');
                             runReport(qs.reportid, 'grid', params);
                         });
                         $('#btnCsv').click(function () { runReport(qs.reportid, 'csv', params); });
@@ -112,6 +111,7 @@
                     },
                     success: function (data) {
                         var parent = Csw.domNode({ ID: 'rptDiv' });
+                        parent.empty();
 
                         var gridData = JSON.parse(data.gridJSON);
                         gridData.grid.showActionColumn = false;
