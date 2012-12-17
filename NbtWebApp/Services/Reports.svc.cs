@@ -6,6 +6,13 @@ using System.Web;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Reports;
 using NbtWebApp.WebSvc.Returns;
+using ChemSW.Nbt.WebServices;
+using System.IO;
+using System.Data;
+using System.Text;
+using ChemSW;
+using System.ServiceModel.Channels;
+using System.Collections.Specialized;
 
 namespace NbtWebApp
 {
@@ -53,6 +60,75 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceMailReports.saveSubscriptions,
                 ParamObj: Subscriptions
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Generate a report" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceReport.ReportReturn report( CswNbtWebServiceReport.ReportData Request )
+        {
+            CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceReport.runReport,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( BodyStyle = WebMessageBodyStyle.Bare, Method = "POST" )]
+        [Description( "Generate a csv report file" )]
+        [FaultContract( typeof( FaultException ) )]
+        public Stream reportCSV( Stream dataStream )
+        {
+
+            string body = new StreamReader( dataStream ).ReadToEnd();
+            NameValueCollection formData = HttpUtility.ParseQueryString( body );
+
+            CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+            CswNbtWebServiceReport.ReportData Request = new CswNbtWebServiceReport.ReportData();
+            Request.nodeId = formData["reportid"];
+            Request.reportFormat = formData["reportFormat"];
+            formData.Remove( "reportid" );
+            formData.Remove( "reportFormat" );
+            Request.reportParams = CswNbtWebServiceReport.FormReportParamsToCollection( formData );
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceReport.runReportCSV,
+                ParamObj: Request
+                );
+            SvcDriver.run();
+
+            WebOperationContext.Current.OutgoingResponse.Headers.Set( "Content-Disposition", "attachment; filename=export.csv;" );
+
+            return Request.stream;
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Gets a Reports parameters in the sql" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceReport.ReportReturn getReportInfo( CswNbtWebServiceReport.ReportData Request )
+        {
+            CswNbtWebServiceReport.ReportReturn Ret = new CswNbtWebServiceReport.ReportReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceReport.ReportReturn, CswNbtWebServiceReport.ReportData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceReport.getReportInfo,
+                ParamObj: Request
                 );
 
             SvcDriver.run();

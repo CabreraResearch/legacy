@@ -183,7 +183,8 @@
                             thumbnailCell.img({
                                 src: nodeObj.thumbnailurl
                             }).css({
-                                 height: imgheight
+                                 height: imgheight,
+                                 maxWidth: '100px'
                             });
                         }
 
@@ -222,7 +223,15 @@
                                 btncol += 1;
 
                             } else {
-                                texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1)).span({ text: propObj.propname + ': ' + propObj.gestalt });
+                                var propCell = texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1));
+                                var cssclass = 'searchResult';
+                                if(propObj.source === 'Results') {
+                                    cssclass = 'searchResultDeemph';
+                                }
+                                propCell.span({ 
+                                    text: propObj.propname + ': ' + propObj.gestalt,
+                                    cssclass: cssclass
+                                });
                                 row += 1;
                                 //maintextcell.br();
                             }
@@ -366,6 +375,15 @@
                         }
 
 
+                        // empty cells if no results, to keep image in place
+                        while(false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
+                            var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
+                            var textCell = cswPrivate.getTextCell(cellSet);
+                            textCell.append('&nbsp;');
+                            cswPrivate.c += 1;
+                        }
+
+
                         var nodetypeid = nodetypeObj["nodetypeid"];
                         var nodetypename = nodetypeObj["nodetypename"];
 
@@ -452,6 +470,7 @@
             cswPrivate.HandleTableData = function () {
                 cswParent.empty();
                 cswPrivate.results = Csw.number(cswPrivate.tabledata.results, -1);
+                cswPrivate.pagenodelimit = Csw.number(cswPrivate.tabledata.pagesize, 20);
 
                 // multi-nodetype
                 cswPrivate.singleColumn = false;

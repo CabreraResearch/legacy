@@ -116,18 +116,38 @@
                 }); // ajax
 
                 cswPrivate.searchinput = cswtable.cell(1, 2).input({
-                    type: Csw.enums.inputTypes.search,
-                    width: cswPrivate.searchbox_width,
-                    cssclass: 'mousetrap'
-                });
+                        });
 
-                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
-                    name: 'searchBtn',
-                    menuOptions: ['Search', 'Structure Search'],
-                    selectedText: 'Search',
-                    size: 'small',
-                    onClick: function (selectedOption) {
-                        switch (selectedOption) {
+                        var selectedText = 'All';
+                        var selectedIcon = '';
+                        Csw.each(data, function (nt) {
+                            if(false === Csw.isNullOrEmpty(nt.name)) {
+                                items.push({
+                                    text: nt.name,
+                                    icon: nt.iconfilename,
+                                    handler: function() { onPreFilterClick(nt); }
+                                });
+                                if(cswPrivate.nodetypeid === nt.id) {
+                                    selectedText = '';
+                                    selectedIcon = nt.iconfilename;
+                                }
+                            }
+                        });
+
+                        cswPrivate.preFilterSelect = window.Ext.create('Ext.SplitButton', {
+                            text: selectedText,
+                            icon: selectedIcon,
+                            renderTo: cswtable.cell(1, 1).getId(),
+                            menu: {
+                                items: items
+                            }
+                        }); // toolbar
+
+                    } // success
+                }); // ajax
+
+                var srchOnClick=function (selectedOption) {
+                    switch (selectedOption) {
                             case 'Structure Search':
                                 $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                                 break;
@@ -136,9 +156,24 @@
                                 cswPrivate.searchterm = cswPrivate.searchinput.val();
                                 cswPrivate.newsearch();
                         }
+                }
 
+                cswPrivate.searchinput = cswtable.cell(1, 2).input({
+                    type: Csw.enums.inputTypes.search,
+                    width: cswPrivate.searchbox_width,
+                    cssclass: 'mousetrap',
+                    onKeyEnter: function () {
+                        Csw.tryExec(srchOnClick, cswPrivate.searchButton.selectedOption);
                     }
                     });
+
+                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
+                    name: 'searchBtn',
+                    menuOptions: ['Search', 'Structure Search'],
+                    selectedText: 'Search',
+                    size: 'small',
+                    onClick: srchOnClick
+                });
             })();
 
             // Handle search submission
@@ -240,6 +275,7 @@
 
                 // Filters in use
                 var hasFilters = false;
+                var atLeastOneShown = false;
                 var ftable_row = 1;
 
                 function showFilter(thisFilter) {
@@ -281,45 +317,62 @@
                 fdiv.br();
 
                 // Filters to add
-
-                function makeFilterLink(thisFilter, div, filterCount) {
-                    var flink = div.a({
-                        text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
-                        onClick: function () {
-                            cswPrivate.filter(thisFilter, 'add');
-                            return false;
-                        }
-                    });
-                    div.br();
-                } // makeFilterLink()
+                var filtersDiv = fdiv.moreDiv({
+                    moretext: 'More Filters...',
+                    lesstext: ''
+                });
+                filtersDiv.moreLink.hide();
 
                 function makeFilterSet(thisFilterSet) {
 
                     var filterCount = 0;
-                    var moreDiv = fdiv.moreDiv();
-                    var filterName = '';
+                    var destDiv, moreDiv, thisdiv, filterName = '', filterSource, nameSpan;
 
-                    var nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
-                    moreDiv.shownDiv.br();
-                    var thisdiv = moreDiv.shownDiv;
-                    moreDiv.moreLink.hide();
                     Csw.each(thisFilterSet, function (thisFilter) {
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
+                            filterSource = thisFilter.source;
+                            if(filterSource === 'Results') {
+                                destDiv = filtersDiv.hiddenDiv;
+                                filtersDiv.moreLink.show();
+                            } else {
+                                destDiv = filtersDiv.shownDiv;
+                                atLeastOneShown = true;
+                            }
+                            moreDiv = destDiv.moreDiv();
+                            moreDiv.moreLink.hide();
+
+                            nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
+                            moreDiv.shownDiv.br();
+                            thisdiv = moreDiv.shownDiv;
                         }
                         if (filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }
-                        makeFilterLink(thisFilter, thisdiv, filterCount);
+                        
+                        thisdiv.a({
+                            text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
+                            onClick: function () {
+                                cswPrivate.filter(thisFilter, 'add');
+                                return false;
+                            }
+                        });
+                        thisdiv.br();
+
                         filterCount++;
                     });
-                    nameSpan.text(filterName);
-                    fdiv.br();
-                    fdiv.br();
+                    if(false === Csw.isNullOrEmpty(filterName)) {
+                        nameSpan.text(filterName);
+                        destDiv.br();
+                        destDiv.br();
+                    }
                 } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
+                if(false === atLeastOneShown) {
+                    filtersDiv.showHidden();
+                }
 
                 cswPrivate.data = data;
 

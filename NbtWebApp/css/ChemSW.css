@@ -1176,10 +1176,10 @@ ul li div {
 {
     padding: 5px;
     background-color: #e8e9f2;
-    border-top: 5px solid #7b7bb1;
-    border-right: 5px solid #54548f;
-    border-bottom: 5px solid #54548f;
-    border-left: 5px solid #7b7bb1;
+    border-top: 5px solid #5788e7;
+    border-right: 5px solid #164399;
+    border-bottom: 5px solid #164399;
+    border-left: 5px solid #5788e7;
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
     -khtml-border-radius: 20px;
@@ -1398,8 +1398,15 @@ ul li div {
 
 .NodeTableOddRow
 {
-    background-color: #dddddd;
 }
 .NodeTableEvenRow
 {
+    background-color: #eeeeee;
+}
+
+.searchResult {
+    
+}
+.searchResultDeemph {
+    color: #808080;
 }

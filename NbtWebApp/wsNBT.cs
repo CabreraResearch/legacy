@@ -2398,37 +2398,6 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doesReportSupportCrystal( string reportid )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
-                    CswNbtObjClassReport rptAsReport = (CswNbtObjClassReport) rpt;
-                    ReturnVal["result"] = ( false == rptAsReport.RPTFile.Empty ).ToString().ToLower();
-
-                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
-                _deInitResources();
-            } // try
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-            return ReturnVal.ToString();
-
-        } // doesReportSupportCrystal()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getAbout()
         {
             JObject ReturnVal = new JObject();
