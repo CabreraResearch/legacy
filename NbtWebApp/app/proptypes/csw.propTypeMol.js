@@ -106,6 +106,13 @@
                                                 cswPublic.data.onPropChange({ href: '', mol: '' });
                                             }
                                         });
+
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'Mol/ClearMolFingerprint',
+                                            data: {
+                                                nodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
+                                            }
+                                        });
                                     }
                                 }
                             });

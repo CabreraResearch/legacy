@@ -127,6 +127,25 @@ namespace NbtWebApp
             return ( Ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [Description( "Clear a mol file and its fingerprint" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceMols.MolDataReturn ClearMolFingerprint( MolData Request )
+        {
+            CswNbtWebServiceMols.MolDataReturn Ret = new CswNbtWebServiceMols.MolDataReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceMols.MolDataReturn, MolData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceMols.ClearMolFingerprint,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
         public class MultiPartFormDataFile
         {
             public string ContentDisposition;

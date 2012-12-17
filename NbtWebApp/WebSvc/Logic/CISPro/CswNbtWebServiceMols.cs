@@ -167,6 +167,14 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = ImgData;
         }
 
+        public static void ClearMolFingerprint( ICswResources CswResources, MolDataReturn Return, MolData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            CswPrimaryKey pk = new CswPrimaryKey();
+            pk.FromString( Request.nodeId );
+            NbtResources.StructureSearchManager.DeleteFingerprintRecord( pk.PrimaryKey );
+        }
+
         #endregion
     }
 
