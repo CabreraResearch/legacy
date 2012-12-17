@@ -211,19 +211,15 @@ namespace ChemSW.Nbt
             newSupplierPropView.saveNew( "Supplier", NbtViewVisibility.Property );
             CswNbtViewRelationship parent = newSupplierPropView.AddViewRelationship( vendorOC, true );
 
-            if( MLMDisabled )
-            {
-                newSupplierPropView.save();
-            }
-            else
+            if( false == MLMDisabled )
             {
                 CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
                 newSupplierPropView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: vendorTypeOCP,
                     Value: CswNbtObjClassVendor.VendorTypes.Corporate,
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                newSupplierPropView.save();
             }
+            newSupplierPropView.save();
 
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {
