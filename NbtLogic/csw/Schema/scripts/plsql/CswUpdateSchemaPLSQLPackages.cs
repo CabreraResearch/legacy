@@ -145,6 +145,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     materials tier_ii_material_table;
     containers tier_ii_material_table;
     conversion_factor number;
+    found number := 0;
   begin
     --Take the contents of the child locations' Materials and add them to the list (setting every Material's Quantity value to 0)
     select tier_ii_material(t.materialid, t.casno, 0, null, t.totalquantity)
@@ -152,17 +153,19 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       from Tier2 t
       where t.parentlocationid = LocId
       and t.dateadded = DATE_ADDED;
-      
-    for i in 1..materials.count loop
-      if materials.exists(i) then--If the MaterialQty to add's MaterialId already exists in the list,
-        for j in 1..materials.count loop--add the MaterialQty to add's CollectiveQty to the existing MaterialQty's CollectiveQty
-          if materials.exists(j) and i != j and materials(i).materialid = materials(j).materialid then
-            materials(i).totalquantity := materials(i).totalquantity + materials(j).totalquantity;
-            materials.delete(j);
-          end if;
-        end loop;
-      end if;
-    end loop;
+    
+    if materials.exists(materials.first) then
+      for i in materials.first..materials.last loop
+        if materials.exists(i) then--If the MaterialQty to add's MaterialId already exists in the list,
+          for j in materials.first..materials.last loop--add the MaterialQty to add's CollectiveQty to the existing MaterialQty's CollectiveQty
+            if materials.exists(j) and i != j and materials(i).materialid = materials(j).materialid then
+              materials(i).totalquantity := materials(i).totalquantity + materials(j).totalquantity;
+              materials.delete(j);
+            end if;
+          end loop;
+        end if;
+      end loop;
+    end if;
     
     --Grab all Containers in the current Location where qty > 0 and material's tierII is true
     select tier_ii_material(m.materialid, mat.casno, qty.quantity, qty.unitid, qty.quantity)
@@ -211,6 +214,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         containers(i).quantity := UNIT_CONVERSION.CONVERT_UNIT(containers(i).quantity, conversion_factor, 1);
         containers(i).totalquantity := containers(i).quantity;
       end if;
+      found := 0;
       if materials.count > 0 then
         for j in 1..materials.count loop
           --If a MaterialQty with the container's MaterialId already exists, 
@@ -218,13 +222,12 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
           if containers(i).materialid = materials(j).materialid then
             materials(j).quantity := materials(j).quantity + containers(i).quantity;
             materials(j).totalquantity := materials(j).totalquantity + containers(i).totalquantity;
-          else--else, add a new MaterialQty object to the list
-            materials.extend(1);
-            materials(materials.count) := containers(i);
+            found := 1;
             exit;
           end if;
         end loop;
-      else
+      end if;
+      if found = 0 then
         materials.extend(1);
         materials(materials.count) := containers(i);
       end if;
@@ -241,31 +244,36 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     Locations := GET_LOCATIONS();
     for loc in 1..Locations.count loop
       Materials := GET_MATERIALS(Locations(loc).LocationId);
-      for mat in 1..Materials.count loop
-        insert
-          into TIER2
-          (
-            TIER2ID,
-            DATEADDED, 
-            LOCATIONID, 
-            PARENTLOCATIONID, 
-            MATERIALID, 
-            CASNO, 
-            QUANTITY, 
-            TOTALQUANTITY
-          ) 
-          values 
-          (
-            SEQ_TIER2ID.nextval,
-            DATE_ADDED, 
-            Locations(loc).LOCATIONID, 
-            Locations(loc).PARENTLOCATIONID, 
-            Materials(mat).MATERIALID,
-            Materials(mat).CASNO,
-            Materials(mat).QUANTITY,
-            Materials(mat).TOTALQUANTITY
-          );
-      end loop;
+      if Materials.exists(Materials.first) then
+        for mat in Materials.first..Materials.last loop
+          if Materials.exists(mat) then
+            insert
+              into TIER2
+              (
+                TIER2ID,
+                DATEADDED, 
+                LOCATIONID, 
+                PARENTLOCATIONID, 
+                MATERIALID, 
+                CASNO, 
+                QUANTITY, 
+                TOTALQUANTITY
+              ) 
+              values 
+              (
+                SEQ_TIER2ID.nextval,
+                DATE_ADDED, 
+                Locations(loc).LOCATIONID, 
+                Locations(loc).PARENTLOCATIONID, 
+                Materials(mat).MATERIALID,
+                Materials(mat).CASNO,
+                Materials(mat).QUANTITY,
+                Materials(mat).TOTALQUANTITY
+              );
+          end if;
+        end loop;
+        commit;
+      end if;
     end loop;
   end SET_TIER_II_DATA;
 
