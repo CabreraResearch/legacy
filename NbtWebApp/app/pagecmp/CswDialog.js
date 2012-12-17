@@ -900,10 +900,11 @@
 
             var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
 
-            tableOuter.cell(1, 1).p({ text: 'To perform a search of the ChemCatCentral database, select a data source, search type, and search operator.' });
+            tableOuter.cell(1, 1).p({ text: '' });
 
             var tableInner = div.table({ cellpadding: '2px' });
 
+            //DataSources Picklist
             var sourceSelect = tableInner.cell(1, 1).select({
                 name: 'C3Search_sourceSelect',
                 selected: 'All Sources',
@@ -911,36 +912,35 @@
             });
 
             function getAvailableDataSources() {
-                var ret = '';
-
-                var CswC3Params = {
-                    AccessId: 'chemcatcentral',
-                    CustomerLoginName: 'g',
-                    LoginPassword: 'g'
-                };
 
                 Csw.ajaxWcf.post({
                     async: false,
                     urlMethod: 'ChemCatCentral/GetAvailableDataSources',
-                    data: CswC3Params,
                     success: function (data) {
                         sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
                     }
                 });
-                return ret;
             };
 
             getAvailableDataSources(); //call function
 
+            //SearchTypes Picklist
             var searchTypeSelect = tableInner.cell(1, 2).select({
-                name: 'C3Search_sourceSelect'
+                name: 'C3Search_searchTypeSelect'
             });
-            searchTypeSelect.option({ display: 'Catalog Number', value: 'CatalogNo' });
-            searchTypeSelect.option({ display: 'Name (Including Synonyms)', value: 'Name' });
-            searchTypeSelect.option({ display: 'Tradename (No Synonyms)', value: 'Tradename' });
-            searchTypeSelect.option({ display: 'CAS Number', value: 'CasNo' });
-            searchTypeSelect.option({ display: 'Formula', value: 'Formula' });
-            searchTypeSelect.option({ display: 'Suppliername', value: 'Suppliername' });
+
+            function getSearchTypes() {
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'ChemCatCentral/GetSearchTypes',
+                    success: function (data) {
+                        searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchTypes));
+                    }
+                });
+            }
+
+            getSearchTypes(); //call function
 
             var searchOperatorSelect = tableInner.cell(1, 3).select({
                 name: 'C3Search_searchOperatorSelect'
@@ -960,9 +960,6 @@
                 onClick: function () {
 
                     var CswC3SearchParams = {
-                        AccessId: 'chemcatcentral',
-                        CustomerLoginName: 'g',
-                        LoginPassword: 'g',
                         Field: searchTypeSelect.selectedVal(),
                         Query: searchTermField.val(),
                         SearchOperator: searchOperatorSelect.selectedVal(),
