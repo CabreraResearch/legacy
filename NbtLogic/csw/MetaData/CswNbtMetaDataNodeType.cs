@@ -501,6 +501,7 @@ namespace ChemSW.Nbt.MetaData
         public const string _Attribute_FirstNodeTypeId = "firstversionid";
         public const string _Attribute_NameTemplate = "nametemplate";
 
+        //TODO: ForMobile needs to go.
         public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
         {
             CswNbtMetaDataNodeType LatestVersionNT = getNodeTypeLatestVersion();
