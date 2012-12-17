@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
 
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
-            
+
             #region URSULA
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_RequestItems_Case27942() ) );            //01U-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case27866() ) );                         //01U-002
@@ -43,9 +43,9 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28236() ) );                         //01U-016
             #endregion URSULA
             #region VIOLA
-            
+
             //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_CaseXXXXX() ) );                       //01U-015    01V-001
-            
+
             #endregion VIOLA
 
 
@@ -58,10 +58,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28281() ) );                         //01U-020      //01V-004
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28282() ) );                         //01U-021      //01V-005
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27649() ) );                         //01U-022      //01V-006
-            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28293() ) );                         //01U-023      //01V-007
+
             #endregion VIOLA
-            
-            
+
+
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
