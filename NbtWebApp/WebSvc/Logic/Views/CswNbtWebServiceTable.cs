@@ -100,6 +100,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["results"] = results; // Tree.getChildNodeCount().ToString();
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
+                ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
             }
             return ret;

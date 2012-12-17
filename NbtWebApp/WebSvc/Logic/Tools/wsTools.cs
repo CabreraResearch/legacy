@@ -5,6 +5,7 @@ using System.Web.Script.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
+using System.IO;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -89,6 +90,38 @@ namespace ChemSW.Nbt.WebServices
         private static string _csvSafe( string str )
         {
             return str.Replace( "\"", "\"\"" );
+        }
+
+        public static Stream ReturnCSVStream( DataTable DT )
+        {
+            MemoryStream stream = new MemoryStream();
+            StreamWriter sw = new StreamWriter( stream );
+
+            int idx = 0;
+            byte[] data = new byte[0];
+            foreach( DataColumn dc in DT.Columns )
+            {
+                if( idx > 0 ) sw.Write( "," );
+                sw.Write( "\"" + _csvSafe( dc.ColumnName.ToString() ) + "\"" );
+                idx++;
+            }
+            sw.Write( "\r\n" );
+
+            // Rows
+            foreach( DataRow dr in DT.Rows )
+            {
+                idx = 0;
+                foreach( DataColumn dc in DT.Columns )
+                {
+                    if( idx > 0 ) sw.Write( "," );
+                    sw.Write( "\"" + _csvSafe( dr[dc].ToString() ) + "\"" );
+                    idx++;
+                }
+                sw.Write( "\r\n" );
+            }
+            sw.Flush();
+            stream.Position = 0;
+            return stream;
         }
 
         #endregion
