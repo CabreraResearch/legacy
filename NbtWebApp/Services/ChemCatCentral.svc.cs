@@ -20,7 +20,7 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
 
         /// <summary>
-        /// Search ChemCatCentral database.
+        /// 
         /// </summary>
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "GetAvailableDataSources" )]
@@ -28,18 +28,36 @@ namespace NbtWebApp
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetAvailableDataSources( CswC3Params CswC3Params )
         {
-            //JObject Ret = new JObject();
 
             CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
 
-            //CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-            //ReturnVal = ws.doChemCatCentralSearch( CswC3SearchParams );
-
-            //CswNbtViewReturn Ret = new CswNbtViewReturn();
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3Params>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceC3Search.GetAvailableDataSources,
+                ParamObj: CswC3Params
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetSearchTypes" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetSearchTypes( CswC3Params CswC3Params )
+        {
+            
+            CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3Params>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetSearchTypes,
                 ParamObj: CswC3Params
                 );
 
