@@ -368,7 +368,7 @@
                     cswPrivate.topToolbar.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
 
-                if (cswPrivate.topToolbar.length === '1') {
+                if (cswPrivate.topToolbar.length > 0) {
                     gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
