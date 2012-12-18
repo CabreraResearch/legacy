@@ -180,11 +180,10 @@
                         createData.ViewMode = o.viewmode;
                     }
 
-                    if (false === Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
-                        createData.Visibility = visSelect.$visibilityselect.val();
-                        createData.VisibilityRoleId = visSelect.$visroleselect.val();
-                        createData.VisibilityUserId = visSelect.$visuserselect.val();
-                    }
+                    var visValue = visSelect.getSelected();
+                    createData.Visibility = visValue.visibility;
+                    createData.VisibilityRoleId = visValue.roleid;
+                    createData.VisibilityUserId = visValue.userid;
 
                     Csw.ajax.post({
                         urlMethod: 'createView',
@@ -1383,6 +1382,8 @@
                 title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
+
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 name: cswDlgPrivate.name,
                 nodetypeid: cswDlgPrivate.nodetypeid,
@@ -1403,7 +1404,6 @@
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
                 }
             });
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
             return cswPublic;
         }, // SearchDialog
 

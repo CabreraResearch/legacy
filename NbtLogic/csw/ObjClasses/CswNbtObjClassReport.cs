@@ -2,7 +2,8 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-
+using ChemSW.Exceptions;
+using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -158,6 +159,24 @@ namespace ChemSW.Nbt.ObjClasses
         //        return ( _CswNbtNode.Properties[ViewPropertyName].AsViewReference );
         //    }
         //}
+
+        #endregion
+
+        #region custom logic
+
+        public CswCommaDelimitedString ExtractReportParams()
+        {
+            CswCommaDelimitedString reportParams = new CswCommaDelimitedString();
+
+            MatchCollection matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
+            foreach( Match match in matchedParams )
+            {
+                string paramName = match.Value.Replace( '{', ' ' ).Replace( '}', ' ' ).Trim(); //remove the '{' and '}' and whitespace
+                reportParams.Add( paramName );
+            }
+
+            return reportParams;
+        }
 
         #endregion
 
