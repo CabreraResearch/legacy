@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.WebServices
     /// Label List Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtLabelList : CswWebSvcReturn
+    public class CswNbtLabelList: CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtLabelList()
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
     /// Label EPL Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtLabelEpl : CswWebSvcReturn
+    public class CswNbtLabelEpl: CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtLabelEpl()
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             PropMatchesPrintLabel = true;
                         }
-                        else if ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                        else if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                         {
                             foreach( Int32 PrintLabelNTId in PrintLabelClass.getNodeTypeIds() )
                             {
@@ -145,13 +145,9 @@ namespace ChemSW.Nbt.WebServices
                     {
                         // BZ 6118 - this prevents " from being turned into &quot;
                         // BUT SEE BZ 7881!
-                        string EplText = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode ) + "\n";
-                        Return.Data.Labels.Add( new PrintLabel
-                        {
-                            TargetId = TargetNode.NodeId.ToString(),
-                            TargetName = TargetNode.NodeName,
-                            EplText = EplText
-                        } );
+                        //string EplText = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode ) + "\n";
+                        PrintLabel Label = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode );
+                        Return.Data.Labels.Add( Label );
                     }
                 }
             }
@@ -161,8 +157,9 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getEPLText()
 
-        private static string GenerateEPLScript( CswNbtResources NbtResources, string EPLText, string Params, CswNbtNode Node )
+        private static PrintLabel GenerateEPLScript( CswNbtResources NbtResources, string EPLText, string Params, CswNbtNode Node )
         {
+            PrintLabel Ret = new PrintLabel();
             string EPLScript = string.Empty;
             if( false == string.IsNullOrEmpty( EPLText ) )
             {
@@ -181,6 +178,9 @@ namespace ChemSW.Nbt.WebServices
                         // Find the property
                         if( null != Node )
                         {
+                            Ret.TargetId = Node.NodeId.ToString();
+                            Ret.TargetName = Node.NodeName;
+
                             CswNbtMetaDataNodeType MetaDataNodeType = NbtResources.MetaData.getNodeType( Node.NodeTypeId );
                             if( null != MetaDataNodeType )
                             {
@@ -188,6 +188,15 @@ namespace ChemSW.Nbt.WebServices
                                 if( null != MetaDataProp )
                                 {
                                     string PropertyValue = Node.Properties[MetaDataProp].Gestalt;
+                                    if( MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
+                                    {
+                                        PropertyValue = Node.Properties[MetaDataProp].AsImage.FileName;
+                                        Ret.Pictos.Add( new PrintLabel.Picto
+                                            {
+                                                FileName = PropertyValue,
+                                                FileURL = Node.Properties[MetaDataProp].AsImage.ImageUrl
+                                            } );
+                                    }
 
                                     bool FoundMatch = false;
                                     foreach( string ParamNVP in ParamsArray )
@@ -232,7 +241,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Error, "Could not generate an EPL script from the provided parameters.", "EPL Text='" + EPLText + "', Params='" + Params + "'" );
             }
-            return EPLScript;
+            Ret.EplText = EPLScript + "\n";
+            return Ret;
         } // GenerateEPLScript()
 
 
