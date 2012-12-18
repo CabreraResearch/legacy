@@ -71,17 +71,6 @@
 
                 cswPrivate.getQuantity = function () {
                     var ret = false;
-                    if (Csw.isNullOrEmpty(cswPrivate.selectedSizeId) && false === Csw.isNullOrEmpty(cswPrivate.relatedNodeId)) {
-                        Csw.ajax.post({
-                            urlMethod: 'getSize',
-                            async: false,
-                            data: { RelatedNodeId: cswPrivate.relatedNodeId },
-                            success: function (data) {
-                                cswPrivate.selectedSizeId = data.sizeid;
-                                ret = false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId);
-                            }
-                        });
-                    }
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
                         Csw.ajax.post({
                             urlMethod: 'getQuantity',
@@ -147,8 +136,8 @@
                         makeAddRow: function (cswCell, columnName, rowid) {
                             'use strict';
                             var updateSizeVals = function () {
-                                cswPrivate.selectedSizeId = cswPublic.rows[rowid].sizeControl.selectedNodeId();
-                                cswPublic.rows[rowid].quantityValues.sizeid = cswPublic.rows[rowid].sizeControl.selectedNodeId();
+                                cswPrivate.selectedSizeId = cswPublic.rows[rowid].sizeControl.selectedVal();
+                                cswPublic.rows[rowid].quantityValues.sizeid = cswPublic.rows[rowid].sizeControl.selectedVal();
                                 cswPublic.rows[rowid].quantityValues.sizename = cswPublic.rows[rowid].sizeControl.selectedText();
                             };
                             var updateColumnVals = function (changeContainerNo) {
