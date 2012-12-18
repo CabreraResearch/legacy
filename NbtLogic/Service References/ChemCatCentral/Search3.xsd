@@ -80,9 +80,22 @@
       <xs:element minOccurs="0" name="MaxRows" type="xs:int" />
       <xs:element minOccurs="0" name="Query" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SearchOperator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SearchTypes" type="tns:CswC3SearchParams.SearchFieldType" />
       <xs:element minOccurs="0" name="SourceName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CswC3SearchParams" nillable="true" type="tns:CswC3SearchParams" />
+  <xs:simpleType name="CswC3SearchParams.SearchFieldType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CasNo" />
+      <xs:enumeration value="CatalogNo" />
+      <xs:enumeration value="Formula" />
+      <xs:enumeration value="Name" />
+      <xs:enumeration value="TradeName" />
+      <xs:enumeration value="SupplierName" />
+      <xs:enumeration value="Structure" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CswC3SearchParams.SearchFieldType" nillable="true" type="tns:CswC3SearchParams.SearchFieldType" />
 </xs:schema>

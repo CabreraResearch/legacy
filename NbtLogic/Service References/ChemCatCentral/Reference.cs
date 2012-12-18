@@ -878,6 +878,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string SearchOperatorField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ChemSW.Nbt.ChemCatCentral.CswC3SearchParams.SearchFieldType SearchTypesField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SourceNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -998,6 +1001,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public ChemSW.Nbt.ChemCatCentral.CswC3SearchParams.SearchFieldType SearchTypes {
+            get {
+                return this.SearchTypesField;
+            }
+            set {
+                if ((this.SearchTypesField.Equals(value) != true)) {
+                    this.SearchTypesField = value;
+                    this.RaisePropertyChanged("SearchTypes");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string SourceName {
             get {
                 return this.SourceNameField;
@@ -1031,6 +1047,32 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
+        
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+        [System.Runtime.Serialization.DataContractAttribute(Name="CswC3SearchParams.SearchFieldType", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices")]
+        public enum SearchFieldType : int {
+            
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            CasNo = 0,
+            
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            CatalogNo = 1,
+            
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            Formula = 2,
+            
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            Name = 3,
+            
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            TradeName = 4,
+            
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            SupplierName = 5,
+            
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            Structure = 6,
+        }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -1040,6 +1082,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/authenticateUser", ReplyAction="http://tempuri.org/Search/authenticateUserResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/authenticateUserSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults authenticateUser(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getSearchTypes", ReplyAction="http://tempuri.org/Search/getSearchTypesResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getSearchTypesSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getSearchTypes(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getDataSources", ReplyAction="http://tempuri.org/Search/getDataSourcesResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getDataSourcesSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
@@ -1095,6 +1141,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults authenticateUser(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
             return base.Channel.authenticateUser(CswC3Params);
+        }
+        
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getSearchTypes(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
+            return base.Channel.getSearchTypes(CswC3Params);
         }
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getDataSources(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
