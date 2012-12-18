@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropImage : CswNbtNodeProp
+    public class CswNbtNodePropImage: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropImage( CswNbtNodePropWrapper PropWrapper )
         {

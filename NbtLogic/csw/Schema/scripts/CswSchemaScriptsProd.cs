@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public class CswSchemaScriptsProd : ICswSchemaScripts
+    public class CswSchemaScriptsProd: ICswSchemaScripts
     {
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
@@ -56,21 +56,9 @@ namespace ChemSW.Nbt.Schema
             #endregion VIOLA
 
 
-            #region VIOLA
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case26827() ) );                         //01U-017      //01V-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part1() ) );                    //01U-018      //01V-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part2() ) );                    //01U-019      //01V-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28281() ) );                         //01U-020      //01V-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28282() ) );                         //01U-021      //01V-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27649() ) );                         //01U-022      //01V-006
-
-            #endregion VIOLA
-
-
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
-            foreach ( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
+            foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
                                                                                         ( _LatestVersion.CycleIteration == Version.CycleIteration &&
                                                                                             _LatestVersion.ReleaseIdentifier == Version.ReleaseIdentifier &&
                                                                                             _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
@@ -115,7 +103,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswSchemaVersion ret = null;
             CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
-            if ( myCurrentVersion == MinimumVersion )
+            if( myCurrentVersion == MinimumVersion )
                 ret = new CswSchemaVersion( LatestVersion.CycleIteration, LatestVersion.ReleaseIdentifier, 1 );
             else
                 ret = new CswSchemaVersion( myCurrentVersion.CycleIteration, myCurrentVersion.ReleaseIdentifier, myCurrentVersion.ReleaseIteration + 1 );
@@ -128,7 +116,7 @@ namespace ChemSW.Nbt.Schema
             CswSchemaUpdateDriver ReturnVal = null;
 
             CswSchemaVersion myCurrentVersion = CurrentVersion( CswNbtResources );
-            if ( myCurrentVersion == MinimumVersion ||
+            if( myCurrentVersion == MinimumVersion ||
                 ( LatestVersion.CycleIteration == myCurrentVersion.CycleIteration &&
                     LatestVersion.ReleaseIdentifier == myCurrentVersion.ReleaseIdentifier &&
                     LatestVersion.ReleaseIteration > myCurrentVersion.ReleaseIteration ) )
@@ -148,7 +136,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswSchemaUpdateDriver ReturnVal = null;
 
-                if ( _UpdateDrivers.ContainsKey( CswSchemaVersion ) )
+                if( _UpdateDrivers.ContainsKey( CswSchemaVersion ) )
                 {
                     ReturnVal = _UpdateDrivers[CswSchemaVersion];
                 }
@@ -175,7 +163,7 @@ namespace ChemSW.Nbt.Schema
         {
             int SuperCycle = _MinimumVersion.CycleIteration;
             char ReleaseIdentifier = _MinimumVersion.ReleaseIdentifier;
-            if ( 'Z' != ReleaseIdentifier )
+            if( 'Z' != ReleaseIdentifier )
             {
                 char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
                 List<char> Chars = new List<char>( alpha );
@@ -223,7 +211,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
             CswSchemaUpdateDriver.Description = Description;
-            if ( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
+            if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunBeforeScripts.Add( CswSchemaUpdateDriver );
             }
@@ -244,7 +232,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 99, '#', _RunAfterScripts.Count );
             CswSchemaUpdateDriver.Description = Description;
-            if ( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
+            if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunAfterScripts.Add( CswSchemaUpdateDriver );
             }
