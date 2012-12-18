@@ -26,7 +26,6 @@ namespace ChemSW.Nbt.PropTypes
             _ColumnSubField = _FieldTypeRule.ColumnSubField;
             _PathSubField = _FieldTypeRule.PathSubField;
             _BarcodeSubField = _FieldTypeRule.BarcodeSubField;
-            TopLevelName = CswNbtResources.ConfigVbls.getConfigVariableValue( "LocationViewRootName" );
         }
 
         private CswNbtFieldTypeRuleLocation _FieldTypeRule;
@@ -37,7 +36,11 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _PathSubField;
         private CswNbtSubField _BarcodeSubField;
 
-        public static string TopLevelName = "Top";
+        public static string GetTopLevelName( CswNbtResources NbtResources )
+        {
+            return NbtResources.ConfigVbls.getConfigVariableValue( "LocationViewRootName" );
+        }
+
         public bool CreateContainerLocation = true;
 
         override public bool Empty
@@ -214,7 +217,7 @@ namespace ChemSW.Nbt.PropTypes
 
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
 
-            Ret.ViewName = TopLevelName;
+            Ret.ViewName = GetTopLevelName( CswNbtResources );
             Ret.Root.Included = IsLocationNode;
 
             CswNbtViewRelationship LocationLevel1 = Ret.AddViewRelationship( LocationOC, true );
