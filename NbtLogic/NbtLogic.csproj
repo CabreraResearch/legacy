@@ -798,7 +798,7 @@
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_030.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_031.cs" />
     <Compile Include="csw\Search\CswNbtSearch.cs" />
-    <Compile Include="csw\Search\CswNbtSearchFilterWrapper.cs" />
+    <Compile Include="csw\Search\CswNbtSearchFilter.cs" />
     <Compile Include="csw\Security\CswNbtPermit.cs" />
     <Compile Include="csw\Security\CswNbtSchemaAuthenticator.cs" />
     <Compile Include="csw\Security\CswNbtSystemUser.cs" />
