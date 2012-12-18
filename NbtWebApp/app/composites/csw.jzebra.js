@@ -72,16 +72,56 @@
                 cswPublic.print = function (eplText, pictos) {
                     if (false === Csw.isNullOrEmpty(eplText)) {
                         cswPublic.zebraJava.findPrinter(cswPublic.defaultPrinter);
-                        cswPublic.zebraJava.append(eplText);
-                        if (pictos && pictos.length > 0) {
-                            pictos.forEach(function(pic) {
-                                cswPublic.zebraJava.appendImage(Csw.window.getPath() + pic.FileURL, 'ZPLII');
-                                cswPublic.zebraJava.append('r\\n\\');
-                            });
+
+                        var cswEpl = Csw.delimitedString(eplText, { delimiter: '|', spaceToDelimited: false, removeDuplicates: false });
+
+                        var addPicto = function(eplSubStr) {
+                            var ret = null;
+                            if (pictos && pictos.length > 0) {
+                                pictos.forEach(function (pic) {
+                                    if (eplSubStr.toLowerCase().indexOf(pic.FileName) >= 0) {
+                                        var url = Csw.window.getPath() + pic.FileURL + '&guid=' + window.Ext.id();
+                                        ret = cswPublic.zebraJava.appendImage(url, 'ZPLII');
+                                        cswPublic.zebraJava.append('\n');
+                                    }
+                                });
+                            }
+                            return ret;
+                        };
+
+
+                        cswEpl.each(function(eplSubStr) {
+                            if (eplSubStr.indexOf('CSWPICTO') === 0) {
+                                var pictoStr = 'F0';
+                                var eplSubArr = eplSubStr.split(',');
+                                if (eplSubArr[1]) {
+                                    pictoStr += eplSubArr[1];
+                                }
+                                if (eplSubArr[2]) {
+                                    pictoStr += ',' + eplSubArr[2];
+                                }
+                                cswPublic.zebraJava.append(pictoStr);
+                                addPicto(eplSubStr);
+                                
+                            } else {
+                               cswPublic.zebraJava.append(eplSubStr);
+                                cswPublic.zebraJava.append('\n');
+                            }
+                        });
+                        
+                        var counter = 0;
+                        while(!cswPublic.zebraJava.isDoneAppending()) {
+                           counter += 1;
+                            //sit in timeout    
+                            if (counter > 100000) {
+                                //I don't trust jZebra. Exit eventually.
+                                $.CswDialog('AlertDialog', { text: 'An error occurred waiting for the printer. Please try again.' });
+                                break;
+                            }
                         }
                         cswPublic.zebraJava.print();
                     } else {
-                        $.CswDialog('AlertDialog', { text: 'No EPL text submitted for print. ' });
+                        $.CswDialog('AlertDialog', { text: 'No EPL text submitted for print.' });
                     }
                 };
 
