@@ -14,6 +14,7 @@ using System.ServiceModel.Web;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -226,6 +227,13 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ReportData.ReportParam paramObj = new ReportData.ReportParam();
                     paramObj.name = param;
+                    CswNbtMetaDataNodeType userNT = NBTResources.MetaData.getNodeType( NBTResources.CurrentNbtUser.UserNodeTypeId );
+                    CswNbtMetaDataNodeTypeProp userNTP = userNT.getNodeTypeProp( param );
+                    if( null != userNTP )
+                    {
+                        CswNbtNode userNode = NBTResources.Nodes[NBTResources.CurrentNbtUser.UserId];
+                        paramObj.value = userNode.Properties[userNTP].Gestalt;
+                    }
                     Request.reportParams.Add( paramObj );
                 }
             }

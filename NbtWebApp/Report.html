@@ -45,10 +45,12 @@
                             };
 
                             var inputCell = table.cell(i + 1, 2).input({
+                                value: param.value,
                                 onChange: OnChange,
                                 isRequired: true
                             }).css('margin', '5px');
                             i++;
+                            params[paramName] = param.value;
                         })();
                     });
 

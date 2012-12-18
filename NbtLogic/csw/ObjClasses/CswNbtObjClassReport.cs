@@ -4,6 +4,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -176,6 +177,25 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             return reportParams;
+        }
+
+        /// <summary>
+        /// Returns the SQL of this report as it would be for a mail report. Finds each parameter, matches it with a UserNTP and replaces it with the value of the NTP
+        /// </summary>
+        public string GetMailReportSQL( CswNbtObjClassUser UserNode )
+        {
+            string ReplacedSQL = SQL.Text;
+            foreach( string param in ExtractReportParams() )
+            {
+                CswNbtMetaDataNodeTypeProp userNTP = UserNode.NodeType.getNodeTypeProp( param );
+                if( null != userNTP )
+                {
+                    string replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
+                    ReplacedSQL = ReplacedSQL.Replace( "{" + param + "}", replacementVal );
+                }
+
+            }
+            return ReplacedSQL;
         }
 
         #endregion
