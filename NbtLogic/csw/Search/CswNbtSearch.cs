@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
@@ -12,7 +13,7 @@ namespace ChemSW.Nbt.Search
     /// <summary>
     /// Represents a Universal Search
     /// </summary>
-    [Serializable()]
+    [DataContract]
     public class CswNbtSearch : IEquatable<CswNbtSearch>
     {
         /// <summary>
@@ -25,14 +26,11 @@ namespace ChemSW.Nbt.Search
         /// <summary>
         /// Constructor - new search
         /// </summary>
-        public CswNbtSearch( CswNbtResources CswNbtResources, string SearchTerm )
+        public CswNbtSearch( CswNbtResources CswNbtResources, string inSearchTerm )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
-
-            _SearchObj = new JObject();
-            _SearchObj["searchterm"] = SearchTerm;
-            _SearchObj["filters"] = new JArray();
+            SearchTerm = inSearchTerm;
         }
 
         /// <summary>
@@ -42,15 +40,15 @@ namespace ChemSW.Nbt.Search
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
-
-            _SearchObj = JObject.Parse( SessionDataRow["viewxml"].ToString() );
-            SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionDataRow["sessiondataid"] ) );
+            FromSessionData( SessionDataRow );
         }
 
-        private JObject _SearchObj;
+        #region Search Data
 
-        public JArray FiltersApplied { get { return (JArray) _SearchObj["filters"]; } }
-        public string SearchTerm { get { return _SearchObj["searchterm"].ToString(); } }
+        [DataMember]
+        public string SearchTerm;
+        [DataMember]
+        public Collection<CswNbtSearchFilter> FiltersApplied = new Collection<CswNbtSearchFilter>();
 
         /// <summary>
         /// A display name for the search
@@ -63,23 +61,77 @@ namespace ChemSW.Nbt.Search
             }
         }
 
+        #endregion Search Data
+        
+        #region Serialization
+
+        public void FromJObject( JObject SearchObj )
+        {
+            SearchTerm = SearchObj["searchterm"].ToString();
+            SessionDataId = new CswNbtSessionDataId( SearchObj["sessiondataid"].ToString() );
+            JArray FiltersArr = (JArray) SearchObj["filtersapplied"];
+            foreach(JObject FilterObj in FiltersArr)
+            {
+                addFilter( FilterObj );
+            }
+        } // FromJObject()
+
+        public JObject ToJObject()
+        {
+            JObject SearchObj = new JObject();
+            SearchObj["searchterm"] = SearchTerm;
+            SearchObj["sessiondataid"] = SessionDataId.ToString();
+            
+            JArray FiltersArr =  new JArray();
+            foreach(CswNbtSearchFilter Filter in FiltersApplied)
+            {
+                FiltersArr.Add( Filter.ToJObject() );
+            }
+            SearchObj["filtersapplied"] = FiltersArr;
+
+            return SearchObj;
+        } // ToJObject()
+
+        public void FromSessionData( DataRow SessionDataRow )
+        {
+            FromJObject( JObject.Parse( SessionDataRow["viewxml"].ToString() ) );
+            SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionDataRow["sessiondataid"] ) );
+        }
+
         public override string ToString()
         {
-            return _SearchObj.ToString();
+            return ToJObject().ToString();
         }
+
+        /// <summary>
+        /// Save this View to Session's data cache
+        /// </summary>
+        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
+        {
+            // don't cache twice
+            if( SessionDataId == null || ForceCache || IncludeInQuickLaunch )  // case 23999
+            {
+                SessionDataId = _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch, KeepInQuickLaunch );
+            }
+        } // SaveToCache()
+
+        public void clearSessionDataId()
+        {
+            SessionDataId = null;
+        }
+
+        /// <summary>
+        /// Key for retrieving the view from the Session's data cache
+        /// </summary>
+        public CswNbtSessionDataId SessionDataId;
+
+        #endregion JSON Serialization
+
+        #region Search Functions
 
         public bool IsSingleNodeType()
         {
-            bool ret = false;
-            foreach( JObject FilterObj in FiltersApplied )
-            {
-                CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                if( Filter.Type == CswNbtSearchFilterType.nodetype )
-                {
-                    ret = true;
-                }
-            }
-            return ret;
+            return ( FiltersApplied.Any( Filter => Filter.Type == CswNbtSearchFilterType.nodetype ) );
         } // IsSingleNodeType()
 
         private Collection<Int32> _FilteredPropIds = null;
@@ -88,43 +140,52 @@ namespace ChemSW.Nbt.Search
             if( _FilteredPropIds == null )
             {
                 _FilteredPropIds = new Collection<Int32>();
-                foreach( JObject FilterObj in FiltersApplied )
+                foreach( CswNbtSearchFilter Filter in FiltersApplied.Where( Filter => Filter.Type == CswNbtSearchFilterType.propval ) )
                 {
-                    CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                    if( Filter.Type == CswNbtSearchFilterType.propval )
-                    {
-                        _FilteredPropIds.Add( Filter.FirstPropVersionId );
-                    }
-                } // foreach(JObject FilterObj in FiltersApplied)
+                    _FilteredPropIds.Add( Filter.FirstPropVersionId );
+                }
             }
             return _FilteredPropIds;
         } // getFilteredPropIds()
 
-        #region Search Functions
-
-        public void addNodeTypeFilter( Int32 NodeTypeId )
+        public void addFilter( Int32 NodeTypeId, bool Removeable )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             if( null != NodeType )
             {
-                addFilter( makeFilter( NodeType, Int32.MinValue, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+                addFilter( NodeType, Removeable );
             }
         } // addNodeTypeFilter()
 
-        public void addFilter( CswNbtSearchFilterWrapper Filter )
+        public void addFilter( CswNbtSearchFilter Filter )
         {
-            addFilter( Filter.ToJObject() );
+            FiltersApplied.Add( Filter );
+            _FilteredPropIds = null;
         } // addFilter()
 
         public void addFilter( JObject FilterObj )
         {
-            FiltersApplied.Add( FilterObj );
-            _FilteredPropIds = null;
+            addFilter( new CswNbtSearchFilter( FilterObj ) );
         } // addFilter()
+
+        public void addFilter( CswNbtMetaDataNodeType NodeType, bool Removeable )
+        {
+            addFilter( makeFilter( NodeType, Int32.MinValue, Removeable, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+        } // addFilter()
+
+        public void addFilter( CswNbtMetaDataObjectClass ObjectClass, bool Removeable )
+        {
+            addFilter( makeFilter( ObjectClass, Int32.MinValue, Removeable, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+        } // addFilter()
+
 
         public void removeFilter( JObject FilterObj )
         {
-            CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
+            removeFilter( new CswNbtSearchFilter( FilterObj ) );
+        } // removeFilter()
+
+        public void removeFilter( CswNbtSearchFilter Filter )
+        {
             if( Filter.Type == CswNbtSearchFilterType.nodetype )
             {
                 // Clear all filters
@@ -132,18 +193,14 @@ namespace ChemSW.Nbt.Search
             }
             else
             {
-                Collection<JObject> FiltersToRemove = new Collection<JObject>();
-                foreach( JObject MatchingFilterObj in ( from JObject AppliedFilterObj in FiltersApplied
-                                                        select new CswNbtSearchFilterWrapper( AppliedFilterObj ) into AppliedFilter
-                                                        where AppliedFilter == Filter
-                                                        select AppliedFilter.ToJObject() ) )
+                Collection<CswNbtSearchFilter> FiltersToRemove = new Collection<CswNbtSearchFilter>();
+                foreach( CswNbtSearchFilter MatchingFilterObj in FiltersApplied.Where( AppliedFilter => AppliedFilter == Filter ) )
                 {
                     FiltersToRemove.Add( MatchingFilterObj );
                 }
-
-                foreach( JObject DoomedFilterObj in FiltersToRemove )
+                foreach( CswNbtSearchFilter DoomedFilter in FiltersToRemove )
                 {
-                    FiltersApplied.Remove( DoomedFilterObj );
+                    FiltersApplied.Remove( DoomedFilter );
                 }
             }
             _FilteredPropIds = null;
@@ -155,10 +212,8 @@ namespace ChemSW.Nbt.Search
             string WhereClause = string.Empty;
             //bool SingleNodeType = false;
             //Collection<Int32> FilteredPropIds = new Collection<Int32>();
-            foreach( JObject FilterObj in FiltersApplied )
+            foreach( CswNbtSearchFilter Filter in FiltersApplied )
             {
-                CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-
                 if( Filter.Type == CswNbtSearchFilterType.nodetype )
                 {
                     // NodeType filter
@@ -183,7 +238,7 @@ namespace ChemSW.Nbt.Search
                     // Someday we may need to do this in a view instead
                     Int32 NodeTypePropFirstVersionId = Filter.FirstPropVersionId;
                     string FilterStr = Filter.FilterValue;
-                    if( FilterStr == CswNbtSearchFilterWrapper.BlankValue )
+                    if( FilterStr == CswNbtSearchFilter.BlankValue )
                     {
                         FilterStr = " is null";
                     }
@@ -204,7 +259,7 @@ namespace ChemSW.Nbt.Search
                                                               and gestalt " + FilterStr + @") ";
                     }
                 }
-            } // foreach(JObject FilterObj in FiltersApplied)
+            } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, true, false, false );
             return Tree;
@@ -246,7 +301,7 @@ namespace ChemSW.Nbt.Search
                         // add the filter to the filters list for display
                         Int32 NodeTypeId = NodeTypeIds.Keys.First();
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, NodeTypeIds[NodeTypeId], false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( NodeType, NodeTypeIds[NodeTypeId], false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         addFilter( NodeTypeFilter );
                     }
                     SingleNodeType = true;
@@ -266,7 +321,7 @@ namespace ChemSW.Nbt.Search
                     {
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                         Int32 Count = sortedDict[NodeTypeId];
-                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, Count, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( NodeType, Count, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         FilterSet.Add( NodeTypeFilter.ToJObject() );
                     }
                 }
@@ -334,7 +389,7 @@ namespace ChemSW.Nbt.Search
                         foreach( string Value in sortedDict.Keys )
                         {
                             Int32 Count = sortedDict[Value];
-                            CswNbtSearchFilterWrapper Filter = makeFilter( NodeTypeProp, Value, Count, true, order.Source );
+                            CswNbtSearchFilter Filter = makeFilter( NodeTypeProp, Value, Count, true, order.Source );
                             FilterSet.Add( Filter.ToJObject() );
                         }
                     } // if( false == NodeTypeProp.IsUnique() )
@@ -344,83 +399,9 @@ namespace ChemSW.Nbt.Search
             return FiltersArr;
         } // FilterOptions()
 
-
-        public bool saveSearchAsView( CswNbtView View )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
-            bool ret = false;
-            View.Root.ChildRelationships.Clear();
-
-            // NodeType filter becomes Relationship
-            CswNbtViewRelationship ViewRel = null;
-            foreach( JObject FilterObj in FiltersApplied )
-            {
-                CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                if( Filter.Type == CswNbtSearchFilterType.nodetype )
-                {
-                    if( ViewRel != null )
-                    {
-                        // nodetype should override object class
-                        View.Root.ChildRelationships.Clear();
-                    }
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Filter.FirstVersionId );
-                    ViewRel = View.AddViewRelationship( NodeType, false );
-                    break;
-                }
-                if( Filter.Type == CswNbtSearchFilterType.objectclass )
-                {
-                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Filter.ObjectClassId );
-                    ViewRel = View.AddViewRelationship( ObjectClass, false );
-                }
-            } // foreach( JObject FilterObj in FiltersApplied )
-
-            if( ViewRel != null )
-            {
-                // Add property filters
-                foreach( JObject FilterObj in FiltersApplied )
-                {
-                    CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                    if( Filter.Type == CswNbtSearchFilterType.propval )
-                    {
-                        CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Filter.FirstPropVersionId );
-                        CswNbtViewProperty ViewProp = View.AddViewProperty( ViewRel, NodeTypeProp );
-
-                        CswNbtSubField DefaultSubField = NodeTypeProp.getFieldTypeRule().SubFields.Default;
-                        if( Filter.FilterValue == CswNbtSearchFilterWrapper.BlankValue )
-                        {
-                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Null ) )
-                            {
-                                View.AddViewPropertyFilter( ViewProp,
-                                                            DefaultSubField.Name,
-                                                            CswNbtPropFilterSql.PropertyFilterMode.Null,
-                                                            string.Empty,
-                                                            false );
-                            }
-                        }
-                        else
-                        {
-                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Equals ) )
-                            {
-                                View.AddViewPropertyFilter( ViewProp,
-                                                            DefaultSubField.Name,
-                                                            CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                            Filter.FilterValue,
-                                                            false );
-                            }
-                        }
-                    }
-                } // foreach( JProperty FilterProp in Filters.Properties() )
-
-                View.save();
-                View.SaveToCache( true );
-                ret = true;
-
-            } // if(ViewRel != null)
-            return ret;
-        } // saveSearchAsView()
-
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
-        {
-            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
+            CswNbtSearchFilter ret = new CswNbtSearchFilter( "Filter To",
                                                   CswNbtSearchFilterType.nodetype,
                                                   "NT_" + NodeType.NodeTypeId.ToString(),
                                                   NodeType.NodeTypeName,
@@ -432,9 +413,9 @@ namespace ChemSW.Nbt.Search
             return ret;
         }
 
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
-            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
+            CswNbtSearchFilter ret = new CswNbtSearchFilter( "Filter To",
                                                   CswNbtSearchFilterType.objectclass,
                                                   "OC_" + ObjectClass.ObjectClassId.ToString(),
                                                   "All " + ObjectClass.ObjectClass.ToString(),
@@ -446,9 +427,9 @@ namespace ChemSW.Nbt.Search
             return ret;
         }
 
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
-            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( NodeTypeProp.PropName,
+            CswNbtSearchFilter ret = new CswNbtSearchFilter( NodeTypeProp.PropName,
                                                   CswNbtSearchFilterType.propval,
                                                   NodeTypeProp.PropId.ToString() + "_" + Value,
                                                   Value,
@@ -462,53 +443,7 @@ namespace ChemSW.Nbt.Search
 
 
         #endregion Search Functions
-
-
-        #region Session Cache functions
-
-        /// <summary>
-        /// Save this View to Session's data cache
-        /// </summary>
-        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
-        {
-            // don't cache twice
-            if( SessionDataId == null || ForceCache || IncludeInQuickLaunch )  // case 23999
-            {
-                SessionDataId = _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch, KeepInQuickLaunch );
-            }
-        } // SaveToCache()
-
-        public void clearSessionDataId()
-        {
-            SessionDataId = null;
-        }
-
-        /// <summary>
-        /// Key for retrieving the view from the Session's data cache
-        /// </summary>
-        public CswNbtSessionDataId SessionDataId
-        {
-            get
-            {
-                CswNbtSessionDataId ret = null;
-                if( _SearchObj["sessiondataid"] != null )
-                {
-                    ret = new CswNbtSessionDataId( _SearchObj["sessiondataid"].ToString() );
-                }
-                return ret;
-            }
-            set
-            {
-                if( value != null )
-                {
-                    _SearchObj["sessiondataid"] = value.ToString();
-                }
-            }
-        }
-
-        #endregion Session Cache functions
-
-
+        
         #region IEquatable
         /// <summary>
         /// IEquatable: ==

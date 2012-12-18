@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != NodeType )
                 {
-                    Search.addFilter( Search.makeFilter( NodeType, Int32.MinValue, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+                    Search.addFilter( NodeType, false );
                 }
             }
             if( Int32.MinValue != ObjectClassId )
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
                 if( null != ObjectClass )
                 {
-                    Search.addFilter( Search.makeFilter( ObjectClass, Int32.MinValue, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+                    Search.addFilter( ObjectClass, false );
                 }
             }
             return _finishUniversalSearch( Search );
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.WebServices
             if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
-                Search.addNodeTypeFilter( NodeTypeId );
+                Search.addFilter( NodeTypeId, true );
                 ret = _finishUniversalSearch( Search );
             }
             return ret;
@@ -117,31 +117,29 @@ namespace ChemSW.Nbt.WebServices
             ICswNbtTree Tree = Search.Results();
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null, Int32.MinValue );
 
-            JObject ret = new JObject();
+            Search.SaveToCache( true );
+
+            JObject ret = Search.ToJObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
             ret["filters"] = Search.FilterOptions( Tree );
-            ret["searchterm"] = Search.SearchTerm;
-            ret["filtersapplied"] = Search.FiltersApplied;
-            Search.SaveToCache( true );
-            ret["sessiondataid"] = Search.SessionDataId.ToString();
             return ret;
         }
 
-        public JObject saveSearchAsView( CswNbtSessionDataId SessionDataId, CswNbtView View )
-        {
-            JObject ret = new JObject();
-            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
-            {
-                CswNbtSearch Search = SessionDataItem.Search;
-                ret["result"] = Search.saveSearchAsView( View );
-            }
-            else
-            {
-                ret["result"] = false;
-            }
-            return ret;
-        }
+        //public JObject saveSearchAsView( CswNbtSessionDataId SessionDataId, CswNbtView View )
+        //{
+        //    JObject ret = new JObject();
+        //    CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+        //    if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+        //    {
+        //        CswNbtSearch Search = SessionDataItem.Search;
+        //        ret["result"] = Search.saveSearchAsView( View );
+        //    }
+        //    else
+        //    {
+        //        ret["result"] = false;
+        //    }
+        //    return ret;
+        //}
 
         #endregion UniversalSearch
 
