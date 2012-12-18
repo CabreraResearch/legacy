@@ -20,6 +20,7 @@
                 cswPrivate.labelText = cswPrivate.labelText || null;
                 cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
                 cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
+                cswPrivate.selectedName = cswPrivate.selectedName || '';
                 cswPrivate.viewid = cswPrivate.viewid || '';
 
                 cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
@@ -248,6 +249,7 @@
                                 onSelectNode: function (nodeObj) {
                                     cswPrivate.nameSpan.text(nodeObj.nodename);
                                     cswPrivate.hiddenValue.val(nodeObj.nodeid);
+                                    cswPrivate.selectedNodeId = nodeObj.nodeid;
                                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
                                 }
                             });
@@ -328,13 +330,24 @@
 
             //#region Public
 
-            cswPublic.selectedNodeId = function () {
-                if (cswPublic && cswPublic.select && cswPublic.select.val) {
-                    cswPrivate.selectedNodeId = cswPublic.select.val();
+            cswPublic.setSelectedNode = function (nodeid, nodename) {
+                cswPrivate.selectedNodeId = nodeid;
+                cswPrivate.selectedName = nodename;
+                if (cswPrivate.useSearch) {
+                    cswPrivate.nameSpan.text(nodename);
+                    cswPrivate.hiddenValue.val(nodeid);
+                } else {
+                    cswPublic.select.val(nodeid);
                 }
-                return cswPrivate.selectedNodeId;
-            };
+            }; // setSelectedNode
 
+            cswPublic.selectedNodeId = function () {
+                return cswPrivate.selectedNodeId;
+            }; // selectedNodeId
+            cswPublic.selectedName = function () {
+                return cswPrivate.selectedName;
+            }; // selectedName
+                
             //#endregion Public
 
             //#region _postCtor
