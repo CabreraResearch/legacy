@@ -115,19 +115,19 @@
                     } // success
                 }); // ajax
 
-                var srchOnClick=function (selectedOption) {
+                var srchOnClick = function (selectedOption) {
                     switch (selectedOption) {
-                            case 'Structure Search':
-                                $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
-                                break;
-                            case 'ChemCatCentral Search':
-                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic, clearview: cswPrivate.onBeforeSearch });
-                                break;
-                            default:
-                                Csw.publish('initPropertyTearDown');
-                                cswPrivate.searchterm = cswPrivate.searchinput.val();
-                                cswPrivate.newsearch();
-                        }
+                        case 'Structure Search':
+                            $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                            break;
+                        case 'ChemCatCentral Search':
+                            $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic, clearview: cswPrivate.onBeforeSearch });
+                            break;
+                        default:
+                            Csw.publish('initPropertyTearDown');
+                            cswPrivate.searchterm = cswPrivate.searchinput.val();
+                            cswPrivate.newsearch();
+                    }
                 }
                 cswPrivate.searchinput = cswtable.cell(1, 2).input({
                     type: Csw.enums.inputTypes.search,
@@ -184,15 +184,15 @@
 
                     var table2 = resultstable.cell(1, 1).table({
                         cellvalign: 'bottom'
-                    }).css({'padding-bottom':'5px'});
-
-                    table2.cell(1, 1).div({
-                        cssclass: 'SearchLabel',
-                        text: 'Search Results: (' + data.table.results + ')'
-                    });
+                    }).css({ 'padding-bottom': '5px' });
 
                     //If user is performing a universal search, direct them to C3 search
                     if (data.searchtype == 'universal') {
+
+                        table2.cell(1, 1).div({
+                            cssclass: 'SearchLabel',
+                            text: 'Search Results: (' + data.table.results + ')'
+                        });
 
                         table2.cell(1, 2).div({
                             text: '&nbsp; &nbsp;'
@@ -214,7 +214,35 @@
                                 $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic });
                             }
                         });
+
+                        table2.cell(1, 6).div({
+                            text: '&nbsp;'
+                        });
+
+                        table2.cell(1, 7).img({
+                            src: 'Images/c3/cat18.png'
+                        });
+
                     } //if (data.searchtype == 'universal')
+                    else {
+                        var table3 = table2.cell(1, 1).table({
+                            cellvalign: 'bottom'
+                        }).css({ 'padding-bottom': '5px' });
+
+                        //ChemCatCentral Icon
+                        table3.cell(1, 1).img({
+                            src: 'Images/c3/cat24.png'
+                        });
+
+                        table3.cell(1, 2).div({
+                            text: '&nbsp;'
+                        });
+
+                        table3.cell(1, 3).div({
+                            cssclass: 'SearchLabel',
+                            text: 'ChemCatCentral Search Results: (' + data.table.results + ')'
+                        });
+                    }
 
                     if (Csw.bool(cswPrivate.compactResults)) {
                         resultstable.cell(1, 2).css({ width: '100px' });
@@ -332,7 +360,7 @@
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
                             filterSource = thisFilter.source;
-                            if(filterSource === 'Results') {
+                            if (filterSource === 'Results') {
                                 destDiv = filtersDiv.hiddenDiv;
                                 filtersDiv.moreLink.show();
                             } else {
@@ -350,7 +378,7 @@
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }
-                        
+
                         thisdiv.a({
                             text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                             onClick: function () {
@@ -362,7 +390,7 @@
 
                         filterCount++;
                     });
-                    if(false === Csw.isNullOrEmpty(filterName)) {
+                    if (false === Csw.isNullOrEmpty(filterName)) {
                         nameSpan.text(filterName);
                         destDiv.br();
                         destDiv.br();
@@ -370,7 +398,7 @@
                 } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
-                if(false === atLeastOneShown) {
+                if (false === atLeastOneShown) {
                     filtersDiv.showHidden();
                 }
 
