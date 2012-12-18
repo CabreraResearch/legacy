@@ -2,6 +2,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using System.Collections.Generic;
 using ChemSW.Exceptions;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -12,6 +13,22 @@ namespace ChemSW.Nbt.ObjClasses
             public const string VendorName = "Vendor Name";
             public const string CorporateEntityName = "Corporate Entity";
             public const string VendorTypeName = "Vendor Type";
+        }
+
+        public sealed class VendorTypes
+        {
+            public const string Corporate = "Corporate";
+            public const string Sales = "Sales";
+            public const string Technical = "Technical";
+            public const string Manufacturing = "Manufacturing";
+
+            public CswCommaDelimitedString Options = new CswCommaDelimitedString
+                {
+                    Corporate,
+                    Sales,
+                    Technical,
+                    Manufacturing
+                };
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -53,11 +70,11 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( vendorNode.NodeId != this.NodeId &&
                             vendorNode.CorporateIdentity.Text.Equals( CorporateIdentity.Text ) &&
-                            vendorNode.VendorType.Value.Equals( "Corporate" ) &&
-                            this.VendorType.Value.Equals( "Corporate" ) )
+                            vendorNode.VendorType.Value.Equals( VendorTypes.Corporate ) &&
+                            this.VendorType.Value.Equals( VendorTypes.Corporate ) )
                         {
                             throw new CswDniException( ErrorType.Warning,
-                                    "Multiple Corporate Entities with a Vendor Type of \"Corporate\" are not allowed",
+                                    "Multiple Corporate Entities with a Vendor Type of " + VendorTypes.Corporate + " are not allowed",
                                     "A Vendor with a Corporate Entity of " + vendorNode.CorporateIdentity.Text + " already exists with a Vendor Type of " + vendorNode.VendorType.Value );
                         }
                     }

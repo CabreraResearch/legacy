@@ -88,6 +88,23 @@ namespace ChemSW.Nbt
                     ReceiveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ReceiveTab.TabId );
                 }
             }
+
+            //Case 28339
+            //   Show Vendor.VendorType and CorporateEntity
+            //   Add a filter to Material.Supplier where VendorType = 'Coporate'
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            foreach( CswNbtMetaDataNodeType vendorNT in vendorOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeTab firstTab = vendorNT.getFirstNodeTypeTab();
+                CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                vendorTypeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, TabId: firstTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp corporateEntityNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.CorporateEntityName );
+                corporateEntityNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, TabId: firstTab.TabId );
+            }
+
+            _toggleMaterialSupplierView( false );
+
         }
 
         public override void OnDisable()
@@ -162,7 +179,53 @@ namespace ChemSW.Nbt
                 NrdNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RofNtp, true );
 
             }
+
+            //Case 28339
+            //   Hide Vendor.VendorType and CorporateEntity
+            //   Remove filter on Material.Supplier
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            foreach( CswNbtMetaDataNodeType vendorNT in vendorOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                vendorTypeNTP.removeFromAllLayouts();
+
+                CswNbtMetaDataNodeTypeProp corporateEntityNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.CorporateEntityName );
+                corporateEntityNTP.removeFromAllLayouts();
+            }
+
+            CswNbtView newSupplierPropView = new CswNbtView( _CswNbtResources );
+            newSupplierPropView.saveNew( "Supplier", NbtViewVisibility.Property );
+            newSupplierPropView.AddViewRelationship( vendorOC, true );
+            newSupplierPropView.save();
+
+            _toggleMaterialSupplierView( true );
+
         } // OnDisable()
+
+        private void _toggleMaterialSupplierView( bool MLMDisabled )
+        {
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+
+            foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp supplierNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
+                CswNbtView supplierView = _CswNbtResources.ViewSelect.restoreView( supplierNTP.ViewId );
+                supplierView.Clear();
+                CswNbtViewRelationship parent = supplierView.AddViewRelationship( vendorOC, true );
+                if( false == MLMDisabled )
+                {
+                    CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                    supplierView.AddViewPropertyAndFilter( parent,
+                        MetaDataProp: vendorTypeOCP,
+                        Value: CswNbtObjClassVendor.VendorTypes.Corporate,
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                }
+                supplierView.Visibility = NbtViewVisibility.Property;
+                supplierView.ViewName = "Supplier";
+                supplierView.save();
+            }
+        }
 
     } // class CswNbtModuleCISPro
 }// namespace ChemSW.Nbt
