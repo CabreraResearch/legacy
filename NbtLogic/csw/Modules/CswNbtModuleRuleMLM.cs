@@ -207,29 +207,23 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
             CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
 
-            CswNbtView newSupplierPropView = new CswNbtView( _CswNbtResources );
-            newSupplierPropView.saveNew( "Supplier", NbtViewVisibility.Property );
-            CswNbtViewRelationship parent = newSupplierPropView.AddViewRelationship( vendorOC, true );
-
-            if( false == MLMDisabled )
-            {
-                CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                newSupplierPropView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: vendorTypeOCP,
-                    Value: CswNbtObjClassVendor.VendorTypes.Corporate,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            }
-            newSupplierPropView.save();
-
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp supplierNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-                CswNbtView oldSupplierView = _CswNbtResources.ViewSelect.restoreView( supplierNTP.ViewId );
-                if( null != oldSupplierView )
+                CswNbtView supplierView = _CswNbtResources.ViewSelect.restoreView( supplierNTP.ViewId );
+                supplierView.Clear();
+                CswNbtViewRelationship parent = supplierView.AddViewRelationship( vendorOC, true );
+                if( false == MLMDisabled )
                 {
-                    oldSupplierView.Delete();
+                    CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                    supplierView.AddViewPropertyAndFilter( parent,
+                        MetaDataProp: vendorTypeOCP,
+                        Value: CswNbtObjClassVendor.VendorTypes.Corporate,
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 }
-                supplierNTP.ViewId = newSupplierPropView.ViewId;
+                supplierView.Visibility = NbtViewVisibility.Property;
+                supplierView.ViewName = "Supplier";
+                supplierView.save();
             }
         }
 

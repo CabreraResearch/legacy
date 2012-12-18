@@ -34,21 +34,21 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
 
-            CswNbtView newSupplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier", NbtViewVisibility.Property );
-            newSupplierView.AddViewRelationship( vendorOC, true );
-            newSupplierView.save();
-
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, newSupplierView.ToString() );
+            CswNbtView supplierView = null;
 
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp supplierNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-                CswNbtView supplierView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( supplierNTP.ViewId );
-                if( null != supplierView )
+                if( null == supplierView )
                 {
-                    supplierView.Delete();
+                    supplierView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( supplierNTP.ViewId );
+                    supplierView.Clear();
+                    supplierView.AddViewRelationship( vendorOC, true );
+                    supplierView.Visibility = NbtViewVisibility.Property;
+                    supplierView.ViewName = "Supplier";
+                    supplierView.save();
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToString() );
                 }
-                supplierNTP.ViewId = newSupplierView.ViewId;
             }
 
         } //Update()
