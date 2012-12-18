@@ -197,7 +197,7 @@
                                     break;
                                 case cswPrivate.config.sizeName:
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
-                                        name: 'sizes',
+                                        name: 'Add New Size',
                                         async: false,
                                         nodesUrlMethod: 'Nodes/getRelationshipOpts',
                                         ajaxData: {
@@ -206,6 +206,7 @@
                                             TargetNodeTypeName: 'Size'
                                         },
                                         showSelectOnLoad: true,
+                                        objectClassName: 'SizeClass',
                                         addNodeDialogTitle: 'Size',
                                         relatedTo: {
                                             objectClassName: 'MaterialClass',
