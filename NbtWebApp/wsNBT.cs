@@ -3383,35 +3383,34 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // filterUniversalSearch()
 
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string saveSearchAsView( string SessionDataId, string ViewId )
-        //{
-        //    JObject ReturnVal = new JObject();
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh();
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveSearch( string SessionDataId, string Name, string Category )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
 
-        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-        //        {
-        //            CswNbtView View = _getView( ViewId );
-        //            CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-        //            CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-        //            ReturnVal = ws.saveSearchAsView( RealSessionDataId, View );
-        //        }
-        //        _deInitResources();
-        //    }
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
+                    CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
+                    ReturnVal = ws.saveSearch( RealSessionDataId, Name, Category );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
 
-        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
-        //    return ReturnVal.ToString();
-        //} // saveSearchAsView()
+            return ReturnVal.ToString();
+        } // saveSearch()
 
         #endregion Search
 

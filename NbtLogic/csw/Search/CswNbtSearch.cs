@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
@@ -24,41 +25,71 @@ namespace ChemSW.Nbt.Search
         private CswNbtSearchPropOrder _CswNbtSearchPropOrder;
 
         /// <summary>
-        /// Constructor - new search
+        /// Constructor
         /// </summary>
-        public CswNbtSearch( CswNbtResources CswNbtResources, string inSearchTerm )
+        public CswNbtSearch( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
-            SearchTerm = inSearchTerm;
-        }
-
-        /// <summary>
-        /// Constructor - from session data
-        /// </summary>
-        public CswNbtSearch( CswNbtResources CswNbtResources, DataRow SessionDataRow )
-        {
-            _CswNbtResources = CswNbtResources;
-            _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
-            FromSessionData( SessionDataRow );
+            if( null != CswNbtResources.CurrentNbtUser )
+            {
+                UserId = CswNbtResources.CurrentNbtUser.UserId;
+            }
         }
 
         #region Search Data
 
+        /// <summary>
+        /// Primary key
+        /// </summary>
+        [DataMember]
+        public CswPrimaryKey SearchId;
+        
+        /// <summary>
+        /// Primary key of user who owns this search
+        /// </summary>
+        [DataMember]
+        public CswPrimaryKey UserId;
+
+        /// <summary>
+        /// Category for view
+        /// </summary>
+        [DataMember]
+        public string Category;
+
+        /// <summary>
+        /// Query term for search
+        /// </summary>
         [DataMember]
         public string SearchTerm;
+        
+        /// <summary>
+        /// Set of filters applied to search
+        /// </summary>
         [DataMember]
         public Collection<CswNbtSearchFilter> FiltersApplied = new Collection<CswNbtSearchFilter>();
 
         /// <summary>
+        /// Key for retrieving the view from the Session's data cache
+        /// </summary>
+        public CswNbtSessionDataId SessionDataId;
+
+        private string _Name;
+        /// <summary>
         /// A display name for the search
         /// </summary>
+        [DataMember]
         public string Name
         {
             get
             {
-                return "Search for: " + SearchTerm;
+                if( string.IsNullOrEmpty( _Name ) )
+                {
+                    _Name = "Search for: " + SearchTerm;
+                }
+                return _Name;
             }
+            set { _Name = value; }
         }
 
         #endregion Search Data
@@ -68,7 +99,22 @@ namespace ChemSW.Nbt.Search
         public void FromJObject( JObject SearchObj )
         {
             SearchTerm = SearchObj["searchterm"].ToString();
-            SessionDataId = new CswNbtSessionDataId( SearchObj["sessiondataid"].ToString() );
+            if( null != SearchObj["name"] )
+            {
+                Name = SearchObj["name"].ToString();
+            }
+            if( null != SearchObj["category"] )
+            {
+                Category = SearchObj["category"].ToString();
+            }
+            if( null != SearchObj["searchid"] )
+            {
+                SearchId = new CswPrimaryKey( "search", CswConvert.ToInt32( SearchObj["searchid"] ) );
+            }
+            if( null != SearchObj["sessiondataid"] )
+            {
+                SessionDataId = new CswNbtSessionDataId( SearchObj["sessiondataid"].ToString() );
+            }
             JArray FiltersArr = (JArray) SearchObj["filtersapplied"];
             foreach(JObject FilterObj in FiltersArr)
             {
@@ -79,9 +125,17 @@ namespace ChemSW.Nbt.Search
         public JObject ToJObject()
         {
             JObject SearchObj = new JObject();
+            SearchObj["name"] = Name;
             SearchObj["searchterm"] = SearchTerm;
-            SearchObj["sessiondataid"] = SessionDataId.ToString();
-            
+            SearchObj["category"] = Category;
+            if( null != SearchId )
+            {
+                SearchObj["searchid"] = SearchId.PrimaryKey;
+            }
+            if( null != SessionDataId )
+            {
+                SearchObj["sessiondataid"] = SessionDataId.ToString();
+            }
             JArray FiltersArr =  new JArray();
             foreach(CswNbtSearchFilter Filter in FiltersApplied)
             {
@@ -92,11 +146,63 @@ namespace ChemSW.Nbt.Search
             return SearchObj;
         } // ToJObject()
 
+        /// <summary>
+        /// Restore search from row in 'sessiondata' table
+        /// </summary>
         public void FromSessionData( DataRow SessionDataRow )
         {
             FromJObject( JObject.Parse( SessionDataRow["viewxml"].ToString() ) );
             SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionDataRow["sessiondataid"] ) );
         }
+
+        /// <summary>
+        /// Restore search from row in 'search' table
+        /// </summary>
+        public void FromSearchRow( DataRow SearchRow )
+        {
+            FromJObject( JObject.Parse( SearchRow["searchdata"].ToString() ) );
+            SearchId = new CswPrimaryKey( "search", CswConvert.ToInt32( SearchRow["searchid"] ) );
+        }
+
+        /// <summary>
+        /// Save search to row in 'search' table.  Returns searchid.
+        /// </summary>
+        public bool SaveToDb()
+        {
+            CswTableUpdate SearchUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtSearch_SaveToDb", "search" );
+            DataTable SearchTable = null;
+            DataRow SearchRow = null;
+            if( null != SearchId && Int32.MinValue != SearchId.PrimaryKey )
+            {
+                SearchTable = SearchUpdate.getTable( "where searchid = " + SearchId.PrimaryKey );
+                if( SearchTable.Rows.Count > 0 )
+                {
+                    SearchRow = SearchTable.Rows[0];
+                }
+            }
+            if( null == SearchRow )
+            {
+                SearchTable = SearchUpdate.getEmptyTable();
+                SearchRow = SearchTable.NewRow();
+                SearchTable.Rows.Add( SearchRow );
+                SearchId = new CswPrimaryKey( "search", CswConvert.ToInt32( SearchRow["searchid"] ) );
+            }
+
+            if( null != SearchRow )
+            {
+                //SearchRow["searchid"] = CswConvert.ToDbVal(SearchId);
+                SearchRow["name"] = Name;
+                SearchRow["category"] = Category;
+                SearchRow["searchdata"] = ToString();
+                if( null != UserId )
+                {
+                    SearchRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
+                }
+            }
+
+            SearchUpdate.update( SearchTable );
+            return true;
+        } // SaveToDb()
 
         public override string ToString()
         {
@@ -119,11 +225,6 @@ namespace ChemSW.Nbt.Search
         {
             SessionDataId = null;
         }
-
-        /// <summary>
-        /// Key for retrieving the view from the Session's data cache
-        /// </summary>
-        public CswNbtSessionDataId SessionDataId;
 
         #endregion JSON Serialization
 
@@ -258,12 +359,12 @@ namespace ChemSW.Nbt.Search
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
                                                               and gestalt " + FilterStr + @") ";
                     }
-                }
+                } // else if( Filter.Type == CswNbtSearchFilterType.propval )
             } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, true, false, false );
             return Tree;
-        }
+        } // Results()
 
         /// <summary>
         /// New Filters to offer, based on Results

@@ -1288,7 +1288,7 @@
                 onAfterNewSearch: function (searchid) { },
                 onAddView: function (viewid, viewmode) { },
                 onLoadView: function (viewid, viewmode) { },
-                showSaveAsView: false,
+                showSave: false,
                 allowEdit: false,
                 allowDelete: false,
                 compactResults: true,
@@ -1301,7 +1301,49 @@
             });
             return cswPublic;
         }, // SearchDialog
+        
+        SaveSearchDialog: function (options) {
+            var o = {
+                div: Csw.literals.div(),
+                title: 'Save Search',
+                onOk: null,
+                onClose: null,
+                height: 400,
+                width: 600,
+                name: '',
+                category: ''
+            };
+            Csw.extend(o, options);
 
+            var nameInput = o.div.input({
+                 labelText: 'Name:&nbsp;', 
+                 value: o.name
+            });
+            o.div.br();
+            
+            var categoryInput = o.div.input({
+                 labelText: 'Category:&nbsp;', 
+                 value: o.category
+            });
+            o.div.br();
+            
+            o.div.button({
+                enabledText: 'Save',
+                onClick: function () {
+                    Csw.tryExec(o.onOk, nameInput.val(), categoryInput.val());
+                    o.div.$.dialog('close');
+                }
+            });
+
+            o.div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    o.div.$.dialog('close');
+                }
+            });
+
+            openDialog(o.div, o.width, o.height, o.onClose, o.title);
+        }, // SearchDialog
         GenericDialog: function (options) {
             var o = {
                 div: Csw.literals.div(),

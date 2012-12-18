@@ -57,6 +57,20 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
             _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
 
+            
+            // case 25495
+            _acceptBlame( CswDeveloper.SS, 25495 );
+            string SearchTableName = "search";
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( SearchTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( SearchTableName , "searchid" );
+                _CswNbtSchemaModTrnsctn.addStringColumn( SearchTableName, "category", "category for view selector", false, false, 40 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( SearchTableName, "name", "name of search", false, false, 80 );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( SearchTableName , "userid", "owner of search", false, false, "nodes", "nodeid" );
+                _CswNbtSchemaModTrnsctn.addClobColumn( SearchTableName , "searchdata", "data for building this search", false, false );
+            }
+            _resetBlame();
+
             #endregion VIOLA
 
         }//Update()

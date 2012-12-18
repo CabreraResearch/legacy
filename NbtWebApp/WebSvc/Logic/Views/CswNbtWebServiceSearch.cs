@@ -48,7 +48,10 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject doUniversalSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
         {
-            CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
+            CswNbtSearch Search = new CswNbtSearch( _CswNbtResources )
+                                      {
+                                          SearchTerm = SearchTerm
+                                      };
             if( Int32.MinValue != NodeTypeId )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
@@ -125,21 +128,20 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        //public JObject saveSearchAsView( CswNbtSessionDataId SessionDataId, CswNbtView View )
-        //{
-        //    JObject ret = new JObject();
-        //    CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-        //    if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
-        //    {
-        //        CswNbtSearch Search = SessionDataItem.Search;
-        //        ret["result"] = Search.saveSearchAsView( View );
-        //    }
-        //    else
-        //    {
-        //        ret["result"] = false;
-        //    }
-        //    return ret;
-        //}
+        public JObject saveSearch( CswNbtSessionDataId SessionDataId, string Name, string Category )
+        {
+            JObject ret = new JObject();
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                CswNbtSearch Search = SessionDataItem.Search;
+                Search.Name = Name;
+                Search.Category = Category;
+                Search.SaveToDb();
+                ret = _finishUniversalSearch( Search );
+            }
+            return ret;
+        } // saveSearch
 
         #endregion UniversalSearch
 

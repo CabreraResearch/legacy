@@ -16,7 +16,7 @@
                 onLoadView: null,
                 onAddView: null,
                 searchbox_width: '200px',
-                showSaveAsView: true,
+                showSave: true,
                 allowEdit: true,
                 allowDelete: true,
                 extraAction: null,
@@ -25,7 +25,7 @@
                 compactResults: false,
                 newsearchurl: 'doUniversalSearch',
                 restoresearchurl: 'restoreUniversalSearch',
-                saveurl: 'saveSearchAsView',
+                saveurl: 'saveSearch',
                 sessiondataid: '',
                 searchterm: '',
                 filterHideThreshold: 5 //,
@@ -273,13 +273,13 @@
 
                 Csw.each(data.filtersapplied, showFilter);
 
-                if (hasFilters && cswPrivate.showSaveAsView) {
+                if (hasFilters && cswPrivate.showSave) {
                     fdiv.br();
                     fdiv.buttonExt({
-                        enabledText: 'Save as View',
+                        enabledText: 'Save',
                         disableOnClick: false,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-                        onClick: cswPrivate.saveAsView
+                        onClick: cswPrivate.save
                     });
                 }
                 fdiv.br();
@@ -374,26 +374,27 @@
                 });
             }; // filter()
 
-            cswPrivate.saveAsView = function () {
-                $.CswDialog('AddViewDialog', {
-                    category: 'Saved Searches',
-                    onAddView: function (newviewid, viewmode) {
+            cswPrivate.save = function () {
+                $.CswDialog('SaveSearchDialog', {
+                    name: cswPrivate.data.name,
+                    category: cswPrivate.data.category || 'Saved Searches',
+                    onOk: function (name, category) {
 
                         Csw.ajax.post({
                             urlMethod: cswPrivate.saveurl,
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
-                                ViewId: newviewid
+                                Name: name, 
+                                Category: category
                             },
                             success: function (data) {
-                                Csw.tryExec(cswPrivate.onAddView, newviewid, viewmode);
-                                Csw.tryExec(cswPrivate.onLoadView, newviewid, viewmode);
-                            }
+                                cswPrivate.handleResults(data);
+                            } // success
                         }); // ajax  
 
                     } // onAddView()
                 }); // CswDialog
-            }; // saveAsView()
+            }; // save()
 
             cswPublic.restoreSearch = function (searchid) {
 
