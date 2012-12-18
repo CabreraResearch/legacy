@@ -313,11 +313,13 @@
                     categoryTextBox.val(currentViewJson.category);
                     var visibility = Csw.string(currentViewJson.visibility);
                     if (visibility !== 'Property') {
-                        if (visSelect.$visibilityselect !== undefined) {
-                            visSelect.$visibilityselect.val(visibility).trigger('change');
-                            visSelect.$visroleselect.val('nodes_' + currentViewJson.visibilityroleid);
-                            visSelect.$visuserselect.val('nodes_' + currentViewJson.visibilityuserid);
-                        }
+                        visSelect.setSelected({
+                            visibility: visibility,
+                            roleid: 'nodes_' + currentViewJson.visibilityroleid,
+                            rolename: currentViewJson.visibilityrolename,
+                            userid: 'nodes_' + currentViewJson.visibilityuserid,
+                            username: currentViewJson.visibilityusername
+                        });
                     }
 
                     if (Csw.bool(currentViewJson.formobile)) {
@@ -343,25 +345,19 @@
             currentViewJson.viewname = viewNameTextBox.val();
             currentViewJson.category = categoryTextBox.val();
             if (currentViewJson.visibility !== 'Property') {
-                if (visSelect.$visibilityselect !== undefined) {
-                    var visibility = visSelect.$visibilityselect.val();
-                    currentViewJson.visibility = visibility;
+                if (false === Csw.isNullOrEmpty(visSelect)) {
+                    var visValue = visSelect.getSelected();
+                    currentViewJson.visibility = visValue.visibility;
 
-                    var rolenodeid = '';
-                    if (visibility === 'Role') {
-                        rolenodeid = visSelect.$visroleselect.val();
-                        if (!Csw.isNullOrEmpty(rolenodeid)) {
-                            rolenodeid = rolenodeid.substr('nodes_'.length);
-                        }
+                    var rolenodeid = visValue.roleid;
+                    if (false === Csw.isNullOrEmpty(rolenodeid)) {
+                        rolenodeid = rolenodeid.substr('nodes_'.length);
                     }
                     currentViewJson.visibilityroleid = rolenodeid;
 
-                    var usernodeid = '';
-                    if (visibility === 'User') {
-                        usernodeid = visSelect.$visuserselect.val();
-                        if (!Csw.isNullOrEmpty(usernodeid)) {
-                            usernodeid = usernodeid.substr('nodes_'.length);
-                        }
+                    var usernodeid = visValue.userid;
+                    if (false === Csw.isNullOrEmpty(usernodeid)) {
+                        usernodeid = usernodeid.substr('nodes_'.length);
                     }
                     currentViewJson.visibilityuserid = usernodeid;
                 }
