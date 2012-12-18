@@ -25,6 +25,7 @@
                 name: '',
                 enabledText: '',
                 disabledText: '',
+                width: '100px',
                 cssclass: '',
                 hasText: true,
                 disableOnClick: true,
