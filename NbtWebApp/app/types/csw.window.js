@@ -76,6 +76,12 @@
             return window.location;
         });
 
+    Csw.window.getPath = Csw.window.getPath ||
+        Csw.window.register('getPath', function() {
+            var path = window.location.href;
+            return path.substring(0, path.lastIndexOf("/")) + "/";
+        });
+
     //#endregion Window
 
 

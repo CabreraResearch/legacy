@@ -115,6 +115,9 @@
                         return ((isCaseSensitive && Csw.string(matStr).trim() === str) || Csw.string(matStr).trim().toLowerCase() === str);
                     });
                     return match.length > 0;
+                },
+                each: function(callBack) {
+                    return cswPublic.array.forEach(callBack);
                 }
             };
 
@@ -163,8 +166,7 @@
                             cswPublic.array.push(val);
                         }
                     });
-                }
-                else if (opts) {
+                } else if(string && string.length > 0) {
                     Csw.extend(cswPrivate, opts);
                     var delimitedString = cswPrivate.parse(string);
                     cswPrivate.initString = delimitedString;

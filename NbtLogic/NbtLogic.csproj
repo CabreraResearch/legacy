@@ -320,8 +320,8 @@
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case5083.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28252.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27649.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case26827.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27649.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28282.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part2.cs" />

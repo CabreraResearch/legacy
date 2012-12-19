@@ -54,8 +54,18 @@ namespace ChemSW.Nbt.Schema
             #region VIOLA
 
             // case 26827
-            _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
-            _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "searchdeferpropid", "Defer to the target of this property in search results", false, false );
+            if ( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", "searchdeferpropid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", "searchdeferpropid",
+                                                      "Defer to the target of this property in search results", false,
+                                                      false );
+            }
+            if ( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "searchdeferpropid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "searchdeferpropid",
+                                                      "Defer to the target of this property in search results", false,
+                                                      false );
+            }
 
             _createTierIITable( CswDeveloper.BV, 28247 );
 
@@ -81,11 +91,11 @@ namespace ChemSW.Nbt.Schema
         {
             #region Create fingerprint table
             _acceptBlame( CswDeveloper.MB, 24524 );
-            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "mol_keys" ) )
+            if ( false == _CswNbtSchemaModTrnsctn.isTableDefined( "mol_keys" ) )
             {
                 _CswNbtSchemaModTrnsctn.addTable( "mol_keys", "nodeid" );
 
-                for( int i = 0; i < CswStructureSearch.keySize; i++ )
+                for ( int i = 0; i < CswStructureSearch.keySize; i++ )
                 {
                     _CswNbtSchemaModTrnsctn.addLongColumn( "mol_keys", "key" + i, "key" + i + "for the mol fingerprint", false, false );
                 }

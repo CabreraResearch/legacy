@@ -69,9 +69,9 @@
                 Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
-                        ObjectClassName: '', 
-                        ObjectClassId: '', 
-                        ExcludeNodeTypeIds: '', 
+                        ObjectClassName: '',
+                        ObjectClassId: '',
+                        ExcludeNodeTypeIds: '',
                         RelatedToNodeTypeId: '',
                         RelatedObjectClassPropName: '',
                         FilterToPermission: '',
@@ -89,13 +89,13 @@
                         var selectedText = 'All';
                         var selectedIcon = '';
                         Csw.each(data, function (nt) {
-                            if(false === Csw.isNullOrEmpty(nt.name)) {
+                            if (false === Csw.isNullOrEmpty(nt.name)) {
                                 items.push({
                                     text: nt.name,
                                     icon: nt.iconfilename,
-                                    handler: function() { onPreFilterClick(nt); }
+                                    handler: function () { onPreFilterClick(nt); }
                                 });
-                                if(cswPrivate.nodetypeid === nt.id) {
+                                if (cswPrivate.nodetypeid === nt.id) {
                                     selectedText = '';
                                     selectedIcon = nt.iconfilename;
                                 }
@@ -114,18 +114,18 @@
 
                     } // success
                 }); // ajax
-
-                var srchOnClick=function (selectedOption) {
+                
+                var srchOnClick = function (selectedOption) {
                     switch (selectedOption) {
-                            case 'Structure Search':
-                                $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
-                                break;
-                            default:
-                                Csw.publish('initPropertyTearDown');
-                                cswPrivate.searchterm = cswPrivate.searchinput.val();
-                                cswPrivate.newsearch();
-                        }
-                }
+                        case 'Structure Search':
+                            $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                            break;
+                        default:
+                            Csw.publish('initPropertyTearDown');
+                            cswPrivate.searchterm = cswPrivate.searchinput.val();
+                            cswPrivate.newsearch();
+                    }
+                };
 
                 cswPrivate.searchinput = cswtable.cell(1, 2).input({
                     type: Csw.enums.inputTypes.search,
@@ -314,7 +314,7 @@
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
                             filterSource = thisFilter.source;
-                            if(filterSource === 'Results') {
+                            if (filterSource === 'Results') {
                                 destDiv = filtersDiv.hiddenDiv;
                                 filtersDiv.moreLink.show();
                             } else {
@@ -332,7 +332,7 @@
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }
-                        
+
                         thisdiv.a({
                             text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                             onClick: function () {
@@ -344,7 +344,7 @@
 
                         filterCount++;
                     });
-                    if(false === Csw.isNullOrEmpty(filterName)) {
+                    if (false === Csw.isNullOrEmpty(filterName)) {
                         nameSpan.text(filterName);
                         destDiv.br();
                         destDiv.br();
@@ -352,7 +352,7 @@
                 } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
-                if(false === atLeastOneShown) {
+                if (false === atLeastOneShown) {
                     filtersDiv.showHidden();
                 }
 
