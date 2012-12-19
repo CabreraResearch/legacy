@@ -638,7 +638,9 @@ namespace ChemSW.Nbt
             RootPropObj["category"] = Category;
             RootPropObj["visibility"] = Visibility.ToString();
             RootPropObj["visibilityroleid"] = ( VisibilityRoleId != null ) ? VisibilityRoleId.PrimaryKey.ToString() : "";
+            RootPropObj["visibilityrolename"] = ( VisibilityRoleId != null ) ? _CswNbtResources.Nodes[VisibilityRoleId].NodeName : "";
             RootPropObj["visibilityuserid"] = ( VisibilityUserId != null ) ? VisibilityUserId.PrimaryKey.ToString() : "";
+            RootPropObj["visibilityusername"] = ( VisibilityUserId != null ) ? _CswNbtResources.Nodes[VisibilityUserId].NodeName : "";
             RootPropObj["formobile"] = ForMobile.ToString().ToLower();
             RootPropObj["included"] = Included.ToString().ToLower();
             RootPropObj["isdemo"] = IsDemo.ToString().ToLower();

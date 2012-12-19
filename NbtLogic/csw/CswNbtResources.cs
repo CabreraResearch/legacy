@@ -137,7 +137,11 @@ namespace ChemSW.Nbt
             /// <summary>
             /// The maximum number of lines in comments fields
             /// </summary>
-            total_comments_lines
+            total_comments_lines,
+            /// <summary>
+            /// The name of the root level item on location views
+            /// </summary>
+            LocationViewRootName
         }
 
         /// <summary>

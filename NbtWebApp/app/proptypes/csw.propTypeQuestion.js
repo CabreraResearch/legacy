@@ -19,14 +19,14 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.showCorrectiveAction = function () {
-                        return (false == cswPrivate.isAnswerCompliant() &&
+                        return (false == cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer) &&
                             (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
                     }
 
-                    cswPrivate.isAnswerCompliant = function () {
+                    cswPrivate.isAnswerCompliant = function (answer) {
                         var answerCompliant = false;
                         for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
-                            if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(cswPrivate.selectedAnswer).trim().toLowerCase()) {
+                            if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(answer).trim().toLowerCase()) {
                                 answerCompliant = true;
                             }
                         }
@@ -39,7 +39,7 @@
                         var isCompliant = true;
 
                         if (cswPrivate.selectedAnswer !== cswPrivate.defaultText && cswPrivate.correctiveAction === cswPrivate.defaultText) {
-                            isCompliant = cswPrivate.isAnswerCompliant();
+                            isCompliant = cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer);
                         }
 
                         if (isCompliant) {
@@ -70,23 +70,47 @@
                     cswPrivate.dateAnswered = Csw.string(cswPrivate.propVals.dateanswered.date).trim();
                     cswPrivate.dateCorrected = Csw.string(cswPrivate.propVals.datecorrected.date).trim();
                     cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
+                    cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.div();
-                        cswPublic.control.append('Answer: ' + cswPrivate.answer);
-                        if (cswPrivate.dateAnswered !== '') {
-                            cswPublic.control.append(' (' + cswPrivate.dateAnswered + ')');
+                        cswPublic.table = cswPublic.control.table({
+                            TableCssClass: 'CswFieldTypeQuestion_table',
+                            CellCssClass: 'CSwFieldTypeQuestion_cell'
+                        });
+
+                        var label = cswPublic.table.cell(1, 1).label({
+                            text: cswPrivate.answer + '   ',
+                            cssclass: 'CswFieldTypeQuestion_answer'
+                        });
+                        if (false == cswPrivate.isAnswerCompliant(cswPrivate.answer)) {
+                            label.img({
+                                src: "Images\\newicons\\18\\warning.png"
+                            });
+                            var x = 10;
                         }
+                        var answerCell = cswPublic.table.cell(2, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                        answerCell.append('Answer: ' + cswPrivate.answer + ' ');
+                        if (cswPrivate.dateAnswered !== '') {
+                            answerCell.append(' (' + cswPrivate.dateAnswered + ')');
+                        }
+                        var correctiveActionPresent = false;
                         if (false == Csw.isNullOrEmpty(cswPrivate.correctiveAction)) {
-                            cswPublic.control.br();
-                            cswPublic.control.append('Corrective Action: ' + cswPrivate.correctiveAction);
+                            cswPublic.table.cell(3, 1).append('Corrective Action: ' + cswPrivate.correctiveAction);
+                            var correctiveActionPresent = true;
                             if (cswPrivate.dateCorrected !== '') {
-                                cswPublic.control.append(' (' + cswPrivate.dateCorrected + ')');
+                                cswPublic.table.cell(3, 1).append(' (' + cswPrivate.dateCorrected + ')');
                             }
                         }
-                        cswPublic.control.br();
-                        cswPublic.control.append('Comments: ' + cswPrivate.comments);
-                        cswPublic.control.br();
+                        var commentsCell;
+                        if (correctiveActionPresent) {
+                            commentsCell = cswPublic.table.cell(4, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                        } else {
+                            commentsCell = cswPublic.table.cell(4, 1).span({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                        }
+                        commentsCell.append('Comments: ' + cswPrivate.comments);
+
                     } else {
                         cswPublic.control = cswPrivate.parent.table({
                             FirstCellRightAlign: true
@@ -98,7 +122,7 @@
                             cswPrivate.splitAnswers.push('');
                         }
 
-                        
+
                         cswPrivate.answerSel = cswPublic.control.cell(1, 2)
                                               .select({
                                                   name: cswPublic.data.name + '_ans',
@@ -141,9 +165,6 @@
 
                         cswPrivate.correctiveActionTextBox.hide();
                         cswPrivate.correctiveActionLabel.hide();
-
-                        cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
-                        cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
 
                         cswPrivate.checkCompliance();
 

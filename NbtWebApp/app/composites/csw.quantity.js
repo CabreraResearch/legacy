@@ -23,7 +23,7 @@
                 cswPrivate.relationships = cswPrivate.relationships || [];
                 cswPrivate.quantity = cswPrivate.quantity || '';
                 cswPrivate.unit = cswPrivate.unit || '';
-
+                cswPrivate.unitText = cswPrivate.unitText || '';
                 cswPrivate.minvalue = cswPrivate.minvalue || '';
                 cswPrivate.maxvalue = cswPrivate.maxvalue || '';
                 cswPrivate.excludeRangeLimits = cswPrivate.excludeRangeLimits || false;
@@ -131,6 +131,13 @@
                     cswPrivate.unit = cswPrivate.selectBox.val();
                 }
                 return cswPrivate.unit;
+            };
+            
+            cswPublic.selectedUnitText = function () {
+                if (cswPrivate && cswPrivate.selectBox && cswPrivate.selectBox.val) {
+                    cswPrivate.unitText = cswPrivate.selectBox.selectedText();
+                }
+                return cswPrivate.unitText;
             };
 
             cswPublic.value = function () {
