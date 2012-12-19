@@ -164,41 +164,40 @@ namespace ChemSW.Nbt.WebServices
             if( false == string.IsNullOrEmpty( EPLText ) )
             {
                 EPLScript = EPLText;
-                if( false == string.IsNullOrEmpty( Params ) )
+                while( EPLScript.Contains( "{" ) )
                 {
-                    string[] ParamsArray = Params.Split( '\n' );
+                    Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
+                    Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
 
-                    while( EPLScript.Contains( "{" ) )
+                    string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
+                    string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
+                    // Find the property
+                    if( null != Node )
                     {
-                        Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
-                        Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
+                        Ret.TargetId = Node.NodeId.ToString();
+                        Ret.TargetName = Node.NodeName;
 
-                        string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
-                        string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
-                        // Find the property
-                        if( null != Node )
+                        CswNbtMetaDataNodeType MetaDataNodeType = NbtResources.MetaData.getNodeType( Node.NodeTypeId );
+                        if( null != MetaDataNodeType )
                         {
-                            Ret.TargetId = Node.NodeId.ToString();
-                            Ret.TargetName = Node.NodeName;
-
-                            CswNbtMetaDataNodeType MetaDataNodeType = NbtResources.MetaData.getNodeType( Node.NodeTypeId );
-                            if( null != MetaDataNodeType )
+                            CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
+                            if( null != MetaDataProp )
                             {
-                                CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
-                                if( null != MetaDataProp )
+                                string PropertyValue = Node.Properties[MetaDataProp].Gestalt;
+                                if( MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
                                 {
-                                    string PropertyValue = Node.Properties[MetaDataProp].Gestalt;
-                                    if( MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
-                                    {
-                                        PropertyValue = Node.Properties[MetaDataProp].AsImage.FileName;
-                                        Ret.Pictos.Add( new PrintLabel.Picto
-                                            {
-                                                FileName = PropertyValue,
-                                                FileURL = Node.Properties[MetaDataProp].AsImage.ImageUrl
-                                            } );
-                                    }
+                                    PropertyValue = Node.Properties[MetaDataProp].AsImage.FileName;
+                                    Ret.Pictos.Add( new PrintLabel.Picto
+                                        {
+                                            FileName = PropertyValue,
+                                            FileURL = Node.Properties[MetaDataProp].AsImage.ImageUrl
+                                        } );
+                                }
 
-                                    bool FoundMatch = false;
+                                bool FoundMatch = false;
+                                if( false == string.IsNullOrEmpty( Params ) )
+                                {
+                                    string[] ParamsArray = Params.Split( '\n' );
                                     foreach( string ParamNVP in ParamsArray )
                                     {
                                         string[] ParamSplit = ParamNVP.Split( '=' );
@@ -227,16 +226,17 @@ namespace ChemSW.Nbt.WebServices
                                             }
                                         }
                                     }
-                                    if( false == FoundMatch )
-                                    {
-                                        EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
-                                    }
+                                }
+                                if( false == FoundMatch )
+                                {
+                                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
                                 }
                             }
                         }
                     }
                 }
             }
+            //}
             if( string.IsNullOrEmpty( EPLScript ) )
             {
                 throw new CswDniException( ErrorType.Error, "Could not generate an EPL script from the provided parameters.", "EPL Text='" + EPLText + "', Params='" + Params + "'" );
