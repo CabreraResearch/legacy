@@ -34,20 +34,25 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
 
-            CswNbtView supplierView = null;
-
+            bool updatedOCP = false;
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp supplierNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-                if( null == supplierView )
+                CswNbtView oldSupplierView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( supplierNTP.ViewId );
+                if( null != oldSupplierView )
                 {
-                    supplierView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( supplierNTP.ViewId );
-                    supplierView.Clear();
-                    supplierView.AddViewRelationship( vendorOC, true );
-                    supplierView.Visibility = NbtViewVisibility.Property;
-                    supplierView.ViewName = "Supplier";
-                    supplierView.save();
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToString() );
+                    oldSupplierView.Delete();
+                }
+                CswNbtView newSupplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier", NbtViewVisibility.Property );
+                newSupplierView.AddViewRelationship( vendorOC, true );
+                newSupplierView.save();
+
+                supplierNTP.ViewId = newSupplierView.ViewId;
+
+                if( false == updatedOCP )
+                {
+                    updatedOCP = true;
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, newSupplierView.ToString() );
                 }
             }
 
