@@ -919,7 +919,15 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignName );
             if( null != InspectionDesignNt )
             {
-                CswNbtMetaDataNodeType CopiedInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( InspectionDesignNt, InspectionDesignName + " Copy" );
+                string CopyInspectionNameOrig = CswTools.makeUniqueCopyName( InspectionDesignName, MaxLength : 50 );
+                string CopyInspectionNameFinal = CopyInspectionNameOrig;
+                Int32 Iterator = 0;
+                while( null != _CswNbtResources.MetaData.getNodeType( CopyInspectionNameFinal ) )
+                {
+                    Iterator += 1;
+                    CopyInspectionNameFinal = CopyInspectionNameOrig + " " + Iterator;
+                }
+                CswNbtMetaDataNodeType CopiedInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( InspectionDesignNt, CopyInspectionNameFinal );
 
                 CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category );
                 _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );

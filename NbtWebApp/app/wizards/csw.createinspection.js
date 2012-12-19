@@ -613,13 +613,13 @@
                                 name: 'confirmationViews'
                             });
                         confirmViewsList.li({
-                            text: '<b>Scheduling, ' + cswPrivate.selectedInspectionDesign.name + ' Copy: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            text: '<b>Scheduling, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                         confirmViewsList.li({
-                            text: '<b>Groups, ' + cswPrivate.selectedInspectionDesign.name + ' Copy: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            text: '<b>Groups, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                         confirmViewsList.li({
-                            text: '<b>Inspections, ' + cswPrivate.selectedInspectionDesign.name + ' Copy: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            text: '<b>Inspections, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                     } /*else {
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
