@@ -12,6 +12,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
@@ -176,7 +177,11 @@ namespace ChemSW.Nbt.WebServices
                 //Add the user's stored views to Favorites
                 foreach( CswNbtView View in UserOc.FavoriteViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )
                 {
-                    ViewSelect.Response.Item ViewItem = _addViewSelectObj( FavoritesCategory, View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
+                    ViewSelect.Response.Item ViewItem = _addViewSelectObj( FavoritesCategory, 
+                                                                           View.ViewName, 
+                                                                           ItemType.View, 
+                                                                           View.IconFileName, 
+                                                                           View.ViewId.ToString() );
                     ViewItem.mode = View.ViewMode.ToString();
                 }
 
@@ -193,8 +198,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( Action.ShowInList ) //case 26555 - filter out actions like 'Multi Edit' or 'Edit View'
                     {
-                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( FavoritesCategory, Action.DisplayName, ItemType.Action,
-                            CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
+                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( FavoritesCategory, 
+                                                                                 Action.DisplayName, 
+                                                                                 ItemType.Action,
+                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", 
+                                                                                 Action.ActionId.ToString() );
                         ActionItem.url = Action.Url;
                     }
                 }
@@ -205,7 +213,12 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( CswNbtView View in Views.Values )
             {
-                ViewSelect.Response.Item ViewItem = _addViewSelectObj( ref ret, View.Category, View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
+                ViewSelect.Response.Item ViewItem = _addViewSelectObj( ref ret, 
+                                                                       View.Category, 
+                                                                       View.ViewName, 
+                                                                       ItemType.View, 
+                                                                       View.IconFileName, 
+                                                                       View.ViewId.ToString() );
                 ViewItem.mode = View.ViewMode.ToString();
             }
 
@@ -218,8 +231,12 @@ namespace ChemSW.Nbt.WebServices
                         //Case 23687: "View By Location" Action is toast. Bye-bye "loc_use_images" config var check.
                         CswNbtResources.Permit.can( Action.Name ) )
                     {
-                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( ref ret, Action.Category, Action.DisplayName, ItemType.Action,
-                                                              CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
+                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( ref ret, 
+                                                                                 Action.Category, 
+                                                                                 Action.DisplayName, 
+                                                                                 ItemType.Action,
+                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", 
+                                                                                 Action.ActionId.ToString() );
                         ActionItem.url = Action.Url;
                     }
                 }
@@ -234,11 +251,28 @@ namespace ChemSW.Nbt.WebServices
                     ReportTree.goToNthChild( i );
 
                     CswNbtObjClassReport ReportNode = ReportTree.getNodeForCurrentPosition();
-                    _addViewSelectObj( ref ret, ReportNode.Category.Text, ReportNode.ReportName.Text, ItemType.Report, "Images/view/report.gif", ReportNode.NodeId.ToString() );
+                    _addViewSelectObj( ref ret, 
+                                       ReportNode.Category.Text, 
+                                       ReportNode.ReportName.Text, 
+                                       ItemType.Report,
+                                       CswNbtMetaDataObjectClass.IconPrefix16 + "doc.png", 
+                                       ReportNode.NodeId.ToString() );
 
                     ReportTree.goToParentNode();
                 }
-            }
+
+                // Searches
+                Collection<CswNbtSearch> Searches = CswNbtResources.SearchManager.getSearches();
+                foreach(CswNbtSearch Search in Searches)
+                {
+                    _addViewSelectObj( ref ret,
+                                       Search.Category, 
+                                       Search.Name, 
+                                       ItemType.Search, 
+                                       CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png", 
+                                       Search.SearchId.ToString() );
+                }
+            } // if( false == Request.IsSearchable )
 
             return ret;
         } // getViewSelect()

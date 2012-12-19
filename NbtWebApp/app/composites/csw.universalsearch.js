@@ -25,7 +25,6 @@
                 compactResults: false,
                 newsearchurl: 'doUniversalSearch',
                 restoresearchurl: 'restoreUniversalSearch',
-                saveurl: 'saveSearch',
                 sessiondataid: '',
                 searchterm: '',
                 filterHideThreshold: 5 //,
@@ -241,7 +240,8 @@
                     paddingTop: '15px'
                 });
 
-                fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
+                fdiv.span({ text: data.name }).br();
+                //fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
                 ftable = fdiv.table({});
 
                 // Filters in use
@@ -277,12 +277,23 @@
 
                 if (hasFilters && cswPrivate.showSave) {
                     fdiv.br();
-                    fdiv.buttonExt({
+                    var btntbl = fdiv.table();
+                    btntbl.cell(1,1).buttonExt({
                         enabledText: 'Save',
                         disableOnClick: false,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                         onClick: cswPrivate.save
                     });
+                    if(false === Csw.isNullOrEmpty(data.searchid)) {
+                        btntbl.cell(1,2).buttonExt({
+                            enabledText: 'Delete',
+                            disableOnClick: false,
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                            onClick: function () {
+                                cswPrivate.deleteSave(data.searchid);
+                            } // onClick
+                        });
+                    }
                 }
                 fdiv.br();
                 fdiv.br();
@@ -383,7 +394,7 @@
                     onOk: function (name, category) {
 
                         Csw.ajax.post({
-                            urlMethod: cswPrivate.saveurl,
+                            urlMethod: 'saveSearch',
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
                                 Name: name, 
@@ -398,6 +409,18 @@
                 }); // CswDialog
             }; // save()
 
+            cswPrivate.deleteSave = function (searchid) {
+                Csw.ajax.post({
+                    urlMethod: 'deleteSearch',
+                    data: {
+                        SearchId: searchid
+                    },
+                    success: function (data) {
+                        cswPrivate.handleResults(data);
+                    } // success
+                }); // ajax  
+            }; // save()
+            
             cswPublic.restoreSearch = function (searchid) {
 
                 cswPrivate.sessiondataid = searchid;

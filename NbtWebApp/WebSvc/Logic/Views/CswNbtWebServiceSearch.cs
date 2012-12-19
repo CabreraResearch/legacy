@@ -71,11 +71,17 @@ namespace ChemSW.Nbt.WebServices
             return _finishUniversalSearch( Search );
         }
 
+        public JObject restoreUniversalSearch( CswPrimaryKey SearchId )
+        {
+            CswNbtSearch Search = _CswNbtResources.SearchManager.restoreSearch( SearchId );
+            return _finishUniversalSearch( Search );
+        } // restoreUniversalSearch()
+
         public JObject restoreUniversalSearch( CswNbtSessionDataId SessionDataId )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( null != SessionDataItem && SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 ret = _finishUniversalSearch( Search );
@@ -142,6 +148,16 @@ namespace ChemSW.Nbt.WebServices
             }
             return ret;
         } // saveSearch
+
+        public JObject deleteSearch( CswPrimaryKey SearchId )
+        {
+            CswNbtSearch doomedSearch = _CswNbtResources.SearchManager.restoreSearch( SearchId );
+            if( null != doomedSearch )
+            {
+                doomedSearch.delete();
+            }
+            return _finishUniversalSearch( doomedSearch );
+        } // deleteSearch
 
         #endregion UniversalSearch
 

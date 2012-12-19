@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.Search
             {
                 if( string.IsNullOrEmpty( _Name ) )
                 {
-                    _Name = "Search for: " + SearchTerm;
+                    _Name = "Searched for: " + SearchTerm;
                 }
                 return _Name;
             }
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.Search
             }
             if( null != SearchObj["searchid"] )
             {
-                SearchId = new CswPrimaryKey( "search", CswConvert.ToInt32( SearchObj["searchid"] ) );
+                SearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchObj["searchid"] ) );
             }
             if( null != SearchObj["sessiondataid"] )
             {
@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.Search
         public void FromSearchRow( DataRow SearchRow )
         {
             FromJObject( JObject.Parse( SearchRow["searchdata"].ToString() ) );
-            SearchId = new CswPrimaryKey( "search", CswConvert.ToInt32( SearchRow["searchid"] ) );
+            SearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchRow["searchid"] ) );
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.Search
         /// </summary>
         public bool SaveToDb()
         {
-            CswTableUpdate SearchUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtSearch_SaveToDb", "search" );
+            CswTableUpdate SearchUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtSearch_SaveToDb", CswNbtSearchManager.SearchTableName );
             DataTable SearchTable = null;
             DataRow SearchRow = null;
             if( null != SearchId && Int32.MinValue != SearchId.PrimaryKey )
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.Search
                 SearchTable = SearchUpdate.getEmptyTable();
                 SearchRow = SearchTable.NewRow();
                 SearchTable.Rows.Add( SearchRow );
-                SearchId = new CswPrimaryKey( "search", CswConvert.ToInt32( SearchRow["searchid"] ) );
+                SearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchRow["searchid"] ) );
             }
 
             if( null != SearchRow )
@@ -542,9 +542,25 @@ namespace ChemSW.Nbt.Search
             return ret;
         }
 
-
         #endregion Search Functions
-        
+
+        public void delete()
+        {
+            if( CswTools.IsPrimaryKey( SearchId ) )
+            {
+                CswTableUpdate SearchUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtSearchManager_deleteSearch", CswNbtSearchManager.SearchTableName );
+                DataTable SearchTable = SearchUpdate.getTable( "searchid", SearchId.PrimaryKey );
+                if( SearchTable.Rows.Count > 0 )
+                {
+                    SearchTable.Rows[0].Delete();
+                    SearchUpdate.update( SearchTable );
+                }
+                SearchId = null;
+                Name = string.Empty;
+            }
+        } // delete()
+
+
         #region IEquatable
         /// <summary>
         /// IEquatable: ==
