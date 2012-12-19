@@ -863,7 +863,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( CswTools.IsPrimaryKey( Location.SelectedNodeId ) &&
                 false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
-                Location.CachedNodeName != CswNbtNodePropLocation.TopLevelName )
+                Location.CachedNodeName != CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources ) )
             {
                 if( false == _InventoryLevelModified &&
                     CswConvert.ToInt32( Quantity.Quantity ) != 0 )
