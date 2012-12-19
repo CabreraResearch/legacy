@@ -131,6 +131,7 @@
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28146.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerUpdate.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropCASNo.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtTierII.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerLocation.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerReconciliationActions.cs" />
@@ -281,6 +282,12 @@
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Size_Case27438.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27551.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
+    <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLTypes.cs" />
+    <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLPackages.cs" />
+    <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLViews.cs" />
+    <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLFunctions.cs" />
+    <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLProcedures.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28229.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28156.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28117.cs" />
@@ -339,7 +346,6 @@
     <Compile Include="csw\Actions\CswNbtActionCollection.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryListsForMaterials.cs" />
     <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
-    <Compile Include="csw\CswNbtNotificationKey.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\Dev\CswDeveloper.cs" />
@@ -481,7 +487,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialComponent.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSynonym.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassNotification.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassParameter.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassPrintLabel.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassProblem.cs" />

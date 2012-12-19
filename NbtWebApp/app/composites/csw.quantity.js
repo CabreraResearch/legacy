@@ -156,6 +156,8 @@
                 cswPrivate.nodeid = data.nodeid;
                 cswPrivate.name = data.name;
                 cswPrivate.qtyReadonly = data.qtyReadonly;
+                cswPrivate.isRequired = data.isRequired;
+                cswPrivate.options = data.options;
                 cswPrivate.selectedNodeId = Csw.string(data.relatednodeid).trim();
                 cswPrivate.unit = Csw.string(data.unitName).trim();
                 cswPrivate.relationships = [];

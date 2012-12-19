@@ -21,13 +21,10 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
             ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
+            ReturnVal.Add( new CswScheduleLogicNbtTierII() );
 
             return ( ReturnVal );
-
-        }//getRules()
-
-
-    }//CswReportTimingDaily
-
-}//namespace ChemSW.MailRpt
+        }
+    }
+}
 
