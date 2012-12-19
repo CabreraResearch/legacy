@@ -849,21 +849,10 @@
 
             var div = Csw.literals.div();
 
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-
-            uploadBtn.$.fileupload({
-                dataType: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.urlMethod + '?' + $.param(o.params),
-                done: function (e, jqXHR) {
-                    var data = {};
-                    if (jqXHR.result && jqXHR.result.data) {
-                        data = jqXHR.result.data;
-                    } else if (jqXHR.data) {
-                        data = jqXHR.data;
-                    }
+            div.fileUpload({
+                uploadUrl: o.urlMethod,
+                params: o.params,
+                onSuccess: function(data) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onSuccess, data);
                 }
@@ -928,26 +917,21 @@
                     }
                 });
                 return ret;
-            }
+            };
 
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
             getMolImgFromText('', currentNodeId);
 
-            var uploadBtn = table.cell(2, 1).input({
-                name: 'fileupload',
-                labelText: "Mol File",
-                type: Csw.enums.inputTypes.file
-            }).css('float', 'left');
-            uploadBtn.$.fileupload({
-                datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromFile',
+            table.cell(2, 1).fileUpload({
+                uploadUrl: 'getMolImgFromFile',
                 paramName: 'filename',
-                done: function (e, data) {
-                    molText.val(JSON.parse(data.result).molstring);
+                //params: o.params,
+                onSuccess: function (data) {
+                    molText.val(data.molstring);
                     table.cell(4, 2).empty();
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + JSON.parse(data.result).bin
+                        src: "data:image/jpeg;base64," + data.bin
                     });
                 }
             });
@@ -1010,18 +994,12 @@
 
             div.br({ number: 2 });
 
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-
-            uploadBtn.$.fileupload({
-                datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.FileUrl + '?' + $.param({ PropId: o.PropId }),
-                paramName: 'fileupload',
-                done: function (e, data) {
+            div.fileUpload({
+                uploadUrl: o.FileUrl,
+                params: { PropId: o.PropId },
+                onSuccess: function (data) {
                     div.$.dialog('close');
-                    o.onSuccess(data.result);
+                    o.onSuccess(data);
                 }
             });
 
