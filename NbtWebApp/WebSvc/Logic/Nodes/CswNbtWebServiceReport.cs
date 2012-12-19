@@ -100,39 +100,6 @@ namespace ChemSW.Nbt.WebServices
             _Context = Context;
         }
 
-        public JObject runReport( string rformat, HttpContext Context )
-        {
-            CswNbtObjClassReport report = (CswNbtObjClassReport) _reportNode;
-            JObject ret = new JObject();
-
-            if( string.Empty != report.SQL.Text )
-            {
-                string ReportSql = report.SQL.Text;
-                CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
-                DataTable rptDataTbl = cswRptSql.getTable();
-                if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != _reportNode )
-                {
-                    CswNbtObjClassReport nodeAsReport = _reportNode;
-                    rptDataTbl.TableName = nodeAsReport.ReportName.Text;
-                }
-
-                if( "csv" == rformat.ToLower() )
-                {
-                    wsTools.ReturnCSV( Context, rptDataTbl );
-                }
-                else
-                {
-                    CswNbtGrid cg = new CswNbtGrid( _CswNbtResources );
-                    ret = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
-                }
-            }
-            else
-            {
-                throw ( new CswDniException( "Report has no SQL to run!" ) );
-            }
-            return ret;
-        } // runReport()
-
         // Need to double " in string values
         private static string _csvSafe( string str )
         {
