@@ -73,42 +73,46 @@
                     if (false === Csw.isNullOrEmpty(eplText)) {
                         cswPublic.zebraJava.findPrinter(cswPublic.defaultPrinter);
 
-                        var cswEpl = Csw.delimitedString(eplText, { delimiter: '|', spaceToDelimited: false, removeDuplicates: false });
+                        //Case 27885. No Zebra support for images, for now.
 
-                        var addPicto = function(eplSubStr) {
-                            var ret = null;
-                            if (pictos && pictos.length > 0) {
-                                pictos.forEach(function (pic) {
-                                    if (eplSubStr.toLowerCase().indexOf(pic.FileName) >= 0) {
-                                        var url = Csw.window.getPath() + pic.FileURL + '&guid=' + window.Ext.id();
-                                        ret = cswPublic.zebraJava.appendImage(url, 'ZPLII');
-                                        cswPublic.zebraJava.append('\n');
-                                    }
-                                });
-                            }
-                            return ret;
-                        };
+                        //var cswEpl = Csw.delimitedString(eplText, { delimiter: '|', spaceToDelimited: false, removeDuplicates: false });
+
+                        //var addPicto = function(eplSubStr) {
+                        //    var ret = null;
+                        //    if (pictos && pictos.length > 0) {
+                        //        pictos.forEach(function (pic) {
+                        //            if (eplSubStr.toLowerCase().indexOf(pic.FileName) >= 0) {
+                        //                var url = Csw.window.getPath() + pic.FileURL + '&guid=' + window.Ext.id();
+                        //                ret = cswPublic.zebraJava.appendImage(url, 'ZPLII');
+                        //                cswPublic.zebraJava.append('\n');
+                        //            }
+                        //        });
+                        //    }
+                        //    return ret;
+                        //};
 
 
-                        cswEpl.each(function(eplSubStr) {
-                            if (eplSubStr.indexOf('CSWPICTO') === 0) {
-                                var pictoStr = 'F0';
-                                var eplSubArr = eplSubStr.split(',');
-                                if (eplSubArr[1]) {
-                                    pictoStr += eplSubArr[1];
-                                }
-                                if (eplSubArr[2]) {
-                                    pictoStr += ',' + eplSubArr[2];
-                                }
-                                cswPublic.zebraJava.append(pictoStr);
-                                addPicto(eplSubStr);
+                        //cswEpl.each(function(eplSubStr) {
+                        //    if (eplSubStr.indexOf('CSWPICTO') === 0) {
+                        //        var pictoStr = 'F0';
+                        //        var eplSubArr = eplSubStr.split(',');
+                        //        if (eplSubArr[1]) {
+                        //            pictoStr += eplSubArr[1];
+                        //        }
+                        //        if (eplSubArr[2]) {
+                        //            pictoStr += ',' + eplSubArr[2];
+                        //        }
+                        //        cswPublic.zebraJava.append(pictoStr);
+                        //        addPicto(eplSubStr);
                                 
-                            } else {
-                               cswPublic.zebraJava.append(eplSubStr);
-                                cswPublic.zebraJava.append('\n');
-                            }
-                        });
-                        
+                        //    } else {
+                        //       cswPublic.zebraJava.append(eplSubStr);
+                        //        cswPublic.zebraJava.append('\n');
+                        //    }
+                        //});
+
+                        cswPublic.zebraJava.append(eplText);
+
                         var counter = 0;
                         while(!cswPublic.zebraJava.isDoneAppending()) {
                            counter += 1;
