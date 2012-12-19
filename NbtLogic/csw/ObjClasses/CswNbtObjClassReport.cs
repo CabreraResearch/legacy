@@ -133,21 +133,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-
-        public string getUserContextSql( string UserName )
-        {
-            string ReturnVal = string.Empty;
-
-            CswTemplateTextFormatter CswTemplateTextFormatter = new Core.CswTemplateTextFormatter();
-            CswTemplateTextFormatter.addReplacementValue( "username", UserName );
-            string Message = string.Empty;
-            CswTemplateTextFormatter.setTemplateText( SQL.Text, ref Message );
-            ReturnVal = CswTemplateTextFormatter.getFormattedText();
-
-            return ( ReturnVal );
-
-        }//getUserContextSql
-
         public CswNbtNodePropButton Run { get { return ( _CswNbtNode.Properties[PropertyName.BtnRun] ); } }
         public CswNbtNodePropBlob RPTFile { get { return ( _CswNbtNode.Properties[PropertyName.RPTFile] ); } }
         public CswNbtNodePropText ReportName { get { return ( _CswNbtNode.Properties[PropertyName.ReportName] ); } }

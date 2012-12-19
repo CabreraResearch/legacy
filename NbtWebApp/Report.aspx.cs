@@ -97,8 +97,7 @@ namespace ChemSW.Nbt.WebPages
 
                 Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams = CswNbtWebServiceReport.FormReportParamsToCollection( Request.Form );
 
-                ReportNode.SQL.Text = CswNbtWebServiceReport.ReplaceReportParams( reportParams, ReportNode );
-                string ReportSql = ReportNode.getUserContextSql( Master.CswNbtResources.CurrentNbtUser.Username );
+                string ReportSql = CswNbtWebServiceReport.ReplaceReportParams( reportParams, ReportNode );
                 CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                 DataTable ReportTable = ReportSelect.getTable();
                 if( ReportTable.Rows.Count > 0 )
