@@ -774,7 +774,7 @@ namespace ChemSW.Nbt.Actions
             CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
             CompliantAnswers.FromString( CompliantAnswersString );
 
-            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive: false ) )
+            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive : false ) )
             {
                 PreferredAnswerString = "";
             }
@@ -872,7 +872,7 @@ namespace ChemSW.Nbt.Actions
                 foreach( DataRow Row in UploadDataTable.Rows )
                 {
                     string Question = _standardizeName( Row[_QuestionName] );
-                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive: false ) )
+                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive : false ) )
                     {
                         _UniqueQuestions.Add( Question );
                         if( false == string.IsNullOrEmpty( Question ) )
@@ -913,16 +913,20 @@ namespace ChemSW.Nbt.Actions
             return ( RetDataTable );
         }
 
-        public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
+        public JObject copyInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
         {
+            JObject RetObj = new JObject();
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignName );
+            if( null != InspectionDesignNt )
+            {
+                CswNbtMetaDataNodeType CopiedInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( InspectionDesignNt, InspectionDesignName + " Copy" );
 
-            CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
-            _setInspectionDesignTabsAndProps( InspectionDesignNt, InspectionTargetNt );
-            _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
+                CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category );
+                _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );
+                _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
-            JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
-
+                RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt );
+            }
             return RetObj;
         }
 
