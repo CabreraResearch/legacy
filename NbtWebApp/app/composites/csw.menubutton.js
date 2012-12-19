@@ -16,7 +16,7 @@
                 selectedText: '',
                 onClick: null,
                 state: '',
-                width: 240,
+                width: '100px',
                 disabled: false
             };
             var cswPublic = {};
@@ -49,6 +49,7 @@
                             text: cswPrivate.selectedText,
                             handler: cswPrivate.handleMenuItemClick,
                             scale: Csw.string(cswPrivate.size, 'medium'),
+                            width: cswPrivate.width,
                             menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
                             disabled: cswPrivate.disabled
                         });

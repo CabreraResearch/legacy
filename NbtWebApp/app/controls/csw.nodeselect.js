@@ -106,6 +106,7 @@
                 cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
                     cswPrivate.table.cell(1, cswPrivate.cellCol)
                              .nodeTypeSelect({
+                                 objectClassName: cswPrivate.objectClassName,
                                  objectClassId: cswPrivate.objectClassId,
                                  onSelect: function () {
                                      if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
