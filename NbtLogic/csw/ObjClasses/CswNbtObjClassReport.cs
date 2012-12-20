@@ -150,37 +150,38 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region custom logic
 
-        public CswCommaDelimitedString ExtractReportParams()
+        public Dictionary<string, string> ExtractReportParams( CswNbtObjClassUser UserNode = null )
         {
-            CswCommaDelimitedString reportParams = new CswCommaDelimitedString();
+            Dictionary<string, string> reportParams = new Dictionary<string, string>();
 
             MatchCollection matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
             foreach( Match match in matchedParams )
             {
                 string paramName = match.Value.Replace( '{', ' ' ).Replace( '}', ' ' ).Trim(); //remove the '{' and '}' and whitespace
-                reportParams.Add( paramName );
+                string replacementVal = "";
+                if( null != UserNode )
+                {
+                    CswNbtMetaDataNodeTypeProp userNTP = UserNode.NodeType.getNodeTypeProp( paramName );
+                    if( null != userNTP )
+                    {
+                        replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
+                    }
+                }
+                if( false == reportParams.ContainsKey( paramName ) )
+                {
+                    reportParams.Add( paramName, replacementVal );
+                }
             }
-
             return reportParams;
         }
 
-        /// <summary>
-        /// Returns the SQL of this report as it would be for a mail report. Finds each parameter, matches it with a UserNTP and replaces it with the value of the NTP
-        /// </summary>
-        public string GetMailReportSQL( CswNbtObjClassUser UserNode )
+        public static string ReplaceReportParams( string SQL, Dictionary<string, string> reportParams )
         {
-            string ReplacedSQL = SQL.Text;
-            foreach( string param in ExtractReportParams() )
+            foreach( var paramPair in reportParams )
             {
-                CswNbtMetaDataNodeTypeProp userNTP = UserNode.NodeType.getNodeTypeProp( param );
-                if( null != userNTP )
-                {
-                    string replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
-                    ReplacedSQL = ReplacedSQL.Replace( "{" + param + "}", replacementVal );
-                }
-
+                SQL = SQL.Replace( "{" + paramPair.Key + "}", CswTools.SafeSqlParam( paramPair.Value ) );
             }
-            return ReplacedSQL;
+            return SQL;
         }
 
         #endregion

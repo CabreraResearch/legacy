@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassReport reportNode = NbtResources.Nodes[pk];
                 if( string.Empty != reportNode.SQL.Text )
                 {
-                    string ReportSql = ReplaceReportParams( reportParams.reportParams, reportNode );
+                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( reportNode.SQL.Text, reportParams.ReportParamDictionary );
                     CswArbitrarySelect cswRptSql = NbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
                     rptDataTbl = cswRptSql.getTable();
                     if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportNode )
@@ -148,16 +148,6 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
             return rptDataTbl;
-        }
-
-        public static string ReplaceReportParams( Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams, CswNbtObjClassReport reportNode ) //{param1}=someval,{param2}=anotherval
-        {
-            string replacedSQL = reportNode.SQL.Text;
-            foreach( CswNbtWebServiceReport.ReportData.ReportParam param in reportParams )
-            {
-                replacedSQL = replacedSQL.Replace( "{" + param.name + "}", CswTools.SafeSqlParam( param.value ) );
-            }
-            return replacedSQL;
         }
 
         public static Collection<CswNbtWebServiceReport.ReportData.ReportParam> FormReportParamsToCollection( NameValueCollection FormData )
@@ -188,17 +178,11 @@ namespace ChemSW.Nbt.WebServices
                 Request.doesSupportCrystal = ( false == reportNode.RPTFile.Empty );
 
                 Request.reportParams = new Collection<ReportData.ReportParam>();
-                foreach( string param in reportNode.ExtractReportParams() )
+                foreach( var paramPair in reportNode.ExtractReportParams( NBTResources.Nodes[NBTResources.CurrentNbtUser.UserId] ) )
                 {
                     ReportData.ReportParam paramObj = new ReportData.ReportParam();
-                    paramObj.name = param;
-                    CswNbtMetaDataNodeType userNT = NBTResources.MetaData.getNodeType( NBTResources.CurrentNbtUser.UserNodeTypeId );
-                    CswNbtMetaDataNodeTypeProp userNTP = userNT.getNodeTypeProp( param );
-                    if( null != userNTP )
-                    {
-                        CswNbtNode userNode = NBTResources.Nodes[NBTResources.CurrentNbtUser.UserId];
-                        paramObj.value = userNode.Properties[userNTP].Gestalt;
-                    }
+                    paramObj.name = paramPair.Key;
+                    paramObj.value = paramPair.Value;
                     Request.reportParams.Add( paramObj );
                 }
             }
