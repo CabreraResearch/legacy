@@ -332,10 +332,10 @@
             cswPublic.setSelectedNode = function (nodeid, nodename) {
                 cswPrivate.selectedNodeId = nodeid;
                 cswPrivate.selectedName = nodename;
-                if (cswPrivate.useSearch) {
+                if (cswPrivate.useSearch && cswPrivate.nameSpan && cswPrivate.hiddenValue) {
                     cswPrivate.nameSpan.text(nodename);
                     cswPrivate.hiddenValue.val(nodeid);
-                } else {
+                } else if(cswPrivate.select) {
                     cswPrivate.select.val(nodeid);
                 }
             }; // setSelectedNode
