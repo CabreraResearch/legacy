@@ -14,13 +14,15 @@ namespace ChemSW.Nbt.Schema
         {
             #region Properties and ctor
 
-            private TypeHeaders( string Dev, Int32 CaseNo, string Name ) : base( Name )
+            private TypeHeaders( string Dev, Int32 CaseNo, string Title, string Name ) : base( Name )
             {
                 _Dev = Dev;
                 _CaseNo = CaseNo;
+                _Title = Title;
             }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
+            public string _Title { get; private set; }
             public static IEnumerable<TypeHeaders> _All { get { return All; } }
             public static implicit operator TypeHeaders( string str )
             {
@@ -32,7 +34,7 @@ namespace ChemSW.Nbt.Schema
 
             #region TIER_II_LOCATION
 
-            public static readonly TypeHeaders TIER_II_LOCATION = new TypeHeaders( CswDeveloper.BV, 28247,
+            public static readonly TypeHeaders TIER_II_LOCATION = new TypeHeaders( CswDeveloper.BV, 28247, "TIER_II_LOCATION",
             @"create or replace
 TYPE TIER_II_LOCATION AS OBJECT 
 (
@@ -44,7 +46,7 @@ TYPE TIER_II_LOCATION AS OBJECT
 
             #region TIER_II_MATERIAL
 
-            public static readonly TypeHeaders TIER_II_MATERIAL = new TypeHeaders( CswDeveloper.BV, 28247,
+            public static readonly TypeHeaders TIER_II_MATERIAL = new TypeHeaders( CswDeveloper.BV, 28247, "TIER_II_MATERIAL",
             @"create or replace
 TYPE TIER_II_MATERIAL AS OBJECT 
 (
@@ -62,14 +64,15 @@ TYPE TIER_II_MATERIAL AS OBJECT
         {
             #region Properties and ctor
 
-            private NestedTables( string Dev, Int32 CaseNo, string Name )
-                : base( Name )
+            private NestedTables( string Dev, Int32 CaseNo, string Title, string Name ) : base( Name )
             {
                 _Dev = Dev;
                 _CaseNo = CaseNo;
+                _Title = Title;
             }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
+            public string _Title { get; private set; }
             public static IEnumerable<NestedTables> _All { get { return All; } }
             public static implicit operator NestedTables( string str )
             {
@@ -79,17 +82,9 @@ TYPE TIER_II_MATERIAL AS OBJECT
 
             #endregion Properties and ctor
 
-            #region NUM_TABLE
-
-            public static readonly NestedTables NUM_TABLE = new NestedTables( CswDeveloper.BV, 28247,
-            @"create or replace
-type num_table as table of number;" );
-
-            #endregion NUM_TABLE
-
             #region TIER_II_LOCATION_TABLE
 
-            public static readonly NestedTables TIER_II_LOCATION_TABLE = new NestedTables( CswDeveloper.BV, 28247,
+            public static readonly NestedTables TIER_II_LOCATION_TABLE = new NestedTables( CswDeveloper.BV, 28247, "TIER_II_LOCATION_TABLE",
             @"create or replace
 type TIER_II_LOCATION_TABLE as table of TIER_II_LOCATION;" );
 
@@ -97,7 +92,7 @@ type TIER_II_LOCATION_TABLE as table of TIER_II_LOCATION;" );
 
             #region TIER_II_MATERIAL_TABLE
 
-            public static readonly NestedTables TIER_II_MATERIAL_TABLE = new NestedTables( CswDeveloper.BV, 28247,
+            public static readonly NestedTables TIER_II_MATERIAL_TABLE = new NestedTables( CswDeveloper.BV, 28247, "TIER_II_MATERIAL_TABLE",
             @"create or replace
 type TIER_II_MATERIAL_TABLE as table of TIER_II_MATERIAL;" );
 
