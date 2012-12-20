@@ -47,7 +47,7 @@
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
                 cswPrivate.isClickable = cswPrivate.isClickable; // ||true;
-
+                cswPrivate.useSearch = false;
                 cswPrivate.options = cswPrivate.options || [];
 
                 cswPublic = cswParent.div();
@@ -145,15 +145,15 @@
             };
 
             cswPrivate.bindSelectMethods = function () {
-                cswPublic.val = cswPublic.select.val;
-                cswPublic.selectedText = cswPublic.select.selectedText;
-                cswPublic.selectedVal = cswPublic.select.selectedVal;
-                cswPublic.makeOption = cswPublic.select.makeOption;
-                cswPublic.makeOptions = cswPublic.select.makeOptions;
-                cswPublic.addOption = cswPublic.select.addOption;
-                cswPublic.setOptions = cswPublic.select.setOptions;
-                cswPublic.removeOption = cswPublic.select.removeOption;
-                cswPublic.option = cswPublic.select.option;
+                cswPublic.val = cswPrivate.select.val;
+                cswPublic.selectedText = cswPrivate.select.selectedText;
+                cswPublic.selectedVal = cswPrivate.select.selectedVal;
+                cswPublic.makeOption = cswPrivate.select.makeOption;
+                cswPublic.makeOptions = cswPrivate.select.makeOptions;
+                cswPublic.addOption = cswPrivate.select.addOption;
+                cswPublic.setOptions = cswPrivate.select.setOptions;
+                cswPublic.removeOption = cswPrivate.select.removeOption;
+                cswPublic.option = cswPrivate.select.option;
             };
 
             cswPrivate.makeSelect = function () {
@@ -174,11 +174,11 @@
                 //Normally, we would assign the select to cswPublic, as it's the primary control; 
                 //however, to assign now would be decoupled from the return. The caller would not receive this reference.
                 //Instead, we'll assign the select as a member and we'll reassign key methods to cswPublic.
-                cswPublic.select = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
+                cswPrivate.select = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: function () {
-                        var val = cswPublic.select.val();
+                        var val = cswPrivate.select.val();
                         Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val });
                     },
                     values: cswPrivate.relationships,
@@ -187,10 +187,10 @@
                 });
                 cswPrivate.bindSelectMethods();
 
-                cswPublic.select.bind('change', function () {
-                    var val = cswPublic.select.val();
+                cswPrivate.select.bind('change', function () {
+                    var val = cswPrivate.select.val();
                     cswPrivate.selectedNodeId = val;
-                    Csw.tryExec(cswPrivate.onChange, cswPublic.select);
+                    Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
                     Csw.tryExec(cswPrivate.onSelect, val);
                 });
 
@@ -214,10 +214,10 @@
 
                 cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
 
-                cswPublic.select.required(cswPrivate.isRequired);
+                cswPrivate.select.required(cswPrivate.isRequired);
 
-                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPublic.select.val()); },
-                                function (event) { Csw.nodeHoverOut(event, cswPublic.select.val()); });
+                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.select.val()); },
+                                function (event) { Csw.nodeHoverOut(event, cswPrivate.select.val()); });
             };
 
             cswPrivate.makeSearch = function () {
@@ -264,11 +264,11 @@
 
             cswPrivate.toggleOptions = function (on) {
                 if (Csw.bool(on)) {
-                    cswPublic.select.show();
+                    cswPrivate.select.show();
                     cswPrivate.toggleButton.hide();
                     cswPrivate.nodeLinkText.hide();
                 } else {
-                    cswPublic.select.hide();
+                    cswPrivate.select.hide();
                     cswPrivate.toggleButton.show();
                     cswPrivate.nodeLinkText.show();
                 }
@@ -285,12 +285,12 @@
                 if (cswPrivate.hiddenValue) {
                     cswPrivate.hiddenValue.val(nodeid);
                 }
-                if (cswPublic && cswPublic.select) {
-                    cswPublic.select.option({ value: nodeid, display: nodename });
-                    cswPublic.select.val(nodeid);
+                if (cswPrivate.select) {
+                    cswPrivate.select.option({ value: nodeid, display: nodename });
+                    cswPrivate.select.val(nodeid);
                     cswPrivate.toggleOptions(true);
                     Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
-                    cswPublic.select.$.valid();
+                    cswPrivate.select.$.valid();
                 }
             };
 
@@ -333,11 +333,11 @@
             cswPublic.setSelectedNode = function (nodeid, nodename) {
                 cswPrivate.selectedNodeId = nodeid;
                 cswPrivate.selectedName = nodename;
-                if (cswPrivate.useSearch) {
+                if (cswPrivate.useSearch && cswPrivate.nameSpan && cswPrivate.hiddenValue) {
                     cswPrivate.nameSpan.text(nodename);
                     cswPrivate.hiddenValue.val(nodeid);
-                } else {
-                    cswPublic.select.val(nodeid);
+                } else if(cswPrivate.select) {
+                    cswPrivate.select.val(nodeid);
                 }
             }; // setSelectedNode
 

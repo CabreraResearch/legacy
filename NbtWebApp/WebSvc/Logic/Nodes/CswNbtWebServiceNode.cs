@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -433,7 +434,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.NodeTypeId = Request.NodeTypeId;
             Ret.ObjectClassId = Request.ObjectClassId;
 
-            Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
+            Dictionary<CswPrimaryKey, string> Nodes = new Dictionary<CswPrimaryKey, string>();
 
             // case 25956
             Int32 SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.relationshipoptionlimit.ToString() ) );
@@ -470,7 +471,7 @@ namespace ChemSW.Nbt.WebServices
             else if( Request.NodeTypeId > 0 )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId );
-                Nodes = MetaDataNodeType.getNodes( true, false );
+                Nodes = MetaDataNodeType.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
                 Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
             }
             else
@@ -525,7 +526,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     if( doGetNodes )
                     {
-                        Nodes = MetaDataObjectClass.getNodes( true, false );
+                        Nodes = MetaDataObjectClass.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
                     }
                     Ret.CanAdd = MetaDataObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
                 }
@@ -543,21 +544,20 @@ namespace ChemSW.Nbt.WebServices
                 for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
                 {
                     Tree.goToNthChild( N );
-                    Ret.Nodes.Add( new CswNbtNode.Node( null )
-                    {
-                        NodePk = Tree.getNodeIdForCurrentPosition(),
-                        NodeName = Tree.getNodeNameForCurrentPosition()
-                    } );
+                    Ret.Nodes.Add( new CswNbtNode.Node( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() );
                     Tree.goToParentNode();
                 }
             }
-
-            Ret.UseSearch = Ret.UseSearch || Nodes.Count > SearchThreshold;
-            foreach( CswNbtNode Node in ( from _Node in Nodes orderby _Node.NodeName select _Node ).Take( SearchThreshold ) )
+            else
             {
-                Ret.Nodes.Add( new CswNbtNode.Node( Node ) );
+                Ret.UseSearch = Ret.UseSearch || Nodes.Count > SearchThreshold;
+                foreach( CswPrimaryKey NodePk in Nodes.OrderBy( Pair => Pair.Value )
+                    .Select( Pair => Pair.Key )
+                    .Take( SearchThreshold ) )
+                {
+                    Ret.Nodes.Add( new CswNbtNode.Node( NodePk, Nodes[NodePk] ) );
+                }
             }
-
             return Ret;
         }
 
