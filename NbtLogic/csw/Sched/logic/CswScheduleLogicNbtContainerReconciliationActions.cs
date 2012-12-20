@@ -70,7 +70,10 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    makeReconciliationActionBatchProcess();
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    {
+                        makeReconciliationActionBatchProcess();                        
+                    }
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = LogicRunStatus.Succeeded;
                 }
