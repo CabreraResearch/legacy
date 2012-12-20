@@ -279,6 +279,7 @@
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Size_Case27438.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27551.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489_Part3.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28229.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28156.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28117.cs" />
