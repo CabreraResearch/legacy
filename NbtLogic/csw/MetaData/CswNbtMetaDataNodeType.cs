@@ -659,7 +659,21 @@ namespace ChemSW.Nbt.MetaData
                 Tree.goToParentNode();
             }
             return Collection;
-        }
+        } // getNodes()
+
+        public Dictionary<CswPrimaryKey, string> getNodeIdAndNames( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false, bool IncludeHiddenNodes = false )
+        {
+            Dictionary<CswPrimaryKey, string> Dict = new Dictionary<CswPrimaryKey, string>();
+            CswNbtView View = CreateDefaultView( includeDefaultFilters );
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, true, includeSystemNodes, IncludeHiddenNodes );
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            {
+                Tree.goToNthChild( c );
+                Dict.Add( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() );
+                Tree.goToParentNode();
+            }
+            return Dict;
+        } // getNodeIdAndNames()
 
         private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
         public string AuditLevel
