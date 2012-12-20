@@ -67,10 +67,12 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    _CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
-
-                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    _LogicRunStatus = LogicRunStatus.Succeeded;
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    {
+                        _CswNbtResources.execStoredProc("TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>());
+                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                        _LogicRunStatus = LogicRunStatus.Succeeded;
+                    }
                 }
                 catch( Exception Exception )
                 {
