@@ -81,19 +81,19 @@ namespace ChemSW.Nbt.Schema
             //but that can't be done generically. So instead, we use "force" to avoid ORA-02303.
             #region Drop Types
 
-            foreach( CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
-            {
-                _acceptBlame( TypeHeader._Dev, TypeHeader._CaseNo );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "drop type " + TypeHeader._Title + " force" );
-                _resetBlame();
-            }
-
             foreach( CswUpdateSchemaPLSQLTypes.NestedTables NestedTable in CswUpdateSchemaPLSQLTypes.NestedTables._All )
             {
                 _acceptBlame( NestedTable._Dev, NestedTable._CaseNo );
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "drop type " + NestedTable._Title + " force" );
                 _resetBlame();
             }
+
+            foreach( CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
+            {
+                _acceptBlame( TypeHeader._Dev, TypeHeader._CaseNo );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "drop type " + TypeHeader._Title + " force" );
+                _resetBlame();
+            }            
 
             #endregion Drop Types
 
