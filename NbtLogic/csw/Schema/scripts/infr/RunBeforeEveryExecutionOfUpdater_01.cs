@@ -115,7 +115,6 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addTable( "tier2", "tier2id" );
                 _CswNbtSchemaModTrnsctn.getNewPrimeKey("tier2");
             }
-
             if( _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
             {
                 if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "dateadded" ) )
@@ -145,6 +144,10 @@ namespace ChemSW.Nbt.Schema
                 if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "totalquantity" ) )
                 {
                     _CswNbtSchemaModTrnsctn.addDoubleColumn( "tier2", "totalquantity", "Quantity of the Material in the given Location and all child locations", false, false, 6 );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "unitid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "unitid", "UnitId of the Quantity of the Material", false, false );
                 }
             }
 

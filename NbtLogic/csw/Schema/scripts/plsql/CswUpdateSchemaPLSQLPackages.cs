@@ -49,10 +49,11 @@ END TIER_II_DATA_MANAGER;" );
             #region UNIT_CONVERSION
 
             public static readonly PackageHeaders UNIT_CONVERSION_HEAD = new PackageHeaders( CswDeveloper.BV, 28247,
-            @"CREATE OR REPLACE 
+            @"create or replace
 PACKAGE UNIT_CONVERSION AS 
 
   function GET_BASE_UNIT (unit_name varchar2) return number;
+  function GET_BASE_UNIT (unit_id number) return number;
   function GET_CONVERSION_FACTOR (unit_id number) return number;
   function CONVERT_UNIT (value_to_convert in number, old_conversion_factor in number, new_conversion_factor in number) return number;
 
@@ -148,7 +149,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     found number := 0;
   begin
     --Take the contents of the child locations' Materials and add them to the list (setting every Material's Quantity value to 0)
-    select tier_ii_material(t.materialid, t.casno, 0, null, t.totalquantity)
+    select tier_ii_material(t.materialid, t.casno, 0, t.totalquantity, t.unitid)
       bulk collect into materials
       from Tier2 t
       where t.parentlocationid = LocId
@@ -168,7 +169,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     end if;
     
     --Grab all Containers in the current Location where qty > 0 and material's tierII is true
-    select tier_ii_material(m.materialid, mat.casno, qty.quantity, qty.unitid, qty.quantity)
+    select tier_ii_material(m.materialid, mat.casno, qty.quantity, qty.quantity, qty.unitid)
       bulk collect into containers
       from nodes n
     left join (select jnp.nodeid, jnp.field1_numeric as quantity, jnp.field1_fk as unitid
@@ -213,6 +214,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         conversion_factor := UNIT_CONVERSION.GET_CONVERSION_FACTOR(containers(i).unitid);
         containers(i).quantity := UNIT_CONVERSION.CONVERT_UNIT(containers(i).quantity, conversion_factor, 1);
         containers(i).totalquantity := containers(i).quantity;
+        --containers(i).unitid := UNIT_CONVERSION.GET_BASE_UNIT(containers(i).unitid);
       end if;
       found := 0;
       if materials.count > 0 then
@@ -257,7 +259,8 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
                 MATERIALID, 
                 CASNO, 
                 QUANTITY, 
-                TOTALQUANTITY
+                TOTALQUANTITY,
+                UNITID
               ) 
               values 
               (
@@ -268,7 +271,8 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
                 Materials(mat).MATERIALID,
                 Materials(mat).CASNO,
                 Materials(mat).QUANTITY,
-                Materials(mat).TOTALQUANTITY
+                Materials(mat).TOTALQUANTITY,
+                Materials(mat).UNITID
               );
           end if;
         end loop;
@@ -277,14 +281,14 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     end loop;
   end SET_TIER_II_DATA;
 
-END TIER_II_DATA_MANAGER;" );
+END TIER_II_DATA_MANAGER;;" );
 
             #endregion TIER_II_DATA_MANAGER
 
             #region UNIT_CONVERSION
 
             public static readonly PackageBodies UNIT_CONVERSION_BODY = new PackageBodies( CswDeveloper.BV, 28247,
-            @"CREATE OR REPLACE
+            @"create or replace
 PACKAGE BODY UNIT_CONVERSION AS
 
   function GET_BASE_UNIT (unit_name varchar2) return number is
@@ -313,6 +317,49 @@ PACKAGE BODY UNIT_CONVERSION AS
       and base.unit = nm.unit
       and nt.nodetypename = unit_name;
     return unit_id;
+  end GET_BASE_UNIT;
+  
+  function GET_BASE_UNIT (unit_id number) return number is
+    base_unit_id number;
+  begin
+    select baseunitid.nodeid
+    into base_unit_id
+    from nodes n
+      left join (
+        select n.nodeid, jnp.field1 as unit
+        from nodes n
+        left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
+        left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        where ntp.propname = 'Base Unit'
+        ) baseunit on baseunit.nodeid = n.nodeid
+      left join (
+        select n.nodeid, jnp.field1 as unit
+        from nodes n
+        left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
+        left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        where ntp.propname = 'Name'
+        ) nodename on baseunit.nodeid = nodename.nodeid 
+      left join (  
+        select n.nodeid, base.unit as bu
+          from nodes n
+            left join (
+              select n.nodeid, jnp.field1 as unit
+              from nodes n
+              left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
+              left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+              where ntp.propname = 'Base Unit'
+              ) base on base.nodeid = n.nodeid
+            left join (
+              select n.nodeid, jnp.field1 as unit
+              from nodes n
+              left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
+              left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+              where ntp.propname = 'Name'
+              ) nm on base.nodeid = nm.nodeid 
+            where base.unit = nm.unit
+        ) baseunitid on baseunitid.bu = baseunit.unit
+      where n.nodeid = unit_id;
+    return base_unit_id;
   end GET_BASE_UNIT;
 
   function GET_CONVERSION_FACTOR (unit_id number) return number is
