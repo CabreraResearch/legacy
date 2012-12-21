@@ -46,7 +46,7 @@
                 cswPrivate.isMulti = cswPrivate.isMulti; // || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
-                cswPrivate.useSearch = false;
+                cswPrivate.useSearch = cswPrivate.useSearch;
                 cswPrivate.options = cswPrivate.options || [];
 
                 cswPublic = cswParent.div();
