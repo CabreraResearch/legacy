@@ -544,7 +544,7 @@ namespace ChemSW.Nbt.WebServices
                 for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
                 {
                     Tree.goToNthChild( N );
-                    Ret.Nodes.Add( new CswNbtNode.Node( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() );
+                    Ret.Nodes.Add( new CswNbtNode.Node( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() ) );
                     Tree.goToParentNode();
                 }
             }
