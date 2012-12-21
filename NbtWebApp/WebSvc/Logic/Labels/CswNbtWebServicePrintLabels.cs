@@ -68,20 +68,20 @@ namespace ChemSW.Nbt.WebServices
                     Int32 PrintLabelCount = PrintLabelsTree.getChildNodeCount();
                     if( PrintLabelCount > 0 )
                     {
-                        String LabelFormatId = _getLabelFormatForTargetId( NbtResources, TargetNodeType, Request.TargetId );
+                        CswPrimaryKey LabelFormatId = _getLabelFormatForTargetId( NbtResources, TargetNodeType, Request.TargetId );
                         PrintLabelsTree.goToRoot();
                         for( int P = 0; P < PrintLabelCount; P += 1 )
                         {
                             PrintLabelsTree.goToNthChild( P );
-                            String PrintLabelId = PrintLabelsTree.getNodeIdForCurrentPosition().ToString();
+                            CswPrimaryKey PrintLabelId = PrintLabelsTree.getNodeIdForCurrentPosition();
                             Return.Data.Labels.Add( new Label
                             {
                                 Name = PrintLabelsTree.getNodeNameForCurrentPosition(),
-                                Id = PrintLabelId
+                                Id = PrintLabelId.ToString()
                             } );
                             if( PrintLabelId == LabelFormatId )
                             {
-                                Return.Data.SelectedLabelId = PrintLabelId;
+                                Return.Data.SelectedLabelId = PrintLabelId.ToString();
                             }
                             PrintLabelsTree.goToParentNode();
                         }
@@ -90,9 +90,9 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getLabels()
 
-        private static String _getLabelFormatForTargetId( CswNbtResources NbtResources, CswNbtMetaDataNodeType TargetNodeType, String TargetId )
+        private static CswPrimaryKey _getLabelFormatForTargetId( CswNbtResources NbtResources, CswNbtMetaDataNodeType TargetNodeType, String TargetId )
         {
-            String LabelFormatId = String.Empty;
+            CswPrimaryKey LabelFormatId = null;
             if( null != TargetId )
             {
                 CswNbtNode TargetNode = NbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( TargetId ) );
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         if( PropMatchesPrintLabel )
                         {
-                            LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId.ToString();
+                            LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId;
                             break;
                         }
                     }
