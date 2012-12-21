@@ -46,8 +46,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}" )]
-        [WebInvoke( BodyStyle = WebMessageBodyStyle.Wrapped )]
+        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}", BodyStyle = WebMessageBodyStyle.Wrapped )]
         [Description( "Get a collection of EPL texts for the selected Targets" )]
         public CswNbtLabelEpl get( string PrintLabelId, string TargetId )
         {
