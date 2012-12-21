@@ -103,7 +103,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     select tier_ii_location(n.nodeid, jnp.field1_fk)
       bulk collect into unsorted_locations
       from nodes n
-        left join jct_nodes_props jnp on n.nodeid = jnp.nodeid
+        inner join jct_nodes_props jnp on n.nodeid = jnp.nodeid
         inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
         inner join object_class oc on nt.objectclassid = oc.objectclassid
         inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
