@@ -23,6 +23,11 @@ namespace ChemSW.Nbt.PropTypes
             _StartDateTimeSubField = _FieldTypeRule.StartDateTimeSubField;
             _UnitsSubField = _FieldTypeRule.UnitsSubField;
             _ValueSubField = _FieldTypeRule.ValueSubField;
+            
+            if(string.IsNullOrEmpty(Units))
+            {
+                Units = "days";
+            }
         }
 
         private CswNbtFieldTypeRuleMTBF _FieldTypeRule;
@@ -141,10 +146,13 @@ namespace ChemSW.Nbt.PropTypes
 
             // Set cached value
             if( Units == "hours" )
+            {
                 CachedValue = hours;
+            }
             else
+            {
                 CachedValue = days;
-
+            }
             this.PendingUpdate = false;
 
         } // CalculateMTBF()
