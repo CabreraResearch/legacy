@@ -23,31 +23,34 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtView MHCView = _CswNbtSchemaModTrnsctn.makeNewView( "Missing Hazard Classes", NbtViewVisibility.Global );
-            MHCView.Category = "Materials";
-            MHCView.Visibility = NbtViewVisibility.Global;
-            MHCView.ViewMode = NbtViewRenderingMode.Tree;
-
             CswNbtMetaDataNodeType ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
-            CswNbtViewRelationship RootRel = MHCView.AddViewRelationship( ChemicalNT, true );
+            if( null != ChemicalNT )
+            {
+                CswNbtView MHCView = _CswNbtSchemaModTrnsctn.makeNewView( "Missing Hazard Classes", NbtViewVisibility.Global );
+                MHCView.Category = "Materials";
+                MHCView.Visibility = NbtViewVisibility.Global;
+                MHCView.ViewMode = NbtViewRenderingMode.Tree;
+            
+                CswNbtViewRelationship RootRel = MHCView.AddViewRelationship( ChemicalNT, true );
 
-            CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = ChemicalNT.getNodeTypeProp( "Special Flags" );
-            CswNbtViewProperty SpecialFlagsVP = MHCView.AddViewProperty( RootRel, SpecialFlagsNTP );
-            MHCView.AddViewPropertyFilter( SpecialFlagsVP,
-                                            CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                            CswNbtPropFilterSql.FilterResultMode.Hide,
-                                            CswNbtSubField.SubFieldName.Value,
-                                            CswNbtPropFilterSql.PropertyFilterMode.NotContains,
-                                            "Not Reportable");
+                CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = ChemicalNT.getNodeTypeProp( "Special Flags" );
+                CswNbtViewProperty SpecialFlagsVP = MHCView.AddViewProperty( RootRel, SpecialFlagsNTP );
+                MHCView.AddViewPropertyFilter( SpecialFlagsVP,
+                                                CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                CswNbtPropFilterSql.FilterResultMode.Hide,
+                                                CswNbtSubField.SubFieldName.Value,
+                                                CswNbtPropFilterSql.PropertyFilterMode.NotContains,
+                                                "Not Reportable");
 
-            CswNbtMetaDataNodeTypeProp HazardClassesNTP = ChemicalNT.getNodeTypeProp( "Hazard Classes" );
-            CswNbtViewProperty HazardClassesVP = MHCView.AddViewProperty( RootRel, HazardClassesNTP );
-            MHCView.AddViewPropertyFilter( HazardClassesVP,
-                                            CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                            CswNbtPropFilterSql.FilterResultMode.Hide,
-                                            CswNbtSubField.SubFieldName.Value,
-                                            CswNbtPropFilterSql.PropertyFilterMode.Null);
-            MHCView.save();
+                CswNbtMetaDataNodeTypeProp HazardClassesNTP = ChemicalNT.getNodeTypeProp( "Hazard Classes" );
+                CswNbtViewProperty HazardClassesVP = MHCView.AddViewProperty( RootRel, HazardClassesNTP );
+                MHCView.AddViewPropertyFilter( HazardClassesVP,
+                                                CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                CswNbtPropFilterSql.FilterResultMode.Hide,
+                                                CswNbtSubField.SubFieldName.Value,
+                                                CswNbtPropFilterSql.PropertyFilterMode.Null);
+                MHCView.save();
+            }
         }//Update()
 
     }//class CswUpdateSchemaCase_01V_28393
