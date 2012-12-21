@@ -84,14 +84,32 @@ namespace ChemSW.Nbt.Schema
             foreach( CswUpdateSchemaPLSQLTypes.NestedTables NestedTable in CswUpdateSchemaPLSQLTypes.NestedTables._All )
             {
                 _acceptBlame( NestedTable._Dev, NestedTable._CaseNo );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "drop type " + NestedTable._Title + " force" );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( 
+                    @"declare
+                      object_not_exists EXCEPTION;
+                      PRAGMA EXCEPTION_INIT(object_not_exists, -04043);
+                    begin
+                      execute immediate 'drop type " + NestedTable._Title + @" force';
+                    exception
+                      when object_not_exists then null;
+                    end;" 
+                );
                 _resetBlame();
             }
 
             foreach( CswUpdateSchemaPLSQLTypes.TypeHeaders TypeHeader in CswUpdateSchemaPLSQLTypes.TypeHeaders._All )
             {
                 _acceptBlame( TypeHeader._Dev, TypeHeader._CaseNo );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "drop type " + TypeHeader._Title + " force" );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql(
+                    @"declare
+                      object_not_exists EXCEPTION;
+                      PRAGMA EXCEPTION_INIT(object_not_exists, -04043);
+                    begin
+                      execute immediate 'drop type " + TypeHeader._Title + @" force';
+                    exception
+                      when object_not_exists then null;
+                    end;"
+                );
                 _resetBlame();
             }            
 
