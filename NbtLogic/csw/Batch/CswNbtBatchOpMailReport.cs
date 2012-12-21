@@ -291,7 +291,13 @@ namespace ChemSW.Nbt.Batch
 
             if( false == CurrentMailReport.Recipients.Empty )
             {
-                JArray NewRecipientIds = BatchData.RecipientIds;
+                // Copy recipients
+                JArray NewRecipientIds = new JArray();
+                foreach(string UserId in BatchData.RecipientIds)
+                {
+                    NewRecipientIds.Add( UserId );
+                }
+
                 for( Int32 u = 0; u < BatchData.RecipientIds.Count() && u < NodeLimit; u++ )
                 {
                     Int32 UserId = CswConvert.ToInt32( BatchData.RecipientIds[u].ToString() );
