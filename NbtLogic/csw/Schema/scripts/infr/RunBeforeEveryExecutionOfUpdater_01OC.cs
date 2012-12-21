@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -1332,7 +1331,7 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
+
         private void _addContainerFireReportingProps( CswDeveloper Dev, Int32 CaseNum )
         {
             _acceptBlame( Dev, CaseNum );
@@ -1380,7 +1379,7 @@ namespace ChemSW.Nbt.Schema
                 if( null == ControlZoneNt )
                 {
                     ControlZoneNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "Control Zone", "Materials" );
-                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, ControlZoneNt.NodeTypeId );                    
+                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, ControlZoneNt.NodeTypeId );
 
                     CswNbtMetaDataNodeTypeProp NameNTP = _createNewProp( ControlZoneNt, "Name", CswNbtMetaDataFieldType.NbtFieldType.Text );
                     NameNTP.IsRequired = true;
@@ -1409,6 +1408,24 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Case 28282
+
+        #region Case 28408
+
+        private void _addBarcodePropToUserOC( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
+            {
+                PropName = CswNbtObjClassUser.PropertyName.Barcode,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode
+            } );
+
+            _resetBlame();
+        }
+
+        #endregion
 
         #endregion Viola Methods
 
@@ -1451,6 +1468,7 @@ namespace ChemSW.Nbt.Schema
             _addHazardousReoprtingProp( CswDeveloper.BV, 28281 );
             _addContainerFireReportingProps( CswDeveloper.BV, 28281 );
             _addControlZoneNT( CswDeveloper.BV, 28282 );
+            _addBarcodePropToUserOC( CswDeveloper.CM, 28408 );
 
             #endregion VIOLA
 
