@@ -536,7 +536,6 @@
     <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
