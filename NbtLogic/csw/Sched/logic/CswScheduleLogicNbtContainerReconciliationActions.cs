@@ -36,14 +36,19 @@ namespace ChemSW.Nbt.Sched
 
         #region Scheduler Methods
 
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetailIn )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetailIn )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetailIn;
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
 
-        public bool doesItemRunNow()
+        public void initResource( ICswResources RuleResources )
+        {
+            _CswNbtResources = (CswNbtResources) RuleResources;
+
+        }//initResource()
+
+        public bool doesRuleHaveLoad()
         {
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }

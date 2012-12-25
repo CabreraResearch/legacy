@@ -75,11 +75,12 @@ namespace ChemSW.Nbt.SchedService
 
 
 
-            serviceHost.Open();
 
 
             _CswScheduleService = new CswScheduleService( new CswScheduleLogicFactoryNbt(), new CswScheduleResourceFactoryNbt(), new CswScheduleLogicDetailPersistenceFactoryNbt() );
+            CswSchedSvcAdminEndPoint.CswScheduleService = _CswScheduleService;
             _CswScheduleService.start();
+            serviceHost.Open();
 
 
         }//OnStart()

@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.BatchOp.ToString() ); }
         }
 
-        public bool doesItemRunNow()
+        public bool doesRuleHaveLoad()
         {
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }
@@ -41,13 +41,17 @@ namespace ChemSW.Nbt.Sched
 
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
         private CswNbtResources _CswNbtResources = null;
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
-        }//init()
+        }//initScheduleLogicDetail()
+
+        public void initResource( ICswResources CswResources )
+        {
+            _CswNbtResources = (CswNbtResources) CswResources;
+        }//initResources()
 
         public void threadCallBack()
         {

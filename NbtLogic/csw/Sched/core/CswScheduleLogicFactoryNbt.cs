@@ -4,6 +4,7 @@ using ChemSW.MtSched.Core;
 namespace ChemSW.Nbt.Sched
 {
 
+    public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin, BatchOp, ExpiredContainers, MolFingerprints }
     public class CswScheduleLogicFactoryNbt : ICswScheduleLogicFactory
     {
 

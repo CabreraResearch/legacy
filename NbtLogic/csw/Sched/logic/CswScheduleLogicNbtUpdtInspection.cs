@@ -21,10 +21,10 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.UpdtInspection.ToString() ); }
         }
 
-        public bool doesItemRunNow()
+        public bool doesRuleHaveLoad()
         {
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
-        }//doesItemRunNow()
+        }//doesRuleHaveLoad()
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
@@ -42,14 +42,21 @@ namespace ChemSW.Nbt.Sched
 
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswNbtResources _CswNbtResources = null;
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail(  CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
             //_CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
+
+
+        public void initResource( ICswResources RuleResources )
+        {
+            _CswNbtResources = (CswNbtResources) RuleResources;
+
+        }//initResource()
+
 
         //private CswNbtNode _CswNbtNodeGenerator;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatus.Pending;
