@@ -9,19 +9,24 @@ namespace ChemSW.Nbt.Sched
     public class CswScheduleLogicFactoryNbt : CswScheduleLogicFactoryBase
     {
 
-        public CswScheduleLogicFactoryNbt()
+        protected override List<ICswScheduleLogic> _getRulesFromImplmentationPlatform()
         {
-            _Rules.Add( new CswScheduleLogicNbtBatchOps() );
-            _Rules.Add( new CswScheduleLogicNbtGenEmailRpt() );
-            _Rules.Add( new CswScheduleLogicNbtGenNode() );
-            _Rules.Add( new CswScheduleLogicNbtUpdtInspection() );
-            _Rules.Add( new CswScheduleLogicNbtUpdtMTBF() );
-            _Rules.Add( new CswScheduleLogicNbtUpdtPropVals() );
-            _Rules.Add( new CswScheduleLogicNbtDisableCswAdmin() );
-            _Rules.Add( new CswScheduleLogicNbtExpiredContainers() );
-            _Rules.Add( new CswScheduleLogicNbtMolFingerprints() );
-            _Rules.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
-        }
+            List<ICswScheduleLogic> ReturnVal = new List<ICswScheduleLogic>();
+
+            ReturnVal.Add( new CswScheduleLogicNbtBatchOps() );
+            ReturnVal.Add( new CswScheduleLogicNbtGenEmailRpt() );
+            ReturnVal.Add( new CswScheduleLogicNbtGenNode() );
+            ReturnVal.Add( new CswScheduleLogicNbtUpdtInspection() );
+            ReturnVal.Add( new CswScheduleLogicNbtUpdtMTBF() );
+            ReturnVal.Add( new CswScheduleLogicNbtUpdtPropVals() );
+            ReturnVal.Add( new CswScheduleLogicNbtDisableCswAdmin() );
+            ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
+            ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
+            ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
+
+            return ( ReturnVal );
+
+        }//_getRulesFromImplmentationPlatform()
 
     }//CswReportTimingDaily
 
