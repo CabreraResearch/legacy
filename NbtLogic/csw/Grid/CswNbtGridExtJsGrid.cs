@@ -131,11 +131,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
             Jret["grid"]["data"] = new JObject();
             Jret["grid"]["data"]["items"] = Jdataitems;
             Jret["grid"]["data"]["buttons"] = Jdatabuttons;
-
-            if( false == String.IsNullOrEmpty( GroupByCol ) )
-            {
-                Jret["grid"]["groupfield"] = GroupByCol.ToLower();
-            }
+            Jret["grid"]["groupfield"] = GroupByCol.ToLower();
 
             return Jret;
         } // ToJson()

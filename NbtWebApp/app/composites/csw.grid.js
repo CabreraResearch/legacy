@@ -10,9 +10,9 @@
             //#region _preCtor
 
             var cswPrivate;
-            var cswPublic; 
+            var cswPublic;
 
-            (function() {
+            (function () {
                 cswPublic = cswParent.div();
 
                 cswPrivate = {
@@ -55,13 +55,13 @@
 
                     topToolbar: [],
                     groupField: '',
-                    groupHeaderTpl: '{name}'
+                    groupHeaderTpl: '{columnName}: {name}'
                 };
 
                 Csw.extend(cswPrivate, options);
                 cswPrivate.ID = cswPrivate.ID || cswPublic.getId();
                 cswPrivate.ID += cswPrivate.suffix;
-            }());
+            } ());
 
             //#endregion _preCtor
 
@@ -100,7 +100,7 @@
                         };
                         if (false === Csw.isNullOrEmpty(clickFunc)) {
                             iconopts.isButton = true;
-                            iconopts.onClick = function() {
+                            iconopts.onClick = function () {
                                 Csw.tryExec(clickFunc, [record.data]);
                             };
                         }
@@ -113,6 +113,9 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
+                if (cswPrivate.groupField.length > 0) {
+                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+                }
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -192,7 +195,7 @@
                     },
                     {
                         id: 'group',
-                        ftype: 'groupingsummary',
+                        ftype: 'grouping',
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
                         enableGroupingMenu: false
@@ -375,7 +378,7 @@
                         items: cswPrivate.topToolbar
                     }); // panelopts.dockedItems
                 }
-                
+
                 if (Csw.isElementInDom(cswPublic.getId())) {
                     cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
                 } else {
@@ -404,7 +407,7 @@
                 cswPublic.empty();
             };
 
-            cswPublic.destroy = function() {
+            cswPublic.destroy = function () {
                 cswPrivate.removeAll();
             };
 
@@ -427,7 +430,7 @@
                     deselect: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
                     },
-                    selectionchange: function(rowModel, selected, eOpts) {
+                    selectionchange: function (rowModel, selected, eOpts) {
                         Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
                     },
                     afterrender: function (component) {
@@ -457,10 +460,9 @@
                             }
                             cswPrivate.fields = result.grid.fields;
                             cswPrivate.columns = result.grid.columns;
-                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.data = result.grid.data;
-                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.ajaxResult = result;
+                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.init();
 
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
@@ -469,7 +471,7 @@
                     cswPrivate.init();
                 }
             };
-            
+
             //#endregion Grid Init
 
             //#region Public methods
@@ -496,7 +498,7 @@
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
             });
 
-            cswPublic.getSelectedRowCount = Csw.method(function() {
+            cswPublic.getSelectedRowCount = Csw.method(function () {
                 return cswPrivate.grid.getSelectionModel().getSelection().length;
             });
 
@@ -597,7 +599,7 @@
             } ());
 
             return cswPublic;
-            
+
             //#endregion _postCtor
         });
 

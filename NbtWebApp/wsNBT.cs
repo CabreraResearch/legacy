@@ -927,26 +927,14 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey )
         {
             bool IsQuickLaunch = false;
-            string dummyGroupByCol = "";
-            return _prepGridView( ViewId, CswNbtNodeKey, ref RealNodeKey, ref IsQuickLaunch, ref dummyGroupByCol );
+            return _prepGridView( ViewId, CswNbtNodeKey, ref RealNodeKey, ref IsQuickLaunch );
         }
 
         private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey, ref bool IsQuickLaunch )
         {
-            string dummyGroupByCol = "";
-            return _prepGridView( ViewId, CswNbtNodeKey, ref RealNodeKey, ref IsQuickLaunch, ref dummyGroupByCol );
-        }
-
-        private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey, ref bool IsQuickLaunch, ref string GroupByCol )
-        {
             CswNbtView RetView = _getView( ViewId );
             if( null != RetView )
             {
-                CswNbtViewRelationship FirstVr = RetView.Root.ChildRelationships.FirstOrDefault();
-                if( null != FirstVr )
-                {
-                    GroupByCol = FirstVr.GroupByPropName;
-                }
                 if( RetView.Visibility == NbtViewVisibility.Property )
                 {
                     RealNodeKey = _getNodeKey( CswNbtNodeKey );
@@ -1060,13 +1048,12 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                string GroupByCol = "";
-                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch, ref GroupByCol );
+                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
 
                 if( null != View )
                 {
                     var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( ForReport ) );
-                    ReturnVal = ws.runGrid( IsQuickLaunch, GroupByCol: GroupByCol );
+                    ReturnVal = ws.runGrid( IsQuickLaunch );
                 }
 
                 _deInitResources();

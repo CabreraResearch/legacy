@@ -626,6 +626,7 @@
                                                         viewnodejson.groupbypropid = Csw.string(selected.val());
                                                         viewnodejson.groupbyproptype = Csw.string(selected.propNonDom('propType'));
                                                         viewnodejson.groupbypropname = Csw.string(selected.text());
+                                                        currentViewJson.gridgroupbycol = Csw.string(selected.text());
                                                     } // if (false === Csw.isNullOrEmpty(selval)) {
                                                 } // onChange
                                             }); // 
