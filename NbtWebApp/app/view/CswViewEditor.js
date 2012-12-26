@@ -613,7 +613,7 @@
                 _makeAllowCB(row, 'editrel_del', 'Delete', Csw.bool(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
                 row += 1;
 
-                if (viewmode === 'Tree') {
+                if (viewmode === 'Tree' || viewmode === 'Grid') {
                     subTable.cell(row, 1).text('Group By');
                 }
                 var groupBySelect = subTable.cell(row, 2)
@@ -629,8 +629,9 @@
                                                     } // if (false === Csw.isNullOrEmpty(selval)) {
                                                 } // onChange
                                             }); // 
-                if (viewmode !== 'Tree') {
-                    groupBySelect.hide();
+                groupBySelect.hide();
+                if (viewmode === 'Tree' || viewmode === 'Grid') {
+                    groupBySelect.show();
                 }
                 row += 1;
 
@@ -814,8 +815,7 @@
 
 
             // case 27553 - export to code
-            if(Csw.cookie.get(Csw.cookie.cookieNames.Username) === "chemsw_admin")
-            {
+            if (Csw.cookie.get(Csw.cookie.cookieNames.Username) === "chemsw_admin") {
                 var cell21 = table6.cell(2, 1);
                 cell21.empty();
                 cell21.buttonExt({
@@ -1136,7 +1136,7 @@
                         checked: 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
-                    
+
                     //7. We don't need to do this, because we're querying the DOM from the Add button.
                     //$this.CswTristateCheckBox('reBindClick');
                     //8. What hasn't killed you, hasn't killed you yet.
