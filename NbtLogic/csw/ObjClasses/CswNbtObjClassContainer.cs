@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Disposed.Checked = Tristate.True;
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
-                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
+                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose, null, null );
             }
         }
 
@@ -452,7 +452,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _setDisposedReadOnly( false );
                 if( CreateContainerLocation )
                 {
-                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose, null, null );
                 }
             }
         }
@@ -484,7 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
             }
-            _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispense );
+            _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispense, null, null );
         } // DispenseOut()
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassContainerLocation.TypeOptions ContainerLocationType =
                 SourceContainer == null ? CswNbtObjClassContainerLocation.TypeOptions.Receipt
                                         : CswNbtObjClassContainerLocation.TypeOptions.Dispense;
-            _createContainerLocationNode( ContainerLocationType );
+            _createContainerLocationNode( ContainerLocationType, null, null );
         } // DispenseIn()
 
         /// <summary>
@@ -553,6 +553,53 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return eldestContainer;
         }
+
+        #region CISPro/NBT CORE Mobile App Operations
+
+        /// <summary>
+        /// Public wrapper around _createContainerLocationNode(). This is called
+        /// by the batch operation MobileMultiOpUpdates which is used for the
+        /// CISPro/NBT CORE Mobile App.
+        /// 
+        /// Case: 28224
+        /// 
+        /// </summary>
+        /// <param name="Type"></param>
+        public void CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type, string NewLocationBarcode, string ContainerBarcode )
+        {
+            _createContainerLocationNode( Type, NewLocationBarcode, ContainerBarcode );
+        }
+
+        /// <summary>
+        /// Update the location of a container.
+        /// </summary>
+        public void MoveContainer( CswPrimaryKey newLocation )
+        {
+            this.Location.SelectedNodeId = newLocation;
+            this.Location.RefreshNodeName();
+        }
+
+        /// <summary>
+        /// Update the owner of a container.
+        /// </summary>
+        public void UpdateOwner( CswPrimaryKey newOwner )
+        {
+            this.Owner.RelatedNodeId = newOwner;
+            this.Owner.RefreshNodeName();
+        }
+
+        /// <summary>
+        /// Update the owner and location of a container.
+        /// </summary>
+        public void TransferContainer( CswPrimaryKey newLocation, CswPrimaryKey newOwner )
+        {
+            this.Location.SelectedNodeId = newLocation;
+            this.Location.RefreshNodeName();
+            this.Owner.RelatedNodeId = newOwner;
+            this.Owner.RefreshNodeName();
+        }
+
+        #endregion  CISPro/NBT CORE Mobile App Operations
 
         #endregion Custom Logic
 
@@ -697,8 +744,15 @@ namespace ChemSW.Nbt.ObjClasses
                 ContDispTransNode.postChanges( false );
             } // if( ContDispTransNT != null )
         } // _createContainerTransactionNode
-
-        private void _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type )
+        /// <summary>
+        /// Create a new ContainerLocation node. 
+        /// *Note: The NewLocationBarcode and ContainerBarcode parameters are necessary only if the Type = Scan. They
+        /// are currently only used for the reconcile data from the CISPro/NBT CORE mobile app.
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="NewLocationBarcode"></param>
+        /// <param name="ContainerBarcode"></param>
+        private void _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type, string NewLocationBarcode, string ContainerBarcode )
         {
             CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
             if( ContLocNT != null )
@@ -708,9 +762,17 @@ namespace ChemSW.Nbt.ObjClasses
                 ContLocNode.Container.RelatedNodeId = NodeId;
                 if( null != Location )
                 {
-                    ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
-                    ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
-                    ContLocNode.Location.CachedPath = Location.CachedPath;
+                    if( Type != CswNbtObjClassContainerLocation.TypeOptions.Scan )
+                    {
+                        ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
+                        ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
+                        ContLocNode.Location.CachedPath = Location.CachedPath;
+                    }
+                    else
+                    {
+                        ContLocNode.LocationScan.Text = NewLocationBarcode;
+                        ContLocNode.ContainerScan.Text = ContainerBarcode;
+                    }
                 }
                 ContLocNode.ActionApplied.Checked = Tristate.False;
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
@@ -900,7 +962,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                 {
-                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move, null, null );
                 }
             }
 
