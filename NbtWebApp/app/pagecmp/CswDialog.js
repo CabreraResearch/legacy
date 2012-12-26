@@ -852,7 +852,7 @@
             div.fileUpload({
                 uploadUrl: o.urlMethod,
                 params: o.params,
-                onSuccess: function(data) {
+                onSuccess: function (data) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onSuccess, data);
                 }
@@ -907,11 +907,11 @@
                     },
                     success: function (data) {
                         table.cell(4, 2).empty();
-                        if (data.MolImgDataCollection.length > 0) {
-                            molText.val(data.MolImgDataCollection[0].molString);
+                        if (data.molImgAsBase64String) {
+                            molText.val(data.molString);
                             table.cell(4, 2).img({
                                 labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + data.MolImgDataCollection[0].molImgAsBase64String
+                                src: "data:image/jpeg;base64," + data.molImgAsBase64String
                             });
                         }
                     }
@@ -922,16 +922,21 @@
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
             getMolImgFromText('', currentNodeId);
 
-            table.cell(2, 1).fileUpload({
-                uploadUrl: 'getMolImgFromFile',
+            var uploadBtn = table.cell(2, 1).input({
+                name: 'fileupload',
+                labelText: "Mol File",
+                type: Csw.enums.inputTypes.file
+            }).css('float', 'left');
+            uploadBtn.$.fileupload({
+                datatype: 'json',
+                url: 'Services/Mol/getImgFromFile',
                 paramName: 'filename',
-                //params: o.params,
-                onSuccess: function (data) {
-                    molText.val(data.molstring);
+                done: function (e, data) {
+                    molText.val(data.result.Data.molString);
                     table.cell(4, 2).empty();
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + data.bin
+                        src: "data:image/jpeg;base64," + data.result.Data.molImgAsBase64String
                     });
                 }
             });
@@ -994,12 +999,17 @@
 
             div.br({ number: 2 });
 
-            div.fileUpload({
-                uploadUrl: o.FileUrl,
-                params: { PropId: o.PropId },
-                onSuccess: function (data) {
+            var uploadBtn = div.input({
+                name: 'fileupload',
+                type: Csw.enums.inputTypes.file
+            });
+            uploadBtn.$.fileupload({
+                datatype: 'json',
+                url: 'Services/Mol/saveMolPropFile?' + $.param({ PropId: o.PropId }),
+                paramName: 'fileupload',
+                done: function (e, data) {
                     div.$.dialog('close');
-                    o.onSuccess(data);
+                    o.onSuccess(data.result.Data);
                 }
             });
 
@@ -1279,7 +1289,7 @@
             });
             return cswPublic;
         }, // SearchDialog
-        
+
         SaveSearchDialog: function (options) {
             var o = {
                 div: Csw.literals.div(),
@@ -1294,17 +1304,17 @@
             Csw.extend(o, options);
 
             var nameInput = o.div.input({
-                 labelText: 'Name:&nbsp;', 
-                 value: o.name
+                labelText: 'Name:&nbsp;',
+                value: o.name
             });
             o.div.br();
-            
+
             var categoryInput = o.div.input({
-                 labelText: 'Category:&nbsp;', 
-                 value: o.category
+                labelText: 'Category:&nbsp;',
+                value: o.category
             });
             o.div.br();
-            
+
             o.div.button({
                 enabledText: 'Save',
                 onClick: function () {
