@@ -971,7 +971,7 @@
                         data: CswC3SearchParams,
                         success: function (data) {
                             //Convert to object from string
-                            var obj = eval("(" + data.SearchResults + ')');
+                            var obj = JSON.parse(data.SearchResults);
                             Csw.tryExec(options.clearview);
                             Csw.tryExec(options.c3handleresults.handleResults(obj));
                             div.$.dialog('close');
