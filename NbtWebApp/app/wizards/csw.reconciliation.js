@@ -78,7 +78,7 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, Csw.bool(cswPrivate.currentStepNo === cswPrivate.numOfSteps));
                 cswPrivate.toggleButton(cswPrivate.buttons.next, Csw.bool(cswPrivate.currentStepNo < cswPrivate.numOfSteps));
             };
-            
+
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
@@ -142,10 +142,10 @@
                         locationDatesTable.cell(rowNum, 1).span({ text: 'View Mode:' }).addClass('propertylabel');
                         var viewModeSelect = locationDatesTable.cell(rowNum, 2).select({
                             name: 'ReconciliationViewModeSelect',
-                            values: ['Current','History'],
+                            values: ['Current', 'History'],
                             onChange: function () {
                                 cswPrivate.isCurrent = Csw.bool(viewModeSelect.val() === 'Current');
-                                if(cswPrivate.isCurrent) {
+                                if (cswPrivate.isCurrent) {
                                     endDatePicker.hide();
                                     staticEndDate.show();
                                     startDatePicker.setMaxDate(cswPrivate.getCurrentDate());
@@ -240,12 +240,12 @@
                         });
                         cswPrivate.typeCheckBox = [];
                         var typeRowNum = 1;
-                        Csw.each(cswPrivate.state.ContainerLocationTypes, function(type, key) {
+                        Csw.each(cswPrivate.state.ContainerLocationTypes, function (type, key) {
                             cswPrivate.typeCheckBox[typeRowNum - 1] = typeSelectTable.cell(typeRowNum, 1).checkBox({
                                 checked: type.Enabled,
                                 onChange: Csw.method(function () {
                                     cswPrivate.state.ContainerLocationTypes[key].Enabled = cswPrivate.typeCheckBox[key].checked();
-                                    if (cswPrivate.state.ContainerLocationTypes[key].Type != 'Scan'){
+                                    if (cswPrivate.state.ContainerLocationTypes[key].Type != 'Scan') {
                                         if (cswPrivate.state.ContainerLocationTypes[key].Enabled) {
                                             cswPrivate.touchesIncluded++;
                                         } else {
@@ -268,11 +268,12 @@
             //#region Step 2: Statistics
             cswPrivate.makeStep2 = (function () {
                 cswPrivate.stepTwoComplete = false;
-                return function () {                    
+                return function () {
                     if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
-                        cswPrivate.divStep2.label({
+                        var Step2Table = cswPrivate.divStep2.table({});
+                        Step2Table.cell(1, 1).label({
                             text: "Loading Container Statistics...",
                             cssclass: "wizardHelpDesc"
                         });
@@ -330,7 +331,7 @@
                                             numofcontainers: row.ContainerCount,
                                             percentscanned: (Math.round(Csw.number(percent) * 100) / 100) + '%'
                                         });
-                                        if(Csw.startsWith(row.Status, 'Scanned')) {
+                                        if (Csw.startsWith(row.Status, 'Scanned')) {
                                             totalContainersScanned += row.ContainerCount;
                                         } else {
                                             StatusMetricsGridData.push({});
@@ -371,7 +372,8 @@
                                     columns: StatusMetricsGridColumns,
                                     data: StatusMetricsGridData
                                 };
-                                cswPrivate.ReconciliationStatusGrid = cswPrivate.divStep2.grid(cswPrivate.gridOptions);
+                                Step2Table.cell(1, 1).empty();
+                                cswPrivate.ReconciliationStatusGrid = Step2Table.cell(1, 1).grid(cswPrivate.gridOptions);
                                 cswPrivate.toggleStepButtons();
                             }
                         });
@@ -390,7 +392,8 @@
                     if (false === cswPrivate.stepThreeComplete) {
                         cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                         cswPrivate.divStep3.empty();
-                        cswPrivate.divStep3.label({
+                        var Step3Table = cswPrivate.divStep3.table({});
+                        Step3Table.cell(1, 1).label({
                             text: "Loading Containers and their Statuses...",
                             cssclass: "wizardHelpDesc"
                         });
@@ -437,8 +440,8 @@
                                 addColumn('actionoptions', 'Action Options', true);
                                 addColumn('containerbarcode', 'Container Barcode', false);
                                 var StatusOptions = [];
-                                Csw.each(cswPrivate.data.ContainerStatistics, function(row) {
-                                    StatusOptions.push( row.Status );
+                                Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
+                                    StatusOptions.push(row.Status);
                                 });
                                 addColumn('status', 'Status', false, {
                                     type: 'list',
@@ -451,7 +454,7 @@
                                         header: 'Action',
                                         dataIndex: 'action',
                                         xtype: 'actioncolumn',
-                                        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+                                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                                             var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
                                             var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
                                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
@@ -501,25 +504,25 @@
                                     columns: ContainersGridColumns,
                                     data: ContainersGridData
                                 };
-                                var step3Table = cswPrivate.divStep3.table();
+                                Step3Table.cell(1, 1).empty();
                                 //Containers Grid
-                                cswPrivate.makeContainersGrid(step3Table.cell(1, 1), true);
+                                cswPrivate.makeContainersGrid(Step3Table.cell(1, 1), true);
+                                //Filter Correct Containers Checkbox
+                                var filterCorrectTable = Step3Table.cell(2, 1).table({ cellvalign: 'center' });
+                                var filterCorrectCheckbox = filterCorrectTable.cell(1, 1).checkBox({
+                                    checked: true,
+                                    onChange: Csw.method(function () {
+                                        cswPrivate.makeContainersGrid(Step3Table.cell(1, 1), filterCorrectCheckbox.checked());
+                                    })
+                                });
+                                filterCorrectTable.cell(1, 2).span({ text: ' Filter out Correct Containers' });
+                                Step3Table.cell(3, 1).br();
                                 if (cswPrivate.isCurrent) {
-                                    //Filter Correct Containers Checkbox
-                                    var filterCorrectTable = step3Table.cell(2, 1).table({ cellvalign: 'center' });
-                                    var filterCorrectCheckbox = filterCorrectTable.cell(1, 1).checkBox({
-                                        checked: true,
-                                        onChange: Csw.method(function () {
-                                            cswPrivate.makeContainersGrid(step3Table.cell(1, 1), filterCorrectCheckbox.checked());
-                                        })
-                                    });
-                                    filterCorrectTable.cell(1, 2).span({ text: ' Filter out Correct Containers' });
-                                    step3Table.cell(3, 1).br();
                                     //Set Action in Bulk
-                                    var bulkActionTable = step3Table.cell(4, 1).table({ cellvalign: 'center' });
+                                    var bulkActionTable = Step3Table.cell(4, 1).table({ cellvalign: 'center' });
                                     bulkActionTable.cell(1, 1).span({ text: 'Set Action of all Containers with Status&nbsp;' });
                                     var statusOptions = [];
-                                    Csw.each(cswPrivate.data.ContainerStatistics, function(row) {
+                                    Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
                                         if (row.Status.indexOf('Scanned') !== -1 && row.Status !== 'Scanned Correct') {
                                             statusOptions.push(row.Status);
                                         }
@@ -555,7 +558,7 @@
                                                     cswPrivate.addActionChange(row.data, actionSelect.val());
                                                 }
                                             });
-                                            cswPrivate.makeContainersGrid(step3Table.cell(1, 1), filterCorrectCheckbox.checked());
+                                            cswPrivate.makeContainersGrid(Step3Table.cell(1, 1), filterCorrectCheckbox.checked());
                                             applyChangesButton.enable();
                                         }
                                     });
@@ -589,7 +592,7 @@
                 }
                 return cswPrivate.currentDate;
             };
-            
+
             cswPrivate.makeActionPicklist = function (cellId, record) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
@@ -602,7 +605,7 @@
                             selectedOption = row.Action;
                         }
                     });
-                    if (false === Csw.isNullOrEmpty(record.data.currentaction) 
+                    if (false === Csw.isNullOrEmpty(record.data.currentaction)
                         && Csw.isNullOrEmpty(record.data.actionoptions)) {
                         actionOptions.push(record.data.currentaction);
                     }
@@ -618,13 +621,13 @@
                     if (Csw.bool(record.data.actionapplied) === true) {
                         actionSelect.disable();
                     }
-                    if(Csw.isNullOrEmpty(record.data.actionoptions)) {
+                    if (Csw.isNullOrEmpty(record.data.actionoptions)) {
                         actionSelect.hide();
                     }
                 }, 50);
             };
 
-            cswPrivate.addActionChange = function(container, action) {
+            cswPrivate.addActionChange = function (container, action) {
                 var ContainerAction = {
                     ContainerId: container.containerid,
                     ContainerLocationId: container.containerlocationid,
@@ -632,25 +635,25 @@
                     Action: action
                 };
                 var changeExists = false;
-                Csw.each(cswPrivate.state.ContainerActions, function(row, key) {
-                    if(row.ContainerId === ContainerAction.ContainerId) {
+                Csw.each(cswPrivate.state.ContainerActions, function (row, key) {
+                    if (row.ContainerId === ContainerAction.ContainerId) {
                         cswPrivate.state.ContainerActions[key] = ContainerAction;
                         changeExists = true;
                     }
                 });
-                if(false === changeExists) {
+                if (false === changeExists) {
                     cswPrivate.state.ContainerActions.push(ContainerAction);
                 }
             };
 
-            cswPrivate.getActionOptions = function(status) {
+            cswPrivate.getActionOptions = function (status) {
                 var actionOptions = ['', 'No Action'];
                 if (status === 'Scanned, but already marked Disposed') {
                     actionOptions.push('Undispose');
-                        }
+                }
                 if (status === 'Scanned at Wrong Location') {
                     actionOptions.push('Move To Location');
-                    }
+                }
                 if (status === 'Scanned, but Disposed at Wrong Location') {
                     actionOptions.push('Undispose and Move');
                 }
@@ -660,7 +663,7 @@
                 return actionOptions;
             };
 
-            cswPrivate.makeContainersGrid = function(parentDiv, filterOutCorrect) {
+            cswPrivate.makeContainersGrid = function (parentDiv, filterOutCorrect) {
                 parentDiv.empty();
                 cswPrivate.ReconciliationContainersGrid = parentDiv.grid(cswPrivate.gridOptions);
                 var statusFilter = cswPrivate.ReconciliationContainersGrid.extGrid.filters.getFilter('status');
@@ -681,7 +684,7 @@
                 statusFilter.menu.setSelected(optionsToFilter, true);
             };
 
-            cswPrivate.saveChanges = function() {
+            cswPrivate.saveChanges = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Containers/saveContainerActions',
                     data: cswPrivate.state
@@ -731,4 +734,4 @@
 
             return cswPublic;
         });
-} ());
+}());

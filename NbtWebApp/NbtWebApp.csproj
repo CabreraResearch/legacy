@@ -1210,7 +1210,6 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
     <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
@@ -1356,12 +1355,6 @@
     </Compile>
     <Compile Include="Statistics.aspx.designer.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.aspx.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.aspx.designer.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
     </Compile>
     <Compile Include="TermsOfUse.aspx.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>

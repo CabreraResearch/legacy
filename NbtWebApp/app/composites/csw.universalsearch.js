@@ -16,7 +16,7 @@
                 onLoadView: null,
                 onAddView: null,
                 searchbox_width: '200px',
-                showSaveAsView: true,
+                showSave: true,
                 allowEdit: true,
                 allowDelete: true,
                 extraAction: null,
@@ -25,7 +25,6 @@
                 compactResults: false,
                 newsearchurl: 'doUniversalSearch',
                 restoresearchurl: 'restoreUniversalSearch',
-                saveurl: 'saveSearchAsView',
                 sessiondataid: '',
                 searchterm: '',
                 filterHideThreshold: 5 //,
@@ -70,9 +69,9 @@
                 Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
-                        ObjectClassName: '', 
-                        ObjectClassId: '', 
-                        ExcludeNodeTypeIds: '', 
+                        ObjectClassName: '',
+                        ObjectClassId: '',
+                        ExcludeNodeTypeIds: '',
                         RelatedToNodeTypeId: '',
                         RelatedObjectClassPropName: '',
                         FilterToPermission: '',
@@ -90,13 +89,13 @@
                         var selectedText = 'All';
                         var selectedIcon = '';
                         Csw.each(data, function (nt) {
-                            if(false === Csw.isNullOrEmpty(nt.name)) {
+                            if (false === Csw.isNullOrEmpty(nt.name)) {
                                 items.push({
                                     text: nt.name,
                                     icon: nt.iconfilename,
-                                    handler: function() { onPreFilterClick(nt); }
+                                    handler: function () { onPreFilterClick(nt); }
                                 });
-                                if(cswPrivate.nodetypeid === nt.id) {
+                                if (cswPrivate.nodetypeid === nt.id) {
                                     selectedText = '';
                                     selectedIcon = nt.iconfilename;
                                 }
@@ -106,6 +105,7 @@
                         cswPrivate.preFilterSelect = window.Ext.create('Ext.SplitButton', {
                             text: selectedText,
                             icon: selectedIcon,
+                            width: (selectedText.length * 8) + 16,
                             renderTo: cswtable.cell(1, 1).getId(),
                             menu: {
                                 items: items
@@ -114,18 +114,18 @@
 
                     } // success
                 }); // ajax
-
-                var srchOnClick=function (selectedOption) {
+                
+                var srchOnClick = function (selectedOption) {
                     switch (selectedOption) {
-                            case 'Structure Search':
-                                $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
-                                break;
-                            default:
-                                Csw.publish('initPropertyTearDown');
-                                cswPrivate.searchterm = cswPrivate.searchinput.val();
-                                cswPrivate.newsearch();
-                        }
-                }
+                        case 'Structure Search':
+                            $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                            break;
+                        default:
+                            Csw.publish('initPropertyTearDown');
+                            cswPrivate.searchterm = cswPrivate.searchinput.val();
+                            cswPrivate.newsearch();
+                    }
+                };
 
                 cswPrivate.searchinput = cswtable.cell(1, 2).input({
                     type: Csw.enums.inputTypes.search,
@@ -138,6 +138,7 @@
 
                 cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
                     name: 'searchBtn',
+                    width: ('Search'.length * 8) + 16,
                     menuOptions: ['Search', 'Structure Search'],
                     selectedText: 'Search',
                     size: 'small',
@@ -239,7 +240,8 @@
                     paddingTop: '15px'
                 });
 
-                fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
+                fdiv.span({ text: data.name }).br();
+                //fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
                 ftable = fdiv.table({});
 
                 // Filters in use
@@ -273,14 +275,25 @@
 
                 Csw.each(data.filtersapplied, showFilter);
 
-                if (hasFilters && cswPrivate.showSaveAsView) {
+                if (hasFilters && cswPrivate.showSave) {
                     fdiv.br();
-                    fdiv.buttonExt({
-                        enabledText: 'Save as View',
+                    var btntbl = fdiv.table();
+                    btntbl.cell(1,1).buttonExt({
+                        enabledText: 'Save',
                         disableOnClick: false,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-                        onClick: cswPrivate.saveAsView
+                        onClick: cswPrivate.save
                     });
+                    if(false === Csw.isNullOrEmpty(data.searchid)) {
+                        btntbl.cell(1,2).buttonExt({
+                            enabledText: 'Delete',
+                            disableOnClick: false,
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                            onClick: function () {
+                                cswPrivate.deleteSave(data.searchid);
+                            } // onClick
+                        });
+                    }
                 }
                 fdiv.br();
                 fdiv.br();
@@ -301,7 +314,7 @@
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
                             filterSource = thisFilter.source;
-                            if(filterSource === 'Results') {
+                            if (filterSource === 'Results') {
                                 destDiv = filtersDiv.hiddenDiv;
                                 filtersDiv.moreLink.show();
                             } else {
@@ -319,7 +332,7 @@
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }
-                        
+
                         thisdiv.a({
                             text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                             onClick: function () {
@@ -331,7 +344,7 @@
 
                         filterCount++;
                     });
-                    if(false === Csw.isNullOrEmpty(filterName)) {
+                    if (false === Csw.isNullOrEmpty(filterName)) {
                         nameSpan.text(filterName);
                         destDiv.br();
                         destDiv.br();
@@ -339,7 +352,7 @@
                 } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
-                if(false === atLeastOneShown) {
+                if (false === atLeastOneShown) {
                     filtersDiv.showHidden();
                 }
 
@@ -374,27 +387,40 @@
                 });
             }; // filter()
 
-            cswPrivate.saveAsView = function () {
-                $.CswDialog('AddViewDialog', {
-                    category: 'Saved Searches',
-                    onAddView: function (newviewid, viewmode) {
+            cswPrivate.save = function () {
+                $.CswDialog('SaveSearchDialog', {
+                    name: cswPrivate.data.name,
+                    category: cswPrivate.data.category || 'Saved Searches',
+                    onOk: function (name, category) {
 
                         Csw.ajax.post({
-                            urlMethod: cswPrivate.saveurl,
+                            urlMethod: 'saveSearch',
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
-                                ViewId: newviewid
+                                Name: name, 
+                                Category: category
                             },
                             success: function (data) {
-                                Csw.tryExec(cswPrivate.onAddView, newviewid, viewmode);
-                                Csw.tryExec(cswPrivate.onLoadView, newviewid, viewmode);
-                            }
+                                cswPrivate.handleResults(data);
+                            } // success
                         }); // ajax  
 
                     } // onAddView()
                 }); // CswDialog
-            }; // saveAsView()
+            }; // save()
 
+            cswPrivate.deleteSave = function (searchid) {
+                Csw.ajax.post({
+                    urlMethod: 'deleteSearch',
+                    data: {
+                        SearchId: searchid
+                    },
+                    success: function (data) {
+                        cswPrivate.handleResults(data);
+                    } // success
+                }); // ajax  
+            }; // save()
+            
             cswPublic.restoreSearch = function (searchid) {
 
                 cswPrivate.sessiondataid = searchid;

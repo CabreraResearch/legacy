@@ -37,6 +37,15 @@
                 //    }
                 //});
 
+                cswParent.fileUpload = function (opts) {
+                    /// <summary> Creates a Csw.fileUpload on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the fileUpload.</param>
+                    /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'fileUpload');
+                    return Csw.composites.fileUpload(cswParent, opts);
+
+                };
+                
                 cswParent.grid = function (opts) {
                     /// <summary> Creates a Csw.grid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the grid.</param>

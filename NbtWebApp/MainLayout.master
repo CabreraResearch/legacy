@@ -76,7 +76,7 @@
           
           <asp:TableRow>
             <asp:TableCell ID="HeaderTable_LeftCell" CssClass="HeaderTable_LeftCell">
-              <asp:Image runat="server" ID="Image1" ImageUrl="Images/pagelayout/header_logo32.gif" Width="216" Height="32"/>
+              <asp:Image runat="server" ID="Image1" ImageUrl="Images/pagelayout/header_logo32.png" Width="216" Height="32"/>
             </asp:TableCell>
 <%--
             <asp:TableCell ID="HeaderTable_MidTopCell" CssClass="HeaderTable_MidTopCell">

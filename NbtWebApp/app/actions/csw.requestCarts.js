@@ -497,6 +497,17 @@
 
             cswPrivate.makeRecurringTab = function () {
                 var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Items', 'View any recurring Request Items.');
+                Csw.nbt.viewFilters({
+                    name: 'recurring_viewfilters',
+                    isTreeView: false,
+                    parent: ol.li(),
+                    viewid: cswPrivate.state.recurringItemsViewId,
+                    onEditFilters: function (newviewid) {
+                        cswPrivate.state.recurringItemsViewId = newviewid;
+                        cswPrivate.makeRecurringTab();
+                    } // onEditFilters
+                }); // viewFilters
+
                 ol.br();
 
                 var opts = {

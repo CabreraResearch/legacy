@@ -57,6 +57,7 @@ namespace ChemSW.Nbt.MetaData
             public static readonly PropertyFilterMode Begins = new PropertyFilterMode( "Begins" );
             public static readonly PropertyFilterMode Ends = new PropertyFilterMode( "Ends" );
             public static readonly PropertyFilterMode Contains = new PropertyFilterMode( "Contains" );
+            public static readonly PropertyFilterMode NotContains = new PropertyFilterMode( "NotContains" );
             //public static readonly PropertyFilterMode In = new PropertyFilterMode("In");
             public static readonly PropertyFilterMode Null = new PropertyFilterMode( "Null" );
             public static readonly PropertyFilterMode NotNull = new PropertyFilterMode( "NotNull" );
@@ -198,6 +199,11 @@ namespace ChemSW.Nbt.MetaData
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Contains )
                     {
                         ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotContains )
+                    {
+                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend
+                            + " or " + NonNumericValueColumn + " is null" + ")";
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Ends )
                     {

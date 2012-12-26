@@ -849,21 +849,10 @@
 
             var div = Csw.literals.div();
 
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-
-            uploadBtn.$.fileupload({
-                dataType: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.urlMethod + '?' + $.param(o.params),
-                done: function (e, jqXHR) {
-                    var data = {};
-                    if (jqXHR.result && jqXHR.result.data) {
-                        data = jqXHR.result.data;
-                    } else if (jqXHR.data) {
-                        data = jqXHR.data;
-                    }
+            div.fileUpload({
+                uploadUrl: o.urlMethod,
+                params: o.params,
+                onSuccess: function(data) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onSuccess, data);
                 }
@@ -918,34 +907,31 @@
                     },
                     success: function (data) {
                         table.cell(4, 2).empty();
-                        molText.val(data.molString);
-                        table.cell(4, 2).img({
-                            labelText: "Query Image",
-                            src: "data:image/jpeg;base64," + data.molImgAsBase64String
-                        });
+                        if (data.MolImgDataCollection.length > 0) {
+                            molText.val(data.MolImgDataCollection[0].molString);
+                            table.cell(4, 2).img({
+                                labelText: "Query Image",
+                                src: "data:image/jpeg;base64," + data.MolImgDataCollection[0].molImgAsBase64String
+                            });
+                        }
                     }
                 });
                 return ret;
-            }
+            };
 
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
             getMolImgFromText('', currentNodeId);
 
-            var uploadBtn = table.cell(2, 1).input({
-                name: 'fileupload',
-                labelText: "Mol File",
-                type: Csw.enums.inputTypes.file
-            }).css('float', 'left');
-            uploadBtn.$.fileupload({
-                datatype: 'json',
-                url: 'Services/Mol/getImgFromFile',
+            table.cell(2, 1).fileUpload({
+                uploadUrl: 'getMolImgFromFile',
                 paramName: 'filename',
-                done: function (e, data) {
-                    molText.val(data.result.Data.molString);
+                //params: o.params,
+                onSuccess: function (data) {
+                    molText.val(data.molstring);
                     table.cell(4, 2).empty();
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + data.result.Data.molImgAsBase64String
+                        src: "data:image/jpeg;base64," + data.bin
                     });
                 }
             });
@@ -998,7 +984,7 @@
             if (options) {
                 Csw.extend(o, options);
             }
-            var div = Csw.literals.div({ ID: 'editmoldialogmasterdiv' }),
+            var div = Csw.literals.div(),
                 molTxtArea, saveBtn;
 
             div.label({
@@ -1008,17 +994,12 @@
 
             div.br({ number: 2 });
 
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-            uploadBtn.$.fileupload({
-                datatype: 'json',
-                url: 'Services/Mol/saveMolPropFile?' + $.param({ PropId: o.PropId }),
-                paramName: 'fileupload',
-                done: function (e, data) {
+            div.fileUpload({
+                uploadUrl: o.FileUrl,
+                params: { PropId: o.PropId },
+                onSuccess: function (data) {
                     div.$.dialog('close');
-                    o.onSuccess(data.result.Data);
+                    o.onSuccess(data);
                 }
             });
 
@@ -1028,8 +1009,8 @@
 
             molTxtArea = div.textArea({
                 name: '',
-                rows: 12,
-                cols: 50,
+                rows: 6,
+                cols: 40
             });
             molTxtArea.text(o.molData);
             div.br();
@@ -1041,11 +1022,11 @@
                 enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Mol/saveMolPropText',
+                    Csw.ajax.post({
+                        urlMethod: o.TextUrl,
                         data: {
-                            molString: molTxtArea.val(),
-                            propId: o.PropId
+                            molData: molTxtArea.val(),
+                            PropId: o.PropId
                         },
                         success: function (data) {
                             div.$.dialog('close');
@@ -1065,7 +1046,7 @@
                 }
             });
 
-            openDialog(div, 550, 400, null, 'Change MOL Data');
+            openDialog(div, 400, 300, null, 'Change MOL Data');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             var o = {
@@ -1285,7 +1266,7 @@
                 onAfterNewSearch: function (searchid) { },
                 onAddView: function (viewid, viewmode) { },
                 onLoadView: function (viewid, viewmode) { },
-                showSaveAsView: false,
+                showSave: false,
                 allowEdit: false,
                 allowDelete: false,
                 compactResults: true,
@@ -1298,7 +1279,49 @@
             });
             return cswPublic;
         }, // SearchDialog
+        
+        SaveSearchDialog: function (options) {
+            var o = {
+                div: Csw.literals.div(),
+                title: 'Save Search',
+                onOk: null,
+                onClose: null,
+                height: 400,
+                width: 600,
+                name: '',
+                category: ''
+            };
+            Csw.extend(o, options);
 
+            var nameInput = o.div.input({
+                 labelText: 'Name:&nbsp;', 
+                 value: o.name
+            });
+            o.div.br();
+            
+            var categoryInput = o.div.input({
+                 labelText: 'Category:&nbsp;', 
+                 value: o.category
+            });
+            o.div.br();
+            
+            o.div.button({
+                enabledText: 'Save',
+                onClick: function () {
+                    Csw.tryExec(o.onOk, nameInput.val(), categoryInput.val());
+                    o.div.$.dialog('close');
+                }
+            });
+
+            o.div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    o.div.$.dialog('close');
+                }
+            });
+
+            openDialog(o.div, o.width, o.height, o.onClose, o.title);
+        }, // SearchDialog
         GenericDialog: function (options) {
             var o = {
                 div: Csw.literals.div(),

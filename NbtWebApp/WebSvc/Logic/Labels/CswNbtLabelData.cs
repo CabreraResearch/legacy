@@ -32,6 +32,19 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         [DataMember( IsRequired = true )]
         [Description( "The EPL Text to define the Print Label" )]
         public string EplText = string.Empty;
+
+        /// <summary>
+        /// Optional collection of Picto file names and URLs
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "Optional collection of Picto file names and URLs" )]
+        public Collection<Picto> Pictos = new Collection<Picto>();
+
+        public class Picto
+        {
+            public string FileName = "";
+            public string FileURL = "";
+        }
     }
 
     /// <summary>
@@ -135,7 +148,6 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [DataMember( IsRequired = false )]
                 [Description( "Optional params to apply to EPL text on label" )]
                 public string Params = string.Empty;
-
             }
         }
 
