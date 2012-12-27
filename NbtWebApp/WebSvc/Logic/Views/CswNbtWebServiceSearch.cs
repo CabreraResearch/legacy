@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using ChemSW.Core;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Search;
