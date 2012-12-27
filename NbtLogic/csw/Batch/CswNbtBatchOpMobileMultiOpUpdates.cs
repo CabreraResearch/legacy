@@ -257,13 +257,13 @@ namespace ChemSW.Nbt.Batch
 
         #region Helper Methods
 
-        private CswNbtNode _getNodeFromBarcode( string barcode, NbtObjectClass objClassType )
+        private CswNbtNode _getNodeFromBarcode( string barcode, NbtObjectClass objClassType, string barcodePropertyName )
         {
             CswNbtNode returnNode = null;
 
             CswNbtView objClassView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataObjectClass objClass = _CswNbtResources.MetaData.getObjectClass( objClassType );
-            CswNbtMetaDataObjectClassProp barcodeOCP = objClass.getObjectClassProp( "Barcode" );
+            CswNbtMetaDataObjectClassProp barcodeOCP = objClass.getObjectClassProp( barcodePropertyName );
 
             CswNbtViewRelationship parent = objClassView.AddViewRelationship( objClass, true );
             objClassView.AddViewPropertyAndFilter( parent,
@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.Batch
         {
             bool ReturnVal = false;
 
-            CswNbtObjClassContainer ContainerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass );
+            CswNbtObjClassContainer ContainerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != ContainerNode )
             {
                 ContainerNode.DisposeContainer();
@@ -306,13 +306,13 @@ namespace ChemSW.Nbt.Batch
 
             string newLocationBarcode = update["location"].ToString();
             CswPrimaryKey newLocationNodeId = null;
-            CswNbtNode newLocationNode = _getNodeFromBarcode( newLocationBarcode, NbtObjectClass.LocationClass );
+            CswNbtNode newLocationNode = _getNodeFromBarcode( newLocationBarcode, NbtObjectClass.LocationClass, CswNbtObjClassLocation.PropertyName.Barcode );
             if( null != newLocationNode )
             {
                 newLocationNodeId = newLocationNode.NodeId;
             }
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass );
+            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != containerNode )
             {
                 containerNode.MoveContainer( newLocationNodeId );
@@ -328,13 +328,13 @@ namespace ChemSW.Nbt.Batch
             bool returnVal = false;
             string newOwnerBarcode = update["user"].ToString();
             CswPrimaryKey newOwnerNodeId = null;
-            CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass );
+            CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass, CswNbtObjClassUser.PropertyName.Barcode );
             if( null != newOwnerNode )
             {
                 newOwnerNodeId = newOwnerNode.NodeId;
             }
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass );
+            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != containerNode )
             {
                 containerNode.UpdateOwner( newOwnerNodeId );
@@ -352,20 +352,20 @@ namespace ChemSW.Nbt.Batch
             string newLocationBarcode = update["location"].ToString();
 
             CswPrimaryKey newLocationNodeId = null;
-            CswNbtNode newLocationNode = _getNodeFromBarcode( newLocationBarcode, NbtObjectClass.LocationClass );
+            CswNbtNode newLocationNode = _getNodeFromBarcode( newLocationBarcode, NbtObjectClass.LocationClass, CswNbtObjClassLocation.PropertyName.Barcode );
             if( null != newLocationNode )
             {
                 newLocationNodeId = newLocationNode.NodeId;
             }
 
             CswPrimaryKey newOwnerNodeId = null;
-            CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass );
+            CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass, CswNbtObjClassUser.PropertyName.Barcode );
             if( null != newOwnerNode )
             {
                 newOwnerNodeId = newOwnerNode.NodeId;
             }
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass );
+            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != containerNode )
             {
                 containerNode.TransferContainer( newLocationNodeId, newOwnerNodeId );
@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.Batch
                 }
             }
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass );
+            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != containerNode )
             {
                 containerNode.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, CswConvert.ToDouble( update["qty"] ), uomId );
@@ -409,7 +409,7 @@ namespace ChemSW.Nbt.Batch
             bool returnVal = false;
             string newLocationBarcode = update["location"].ToString();
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass );
+            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != containerNode )
             {
                 containerNode.CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Scan, newLocationBarcode, barcode );
