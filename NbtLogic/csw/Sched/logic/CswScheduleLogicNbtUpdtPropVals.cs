@@ -36,12 +36,10 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        private CswNbtResources _CswNbtResources = null;
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            //_CswNbtResources.AuditContext = "Scheduler Task: Update Property Values";
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+            //CswNbtResources.AuditContext = "Scheduler Task: Update Property Values";
         }
 
 
@@ -57,6 +55,8 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
@@ -64,14 +64,14 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
 
-                    if( _CswNbtResources == null )
-                        throw new CswDniException( "_CswNbtResources is null" );
+                    if( CswNbtResources == null )
+                        throw new CswDniException( "CswNbtResources is null" );
 
                     // Find which nodes are out of date
-                    CswStaticSelect OutOfDateNodesQuerySelect = _CswNbtResources.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
+                    CswStaticSelect OutOfDateNodesQuerySelect = CswNbtResources.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
                     DataTable OutOfDateNodes = null;
 
-                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    int NodesPerCycle = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
                     OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
                     OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
 
@@ -97,12 +97,12 @@ namespace ChemSW.Nbt.Sched
                         Int32 index = rand.Next( 0, OutOfDateNodes.Rows.Count );
 
                         CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OutOfDateNodes.Rows[index]["nodeid"].ToString() ) );
-                        CswNbtNode Node = _CswNbtResources.Nodes[nodeid];
+                        CswNbtNode Node = CswNbtResources.Nodes[nodeid];
                         if( Node != null )
                         {
                             if( Node.getNodeType() != null )
                             {
-                                CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                                CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( CswNbtResources );
                                 CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
                                 Node.postChanges( false );
                             }
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtPropVals exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;//last line
                 }
 

@@ -41,18 +41,20 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        private CswNbtResources _CswNbtResources = null;
+
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            //_CswNbtResources.AuditContext = "Scheduler Task: Update MTBF";
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
-
         }
 
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
+
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+
+            //CswNbtResources.AuditContext = "Scheduler Task: Update MTBF";
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
@@ -62,9 +64,9 @@ namespace ChemSW.Nbt.Sched
 
                     // BZ 6779
                     // Set all MTBF fields pendingupdate = 1
-                    Int32 MTBFId = _CswNbtResources.MetaData.getFieldType( ChemSW.Nbt.MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId;
+                    Int32 MTBFId = CswNbtResources.MetaData.getFieldType( ChemSW.Nbt.MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId;
 
-                    CswTableSelect NTPSelect = _CswNbtResources.makeCswTableSelect( "UpdateMTBF_NTP_Select", "nodetype_props" );
+                    CswTableSelect NTPSelect = CswNbtResources.makeCswTableSelect( "UpdateMTBF_NTP_Select", "nodetype_props" );
                     DataTable NTPTable = NTPSelect.getTable( "fieldtypeid", MTBFId );
                     string NTPIds = string.Empty;
                     foreach( DataRow NTPRow in NTPTable.Rows )
@@ -75,7 +77,7 @@ namespace ChemSW.Nbt.Sched
 
                     if( NTPIds != string.Empty )
                     {
-                        CswTableUpdate JNPUpdate = _CswNbtResources.makeCswTableUpdate( "UpdateMTBF_JNP_Update", "jct_nodes_props" );
+                        CswTableUpdate JNPUpdate = CswNbtResources.makeCswTableUpdate( "UpdateMTBF_JNP_Update", "jct_nodes_props" );
                         DataTable JNPTable = JNPUpdate.getTable( "where nodetypepropid in (" + NTPIds + ")" );
                         foreach( DataRow JNPRow in JNPTable.Rows )
                         {
@@ -93,7 +95,7 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtMTBF::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch

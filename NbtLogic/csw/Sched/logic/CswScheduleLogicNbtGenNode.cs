@@ -43,12 +43,10 @@ namespace ChemSW.Nbt.Sched
 
 
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
-        private CswNbtResources _CswNbtResources = null;
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+
 
         }//initScheduleLogicDetail()
 
@@ -57,12 +55,17 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+
+
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 try
                 {
-                    Int32 GeneratorLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
+                    Int32 GeneratorLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
                     if( Int32.MinValue == GeneratorLimit )
                     {
                         GeneratorLimit = 1;
@@ -127,7 +130,7 @@ namespace ChemSW.Nbt.Sched
                                         }
                                         else
                                         {
-                                            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+                                            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( CswNbtResources );
                                             bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
                                             if( Finished ) // case 26111
                                             {
@@ -156,7 +159,7 @@ namespace ChemSW.Nbt.Sched
                                 CurrentGenerator.Enabled.Checked = Tristate.False;
                                 CurrentGenerator.RunStatus.AddComment( "Disabled due do exception: " + Exception.Message );
                                 CurrentGenerator.postChanges( false );
-                                _CswNbtResources.logError( new CswDniException( Message ) );
+                                CswNbtResources.logError( new CswDniException( Message ) );
 
 
                             }//catch
@@ -175,7 +178,7 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
 

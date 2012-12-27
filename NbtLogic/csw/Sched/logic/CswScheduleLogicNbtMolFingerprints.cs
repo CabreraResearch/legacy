@@ -46,17 +46,18 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        private CswNbtResources _CswNbtResources = null;
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
         }
 
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
+
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
@@ -70,7 +71,7 @@ namespace ChemSW.Nbt.Sched
                                         where ntp.fieldtypeid = (select fieldtypeid from field_types ft where ft.fieldtype = 'MOL')
                                             and jnp.clobdata is not null 
                                             and not exists (select nodeid from mol_keys where nodeid = jnp.nodeid)";
-                    CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getNonFingerprintedMols", sql );
+                    CswArbitrarySelect arbSelect = CswNbtResources.makeCswArbitrarySelect( "getNonFingerprintedMols", sql );
 
                     int lowerBound = 0;
                     int upperBound = 500;
@@ -81,8 +82,8 @@ namespace ChemSW.Nbt.Sched
                         nonFingerprintedMols.Add( row["nodeid"].ToString() );
                     }
 
-                    CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( _CswNbtResources );
-                    int nodesPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( CswNbtResources );
+                    int nodesPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
                     batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
@@ -94,7 +95,7 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtMolFingerprints::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch

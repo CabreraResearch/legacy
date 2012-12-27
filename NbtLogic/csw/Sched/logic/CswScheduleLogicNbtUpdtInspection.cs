@@ -43,13 +43,10 @@ namespace ChemSW.Nbt.Sched
 
 
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
-        private CswNbtResources _CswNbtResources = null;
+
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            //_CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
 
 
@@ -60,6 +57,11 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+            //CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
@@ -77,7 +79,7 @@ namespace ChemSW.Nbt.Sched
                         CswNbtObjClassInspectionDesign CurrentInspectionDesign = InspectionDesigns[idx];
 
                         DateTime DueDate = CurrentInspectionDesign.DueDate.DateTimeValue;
-                        //CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
+                        //CswNbtNode GeneratorNode = CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
                         //if( null != GeneratorNode &&
                         if( _Pending == CurrentInspectionDesign.Status.Value &&
                             DateTime.Today >= DueDate &&
@@ -106,7 +108,7 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtInspection::threadCallBack() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch

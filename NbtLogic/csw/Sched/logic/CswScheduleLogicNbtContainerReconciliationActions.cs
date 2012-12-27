@@ -14,7 +14,6 @@ namespace ChemSW.Nbt.Sched
     {
         #region Properties
 
-        private CswNbtResources _CswNbtResources;
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
@@ -39,7 +38,6 @@ namespace ChemSW.Nbt.Sched
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetailIn )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetailIn;
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
 
 
@@ -63,18 +61,21 @@ namespace ChemSW.Nbt.Sched
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
                 try
                 {
-                    makeReconciliationActionBatchProcess();
+                    makeReconciliationActionBatchProcess( CswNbtResources );
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = LogicRunStatus.Succeeded;
                 }
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtContainerReconciliationActions exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
                 }
             }
@@ -84,23 +85,23 @@ namespace ChemSW.Nbt.Sched
 
         #region Schedule-Specific Logic
 
-        public void makeReconciliationActionBatchProcess()
+        public void makeReconciliationActionBatchProcess( CswNbtResources CswNbtResources )
         {
-            CswNbtView ContainerLocationsView = getOutstandingContainerLocations();
-            CswCommaDelimitedString ContainerLocations = getContainerLocationIds( ContainerLocationsView );
+            CswNbtView ContainerLocationsView = getOutstandingContainerLocations( CswNbtResources );
+            CswCommaDelimitedString ContainerLocations = getContainerLocationIds( CswNbtResources, ContainerLocationsView );
             if( ContainerLocations.Count > 0 )
             {
-                CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( _CswNbtResources );
+                CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
                 Int32 ContainersProcessedPerIteration =
-                    CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
                 BatchOp.makeBatchOp( ContainerLocations, ContainersProcessedPerIteration );
             }
         }
 
-        public CswNbtView getOutstandingContainerLocations()
+        public CswNbtView getOutstandingContainerLocations( CswNbtResources CswNbtResources )
         {
-            CswNbtView ContainerLocationsView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtView ContainerLocationsView = new CswNbtView( CswNbtResources );
+            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
             CswNbtViewRelationship ParentRelationship = ContainerLocationsView.AddViewRelationship( ContainerLocationOc, true );
             CswNbtMetaDataObjectClassProp ActionAppliedOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ActionApplied );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
@@ -122,10 +123,10 @@ namespace ChemSW.Nbt.Sched
             return ContainerLocationsView;
         }
 
-        public CswCommaDelimitedString getContainerLocationIds( CswNbtView ContainerLocationsView )
+        public CswCommaDelimitedString getContainerLocationIds( CswNbtResources CswNbtResources, CswNbtView ContainerLocationsView )
         {
             CswCommaDelimitedString ContainerLocations = new CswCommaDelimitedString();
-            ICswNbtTree ContainerLocationsTree = _CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
+            ICswNbtTree ContainerLocationsTree = CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             int ContainerLocationCount = ContainerLocationsTree.getChildNodeCount();
             for( int i = 0; i < ContainerLocationCount; i++ )
             {

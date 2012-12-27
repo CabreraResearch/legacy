@@ -41,15 +41,12 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        private CswNbtResources _CswNbtResources = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
 
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }//initScheduleLogicDetail() 
 
 
@@ -62,9 +59,15 @@ namespace ChemSW.Nbt.Sched
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
 
+                CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
                     string InnerErrorMessage = string.Empty;
+                    _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+                    CswResources.AuditContext = "Scheduler Task: " + RuleName;
+
+
+
                     Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
                     Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
 
@@ -154,7 +157,7 @@ namespace ChemSW.Nbt.Sched
 
                     if( MailReportIdsToRun.Count > 0 )
                     {
-                        CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( _CswNbtResources );
+                        CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( CswNbtResources );
                         BatchOp.makeBatchOp( MailReportIdsToRun );
                     }
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
@@ -165,7 +168,7 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "An exception occurred: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
