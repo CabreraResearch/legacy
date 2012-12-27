@@ -53,15 +53,8 @@ namespace ChemSW.Nbt.WebServices
         public static void GetAvailableDataSources( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-            CswC3Params = new CswC3Params();
 
-            CswC3Params.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue(
-                CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
-            CswC3Params.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue(
-                CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
-            CswC3Params.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue(
-                CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
-
+            _setConfigurationVariables( CswC3Params );
 
             ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
             CswRetObjSearchResults SourcesList = C3Search.getDataSources( CswC3Params );
@@ -75,14 +68,8 @@ namespace ChemSW.Nbt.WebServices
                                            CswC3Params CswC3Params )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-            CswC3Params = new CswC3Params();
 
-            CswC3Params.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue(
-                CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
-            CswC3Params.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue(
-                CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
-            CswC3Params.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue(
-                CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
+            _setConfigurationVariables( CswC3Params );
 
             List<string> newlist = new List<string>();
 
@@ -100,9 +87,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
-            CswC3SearchParams.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
-            CswC3SearchParams.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
-            CswC3SearchParams.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
+            _setConfigurationVariables( CswC3SearchParams );
 
             JObject ret = new JObject();
 
@@ -122,7 +107,33 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        #region Public
+        #region Private helper methods
+
+        /// <summary>
+        /// Set the c3 parameter object's CustomerLoginName, LoginPassword, and AccessId
+        /// parameters using the values from the configuration_variables table in the db.
+        /// </summary>
+        /// <param name="CswC3Params"></param>
+        private static void _setConfigurationVariables( CswC3Params CswC3Params )
+        {
+
+            CswC3Params.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
+            CswC3Params.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
+            CswC3Params.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
+
+        }
+
+        /// <summary>
+        /// Set the c3 search parameter object's CustomerLoginName, LoginPassword, and AccessId
+        /// parameters using the values from the configuration_variables table in the db.
+        /// </summary>
+        /// <param name="CswC3SearchParams"></param>
+        private static void _setConfigurationVariables( CswC3SearchParams CswC3SearchParams )
+        {
+            CswC3SearchParams.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
+            CswC3SearchParams.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
+            CswC3SearchParams.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
+        }
 
         #endregion
     }

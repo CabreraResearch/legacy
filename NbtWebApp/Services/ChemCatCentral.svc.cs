@@ -35,7 +35,7 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceC3Search.GetAvailableDataSources,
-                ParamObj: CswC3Params
+                ParamObj: new CswC3Params()
                 );
 
             SvcDriver.run();
@@ -51,14 +51,14 @@ namespace NbtWebApp
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceC3Search.CswNbtC3SearchReturn GetSearchTypes( CswC3Params CswC3Params )
         {
-            
+
             CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3Params>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceC3Search.GetSearchTypes,
-                ParamObj: CswC3Params
+                ParamObj: new CswC3Params()
                 );
 
             SvcDriver.run();
