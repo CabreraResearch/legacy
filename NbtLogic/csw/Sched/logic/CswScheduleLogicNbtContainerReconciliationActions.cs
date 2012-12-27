@@ -42,13 +42,8 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
 
-        public void initResource( ICswResources RuleResources )
-        {
-            _CswNbtResources = (CswNbtResources) RuleResources;
 
-        }//initResource()
-
-        public bool doesRuleHaveLoad()
+        public bool hasLoad( ICswResources CswResources )
         {
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }
@@ -63,12 +58,7 @@ namespace ChemSW.Nbt.Sched
             _LogicRunStatus = LogicRunStatus.Idle;
         }
 
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
-        public void threadCallBack()
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
             if( LogicRunStatus.Stopping != _LogicRunStatus )

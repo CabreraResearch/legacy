@@ -21,10 +21,10 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.UpdtInspection.ToString() ); }
         }
 
-        public bool doesRuleHaveLoad()
+        public bool hasLoad( ICswResources CswResources )
         {
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
-        }//doesRuleHaveLoad()
+        }//hasLoad()
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Sched
 
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswNbtResources _CswNbtResources = null;
-        public void initScheduleLogicDetail(  CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
@@ -51,17 +51,10 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        public void initResource( ICswResources RuleResources )
-        {
-            _CswNbtResources = (CswNbtResources) RuleResources;
-
-        }//initResource()
-
-
         //private CswNbtNode _CswNbtNodeGenerator;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatus.Pending;
         private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatus.Overdue;
-        public void threadCallBack()
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
@@ -133,13 +126,6 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
-
     }//CswScheduleLogicNbtUpdtInspection
 
 

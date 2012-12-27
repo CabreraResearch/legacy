@@ -18,12 +18,12 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.GenEmailRpt.ToString() ); }
         }
 
-        public bool doesRuleHaveLoad()
+        public bool hasLoad( ICswResources CswResources )
         {
 
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
 
-        }//doesRuleHaveLoad()
+        }//hasLoad()
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Sched
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
 
-        public void initScheduleLogicDetail(  CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
@@ -51,14 +51,9 @@ namespace ChemSW.Nbt.Sched
         }//initScheduleLogicDetail() 
 
 
-        public void initResource( ICswResources RuleResources )
-        {
-            _CswNbtResources = (CswNbtResources) RuleResources;
-
-        }//initResource()
 
 
-        public void threadCallBack()
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
@@ -185,12 +180,6 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
     }//CswScheduleLogicNbtGenEmailRpt
 
 }//namespace ChemSW.Nbt.Sched

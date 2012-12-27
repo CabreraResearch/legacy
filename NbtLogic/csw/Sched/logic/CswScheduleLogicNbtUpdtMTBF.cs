@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Sched
         }
 
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
-        public bool doesRuleHaveLoad()
+        public bool hasLoad( ICswResources CswResources )
         {
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }
@@ -48,14 +48,7 @@ namespace ChemSW.Nbt.Sched
 
         }
 
-        public void initResource( ICswResources RuleResources )
-        {
-            _CswNbtResources = (CswNbtResources) RuleResources;
-
-        }//initResource()
-
-
-        public void threadCallBack()
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
@@ -119,12 +112,6 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
     }//CswScheduleLogicNbtUpdtMTBF
 
 

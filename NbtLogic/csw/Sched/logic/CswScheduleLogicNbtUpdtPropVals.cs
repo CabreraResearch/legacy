@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.UpdtPropVals.ToString() ); }
         }
 
-        public bool doesRuleHaveLoad()
+        public bool hasLoad( ICswResources CswResources )
         {
             return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
         }
@@ -35,18 +35,12 @@ namespace ChemSW.Nbt.Sched
         }
 
         private CswNbtResources _CswNbtResources = null;
-        public void initScheduleLogicDetail(  CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             //_CswNbtResources.AuditContext = "Scheduler Task: Update Property Values";
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
-
-        public void initResource( ICswResources RuleResources )
-        {
-            _CswNbtResources = (CswNbtResources) RuleResources;
-
-        }//initResource()
 
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
@@ -57,7 +51,7 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        public void threadCallBack()
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
@@ -154,11 +148,6 @@ namespace ChemSW.Nbt.Sched
         public void reset()
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
-        }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
         }
     }//CswScheduleLogicNbtUpdtPropVals
 
