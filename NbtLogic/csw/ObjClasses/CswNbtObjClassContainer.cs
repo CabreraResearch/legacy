@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Disposed.Checked = Tristate.True;
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
-                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose, null, null );
+                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
             }
         }
 
@@ -452,7 +452,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _setDisposedReadOnly( false );
                 if( CreateContainerLocation )
                 {
-                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose, null, null );
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
                 }
             }
         }
@@ -484,7 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
             }
-            _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispense, null, null );
+            _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispense );
         } // DispenseOut()
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassContainerLocation.TypeOptions ContainerLocationType =
                 SourceContainer == null ? CswNbtObjClassContainerLocation.TypeOptions.Receipt
                                         : CswNbtObjClassContainerLocation.TypeOptions.Dispense;
-            _createContainerLocationNode( ContainerLocationType, null, null );
+            _createContainerLocationNode( ContainerLocationType );
         } // DispenseIn()
 
         /// <summary>
@@ -752,7 +752,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="Type"></param>
         /// <param name="NewLocationBarcode"></param>
         /// <param name="ContainerBarcode"></param>
-        private void _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type, string NewLocationBarcode, string ContainerBarcode )
+        private void _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type, string NewLocationBarcode = "", string ContainerBarcode = "" )
         {
             CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
             if( ContLocNT != null )
@@ -962,7 +962,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                 {
-                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move, null, null );
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
                 }
             }
 
