@@ -2,10 +2,10 @@
 using System.Collections.ObjectModel;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Nbt.csw.Mobile;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Schema;
-using ChemSW.Nbt.csw.Mobile;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Batch
                                 case "Owner":
                                     try
                                     {
-                                        bool success = _owner( barcode, update );
+                                        bool success = _updateOwner( barcode, update );
                                         if( success )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.Batch
             return ReturnVal;
         }
 
-        private bool _owner( string barcode, JObject update )
+        private bool _updateOwner( string barcode, JObject update )
         {
             bool ReturnVal = false;
             string newOwner = update["user"].ToString();
