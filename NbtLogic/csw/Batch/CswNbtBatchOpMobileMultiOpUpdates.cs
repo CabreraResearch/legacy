@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.csw.Mobile;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Schema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -360,62 +359,65 @@ namespace ChemSW.Nbt.Batch
 
         private bool _move( string barcode, JObject update )
         {
-            bool ReturnVal = false;
+            bool returnVal = false;
             string newLocation = update["location"].ToString();
+            CswPrimaryKey newLocationNodeId = _getLocationNodeIdFromBarcode( newLocation );
 
-            CswNbtObjClassContainer ContainerNode = _getContainerNodeFromBarcode( barcode );
-            if( null != ContainerNode )
+            CswNbtObjClassContainer containerNode = _getContainerNodeFromBarcode( barcode );
+            if( null != containerNode )
             {
-                ContainerNode.MoveContainer( _getLocationNodeIdFromBarcode( newLocation ) );
-                ContainerNode.postChanges( false );
-                ReturnVal = true;
+                containerNode.MoveContainer( newLocationNodeId );
+                containerNode.postChanges( false );
+                returnVal = true;
             }
 
-            return ReturnVal;
+            return returnVal;
         }
 
         private bool _updateOwner( string barcode, JObject update )
         {
-            bool ReturnVal = false;
+            bool returnVal = false;
             string newOwner = update["user"].ToString();
+            CswPrimaryKey newOwnerNodeId = _getUserNodeIdFromBarcode( newOwner );
 
-            CswNbtObjClassContainer ContainerNode = _getContainerNodeFromBarcode( barcode );
-            if( null != ContainerNode )
+            CswNbtObjClassContainer containerNode = _getContainerNodeFromBarcode( barcode );
+            if( null != containerNode )
             {
-                ContainerNode.UpdateOwner( _getUserNodeIdFromBarcode( newOwner ) );
-                ContainerNode.postChanges( false );
-                ReturnVal = true;
+                containerNode.UpdateOwner( newOwnerNodeId );
+                containerNode.postChanges( false );
+                returnVal = true;
             }
 
-            return ReturnVal;
+            return returnVal;
         }
 
         private bool _transfer( string barcode, JObject update )
         {
-            bool ReturnVal = false;
+            bool returnVal = false;
             string newOwner = update["user"].ToString();
             string newLocation = update["location"].ToString();
 
-            CswNbtObjClassContainer ContainerNode = _getContainerNodeFromBarcode( barcode );
-            if( null != ContainerNode )
+            CswPrimaryKey newLocationNodeId = _getLocationNodeIdFromBarcode( newLocation );
+            CswPrimaryKey newOwnerNodeId = _getUserNodeIdFromBarcode( newOwner );
+
+            CswNbtObjClassContainer containerNode = _getContainerNodeFromBarcode( barcode );
+            if( null != containerNode )
             {
-                ContainerNode.TransferContainer( _getLocationNodeIdFromBarcode( newLocation ), _getUserNodeIdFromBarcode( newOwner ) );
-                ContainerNode.postChanges( false );
-                ReturnVal = true;
+                containerNode.TransferContainer( newLocationNodeId, newOwnerNodeId );
+                containerNode.postChanges( false );
+                returnVal = true;
             }
 
-            return ReturnVal;
+            return returnVal;
         }
 
         private bool _dispense( string barcode, JObject update )
         {
-            bool ReturnVal = false;
-
-            CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+            bool returnVal = false;
 
             string uom = update["uom"].ToString().ToLower();
             CswPrimaryKey uomId = null;
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
 
             foreach( CswNbtObjClassUnitOfMeasure currentUnitOfMeasureNode in UnitOfMeasureOC.getNodes( false, false, false, true ) )
             {
@@ -426,32 +428,32 @@ namespace ChemSW.Nbt.Batch
                 }
             }
 
-            CswNbtObjClassContainer ContainerNode = _getContainerNodeFromBarcode( barcode );
-            if( null != ContainerNode )
+            CswNbtObjClassContainer containerNode = _getContainerNodeFromBarcode( barcode );
+            if( null != containerNode )
             {
-                ContainerNode.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, CswConvert.ToDouble( update["qty"] ), uomId );
-                ContainerNode.postChanges( false );
-                ReturnVal = true;
+                containerNode.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, CswConvert.ToDouble( update["qty"] ), uomId );
+                containerNode.postChanges( false );
+                returnVal = true;
             }
 
-            return ReturnVal;
+            return returnVal;
         }
 
         private bool _reconcile( string barcode, JObject update )
         {
-            bool ReturnVal = false;
+            bool returnVal = false;
             string newLocationBarcode = update["location"].ToString();
 
-            CswNbtObjClassContainer ContainerNode = _getContainerNodeFromBarcode( barcode );
-            if( null != ContainerNode )
+            CswNbtObjClassContainer containerNode = _getContainerNodeFromBarcode( barcode );
+            if( null != containerNode )
             {
-                ContainerNode.CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Scan, newLocationBarcode, barcode );
-                ContainerNode.Location.RefreshNodeName();
-                ContainerNode.postChanges( false );
-                ReturnVal = true;
+                containerNode.CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Scan, newLocationBarcode, barcode );
+                containerNode.Location.RefreshNodeName();
+                containerNode.postChanges( false );
+                returnVal = true;
             }
 
-            return ReturnVal;
+            return returnVal;
         }
 
         #endregion
