@@ -19,7 +19,7 @@ namespace ChemSW.Nbt
     /// Represents an NBT View based on Relationships
     /// </summary>
     [DataContract]
-    public class CswNbtView : IEquatable<CswNbtView>
+    public class CswNbtView: IEquatable<CswNbtView>
     {
         /// <summary>
         /// CswNbtResources reference
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt
             }
         } // IsQuickLaunch
 
-        public sealed class ViewType : CswEnum<ViewType>
+        public sealed class ViewType: CswEnum<ViewType>
         {
             private ViewType( String Name ) : base( Name ) { }
             public static IEnumerable<ViewType> _All { get { return CswEnum<ViewType>.All; } }
@@ -185,6 +185,7 @@ namespace ChemSW.Nbt
             set { Root.VisibilityUserId = value; }
         }
 
+        //TODO: ForMobile needs to go.
         /// <summary>
         /// Use view in Mobile
         /// </summary>
@@ -726,6 +727,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["viewname"] = ViewName;
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
+            //TODO: formobile needs to go.
             ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
@@ -791,36 +793,56 @@ namespace ChemSW.Nbt
         public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
         {
             if( ViewName == string.Empty )
+            {
                 throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
+            }
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
+            {
                 throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
+            }
 
             // Before New View Events
             Collection<object> BeforeNewEvents = _CswNbtResources.CswEventLinker.Trigger( BeforeNewViewEventName );
             foreach( object Handler in BeforeNewEvents )
             {
                 if( Handler is BeforeNewViewEventHandler )
+                {
                     ( (BeforeNewViewEventHandler) Handler )();
+                }
             }
 
             // Insert a new view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "ViewTableUpdate", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getEmptyTable();
 
+            NbtViewRenderingMode NewViewMode = this.ViewMode;
+            string NewViewCategory = Category;
+            if( null != CopyView )
+            {
+                NewViewMode = CopyView.ViewMode;
+                NewViewCategory = CopyView.Category;
+            }
+
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
+            //TODO: formobile needs to go.
             NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
             NewRow["visibility"] = Visibility.ToString();
-            NewRow["viewmode"] = ViewMode.ToString();
+            NewRow["viewmode"] = NewViewMode.ToString();
+            NewRow["category"] = NewViewCategory;
             NewRow["userid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( UserId != null )
+            {
                 NewRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
+            }
 
             NewRow["roleid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( Visibility == NbtViewVisibility.Role && RoleId != null )
+            {
                 NewRow["roleid"] = CswConvert.ToDbVal( RoleId.PrimaryKey );
+            }
 
             ViewTable.Rows.Add( NewRow );
             ViewTableUpdate.update( ViewTable );
@@ -828,12 +850,17 @@ namespace ChemSW.Nbt
             // Reset this view info to the new one
             Clear();
             if( CopyView != null )
+            {
                 this.LoadXml( CopyView.ToXml() );
+            }
             this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
             this.ViewName = ViewName;
+            this.ViewMode = NewViewMode;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
             this.VisibilityUserId = UserId;
+            this.Category = NewViewCategory;
+            //TODO: ForMobile needs to go.
             this.ForMobile = ForMobile;
 
             // The XML includes the viewid and viewname, so it has to be updated before it can be saved
@@ -848,7 +875,9 @@ namespace ChemSW.Nbt
             foreach( object Handler in AfterNewEvents )
             {
                 if( Handler is AfterNewViewEventHandler )
+                {
                     ( (AfterNewViewEventHandler) Handler )( this );
+                }
             }
         }
 

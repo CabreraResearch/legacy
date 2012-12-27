@@ -291,7 +291,13 @@ namespace ChemSW.Nbt.Batch
 
             if( false == CurrentMailReport.Recipients.Empty )
             {
-                JArray NewRecipientIds = BatchData.RecipientIds;
+                // Copy recipients
+                JArray NewRecipientIds = new JArray();
+                foreach(string UserId in BatchData.RecipientIds)
+                {
+                    NewRecipientIds.Add( UserId );
+                }
+
                 for( Int32 u = 0; u < BatchData.RecipientIds.Count() && u < NodeLimit; u++ )
                 {
                     Int32 UserId = CswConvert.ToInt32( BatchData.RecipientIds[u].ToString() );
@@ -364,7 +370,7 @@ namespace ChemSW.Nbt.Batch
                                 ReportObjClass = (CswNbtObjClassReport) _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
                                 if( null != ReportObjClass )
                                 {
-                                    string ReportSql = ReportObjClass.getUserContextSql( UserNodeAsUser.Username );
+                                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( ReportObjClass.SQL.Text, ReportObjClass.ExtractReportParams( UserNode ) );
 
                                     CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportObjClass.NodeId.ToString() + "_Select", ReportSql );
                                     ReportTable = ReportSelect.getTable();

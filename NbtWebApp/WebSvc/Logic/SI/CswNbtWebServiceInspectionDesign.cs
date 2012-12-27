@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
         {
             CswNbtActInspectionDesignWiz wiz = new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Role, _CswNbtResources.CurrentNbtUser, false );
-            return ( wiz.recycleInspectionDesign( InspectionDesignName, InspectionTargetName, Category ) );
+            return ( wiz.copyInspectionDesign( InspectionDesignName, InspectionTargetName, Category ) );
         }
 
         public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionDesignName, string InspectionTargetName, string Category )

@@ -14,6 +14,7 @@ using System.ServiceModel.Web;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -99,40 +100,6 @@ namespace ChemSW.Nbt.WebServices
             _Context = Context;
         }
 
-        public JObject runReport( string rformat, HttpContext Context )
-        {
-            CswNbtObjClassReport report = (CswNbtObjClassReport) _reportNode;
-            JObject ret = new JObject();
-
-            if( string.Empty != report.SQL.Text )
-            {
-
-                string ReportSql = report.getUserContextSql( _CswNbtResources.CurrentNbtUser.Username );
-                CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
-                DataTable rptDataTbl = cswRptSql.getTable();
-                if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != _reportNode )
-                {
-                    CswNbtObjClassReport nodeAsReport = _reportNode;
-                    rptDataTbl.TableName = nodeAsReport.ReportName.Text;
-                }
-
-                if( "csv" == rformat.ToLower() )
-                {
-                    wsTools.ReturnCSV( Context, rptDataTbl );
-                }
-                else
-                {
-                    CswNbtGrid cg = new CswNbtGrid( _CswNbtResources );
-                    ret = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
-                }
-            }
-            else
-            {
-                throw ( new CswDniException( "Report has no SQL to run!" ) );
-            }
-            return ret;
-        } // runReport()
-
         // Need to double " in string values
         private static string _csvSafe( string str )
         {
@@ -167,8 +134,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassReport reportNode = NbtResources.Nodes[pk];
                 if( string.Empty != reportNode.SQL.Text )
                 {
-                    reportNode.SQL.Text = ReplaceReportParams( reportParams.reportParams, reportNode );
-                    string ReportSql = reportNode.getUserContextSql( NbtResources.CurrentNbtUser.Username );
+                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( reportNode.SQL.Text, reportParams.ReportParamDictionary );
                     CswArbitrarySelect cswRptSql = NbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
                     rptDataTbl = cswRptSql.getTable();
                     if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != reportNode )
@@ -182,16 +148,6 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
             return rptDataTbl;
-        }
-
-        public static string ReplaceReportParams( Collection<CswNbtWebServiceReport.ReportData.ReportParam> reportParams, CswNbtObjClassReport reportNode ) //{param1}=someval,{param2}=anotherval
-        {
-            string replacedSQL = reportNode.SQL.Text;
-            foreach( CswNbtWebServiceReport.ReportData.ReportParam param in reportParams )
-            {
-                replacedSQL = replacedSQL.Replace( "{" + param.name + "}", CswTools.SafeSqlParam( param.value ) );
-            }
-            return replacedSQL;
         }
 
         public static Collection<CswNbtWebServiceReport.ReportData.ReportParam> FormReportParamsToCollection( NameValueCollection FormData )
@@ -222,10 +178,11 @@ namespace ChemSW.Nbt.WebServices
                 Request.doesSupportCrystal = ( false == reportNode.RPTFile.Empty );
 
                 Request.reportParams = new Collection<ReportData.ReportParam>();
-                foreach( string param in reportNode.ExtractReportParams() )
+                foreach( var paramPair in reportNode.ExtractReportParams( NBTResources.Nodes[NBTResources.CurrentNbtUser.UserId] ) )
                 {
                     ReportData.ReportParam paramObj = new ReportData.ReportParam();
-                    paramObj.name = param;
+                    paramObj.name = paramPair.Key;
+                    paramObj.value = paramPair.Value;
                     Request.reportParams.Add( paramObj );
                 }
             }

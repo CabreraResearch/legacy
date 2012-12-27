@@ -407,6 +407,13 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            public Node( CswPrimaryKey inNodeId, string inNodeName )
+            {
+                _NodeId = inNodeId.ToString();
+                _NodePk = inNodeId;
+                NodeName = inNodeName;
+            }
+
             private string _NodeId = string.Empty;
             private CswPrimaryKey _NodePk = null;
 

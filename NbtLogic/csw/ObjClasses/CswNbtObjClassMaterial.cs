@@ -43,6 +43,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Approved = "Approved";
             public const string ManufacturingSites = "Manufacturing Sites";
             public const string UNCode = "UN Code";
+            public const string IsTierII = "Is Tier II";
         }
 
         public sealed class PhysicalStates
@@ -420,6 +421,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Approved { get { return ( _CswNbtNode.Properties[PropertyName.Approved] ); } }
         public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
         public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
+        public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial

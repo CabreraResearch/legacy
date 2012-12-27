@@ -4,6 +4,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -132,21 +133,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-
-        public string getUserContextSql( string UserName )
-        {
-            string ReturnVal = string.Empty;
-
-            CswTemplateTextFormatter CswTemplateTextFormatter = new Core.CswTemplateTextFormatter();
-            CswTemplateTextFormatter.addReplacementValue( "username", UserName );
-            string Message = string.Empty;
-            CswTemplateTextFormatter.setTemplateText( SQL.Text, ref Message );
-            ReturnVal = CswTemplateTextFormatter.getFormattedText();
-
-            return ( ReturnVal );
-
-        }//getUserContextSql
-
         public CswNbtNodePropButton Run { get { return ( _CswNbtNode.Properties[PropertyName.BtnRun] ); } }
         public CswNbtNodePropBlob RPTFile { get { return ( _CswNbtNode.Properties[PropertyName.RPTFile] ); } }
         public CswNbtNodePropText ReportName { get { return ( _CswNbtNode.Properties[PropertyName.ReportName] ); } }
@@ -164,18 +150,38 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region custom logic
 
-        public CswCommaDelimitedString ExtractReportParams()
+        public Dictionary<string, string> ExtractReportParams( CswNbtObjClassUser UserNode = null )
         {
-            CswCommaDelimitedString reportParams = new CswCommaDelimitedString();
+            Dictionary<string, string> reportParams = new Dictionary<string, string>();
 
             MatchCollection matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
             foreach( Match match in matchedParams )
             {
                 string paramName = match.Value.Replace( '{', ' ' ).Replace( '}', ' ' ).Trim(); //remove the '{' and '}' and whitespace
-                reportParams.Add( paramName );
+                string replacementVal = "";
+                if( null != UserNode )
+                {
+                    CswNbtMetaDataNodeTypeProp userNTP = UserNode.NodeType.getNodeTypeProp( paramName );
+                    if( null != userNTP )
+                    {
+                        replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
+                    }
+                }
+                if( false == reportParams.ContainsKey( paramName ) )
+                {
+                    reportParams.Add( paramName, replacementVal );
+                }
             }
-
             return reportParams;
+        }
+
+        public static string ReplaceReportParams( string SQL, Dictionary<string, string> reportParams )
+        {
+            foreach( var paramPair in reportParams )
+            {
+                SQL = SQL.Replace( "{" + paramPair.Key + "}", CswTools.SafeSqlParam( paramPair.Value ) );
+            }
+            return SQL;
         }
 
         #endregion

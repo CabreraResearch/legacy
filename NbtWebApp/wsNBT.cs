@@ -13,6 +13,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
@@ -38,7 +39,7 @@ namespace ChemSW.Nbt.WebServices
     [ScriptService]
     [WebService( Namespace = "ChemSW.Nbt.WebServices" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-    public class wsNBT : WebService
+    public class wsNBT: WebService
     {
         // case 25887
         CswTimer Timer = new CswTimer();
@@ -328,7 +329,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
 
             // case 26549 - we need to remove the old session
-            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie: false );
+            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie : false );
 
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
@@ -980,7 +981,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
                     ReturnVal["rows"] = ws.getThinGridRows( RowLimit );
                 }
 
@@ -1015,7 +1016,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView View = _prepGridView( ViewId, SafeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
                     ws.ExportCsv( Context );
                 }
 
@@ -1051,7 +1052,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( ForReport ) );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( ForReport ) );
                     ReturnVal = ws.runGrid( IsQuickLaunch );
                 }
 
@@ -1088,7 +1089,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( false ) );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( false ) );
                     ReturnVal = g.getGridRowCount();
                 }
 
@@ -1585,14 +1586,24 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtView NewView = new CswNbtView( _CswNbtResources );
                         string NewViewNameOrig = SourceView.ViewName;
                         string Suffix = " Copy";
-                        if( !NewViewNameOrig.EndsWith( Suffix ) && NewViewNameOrig.Length < ( CswNbtView.ViewNameLength - Suffix.Length - 2 ) )
+                        if( NewViewNameOrig.Length >= 193 ) //We need enough space to append " Copy n"
+                        {
+                            NewViewNameOrig = NewViewNameOrig.Substring( 0, 192 ) + Suffix;
+                        }
+                        else if( false == NewViewNameOrig.EndsWith( Suffix ) &&
+                            NewViewNameOrig.Length < ( CswNbtView.ViewNameLength - Suffix.Length - 2 ) )
+                        {
                             NewViewNameOrig = NewViewNameOrig + Suffix;
+                        }
                         string NewViewName = NewViewNameOrig;
                         if( NewViewNameOrig.Length > ( CswNbtView.ViewNameLength - 2 ) )
-                            NewViewNameOrig = NewViewNameOrig.Substring( 0, ( CswNbtView.ViewNameLength - 2 ) );
-                        Int32 Increment = 1;
-                        while( !CswNbtView.ViewIsUnique( _CswNbtResources, new CswNbtViewId(), NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId ) )
                         {
+                            NewViewNameOrig = NewViewNameOrig.Substring( 0, ( CswNbtView.ViewNameLength - 2 ) );
+                        }
+                        Int32 Increment = 1;
+                        while( false == CswNbtView.ViewIsUnique( _CswNbtResources, new CswNbtViewId(), NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId ) )
+                        {
+                            //I oppose this while() loop.
                             Increment++;
                             NewViewName = NewViewNameOrig + " " + Increment.ToString();
                         }
@@ -2051,7 +2062,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsObj, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: false );
+                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsObj, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab : false );
                 }
                 _deInitResources();
             }
@@ -2363,39 +2374,6 @@ namespace ChemSW.Nbt.WebServices
 
         } // getSessions()
 
-
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string report( string reportid, string rformat )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
-                    CswNbtWebServiceReport ws = new CswNbtWebServiceReport( _CswNbtResources, rpt );
-                    ReturnVal = ws.runReport( rformat, Context );
-
-                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
-                _deInitResources();
-            } // try
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-            return ReturnVal.ToString();
-
-        } // report
-
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getAbout()
@@ -2555,293 +2533,6 @@ namespace ChemSW.Nbt.WebServices
             Context.Response.Write( ReturnVal.ToString() );
 
         } // fileForProp()
-
-
-
-        //dch
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void saveMolPropFile()
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    string PropId = Context.Request["propid"];
-                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
-                    Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
-
-                    if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
-                    {
-                        // Read the binary data
-                        BinaryReader br = new BinaryReader( MolStream );
-                        long Length = MolStream.Length;
-                        byte[] FileData = new byte[Length];
-                        for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
-                        {
-                            FileData[CurrentIndex] = br.ReadByte();
-                        }
-                        string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
-                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                        ReturnVal = ws.saveMolProp( MolData, PropId );
-                    }
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-                ReturnVal["success"] = false;
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            //This is the only way to get the content back down to the client using jQuery File Upload.
-            //DO NOT TOUCH.
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            Context.Response.Flush();
-            Context.Response.Write( ReturnVal.ToString() );
-            //return ReturnVal.ToString();
-
-        } // saveMolPropFile()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMolPropText( string molData, string PropId )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.saveMolProp( molData, PropId );
-                }
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
-                ReturnVal["success"] = false;
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-
-            return ReturnVal.ToString();
-
-        } // saveMolProp()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMolImgFromText( string molData, string nodeId )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    if( String.IsNullOrEmpty( molData ) && false == String.IsNullOrEmpty( nodeId ) )
-                    {
-                        CswPrimaryKey pk = CswConvert.ToPrimaryKey( nodeId );
-                        CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
-                        DataTable dt = ts.getTable( "where nodeid = " + pk.PrimaryKey + " and field1 = 'mol.jpeg'" );
-                        if( dt.Rows.Count > 0 )
-                        {
-                            molData = dt.Rows[0]["clobdata"].ToString();
-                        }
-                    }
-
-                    if( false == String.IsNullOrEmpty( molData ) )
-                    {
-                        byte[] bytes = CswStructureSearch.GetImage( molData );
-                        string base64String = Convert.ToBase64String( bytes );
-                        ReturnVal["bin"] = base64String;
-                        ReturnVal["molstring"] = molData;
-                    }
-                }
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
-                ReturnVal["success"] = false;
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-
-            return ReturnVal.ToString();
-
-        } // saveMolProp()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void getMolImgFromFile()
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
-                    Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
-
-                    if( null != MolStream )
-                    {
-                        // Read the binary data
-                        BinaryReader br = new BinaryReader( MolStream );
-                        long Length = MolStream.Length;
-                        byte[] FileData = new byte[Length];
-                        for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
-                        {
-                            FileData[CurrentIndex] = br.ReadByte();
-                        }
-                        string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
-                        byte[] bytes = CswStructureSearch.GetImage( MolData );
-                        string base64String = Convert.ToBase64String( bytes );
-                        ReturnVal["bin"] = base64String;
-                        ReturnVal["molstring"] = MolData;
-                    }
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-                ReturnVal["success"] = false;
-            }
-
-            //This is the only way to get the content back down to the client using jQuery File Upload.
-            //DO NOT TOUCH.
-            Context.Response.Clear();
-            Context.Response.ContentType = "image/JPEG";
-            Context.Response.Flush();
-            Context.Response.Write( ReturnVal.ToString() );
-            //return ReturnVal.ToString();
-        } // saveMolProp()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void getMolTextForSearch()
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    string PropId = "4446";
-                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
-                    Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
-
-                    if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
-                    {
-                        // Read the binary data
-                        BinaryReader br = new BinaryReader( MolStream );
-                        long Length = MolStream.Length;
-                        byte[] FileData = new byte[Length];
-                        for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
-                        {
-                            FileData[CurrentIndex] = br.ReadByte();
-                        }
-                        string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
-                        ReturnVal["text"] = MolData;
-                    }
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-                ReturnVal["success"] = false;
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            //This is the only way to get the content back down to the client using jQuery File Upload.
-            //DO NOT TOUCH.
-            Context.Response.Clear();
-            Context.Response.ContentType = "image/JPEG";
-            Context.Response.Flush();
-            Context.Response.Write( ReturnVal.ToString() );
-            //return ReturnVal.ToString();
-        } // getMolTextForSearch()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string RunStructureSearch( string molData, string exact )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    bool exactAsBool = CswConvert.ToBoolean( exact );
-                    Dictionary<int, string> results = _CswNbtResources.StructureSearchManager.RunSearch( molData, exactAsBool );
-                    CswNbtView searchView = new CswNbtView( _CswNbtResources );
-                    searchView.SetViewMode( NbtViewRenderingMode.Table );
-                    searchView.Category = "Recent";
-                    searchView.ViewName = "Structure Search Results";
-
-                    if( results.Count > 0 )
-                    {
-                        CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-                        CswNbtViewRelationship parent = searchView.AddViewRelationship( materialOC, false );
-
-                        foreach( int nodeId in results.Keys )
-                        {
-                            CswPrimaryKey pk = new CswPrimaryKey( "nodes", nodeId );
-                            parent.NodeIdsToFilterIn.Add( pk );
-                        }
-                    }
-
-                    searchView.SaveToCache( false );
-
-                    ReturnVal["viewId"] = searchView.SessionViewId.ToString();
-                    ReturnVal["viewMode"] = searchView.ViewMode.ToString();
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-                ReturnVal["success"] = false;
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // RunStructureSearch()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3310,8 +3001,17 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-                    ReturnVal = ws.restoreUniversalSearch( RealSessionDataId );
+
+                    CswPrimaryKey Pk = CswConvert.ToPrimaryKey( SessionDataId );
+                    if( CswTools.IsPrimaryKey( Pk ) && Pk.TableName == CswNbtSearchManager.SearchTableName )
+                    {
+                        ReturnVal = ws.restoreUniversalSearch( Pk );
+                    }
+                    else
+                    {
+                        CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
+                        ReturnVal = ws.restoreUniversalSearch( RealSessionDataId );
+                    }
                 }
                 _deInitResources();
             }
@@ -3385,7 +3085,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveSearchAsView( string SessionDataId, string ViewId )
+        public string saveSearch( string SessionDataId, string Name, string Category )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3396,10 +3096,9 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtView View = _getView( ViewId );
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-                    ReturnVal = ws.saveSearchAsView( RealSessionDataId, View );
+                    ReturnVal = ws.saveSearch( RealSessionDataId, Name, Category );
                 }
                 _deInitResources();
             }
@@ -3411,8 +3110,37 @@ namespace ChemSW.Nbt.WebServices
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // saveSearchAsView()
+        } // saveSearch()
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
 
+        public string deleteSearch( string SearchId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
+                    CswPrimaryKey RealSearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchId ) );
+                    ReturnVal = ws.deleteSearch( RealSearchId );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // saveSearch()
+        
         #endregion Search
 
         #region Node DML
@@ -3692,7 +3420,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile : true );
             return ( Connected.ToString() );
         }
 
@@ -3720,7 +3448,7 @@ namespace ChemSW.Nbt.WebServices
                 Connected["result"] = "OK";
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile : true );
             //_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
 

@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.ExpiredContainers.ToString() ); }
+            get { return ( NbtScheduleRuleNames.Reconciliation.ToString() ); }
         }
 
         #endregion Properties
@@ -70,7 +70,10 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    makeReconciliationActionBatchProcess();
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    {
+                        makeReconciliationActionBatchProcess();                        
+                    }
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = LogicRunStatus.Succeeded;
                 }

@@ -138,7 +138,6 @@ namespace ChemSW.Nbt.MetaData
         public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool IncludeDefaultFilters = true, bool IncludeHiddenNodes = false )
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
-
             CswNbtView View = CreateDefaultView( IncludeDefaultFilters );
             ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, false, includeSystemNodes, IncludeHiddenNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
@@ -148,7 +147,21 @@ namespace ChemSW.Nbt.MetaData
                 Tree.goToParentNode();
             }
             return Collection;
-        }
+        } // getNodes()
+
+        public Dictionary<CswPrimaryKey, string> getNodeIdAndNames( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false, bool IncludeHiddenNodes = false )
+        {
+            Dictionary<CswPrimaryKey, string> Dict = new Dictionary<CswPrimaryKey, string>();
+            CswNbtView View = CreateDefaultView( includeDefaultFilters );
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, true, includeSystemNodes, IncludeHiddenNodes );
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            {
+                Tree.goToNthChild( c );
+                Dict.Add( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() );
+                Tree.goToParentNode();
+            }
+            return Dict;
+        } // getNodeIdAndNames()
 
         public bool CanAdd
         {

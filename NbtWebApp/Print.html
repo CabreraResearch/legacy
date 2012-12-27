@@ -43,7 +43,7 @@
                     processingCnt += 1;
                     //processingNow.empty();
                     processingNow.span({ text: 'Printing label ' + processingCnt + ' of ' + processingTtl + ' for target ' + label.TargetName + '.' });
-                    cswPrivate.jZeb.print(label.EplText);
+                    cswPrivate.jZeb.print(label.EplText, label.Pictos);
                 });
             };
 

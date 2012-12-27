@@ -46,13 +46,16 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject doUniversalSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
         {
-            CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
+            CswNbtSearch Search = new CswNbtSearch( _CswNbtResources )
+                                      {
+                                          SearchTerm = SearchTerm
+                                      };
             if( Int32.MinValue != NodeTypeId )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != NodeType )
                 {
-                    Search.addFilter( Search.makeFilter( NodeType, Int32.MinValue, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+                    Search.addFilter( NodeType, false );
                 }
             }
             if( Int32.MinValue != ObjectClassId )
@@ -60,17 +63,23 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
                 if( null != ObjectClass )
                 {
-                    Search.addFilter( Search.makeFilter( ObjectClass, Int32.MinValue, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+                    Search.addFilter( ObjectClass, false );
                 }
             }
             return _finishUniversalSearch( Search );
         }
 
+        public JObject restoreUniversalSearch( CswPrimaryKey SearchId )
+        {
+            CswNbtSearch Search = _CswNbtResources.SearchManager.restoreSearch( SearchId );
+            return _finishUniversalSearch( Search );
+        } // restoreUniversalSearch()
+
         public JObject restoreUniversalSearch( CswNbtSessionDataId SessionDataId )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( null != SessionDataItem && SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 ret = _finishUniversalSearch( Search );
@@ -105,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
             if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
-                Search.addNodeTypeFilter( NodeTypeId );
+                Search.addFilter( NodeTypeId, true );
                 ret = _finishUniversalSearch( Search );
             }
             return ret;
@@ -116,32 +125,39 @@ namespace ChemSW.Nbt.WebServices
             //CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null, Int32.MinValue );
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, Int32.MinValue );
 
-            JObject ret = new JObject();
+            Search.SaveToCache( true );
+
+            JObject ret = Search.ToJObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
             ret["filters"] = Search.FilterOptions( Tree );
-            ret["searchterm"] = Search.SearchTerm;
-            ret["filtersapplied"] = Search.FiltersApplied;
-            Search.SaveToCache( true );
-            ret["sessiondataid"] = Search.SessionDataId.ToString();
             ret["searchtype"] = "universal";
             return ret;
         }
 
-        public JObject saveSearchAsView( CswNbtSessionDataId SessionDataId, CswNbtView View )
+        public JObject saveSearch( CswNbtSessionDataId SessionDataId, string Name, string Category )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
             if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
-                ret["result"] = Search.saveSearchAsView( View );
-            }
-            else
-            {
-                ret["result"] = false;
+                Search.Name = Name;
+                Search.Category = Category;
+                Search.SaveToDb();
+                ret = _finishUniversalSearch( Search );
             }
             return ret;
-        }
+        } // saveSearch
+
+        public JObject deleteSearch( CswPrimaryKey SearchId )
+        {
+            CswNbtSearch doomedSearch = _CswNbtResources.SearchManager.restoreSearch( SearchId );
+            if( null != doomedSearch )
+            {
+                doomedSearch.delete();
+            }
+            return _finishUniversalSearch( doomedSearch );
+        } // deleteSearch
 
 
 

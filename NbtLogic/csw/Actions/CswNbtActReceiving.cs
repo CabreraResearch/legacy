@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.Actions
                                                 AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
                                                 AsContainer.Disposed.Checked = Tristate.False;
                                                 AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
-                                                AsContainer.postChanges( true );                                                
+                                                AsContainer.postChanges( true );
                                                 ContainerIds.Add( AsContainer.NodeId );
                                                 jBarcodes.Add( AsContainer.NodeId.ToString() );
                                             }
@@ -242,11 +242,11 @@ namespace ChemSW.Nbt.Actions
             CswNbtObjClassDocument Doc = CswNbtResources.Nodes[CswConvert.ToString( Obj["documentid"] )];
             if( null != Doc )
             {
-                Doc.IsTemp = false;
                 SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, (JObject) Obj["documentProperties"], Doc.NodeTypeId, null, IsIdentityTab: false );
                 if( ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( Doc.File.FileName ) ) ||
                     ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( Doc.Link.Href ) ) )
                 {
+                    Doc.IsTemp = false;
                     Doc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
                     Doc.postChanges( ForceUpdate: false );
                 }

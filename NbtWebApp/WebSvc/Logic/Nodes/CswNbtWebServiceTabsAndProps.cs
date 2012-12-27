@@ -7,6 +7,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using NbtWebApp.WebSvc.Logic.CISPro;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -99,11 +100,6 @@ namespace ChemSW.Nbt.WebServices
         {
             return _TabsPropsSd.ClearPropValue( PropIdAttr, IncludeBlob );
         } // ClearPropValue()
-
-        public JObject saveMolProp( string moldata, string propIdAttr )
-        {
-            return _TabsPropsSd.saveMolProp( moldata, propIdAttr );
-        }
 
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )
         {

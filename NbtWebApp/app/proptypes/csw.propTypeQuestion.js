@@ -19,7 +19,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.showCorrectiveAction = function () {
-                        return (false == cswPrivate.isAnswerCompliant() &&
+                        return (false == cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer) &&
                             (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
                     }
 
