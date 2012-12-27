@@ -1419,7 +1419,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
             {
                 PropName = CswNbtObjClassUser.PropertyName.Barcode,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode,
+                IsUnique = true
             } );
 
             _resetBlame();

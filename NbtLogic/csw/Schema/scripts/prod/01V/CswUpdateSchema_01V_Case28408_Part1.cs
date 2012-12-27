@@ -30,11 +30,16 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp barcodeNTP = UserOCNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Barcode );
                 if( null != barcodeNTP )
                 {
+                    barcodeNTP.IsRequired = true;
+                    barcodeNTP.ReadOnly = true;
+
                     if( Int32.MinValue == barcodeNTP.SequenceId )
                     {
                         int userOCBarcodeSequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "User Barcode" ), "U", "", 6, 0 );
                         barcodeNTP.setSequence( userOCBarcodeSequenceId );
                     }
+
+                    barcodeNTP.removeFromLayout( LayoutType: CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                 }
             }
 
