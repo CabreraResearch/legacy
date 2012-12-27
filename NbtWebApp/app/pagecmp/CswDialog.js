@@ -938,7 +938,7 @@
             searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
 
             var searchTermField = tableInner.cell(1, 4).input({
-                value: options.c3searchterm
+                value: cswPrivate.c3searchterm
             });
 
             tableInner.cell(1, 5).button({
@@ -961,8 +961,8 @@
                         success: function (data) {
                             //Convert to object from string
                             var obj = JSON.parse(data.SearchResults);
-                            Csw.tryExec(options.clearview);
-                            Csw.tryExec(options.c3handleresults.handleResults(obj));
+                            Csw.tryExec(cswPrivate.clearview);
+                            Csw.tryExec(cswPrivate.c3handleresults.handleResults(obj));
                             div.$.dialog('close');
                         }
                     });

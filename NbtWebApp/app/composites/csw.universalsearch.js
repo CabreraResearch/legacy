@@ -212,7 +212,7 @@
                             cssclass: 'SearchC3Label',
                             text: 'ChemCatCentral.',
                             onClick: function () {
-                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic });
+                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic, clearview: cswPrivate.onBeforeSearch });
                             }
                         });
 
