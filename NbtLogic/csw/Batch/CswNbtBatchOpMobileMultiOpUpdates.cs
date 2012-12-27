@@ -262,17 +262,24 @@ namespace ChemSW.Nbt.Batch
         {
             CswPrimaryKey ReturnVal = null;
 
-            CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+            CswNbtView LocationOCView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClassProp BarcodeOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Barcode );
 
-            CswNbtMetaDataObjectClass LocationOC =
-                _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtViewRelationship Parent = LocationOCView.AddViewRelationship( LocationOC, true );
 
-            foreach( CswNbtObjClassLocation currentLocationNode in LocationOC.getNodes( false, false, false, true ) )
+            LocationOCView.AddViewPropertyAndFilter( Parent,
+                                                    MetaDataProp: BarcodeOCP,
+                                                    Value: barcode,
+                                                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationOCView, false, true, true );
+            Tree.goToRoot();
+            for( int i = 0; i < Tree.getChildNodeCount(); i++ )
             {
-                if( currentLocationNode.Barcode.Barcode == barcode )
-                {
-                    ReturnVal = currentLocationNode.NodeId;
-                }
+                Tree.goToNthChild( i );
+                ReturnVal = Tree.getNodeIdForCurrentPosition();
+                Tree.goToParentNode();
             }
 
             return ReturnVal;
@@ -282,17 +289,25 @@ namespace ChemSW.Nbt.Batch
         {
             CswPrimaryKey ReturnVal = null;
 
-            CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+            CswNbtView UserOCView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp BarcodeOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Barcode );
 
-            CswNbtMetaDataObjectClass UserOC =
-                _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtViewRelationship Parent = UserOCView.AddViewRelationship( UserOC, true );
 
-            foreach( CswNbtObjClassUser currentLocationNode in UserOC.getNodes( false, false, false, true ) )
+            UserOCView.AddViewPropertyAndFilter( Parent,
+                                                MetaDataProp: BarcodeOCP,
+                                                Value: barcode,
+                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UserOCView, false, true, true );
+            Tree.goToRoot();
+            for( int i = 0; i < Tree.getChildNodeCount(); i++ )
             {
-                if( currentLocationNode.Barcode.Barcode == barcode )
-                {
-                    ReturnVal = currentLocationNode.NodeId;
-                }
+                Tree.goToNthChild( i );
+                ReturnVal = Tree.getNodeIdForCurrentPosition();
+                Tree.goToParentNode();
             }
 
             return ReturnVal;
@@ -302,17 +317,25 @@ namespace ChemSW.Nbt.Batch
         {
             CswNbtObjClassContainer ReturnNode = null;
 
-            CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( _CswNbtResources );
+            CswNbtView ContainerOCView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp BarcodeOCP = ContainerOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Barcode );
 
-            CswNbtMetaDataObjectClass ContainerOC =
-                _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtViewRelationship Parent = ContainerOCView.AddViewRelationship( ContainerOC, true );
 
-            foreach( CswNbtObjClassContainer currentContainerNode in ContainerOC.getNodes( false, false, false, true ) )
+            ContainerOCView.AddViewPropertyAndFilter( Parent,
+                                                MetaDataProp: BarcodeOCP,
+                                                Value: barcode,
+                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerOCView, false, true, true );
+            Tree.goToRoot();
+            for( int i = 0; i < Tree.getChildNodeCount(); i++ )
             {
-                if( currentContainerNode.Barcode.Barcode == barcode )
-                {
-                    ReturnNode = currentContainerNode;
-                }
+                Tree.goToNthChild( i );
+                ReturnNode = Tree.getNodeForCurrentPosition();
+                Tree.goToParentNode();
             }
 
             return ReturnNode;
