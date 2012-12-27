@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
-            _setConfigurationVariables( CswC3Params );
+            _setConfigurationVariables( CswC3Params, _CswNbtResources );
 
             ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
             CswRetObjSearchResults SourcesList = C3Search.getDataSources( CswC3Params );
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
-            _setConfigurationVariables( CswC3Params );
+            _setConfigurationVariables( CswC3Params, _CswNbtResources );
 
             List<string> newlist = new List<string>();
 
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
-            _setConfigurationVariables( CswC3SearchParams );
+            _setConfigurationVariables( CswC3SearchParams, _CswNbtResources );
 
             JObject ret = new JObject();
 
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
         /// parameters using the values from the configuration_variables table in the db.
         /// </summary>
         /// <param name="CswC3Params"></param>
-        private static void _setConfigurationVariables( CswC3Params CswC3Params )
+        private static void _setConfigurationVariables( CswC3Params CswC3Params, CswNbtResources _CswNbtResources )
         {
 
             CswC3Params.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.WebServices
         /// parameters using the values from the configuration_variables table in the db.
         /// </summary>
         /// <param name="CswC3SearchParams"></param>
-        private static void _setConfigurationVariables( CswC3SearchParams CswC3SearchParams )
+        private static void _setConfigurationVariables( CswC3SearchParams CswC3SearchParams, CswNbtResources _CswNbtResources )
         {
             CswC3SearchParams.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
             CswC3SearchParams.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
