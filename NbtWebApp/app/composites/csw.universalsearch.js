@@ -114,14 +114,18 @@
 
                     } // success
                 }); // ajax
-                
+
                 var srchOnClick = function (selectedOption) {
                     switch (selectedOption) {
                         case 'Structure Search':
                             $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                             break;
                         case 'ChemCatCentral Search':
-                            $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic, clearview: cswPrivate.onBeforeSearch });
+                            $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
+                                c3searchterm: cswPrivate.searchinput.val(),
+                                c3handleresults: cswPublic.handleResults,
+                                clearview: cswPrivate.onBeforeSearch
+                            });
                             break;
                         default:
                             Csw.publish('initPropertyTearDown');
@@ -212,7 +216,11 @@
                             cssclass: 'SearchC3Label',
                             text: 'ChemCatCentral.',
                             onClick: function () {
-                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView, c3searchterm: cswPrivate.searchinput.val(), c3handleresults: cswPublic, clearview: cswPrivate.onBeforeSearch });
+                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
+                                    c3searchterm: cswPrivate.searchinput.val(),
+                                    c3handleresults: cswPublic,
+                                    clearview: cswPrivate.onBeforeSearch
+                                });
                             }
                         });
 
@@ -337,14 +345,14 @@
                 if (hasFilters && cswPrivate.showSave) {
                     fdiv.br();
                     var btntbl = fdiv.table();
-                    btntbl.cell(1,1).buttonExt({
+                    btntbl.cell(1, 1).buttonExt({
                         enabledText: 'Save',
                         disableOnClick: false,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                         onClick: cswPrivate.save
                     });
-                    if(false === Csw.isNullOrEmpty(data.searchid)) {
-                        btntbl.cell(1,2).buttonExt({
+                    if (false === Csw.isNullOrEmpty(data.searchid)) {
+                        btntbl.cell(1, 2).buttonExt({
                             enabledText: 'Delete',
                             disableOnClick: false,
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
@@ -456,7 +464,7 @@
                             urlMethod: 'saveSearch',
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
-                                Name: name, 
+                                Name: name,
                                 Category: category
                             },
                             success: function (data) {
@@ -479,7 +487,7 @@
                     } // success
                 }); // ajax  
             }; // save()
-            
+
             cswPublic.restoreSearch = function (searchid) {
 
                 cswPrivate.sessiondataid = searchid;

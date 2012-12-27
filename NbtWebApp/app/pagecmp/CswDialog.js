@@ -962,7 +962,7 @@
                             //Convert to object from string
                             var obj = JSON.parse(data.SearchResults);
                             Csw.tryExec(cswPrivate.clearview);
-                            Csw.tryExec(cswPrivate.c3handleresults.handleResults(obj));
+                            Csw.tryExec(cswPrivate.c3handleresults(obj));
                             div.$.dialog('close');
                         }
                     });
