@@ -88,13 +88,7 @@ namespace ChemSW.Nbt.Batch
                                     try
                                     {
                                         bool success = _dispose( barcode, update );
-                                        if( success )
-                                        {
-                                            BatchNode.appendToLog( "Operation: " + operation
-                                                + "; Container Barcode: " + barcode
-                                                + "; Success: " + success );
-                                        }
-                                        else
+                                        if( false == success )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                 + "; Container Barcode: " + barcode
@@ -110,14 +104,7 @@ namespace ChemSW.Nbt.Batch
                                     try
                                     {
                                         bool success = _move( barcode, update );
-                                        if( success )
-                                        {
-                                            BatchNode.appendToLog( "Operation: " + operation
-                                                                   + "; Container Barcode: " + barcode
-                                                                   + "; New Location: " + update["location"]
-                                                                   + "; Success: " + success );
-                                        }
-                                        else
+                                        if( false == success )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                    + "; Container Barcode: " + barcode
@@ -134,14 +121,7 @@ namespace ChemSW.Nbt.Batch
                                     try
                                     {
                                         bool success = _updateOwner( barcode, update );
-                                        if( success )
-                                        {
-                                            BatchNode.appendToLog( "Operation: " + operation
-                                                + "; Container Barcode: " + barcode
-                                                + "; New Owner: " + update["user"]
-                                                + "; Success: " + success );
-                                        }
-                                        else
+                                        if( false == success )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                 + "; Container Barcode: " + barcode
@@ -158,15 +138,7 @@ namespace ChemSW.Nbt.Batch
                                     try
                                     {
                                         bool success = _transfer( barcode, update );
-                                        if( _transfer( barcode, update ) )
-                                        {
-                                            BatchNode.appendToLog( "Operation: " + operation
-                                                                  + "; Container Barcode: " + barcode
-                                                                  + "; New Owner: " + update["user"]
-                                                                  + "; New Location: " + update["location"]
-                                                                  + "; Success: " + success );
-                                        }
-                                        else
+                                        if( false == success )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                   + "; Container Barcode: " + barcode
@@ -184,14 +156,7 @@ namespace ChemSW.Nbt.Batch
                                     try
                                     {
                                         bool success = _dispense( barcode, update );
-                                        if( success )
-                                        {
-                                            BatchNode.appendToLog( "Operation: " + operation
-                                                                  + "; Container Barcode: " + barcode
-                                                                  + "; Dispense Data: " + update
-                                                                  + "; Success: " + success );
-                                        }
-                                        else
+                                        if( false == success )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                   + "; Container Barcode: " + barcode
@@ -208,14 +173,7 @@ namespace ChemSW.Nbt.Batch
                                     try
                                     {
                                         bool success = _reconcile( barcode, update );
-                                        if( success )
-                                        {
-                                            BatchNode.appendToLog( "Operation: " + operation
-                                                                  + "; Container Barcode: " + barcode
-                                                                  + "; Location: " + update["location"]
-                                                                  + "; Success: " + success );
-                                        }
-                                        else
+                                        if( false == success )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                   + "; Container Barcode: " + barcode
