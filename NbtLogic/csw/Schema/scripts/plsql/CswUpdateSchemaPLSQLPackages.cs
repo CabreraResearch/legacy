@@ -372,15 +372,15 @@ PACKAGE BODY UNIT_CONVERSION AS
     exponent number;
     conversion_factor number;
   begin
-    select jnp.field1_numeric, field2_numeric
+    select jnp.field1_numeric, jnp.field2_numeric
       into base, exponent
-      from nodes n
-        left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
-        left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
-        inner join object_class oc on nt.objectclassid = oc.objectclassid
+      from jct_nodes_props jnp
+        inner join nodes n on n.nodeid = jnp.nodeid            
+        inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        inner join object_class oc on ocp.objectclassid = oc.objectclassid
       where oc.objectclass = 'UnitOfMeasureClass'
-      and ntp.propname = 'Conversion Factor'
+      and ocp.propname = 'Conversion Factor'
       and n.nodeid = unit_id;
     conversion_factor := base * power(10, exponent);
     return conversion_factor;
