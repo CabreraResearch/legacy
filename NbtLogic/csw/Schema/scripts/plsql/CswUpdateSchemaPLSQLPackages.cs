@@ -101,16 +101,21 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     temp_locs tier_ii_location_table;
   begin
     --Get all locationids and their parentlocationids
-    select tier_ii_location(n.nodeid, jnp.field1_fk)
+    select tier_ii_location(n.nodeid, loc.field1_fk) 
       bulk collect into unsorted_locations
       from nodes n
-        inner join jct_nodes_props jnp on n.nodeid = jnp.nodeid
+      left join
+        (select n.nodeid, jnp.field1_fk
+          from jct_nodes_props JNP
+            inner join nodes n on n.nodeid = jnp.nodeid
+            inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid        
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            inner join object_class oc on ocp.objectclassid = oc.objectclassid
+          where oc.objectclass = 'LocationClass'
+          and ocp.propname = 'Location') loc on n.nodeid = loc.nodeid
         inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
         inner join object_class oc on nt.objectclassid = oc.objectclassid
-        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        inner join field_types ft on ntp.fieldtypeid = ft.fieldtypeid
-      where oc.objectclass = 'LocationClass'
-      and ft.fieldtype = 'Location';
+        where oc.objectclass = 'LocationClass';
       
     --Store null base case
     select tier_ii_location(ul.LOCATIONID, ul.parentlocationid) 
@@ -281,7 +286,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     end loop;
   end SET_TIER_II_DATA;
 
-END TIER_II_DATA_MANAGER;;" );
+END TIER_II_DATA_MANAGER;" );
 
             #endregion TIER_II_DATA_MANAGER
 
