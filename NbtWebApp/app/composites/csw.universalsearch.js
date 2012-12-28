@@ -144,10 +144,14 @@
 
                 cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
                     name: 'searchBtn',
-                    width: ('Search'.length * 8) + 16,
-                    menuOptions: ['Search', 'Structure Search', 'ChemCatCentral Search'],
                     selectedText: 'Search',
                     size: 'small',
+                    width: ('Search'.length * 8) + 16,
+                    menu: [
+                            { text: 'Search', icon: 'Images/newicons/18/magglass.png', handler: function () { srchOnClick(); } },
+                            { text: 'Structure Search', icon: 'Images/newicons/100/caffeine.png', handler: function () { srchOnClick('Structure Search'); } },
+                            { text: 'ChemCatCentral Search', icon: 'Images/c3/cat18.png', handler: function () { srchOnClick('ChemCatCentral Search'); } }
+                        ],
                     onClick: srchOnClick
                 });
             })();
@@ -228,6 +232,7 @@
                             text: '&nbsp;'
                         });
 
+                        //C3 icon
                         table2.cell(1, 7).img({
                             src: 'Images/c3/cat18.png'
                         });
@@ -238,7 +243,7 @@
                             cellvalign: 'bottom'
                         }).css({ 'padding-bottom': '5px' });
 
-                        //ChemCatCentral Icon
+                        //C3 icon
                         table3.cell(1, 1).img({
                             src: 'Images/c3/cat24.png'
                         });
