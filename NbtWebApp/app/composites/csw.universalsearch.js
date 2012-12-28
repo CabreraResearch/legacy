@@ -218,7 +218,7 @@
                             onClick: function () {
                                 $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
                                     c3searchterm: cswPrivate.searchinput.val(),
-                                    c3handleresults: cswPublic,
+                                    c3handleresults: cswPublic.handleResults,
                                     clearview: cswPrivate.onBeforeSearch
                                 });
                             }
