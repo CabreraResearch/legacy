@@ -105,6 +105,10 @@
                 /// <param name="col" type="Number">Column number.</param>
                 /// <returns type="Csw.table.cell">A Csw table cell.</returns>
                 var cssClass = '', thisCell;
+                //Case 28336. Yuck. Sometimes this comes in as a string, sometimes as an object, and the only member of the object that we care about is 'value'
+                cellValue = cellValue || '';
+                cellValue = cellValue.value || cellValue;
+                
                 if (cswPrivate.isHeaderRow(row)) {
                     if (false === Csw.isNullOrEmpty(cellValue)) {
                         cswPrivate.header[col] = cellValue;
@@ -116,7 +120,7 @@
 
                 thisCell = cswPrivate.table.cell(row, col);
                 if (false === Csw.isNullOrEmpty(cellValue)) {
-                    thisCell.append(Csw.string(cellValue, '&nbsp;'));
+                    thisCell.span({ text: Csw.string(cellValue) });
                 }
                 thisCell.addClass(cssClass);
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {
@@ -143,6 +147,7 @@
                         cswPublic.deleteRow(row);
                     }
                 });
+                return cell;
             });
 
             cswPublic.addRows = Csw.method(function (dataRows, row, col) {
