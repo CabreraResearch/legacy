@@ -21,8 +21,22 @@ namespace ChemSW.Nbt.Schema
             get { return 28374; }
         }
 
+        private CswNbtMetaDataNodeType ChemicalNT;
+
         public override void update()
         {
+            //3 - Add the following properties to the Chemical's Preview Layout: TradeName, Supplier, NFPA, PPE, GHS pictos (?), Storage Compatibility
+            ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
+            if( null != ChemicalNT )
+            {
+                _addToPreview( CswNbtObjClassMaterial.PropertyName.Tradename );
+                _addToPreview( CswNbtObjClassMaterial.PropertyName.Supplier );
+                _addToPreview( "NFPA" );
+                _addToPreview( "PPE" );
+                _addToPreview( "GHS Pictos" );
+                _addToPreview( CswNbtObjClassMaterial.PropertyName.StorageCompatibility );
+            }
+
             //5 - Create new "My Contianers" grid, which is essentially the Containers view with an "owner=me" filter
             CswNbtView MyContainersView = _CswNbtSchemaModTrnsctn.restoreView( "My Containers" ) ??
                                           _CswNbtSchemaModTrnsctn.makeNewView( "My Containers", NbtViewVisibility.Global );
@@ -93,6 +107,15 @@ namespace ChemSW.Nbt.Schema
             }
 
         }//Update()
+
+        private void _addToPreview( String NodeTypePropName )
+        {
+            CswNbtMetaDataNodeTypeProp ChemicalNTP = ChemicalNT.getNodeTypeProp( NodeTypePropName );
+            if( null != ChemicalNTP )
+            {
+                ChemicalNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true );
+            }
+        }
 
     }//class CswUpdateSchemaCase_01V_28374
 
