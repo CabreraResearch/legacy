@@ -916,22 +916,45 @@ namespace ChemSW.Nbt.Schema
             } );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( approvedOCP, false );
 
-            CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
-            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier", NbtViewVisibility.Property );
-            CswNbtViewRelationship supplierParent = supplierView.AddViewRelationship( vendorOC, true );
-            supplierView.AddViewPropertyAndFilter( supplierParent,
-                MetaDataProp: vendorNameOCP,
-                Value: "Corporate",
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            supplierView.save();
+            _acceptBlame( CswDeveloper.CF, 28420 );
 
             CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+
+            string SupplierViewXml = null;
             foreach ( CswNbtMetaDataNodeTypeProp supplierNTP in supplierOCP.getNodeTypeProps() )
             {
-                supplierNTP.ViewId = supplierView.ViewId;
+                CswNbtView SupplierView = _CswNbtSchemaModTrnsctn.restoreView( supplierNTP.ViewId );
+                SupplierView.Root.ChildRelationships.Clear();
+                CswNbtViewRelationship supplierParent = SupplierView.AddViewRelationship( vendorOC, true );
+                SupplierView.AddViewPropertyAndFilter( supplierParent,
+                    MetaDataProp : vendorNameOCP,
+                    Value : CswNbtObjClassVendor.VendorTypes.Corporate,
+                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SupplierView.save();
+                SupplierViewXml = SupplierViewXml ?? SupplierView.ToXml().ToString();
             }
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, SupplierViewXml );
+            
+            string NewSupplierViewXml = null;
+            CswNbtMetaDataObjectClass RequestMaterialCreateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass );
+            CswNbtMetaDataObjectClassProp NewSupplierOcp = RequestMaterialCreateOc.getObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialSupplier );
+            foreach( CswNbtMetaDataNodeTypeProp NewSupplierNtp in NewSupplierOcp.getNodeTypeProps() )
+            {
+                CswNbtView SupplierView = _CswNbtSchemaModTrnsctn.restoreView( NewSupplierNtp.ViewId );
+                SupplierView.Root.ChildRelationships.Clear();
+                CswNbtViewRelationship supplierParent = SupplierView.AddViewRelationship( vendorOC, true );
+                SupplierView.AddViewPropertyAndFilter( supplierParent,
+                    MetaDataProp : vendorNameOCP,
+                    Value : CswNbtObjClassVendor.VendorTypes.Corporate,
+                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SupplierView.save();
+                NewSupplierViewXml = NewSupplierViewXml ?? SupplierView.ToXml().ToString();
+            }
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, NewSupplierViewXml );
+
+            _acceptBlame(Dev, CaseNo);
 
             CswNbtMetaDataNodeType unCodeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
             if ( null != unCodeNT )
