@@ -148,9 +148,9 @@
                     size: 'small',
                     width: ('Search'.length * 8) + 16,
                     menu: [
-                            { text: 'Search', icon: 'Images/newicons/18/magglass.png', handler: function () { srchOnClick(); } },
-                            { text: 'Structure Search', icon: 'Images/newicons/100/caffeine.png', handler: function () { srchOnClick('Structure Search'); } },
-                            { text: 'ChemCatCentral Search', icon: 'Images/c3/cat18.png', handler: function () { srchOnClick('ChemCatCentral Search'); } }
+                            { text: 'Search', icon: Csw.getIconUrlString(18, Csw.enums.iconType.magglass) , handler: function () { srchOnClick(); } },
+                            { text: 'Structure Search', icon: Csw.getIconUrlString(18, Csw.enums.iconType.structuresearch), handler: function () { srchOnClick('Structure Search'); } },
+                            { text: 'ChemCatCentral Search', icon: Csw.getIconUrlString(18, Csw.enums.iconType.cat), handler: function () { srchOnClick('ChemCatCentral Search'); } }
                         ],
                     onClick: srchOnClick
                 });
@@ -234,7 +234,7 @@
 
                         //C3 icon
                         table2.cell(1, 7).img({
-                            src: 'Images/c3/cat18.png'
+                            src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
                         });
 
                     } //if (data.searchtype == 'universal')
@@ -245,7 +245,7 @@
 
                         //C3 icon
                         table3.cell(1, 1).img({
-                            src: 'Images/c3/cat24.png'
+                            src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
                         });
 
                         table3.cell(1, 2).div({
