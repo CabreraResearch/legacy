@@ -45,6 +45,7 @@
                         urlMethod: cswPrivate.runGridUrl,
                         data: {
                             ViewId: cswPrivate.viewid,
+                            IncludeNodeId: Csw.string(cswPrivate.nodeid),
                             IncludeNodeKey: cswPrivate.nodekey,
                             IncludeInQuickLaunch: cswPrivate.includeInQuickLaunch,
                             ForReport: cswPrivate.forReporting

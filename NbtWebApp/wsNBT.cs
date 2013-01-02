@@ -13,18 +13,17 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Search;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
-using ChemSW.StructureSearch;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
 
@@ -927,21 +926,30 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey )
         {
             bool IsQuickLaunch = false;
-            return _prepGridView( ViewId, CswNbtNodeKey, ref RealNodeKey, ref IsQuickLaunch );
+            return _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, CswNbtNodeKey );
         }
 
-        private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey, ref bool IsQuickLaunch )
+        private CswNbtView _prepGridView( string ViewId, ref CswNbtNodeKey RealNodeKey, ref bool IsQuickLaunch, string CswNbtNodeKey = "", string NbtPrimaryKey = "" )
         {
             CswNbtView RetView = _getView( ViewId );
             if( null != RetView )
             {
                 if( RetView.Visibility == NbtViewVisibility.Property )
                 {
+                    CswPrimaryKey RealNodeId = null;
                     RealNodeKey = _getNodeKey( CswNbtNodeKey );
                     if( null != RealNodeKey )
                     {
+                        RealNodeId = RealNodeKey.NodeId;
+                    }
+                    if( null == RealNodeId )
+                    {
+                        RealNodeId = _getNodeId( NbtPrimaryKey );
+                    }
+                    if( null != RealNodeId )
+                    {
                         ( RetView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
-                        ( RetView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeKey.NodeId );
+                        ( RetView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeId );
                         IsQuickLaunch = false;
                     }
                 }
@@ -977,7 +985,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, IncludeNodeKey );
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
@@ -1013,7 +1021,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, SafeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, SafeNodeKey );
                 if( null != View )
                 {
                     var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
@@ -1035,7 +1043,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runGrid( string ViewId, string IncludeNodeKey, string IncludeInQuickLaunch, string ForReport )
+        public string runGrid( string ViewId, string IncludeNodeKey, string IncludeNodeId, string IncludeInQuickLaunch, string ForReport )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -1048,7 +1056,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, IncludeNodeKey, IncludeNodeId );
 
                 if( null != View )
                 {
@@ -3139,7 +3147,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         } // saveSearch()
-        
+
         #endregion Search
 
         #region Node DML
