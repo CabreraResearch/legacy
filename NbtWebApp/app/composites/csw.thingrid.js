@@ -45,11 +45,10 @@
             var cswPublic = {};
 
             (function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
-                var form = cswParent.form();
-                var table = form.table({
+                Csw.extend(cswPrivate, options);
+                
+                cswPublic = cswParent.form();
+                var table = cswPublic.table({
                     cellpadding: 5,
                     TableCssClass: 'CswThinGridTable',
                     CellCssClass: 'CswThinGridCells'
@@ -68,8 +67,6 @@
                         }
                     });
                 }
-                cswPublic = Csw.dom({}, form);
-                cswPublic.form = form;
             } ());
 
             cswPublic.hide = function () {
@@ -99,7 +96,7 @@
                 return (rowid === 1 && cswPrivate.hasHeader);
             };
 
-            cswPublic.addCell = Csw.method(function (cellData, row, col) {
+            cswPublic.addCell = Csw.method(function (cellValue, row, col) {
                 /// <summary>
                 /// Add a cell to the thin grid
                 /// </summary>
@@ -109,8 +106,8 @@
                 /// <returns type="Csw.table.cell">A Csw table cell.</returns>
                 var cssClass = '', thisCell;
                 if (cswPrivate.isHeaderRow(row)) {
-                    if (false === Csw.isNullOrEmpty(cellData)) {
-                        cswPrivate.header[col] = cellData.value;
+                    if (false === Csw.isNullOrEmpty(cellValue)) {
+                        cswPrivate.header[col] = cellValue;
                     }
                     cssClass = 'CswThinGridHeaderShow';
                 } else if (row === 1) {
@@ -118,9 +115,8 @@
                 }
 
                 thisCell = cswPrivate.table.cell(row, col);
-                if (false === Csw.isNullOrEmpty(cellData.value)) {
-                    //thisCell.append(Csw.string(value, '&nbsp;'));
-                    thisCell.label({ text: cellData.value, isRequired: cellData.isRequired, useWide: true }).css('text-align', 'left');
+                if (false === Csw.isNullOrEmpty(cellValue)) {
+                    thisCell.append(Csw.string(cellValue, '&nbsp;'));
                 }
                 thisCell.addClass(cssClass);
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {
