@@ -283,6 +283,7 @@
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27551.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28421.cs" />
     <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLTypes.cs" />
     <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLPackages.cs" />
     <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLViews.cs" />
