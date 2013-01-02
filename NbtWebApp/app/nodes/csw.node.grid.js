@@ -82,6 +82,9 @@
                             Multi: (nodeids.count() > 1),
                             onEditNode: cswPrivate.onEditNode,
                             onEditView: cswPrivate.onEditView,
+                            onClose: function() {
+                                cswPublic.reload();
+                            },
                             onRefresh: cswPrivate.onRefresh
                         });
                     }, // onEdit
