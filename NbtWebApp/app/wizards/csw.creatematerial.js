@@ -589,7 +589,7 @@
             }());
             //#endregion Step 3: Size(s)
 
-            //#region Step 4: Attach MSDS
+            //#region Step 4: Attach SDS
             cswPrivate.makeStep4 = (function () {
                 cswPrivate.stepFourComplete = false;
 
@@ -642,7 +642,7 @@
                     }
                 };
             }());
-            //#endregion Step 4: Attach MSDS
+            //#endregion Step 4: Attach SDS
             
             //#region ctor
             
@@ -653,7 +653,7 @@
                     1: 'Choose Type and Identity',
                     2: 'Additional Properties',
                     3: 'Size(s)',
-                    4: 'Attach MSDS'
+                    4: 'Attach SDS'
                 };
                 cswPrivate.currentStepNo = cswPrivate.startingStep;                
 
