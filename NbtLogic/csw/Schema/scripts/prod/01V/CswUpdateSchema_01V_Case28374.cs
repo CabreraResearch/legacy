@@ -23,6 +23,38 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            //5 - Create new "My Contianers" grid, which is essentially the Containers view with an "owner=me" filter
+            CswNbtView MyContainersView = _CswNbtSchemaModTrnsctn.restoreView( "My Containers" ) ??
+                                          _CswNbtSchemaModTrnsctn.makeNewView( "My Containers", NbtViewVisibility.Global );
+            MyContainersView.ViewMode = NbtViewRenderingMode.Grid;            
+            MyContainersView.Category = "Containers";
+            MyContainersView.Root.ChildRelationships.Clear();
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtViewRelationship ContainerRel = MyContainersView.AddViewRelationship( ContainerOC, false );
+
+            CswNbtViewProperty BarcodeVP = MyContainersView.AddViewProperty( ContainerRel, ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
+            BarcodeVP.Order = 1;
+            CswNbtViewProperty StatusVP = MyContainersView.AddViewProperty( ContainerRel, ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
+            StatusVP.Order = 2;
+            CswNbtViewProperty QuantityVP = MyContainersView.AddViewProperty( ContainerRel, ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
+            QuantityVP.Order = 3;
+            CswNbtViewProperty LocationVP = MyContainersView.AddViewProperty( ContainerRel, ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
+            LocationVP.Order = 4;
+            CswNbtViewProperty DisposedVP = MyContainersView.AddViewProperty( ContainerRel, ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed ) );
+            DisposedVP.Order = 5;
+            MyContainersView.AddViewPropertyFilter( DisposedVP,
+                                          CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                          CswNbtPropFilterSql.FilterResultMode.Hide,
+                                          CswNbtSubField.SubFieldName.Checked,
+                                          CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                          "false");
+            CswNbtViewProperty OwnerVP = MyContainersView.AddViewProperty( ContainerRel, ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner ) );
+            OwnerVP.Order = 6;
+            OwnerVP.ShowInGrid = false;
+            MyContainersView.AddViewPropertyFilter( OwnerVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, Value: "me" );
+            MyContainersView.save();            
+
             //9 - rename MSDS to SDS everywhere
             CswNbtMetaDataObjectClass DocumentClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
             foreach(CswNbtMetaDataNodeType DocumentNT in DocumentClass.getNodeTypes())
