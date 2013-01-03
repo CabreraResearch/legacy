@@ -87,12 +87,12 @@ namespace ChemSW.Nbt.Batch
                                 case "Dispose":
                                     try
                                     {
-                                        bool success = _dispose( barcode, update );
-                                        if( false == success )
+                                        string error = _dispose( barcode, update );
+                                        if( null != error )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
-                                                + "; Container Barcode: " + barcode
-                                                + "; Success: " + success + "(Container node doesn't exist)" );
+                                                                  + "; Container Barcode: " + barcode
+                                                                  + "; Failure with error message: " + error );
                                         }
                                     }
                                     catch( Exception e )
@@ -103,13 +103,13 @@ namespace ChemSW.Nbt.Batch
                                 case "Move":
                                     try
                                     {
-                                        bool success = _move( barcode, update );
-                                        if( false == success )
+                                        string error = _move( barcode, update );
+                                        if( null != error )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                    + "; Container Barcode: " + barcode
                                                                    + "; New Location: " + update["location"]
-                                                                   + "; Success: " + success + "(Container node doesn't exist)" );
+                                                                   + "; Failure with error message: " + error );
                                         }
                                     }
                                     catch( Exception e )
@@ -120,13 +120,13 @@ namespace ChemSW.Nbt.Batch
                                 case "Owner":
                                     try
                                     {
-                                        bool success = _updateOwner( barcode, update );
-                                        if( false == success )
+                                        string error = _updateOwner( barcode, update );
+                                        if( null != error )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
-                                                + "; Container Barcode: " + barcode
-                                                + "; New Owner: " + update["user"]
-                                                + "; Success: " + success + "(Container node doesn't exist)" );
+                                                                  + "; Container Barcode: " + barcode
+                                                                  + "; New Owner: " + update["user"]
+                                                                  + "; Failure with error message: " + error );
                                         }
                                     }
                                     catch( Exception e )
@@ -137,14 +137,14 @@ namespace ChemSW.Nbt.Batch
                                 case "Transfer":
                                     try
                                     {
-                                        bool success = _transfer( barcode, update );
-                                        if( false == success )
+                                        string error = _transfer( barcode, update );
+                                        if( null != error )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                   + "; Container Barcode: " + barcode
                                                                   + "; New Owner: " + update["user"]
                                                                   + "; New Location: " + update["location"]
-                                                                  + "; Success: " + success + "(Container node doesn't exist)" );
+                                                                  + "; Failure with error message: " + error );
                                         }
                                     }
                                     catch( Exception e )
@@ -155,13 +155,13 @@ namespace ChemSW.Nbt.Batch
                                 case "Dispense":
                                     try
                                     {
-                                        bool success = _dispense( barcode, update );
-                                        if( false == success )
+                                        string error = _dispense( barcode, update );
+                                        if( null != error )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                   + "; Container Barcode: " + barcode
                                                                   + "; Dispense Data: " + update
-                                                                  + "; Success: " + success + "(Container node doesn't exist)" );
+                                                                  + "; Failure with error message: " + error );
                                         }
                                     }
                                     catch( Exception e )
@@ -172,13 +172,13 @@ namespace ChemSW.Nbt.Batch
                                 case "Reconcile":
                                     try
                                     {
-                                        bool success = _reconcile( barcode, update );
-                                        if( false == success )
+                                        string error = _reconcile( barcode, update );
+                                        if( null != error )
                                         {
                                             BatchNode.appendToLog( "Operation: " + operation
                                                                   + "; Container Barcode: " + barcode
                                                                   + "; Location: " + update["location"]
-                                                                  + "; Success: " + success + "(Container node doesn't exist)" );
+                                                                  + "; Failure with error message: " + error );
                                         }
                                     }
                                     catch( Exception e )
@@ -243,104 +243,135 @@ namespace ChemSW.Nbt.Batch
 
         #endregion
 
-        private bool _dispose( string barcode, JObject update )
+        private string _dispose( string barcode, JObject update )
         {
-            bool ReturnVal = false;
+            string errorString = null;
 
             CswNbtObjClassContainer ContainerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
             if( null != ContainerNode )
             {
                 ContainerNode.DisposeContainer();
                 ContainerNode.postChanges( false );
-                ReturnVal = true;
+            }
+            else
+            {
+                errorString = "A container with barcode " + barcode + " does not exist.";
             }
 
-            return ReturnVal;
+            return errorString;
         }
 
-        private bool _move( string barcode, JObject update )
+        private string _move( string barcode, JObject update )
         {
-            bool returnVal = false;
+            string errorString = null;
 
             string newLocationBarcode = update["location"].ToString();
-            CswPrimaryKey newLocationNodeId = null;
+
             CswNbtNode newLocationNode = _getNodeFromBarcode( newLocationBarcode, NbtObjectClass.LocationClass, CswNbtObjClassLocation.PropertyName.Barcode );
             if( null != newLocationNode )
             {
-                newLocationNodeId = newLocationNode.NodeId;
-            }
+                CswPrimaryKey newLocationNodeId = newLocationNode.NodeId;
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
-            if( null != containerNode )
+                CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
+                if( null != containerNode )
+                {
+                    containerNode.MoveContainer( newLocationNodeId );
+                    containerNode.postChanges( false );
+                }
+                else
+                {
+                    errorString = "A container with barcode " + barcode + " does not exist.";
+                }
+            }
+            else
             {
-                containerNode.MoveContainer( newLocationNodeId );
-                containerNode.postChanges( false );
-                returnVal = true;
+                errorString = "The Location barcode, " + newLocationBarcode + ", does not exist";
             }
 
-            return returnVal;
+
+
+            return errorString;
         }
 
-        private bool _updateOwner( string barcode, JObject update )
+        private string _updateOwner( string barcode, JObject update )
         {
-            bool returnVal = false;
+            string errorString = null;
+
             string newOwnerBarcode = update["user"].ToString();
-            CswPrimaryKey newOwnerNodeId = null;
+
             CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass, CswNbtObjClassUser.PropertyName.Barcode );
             if( null != newOwnerNode )
             {
-                newOwnerNodeId = newOwnerNode.NodeId;
-            }
+                CswPrimaryKey newOwnerNodeId = newOwnerNode.NodeId;
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
-            if( null != containerNode )
+                CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
+                if( null != containerNode )
+                {
+                    containerNode.UpdateOwner( newOwnerNodeId );
+                    containerNode.postChanges( false );
+                }
+                else
+                {
+                    errorString = "A container with barcode " + barcode + " does not exist.";
+                }
+            }
+            else
             {
-                containerNode.UpdateOwner( newOwnerNodeId );
-                containerNode.postChanges( false );
-                returnVal = true;
+                errorString = "The User barcode, " + newOwnerBarcode + ", does not exist";
             }
 
-            return returnVal;
+
+
+            return errorString;
         }
 
-        private bool _transfer( string barcode, JObject update )
+        private string _transfer( string barcode, JObject update )
         {
-            bool returnVal = false;
+            string errorString = null;
+
             string newOwnerBarcode = update["user"].ToString();
             string newLocationBarcode = update["location"].ToString();
 
-            CswPrimaryKey newLocationNodeId = null;
             CswNbtNode newLocationNode = _getNodeFromBarcode( newLocationBarcode, NbtObjectClass.LocationClass, CswNbtObjClassLocation.PropertyName.Barcode );
             if( null != newLocationNode )
             {
-                newLocationNodeId = newLocationNode.NodeId;
-            }
+                CswPrimaryKey newLocationNodeId = newLocationNode.NodeId;
 
-            CswPrimaryKey newOwnerNodeId = null;
-            CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass, CswNbtObjClassUser.PropertyName.Barcode );
-            if( null != newOwnerNode )
+                CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass, CswNbtObjClassUser.PropertyName.Barcode );
+                if( null != newOwnerNode )
+                {
+                    CswPrimaryKey newOwnerNodeId = newOwnerNode.NodeId;
+
+                    CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
+                    if( null != containerNode )
+                    {
+                        containerNode.TransferContainer( newLocationNodeId, newOwnerNodeId );
+                        containerNode.postChanges( false );
+                    }
+                    else
+                    {
+                        errorString = "A container with barcode " + barcode + " does not exist.";
+                    }
+                }
+                else
+                {
+                    errorString = "The User barcode, " + newOwnerBarcode + ", does not exist";
+                }
+            }
+            else
             {
-                newOwnerNodeId = newOwnerNode.NodeId;
+                errorString = "The Location barcode, " + newLocationBarcode + ", does not exist";
             }
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
-            if( null != containerNode )
-            {
-                containerNode.TransferContainer( newLocationNodeId, newOwnerNodeId );
-                containerNode.postChanges( false );
-                returnVal = true;
-            }
-
-            return returnVal;
+            return errorString;
         }
 
-        private bool _dispense( string barcode, JObject update )
+        private string _dispense( string barcode, JObject update )
         {
-            bool returnVal = false;
+            string errorString = null;
 
             string uom = update["uom"].ToString().ToLower();
             CswPrimaryKey uomId = null;
-
             CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
             foreach( CswNbtObjClassUnitOfMeasure currentUnitOfMeasureNode in UnitOfMeasureOC.getNodes( false, false, false, true ) )
             {
@@ -351,20 +382,31 @@ namespace ChemSW.Nbt.Batch
                 }
             }
 
-            CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
-            if( null != containerNode )
+            if( null != uomId )
             {
-                containerNode.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, CswConvert.ToDouble( update["qty"] ), uomId );
-                containerNode.postChanges( false );
-                returnVal = true;
+                CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
+                if( null != containerNode )
+                {
+                    containerNode.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, CswConvert.ToDouble( update["qty"] ), uomId );
+                    containerNode.postChanges( false );
+                }
+                else
+                {
+                    errorString = "A container with barcode " + barcode + " does not exist.";
+                }
+            }
+            else
+            {
+                errorString = "The UOM of " + uom + " that was provided does not exist.";
             }
 
-            return returnVal;
+            return errorString;
         }
 
-        private bool _reconcile( string barcode, JObject update )
+        private string _reconcile( string barcode, JObject update )
         {
-            bool returnVal = false;
+            string errorString = null;
+
             string newLocationBarcode = update["location"].ToString();
 
             CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
@@ -373,10 +415,13 @@ namespace ChemSW.Nbt.Batch
                 containerNode.CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Scan, newLocationBarcode, barcode );
                 containerNode.Location.RefreshNodeName();
                 containerNode.postChanges( false );
-                returnVal = true;
+            }
+            else
+            {
+                errorString = "A container with barcode " + barcode + " does not exist.";
             }
 
-            return returnVal;
+            return errorString;
         }
 
         #endregion
