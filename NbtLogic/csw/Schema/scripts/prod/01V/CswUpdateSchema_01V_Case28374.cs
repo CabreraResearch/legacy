@@ -107,6 +107,8 @@ namespace ChemSW.Nbt.Schema
             //5 - Create new "My Contianers" grid, which is essentially the Containers view with an "owner=me" filter
             _createMyContainersView();            
 
+            //6-8 - update action and view permissions for CIS_Pro roles, and add WelcomePage Items (in Part 2 of script)
+
             //9 - rename MSDS to SDS everywhere
             CswNbtMetaDataObjectClass DocumentClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
             foreach(CswNbtMetaDataNodeType DocumentNT in DocumentClass.getNodeTypes())

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using ChemSW.Audit;
@@ -544,23 +545,23 @@ namespace ChemSW.Nbt.Schema
         }
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
         public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
-        public CswNbtView restoreView( string ViewName )
+        public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility = null )
         {
             CswNbtView ReturnVal = null;
 
-            List<CswNbtView> Views = restoreViews( ViewName );
-            if( 1 == Views.Count )
+            List<CswNbtView> AllViews = restoreViews( ViewName );
+            if( 1 == AllViews.Count )
             {
-                ReturnVal = Views[0];
+                ReturnVal = AllViews[0];
             }
-            //else if ( 0 == Views.Count )
-            //{
-            //    throw ( new CswDniException( "No such view: " + ViewName ) );
-            //}
-            //else if ( Views.Count > 1 )
-            //{
-            //    throw ( new CswDniException( "There are more than one views having the view name " + ViewName ) );
-            //}//
+            else if( AllViews.Count > 1 )
+            {
+                List<CswNbtView> VisibilityViews = AllViews.Where(View => View.Visibility == Visibility).ToList();
+                if( 1 == VisibilityViews.Count )
+                {
+                    ReturnVal = VisibilityViews[0];
+                }
+            }
 
             return ( ReturnVal );
         }//restoreView() 
