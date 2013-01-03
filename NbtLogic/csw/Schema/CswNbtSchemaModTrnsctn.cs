@@ -32,7 +32,6 @@ namespace ChemSW.Nbt.Schema
 
         private CswDDL _CswDdl = null;
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        ChemSW.Nbt.LandingPage.CswNbtLandingPageTable _LandingPageTable = null;
 
         public ICswDbCfgInfo CswDbCfgInfo
         {
@@ -99,13 +98,6 @@ namespace ChemSW.Nbt.Schema
 
         public ICswLogger CswLogger { get { return ( _CswNbtResources.CswLogger ); } }
 
-        //private bool _ManageConstraints = true;
-        //public bool ManageConstraints
-        //{
-        //    set { _CswDdl.ManageConstraints = value; }
-        //    get { return ( _CswDdl.ManageConstraints ); }
-        //}//ManageConstraints
-
         public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
         {
             return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
@@ -113,53 +105,42 @@ namespace ChemSW.Nbt.Schema
 
         public LandingPage.CswNbtLandingPageTable getLandingPageTable()
         {
-            if( null == _LandingPageTable )
-            {
-                _LandingPageTable = new LandingPage.CswNbtLandingPageTable( _CswNbtResources );
-            }
-            return ( _LandingPageTable );
+            return ( new LandingPage.CswNbtLandingPageTable( _CswNbtResources ) );
         }
 
         #region TransactionManagement
         public void beginTransaction()
         {
             _CswNbtResources.CswResources.beginTransaction();
-        }//beginTransaction()
+        }
 
         /// <summary>
         /// This removes the cache of CswTableCaddies from CswResources.  Consider using Rollback() if you are trying to revert changes.
         /// </summary>
         public void clearUpdates()
         {
-
             _CswNbtResources.CswResources.clearUpdates();
-        }//
+        }
 
         public void commitTransaction()
         {
             _CswDdl.confirm();
             _CswNbtResources.finalize( true );
-            //_CswNbtResources.CswResources.commitTransaction();
             _CswDdl.clear();
-
-
-        }//commitTransaction()
+        }
 
         public void rollbackTransaction()
         {
-            //_CswResourcesForTableCaddy.commitTransaction();
             _CswNbtResources.Rollback();
             _CswNbtResources.refreshDataDictionary();
             _CswDdl.revert();
             _CswDdl.clear();
-
-        }//rollbackTransaction()
+        }
 
         public void refreshDataDictionary()
         {
             _CswNbtResources.refreshDataDictionary();
         }
-
 
         #endregion
 
@@ -181,10 +162,10 @@ namespace ChemSW.Nbt.Schema
         //public void setIsDeleteModeLogical( bool IsDeleteModeLogical ) { _CswResourcesForTableCaddy.setIsDeleteModeLogical( IsDeleteModeLogical ); }
 
         public bool isTableDefinedInMetaData( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefinedInMetaData( TableName ) ); }
-        public bool isColumnDefinedInMetaData( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInMetaData( TableName, ColumnName ) ); }//isColumnDefinedInMetaData 
+        public bool isColumnDefinedInMetaData( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInMetaData( TableName, ColumnName ) ); }
 
-        public bool isTableDefinedInDataBase( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefinedInDataBase( TableName ) ); }//isTableDefinedInDataBase() 
-        public bool isColumnDefinedInDataBase( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInDataBase( TableName, ColumnName ) ); }//isColumnDefinedInDataBase()
+        public bool isTableDefinedInDataBase( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefinedInDataBase( TableName ) ); }
+        public bool isColumnDefinedInDataBase( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefinedInDataBase( TableName, ColumnName ) ); }
 
         public bool isTableDefined( string TableName ) { return ( _CswNbtResources.CswResources.isTableDefined( TableName ) ); }
         public bool isColumnDefined( string TableName, string ColumnName ) { return ( _CswNbtResources.CswResources.isColumnDefined( TableName, ColumnName ) ); }
@@ -213,7 +194,6 @@ namespace ChemSW.Nbt.Schema
         //public void setSqlSelectText( string AdapterName, string SqlSelectText ) { _CswNbtResources.CswResources.setSqlSelectText( AdapterName, SqlSelectText ); }
         //public void setSqlSelectText( string SqlSelectText, Int32 PageLowerBoundExclusive, Int32 PageUpperBoundInclusive ) { _CswNbtResources.CswResources.setSqlSelectText( SqlSelectText, PageLowerBoundExclusive, PageUpperBoundInclusive ); }
         //public void setSqlSelectText( string AdapterName, string SqlSelectText, Int32 PageLowerBoundExclusive, Int32 PageUpperBoundInclusive ) { _CswNbtResources.CswResources.setSqlSelectText( AdapterName, SqlSelectText, PageLowerBoundExclusive, PageUpperBoundInclusive ); }
-
 
         /// <summary>
         /// Executes arbitrary sql.  It's your job to make sure it's platform neutral.
@@ -245,11 +225,8 @@ namespace ChemSW.Nbt.Schema
         public string getPrimeKeyColName( string TableName ) { return ( _CswNbtResources.CswResources.getPrimeKeyColName( TableName ) ); }
         public int getNewPrimeKey( string TableName ) { return ( _CswNbtResources.CswResources.getNewPrimeKey( TableName ) ); }
 
-
-
         public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Postpend, Int32 Pad, Int32 InitialValue )
         {
-
             return _CswDdl.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
         }
         public DataTable getSequence( CswSequenceName SequenceName )
@@ -280,27 +257,17 @@ namespace ChemSW.Nbt.Schema
         public void makeConstraint( string ReferencingTableName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName, bool AddDdData )
         {
             _CswDdl.makeConstraint( ReferencingTableName, ReferencingColumnName, ReferencedTableName, ReferencedColumnName, AddDdData );
-
-        }//makeConstraint()
-
+        }
 
         public void removeConstraint( string ReferencingTableName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName, string ConstraintName )
         {
             _CswDdl.removeConstraint( ReferencingTableName, ReferencingColumnName, ReferencedTableName, ReferencedColumnName, ConstraintName );
-        }//removeConstraint()
-
-        //public void removeConstraint( string ReferencingTableName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName )
-        //{
-        //    _CswDdl.removeConstraint( ReferencingTableName, ReferencingColumnName, ReferencedTableName, ReferencedColumnName );
-        //}//removeConstraint()
-
-
+        }
 
         public List<CswTableConstraint> getConstraints( string PkTableName, string PkColumnName, string FkTableName, string FkColumnName )
         {
             return ( _CswDdl.getConstraints( PkTableName, PkColumnName, FkTableName, FkColumnName ) );
         }
-
 
         public int purgeTableRecords( string TableName ) { return ( _CswNbtResources.CswResources.purgeTableRecords( TableName ) ); }//purgeTableRecords()
         public void copyTable( string SourceTableName, string CopyToTableName, bool TableIsTemporary = true ) { _CswNbtResources.CswResources.copyTable( SourceTableName, CopyToTableName, TableIsTemporary ); }//copyTable()
@@ -310,31 +277,18 @@ namespace ChemSW.Nbt.Schema
             _CswDdl.addTable( TableName, PkColumnName );
         }
 
-        public void dropTable( string TableName ) { _CswDdl.dropTable( TableName ); }//dropTable()
+        public void dropTable( string TableName ) { _CswDdl.dropTable( TableName ); }
 
-        //public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
-        //                       string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-        //                       bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, DataDictionaryPortableDataType portabledatatype, bool ReadOnly,
-        //                       bool Required, string tablename, DataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
-        //{
-        //    addColumn( columnname, columntype, datatypesize, dblprecision,
-        //               defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
-        //               logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
-        //               Required, tablename, uniquetype, uperrangevalueinclusive, upperrangevalue );
-        //               //Int32.MinValue, string.Empty );
-        //}
         public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
                                bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, DataDictionaryPortableDataType portabledatatype, bool ReadOnly,
                                bool Required, string tablename, DataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
-        //Int32 NodeTypePropId, string SubFieldName )
         {
             _CswDdl.addColumn( columnname, columntype, datatypesize, dblprecision,
                                defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
                                logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
                                Required, tablename, uniquetype, uperrangevalueinclusive, upperrangevalue );
-            //NodeTypePropId, SubFieldName );
-        }//addColumn()
+        }
 
         public void renameColumn( string TableName, string OriginalColumnName, string NewColumnName )
         {
@@ -345,13 +299,10 @@ namespace ChemSW.Nbt.Schema
         public void changeColumnDataType( string TableName, string ColumnName, DataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
         public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
 
-
-        //Note: thi
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
 
         public DataTable getAllViews() { return _CswNbtResources.ViewSelect.getAllViews(); }
 
-        //        public DbVendorType DbVendorType { get { return ( _CswResourcesForTableCaddy.DbVendorType ); } }
         public string Accessid { get { return ( _CswNbtResources.AccessId ); } }
         public string ServerId { get { return ( _CswNbtResources.CswResources.ServerId ); } }
         public string UserName { get { return ( _CswNbtResources.CswResources.UserName ); } }
@@ -362,7 +313,6 @@ namespace ChemSW.Nbt.Schema
         public CswArbitrarySelect makeCswArbitrarySelect( string UniqueName, string QueryText ) { return ( _CswNbtResources.makeCswArbitrarySelect( UniqueName, QueryText ) ); }
         public CswTableSelect makeCswTableSelect( string UniqueName, string TableName ) { return ( _CswNbtResources.makeCswTableSelect( UniqueName, TableName ) ); }
         public CswTableUpdate makeCswTableUpdate( string UniqueName, string TableName ) { return ( _CswNbtResources.makeCswTableUpdate( UniqueName, TableName ) ); }
-        //public CswNbtMetaData MetaData { get { return ( _CswNbtResources.MetaData ); } }
 
         private CswNbtMetaDataForSchemaUpdater _CswNbtMetaDataForSchemaUpdater = null;
         /// <summary>
@@ -381,7 +331,6 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-
         public void makeMissingAuditTablesAndColumns()
         {
             DataTable DataTable = execArbitraryPlatformNeutralSqlSelect( "query for all datadatable names", "select distinct tablename from data_dictionary" );
@@ -391,9 +340,7 @@ namespace ChemSW.Nbt.Schema
                 string CurrentTableName = CurrentRow["tablename"].ToString().ToLower();
                 makeTableAuditable( CurrentTableName );
             }
-
-        }//makeMissingAuditTables()
-
+        }
 
         public void makeTableAuditable( string TableName )
         {
@@ -401,9 +348,6 @@ namespace ChemSW.Nbt.Schema
             {
                 addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
             }
-
-            //datetime stamp column
-
 
             if( _CswAuditMetaData.shouldBeAudited( TableName ) )
             {
@@ -421,11 +365,9 @@ namespace ChemSW.Nbt.Schema
                 }
                 else //if it does exist, maybe the target table has new columns to be added to the audit table?
                 {
-
                     string[] TargetTableColumnNameArray = new string[_CswNbtResources.DataDictionary.getColumnNames( TableName ).Count];
                     _CswNbtResources.DataDictionary.getColumnNames( TableName ).CopyTo( TargetTableColumnNameArray, 0 );
                     List<string> TargetColumnNames = new List<string>( TargetTableColumnNameArray );
-
 
                     string[] AuditTableColumnNameArray = new string[_CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).Count];
                     _CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).CopyTo( AuditTableColumnNameArray, 0 );
@@ -442,7 +384,6 @@ namespace ChemSW.Nbt.Schema
                         }
                     }
 
-
                     if( MissingAuditTableColumnNames.Count > 0 )
                     {
                         foreach( string CurrentMissingColumnName in MissingAuditTableColumnNames )
@@ -455,11 +396,9 @@ namespace ChemSW.Nbt.Schema
 
                 }//if-else the audit table did not yet exist
 
-
             }//if-else it's an audited table
 
         }//makeTableAuditable() 
-
 
         public void makeTableNotAuditable( string TableName )
         {
@@ -468,7 +407,6 @@ namespace ChemSW.Nbt.Schema
                 dropColumn( TableName, _CswAuditMetaData.AuditLevelColName );
             }
 
-
             string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
 
             if( _CswNbtResources.CswResources.isTableDefined( AuditTableName ) )
@@ -476,9 +414,7 @@ namespace ChemSW.Nbt.Schema
                 dropTable( AuditTableName );
             }//if the audit table does not yet exist
 
-
         }//makeTableAuditable() 
-
 
         public bool isTableAuditable( string TableName ) { return ( _CswNbtResources.CswResources.isTableAuditable( TableName ) ); }
 
@@ -488,7 +424,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswTableUpdate CswTableUpdate = makeCswTableUpdate( "setTableAuditLevel", TableName );
 
-                DataTable DataTable = null;
+                DataTable DataTable;
 
                 if( string.Empty == WhereClause )
                 {
@@ -511,7 +447,6 @@ namespace ChemSW.Nbt.Schema
         }//setTableAuditLevel() 
 
         public CswNbtNodeCollection Nodes { get { return ( _CswNbtResources.Nodes ); } }
-        //public CswNbtTreeCache Trees { get { return ( _CswNbtResources.Trees ); } }
         public CswNbtActionCollection Actions { get { return _CswNbtResources.Actions; } }
 
         /// <summary>
@@ -521,11 +456,6 @@ namespace ChemSW.Nbt.Schema
         {
             return CswNbtObjClassFactory.makeObjClass( _CswNbtResources, ObjectClass );
         }
-
-        //public bool IsModuleEnabled( CswNbtResources.CswModule Module )
-        //{
-        //    return _CswNbtResources.Modules.IsModuleEnabled( Module );
-        //}
 
         public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
 
@@ -566,15 +496,6 @@ namespace ChemSW.Nbt.Schema
             return ( ReturnVal );
         }//restoreView() 
 
-        //public void ClearCache()
-        //{
-        //    _CswNbtResources.ClearCache();
-        //    _CswNbtResources.CurrentUser = new CswNbtSystemUser( _CswNbtResources, "_SchemaUpdaterUser" );
-        //}
-
-        //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
-        //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
-
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, false ); }
         public List<CswNbtView> restoreViews( string ViewName )
         {
@@ -611,7 +532,7 @@ namespace ChemSW.Nbt.Schema
 
             return ( ReturnVal );
 
-        }//restoreViews()
+        }//restoreAllViewsOfMode()
 
         public void deleteView( string ViewName, bool DeleteAllInstances )
         {
@@ -624,30 +545,6 @@ namespace ChemSW.Nbt.Schema
                 CurrentView.Delete();
 
         }//deleteView()
-
-        //public CswNbtNodeTypePermissions getNodeTypePermissions( CswNbtObjClassRole Role, CswNbtMetaDataNodeType NodeType )
-        //{
-        //    return new CswNbtNodeTypePermissions( Role, NodeType );
-        //}
-
-        //public CswNbtNodeTypePermissions getNodeTypePermissions( string RoleName, string NodeTypeName )
-        //{
-        //    CswNbtNodeTypePermissions ReturnVal = null;
-        //    CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( RoleName );
-        //    if( null == RoleNode )
-        //        throw ( new CswDniException( "No such role: " + RoleName ) );
-        //    CswNbtObjClassRole Role = (CswNbtObjClassRole) RoleNode;
-
-        //    CswNbtMetaDataNodeType CswNbtMetaDataNodeType = null;
-        //    if( null == ( CswNbtMetaDataNodeType = MetaData.getNodeType( NodeTypeName ) ) )
-        //        throw ( new CswDniException( "No such nodetype: " + NodeTypeName ) );
-
-
-        //    ReturnVal = new CswNbtNodeTypePermissions( Role, CswNbtMetaDataNodeType );
-
-        //    return ( ReturnVal );
-
-        //}//getNodeTypePermissions
 
         public CswNbtPermit Permit { get { return _CswNbtResources.Permit; } }
 
@@ -682,8 +579,6 @@ namespace ChemSW.Nbt.Schema
             _CswNbtResources.ClearActionsCache();
             return NewActionId;
         }
-
-
 
         /// <summary>
         /// Convenience function for making new Configuration Variable
@@ -768,7 +663,6 @@ namespace ChemSW.Nbt.Schema
             JctFtSfUpdate.update( UpdateAsDataTable );
         }
 
-
         public void createModuleActionJunction( CswNbtModuleName Module, CswNbtActionName ActionName )
         {
             Int32 ModuleId = getModuleId( Module );
@@ -787,7 +681,6 @@ namespace ChemSW.Nbt.Schema
             JctRow["actionid"] = ActionId.ToString();
             JctRow["moduleid"] = ModuleId.ToString();
             JctModulesADataTable.Rows.Add( JctRow );
-            //Int32 NewJctModuleActionClassId = CswConvert.ToInt32(JctRow["jctmoduleactionid"]);
             JctModulesATable.update( JctModulesADataTable );
         }
 
@@ -827,30 +720,6 @@ namespace ChemSW.Nbt.Schema
             _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_nodetypes", "nodetypeid" );
             _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_objectclass", "objectclassid" );
         }
-
-        ///// <summary>
-        ///// Deprecated in favor of SetActionPermission.  Don't use for new scripts.
-        ///// </summary>
-        //public void GrantActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName )
-        //{
-        //    _CswNbtResources.Permit.set( ActionName, RoleNode, true );
-        //}
-
-        ///// <summary>
-        ///// Grants or revokes permission to an action to a role
-        ///// </summary>
-        //public void SetActionPermission( CswNbtNode RoleNode, CswNbtActionName ActionName, bool HasAccess )
-        //{
-        //    if( RoleNode != null )
-        //    {
-        //        CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) RoleNode ).ActionPermissions;
-        //        ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
-        //                                    CswNbtAction.ActionNameEnumToString( ActionName ),
-        //                                    HasAccess );
-        //        ActionPermissions.Save();
-        //        RoleNode.postChanges( false );
-        //    }
-        //}
 
         public Int32 getModuleId( CswNbtModuleName Module )
         {
@@ -910,7 +779,7 @@ namespace ChemSW.Nbt.Schema
             if( Recurrence != Recurrence.Unknown &&
                 NbtScheduleRuleNames.Unknown != RuleName )
             {
-                //Come back some day and make this dundant-proof
+                //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
                 CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
                 DataTable RuleTable = RulesUpdate.getEmptyTable();
@@ -950,7 +819,6 @@ namespace ChemSW.Nbt.Schema
             JctRow["moduleid"] = ModuleId.ToString();
             JctRow["objectclassid"] = ObjectClassId.ToString();
             JctModulesOCDataTable.Rows.Add( JctRow );
-            //Int32 NewJctModuleObjectClassId = CswConvert.ToInt32(ModuleRow["jctmoduleobjectclassid"]);
             JctModulesOCTable.update( JctModulesOCDataTable );
         }
 
@@ -971,11 +839,9 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate JctModulesNTTable = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate", "jct_modules_nodetypes" );
             DataTable JctModulesNTDataTable = JctModulesNTTable.getEmptyTable();
             DataRow JctRow = JctModulesNTDataTable.NewRow();
-            //JctRow["deleted"] = CswConvert.ToDbVal( false );
             JctRow["moduleid"] = ModuleId.ToString();
             JctRow["nodetypeid"] = NodeTypeId.ToString();
             JctModulesNTDataTable.Rows.Add( JctRow );
-            //Int32 NewModuleId = CswConvert.ToInt32(ModuleRow["jctmodulenodetypeid"]);
             JctModulesNTTable.update( JctModulesNTDataTable );
         }
 
@@ -1143,7 +1009,6 @@ namespace ChemSW.Nbt.Schema
 
                     ObjectClassPropUpdate.update( UpdateTable );
                     MetaData.refreshAll();
-                    //MetaData.makeMissingNodeTypeProps();
                     RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
                 }
             }
@@ -1191,9 +1056,7 @@ namespace ChemSW.Nbt.Schema
                                                                     Int32 NumberPrecision = Int32.MinValue
             )
         {
-
-
-            CswNbtMetaDataObjectClassProp RetProp = null;
+            CswNbtMetaDataObjectClassProp RetProp;
             if( NbtObjectClass != CswNbtResources.UnknownEnum )
             {
                 CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
@@ -1225,14 +1088,13 @@ namespace ChemSW.Nbt.Schema
                         NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = CswConvert.ToDbVal( Extended );
                     }
                     NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( SetValOnAdd );
-                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( AuditLevel.ToString() );
+                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( AuditLevel );
 
                     if( false == string.IsNullOrEmpty( StaticText ) )
                     {
                         NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = CswConvert.ToDbVal( StaticText );
                     }
                     ObjectClassPropUpdate.update( UpdateTable );
-                    //MetaData.makeMissingNodeTypeProps();
                     RetProp = ObjectClassOc.getObjectClassProp( PropName );
                 }
             }
@@ -1242,8 +1104,6 @@ namespace ChemSW.Nbt.Schema
             }
             return RetProp;
         }
-
-
 
         /// <summary>
         /// (Deprecated) Convenience function for making new Object Class Props
@@ -1292,13 +1152,11 @@ namespace ChemSW.Nbt.Schema
             return OCPRow;
         }
 
-
         private bool _validateFkType( string FkType )
         {
             bool RetIsValid = false;
 
             NbtViewPropIdType PropIdType = FkType;
-            //Enum.TryParse( FkType, true, out PropIdType );
             if( PropIdType != NbtViewPropIdType.Unknown )
             {
                 RetIsValid = true;
@@ -1306,7 +1164,6 @@ namespace ChemSW.Nbt.Schema
             else
             {
                 NbtViewRelatedIdType RelatedIdType = FkType;
-                //Enum.TryParse( FkType, true, out RelatedIdType );
                 if( RelatedIdType != NbtViewRelatedIdType.Unknown )
                 {
                     RetIsValid = true;
@@ -1541,8 +1398,6 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
-
-
         /// <summary>
         /// Replaces one property for another in all Views.
         /// If the new property's name ends with _TMP, the suffix is removed.
@@ -1569,7 +1424,6 @@ namespace ChemSW.Nbt.Schema
                 ViewsUpdate.update( ReportedByViewsTable );
             }
         }
-
 
         /// <summary>
         /// Replaces one property for another in a View.
@@ -1676,18 +1530,13 @@ namespace ChemSW.Nbt.Schema
             return ( _CswNbtResources.ConfigVbls.getConfigVariableValue( VariableName ) );
         }
 
-
         public CswNbtActUpdatePropertyValue getCswNbtActUpdatePropertyValue() { return ( new CswNbtActUpdatePropertyValue( _CswNbtResources ) ); }
 
-
-
         public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswNbtResources.execStoredProc( StoredProcName, Params ); }
-
 
         private string _DumpDirectorySetupVblName = "DumpFileDirectoryId";
         public void getNextSchemaDumpFileInfo( ref string PhysicalDirectoryPath, ref string NameOfCurrentDump )
         {
-
             if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
             {
                 string StatusMsg = string.Empty;
@@ -1699,14 +1548,12 @@ namespace ChemSW.Nbt.Schema
             else
             {
                 throw ( new CswDniException( "Unable to get dump file information: there is no " + _DumpDirectorySetupVblName + " setup variable" ) );
-
             }//if-else the dump setup setting exists
 
-        }//TakeADump() 
+        }//getNextSchemaDumpFileInfo() 
 
         public void takeADump( ref string DumpFileName, ref string StatusMessage )
         {
-
             if( _CswNbtResources.SetupVbls.doesSettingExist( _DumpDirectorySetupVblName ) )
             {
                 if( false == _CswNbtResources.takeADump( _CswNbtResources.SetupVbls[_DumpDirectorySetupVblName], ref DumpFileName, ref StatusMessage ) )
@@ -1722,11 +1569,9 @@ namespace ChemSW.Nbt.Schema
 
         }//takeADump() 
 
-
         public string makeUniqueConstraint( string TableName, string ColumnName )
         {
             return ( _CswNbtResources.makeUniqueConstraint( TableName, ColumnName ) );
-
         }//makeUniqueConstraintInDb() 
 
         public string makeUniqueConstraint( string TableName, string ColumnName, bool AddDdData )
@@ -1737,7 +1582,6 @@ namespace ChemSW.Nbt.Schema
         public bool doesFkConstraintExistInDb( string ConstraintName ) { return ( _CswNbtResources.doesFkConstraintExistInDb( ConstraintName ) ); }
         public bool doesUniqueConstraintExistInDb( string ConstraintName ) { return ( _CswNbtResources.doesUniqueConstraintExistInDb( ConstraintName ) ); }
         public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswNbtResources.getUniqueConstraintName( TableName, ColumName ) ); }
-
 
         /// <summary>
         /// (Deprecated: vendor neutrality is no longer a requirement)
@@ -1791,9 +1635,7 @@ namespace ChemSW.Nbt.Schema
                     File.Delete( SqlFilePath );
                 }
             }
-
         } // runExternalSqlScript
-
 
         /// <summary>
         /// Returns true if the current schema is an unmodified master
