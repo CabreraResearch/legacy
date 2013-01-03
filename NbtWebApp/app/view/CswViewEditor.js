@@ -635,17 +635,13 @@
 
                     var populateGroupBySelect = function () {
                         if (false === $.isEmptyObject(viewnodejson.properties)) {
-                            var opts = [];
-                            for (var propKey in viewnodejson.properties) {
-                                opts.push(viewnodejson.properties[propKey].name);
-                            }
-
-                            for (var key in opts) {
+                            Csw.each(viewnodejson.properties, function (property) {
                                 groupBySelect.option({
-                                    value: opts[key],
-                                    display: opts[key]
+                                    value: property.name,
+                                    display: property.name
                                 });
-                            }
+                                var x = 10
+                            });
                         } else {
                             groupByText.hide();
                             groupBySelect.hide();
