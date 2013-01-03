@@ -1524,36 +1524,6 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
-        #region 28331
-
-        private void _moveMaterialIdentityTabButtons( CswDeveloper Dev, Int32 CaseNum )
-        {
-            _acceptBlame( Dev, CaseNum );
-
-            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-            foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getLatestVersionNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeTab IdentityTab = MaterialNt.getIdentityTab();
-                if( null != IdentityTab )
-                {
-                    CswNbtMetaDataNodeTypeProp ReceiveNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Receive );
-                    ReceiveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove : false, DisplayColumn : 2, DisplayRow : 1, TabId : IdentityTab.TabId );
-                    CswNbtMetaDataNodeTypeProp RequestNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Request );
-                    RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove : false, DisplayColumn : 2, DisplayRow : 2, TabId : IdentityTab.TabId );
-                    CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.PartNumber );
-                    PartNoNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove : false, DisplayColumn : 1, DisplayRow : 1, TabId : IdentityTab.TabId );
-                    CswNbtMetaDataNodeTypeProp TradenameNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename );
-                    TradenameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove : false, DisplayColumn : 1, DisplayRow : 2, TabId : IdentityTab.TabId );
-                    CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-                    SupplierNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove : false, DisplayColumn : 1, DisplayRow : 3, TabId : IdentityTab.TabId );
-                }
-            }
-
-            _resetBlame();
-        }
-        #endregion
-
-
         #endregion Viola Methods
 
         /// <summary>
@@ -1598,7 +1568,6 @@ namespace ChemSW.Nbt.Schema
             _fixLocationOcps( CswDeveloper.CF, 28255 );
             _addMaterialTierIIOCP( CswDeveloper.BV, 28247 );
             _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
-            _moveMaterialIdentityTabButtons( CswDeveloper.CF, 28331 );
 
             #endregion VIOLA
 
