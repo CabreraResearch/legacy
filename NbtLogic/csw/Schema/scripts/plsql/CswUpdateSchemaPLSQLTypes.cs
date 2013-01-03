@@ -52,9 +52,11 @@ TYPE TIER_II_MATERIAL AS OBJECT
 (
   MATERIALID number,
   CASNO varchar2(20),
-  QUANTITY number,
+  QUANTITY number,  
+  TOTALQUANTITY number,
   UNITID number,
-  TOTALQUANTITY number
+  UNITTYPE varchar2(50),
+  SPECIFICGRAVITY number
 )" );
 
             #endregion TIER_II_MATERIAL
