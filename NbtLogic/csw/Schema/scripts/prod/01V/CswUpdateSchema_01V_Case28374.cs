@@ -1,5 +1,4 @@
-﻿using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using System;
@@ -26,7 +25,24 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            //3 - Add the following properties to the Chemical's Preview Layout: TradeName, Supplier, NFPA, PPE, GHS pictos (?), Storage Compatibility
+            //2 - Move the Material Buttons to the second column in the Identity Tab in Edit Layout
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeTab IdentityTab = MaterialNT.getIdentityTab();
+                CswNbtMetaDataNodeTypeProp RequestNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Request );
+                RequestNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, IdentityTab.TabId, 1, 2 );
+                CswNbtMetaDataNodeTypeProp ReceiveNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Receive );
+                ReceiveNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, IdentityTab.TabId, 2, 2 );
+                CswNbtMetaDataNodeTypeProp PartNumberNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.PartNumber );
+                PartNumberNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, IdentityTab.TabId, 1, 1 );
+                CswNbtMetaDataNodeTypeProp TradenameNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename );
+                TradenameNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, IdentityTab.TabId, 2, 1 );
+                CswNbtMetaDataNodeTypeProp SupplierNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
+                SupplierNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, IdentityTab.TabId, 3, 1 );
+            }
+
+            //3 - Add the following properties to the Chemical's Preview Layout: TradeName, Supplier, NFPA, PPE, GHS pictos, Storage Compatibility
             ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
             if( null != ChemicalNT )
             {
@@ -38,7 +54,7 @@ namespace ChemSW.Nbt.Schema
                 _addToPreview( CswNbtObjClassMaterial.PropertyName.StorageCompatibility );
             }
 
-            //4 - Rename Expired Containers View  to "My Expired Contianers", using "owner=me" and "expirationdate=today+30 days" filters
+            //4 - Rename Expired Containers View to "My Expired Contianers"
             CswNbtView MyExpiredContainersView = _CswNbtSchemaModTrnsctn.restoreView( "Expiring Containers" );
             if( null != MyExpiredContainersView )
             {
