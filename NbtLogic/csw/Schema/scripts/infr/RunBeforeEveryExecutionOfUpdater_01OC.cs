@@ -1495,7 +1495,37 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28247
 
-        
+        #region 28424
+
+        private void _fixContainerLabelFormatView( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp LabelFormatOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp NodeTypeOcp = PrintLabelOc.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
+            string LabelViewXml = null;
+            foreach( CswNbtMetaDataNodeTypeProp LfNtp in LabelFormatOcp.getNodeTypeProps() )
+
+            {
+                CswNbtView View = _CswNbtSchemaModTrnsctn.restoreView( LfNtp.ViewId );
+                View.Root.ChildRelationships.Clear();
+                
+                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters: false );
+                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                LabelViewXml = LabelViewXml ?? View.ToXml().ToString();
+                View.save();
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(LabelFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, LabelViewXml);
+
+            _resetBlame();
+        }
+
+        #endregion
+
+
         #endregion Viola Methods
 
         /// <summary>
@@ -1539,6 +1569,8 @@ namespace ChemSW.Nbt.Schema
             _addControlZoneNT( CswDeveloper.BV, 28282 );
             _fixLocationOcps( CswDeveloper.CF, 28255 );
             _addMaterialTierIIOCP( CswDeveloper.BV, 28247 );
+            _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
+
             #endregion VIOLA
 
 
