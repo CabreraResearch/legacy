@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         private CswNbtMetaDataNodeType ChemicalNT;
+        private CswNbtMetaDataNodeTypeProp DocumentClassNTP;
 
         public override void update()
         {
@@ -35,6 +36,14 @@ namespace ChemSW.Nbt.Schema
                 _addToPreview( "PPE" );
                 _addToPreview( "GHS Pictos" );
                 _addToPreview( CswNbtObjClassMaterial.PropertyName.StorageCompatibility );
+            }
+
+            //4 - Rename Expired Containers View  to "My Expired Contianers", using "owner=me" and "expirationdate=today+30 days" filters
+            CswNbtView MyExpiredContainersView = _CswNbtSchemaModTrnsctn.restoreView( "Expiring Containers" );
+            if( null != MyExpiredContainersView )
+            {
+                MyExpiredContainersView.ViewName = "My Expiring Containers";
+                MyExpiredContainersView.save();
             }
 
             //5 - Create new "My Contianers" grid, which is essentially the Containers view with an "owner=me" filter
@@ -73,23 +82,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass DocumentClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
             foreach(CswNbtMetaDataNodeType DocumentNT in DocumentClass.getNodeTypes())
             {
-                CswNbtMetaDataNodeTypeProp DocumentClassNTP = DocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+                DocumentClassNTP = DocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
                 DocumentClassNTP.ListOptions = DocumentClassNTP.ListOptions.Replace( "MSDS", "SDS" );
                 DocumentClassNTP.DefaultValue.AsList.Value = DocumentClassNTP.DefaultValue.AsList.Value.Replace( "MSDS", "SDS" );
                 DocumentClassNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DocumentNT.getFirstNodeTypeTab().TabId );
-
-                CswNbtMetaDataNodeTypeProp LanguageNTP = DocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-                LanguageNTP.setFilter( DocumentClassNTP, DocumentClassNTP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.SDS );
-                LanguageNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DocumentNT.getFirstNodeTypeTab().TabId );
-                CswNbtMetaDataNodeTypeProp FormatNTP = DocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-                FormatNTP.setFilter( DocumentClassNTP, DocumentClassNTP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.SDS );
-                FormatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DocumentNT.getFirstNodeTypeTab().TabId );
-                CswNbtMetaDataNodeTypeProp IssueDateNTP = DocumentNT.getNodeTypeProp( "Issue Date" );                
-                if( null != IssueDateNTP )
-                {
-                    IssueDateNTP.setFilter( DocumentClassNTP, DocumentClassNTP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.SDS );
-                    IssueDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DocumentNT.getFirstNodeTypeTab().TabId );
-                }                                
+                _filterToSDS( DocumentNT, CswNbtObjClassDocument.PropertyName.Language );
+                _filterToSDS( DocumentNT, CswNbtObjClassDocument.PropertyName.Format );
+                _filterToSDS( DocumentNT, "Issue Date" );                               
             }
             foreach( CswNbtObjClassDocument DocumentNode in DocumentClass.getNodes( false, false ) )
             {
@@ -114,6 +113,16 @@ namespace ChemSW.Nbt.Schema
             if( null != ChemicalNTP )
             {
                 ChemicalNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true );
+            }
+        }
+
+        private void _filterToSDS( CswNbtMetaDataNodeType DocumentNT, String NodeTypePropName )
+        {
+            CswNbtMetaDataNodeTypeProp DocumentNTP = DocumentNT.getNodeTypeProp( NodeTypePropName );
+            if( null != DocumentNTP )
+            {
+                DocumentNTP.setFilter( DocumentClassNTP, DocumentClassNTP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.SDS );
+                DocumentNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DocumentNT.getFirstNodeTypeTab().TabId );
             }
         }
 
