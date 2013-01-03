@@ -55,7 +55,9 @@
 
                     topToolbar: [],
                     groupField: '',
-                    groupHeaderTpl: '{columnName}: {name}'
+                    groupHeaderTpl: '{columnName}: {name}',
+
+                    dockedItems: []
                 };
 
                 Csw.extend(cswPrivate, options);
@@ -115,6 +117,42 @@
 
                 if (cswPrivate.groupField.length > 0) {
                     cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+
+                    var toggleGroups = function (collapse) {
+                        for (var i in cswPrivate.grid.view.features) {
+                            if (cswPrivate.grid.view.features[i].ftype === 'grouping') {
+                                if (collapse) {
+                                    cswPrivate.grid.view.features[i].collapseAll();
+                                } else {
+                                    cswPrivate.grid.view.features[i].collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
+                                    cswPrivate.grid.view.features[i].expandAll();
+                                }
+                            }
+                        }
+                    };
+
+                    cswPrivate.dockedItems = [{
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: [
+                            {
+                                xtype: 'button',
+                                text: 'Expand all Rows',
+                                handler: function () {
+                                    toggleGroups(false);
+                                }
+                            },
+                            {
+                                xtype: 'tbseparator'
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'Collapse all Rows',
+                                handler: function () {
+                                    toggleGroups(true);
+                                }
+                            }]
+                    }];
                 }
                 var storeopts = {
                     storeId: storeId,
@@ -186,7 +224,7 @@
                             grid.filters.createFilters();
                         }
                     },
-                    dockedItems: [],
+                    dockedItems: cswPrivate.dockedItems,
                     features: [{
                         ftype: 'filters',
                         autoReload: false,
@@ -198,7 +236,8 @@
                         ftype: 'grouping',
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
-                        enableGroupingMenu: false
+                        enableGroupingMenu: false,
+                        startCollapsed: true
                     }]
                 };
 
