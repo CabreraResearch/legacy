@@ -614,9 +614,9 @@
                 row += 1;
 
                 if (viewmode === 'Tree' || viewmode === 'Grid') {
-                    subTable.cell(row, 1).text('Group By');
-                }
-                var groupBySelect = subTable.cell(row, 2)
+                    var groupByText = subTable.cell(row, 1).text('Group By');
+
+                    var groupBySelect = subTable.cell(row, 2)
                                             .select({ name: o.name + '_gbs',
                                                 onChange: function () {
                                                     var selected = groupBySelect.find(':selected');
@@ -630,39 +630,61 @@
                                                     } // if (false === Csw.isNullOrEmpty(selval)) {
                                                 } // onChange
                                             }); // 
-                groupBySelect.hide();
-                if (viewmode === 'Tree' || viewmode === 'Grid') {
                     groupBySelect.show();
-                }
-                row += 1;
+                    row += 1;
 
-                var jsonData = {
-                    Type: viewnodejson.secondtype,
-                    Id: viewnodejson.secondid
-                };
-                Csw.ajax.post({
-                    urlMethod: o.PropNamesUrl,
-                    data: jsonData,
-                    success: function (data) {
-                        groupBySelect.empty();
-                        groupBySelect.option({ value: 'None' });
-                        for (var propKey in data) {
-                            if (Csw.contains(data, propKey)) {
-                                var thisProp = data[propKey];
-                                var isSelected = (viewnodejson.groupbypropid === thisProp.propid &&
-                                                  viewnodejson.groupbyproptype === thisProp.proptype &&
-                                                  viewnodejson.groupbypropname === thisProp.propname);
+                    var populateGroupBySelect = function () {
+                        if (false === $.isEmptyObject(viewnodejson.properties)) {
+                            var opts = [];
+                            for (var propKey in viewnodejson.properties) {
+                                opts.push(viewnodejson.properties[propKey].name);
+                            }
+
+                            for (var key in opts) {
                                 groupBySelect.option({
-                                    value: thisProp.propid,
-                                    display: thisProp.propname,
-                                    isSelected: isSelected
-                                }).propNonDom({
-                                    propType: thisProp.proptype
+                                    value: opts[key],
+                                    display: opts[key]
                                 });
                             }
-                        } // each
-                    } // success
-                }); // ajax
+                        } else {
+                            groupByText.hide();
+                            groupBySelect.hide();
+                        }
+                    };
+
+                    if (viewmode === 'Grid') {
+                        populateGroupBySelect();
+                    } else {
+
+                        var jsonData = {
+                            Type: viewnodejson.secondtype,
+                            Id: viewnodejson.secondid
+                        };
+                        Csw.ajax.post({
+                            urlMethod: o.PropNamesUrl,
+                            data: jsonData,
+                            success: function (data) {
+                                groupBySelect.empty();
+                                groupBySelect.option({ value: 'None' });
+                                for (var propKey in data) {
+                                    if (Csw.contains(data, propKey)) {
+                                        var thisProp = data[propKey];
+                                        var isSelected = (viewnodejson.groupbypropid === thisProp.propid &&
+                                                  viewnodejson.groupbyproptype === thisProp.proptype &&
+                                                  viewnodejson.groupbypropname === thisProp.propname);
+                                        groupBySelect.option({
+                                            value: thisProp.propid,
+                                            display: thisProp.propname,
+                                            isSelected: isSelected
+                                        }).propNonDom({
+                                            propType: thisProp.proptype
+                                        });
+                                    }
+                                } // each
+                            } // success
+                        }); // ajax
+                    }
+                } //if (viewmode === 'Tree' || viewmode === 'Grid')
 
                 var $showtreecheck;
                 if (viewmode === "Tree") {
