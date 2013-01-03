@@ -361,7 +361,7 @@ namespace ChemSW.Nbt.Batch
                                 } // if( ViewId.isSet() )
                                 else
                                 {
-                                    EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set";
+                                    EmailReportStatusMessage += "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set\r\n";
                                 }
                             } // if( "View" == CurrentMailReport.Type.Value )
 
@@ -391,19 +391,19 @@ namespace ChemSW.Nbt.Batch
                                 }
                                 else
                                 {
-                                    EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated report's NodeId is not set";
+                                    EmailReportStatusMessage += "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated report's NodeId is not set\r\n";
                                 }//if-else report's node id is present
                             } // else if( "Report" == CurrentMailReport.Type.Value )
 
                             else
                             {
-                                EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the report type " + CurrentMailReport.Type.Value + " is unknown";
+                                EmailReportStatusMessage += "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the report type " + CurrentMailReport.Type.Value + " is unknown\r\n";
                             }//if-else-if on report type
 
 
                             if( SendMail )
                             {
-                                EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable );
+                                EmailReportStatusMessage += _sendMailMessage( CurrentMailReport, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable ) + "\r\n";
                             }
                         }//if( Email Address != string.Empty )
 

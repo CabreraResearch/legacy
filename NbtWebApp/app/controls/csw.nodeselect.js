@@ -190,6 +190,7 @@
                 cswPrivate.select.bind('change', function () {
                     var val = cswPrivate.select.val();
                     cswPrivate.selectedNodeId = val;
+                    cswPrivate.selectedName = cswPrivate.select.selectedText();
                     Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
                     Csw.tryExec(cswPrivate.onSelect, val);
                 });
@@ -218,6 +219,10 @@
 
                 cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.select.val()); },
                                 function (event) { Csw.nodeHoverOut(event, cswPrivate.select.val()); });
+
+                // case 28427 - default private values to currently selected
+                cswPrivate.selectedNodeId = cswPrivate.select.val();
+                cswPrivate.selectedName = cswPrivate.select.selectedText();
             };
 
             cswPrivate.makeSearch = function () {
