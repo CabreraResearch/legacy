@@ -18,6 +18,7 @@ namespace ChemSW.Nbt
             // When CISPro is enabled, display the following properties:
             //   Location.Inventory Group
             //   Location.Storage Compatibility
+            //   Location.Containers Grid
             //   User.WorkUnit
             //   User.Jurisdiction
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
@@ -35,14 +36,17 @@ namespace ChemSW.Nbt
                 //LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
 
+                CswNbtMetaDataNodeTypeProp LocationContainersGridNTP = LocationNT.getNodeTypeProp( "Containers" );
+                if( null != LocationContainersGridNTP )
+                {
+                    CswNbtMetaDataNodeTypeTab LocationContainersTab = LocationNT.getNodeTypeTab( "Containers" ) ?? _CswNbtResources.MetaData.makeNewTab( LocationNT, "Containers", 99 );
+                    LocationContainersGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationContainersTab.TabId );
+                }
+
                 CswNbtMetaDataNodeTypeProp LocationInvLevelsNTP = LocationNT.getNodeTypeProp( "Inventory Levels" );
                 if( null != LocationInvLevelsNTP )
                 {
-                    CswNbtMetaDataNodeTypeTab LocationInvLevelsTab = LocationNT.getNodeTypeTab( "Inventory Levels" );
-                    if( LocationInvLevelsTab == null )
-                    {
-                        LocationInvLevelsTab = _CswNbtResources.MetaData.makeNewTab( LocationNT, "Inventory Levels", 100 );
-                    }
+                    CswNbtMetaDataNodeTypeTab LocationInvLevelsTab = LocationNT.getNodeTypeTab( "Inventory Levels" ) ?? _CswNbtResources.MetaData.makeNewTab( LocationNT, "Inventory Levels", 100 );
                     LocationInvLevelsNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationInvLevelsTab.TabId );
                 }
             }
@@ -90,6 +94,7 @@ namespace ChemSW.Nbt
             // case 26717 - When CISPro is disabled, hide the following properties:
             //   Location.Inventory Group
             //   Location.Storage Compatibility
+            //   Location.Containers Grid
             //   User.WorkUnit
             //   Location.Inventory Levels
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
@@ -103,6 +108,17 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.StorageCompatability );
                 LocationStorCompatNTP.removeFromAllLayouts();
+
+                CswNbtMetaDataNodeTypeProp LocationContainersGridNTP = LocationNT.getNodeTypeProp( "Containers" );
+                if( null != LocationContainersGridNTP )
+                {
+                    LocationContainersGridNTP.removeFromAllLayouts();
+                    CswNbtMetaDataNodeTypeTab LocationContainersTab = LocationNT.getNodeTypeTab( "Containers" );
+                    if( LocationContainersTab != null )
+                    {
+                        _CswNbtResources.MetaData.DeleteNodeTypeTab( LocationContainersTab );
+                    }
+                }
 
                 CswNbtMetaDataNodeTypeProp LocationInvLevelsNTP = LocationNT.getNodeTypeProp( "Inventory Levels" );
                 if( null != LocationInvLevelsNTP )
