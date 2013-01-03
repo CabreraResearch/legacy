@@ -284,7 +284,8 @@ namespace ChemSW.Nbt.Actions
                 Category = "Request Configuration",
                 Visibility = NbtViewVisibility.Hidden,
                 ViewMode = NbtViewRenderingMode.Grid,
-                ViewName = SubmittedItemsViewName
+                ViewName = SubmittedItemsViewName,
+                GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Name
             };
 
             //TODO: We need Submited Date (on Request) for runtime filters, but we can't do it yet. See Case 28334.
@@ -387,7 +388,8 @@ namespace ChemSW.Nbt.Actions
                 Category = "Request Configuration",
                 Visibility = NbtViewVisibility.Hidden,
                 ViewMode = NbtViewRenderingMode.Grid,
-                ViewName = RecurringItemsViewName
+                ViewName = RecurringItemsViewName,
+                GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Name
             };
 
             CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
