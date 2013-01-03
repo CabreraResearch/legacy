@@ -303,7 +303,14 @@
                     cswPrivate.select.option({ value: nodeid, display: nodename });
                     cswPrivate.select.val(nodeid);
                     cswPrivate.toggleOptions(true);
-                    Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
+                    Csw.ajaxWcf.post({
+                        async: false,
+                        data: { NodeId: nodeid },
+                        urlMethod: 'Nodes/getNodeLink',
+                        success: function (data) {
+                            Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid, name: nodename, selectedNodeId: nodeid, relatednodelink: data.NodeLink });
+                        }
+                    });
                     cswPrivate.select.$.valid();
                 }
             };
