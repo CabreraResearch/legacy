@@ -102,6 +102,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassGeneric( CswNbtResources, Node );
                     break;
 
+                case NbtObjectClass.GHSClass:
+                    ReturnVal = new CswNbtObjClassGHS( CswNbtResources, Node );
+                    break;
+
                 case NbtObjectClass.InspectionDesignClass:
                     ReturnVal = new CswNbtObjClassInspectionDesign( CswNbtResources, Node );
                     break;

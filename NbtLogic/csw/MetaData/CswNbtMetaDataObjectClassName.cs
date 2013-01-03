@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.MetaData
             { FireClassExemptAmountSetClass     , FireClassExemptAmountSetClass      },
             { GeneratorClass                    , GeneratorClass                     },
             { GenericClass                      , GenericClass                       },
+            { GHSClass                          , GHSClass                           },
             { InspectionDesignClass             , InspectionDesignClass              },
             { InspectionRouteClass              , InspectionRouteClass               },
             { InventoryGroupClass               , InventoryGroupClass                },
@@ -141,6 +142,7 @@ namespace ChemSW.Nbt.MetaData
         public const string FireClassExemptAmountSetClass = "FireClassExemptAmountSetClass";
         public const string GeneratorClass = "GeneratorClass";
         public const string GenericClass = "GenericClass";
+        public const string GHSClass = "GHSClass"; 
         public const string InspectionDesignClass = "InspectionDesignClass";
         public const string InspectionRouteClass = "InspectionRouteClass";
         public const string InventoryGroupClass = "InventoryGroupClass";
@@ -177,7 +179,7 @@ namespace ChemSW.Nbt.MetaData
         public const string UserClass = "UserClass";
         public const string VendorClass = "VendorClass";
         public const string WorkUnitClass = "WorkUnitClass";
-
+        
         #endregion Enum members
 
 
