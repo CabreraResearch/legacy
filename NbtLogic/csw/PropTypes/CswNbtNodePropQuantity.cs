@@ -150,12 +150,12 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    string PresicionString = "";
+                    string PrecisionString = "";
                     for( int i = 0; i < Precision; i++ )
                     {
-                        PresicionString += "#";
+                        PrecisionString += "#";
                     }
-                    StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString( "0." + PresicionString );
+                    StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString( "0." + PrecisionString );
                     _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, StringVal );
                 }
                 _SynchGestalt();
