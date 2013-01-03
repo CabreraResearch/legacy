@@ -205,11 +205,11 @@ namespace ChemSW.Nbt.ObjClasses
             Dispense.setHidden( value : ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb : true );
             Dispose.setHidden( value : ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb : true );
             Undispose.setHidden( value : ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb : true );
-            bool CanRequest = ( ( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) &&
+            bool CantRequest = ( ( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) &&
                                   Requisitionable.Checked == Tristate.False ) ||
                                   IsDisposed ||
                                   false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) );
-            Request.setHidden( value : CanRequest, SaveToDb : true );
+            Request.setHidden( value : CantRequest, SaveToDb : true );
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()

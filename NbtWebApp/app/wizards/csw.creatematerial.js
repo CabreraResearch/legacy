@@ -244,6 +244,7 @@
                             cswPrivate.makeSupplierCtrl(cswPrivate.state.materialType.val);
                         }
                         if (cswPrivate.supplierSelect &&
+                            cswPrivate.supplierSelect.selectedText &&
                             cswPrivate.state.supplier.val !== cswPrivate.supplierSelect.val()) {
 
                             hasChanged = true;
@@ -289,8 +290,6 @@
                         var tbl = cswPrivate.divStep1.table({
                             FirstCellRightAlign: true,
                         });
-
-                        
 
                         //Material
                         tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true);

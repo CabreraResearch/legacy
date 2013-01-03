@@ -585,7 +585,7 @@
                 div: Csw.literals.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
-
+                    Csw.tryExec(cswDlgPrivate.onClose);
                 }
             };
 
@@ -650,7 +650,7 @@
 
                 // _setupTabs()
             };
-            openDialog(cswPublic.div, 900, 600, cswDlgPrivate.onClose, title, cswDlgPrivate.onOpen);
+            openDialog(cswPublic.div, 900, 600, cswPublic.close, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
