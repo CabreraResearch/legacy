@@ -179,7 +179,16 @@
                     cssclass: 'selectinput',
                     onChange: function () {
                         var val = cswPrivate.select.val();
-                        Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val });
+                        Csw.ajaxWcf.post({
+                            async: false,
+                            data: { NodeId: val },
+                            urlMethod: 'Nodes/getNodeLink',
+                            success: function (data) {
+                                var name = cswPrivate.select.selectedText();
+                                var link = data.NodeLink;
+                                Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
+                            }
+                        });
                     },
                     values: cswPrivate.relationships,
                     selected: cswPrivate.selectedNodeId,
@@ -294,7 +303,14 @@
                     cswPrivate.select.option({ value: nodeid, display: nodename });
                     cswPrivate.select.val(nodeid);
                     cswPrivate.toggleOptions(true);
-                    Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
+                    Csw.ajaxWcf.post({
+                        async: false,
+                        data: { NodeId: nodeid },
+                        urlMethod: 'Nodes/getNodeLink',
+                        success: function (data) {
+                            Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid, name: nodename, selectedNodeId: nodeid, relatednodelink: data.NodeLink });
+                        }
+                    });
                     cswPrivate.select.$.valid();
                 }
             };
@@ -341,7 +357,7 @@
                 if (cswPrivate.useSearch && cswPrivate.nameSpan && cswPrivate.hiddenValue) {
                     cswPrivate.nameSpan.text(nodename);
                     cswPrivate.hiddenValue.val(nodeid);
-                } else if(cswPrivate.select) {
+                } else if (cswPrivate.select) {
                     cswPrivate.select.val(nodeid);
                 }
             }; // setSelectedNode
@@ -352,7 +368,7 @@
             cswPublic.selectedName = function () {
                 return cswPrivate.selectedName;
             }; // selectedName
-                
+
             //#endregion Public
 
             //#region _postCtor

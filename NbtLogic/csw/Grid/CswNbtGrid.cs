@@ -45,17 +45,7 @@ namespace ChemSW.Nbt.Grid
                 CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid( gridUniquePrefix );
                 if( string.IsNullOrEmpty( GroupByCol ) )
                 {
-                    CswNbtViewRelationship FirstVr = View.Root.ChildRelationships.FirstOrDefault();
-                    if( null != FirstVr )
-                    {
-                        GroupByCol = FirstVr.GroupByPropName;
-                        //if( false == string.IsNullOrEmpty( GroupByCol ) &&
-                        //    IsPropertyGrid &&
-                        //    Tree.getChildNodeCount() > 0 )
-                        //{
-                        //    Tree.goToNthChild( 0 );
-                        //}
-                    }
+                    GroupByCol = View.Root.GridGroupByCol;
                 }
                 grid.GroupByCol = GroupByCol;
                 grid.title = View.ViewName;
