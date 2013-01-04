@@ -387,7 +387,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Case 28247
-
+        
         #region 28424
 
         private void _fixContainerLabelFormatView( CswDeveloper Dev, Int32 CaseNum )
@@ -417,6 +417,66 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        #region Case 27436
+
+        private void _addGhsOC( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            if( null == _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GHSClass ) )
+            {
+                CswNbtMetaDataObjectClass JurisdictionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass );
+                CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+
+                CswNbtMetaDataObjectClass GhsOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.GHSClass, "warning.png", false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                          {
+                                                                              PropName = CswNbtObjClassGHS.PropertyName.Jurisdiction,
+                                                                              FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                                              FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                                                                              FkValue = JurisdictionOC.ObjectClassId
+                                                                          } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                          {
+                                                                              PropName = CswNbtObjClassGHS.PropertyName.Material,
+                                                                              FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                                              FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                                                                              FkValue = MaterialOC.ObjectClassId
+                                                                          } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                          {
+                                                                              PropName = CswNbtObjClassGHS.PropertyName.LabelCodes,
+                                                                              FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                                                                          } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                          {
+                                                                              PropName = CswNbtObjClassGHS.PropertyName.ClassCodes,
+                                                                              FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                                                                          } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                          {
+                                                                              PropName = CswNbtObjClassGHS.PropertyName.SignalWord,
+                                                                              FieldType = CswNbtMetaDataFieldType.NbtFieldType.List
+                                                                          } );
+
+                CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.GHSPhraseClass, "warning.png", false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsPhraseOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                                {
+                                                                                    PropName = CswNbtObjClassGHSPhrase.PropertyName.Code,
+                                                                                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                                                                                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsPhraseOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                                {
+                                                                                    PropName = CswNbtObjClassGHSPhrase.PropertyName.Category,
+                                                                                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                                                                                    ListOptions = "Physical,Health,Environmental"
+                                                                                } );
+            }
+            _resetBlame();
+        } // _addGhsOC()
+
+        #endregion Case 27436
+
         #endregion Viola Methods
 
         /// <summary>
@@ -436,6 +496,7 @@ namespace ChemSW.Nbt.Schema
             _fixLocationOcps( CswDeveloper.CF, 28255 );
             _addMaterialTierIIOCP( CswDeveloper.BV, 28247 );
             _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
+            _addGhsOC( CswDeveloper.SS, 27436 );
 
             #endregion VIOLA
 

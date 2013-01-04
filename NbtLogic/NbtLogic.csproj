@@ -122,6 +122,8 @@
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947_part2.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27867_part2.cs" />
     <Compile Include="csw\Actions\CswNbtContainerDataContract.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassGHSPhrase.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassGHS.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFireClassExemptAmount.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFireClassExemptAmountSet.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerDispense.cs" />
@@ -322,6 +324,8 @@
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28267.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28374B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28374.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28399B.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28393.cs" />
