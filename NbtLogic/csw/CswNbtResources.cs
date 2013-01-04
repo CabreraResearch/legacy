@@ -12,6 +12,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 using ChemSW.Security;
@@ -137,7 +138,11 @@ namespace ChemSW.Nbt
             /// <summary>
             /// The maximum number of lines in comments fields
             /// </summary>
-            total_comments_lines
+            total_comments_lines,
+            /// <summary>
+            /// The name of the root level item on location views
+            /// </summary>
+            LocationViewRootName
         }
 
         /// <summary>
@@ -172,6 +177,11 @@ namespace ChemSW.Nbt
         public CswNbtSessionDataMgr SessionDataMgr;
 
         public CswSessionManager CswSessionManager = null;
+
+        /// <summary>
+        /// User searches
+        /// </summary>
+        public CswNbtSearchManager SearchManager;
 
 
         ///// <summary>
@@ -222,6 +232,7 @@ namespace ChemSW.Nbt
             SessionDataMgr = new CswNbtSessionDataMgr( this );
             Permit = new CswNbtPermit( this );
             StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
+            SearchManager = new CswNbtSearchManager( this );
         }
 
         public ICswSuperCycleCache CswSuperCycleCache { get { return ( _CswResources.CswSuperCycleCache ); } }
@@ -823,6 +834,8 @@ namespace ChemSW.Nbt
         public CswConfigurationVariables ConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
 
         private Int32 _TreeViewResultLimit = Int32.MinValue;
+        
+
         public Int32 TreeViewResultLimit
         {
             get

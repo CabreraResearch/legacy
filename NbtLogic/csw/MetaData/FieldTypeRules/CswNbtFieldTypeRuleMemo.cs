@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
             TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
             TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
             TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( TextSubField );

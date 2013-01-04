@@ -163,6 +163,7 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
     <Content Include="Services\Mol.svc" />
     <Content Include="Services\Nodes.svc" />
@@ -1008,7 +1009,6 @@
     <Content Include="Images\menu\sub.gif" />
     <Content Include="Images\pagelayout\blank.gif" />
     <Content Include="Images\pagelayout\dash.gif" />
-    <Content Include="Images\pagelayout\header_logo.gif" />
     <Content Include="Images\pagelayout\header_logo32.gif" />
     <Content Include="Images\pagelayout\pagelayoutcorners.gif" />
     <Content Include="Images\pagelayout\pagelayoutx.gif" />
@@ -1210,7 +1210,6 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
     <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
@@ -1356,12 +1355,6 @@
     </Compile>
     <Compile Include="Statistics.aspx.designer.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.aspx.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.aspx.designer.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
     </Compile>
     <Compile Include="TermsOfUse.aspx.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>

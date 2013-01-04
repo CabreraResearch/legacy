@@ -43,6 +43,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Approved = "Approved";
             public const string ManufacturingSites = "Manufacturing Sites";
             public const string UNCode = "UN Code";
+            public const string IsTierII = "Is Tier II";
         }
 
         public sealed class PhysicalStates
@@ -102,6 +103,23 @@ namespace ChemSW.Nbt.ObjClasses
                     _updateRegulatoryLists();
                 }
             }
+
+            CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
+            if( null != ChemicalHazardClassesNTP )
+            {
+                CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+                CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
+                if( null != FireClassExemptAmountNT )
+                {
+                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
+                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp(
+                            FireClassExemptAmountNT.NodeTypeId, 
+                            CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType 
+                            );
+                    ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
+                }                
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -403,6 +421,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Approved { get { return ( _CswNbtNode.Properties[PropertyName.Approved] ); } }
         public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
         public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
+        public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial

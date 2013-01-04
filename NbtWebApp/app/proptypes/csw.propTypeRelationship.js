@@ -35,7 +35,7 @@
                     nodeSelect.onAddNodeFunc = function () { };
                     nodeSelect.onSelectNode = function (nodeObj) {
                         Csw.tryExec(cswPublic.data.onChange, nodeObj.nodeid);
-                        cswPublic.data.onPropChange({ nodeid: nodeObj.nodeid });
+                        cswPublic.data.onPropChange({ nodeid: nodeObj.nodeid, name: nodeObj.name, relatednodeid: nodeObj.selectedNodeId, relatednodelink: nodeObj.relatednodelink });
                     };
 
                     nodeSelect.relatedTo = {};
@@ -47,6 +47,7 @@
                     nodeSelect.isRequired = cswPublic.data.isRequired();
                     nodeSelect.isMulti = cswPublic.data.isMulti();
                     nodeSelect.isReadOnly = cswPublic.data.isReadOnly();
+                    nodeSelect.isClickable = cswPublic.data.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
 
                     nodeSelect.doGetNodes = false;
 

@@ -71,14 +71,12 @@
                                 isButton: true,
                                 onClick: function () {
                                     $.CswDialog('EditMolDialog', {
-                                        TextUrl: 'saveMolPropText',
-                                        FileUrl: 'saveMolPropFile',
                                         PropId: cswPublic.data.propData.id,
                                         molData: cswPrivate.mol,
                                         onSuccess: function (data) {
-                                            var val = data;
                                             cswPrivate.initMol(data);
-                                            cswPublic.data.onPropChange({ href: data.href, mol: data.mol });
+                                            cswPrivate.mol = data.molString;
+                                            cswPublic.data.onPropChange({ href: data.href, mol: data.molString });
                                         }
                                     });
                                 }
@@ -106,6 +104,13 @@
                                             success: function () {
                                                 cswPrivate.initMol();
                                                 cswPublic.data.onPropChange({ href: '', mol: '' });
+                                            }
+                                        });
+
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'Mol/ClearMolFingerprint',
+                                            data: {
+                                                nodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
                                             }
                                         });
                                     }

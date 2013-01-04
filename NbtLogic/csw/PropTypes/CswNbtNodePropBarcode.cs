@@ -75,10 +75,10 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Sets Barcode to the next sequence value
         /// </summary>
-        public bool setBarcodeValue()
+        public bool setBarcodeValue( bool OverrideExisting = false )
         {
             bool Succeeded = false;
-            if( Barcode.Trim() == string.Empty )
+            if( Barcode.Trim() == string.Empty || OverrideExisting )
             {
                 string value = _SequenceValue.Next;
                 Succeeded = setBarcodeValueOverride( value, false );

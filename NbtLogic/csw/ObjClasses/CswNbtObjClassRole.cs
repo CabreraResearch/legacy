@@ -114,8 +114,9 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             if( ( Action.Name == CswNbtActionName.Design ||
                                     Action.Name == CswNbtActionName.Create_Inspection ) && //Case 24288
-                                  this.Name.Text != ChemSWAdminRoleName &&
-                                    false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+                                    _CswNbtResources.CurrentNbtUser.Rolename != ChemSWAdminRoleName &&  //Case 28433: chemsw_admin can grant Design to anyone.
+                                    false == _CswNbtResources.IsSystemUser
+                                )
                             {
                                 // case 23677
                                 throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role",

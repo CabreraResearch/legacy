@@ -386,6 +386,11 @@ namespace ChemSW.Nbt.ObjClasses
                     QuestionProp.CorrectiveAction = string.Empty;
                 }
             }
+
+            // !!!
+            // Don't clear IsFuture here, like we do with Tasks.  See case 28317.
+            // !!!
+
         } // beforeWriteNode()
 
         /// <summary>
@@ -451,6 +456,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 string StatusValue = _InspectionState.AllAnsweredInTime ? InspectionStatus.Completed : InspectionStatus.CompletedLate;
                                 ButtonData.Message = "Inspection marked " + StatusValue + ".";
                                 this.Status.Value = StatusValue;
+                                ButtonData.Action = NbtButtonAction.refresh;
                             }
                         } // if( _allAnswered )
                         else
@@ -464,6 +470,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Cancel:
                         ButtonData.Message = "Inspection has been cancelled.";
                         this.Status.Value = InspectionStatus.Cancelled;
+                        ButtonData.Action = NbtButtonAction.refresh;
                         break;
 
                     case PropertyName.SetPreferred:
@@ -478,9 +485,9 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
+                        ButtonData.Action = NbtButtonAction.refresh;
                         break;
                 }
-                ButtonData.Action = NbtButtonAction.refresh;
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;
@@ -516,6 +523,16 @@ namespace ChemSW.Nbt.ObjClasses
             return 0 < NumOfSiblings || Status.Value.Equals( InspectionStatus.ActionRequired );
         }
 
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassInspectionDesign CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.Node.copyPropertyValues( Node );
+            CopiedIDNode.Generator.RelatedNodeId = null;
+            CopiedIDNode.Generator.RefreshNodeName();
+            CopiedIDNode.postChanges( true );
+            return CopiedIDNode.Node;
+        }
+
         #endregion
 
         #region Object class specific properties
@@ -547,7 +564,9 @@ namespace ChemSW.Nbt.ObjClasses
                               String.Empty == NodeStatus ) &&
                             //Inspections have the same target, and we're comparing different Inspection nodes
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
-                              this.Node != InspectionNode ) )
+                              this.Node != InspectionNode ) &&
+                            // Other inspection isn't future (case 28317)
+                            Tristate.True != PriorInspection.IsFuture.Checked )
                         {
                             PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
                             // Case 20755

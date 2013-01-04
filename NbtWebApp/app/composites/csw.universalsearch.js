@@ -1,9 +1,5 @@
-
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
 (function () {
-
-
     Csw.composites.universalSearch = Csw.composites.universalSearch ||
         Csw.composites.register('universalSearch', function (cswParent, params) {
             'use strict';
@@ -19,9 +15,8 @@
                 onAfterNewSearch: null,
                 onLoadView: null,
                 onAddView: null,
-                //searchresults_maxheight: '600',
                 searchbox_width: '200px',
-                showSaveAsView: true,
+                showSave: true,
                 allowEdit: true,
                 allowDelete: true,
                 extraAction: null,
@@ -30,8 +25,6 @@
                 compactResults: false,
                 newsearchurl: 'doUniversalSearch',
                 restoresearchurl: 'restoreUniversalSearch',
-                saveurl: 'saveSearchAsView',
-                //filters: {},
                 sessiondataid: '',
                 searchterm: '',
                 filterHideThreshold: 5 //,
@@ -61,29 +54,95 @@
                 cswPrivate.searchBoxParent.empty();
                 var cswtable = cswPrivate.searchBoxParent.table();
 
-                cswPrivate.searchinput = cswtable.cell(1, 1).input({
+                var onPreFilterClick = function (nodetypeObj) {
+                    if (false === Csw.isNullOrEmpty(nodetypeObj)) {
+                        cswPrivate.preFilterSelect.setText('');
+                        cswPrivate.preFilterSelect.setIcon(nodetypeObj.iconfilename);
+                        cswPrivate.nodetypeid = nodetypeObj.id;
+                    } else {
+                        cswPrivate.preFilterSelect.setText('All');
+                        cswPrivate.preFilterSelect.setIcon('');
+                        cswPrivate.nodetypeid = '';
+                    }
+                }; // onFilterClick()
+
+                Csw.ajax.post({
+                    urlMethod: 'getNodeTypes',
+                    data: {
+                        ObjectClassName: '',
+                        ObjectClassId: '',
+                        ExcludeNodeTypeIds: '',
+                        RelatedToNodeTypeId: '',
+                        RelatedObjectClassPropName: '',
+                        FilterToPermission: '',
+                        Searchable: true
+                    },
+                    success: function (data) {
+                        var items = [];
+
+                        items.push({
+                            text: 'All',
+                            icon: '',
+                            handler: function () { onPreFilterClick(null); }
+                        });
+
+                        var selectedText = 'All';
+                        var selectedIcon = '';
+                        Csw.each(data, function (nt) {
+                            if (false === Csw.isNullOrEmpty(nt.name)) {
+                                items.push({
+                                    text: nt.name,
+                                    icon: nt.iconfilename,
+                                    handler: function () { onPreFilterClick(nt); }
+                                });
+                                if (cswPrivate.nodetypeid === nt.id) {
+                                    selectedText = '';
+                                    selectedIcon = nt.iconfilename;
+                                }
+                            }
+                        });
+
+                        cswPrivate.preFilterSelect = window.Ext.create('Ext.SplitButton', {
+                            text: selectedText,
+                            icon: selectedIcon,
+                            width: (selectedText.length * 8) + 16,
+                            renderTo: cswtable.cell(1, 1).getId(),
+                            menu: {
+                                items: items
+                            }
+                        }); // toolbar
+
+                    } // success
+                }); // ajax
+                
+                var srchOnClick = function (selectedOption) {
+                    switch (selectedOption) {
+                        case 'Structure Search':
+                            $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                            break;
+                        default:
+                            Csw.publish('initPropertyTearDown');
+                            cswPrivate.searchterm = cswPrivate.searchinput.val();
+                            cswPrivate.newsearch();
+                    }
+                };
+
+                cswPrivate.searchinput = cswtable.cell(1, 2).input({
                     type: Csw.enums.inputTypes.search,
                     width: cswPrivate.searchbox_width,
-                    cssclass: 'mousetrap'
+                    cssclass: 'mousetrap',
+                    onKeyEnter: function () {
+                        Csw.tryExec(srchOnClick, cswPrivate.searchButton.selectedOption);
+                    }
                 });
 
-                cswPrivate.searchButton = cswtable.cell(1, 2).menuButton({
+                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
                     name: 'searchBtn',
+                    width: ('Search'.length * 8) + 16,
                     menuOptions: ['Search', 'Structure Search'],
                     selectedText: 'Search',
                     size: 'small',
-                    onClick: function (selectedOption) {
-                        switch (selectedOption) {
-                            case 'Structure Search':
-                                $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
-                                break;
-                            default:
-                                Csw.publish('initPropertyTearDown');
-                                cswPrivate.searchterm = cswPrivate.searchinput.val();
-                                cswPrivate.newsearch();
-                        }
-
-                    }
+                    onClick: srchOnClick
                 });
             })();
 
@@ -142,29 +201,6 @@
                             }
                         });
                     }
-                    //                    resultstable.cell(1, 3).css({ width: '18px' });
-                    //                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
-                    //                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
-                    //                        Active: (columns === 1),
-                    //                        AlternateText: 'Single Column',
-                    //                        onClick: function () {
-                    //                            setTimeout(function () { // so we see the clear immediately
-                    //                                _renderResultsTable(1);
-                    //                            }, 0);
-                    //                        }
-                    //                    });
-
-                    //                    resultstable.cell(1, 4).css({ width: '18px' });
-                    //                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
-                    //                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
-                    //                        Active: (columns !== 1),
-                    //                        AlternateText: 'Multi Column',
-                    //                        onClick: function () {
-                    //                            setTimeout(function () { // so we see the clear immediately
-                    //                                _renderResultsTable(3);
-                    //                            }, 0);
-                    //                        }
-                    //                    });
 
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
@@ -204,11 +240,13 @@
                     paddingTop: '15px'
                 });
 
-                fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
+                fdiv.span({ text: data.name }).br();
+                //fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
                 ftable = fdiv.table({});
 
                 // Filters in use
                 var hasFilters = false;
+                var atLeastOneShown = false;
                 var ftable_row = 1;
 
                 function showFilter(thisFilter) {
@@ -237,58 +275,86 @@
 
                 Csw.each(data.filtersapplied, showFilter);
 
-                if (hasFilters && cswPrivate.showSaveAsView) {
+                if (hasFilters && cswPrivate.showSave) {
                     fdiv.br();
-                    fdiv.buttonExt({
-                        enabledText: 'Save as View',
+                    var btntbl = fdiv.table();
+                    btntbl.cell(1,1).buttonExt({
+                        enabledText: 'Save',
                         disableOnClick: false,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-                        onClick: cswPrivate.saveAsView
+                        onClick: cswPrivate.save
                     });
+                    if(false === Csw.isNullOrEmpty(data.searchid)) {
+                        btntbl.cell(1,2).buttonExt({
+                            enabledText: 'Delete',
+                            disableOnClick: false,
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                            onClick: function () {
+                                cswPrivate.deleteSave(data.searchid);
+                            } // onClick
+                        });
+                    }
                 }
                 fdiv.br();
                 fdiv.br();
 
                 // Filters to add
-
-                function makeFilterLink(thisFilter, div, filterCount) {
-                    var flink = div.a({
-                        text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
-                        onClick: function () {
-                            cswPrivate.filter(thisFilter, 'add');
-                            return false;
-                        }
-                    });
-                    div.br();
-                } // makeFilterLink()
+                var filtersDiv = fdiv.moreDiv({
+                    moretext: 'More Filters...',
+                    lesstext: ''
+                });
+                filtersDiv.moreLink.hide();
 
                 function makeFilterSet(thisFilterSet) {
 
                     var filterCount = 0;
-                    var moreDiv = fdiv.moreDiv();
-                    var filterName = '';
+                    var destDiv, moreDiv, thisdiv, filterName = '', filterSource, nameSpan;
 
-                    var nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
-                    moreDiv.shownDiv.br();
-                    var thisdiv = moreDiv.shownDiv;
-                    moreDiv.moreLink.hide();
                     Csw.each(thisFilterSet, function (thisFilter) {
                         if (filterName === '') {
                             filterName = thisFilter.filtername;
+                            filterSource = thisFilter.source;
+                            if (filterSource === 'Results') {
+                                destDiv = filtersDiv.hiddenDiv;
+                                filtersDiv.moreLink.show();
+                            } else {
+                                destDiv = filtersDiv.shownDiv;
+                                atLeastOneShown = true;
+                            }
+                            moreDiv = destDiv.moreDiv();
+                            moreDiv.moreLink.hide();
+
+                            nameSpan = moreDiv.shownDiv.span({}).css({ fontWeight: 'bold' });
+                            moreDiv.shownDiv.br();
+                            thisdiv = moreDiv.shownDiv;
                         }
                         if (filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }
-                        makeFilterLink(thisFilter, thisdiv, filterCount);
+
+                        thisdiv.a({
+                            text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
+                            onClick: function () {
+                                cswPrivate.filter(thisFilter, 'add');
+                                return false;
+                            }
+                        });
+                        thisdiv.br();
+
                         filterCount++;
                     });
-                    nameSpan.text(filterName);
-                    fdiv.br();
-                    fdiv.br();
+                    if (false === Csw.isNullOrEmpty(filterName)) {
+                        nameSpan.text(filterName);
+                        destDiv.br();
+                        destDiv.br();
+                    }
                 } // makeFilterSet()
 
                 Csw.each(data.filters, makeFilterSet);
+                if (false === atLeastOneShown) {
+                    filtersDiv.showHidden();
+                }
 
                 cswPrivate.data = data;
 
@@ -321,27 +387,40 @@
                 });
             }; // filter()
 
-            cswPrivate.saveAsView = function () {
-                $.CswDialog('AddViewDialog', {
-                    category: 'Saved Searches',
-                    onAddView: function (newviewid, viewmode) {
+            cswPrivate.save = function () {
+                $.CswDialog('SaveSearchDialog', {
+                    name: cswPrivate.data.name,
+                    category: cswPrivate.data.category || 'Saved Searches',
+                    onOk: function (name, category) {
 
                         Csw.ajax.post({
-                            urlMethod: cswPrivate.saveurl,
+                            urlMethod: 'saveSearch',
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
-                                ViewId: newviewid
+                                Name: name, 
+                                Category: category
                             },
                             success: function (data) {
-                                Csw.tryExec(cswPrivate.onAddView, newviewid, viewmode);
-                                Csw.tryExec(cswPrivate.onLoadView, newviewid, viewmode);
-                            }
+                                cswPrivate.handleResults(data);
+                            } // success
                         }); // ajax  
 
                     } // onAddView()
                 }); // CswDialog
-            }; // saveAsView()
+            }; // save()
 
+            cswPrivate.deleteSave = function (searchid) {
+                Csw.ajax.post({
+                    urlMethod: 'deleteSearch',
+                    data: {
+                        SearchId: searchid
+                    },
+                    success: function (data) {
+                        cswPrivate.handleResults(data);
+                    } // success
+                }); // ajax  
+            }; // save()
+            
             cswPublic.restoreSearch = function (searchid) {
 
                 cswPrivate.sessiondataid = searchid;
@@ -374,5 +453,4 @@
 
             return cswPublic;
         });
-
 })();

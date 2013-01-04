@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Forms;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
@@ -24,6 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LocationCode = "Location Code";
             public const string AllowInventory = "Allow Inventory";
             public const string StorageCompatability = "Storage Compatability";
+            public const string ControlZone = "Control Zone";
             public const string Containers = "Containers";
         }
 
@@ -220,6 +222,13 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropImageList StorageCompatability
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.StorageCompatability] );
+            }
+        }
+        public CswNbtNodePropRelationship ControlZone
         {
             get
             {

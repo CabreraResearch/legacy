@@ -46,6 +46,7 @@
                 cswPrivate.isMulti = cswPrivate.isMulti; // || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
+                cswPrivate.isClickable = cswPrivate.isClickable; // ||true;
                 cswPrivate.useSearch = cswPrivate.useSearch;
                 cswPrivate.options = cswPrivate.options || [];
 
@@ -178,7 +179,16 @@
                     cssclass: 'selectinput',
                     onChange: function () {
                         var val = cswPrivate.select.val();
-                        Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val });
+                        Csw.ajaxWcf.post({
+                            async: false,
+                            data: { NodeId: val },
+                            urlMethod: 'Nodes/getNodeLink',
+                            success: function (data) {
+                                var name = cswPrivate.select.selectedText();
+                                var link = data.NodeLink;
+                                Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
+                            }
+                        });
                     },
                     values: cswPrivate.relationships,
                     selected: cswPrivate.selectedNodeId,
@@ -293,7 +303,14 @@
                     cswPrivate.select.option({ value: nodeid, display: nodename });
                     cswPrivate.select.val(nodeid);
                     cswPrivate.toggleOptions(true);
-                    Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
+                    Csw.ajaxWcf.post({
+                        async: false,
+                        data: { NodeId: nodeid },
+                        urlMethod: 'Nodes/getNodeLink',
+                        success: function (data) {
+                            Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid, name: nodename, selectedNodeId: nodeid, relatednodelink: data.NodeLink });
+                        }
+                    });
                     cswPrivate.select.$.valid();
                 }
             };
@@ -340,7 +357,7 @@
                 if (cswPrivate.useSearch && cswPrivate.nameSpan && cswPrivate.hiddenValue) {
                     cswPrivate.nameSpan.text(nodename);
                     cswPrivate.hiddenValue.val(nodeid);
-                } else if(cswPrivate.select) {
+                } else if (cswPrivate.select) {
                     cswPrivate.select.val(nodeid);
                 }
             }; // setSelectedNode
@@ -351,13 +368,18 @@
             cswPublic.selectedName = function () {
                 return cswPrivate.selectedName;
             }; // selectedName
-                
+
             //#endregion Public
 
             //#region _postCtor
 
             (function _relationship() {
-                if (cswPrivate.isReadOnly) {
+                if (false === cswPrivate.isClickable) { //case 28180 - relationships not clickable from audit history grid
+                    cswPrivate.nodeTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
+                    cswPrivate.nodeText = cswPrivate.nodeTextCell.span({
+                        text: cswPrivate.selectedName
+                    });
+                } else if (cswPrivate.isReadOnly) {
                     cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink

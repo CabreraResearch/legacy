@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
 
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
-            
+
             #region URSULA
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_RequestItems_Case27942() ) );            //01U-001
@@ -43,10 +43,32 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28229() ) );                         //01U-015
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28236() ) );                         //01U-016
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case24489_Part3() ) );                   //01U-017
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28421() ) );                              //01U-018
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case28421() ) );                         //01U-018
             
             #endregion URSULA
-            
+
+            #region VIOLA
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case26827() ) );                         //01U-019      //01V-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part1() ) );                    //01U-020      //01V-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part2() ) );                    //01U-021      //01V-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28281() ) );                         //01U-022      //01V-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28282() ) );                         //01U-023      //01V-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28339() ) );                         //01U-024      //01V-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28252() ) );                         //01U-025      //01V-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case5083() ) );                          //01U-026      //01V-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28247() ) );                         //01U-027      //01V-009
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28393() ) );                         //01U-028      //01V-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28399() ) );                         //01U-029      //01V-011
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28399B() ) );                        //01U-030      //01V-012
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28331() ) );                         //01U-030      //01V-013
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28267() ) );                         //01U-031      //01V-014
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28374() ) );                         //01U-032      //01V-015
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28374B() ) );                        //01U-033      //01V-016
+
+            #endregion VIOLA
+
+
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
@@ -64,6 +86,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
 
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
+            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), RunAfterEveryExecutionOfUpdater_02.Title );
 
         }//ctor
 

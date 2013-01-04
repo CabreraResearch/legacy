@@ -370,7 +370,7 @@ namespace ChemSW.Nbt.Batch
                                 ReportObjClass = (CswNbtObjClassReport) _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
                                 if( null != ReportObjClass )
                                 {
-                                    string ReportSql = ReportObjClass.getUserContextSql( UserNodeAsUser.Username );
+                                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( ReportObjClass.SQL.Text, ReportObjClass.ExtractReportParams( UserNode ) );
 
                                     CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportObjClass.NodeId.ToString() + "_Select", ReportSql );
                                     ReportTable = ReportSelect.getTable();
