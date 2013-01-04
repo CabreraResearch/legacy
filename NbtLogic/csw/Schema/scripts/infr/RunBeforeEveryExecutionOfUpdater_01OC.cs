@@ -419,6 +419,10 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Viola Methods
 
+        #region WILLIAM Methods
+
+        #endregion WILLIAM Methods
+
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -439,6 +443,9 @@ namespace ChemSW.Nbt.Schema
 
             #endregion VIOLA
 
+            #region WILLIAM
+
+            #endregion WILLIAM
 
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
