@@ -19,7 +19,7 @@ namespace ChemSW.Nbt
     /// Represents an NBT View based on Relationships
     /// </summary>
     [DataContract]
-    public class CswNbtView: IEquatable<CswNbtView>
+    public class CswNbtView : IEquatable<CswNbtView>
     {
         /// <summary>
         /// CswNbtResources reference
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt
             }
         } // IsQuickLaunch
 
-        public sealed class ViewType: CswEnum<ViewType>
+        public sealed class ViewType : CswEnum<ViewType>
         {
             private ViewType( String Name ) : base( Name ) { }
             public static IEnumerable<ViewType> _All { get { return CswEnum<ViewType>.All; } }
@@ -193,6 +193,12 @@ namespace ChemSW.Nbt
         {
             get { return Root.ForMobile; }
             set { Root.ForMobile = value; }
+        }
+
+        public string GridGroupByCol
+        {
+            get { return Root.GridGroupByCol; }
+            set { Root.GridGroupByCol = value; }
         }
 
         /// <summary>

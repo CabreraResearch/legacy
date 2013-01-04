@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( CswDeveloper.MB, 27866 );
 
             CswNbtMetaDataObjectClass containerGoupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerGroupClass );
-            if ( null == containerGoupOC )
+            if( null == containerGoupOC )
             {
                 containerGoupOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ContainerGroupClass, "barcode.png", false );
 
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
             CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "RequestItemClass" );
-            if ( null != RequestItemOc )
+            if( null != RequestItemOc )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestItemOc );
             }
@@ -193,13 +193,13 @@ namespace ChemSW.Nbt.Schema
         private CswNbtMetaDataObjectClass _createRequestItemBase( NbtObjectClass ObjectClass, Int32 StartAddRowAt = 1 )
         {
             CswNbtMetaDataObjectClass Ret = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjectClass );
-            if ( null == Ret )
+            if( null == Ret )
             {
                 CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
                 CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
                 CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
                 CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-                Ret = _CswNbtSchemaModTrnsctn.createObjectClass( ObjectClass, NbtIcon.cart, AuditLevel: true );
+                Ret = _CswNbtSchemaModTrnsctn.createObjectClass( ObjectClass, NbtIcon.cart, AuditLevel : true );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
@@ -371,7 +371,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
             CswNbtMetaDataObjectClass RequestContainerDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
-            if ( null == RequestContainerDispenseOc )
+            if( null == RequestContainerDispenseOc )
             {
                 CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
 
@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
             CswNbtMetaDataObjectClass RequestContainerUpdateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
-            if ( null == RequestContainerUpdateOc )
+            if( null == RequestContainerUpdateOc )
             {
                 CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
 
@@ -473,7 +473,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
             CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
-            if ( null == RequestMaterialDispenseOc )
+            if( null == RequestMaterialDispenseOc )
             {
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.SizeClass );
 
@@ -647,13 +647,13 @@ namespace ChemSW.Nbt.Schema
             else
             {
                 CswNbtMetaDataObjectClassProp ReorderOcp = RequestMaterialDispenseOc.getObjectClassProp( "Reorder" );
-                if ( null != ReorderOcp )
+                if( null != ReorderOcp )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.Recurring );
                 }
 
                 CswNbtMetaDataObjectClassProp ReorderFreqOcp = RequestMaterialDispenseOc.getObjectClassProp( "Reorder Frequency" );
-                if ( null != ReorderFreqOcp )
+                if( null != ReorderFreqOcp )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReorderFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
                 }
@@ -665,7 +665,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
             CswNbtMetaDataObjectClass RequestMaterialCreateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass );
-            if ( null == RequestMaterialCreateOc )
+            if( null == RequestMaterialCreateOc )
             {
                 CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClass SupplierOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
@@ -786,11 +786,11 @@ namespace ChemSW.Nbt.Schema
         private void _createUNCodeNodeType( CswDeveloper Dev, Int32 CaseNo )
         {
             CswNbtMetaDataObjectClass GenericOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GenericClass );
-            if ( null != GenericOc )
+            if( null != GenericOc )
             {
                 //LQNo NodeType
                 CswNbtMetaDataNodeType LQNoNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "LQNo" );
-                if ( null == LQNoNt )
+                if( null == LQNoNt )
                 {
                     LQNoNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "LQNo", "MLM" );
                     _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, LQNoNt.NodeTypeId );
@@ -799,7 +799,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp LQNoLimitNtp = _createNewProp( LQNoNt, "Limit", CswNbtMetaDataFieldType.NbtFieldType.Quantity );
                     LQNoLimitNtp.IsRequired = true;
                     CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
-                    if ( null != WeightNt )
+                    if( null != WeightNt )
                     {
                         LQNoLimitNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), WeightNt.NodeTypeId );
                     }
@@ -807,7 +807,7 @@ namespace ChemSW.Nbt.Schema
 
                     //UNCode NodeType
                     CswNbtMetaDataNodeType UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
-                    if ( null == UNCodeNt )
+                    if( null == UNCodeNt )
                     {
                         UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "UN Code", "MLM" );
                         _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, UNCodeNt.NodeTypeId );
@@ -818,12 +818,12 @@ namespace ChemSW.Nbt.Schema
                         UNCodeNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "UN Code" ) );
 
                         //Create Demo Data
-                        if ( null != WeightNt )
+                        if( null != WeightNt )
                         {
                             CswPrimaryKey kgNodeId = null;
-                            foreach ( CswNbtObjClassUnitOfMeasure WeightNode in WeightNt.getNodes( false, false ) )
+                            foreach( CswNbtObjClassUnitOfMeasure WeightNode in WeightNt.getNodes( false, false ) )
                             {
-                                if ( "kg" == WeightNode.Name.Text )
+                                if( "kg" == WeightNode.Name.Text )
                                 {
                                     kgNodeId = WeightNode.NodeId;
                                 }
@@ -860,7 +860,7 @@ namespace ChemSW.Nbt.Schema
 
                         //Update Chemical to include UN Code
                         CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
-                        if ( null != ChemicalNt )
+                        if( null != ChemicalNt )
                         {
                             CswNbtMetaDataNodeTypeProp ChemUNCodeNtp = _createNewProp( ChemicalNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
                             ChemUNCodeNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), UNCodeNt.NodeTypeId );
@@ -873,7 +873,7 @@ namespace ChemSW.Nbt.Schema
         private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true )
         {
             CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
-            if ( SetValOnAdd )
+            if( SetValOnAdd )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
                     CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add,
@@ -916,25 +916,48 @@ namespace ChemSW.Nbt.Schema
             } );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( approvedOCP, false );
 
-            CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
-            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeNewView( "Supplier", NbtViewVisibility.Property );
-            CswNbtViewRelationship supplierParent = supplierView.AddViewRelationship( vendorOC, true );
-            supplierView.AddViewPropertyAndFilter( supplierParent,
-                MetaDataProp: vendorNameOCP,
-                Value: "Corporate",
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            supplierView.save();
+            _acceptBlame( CswDeveloper.CF, 28420 );
 
             CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-            foreach ( CswNbtMetaDataNodeTypeProp supplierNTP in supplierOCP.getNodeTypeProps() )
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+
+            string SupplierViewXml = null;
+            foreach( CswNbtMetaDataNodeTypeProp supplierNTP in supplierOCP.getNodeTypeProps() )
             {
-                supplierNTP.ViewId = supplierView.ViewId;
+                CswNbtView SupplierView = _CswNbtSchemaModTrnsctn.restoreView( supplierNTP.ViewId );
+                SupplierView.Root.ChildRelationships.Clear();
+                CswNbtViewRelationship supplierParent = SupplierView.AddViewRelationship( vendorOC, true );
+                SupplierView.AddViewPropertyAndFilter( supplierParent,
+                    MetaDataProp : vendorNameOCP,
+                    Value : CswNbtObjClassVendor.VendorTypes.Corporate,
+                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SupplierView.save();
+                SupplierViewXml = SupplierViewXml ?? SupplierView.ToXml().ToString();
             }
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, SupplierViewXml );
+
+            string NewSupplierViewXml = null;
+            CswNbtMetaDataObjectClass RequestMaterialCreateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass );
+            CswNbtMetaDataObjectClassProp NewSupplierOcp = RequestMaterialCreateOc.getObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialSupplier );
+            foreach( CswNbtMetaDataNodeTypeProp NewSupplierNtp in NewSupplierOcp.getNodeTypeProps() )
+            {
+                CswNbtView SupplierView = _CswNbtSchemaModTrnsctn.restoreView( NewSupplierNtp.ViewId );
+                SupplierView.Root.ChildRelationships.Clear();
+                CswNbtViewRelationship supplierParent = SupplierView.AddViewRelationship( vendorOC, true );
+                SupplierView.AddViewPropertyAndFilter( supplierParent,
+                    MetaDataProp : vendorNameOCP,
+                    Value : CswNbtObjClassVendor.VendorTypes.Corporate,
+                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SupplierView.save();
+                NewSupplierViewXml = NewSupplierViewXml ?? SupplierView.ToXml().ToString();
+            }
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, NewSupplierViewXml );
+
+            _acceptBlame( Dev, CaseNo );
 
             CswNbtMetaDataNodeType unCodeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
-            if ( null != unCodeNT )
+            if( null != unCodeNT )
             {
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
                 {
@@ -972,7 +995,7 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( CswDeveloper.BV, 24489 );
 
             CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
-            if ( null == ContainerLocationOc )
+            if( null == ContainerLocationOc )
             {
                 //Create new ObjectClass
                 ContainerLocationOc = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ContainerLocationClass, "barcode.png", true );
@@ -1068,7 +1091,7 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             CswNbtMetaDataFieldType CASNoFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.CASNo );
-            if ( null == CASNoFT )
+            if( null == CASNoFT )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType.CASNo, CswNbtMetaDataFieldType.DataType.TEXT );
             }
@@ -1111,7 +1134,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass locationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp containersOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Containers );
 
-            if ( null == containersOCP )
+            if( null == containersOCP )
             {
                 CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
                 CswNbtMetaDataObjectClassProp containerLocationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
@@ -1157,7 +1180,7 @@ namespace ChemSW.Nbt.Schema
             #region FireClassExemptAmountSet
 
             CswNbtMetaDataObjectClass FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
-            if ( null == FireClassExemptAmountSetOC )
+            if( null == FireClassExemptAmountSetOC )
             {
                 FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountSetClass, "explode.png", false );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountSetOC.ObjectClassId );
@@ -1174,7 +1197,7 @@ namespace ChemSW.Nbt.Schema
             #region FireClassExemptAmount
 
             CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
-            if ( null == FireClassExemptAmountOC )
+            if( null == FireClassExemptAmountOC )
             {
                 FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.FireClassExemptAmountClass, "explode.png", false );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, FireClassExemptAmountOC.ObjectClassId );
@@ -1375,11 +1398,11 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNum );
 
             CswNbtMetaDataObjectClass GenericOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GenericClass );
-            if ( null != GenericOc )
+            if( null != GenericOc )
             {
                 //ControlZone NodeType
                 CswNbtMetaDataNodeType ControlZoneNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Control Zone" );
-                if ( null == ControlZoneNt )
+                if( null == ControlZoneNt )
                 {
                     ControlZoneNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "Control Zone", "Materials" );
                     _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, ControlZoneNt.NodeTypeId );
@@ -1418,31 +1441,31 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
             CswNbtMetaDataObjectClass LocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-            foreach ( CswNbtMetaDataObjectClassProp LocationOcp in _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProps( CswNbtMetaDataFieldType.NbtFieldType.Location ) )
+            foreach( CswNbtMetaDataObjectClassProp LocationOcp in _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProps( CswNbtMetaDataFieldType.NbtFieldType.Location ) )
             {
                 Int32 FkValue = LocationOcp.FKValue;
-                if ( Int32.MinValue == FkValue )
+                if( Int32.MinValue == FkValue )
                 {
                     FkValue = LocationOc.ObjectClassId;
                 }
 
-                if ( string.IsNullOrEmpty( LocationOcp.FKType ) || Int32.MinValue == LocationOcp.FKValue )
+                if( string.IsNullOrEmpty( LocationOcp.FKType ) || Int32.MinValue == LocationOcp.FKValue )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, FkValue );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, true );
                 }
             }
-            foreach ( CswNbtMetaDataNodeTypeProp LocationNtp in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Location ) )
+            foreach( CswNbtMetaDataNodeTypeProp LocationNtp in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Location ) )
             {
                 Int32 FkValue = LocationNtp.FKValue;
-                if ( Int32.MinValue == FkValue )
+                if( Int32.MinValue == FkValue )
                 {
                     FkValue = LocationOc.ObjectClassId;
                 }
-                if ( string.IsNullOrEmpty( LocationNtp.FKType ) || Int32.MinValue == LocationNtp.FKValue )
+                if( string.IsNullOrEmpty( LocationNtp.FKType ) || Int32.MinValue == LocationNtp.FKValue )
                 {
-                    LocationNtp.SetFK( inFKValue: FkValue, inFKType: NbtViewRelatedIdType.ObjectClassId.ToString() );
+                    LocationNtp.SetFK( inFKValue : FkValue, inFKType : NbtViewRelatedIdType.ObjectClassId.ToString() );
                 }
 
             }
@@ -1451,7 +1474,7 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28255
 
-          #region Case 28247
+        #region Case 28247
 
         private void _addMaterialTierIIOCP( CswDeveloper Dev, Int32 CaseNum )
         {
@@ -1472,7 +1495,35 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28247
 
-        
+        #region 28424
+
+        private void _fixContainerLabelFormatView( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp LabelFormatOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp NodeTypeOcp = PrintLabelOc.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
+            string LabelViewXml = null;
+            foreach( CswNbtMetaDataNodeTypeProp LfNtp in LabelFormatOcp.getNodeTypeProps() )
+            {
+                CswNbtView View = _CswNbtSchemaModTrnsctn.restoreView( LfNtp.ViewId );
+                View.Root.ChildRelationships.Clear();
+
+                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters : false );
+                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                LabelViewXml = LabelViewXml ?? View.ToXml().ToString();
+                View.save();
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LabelFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, LabelViewXml );
+
+            _resetBlame();
+        }
+
+        #endregion
+
         #endregion Viola Methods
 
         /// <summary>
@@ -1516,6 +1567,8 @@ namespace ChemSW.Nbt.Schema
             _addControlZoneNT( CswDeveloper.BV, 28282 );
             _fixLocationOcps( CswDeveloper.CF, 28255 );
             _addMaterialTierIIOCP( CswDeveloper.BV, 28247 );
+            _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
+
             #endregion VIOLA
 
 
