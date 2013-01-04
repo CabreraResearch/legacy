@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.Actions
     /// </summary>
     public class CswNbtActCreateMaterial
     {
+        #region NewMaterial Class
         /// <summary>
         /// Helper class for creating a New Material node with an eye toward strict validation
         /// </summary>
@@ -25,9 +26,9 @@ namespace ChemSW.Nbt.Actions
             private string _TradeName;
             private CswPrimaryKey _SupplierId;
             private string _PartNo;
-            private CswNbtObjClassMaterial _ExistingNode = null;
-            private CswNbtMetaDataNodeType _MaterialNt = null;
-            private CswNbtObjClassVendor _Supplier = null;
+            private CswNbtObjClassMaterial _ExistingNode;
+            private CswNbtMetaDataNodeType _MaterialNt;
+            private CswNbtObjClassVendor _Supplier;
             private string _NodeTypeName;
 
             /// <summary>
@@ -139,7 +140,7 @@ namespace ChemSW.Nbt.Actions
 
             public CswNbtObjClassMaterial commit( bool RemoveTempStatus = false )
             {
-                CswNbtObjClassMaterial Ret = null;
+                CswNbtObjClassMaterial Ret;
                 if( null == Node ) //Don't commit twice
                 {
                     if( existsInDb() )
@@ -148,11 +149,10 @@ namespace ChemSW.Nbt.Actions
                     }
                     if( false == existsInDb() && Int32.MinValue != NodeTypeId )
                     {
-                        Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp, OverrideUniqueValidation: false );
+                        Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
                         Node = Ret.Node;
 
                         bool InAddLayout = false;
-                        CswNbtMetaDataNodeType metaDataNT = _NbtResources.MetaData.getNodeType( NodeTypeId );
                         foreach( CswNbtMetaDataNodeTypeProp ntp in _NbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeTypeId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                         {
                             if( Ret.PhysicalState.NodeTypePropId == ntp.PropId )
@@ -160,14 +160,7 @@ namespace ChemSW.Nbt.Actions
                                 InAddLayout = true;
                             }
                         }
-                        if( InAddLayout )
-                        {
-                            Ret.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
-                        }
-                        else
-                        {
-                            Ret.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.NA;
-                        }
+                        Ret.PhysicalState.Value = InAddLayout ? CswNbtObjClassMaterial.PhysicalStates.Solid : CswNbtObjClassMaterial.PhysicalStates.NA;
                     }
                     else
                     {
@@ -193,6 +186,7 @@ namespace ChemSW.Nbt.Actions
             public CswNbtNode Node { get; private set; }
         }
 
+        #endregion NewMaterial Class
 
         #region ctor
 
@@ -238,9 +232,6 @@ namespace ChemSW.Nbt.Actions
                     {
                         Ret["documenttypeid"] = DocumentNodeTypeId;
                     }
-                }
-                else
-                {
                     Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
                 }
             }

@@ -9,6 +9,8 @@
         Csw.nbt.register('createMaterialWizard', function (cswParent, options) {
             'use strict';
 
+            //#region Properties
+
             var cswPrivate = {
                 name: 'cswCreateMaterialWizard',
                 exitFunc: null,
@@ -74,6 +76,10 @@
                 sizeGrid: null
             };
 
+            //#endregion Properties
+            
+            //#region State Functions
+
             cswPrivate.validateState = function () {
                 var state;
                 if (Csw.isNullOrEmpty(cswPrivate.state.tradeName)) {
@@ -95,31 +101,33 @@
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
             };
 
+            //#endregion State Functions
+            
+            //#region Wizard Functions
+
             cswPrivate.reinitSteps = function (startWithStep) {
+                cswPrivate.stepFourComplete = false;
+                if (startWithStep <= 3) {
                 cswPrivate.stepThreeComplete = false;
 
                 if (startWithStep <= 2) {
                     cswPrivate.stepTwoComplete = false;
-
-                    if (startWithStep <= 1) {
-                        /* This is mostly for debugging, you probably never need to reset step 1 in practice */
-                        cswPrivate.stepOneComplete = false;
                     }
                 }
             };
 
-            (function () {
-                Csw.extend(cswPrivate, options);
-
-                cswPrivate.validateState();
-                cswPrivate.wizardSteps = {
-                    1: 'Choose Type and Identity',
-                    2: 'Additional Properties',
-                    3: 'Size(s)',
-                    4: 'Attach MSDS'
+            cswPrivate.toggleButton = function (button, isEnabled, doClick) {
+                var btn;
+                if (Csw.bool(isEnabled)) {
+                    btn = cswPrivate.wizard[button].enable();
+                    if (Csw.bool(doClick)) {
+                        btn.click();
+                    }
+                } else {
+                    cswPrivate.wizard[button].disable();
+                }
+                return false;
                 };
-
-                cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.handleStep = function (newStepNo) {
                     cswPrivate.setState();
@@ -142,9 +150,7 @@
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         }
-                        if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) &&
-                            cswPrivate.currentStepNo > 2) {
-
+                    if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
                             cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                             if (cswPrivate.lastStepNo === 2) {
                                 cswPrivate.tabsAndProps.save({}, '', null, false);
@@ -156,81 +162,9 @@
                     }
                 };
 
-                cswPrivate.finalize = function () {
-                    function getMaterialDefinition() {
-                        var createMaterialDef = {
-                            useexistingmaterial: cswPrivate.state.useExistingMaterial,
-                            sizes: cswPrivate.sizeNodes,
-                            sizeNodes: []
-                        };
+            //#endregion Wizard Functions
 
-                        if (false === cswPrivate.state.useExistingMaterial) {
-                            createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
-                            createMaterialDef.materialId = cswPrivate.state.materialId;
-                            createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
-                            createMaterialDef.tradename = cswPrivate.state.tradeName;
-                            createMaterialDef.partno = cswPrivate.state.partNo;
-                            createMaterialDef.documentid = cswPrivate.state.documentId;
-                            createMaterialDef.supplierid = cswPrivate.state.supplier.val;
-                            createMaterialDef.suppliername = cswPrivate.state.supplier.name;
-                            Csw.each(cswPublic.rows, function (row) {
-                                createMaterialDef.sizeNodes.push(row.sizeValues);
-                            });
-                            createMaterialDef.properties = cswPrivate.state.properties;
-                            if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                                createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
-                            }
-                        } else {
-                            createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
-                        }
-                        return JSON.stringify(createMaterialDef);
-                    }
-
-                    Csw.ajax.post({
-                        urlMethod: 'commitMaterial',
-                        data: {
-                            MaterialDefinition: getMaterialDefinition()
-                        },
-                        success: function (data) {
-                            cswPrivate.clearState();
-                            Csw.tryExec(cswPrivate.onFinish, data.landingpagedata);
-                        }
-                    });
-                };
-
-                cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
-                    Title: 'Create Material',
-                    StepCount: 4,
-                    Steps: cswPrivate.wizardSteps,
-                    StartingStep: cswPrivate.startingStep,
-                    FinishText: 'Finish',
-                    onNext: cswPrivate.handleStep,
-                    onPrevious: cswPrivate.handleStep,
-                    onCancel: function () {
-                        cswPrivate.clearState();
-                        Csw.tryExec(cswPrivate.onCancel);
-                    },
-                    onFinish: cswPrivate.finalize,
-                    doNextOnInit: false
-                });
-
-            } ());
-
-
-            cswPrivate.toggleButton = function (button, isEnabled, doClick) {
-                var btn;
-                if (Csw.bool(isEnabled)) {
-                    btn = cswPrivate.wizard[button].enable();
-                    if (Csw.bool(doClick)) {
-                        btn.click();
-                    }
-                } else {
-                    cswPrivate.wizard[button].disable();
-                }
-                return false;
-            };
-
-            //Step 1: 
+            //#region Step 1: Choose Type and Identity
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
@@ -395,7 +329,9 @@
                     }
                 };
             } ());
+            //#endregion Step 1: Choose Type and Identity
 
+            //#region Step 2: Additional Properties
             cswPrivate.makeStep2 = (function () {
                 cswPrivate.stepTwoComplete = false;
 
@@ -440,35 +376,15 @@
                         });
                     }
                 };
+            }());
+            //#endregion Step 2: Additional Properties
 
-            } ());
-
+            //#region Step 3: Size(s)
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
 
                 return function () {
                     var div, selectDiv;
-
-                    function isSizeNew(size) {
-                        var ret = true;
-                        for (var i = 0; i < cswPublic.rows.length; i++) {
-                            if (cswPublic.rows[i].sizeValues["quantity"] === size["quantity"] &&
-                                cswPublic.rows[i].sizeValues["unit"] === size["unit"] &&
-                                cswPublic.rows[i].sizeValues["catalogNo"] === size["catalogNo"]
-                            ) {
-                                ret = false;
-                            }
-                        }
-                        return ret;
-                    }
-
-                    function sizeSelect(retObj, count) {
-                        cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
-                        if (count > 1) {
-                            selectDiv.show();
-                        }
-                    }
-
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
@@ -627,8 +543,14 @@
                                 }
                             });
                         };
-
                         div.br();
+
+                        var sizeSelect = function(retObj, count) {
+                            cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
+                            if (count > 1) {
+                                selectDiv.show();
+                            }
+                        };
 
                         /* Size Select (hidden if only 1 NodeType present) - to get size node type */
                         selectDiv = div.div();
@@ -663,10 +585,10 @@
                         cswPrivate.stepThreeComplete = true;
                     }
                 };
+            }());
+            //#endregion Step 3: Size(s)
 
-            } ());
-
-            //MSDS upload
+            //#region Step 4: Attach SDS
             cswPrivate.makeStep4 = (function () {
                 cswPrivate.stepFourComplete = false;
 
@@ -718,8 +640,83 @@
                         cswPrivate.stepFourComplete = true;
                     }
                 };
+            }());
+            //#endregion Step 4: Attach SDS
+            
+            //#region ctor
+            
+            (function () {
+                Csw.extend(cswPrivate, options);
+                cswPrivate.validateState();
+                cswPrivate.wizardSteps = {
+                    1: 'Choose Type and Identity',
+                    2: 'Additional Properties',
+                    3: 'Size(s)',
+                    4: 'Attach SDS'
+                };
+                cswPrivate.currentStepNo = cswPrivate.startingStep;                
+
+                cswPrivate.finalize = function () {
+                    function getMaterialDefinition() {
+                        var createMaterialDef = {
+                            useexistingmaterial: cswPrivate.state.useExistingMaterial,
+                            sizes: cswPrivate.sizeNodes,
+                            sizeNodes: []
+                        };
+
+                        if (false === cswPrivate.state.useExistingMaterial) {
+                            createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
+                            createMaterialDef.materialId = cswPrivate.state.materialId;
+                            createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
+                            createMaterialDef.tradename = cswPrivate.state.tradeName;
+                            createMaterialDef.partno = cswPrivate.state.partNo;
+                            createMaterialDef.documentid = cswPrivate.state.documentId;
+                            createMaterialDef.supplierid = cswPrivate.state.supplier.val;
+                            createMaterialDef.suppliername = cswPrivate.state.supplier.name;
+                            Csw.each(cswPublic.rows, function (row) {
+                                createMaterialDef.sizeNodes.push(row.sizeValues);
+                            });
+                            createMaterialDef.properties = cswPrivate.state.properties;
+                            if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                                createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                            }
+                        } else {
+                            createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
+                        }
+                        return JSON.stringify(createMaterialDef);
+                    }
+
+                    Csw.ajax.post({
+                        urlMethod: 'commitMaterial',
+                        data: {
+                            MaterialDefinition: getMaterialDefinition()
+                        },
+                        success: function (data) {
+                            cswPrivate.clearState();
+                            Csw.tryExec(cswPrivate.onFinish, data.landingpagedata);
+                        }
+                    });
+                };
+
+                cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
+                    Title: 'Create Material',
+                    StepCount: 4,
+                    Steps: cswPrivate.wizardSteps,
+                    StartingStep: cswPrivate.startingStep,
+                    FinishText: 'Finish',
+                    onNext: cswPrivate.handleStep,
+                    onPrevious: cswPrivate.handleStep,
+                    onCancel: function () {
+                        cswPrivate.clearState();
+                        Csw.tryExec(cswPrivate.onCancel);
+                    },
+                    onFinish: cswPrivate.finalize,
+                    doNextOnInit: false
+                });
 
             } ());
+
+            //#endregion ctor
 
             cswPrivate.makeStep1();
 

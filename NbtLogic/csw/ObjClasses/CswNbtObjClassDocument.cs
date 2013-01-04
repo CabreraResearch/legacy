@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Link = "Link ";
             /// <summary>
-            /// Class. Currently support MSDS and CofA in Business Logic
+            /// Class. Currently support SDS and CofA in Business Logic
             /// </summary>
             public const string DocumentClass = "Document Class";
             /// <summary>
@@ -50,11 +50,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Archived = "Archived";
             /// <summary>
-            /// Language of the document. Conditional on Document Class == MSDS
+            /// Language of the document. Conditional on Document Class == SDS
             /// </summary>
             public const string Language = "Language";
             /// <summary>
-            /// Format of the document. Conditional on Document Class == MSDS
+            /// Format of the document. Conditional on Document Class == SDS
             /// </summary>
             public const string Format = "Format";
             /// <summary>
@@ -92,9 +92,9 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string None = "";
             /// <summary>
-            /// Material Safety Data Sheet
+            /// (Material) Safety Data Sheet
             /// </summary>
-            public const string MSDS = "MSDS";
+            public const string SDS = "SDS";
             /// <summary>
             /// Certificate of Analysis
             /// </summary>
@@ -178,7 +178,6 @@ namespace ChemSW.Nbt.ObjClasses
             File.SetOnPropChange( OnFilePropChange );
             Link.SetOnPropChange( OnLinkPropChange );
             AcquiredDate.SetOnPropChange( OnAcquiredDatePropChange );
-            DocumentClass.SetOnPropChange( OnDocumentClassPropChange );
             Archived.SetOnPropChange( OnArchivedPropChange );
             Language.SetOnPropChange( OnLanguagePropChange );
             Format.SetOnPropChange( OnFormatPropChange );
@@ -201,11 +200,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _archiveMatchingDocs()
         {
-            //If the document is not already archived and ( has a Document Class which is not MSDS or is MSDS and has a Language and Format ), 
+            //If the document is not already archived and ( has a Document Class which is not SDS or is SDS and has a Language and Format ), 
             //then archive existing Docs with the same property values
             if( Archived.Checked != Tristate.True &&
                 false == string.IsNullOrEmpty( DocumentClass.Value ) &&
-                ( DocumentClass.Value != DocumentClasses.MSDS || (
+                ( DocumentClass.Value != DocumentClasses.SDS || (
                 false == string.IsNullOrEmpty( Format.Value ) &&
                 false == string.IsNullOrEmpty( Language.Value ) ) ) )
             {
@@ -218,7 +217,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, DocumentClass.NodeTypeProp, DocumentClass.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
 
-                    if( DocumentClass.Value == DocumentClasses.MSDS )
+                    if( DocumentClass.Value == DocumentClasses.SDS )
                     {
                         ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
                         ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
@@ -273,11 +272,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
         public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
-        private void OnDocumentClassPropChange( CswNbtNodeProp NodeProp )
-        {
-            //Language.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
-            //Format.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
-        }
         public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
         private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
         {

@@ -150,7 +150,12 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString();
+                    string PrecisionString = "";
+                    for( int i = 0; i < Precision; i++ )
+                    {
+                        PrecisionString += "#";
+                    }
+                    StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString( "0." + PrecisionString );
                     _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, StringVal );
                 }
                 _SynchGestalt();
@@ -325,7 +330,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? Quantity.ToString() : string.Empty;
+            ParentObject[_QuantitySubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Quantity ) ) ? CswConvert.ToString( Quantity ) : string.Empty;
 
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
