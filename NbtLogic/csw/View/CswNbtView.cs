@@ -19,7 +19,7 @@ namespace ChemSW.Nbt
     /// Represents an NBT View based on Relationships
     /// </summary>
     [DataContract]
-    public class CswNbtView: IEquatable<CswNbtView>
+    public class CswNbtView : IEquatable<CswNbtView>
     {
         /// <summary>
         /// CswNbtResources reference
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt
             }
         } // IsQuickLaunch
 
-        public sealed class ViewType: CswEnum<ViewType>
+        public sealed class ViewType : CswEnum<ViewType>
         {
             private ViewType( String Name ) : base( Name ) { }
             public static IEnumerable<ViewType> _All { get { return CswEnum<ViewType>.All; } }
@@ -193,6 +193,12 @@ namespace ChemSW.Nbt
         {
             get { return Root.ForMobile; }
             set { Root.ForMobile = value; }
+        }
+
+        public string GridGroupByCol
+        {
+            get { return Root.GridGroupByCol; }
+            set { Root.GridGroupByCol = value; }
         }
 
         /// <summary>
@@ -1032,19 +1038,33 @@ namespace ChemSW.Nbt
 
                 if( Visibility == NbtViewVisibility.User )
                 {
-                    // Must be unique against other private views for this user
-                    // Must be unique against all role and global views 
-                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                    WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
-                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    if( null != UserId )
+                    {
+                        // Must be unique against other private views for this user
+                        // Must be unique against all role and global views 
+                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                        WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
+                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning, "User is required", "A specific user must be selected for User-visible views" );
+                    }
                 }
                 else if( Visibility == NbtViewVisibility.Role )
                 {
-                    // Must be unique against other role views for the same role
-                    // Must be unique against all private and global views 
-                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                    WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
-                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    if( null != RoleId )
+                    {
+                        // Must be unique against other role views for the same role
+                        // Must be unique against all private and global views 
+                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                        WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
+                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Role is required", "A specific role must be selected for Role-visible views" );
+                    }
                 }
                 else if( Visibility == NbtViewVisibility.Global )
                 {

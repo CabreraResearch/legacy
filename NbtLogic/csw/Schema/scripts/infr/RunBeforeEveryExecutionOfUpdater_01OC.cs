@@ -1370,6 +1370,30 @@ namespace ChemSW.Nbt.Schema
 
         #region Case 28282
 
+        private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true )
+        {
+            CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
+            if( SetValOnAdd )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
+                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add,
+                    Nodetype.NodeTypeId,
+                    Prop.PropId,
+                    true,
+                    Nodetype.getFirstNodeTypeTab().TabId
+                    );
+            }
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
+                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                Nodetype.NodeTypeId,
+                Prop.PropId,
+                true,
+                Nodetype.getFirstNodeTypeTab().TabId
+                );
+
+            return Prop;
+        }
+
         private void _addControlZoneNT( CswDeveloper Dev, Int32 CaseNum )
         {
             _acceptBlame( Dev, CaseNum );
@@ -1511,6 +1535,35 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Case 28145
+        
+        #region 28424
+
+        private void _fixContainerLabelFormatView( CswDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp LabelFormatOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp NodeTypeOcp = PrintLabelOc.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
+            string LabelViewXml = null;
+            foreach( CswNbtMetaDataNodeTypeProp LfNtp in LabelFormatOcp.getNodeTypeProps() )
+            {
+                CswNbtView View = _CswNbtSchemaModTrnsctn.restoreView( LfNtp.ViewId );
+                View.Root.ChildRelationships.Clear();
+
+                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters : false );
+                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                LabelViewXml = LabelViewXml ?? View.ToXml().ToString();
+                View.save();
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LabelFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, LabelViewXml );
+
+            _resetBlame();
+        }
+
+        #endregion
 
 
         #endregion Viola Methods
@@ -1558,6 +1611,8 @@ namespace ChemSW.Nbt.Schema
             _fixLocationOcps( CswDeveloper.CF, 28255 );
             _addMaterialTierIIOCP( CswDeveloper.BV, 28247 );
             _correctSpellingOnStorageCompField( CswDeveloper.CM, 28145 );
+            _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
+            
             #endregion VIOLA
 
 

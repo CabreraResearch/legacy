@@ -94,7 +94,7 @@
                 cswPrivate.wizardSteps = {
                     1: 'Create Containers',
                     2: 'Define Properties',
-                    3: 'Attach MSDS'
+                    3: 'Attach SDS'
                 };
                 cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
@@ -300,7 +300,7 @@
                 };
             } ());
 
-            //Step 3: MSDS upload
+            //Step 3: SDS upload
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
 

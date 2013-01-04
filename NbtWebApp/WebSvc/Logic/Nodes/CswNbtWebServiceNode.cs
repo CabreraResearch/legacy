@@ -653,6 +653,25 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        public static void getNodeLink( ICswResources CswResources, NodeSelect.NodeLinkResponse Response, NodeSelect.PropertyView Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+                NodeSelect.NodeLinkResponse.Ret ret = new NodeSelect.NodeLinkResponse.Ret();
+
+                CswPrimaryKey pk = new CswPrimaryKey();
+                pk.FromString( Request.NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtNode node = NbtResources.Nodes[pk];
+                    ret.NodeLink = node.NodeLink;
+                    Response.Data = ret;
+                }
+            }
+        }
+
     } // class CswNbtWebServiceNode
 
 } // namespace ChemSW.Nbt.WebServices

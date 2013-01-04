@@ -10,9 +10,9 @@
             //#region _preCtor
 
             var cswPrivate;
-            var cswPublic; 
+            var cswPublic;
 
-            (function() {
+            (function () {
                 cswPublic = cswParent.div();
 
                 cswPrivate = {
@@ -55,13 +55,15 @@
 
                     topToolbar: [],
                     groupField: '',
-                    groupHeaderTpl: '{name}'
+                    groupHeaderTpl: '{columnName}: {name}',
+
+                    dockedItems: []
                 };
 
                 Csw.extend(cswPrivate, options);
                 cswPrivate.ID = cswPrivate.ID || cswPublic.getId();
                 cswPrivate.ID += cswPrivate.suffix;
-            }());
+            } ());
 
             //#endregion _preCtor
 
@@ -100,7 +102,7 @@
                         };
                         if (false === Csw.isNullOrEmpty(clickFunc)) {
                             iconopts.isButton = true;
-                            iconopts.onClick = function() {
+                            iconopts.onClick = function () {
                                 Csw.tryExec(clickFunc, [record.data]);
                             };
                         }
@@ -113,6 +115,45 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
+                if (cswPrivate.groupField.length > 0) {
+                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+
+                    var toggleGroups = function (collapse) {
+                        for (var i in cswPrivate.grid.view.features) {
+                            if (cswPrivate.grid.view.features[i].ftype === 'grouping') {
+                                if (collapse) {
+                                    cswPrivate.grid.view.features[i].collapseAll();
+                                } else {
+                                    cswPrivate.grid.view.features[i].collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
+                                    cswPrivate.grid.view.features[i].expandAll();
+                                }
+                            }
+                        }
+                    };
+
+                    cswPrivate.dockedItems = [{
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: [
+                            {
+                                xtype: 'button',
+                                text: 'Expand all Rows',
+                                handler: function () {
+                                    toggleGroups(false);
+                                }
+                            },
+                            {
+                                xtype: 'tbseparator'
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'Collapse all Rows',
+                                handler: function () {
+                                    toggleGroups(true);
+                                }
+                            }]
+                    }];
+                }
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -183,7 +224,7 @@
                             grid.filters.createFilters();
                         }
                     },
-                    dockedItems: [],
+                    dockedItems: cswPrivate.dockedItems,
                     features: [{
                         ftype: 'filters',
                         autoReload: false,
@@ -192,10 +233,11 @@
                     },
                     {
                         id: 'group',
-                        ftype: 'groupingsummary',
+                        ftype: 'grouping',
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
-                        enableGroupingMenu: false
+                        enableGroupingMenu: false,
+                        startCollapsed: true
                     }]
                 };
 
@@ -265,18 +307,18 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function _tryMakeBtn(keepTrying) {
-                                    if (false !== keepTrying)
-                                        if (Csw.isElementInDom(id)) {
-                                            var div = Csw.domNode({ ID: id });
-                                            div.nodeButton({
-                                                value: colObj.header,
-                                                size: 'small',
-                                                propId: thisBtn[0].propattr
-                                            });
-                                        } else {
-                                            _tryMakeBtn(false);
-                                        }
+                                Csw.defer(function _tryMakeBtn() {
+                                    //Case 28343. The problem here is that 
+                                    // a) our div is not in the DOM until this method returns and 
+                                    // b) we're not always guaranteed to be the writable porion of the cell--the div we return might be thrown away by Ext
+                                    if (Csw.isElementInDom(id)) {
+                                        var div = Csw.domNode({ ID: id });
+                                        div.nodeButton({
+                                            value: colObj.header,
+                                            size: 'small',
+                                            propId: thisBtn[0].propattr
+                                        });
+                                    }
                                 }, 100);
                             }
                             return '<div id="' + id + '"></div>';
@@ -375,7 +417,7 @@
                         items: cswPrivate.topToolbar
                     }); // panelopts.dockedItems
                 }
-                
+
                 if (Csw.isElementInDom(cswPublic.getId())) {
                     cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
                 } else {
@@ -404,7 +446,7 @@
                 cswPublic.empty();
             };
 
-            cswPublic.destroy = function() {
+            cswPublic.destroy = function () {
                 cswPrivate.removeAll();
             };
 
@@ -427,7 +469,7 @@
                     deselect: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
                     },
-                    selectionchange: function(rowModel, selected, eOpts) {
+                    selectionchange: function (rowModel, selected, eOpts) {
                         Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
                     },
                     afterrender: function (component) {
@@ -457,10 +499,9 @@
                             }
                             cswPrivate.fields = result.grid.fields;
                             cswPrivate.columns = result.grid.columns;
-                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.data = result.grid.data;
-                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.ajaxResult = result;
+                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.init();
 
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
@@ -469,7 +510,7 @@
                     cswPrivate.init();
                 }
             };
-            
+
             //#endregion Grid Init
 
             //#region Public methods
@@ -496,7 +537,7 @@
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
             });
 
-            cswPublic.getSelectedRowCount = Csw.method(function() {
+            cswPublic.getSelectedRowCount = Csw.method(function () {
                 return cswPrivate.grid.getSelectionModel().getSelection().length;
             });
 
@@ -597,7 +638,7 @@
             } ());
 
             return cswPublic;
-            
+
             //#endregion _postCtor
         });
 

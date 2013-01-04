@@ -38,7 +38,6 @@ PACKAGE TIER_II_DATA_MANAGER AS
 
   DATE_ADDED date;
   WEIGHT_BASE_UNIT_ID number;
-  VOLUME_BASE_UNIT_ID number;
 
   procedure SET_TIER_II_DATA;
 
@@ -53,9 +52,13 @@ END TIER_II_DATA_MANAGER;" );
 PACKAGE UNIT_CONVERSION AS 
 
   function GET_BASE_UNIT (unit_name varchar2) return number;
-  function GET_BASE_UNIT (unit_id number) return number;
   function GET_CONVERSION_FACTOR (unit_id number) return number;
-  function CONVERT_UNIT (value_to_convert in number, old_conversion_factor in number, new_conversion_factor in number) return number;
+  function CONVERT_UNIT (
+    value_to_convert in number, 
+    old_conversion_factor in number, 
+    new_conversion_factor in number, 
+    specific_gravity in number default 1
+    ) return number;
 
 END UNIT_CONVERSION;" );
 
@@ -92,7 +95,6 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
   begin
     DATE_ADDED := sysdate;
     WEIGHT_BASE_UNIT_ID := UNIT_CONVERSION.GET_BASE_UNIT('Unit (Weight)');
-    VOLUME_BASE_UNIT_ID := UNIT_CONVERSION.GET_BASE_UNIT('Unit (Volume)');
   end SET_PACKAGE_PROPERTIES;
   
   function GET_LOCATIONS return tier_ii_location_table is
@@ -101,16 +103,21 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     temp_locs tier_ii_location_table;
   begin
     --Get all locationids and their parentlocationids
-    select tier_ii_location(n.nodeid, jnp.field1_fk)
+    select tier_ii_location(n.nodeid, loc.field1_fk) 
       bulk collect into unsorted_locations
       from nodes n
-        inner join jct_nodes_props jnp on n.nodeid = jnp.nodeid
+      left join
+        (select n.nodeid, jnp.field1_fk
+          from jct_nodes_props JNP
+            inner join nodes n on n.nodeid = jnp.nodeid
+            inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid        
+            inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+            inner join object_class oc on ocp.objectclassid = oc.objectclassid
+          where oc.objectclass = 'LocationClass'
+          and ocp.propname = 'Location') loc on n.nodeid = loc.nodeid
         inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
         inner join object_class oc on nt.objectclassid = oc.objectclassid
-        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        inner join field_types ft on ntp.fieldtypeid = ft.fieldtypeid
-      where oc.objectclass = 'LocationClass'
-      and ft.fieldtype = 'Location';
+        where oc.objectclass = 'LocationClass';
       
     --Store null base case
     select tier_ii_location(ul.LOCATIONID, ul.parentlocationid) 
@@ -146,10 +153,11 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     materials tier_ii_material_table;
     containers tier_ii_material_table;
     conversion_factor number;
+    specific_gravity number := 1;
     found number := 0;
   begin
     --Take the contents of the child locations' Materials and add them to the list (setting every Material's Quantity value to 0)
-    select tier_ii_material(t.materialid, t.casno, 0, t.totalquantity, t.unitid)
+    select tier_ii_material(t.materialid, t.casno, 0, t.totalquantity, t.unitid, null, null)
       bulk collect into materials
       from Tier2 t
       where t.parentlocationid = LocId
@@ -168,8 +176,8 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       end loop;
     end if;
     
-    --Grab all Containers in the current Location where qty > 0 and material's tierII is true
-    select tier_ii_material(m.materialid, mat.casno, qty.quantity, qty.quantity, qty.unitid)
+    --Grab all Containers in the current Location where qty > 0 and material's tierII is true     
+    select tier_ii_material(m.materialid, mat.casno, qty.quantity, qty.quantity, qty.unitid, uom.unit_type, mat.spec_grav)
       bulk collect into containers
       from nodes n
     left join (select jnp.nodeid, jnp.field1_numeric as quantity, jnp.field1_fk as unitid
@@ -177,18 +185,33 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
       inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
       where ocp.propname = 'Quantity') qty on n.nodeid = qty.nodeid
+    left join (select n.nodeid, ut.unit_type
+      from nodes n
+      left join (select jnp.nodeid, jnp.field1 as unit_type
+        from jct_nodes_props jnp
+        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        where ocp.propname = 'Unit Type') ut on n.nodeid = ut.nodeid
+      inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        inner join object_class oc on nt.objectclassid = oc.objectclassid
+        where oc.objectclass = 'UnitOfMeasureClass') uom on qty.unitid = uom.nodeid
     left join (select jnp.nodeid, jnp.field1_fk as materialid
       from jct_nodes_props jnp
       inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
       inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
       where ocp.propname = 'Material') m on n.nodeid = m.nodeid
-    left join (select n.nodeid, cas.casno, t2.istier2
+    left join (select n.nodeid, cas.casno, t2.istier2, sg.spec_grav
       from nodes n
       left join (select jnp.nodeid, jnp.field1 as casno
         from jct_nodes_props jnp
         inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
         inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
         where ocp.propname = 'CAS No') cas on n.nodeid = cas.nodeid
+      left join (select jnp.nodeid, jnp.field1_numeric as spec_grav
+        from jct_nodes_props jnp
+        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        where ocp.propname = 'Specific Gravity') sg on n.nodeid = sg.nodeid
       left join (select jnp.nodeid, jnp.field1 as istier2
         from jct_nodes_props jnp
         inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
@@ -210,11 +233,14 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       and mat.istier2 = '1';
 
     for i in 1..containers.count loop
-      if containers(i).unitid != WEIGHT_BASE_UNIT_ID and containers(i).unitid != VOLUME_BASE_UNIT_ID then
+      if containers(i).unitid != WEIGHT_BASE_UNIT_ID then
         conversion_factor := UNIT_CONVERSION.GET_CONVERSION_FACTOR(containers(i).unitid);
-        containers(i).quantity := UNIT_CONVERSION.CONVERT_UNIT(containers(i).quantity, conversion_factor, 1);
+        if containers(i).unittype = 'Volume' then
+          specific_gravity := containers(i).specificgravity;
+        end if;
+        containers(i).quantity := UNIT_CONVERSION.CONVERT_UNIT(containers(i).quantity, conversion_factor, 1, specific_gravity);
         containers(i).totalquantity := containers(i).quantity;
-        --containers(i).unitid := UNIT_CONVERSION.GET_BASE_UNIT(containers(i).unitid);
+        containers(i).unitid := WEIGHT_BASE_UNIT_ID;
       end if;
       found := 0;
       if materials.count > 0 then
@@ -281,7 +307,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     end loop;
   end SET_TIER_II_DATA;
 
-END TIER_II_DATA_MANAGER;;" );
+END TIER_II_DATA_MANAGER;" );
 
             #endregion TIER_II_DATA_MANAGER
 
@@ -318,73 +344,31 @@ PACKAGE BODY UNIT_CONVERSION AS
       and nt.nodetypename = unit_name;
     return unit_id;
   end GET_BASE_UNIT;
-  
-  function GET_BASE_UNIT (unit_id number) return number is
-    base_unit_id number;
-  begin
-    select baseunitid.nodeid
-    into base_unit_id
-    from nodes n
-      left join (
-        select n.nodeid, jnp.field1 as unit
-        from nodes n
-        left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
-        left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        where ntp.propname = 'Base Unit'
-        ) baseunit on baseunit.nodeid = n.nodeid
-      left join (
-        select n.nodeid, jnp.field1 as unit
-        from nodes n
-        left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
-        left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        where ntp.propname = 'Name'
-        ) nodename on baseunit.nodeid = nodename.nodeid 
-      left join (  
-        select n.nodeid, base.unit as bu
-          from nodes n
-            left join (
-              select n.nodeid, jnp.field1 as unit
-              from nodes n
-              left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
-              left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-              where ntp.propname = 'Base Unit'
-              ) base on base.nodeid = n.nodeid
-            left join (
-              select n.nodeid, jnp.field1 as unit
-              from nodes n
-              left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
-              left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-              where ntp.propname = 'Name'
-              ) nm on base.nodeid = nm.nodeid 
-            where base.unit = nm.unit
-        ) baseunitid on baseunitid.bu = baseunit.unit
-      where n.nodeid = unit_id;
-    return base_unit_id;
-  end GET_BASE_UNIT;
 
   function GET_CONVERSION_FACTOR (unit_id number) return number is
     base number;
     exponent number;
     conversion_factor number;
   begin
-    select jnp.field1_numeric, field2_numeric
+    select jnp.field1_numeric, jnp.field2_numeric
       into base, exponent
-      from nodes n
-        left join jct_nodes_props jnp on n.nodeid = jnp.nodeid    
-        left join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
-        inner join object_class oc on nt.objectclassid = oc.objectclassid
+      from jct_nodes_props jnp
+        inner join nodes n on n.nodeid = jnp.nodeid            
+        inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        inner join object_class oc on ocp.objectclassid = oc.objectclassid
       where oc.objectclass = 'UnitOfMeasureClass'
-      and ntp.propname = 'Conversion Factor'
+      and ocp.propname = 'Conversion Factor'
       and n.nodeid = unit_id;
     conversion_factor := base * power(10, exponent);
     return conversion_factor;
   end GET_CONVERSION_FACTOR;
 
-  function CONVERT_UNIT (value_to_convert in number, old_conversion_factor in number, new_conversion_factor in number) return number is
+  function CONVERT_UNIT (value_to_convert in number, old_conversion_factor in number, new_conversion_factor in number, specific_gravity in number default 1) 
+  return number is
     converted_value number;
   begin
-    converted_value := value_to_convert / old_conversion_factor * new_conversion_factor;
+    converted_value := value_to_convert / old_conversion_factor * specific_gravity * new_conversion_factor;
     return converted_value;
   end CONVERT_UNIT;
 
