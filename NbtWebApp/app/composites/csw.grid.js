@@ -307,18 +307,18 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function _tryMakeBtn(keepTrying) {
-                                    if (false !== keepTrying)
-                                        if (Csw.isElementInDom(id)) {
-                                            var div = Csw.domNode({ ID: id });
-                                            div.nodeButton({
-                                                value: colObj.header,
-                                                size: 'small',
-                                                propId: thisBtn[0].propattr
-                                            });
-                                        } else {
-                                            _tryMakeBtn(false);
-                                        }
+                                Csw.defer(function _tryMakeBtn() {
+                                    //Case 28343. The problem here is that 
+                                    // a) our div is not in the DOM until this method returns and 
+                                    // b) we're not always guaranteed to be the writable porion of the cell--the div we return might be thrown away by Ext
+                                    if (Csw.isElementInDom(id)) {
+                                        var div = Csw.domNode({ ID: id });
+                                        div.nodeButton({
+                                            value: colObj.header,
+                                            size: 'small',
+                                            propId: thisBtn[0].propattr
+                                        });
+                                    }
                                 }, 100);
                             }
                             return '<div id="' + id + '"></div>';
