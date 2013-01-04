@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                 StringCollection Jurisdictions = new StringCollection {"North America", "China", "Europe", "Japan"};
                 foreach( string j in Jurisdictions )
                 {
-                    CswNbtObjClassJurisdiction jNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
+                    CswNbtObjClassJurisdiction jNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                     jNode.Name.Text = j;
                     jNode.postChanges( false );
                 }
@@ -97,6 +97,9 @@ namespace ChemSW.Nbt.Schema
 
                 // Property Configuration
                 GhsSignalWordNTP.ListOptions = "Danger,Warning";
+                GhsSignalWordNTP.IsRequired = true;
+                
+                GhsMaterialNTP.IsRequired = true;
 
                 GhsPictogramsNTP.Extended = "true";
                 GhsPictogramsNTP.TextAreaColumns = 77;
@@ -160,25 +163,25 @@ namespace ChemSW.Nbt.Schema
 
 
 
-            CswNbtMetaDataNodeType GhsPhraseNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "GHS Phrase" );
-            if( null != GhsPhraseNT )
-            {
-                CswNbtMetaDataNodeTypeProp GhsPhraseCodeNTP = GhsPhraseNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Code );
-                CswNbtMetaDataNodeTypeProp GhsPhraseEnglishNTP = GhsPhraseNT.getNodeTypeProp( "English" );
+            //CswNbtMetaDataNodeType GhsPhraseNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "GHS Phrase" );
+            //if( null != GhsPhraseNT )
+            //{
+            //    CswNbtMetaDataNodeTypeProp GhsPhraseCodeNTP = GhsPhraseNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Code );
+            //    CswNbtMetaDataNodeTypeProp GhsPhraseEnglishNTP = GhsPhraseNT.getNodeTypeProp( "English" );
                 
-                string NameTemplate = CswNbtMetaData.MakeTemplateEntry( GhsPhraseCodeNTP.PropName ) + " ";
-                if(null != GhsPhraseEnglishNTP)
-                {
-                    NameTemplate += CswNbtMetaData.MakeTemplateEntry( GhsPhraseEnglishNTP.PropName );
-                }
-                GhsPhraseNT.setNameTemplateText( NameTemplate );
+            //    string NameTemplate = CswNbtMetaData.MakeTemplateEntry( GhsPhraseCodeNTP.PropName ) + " ";
+            //    if(null != GhsPhraseEnglishNTP)
+            //    {
+            //        NameTemplate += CswNbtMetaData.MakeTemplateEntry( GhsPhraseEnglishNTP.PropName );
+            //    }
+            //    GhsPhraseNT.setNameTemplateText( NameTemplate );
 
-                foreach(CswNbtNode Node in GhsPhraseNT.getNodes( false, false ))
-                {
-                    Node.postChanges( true );
-                }
+            //    foreach(CswNbtNode Node in GhsPhraseNT.getNodes( false, false ))
+            //    {
+            //        Node.postChanges( true );
+            //    }
 
-            } // if( null != GhsPhraseNT )
+            //} // if( null != GhsPhraseNT )
 
         } //Update()
 

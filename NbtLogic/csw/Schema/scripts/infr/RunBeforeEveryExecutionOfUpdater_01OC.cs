@@ -434,14 +434,16 @@ namespace ChemSW.Nbt.Schema
                                                                               PropName = CswNbtObjClassGHS.PropertyName.Jurisdiction,
                                                                               FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                                               FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                                                                              FkValue = JurisdictionOC.ObjectClassId
+                                                                              FkValue = JurisdictionOC.ObjectClassId,
+                                                                              IsRequired = true
                                                                           } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                                                                           {
                                                                               PropName = CswNbtObjClassGHS.PropertyName.Material,
                                                                               FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                                               FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                                                                              FkValue = MaterialOC.ObjectClassId
+                                                                              FkValue = MaterialOC.ObjectClassId,
+                                                                              IsRequired = true
                                                                           } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                                                                           {
