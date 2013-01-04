@@ -1,7 +1,6 @@
 
 using System;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -45,12 +44,6 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
-            #region URSULA
-
-            _makeMolKeysTable();
-
-            #endregion URSULA
-
             #region VIOLA
 
             // case 26827
@@ -87,24 +80,6 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-        private void _makeMolKeysTable()
-        {
-            #region Create fingerprint table
-            _acceptBlame( CswDeveloper.MB, 24524 );
-            if ( false == _CswNbtSchemaModTrnsctn.isTableDefined( "mol_keys" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addTable( "mol_keys", "nodeid" );
-
-                for ( int i = 0; i < CswStructureSearch.keySize; i++ )
-                {
-                    _CswNbtSchemaModTrnsctn.addLongColumn( "mol_keys", "key" + i, "key" + i + "for the mol fingerprint", false, false );
-                }
-
-                _CswNbtSchemaModTrnsctn.addLongColumn( "mol_keys", "atomcount", "the total number of atoms in this mol fingerprint", false, false );
-            }
-            _resetBlame();
-            #endregion
-        }
 
         private void _createTierIITable( CswDeveloper Dev, Int32 CaseNum )
         {
