@@ -1,13 +1,9 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassGHS : CswNbtObjClass
+    public class CswNbtObjClassGHSPhrase : CswNbtObjClass
     {
         #region Enums
         /// <summary>
@@ -15,18 +11,15 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public sealed class PropertyName
         {
-            public const string Jurisdiction = "Jurisdiction";
-            public const string Material = "Material";
-            public const string LabelCodes = "Label Codes";
-            public const string ClassCodes = "Class Codes";
-            public const string SignalWord = "Signal Word";
+            public const string Code = "Code";
+            public const string Category = "Category";
         }
 
         #endregion Enums
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassGHS( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassGHSPhrase( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
@@ -34,18 +27,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSPhraseClass ); }
         }
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassGHS
+        /// Convert a CswNbtNode to a CswNbtObjClassGHSPhrase
         /// </summary>
-        public static implicit operator CswNbtObjClassGHS( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassGHSPhrase( CswNbtNode Node )
         {
-            CswNbtObjClassGHS ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.GHSClass ) )
+            CswNbtObjClassGHSPhrase ret = null;
+            if( null != Node && _Validate( Node, NbtObjectClass.GHSPhraseClass ) )
             {
-                ret = (CswNbtObjClassGHS) Node.ObjClass;
+                ret = (CswNbtObjClassGHSPhrase) Node.ObjClass;
             }
             return ret;
         }
@@ -76,18 +69,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            LabelCodes.InitOptions = _initGhsPhraseOptions;
-            ClassCodes.InitOptions = _initGhsPhraseOptions;
-            
             _CswNbtObjClassDefault.afterPopulateProps();
-        } //afterPopulateProps()
-        
-        private Dictionary<string, string> _initGhsPhraseOptions()
-        {
-            CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSPhraseClass );
-            Dictionary<CswPrimaryKey, string> Phrases = GhsPhraseOC.getNodeIdAndNames( false, false );
-            return Phrases.Keys.ToDictionary( pk => pk.ToString(), pk => Phrases[pk] );
-        } // _initGhsPhraseOptions()
+        }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
@@ -96,6 +79,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -103,11 +89,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Jurisdiction { get { return ( _CswNbtNode.Properties[PropertyName.Jurisdiction] ); } }
-        public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
-        public CswNbtNodePropMultiList LabelCodes { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodes] ); } }
-        public CswNbtNodePropMultiList ClassCodes { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodes] ); } }
-        public CswNbtNodePropList SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
+        public CswNbtNodePropText Code { get { return ( _CswNbtNode.Properties[PropertyName.Code] ); } }
+        public CswNbtNodePropList Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
+
 
         #endregion
 

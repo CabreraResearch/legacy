@@ -1513,6 +1513,19 @@ namespace ChemSW.Nbt.Schema
                                                                               PropName = CswNbtObjClassGHS.PropertyName.SignalWord,
                                                                               FieldType = CswNbtMetaDataFieldType.NbtFieldType.List
                                                                           } );
+
+                CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.GHSPhraseClass, "warning.png", false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsPhraseOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                                {
+                                                                                    PropName = CswNbtObjClassGHSPhrase.PropertyName.Code,
+                                                                                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                                                                                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsPhraseOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                                                {
+                                                                                    PropName = CswNbtObjClassGHSPhrase.PropertyName.Category,
+                                                                                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                                                                                    ListOptions = "Physical,Health,Environmental"
+                                                                                } );
             }
             _resetBlame();
         } // _addGhsOC()

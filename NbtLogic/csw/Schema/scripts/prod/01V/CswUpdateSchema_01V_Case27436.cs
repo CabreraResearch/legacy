@@ -30,11 +30,21 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeProp GhsPhraseNTP = GhsNT.getNodeTypeProp( "GHS Phrase" );
                 CswNbtMetaDataNodeTypeProp GhsTypeNTP = GhsNT.getNodeTypeProp( "Type" );
+                CswNbtMetaDataNodeTypeProp GhsJurisdictionNTP = GhsNT.getNodeTypeProp( "Jurisdiction" );
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( GhsTypeNTP );
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( GhsPhraseNTP );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( GhsJurisdictionNTP );
 
                 _CswNbtSchemaModTrnsctn.MetaData.ConvertObjectClass( GhsNT, GhsOC );
             } // if( null != GhsNT )
+
+            CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GHSPhraseClass );
+            CswNbtMetaDataNodeType GhsPhraseNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "GHS Phrase" );
+            if( null != GhsPhraseNT )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.ConvertObjectClass( GhsPhraseNT, GhsPhraseOC );
+            } // if( null != GhsPhraseNT )
+            
         } //Update()
 
     }//class CswUpdateSchema_01V_Case27436
