@@ -8,8 +8,8 @@
             var cswPrivate = {
                 viewid: '',
                 name: '',
-//                nodeid: '',
-//                nodekey: '',
+                //                nodeid: '',
+                //                nodekey: '',
                 EditMode: Csw.enums.editMode.Edit,
                 onEditNode: null,
                 onDeleteNode: null,
@@ -22,6 +22,10 @@
                 tabledata: null,
                 allowEdit: true,
                 allowDelete: true,
+
+                allowImport: true, //c3 addition
+                searchType: null, //c3 addition
+
                 compactResults: false,
                 extraAction: null,
                 extraActionIcon: Csw.enums.iconType.none,
@@ -32,10 +36,10 @@
                     cswPrivate.filterToNodeTypeId = nodetypeid;
                     cswPrivate.originaltabledata = cswPrivate.tabledata;
                     cswPrivate.tabledata = null;
-                    cswPrivate.init(function() {
+                    cswPrivate.init(function () {
                         cswPrivate.tableDiv.a({
                             text: 'Back to All Results',
-                            onClick: function() {
+                            onClick: function () {
                                 cswPrivate.filterToNodeTypeId = '';
                                 cswPrivate.tabledata = cswPrivate.originaltabledata;
                                 cswPrivate.init();
@@ -183,8 +187,8 @@
                             thumbnailCell.img({
                                 src: nodeObj.thumbnailurl
                             }).css({
-                                 height: imgheight,
-                                 maxWidth: '100px'
+                                height: imgheight,
+                                maxWidth: '100px'
                             });
                         }
 
@@ -225,10 +229,10 @@
                             } else {
                                 var propCell = texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1));
                                 var cssclass = 'searchResult';
-                                if(propObj.source === 'Results') {
+                                if (propObj.source === 'Results') {
                                     cssclass = 'searchResultDeemph';
                                 }
-                                propCell.span({ 
+                                propCell.span({
                                     text: propObj.propname + ': ' + propObj.gestalt,
                                     cssclass: cssclass
                                 });
@@ -241,7 +245,7 @@
                         if (Csw.bool(cswPrivate.compactResults)) {
                             btnTable.cell(1, btncol).buttonExt({
                                 name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
-                            width: ('More Info'.length * 8) + 16,
+                                width: ('More Info'.length * 8) + 16,
                                 enabledText: 'More Info',
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.info),
                                 disableOnClick: false,
@@ -251,30 +255,42 @@
                             }); // CswButton
                             btncol += 1;
                         }
-                        if (Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
 
+                        //Details Button
+                        if (Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
                             btnTable.cell(1, btncol).buttonExt({
                                 name: Csw.delimitedString(cswPrivate.name, nodeid, 'editbtn').string('_'),
-                            width: ('Details'.length * 7) + 16,
+                                width: ('Details'.length * 7) + 16,
                                 enabledText: 'Details',
+                                disableOnClick: false,
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                                 onClick: function () {
-                                    $.CswDialog('EditNodeDialog', {
-                                        currentNodeId: nodeid,
-                                        currentNodeKey: nodeObj.nodekey,
-                                        nodenames: [nodeObj.nodename],
-                                        ReadOnly: (false === nodeObj.allowedit),
-                                        onEditNode: cswPrivate.onEditNode
-                                    }); // CswDialog
+                                    //If C3 search {} else if Universal search {}
+                                    if (cswPrivate.searchType === "chemcatcentral") {
+                                        $.CswDialog('C3DetailsDialog', {
+                                            nodeObj: nodeObj,
+                                            onEditNode: cswPrivate.onEditNode
+                                        });
+                                    }
+                                    else {
+                                        $.CswDialog('EditNodeDialog', {
+                                            currentNodeId: nodeid,
+                                            currentNodeKey: nodeObj.nodekey,
+                                            nodenames: [nodeObj.nodename],
+                                            ReadOnly: (false === nodeObj.allowedit),
+                                            onEditNode: cswPrivate.onEditNode
+                                        });
+                                    } // CswDialog
                                 } // onClick
                             }); // CswButton
                             btncol += 1;
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
+                        //Delete Button
                         if (Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
                             btnTable.cell(1, btncol).buttonExt({
                                 name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
-                            width: ('Delete'.length * 8) + 16,
+                                width: ('Delete'.length * 8) + 16,
                                 enabledText: 'Delete',
                                 disabledOnClick: false,
                                 //tooltip: { title: 'Delete' },
@@ -291,13 +307,32 @@
                             btncol += 1;
                         } // if (nodeObj.allowdelete)
 
+                        //todo: implement
+                        //Import Button
+                        if (Csw.bool(cswPrivate.allowImport) && Csw.bool(nodeObj.allowimport)) {
+                            btnTable.cell(1, btncol).buttonExt({
+                                name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
+                                width: ('Import'.length * 8) + 16,
+                                enabledText: 'Import',
+                                disableOnClick: false,
+                                //tooltip: { title: 'Delete' },
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.down),
+                                onClick: Csw.method(function () {
+                                    $.CswDialog('ImportC3RecordDialog', {
+                                        nodenames: [nodeObj.nodename]
+                                    }); // CswDialog
+                                }) // onClick
+                            }); // CswButton
+                            btncol += 1;
+                        } // if (nodeObj.allowimport)
+
                         if (false === Csw.isNullOrEmpty(cswPrivate.extraAction)) {
                             Csw.debug.assert(Csw.number(cswPrivate.extraActionIcon) > 0, 'No icon specified for extraAction.');
                             Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');
 
                             btnTable.cell(1, btncol).buttonExt({
                                 name: Csw.delimitedString(cswPrivate.name, nodeid, 'extbtn').string('_'),
-                            width: (cswPrivate.extraAction.length * 8) + 16,
+                                width: (cswPrivate.extraAction.length * 8) + 16,
                                 enabledText: cswPrivate.extraAction,
                                 //tooltip: { title: cswPrivate.extraAction },
                                 icon: cswPrivate.extraActionIcon,
@@ -367,7 +402,7 @@
                         Csw.eachRecursive(nodetypeObj.nodes, cswPrivate.makeNodeCell);
 
                         // empty cells if no results, to keep image in place
-                        while(false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
+                        while (false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
                             var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
                             var textCell = cswPrivate.getTextCell(cellSet);
                             textCell.append('&nbsp;');
@@ -376,7 +411,7 @@
 
 
                         // empty cells if no results, to keep image in place
-                        while(false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
+                        while (false === cswPrivate.singleColumn && cswPrivate.c <= cswPrivate.columns) {
                             var cellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
                             var textCell = cswPrivate.getTextCell(cellSet);
                             textCell.append('&nbsp;');
@@ -457,7 +492,7 @@
                 } // if (pagenodelimit < results)
 
                 // Show truncated
-                if(Csw.bool(cswPrivate.tabledata.truncated)) {
+                if (Csw.bool(cswPrivate.tabledata.truncated)) {
                     cswPrivate.pagerDiv.br();
                     cswPrivate.pagerDiv.span({
                         cssclass: 'truncated',
@@ -471,6 +506,7 @@
                 cswParent.empty();
                 cswPrivate.results = Csw.number(cswPrivate.tabledata.results, -1);
                 cswPrivate.pagenodelimit = Csw.number(cswPrivate.tabledata.pagesize, 20);
+                cswPrivate.searchType = cswPrivate.tabledata.searchtype; //c3 addition
 
                 // multi-nodetype
                 cswPrivate.singleColumn = false;
@@ -513,7 +549,7 @@
                 Csw.tryExec(cswPrivate.onSuccess);
             }; // HandleTableData()
 
-            cswPrivate.init = function(onAfterInit) {
+            cswPrivate.init = function (onAfterInit) {
                 cswPrivate.r = 1;
                 cswPrivate.c = 1;
                 cswPrivate.currentpage = 1;
@@ -527,11 +563,11 @@
                         urlMethod: 'getTableView',
                         data: {
                             ViewId: cswPrivate.viewid,
-//                            NodeId: cswPrivate.nodeid,
-//                            NodeKey: cswPrivate.nodekey,
+                            //                            NodeId: cswPrivate.nodeid,
+                            //                            NodeKey: cswPrivate.nodekey,
                             NodeTypeId: cswPrivate.filterToNodeTypeId
                         },
-                        success: function(result) {
+                        success: function (result) {
                             cswPrivate.tabledata = result;
                             cswPrivate.HandleTableData(onAfterInit);
                             Csw.tryExec(onAfterInit);
@@ -539,7 +575,7 @@
                     }); // ajax
                 }
             }; // init()
-            
+
             // constructor
             (function () {
                 cswPrivate.init();
@@ -553,4 +589,4 @@
 
             return cswPublic;
         }); // register
-})(); // (function
+})();    // (function

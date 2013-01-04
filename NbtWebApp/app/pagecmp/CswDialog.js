@@ -868,7 +868,149 @@
             });
 
             openDialog(div, 400, 300, null, 'Upload');
-        },
+        }, // FileUploadDialog
+        ImportC3RecordDialog: function (options) {
+            var cswDlgPrivate = {
+                nodes: {},
+                nodenames: [],
+                nodeids: [],
+                cswnbtnodekeys: [],
+                onDeleteNode: null, //function (nodeid, nodekey) { },
+                Multi: false,
+                nodeTreeCheck: null,
+                publishDeleteEvent: true
+            };
+
+            if (Csw.isNullOrEmpty(options)) {
+                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+            }
+            Csw.extend(cswDlgPrivate, options);
+            var cswPublic = {
+                div: Csw.literals.div(),
+                close: function () {
+                    cswPublic.div.$.dialog('close');
+                }
+            };
+
+            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
+
+            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
+
+        }, // ImportC3RecordDialog
+        C3DetailsDialog: function (options) {
+
+            var cswPrivate = {
+                title: "Product Details",
+                node: options.nodeObj,
+                searchresults: null
+            };
+
+            if (Csw.isNullOrEmpty(options)) {
+                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+            }
+            Csw.extend(cswPrivate, options);
+            var cswPublic = {
+                div: Csw.literals.div(),
+                close: function () {
+                    cswPublic.div.$.dialog('close');
+                }
+            };
+
+            //is this necessary or can i use the declaration above?
+            var div = Csw.literals.div(),
+                newNode;
+
+            var getProductDetails = function () {
+
+                var CswC3SearchParams = {
+                    Field: 'ProductId',
+                    Query: cswPrivate.node.c3productid,
+                    SearchOperator: '',
+                    SourceName: '',
+                    MaxRows: 10
+                };
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ChemCatCentral/GetProductDetails',
+                    data: CswC3SearchParams,
+                    success: function (data) {
+
+                        //Create the table
+                        var table1 = div.table({ cellspacing: '5px', align: 'left', width: '100%' });
+
+                        table1.cell(1, 1).div({
+                            text: cswPrivate.node.nodename
+                        }).css({ 'font-size': '18px', 'font-weight': 'bold' });
+
+                        table1.cell(2, 1).div({
+                            text: 'Supplier: ' + data.ProductDetails.SupplierName
+                        });
+
+                        table1.cell(3, 1).div({
+                            text: 'Catalog#: ' + data.ProductDetails.CatalogNo
+                        });
+
+                        var cell4_hidden = 'hidden';
+                        var producturl = data.ProductDetails.ProductUrl;
+                        if (null != producturl) {
+                            cell4_hidden = 'visible';
+                        }
+                        table1.cell(4, 1).div({
+                            text: '<a href=' + producturl + ' target="_blank">Product Website</a>',
+                            styles: { 'visibility': cell4_hidden }
+                        });
+
+                        var cell5_hidden = 'hidden';
+                        var msdsurl = data.ProductDetails.MsdsUrl;
+                        if (null != msdsurl) {
+                            cell5_hidden = 'visible';
+                        }
+                        table1.cell(5, 1).div({
+                            text: '<a href=' + msdsurl + ' target="_blank">MSDS</a>',
+                            styles: { 'visibility': cell5_hidden }
+                        });
+
+                        table1.cell(6, 1).grid({
+                            name: 'c3detailsgrid_size',
+                            title: 'Sizes',
+                            height: 100,
+                            width: 300,
+                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string'}],
+                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty'}],
+                            data: {
+                                items: data.ProductDetails.ProductSize,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                        table1.cell(7, 1).grid({
+                            name: 'c3detailsgrid_extradata',
+                            title: 'Extra Attributes',
+                            height: 150,
+                            width: 300,
+                            fields: [{ name: 'attribute', type: 'string' }, { name: 'value', type: 'string' }],
+                            columns: [{ header: 'Attribute', dataIndex: 'attribute' }, { header: 'Value', dataIndex: 'value' }],
+                            data: {
+                                items: data.ProductDetails.TemplateSelectedExtensionData,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                    }
+                });
+            };
+
+            var onOpen = function () {
+                getProductDetails();
+            };
+
+            openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
+
+        }, // C3DetailsDialog
         C3SearchDialog: function (options) {
 
             var cswPrivate = {
@@ -973,7 +1115,7 @@
             tableOuter.cell(2, 1).div(tableInner);
 
             openDialog(div, 750, 300, null, cswPrivate.title);
-        },
+        }, // C3SearchDialog
         StructureSearchDialog: function (options) {
             var cswPrivate = {
                 title: "Structure Search",

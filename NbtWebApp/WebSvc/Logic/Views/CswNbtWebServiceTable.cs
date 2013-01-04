@@ -23,22 +23,24 @@ namespace ChemSW.Nbt.WebServices
 
         private Int32 _FilterToNodeTypeId;
         private readonly CswNbtResources _CswNbtResources;
-        //private readonly CswNbtView _View;
         private CswNbtView _View;
         private readonly CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private readonly CswNbtSearchPropOrder _CswNbtSearchPropOrder;
 
-        //public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, CswNbtView View, Int32 NodeTypeId )
         public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 NodeTypeId )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
-            //_View = View;
             _CswNbtResources.EditMode = NodeEditMode.Table;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
             _FilterToNodeTypeId = NodeTypeId;
         }
 
+        /// <summary>
+        /// Get table from a universal search.
+        /// </summary>
+        /// <param name="View"></param>
+        /// <returns></returns>
         public JObject getTable( CswNbtView View )
         {
             _View = View;
@@ -118,6 +120,9 @@ namespace ChemSW.Nbt.WebServices
             PropsToHide.Add( "TradeName" );
             PropsToHide.Add( "ProductUrl" );
             PropsToHide.Add( "MsdsUrl" );
+            PropsToHide.Add( "CasNo" );
+            PropsToHide.Add( "Description" );
+            PropsToHide.Add( "Formula" );
 
             if( C3SearchResultsObj != null )
             {
@@ -140,6 +145,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
+                ret["searchtype"] = "universal";
             }
             return ret;
         } // makeTableFromTree()
@@ -170,7 +176,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-        /// Make a z
+        /// Make a table from a C3 search result object.
         /// </summary>
         /// <param name="C3SearchResultsObj"></param>
         /// <param name="PropsToHide"></param>
@@ -183,10 +189,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 Int32 results = _populateDictionary( C3SearchResultsObj, PropsToHide );
 
-                ret["results"] = results; // Tree.getChildNodeCount().ToString();
+                ret["results"] = results;
                 ret["nodetypecount"] = _TableDict.Keys.Count;
-                ret["truncated"] = null; //Tree.getCurrentNodeChildrenTruncated();
+                ret["truncated"] = null;
                 ret["nodetypes"] = _dictionaryToJson();
+                ret["searchtype"] = "chemcatcentral";
             }
             return ret;
         }
@@ -196,6 +203,7 @@ namespace ChemSW.Nbt.WebServices
             public CswPrimaryKey NodeId;
             public CswNbtNodeKey NodeKey;
             public CswNbtMetaDataNodeType NodeType;
+            public Int32 C3ProductId;
             public string NodeName;
             public bool Locked;
             public bool Disabled;
@@ -204,6 +212,9 @@ namespace ChemSW.Nbt.WebServices
             public bool AllowView;
             public bool AllowEdit;
             public bool AllowDelete;
+
+            public bool AllowImport;
+
             public SortedList<Int32, TableProp> Props = new SortedList<Int32, TableProp>();
 
             public JObject ToJson()
@@ -226,6 +237,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     NodeObj["nodekey"] = NodeKey.ToString();
                 }
+                NodeObj["c3productid"] = C3ProductId.ToString();
                 NodeObj["locked"] = Locked.ToString().ToLower();
                 NodeObj["disabled"] = Disabled.ToString().ToLower();
                 NodeObj["nodetypeid"] = NodeType.NodeTypeId;
@@ -234,6 +246,8 @@ namespace ChemSW.Nbt.WebServices
                 NodeObj["allowview"] = AllowView;
                 NodeObj["allowedit"] = AllowEdit;
                 NodeObj["allowdelete"] = AllowDelete;
+
+                NodeObj["allowimport"] = AllowImport;
 
                 // Props in the View
                 JArray PropsArray = new JArray();
@@ -392,11 +406,6 @@ namespace ChemSW.Nbt.WebServices
                 thisNode.NodeType = _CswNbtResources.MetaData.getNodeType( "Chemical" );
                 if( null != thisNode.NodeType )
                 {
-                    //thisNode.NodeId = Tree.getNodeIdForCurrentPosition();
-                    //thisNode.NodeName = "ChemCatCentral Search Result " + i;
-                    //thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
-                    //thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
-
                     // default image, overridden below
                     if( thisNode.NodeType.IconFileName != string.Empty )
                     {
@@ -409,7 +418,11 @@ namespace ChemSW.Nbt.WebServices
 
                     thisNode.AllowView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
                     thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
-                    thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNode.NodeType );
+
+                    //C3 results are not nodes and hence they can't be deleted.
+                    thisNode.AllowDelete = false;
+                    //C3 results CAN however be imported into NBT.
+                    thisNode.AllowImport = true;
 
                     // Properties
                     int propIndex = 0;
@@ -422,9 +435,15 @@ namespace ChemSW.Nbt.WebServices
                     {
                         string name = prop.Name;
                         string value = prop.Value.ToString();
+
                         if( prop.Name == "TradeName" )
                         {
                             thisNode.NodeName = prop.Value.ToString();
+                        }
+
+                        if( prop.Name == "ProductId" )
+                        {
+                            thisNode.C3ProductId = CswConvert.ToInt32( prop.Value );
                         }
 
                         TableProp thisProp = new TableProp();
@@ -438,8 +457,6 @@ namespace ChemSW.Nbt.WebServices
                         propIndex++;
 
                     }
-
-
 
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
                     {

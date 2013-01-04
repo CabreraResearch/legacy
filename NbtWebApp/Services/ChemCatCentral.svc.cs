@@ -66,6 +66,28 @@ namespace NbtWebApp
         }
 
         /// <summary>
+        /// Search ChemCatCentral database for information on a particular product.
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetProductDetails" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn getC3ProductDetails( CswC3SearchParams CswC3SearchParams )
+        {
+            CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, CswC3SearchParams>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.GetC3ProductDetails,
+                ParamObj: CswC3SearchParams
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        /// <summary>
         /// Search ChemCatCentral database.
         /// </summary>
         [OperationContract]

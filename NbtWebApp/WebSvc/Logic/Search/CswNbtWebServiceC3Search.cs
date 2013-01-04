@@ -46,6 +46,9 @@ namespace ChemSW.Nbt.WebServices
 
             [DataMember]
             public string SearchResults = string.Empty;
+
+            [DataMember]
+            public CswC3Product ProductDetails = null;
         }
 
         #endregion
@@ -80,6 +83,22 @@ namespace ChemSW.Nbt.WebServices
 
             Return.Data.SearchTypes = newlist;
 
+        }
+
+        public static void GetC3ProductDetails( ICswResources CswResources, CswNbtC3SearchReturn Return,
+                                           CswC3SearchParams CswC3SearchParams )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            _setConfigurationVariables( CswC3SearchParams, _CswNbtResources );
+
+            ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
+            CswRetObjSearchResults SearchResults = C3Search.getProductDetails( CswC3SearchParams );
+            if( SearchResults.CswC3SearchResults.Length > 0 )
+            {
+                ChemCatCentral.CswC3Product C3ProductDetails = SearchResults.CswC3SearchResults[0];
+                Return.Data.ProductDetails = C3ProductDetails;
+            }
         }
 
         public static void RunChemCatCentralSearch( ICswResources CswResources, CswNbtC3SearchReturn Return,

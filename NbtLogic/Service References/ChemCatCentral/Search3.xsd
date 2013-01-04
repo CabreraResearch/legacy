@@ -60,16 +60,43 @@
       <xs:element minOccurs="0" name="Obsolete" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="PartNo" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ProductId" type="xs:int" />
-      <xs:element minOccurs="0" name="ProductSize" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProductSize" nillable="true" type="tns:ArrayOfCswC3Product.Size" />
       <xs:element minOccurs="0" name="ProductUrl" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SourceName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SourceRowId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SupplierName" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="TemplateSelectedExtensionData" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TemplateSelectedExtensionData" nillable="true" type="tns:ArrayOfCswC3Product.TemplateSlctdExtData" />
       <xs:element minOccurs="0" name="TradeName" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CswC3Product" nillable="true" type="tns:CswC3Product" />
+  <xs:complexType name="ArrayOfCswC3Product.Size">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswC3Product.Size" nillable="true" type="tns:CswC3Product.Size" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswC3Product.Size" nillable="true" type="tns:ArrayOfCswC3Product.Size" />
+  <xs:complexType name="CswC3Product.Size">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="case_qty" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="pkg_qty" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="pkg_qty_uom" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswC3Product.Size" nillable="true" type="tns:CswC3Product.Size" />
+  <xs:complexType name="ArrayOfCswC3Product.TemplateSlctdExtData">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswC3Product.TemplateSlctdExtData" nillable="true" type="tns:CswC3Product.TemplateSlctdExtData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswC3Product.TemplateSlctdExtData" nillable="true" type="tns:ArrayOfCswC3Product.TemplateSlctdExtData" />
+  <xs:complexType name="CswC3Product.TemplateSlctdExtData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="attribute" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswC3Product.TemplateSlctdExtData" nillable="true" type="tns:CswC3Product.TemplateSlctdExtData" />
   <xs:complexType name="CswC3SearchParams">
     <xs:sequence>
       <xs:element minOccurs="0" name="AccessId" nillable="true" type="xs:string" />

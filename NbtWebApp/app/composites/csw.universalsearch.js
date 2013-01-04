@@ -19,6 +19,7 @@
                 showSave: true,
                 allowEdit: true,
                 allowDelete: true,
+                allowImport: false, //c3 addition
                 extraAction: null,
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onExtraAction: null,  // function(nodeObj) {}
