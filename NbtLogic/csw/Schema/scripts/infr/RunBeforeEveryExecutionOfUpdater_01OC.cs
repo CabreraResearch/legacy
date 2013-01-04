@@ -952,7 +952,7 @@ namespace ChemSW.Nbt.Schema
                 SupplierView.save();
                 NewSupplierViewXml = NewSupplierViewXml ?? SupplierView.ToXml().ToString();
             }
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, NewSupplierViewXml );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NewSupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, NewSupplierViewXml );
 
             _acceptBlame( Dev, CaseNo );
 
