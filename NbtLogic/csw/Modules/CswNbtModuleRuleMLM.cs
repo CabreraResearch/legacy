@@ -98,6 +98,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeTab firstTab = vendorNT.getFirstNodeTypeTab();
                 CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
                 vendorTypeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, TabId: firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, TabId: firstTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp corporateEntityNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.CorporateEntityName );
                 corporateEntityNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, TabId: firstTab.TabId );
