@@ -325,6 +325,7 @@
                                 });
                                 if(false === found) {
                                     options.push({ id: cswPrivate.selectedNodeId, value: cswPrivate.selectedName, isSelected: true });
+                                    cswPrivate.table.cell(1, cswPrivate.cellCol).quickTip({ html: nodename + ' has been added.  However, it is not an available option for ' + cswPrivate.name + '.' });
                                 }
                                 cswPrivate.options = options;
                                 cswPrivate.select.setOptions(cswPrivate.options, true);
