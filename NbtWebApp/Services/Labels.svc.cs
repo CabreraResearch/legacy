@@ -62,5 +62,28 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get a collection of EPL texts for the selected Targets" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtLabelEpl getLabel( NbtPrintLabel.Request.Get Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtLabelEpl Ret = new CswNbtLabelEpl();
+            var SvcDriver = new CswWebSvcDriver<CswNbtLabelEpl, NbtPrintLabel.Request.Get>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServicePrintLabels.getEPLText,
+                ParamObj: Request //new NbtPrintLabel.Request.Get { LabelId = PrintLabelId, TargetId = TargetId }
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }
