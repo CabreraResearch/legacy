@@ -152,9 +152,9 @@
 
                 headerTable.cell(1, 2)
                     .button({
-                        name: 'clearAll',
-                        enabledText: 'Clear All Reprobates',
-                        disabledText: 'Clearing...',
+                        name: 'updateRules',
+                        enabledText: 'Update Rules',
+                        disabledText: 'Updating . . . ',
                         onClick: function() {
                             Csw.ajax.post({
                                 urlMethod: 'updateAllScheduledRules',
