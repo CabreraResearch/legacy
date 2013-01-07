@@ -122,6 +122,8 @@
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Mobile\CswNbtCISProNbtMobileData.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleC3.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28295.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28293.cs" />
