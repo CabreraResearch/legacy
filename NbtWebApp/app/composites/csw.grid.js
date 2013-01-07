@@ -32,13 +32,13 @@
 
                 canSelectRow: false,
 
-                onLoad: function(grid, ajaxResult) {},
-                onEdit: function (rows) { },   
-                onDelete: function (rows) { }, 
-                onSelect: function (rows) { }, 
+                onLoad: function (grid, ajaxResult) { },
+                onEdit: function (rows) { },
+                onDelete: function (rows) { },
+                onSelect: function (rows) { },
                 onDeselect: function (row) { },
                 onSelectChange: function (rowCount) { },
-                
+
                 height: '',  // overridden by webservice if paging is on
                 //width: '100%',
                 width: '',
@@ -52,7 +52,8 @@
 
                 topToolbar: [],
                 groupField: '',
-                groupHeaderTpl: '{name}'
+                groupHeaderTpl: '{name}',
+                plugins: null
             };
             var cswPublic = {};
 
@@ -191,6 +192,10 @@
                         enableGroupingMenu: false
                     }]
                 };
+
+                if (cswPrivate.plugins) {
+                    gridopts.plugins = cswPrivate.plugins;
+                }
 
                 // Action column
                 if (cswPrivate.showActionColumn) { //&& false === cswPrivate.showCheckboxes
@@ -415,7 +420,7 @@
                     deselect: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
                     },
-                    selectionchange: function(rowModel, selected, eOpts) {
+                    selectionchange: function (rowModel, selected, eOpts) {
                         Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
                     },
                     afterrender: function (component) {
@@ -456,7 +461,7 @@
                     cswPrivate.init();
                 }
             };
-            
+
             //#endregion Grid Init
 
             //#region Public methods
@@ -483,7 +488,7 @@
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
             });
 
-            cswPublic.getSelectedRowCount = Csw.method(function() {
+            cswPublic.getSelectedRowCount = Csw.method(function () {
                 return cswPrivate.grid.getSelectionModel().getSelection().length;
             });
 
@@ -570,7 +575,7 @@
             });
 
             //#endregion Public methods
-                            
+
 
             //#region _postCtor
 
@@ -583,7 +588,7 @@
             } ());
 
             return cswPublic;
-            
+
             //#endregion _postCtor
         });
 

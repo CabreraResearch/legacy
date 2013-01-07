@@ -127,7 +127,12 @@
                         ajax: {
                             urlMethod: 'getScheduledRulesGrid',
                             data: { AccessId: cswPrivate.selectedCustomerId }
-                        }
+                        },
+                        plugins: [
+                        Ext.create('Ext.grid.plugin.CellEditing', {
+                            clicksToEdit: 1
+                        })
+                        ]
                     });
                 }; // makeRulesGrid()
 
