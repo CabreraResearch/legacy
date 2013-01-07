@@ -67,6 +67,7 @@
                     }
                 }; // onFilterClick()
 
+                // Nodetype Filter Menu
                 Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
@@ -116,6 +117,44 @@
                     } // success
                 }); // ajax
 
+                // Search Menu
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Menus/getSearchMenuItems',
+                    success: function (data) {
+                        var srchMenuItems = [];
+
+                        srchMenuItems.push({
+                            text: 'Search',
+                            icon: Csw.getIconUrlString(16, Csw.enums.iconType.magglass),
+                            handler: function () { srchOnClick(); }
+                        });
+
+                        var selectedText = 'Search';
+                        var selectedIcon = '';
+                        Csw.each(data.searchTypes, function (st) {
+                            if (false === Csw.isNullOrEmpty(st.name)) {
+                                srchMenuItems.push({
+                                    text: st.name,
+                                    icon: st.iconfilename,
+                                    handler: function () { srchOnClick(st.name); }
+                                });
+                            }
+                        });
+
+                        cswPrivate.searchButton = window.Ext.create('Ext.SplitButton', {
+                            text: selectedText,
+                            icon: selectedIcon,
+                            width: (selectedText.length * 8) + 16,
+                            renderTo: cswtable.cell(1, 3).getId(),
+                            menu: {
+                                items: srchMenuItems
+                            },
+                            onnClick: srchOnClick
+                        }); // searchButton
+
+                    } // success
+                }); // ajaxWcf
+
                 var srchOnClick = function (selectedOption) {
                     switch (selectedOption) {
                         case 'Structure Search':
@@ -141,19 +180,6 @@
                     onKeyEnter: function () {
                         Csw.tryExec(srchOnClick, cswPrivate.searchButton.selectedOption);
                     }
-                });
-
-                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
-                    name: 'searchBtn',
-                    selectedText: 'Search',
-                    size: 'small',
-                    width: ('Search'.length * 8) + 16,
-                    menu: [
-                            { text: 'Search', icon: Csw.getIconUrlString(18, Csw.enums.iconType.magglass) , handler: function () { srchOnClick(); } },
-                            { text: 'Structure Search', icon: Csw.getIconUrlString(18, Csw.enums.iconType.structuresearch), handler: function () { srchOnClick('Structure Search'); } },
-                            { text: 'ChemCatCentral Search', icon: Csw.getIconUrlString(18, Csw.enums.iconType.cat), handler: function () { srchOnClick('ChemCatCentral Search'); } }
-                        ],
-                    onClick: srchOnClick
                 });
             })();
 
@@ -204,39 +230,43 @@
                             text: 'Search Results: (' + data.table.results + ')'
                         });
 
-                        table2.cell(1, 2).div({
-                            text: '&nbsp; &nbsp;'
-                        });
+                        if (data.alternateoption != false) {
 
-                        table2.cell(1, 3).div({
-                            cssclass: 'SearchC3Label',
-                            text: 'Not the results you wanted? Try searching'
-                        });
+                            table2.cell(1, 2).div({
+                                text: '&nbsp; &nbsp;'
+                            });
 
-                        table2.cell(1, 4).div({
-                            text: '&nbsp;'
-                        });
+                            table2.cell(1, 3).div({
+                                cssclass: 'SearchC3Label',
+                                text: 'Not the results you wanted? Try searching'
+                            });
 
-                        table2.cell(1, 5).a({
-                            cssclass: 'SearchC3Label',
-                            text: 'ChemCatCentral.',
-                            onClick: function () {
-                                $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
-                                    c3searchterm: cswPrivate.searchinput.val(),
-                                    c3handleresults: cswPublic.handleResults,
-                                    clearview: cswPrivate.onBeforeSearch
-                                });
-                            }
-                        });
+                            table2.cell(1, 4).div({
+                                text: '&nbsp;'
+                            });
 
-                        table2.cell(1, 6).div({
-                            text: '&nbsp;'
-                        });
+                            table2.cell(1, 5).a({
+                                cssclass: 'SearchC3Label',
+                                text: 'ChemCatCentral.',
+                                onClick: function () {
+                                    $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
+                                        c3searchterm: cswPrivate.searchinput.val(),
+                                        c3handleresults: cswPublic.handleResults,
+                                        clearview: cswPrivate.onBeforeSearch
+                                    });
+                                }
+                            });
 
-                        //C3 icon
-                        table2.cell(1, 7).img({
-                            src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
-                        });
+                            table2.cell(1, 6).div({
+                                text: '&nbsp;'
+                            });
+
+                            //C3 icon
+                            table2.cell(1, 7).img({
+                                src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
+                            });
+
+                        } // if (data.alternateoption != null)
 
                     } //if (data.searchtype == 'universal')
                     else {

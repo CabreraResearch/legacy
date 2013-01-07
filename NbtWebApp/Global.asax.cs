@@ -28,6 +28,7 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Session", Factory, typeof( Session ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Views", Factory, typeof( Views ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/CISProNbtMobile", Factory, typeof( CISProNbtMobile ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Menus", Factory, typeof( Menus ) ) );
         }
 
         /// <summary>

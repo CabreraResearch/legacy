@@ -119,6 +119,9 @@
     <Compile Include="Services\CISProNbtMobile.svc.cs">
       <DependentUpon>CISProNbtMobile.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Menus.svc.cs">
+      <DependentUpon>Menus.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Mol.svc.cs">
       <DependentUpon>Mol.svc</DependentUpon>
     </Compile>
@@ -152,6 +155,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceMols.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceSearchMenu.cs" />
     <Compile Include="WebSvc\Logic\Mobile\CISProNbt\CswNbtWebServiceCISProNbtMobile.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
@@ -176,6 +180,7 @@
     <Content Include="Images\tab-scroller-menu.gif" />
     <Content Include="Services\ChemCatCentral.svc" />
     <Content Include="Services\CISProNbtMobile.svc" />
+    <Content Include="Services\Menus.svc" />
     <Content Include="Services\Mol.svc" />
     <Content Include="Services\Nodes.svc" />
     <Content Include="Services\LandingPages.svc" />
