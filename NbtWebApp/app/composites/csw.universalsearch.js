@@ -149,7 +149,7 @@
                             menu: {
                                 items: srchMenuItems
                             },
-                            onnClick: srchOnClick
+                            onClick: srchOnClick
                         }); // searchButton
 
                     } // success
@@ -230,7 +230,8 @@
                             text: 'Search Results: (' + data.table.results + ')'
                         });
 
-                        if (data.alternateoption != false) {
+                        //If the C3 module is enabled
+                        if (data.alternateoption) {
 
                             table2.cell(1, 2).div({
                                 text: '&nbsp; &nbsp;'
