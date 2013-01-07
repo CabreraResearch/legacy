@@ -257,7 +257,7 @@
                             tbl.cell(3,2).empty();
                             tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
                             cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
-                                name: 'supplier',
+                                name: 'Supplier',
                                 async: false,
                                 cssclass: 'required',
                                 width: '200px',
@@ -267,6 +267,8 @@
                                     ObjClassPropName: 'Supplier'
                                 },
                                 showSelectOnLoad: true,
+                                allowAdd: true,
+                                objectClassName: 'VendorClass',
                                 addNodeDialogTitle: 'Vendor',
                                 selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                                 onChange: changeMaterial,

@@ -64,11 +64,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Barcode
 
-        public string SequenceNumber
+        public Int32 SequenceNumber
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column );
+                return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _SequenceNumberSubField.Column ) );
             }
         }//SequenceNumber
 
@@ -84,6 +84,16 @@ namespace ChemSW.Nbt.PropTypes
                 Succeeded = setBarcodeValueOverride( value, false );
             }
             return Succeeded;
+        }
+
+        /// <summary>
+        /// Resets SequenceNumber to the numeric portion of the Barcode
+        /// </summary>
+        public void resetSequenceNumber()
+        {
+            // Fix missing sequence number
+            Int32 ThisSeqValue = _SequenceValue.deformatSequence( Barcode );
+            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
         }
 
         /// <summary>

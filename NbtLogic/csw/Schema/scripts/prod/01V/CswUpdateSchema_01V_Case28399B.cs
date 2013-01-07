@@ -35,6 +35,10 @@ namespace ChemSW.Nbt.Schema
                     {
                         LocationNode.Barcode.setBarcodeValue( OverrideExisting: true );
                     }
+                    if( LocationNode.Barcode.SequenceNumber == Int32.MinValue )
+                    {
+                        LocationNode.Barcode.resetSequenceNumber();
+                    }
                     if( LocationNode.Barcode.Barcode.Length < 8 )
                     {
                         string NewBarcodeValue = "LS" + CswTools.PadInt( CswConvert.ToInt32( LocationNode.Barcode.SequenceNumber ), 6 );
