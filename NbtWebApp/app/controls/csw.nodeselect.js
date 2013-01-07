@@ -94,7 +94,7 @@
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
                         cswPrivate.objectClassId = cswPrivate.objectClassId || data.ObjectClassId;
-                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId
+                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId;
 
                         cswPrivate.makeControl();
                     }
@@ -300,8 +300,40 @@
                     cswPrivate.hiddenValue.val(nodeid);
                 }
                 if (cswPrivate.select) {
-                    cswPrivate.select.option({ value: nodeid, display: nodename });
-                    cswPrivate.select.val(nodeid);
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Nodes/getRelationshipOpts',
+                        async: false,
+                        data: cswPrivate.ajaxData || {
+                            NodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
+                            ObjClassPropName: Csw.string(cswPrivate.name),
+                            ViewId: Csw.string(cswPrivate.viewid),
+                            TargetNodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
+                            TargetObjectClassId: Csw.number(cswPrivate.objectClassId, 0)
+                        },
+                        success: function (data) {
+                            if (data.Nodes.length > 0) {                            
+                                var options = [];
+                                var found = false;
+                                if(false === cswPrivate.isRequired) {
+                                    options.push({ id: '', value: '' });
+                                }
+                                data.Nodes.forEach(function(obj) {
+                                    if(obj.NodeId === nodeid) {
+                                        found = true;
+                                    }
+                                    options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
+                                });
+                                if(false === found) {
+                                    options.push({ id: cswPrivate.selectedNodeId, value: cswPrivate.selectedName, isSelected: true });
+                                }
+                                cswPrivate.options = options;
+                                cswPrivate.select.setOptions(cswPrivate.options, true);
+                            } else {
+                                cswPrivate.select.option({ value: nodeid, display: nodename });
+                                cswPrivate.select.val(nodeid);
+                            }
+                        }
+                    });                  
                     cswPrivate.toggleOptions(true);
                     Csw.ajaxWcf.post({
                         async: false,
