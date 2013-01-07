@@ -146,10 +146,10 @@
                             icon: selectedIcon,
                             width: (selectedText.length * 8) + 16,
                             renderTo: cswtable.cell(1, 3).getId(),
+                            handler: srchOnClick,
                             menu: {
                                 items: srchMenuItems
-                            },
-                            onClick: srchOnClick
+                            }
                         }); // searchButton
 
                     } // success
