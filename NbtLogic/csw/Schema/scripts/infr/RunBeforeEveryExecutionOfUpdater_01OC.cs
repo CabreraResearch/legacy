@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 if( string.IsNullOrEmpty( LocationNtp.FKType ) || Int32.MinValue == LocationNtp.FKValue )
                 {
-                    LocationNtp.SetFK( inFKValue : FkValue, inFKType : NbtViewRelatedIdType.ObjectClassId.ToString() );
+                    LocationNtp.SetFK( inFKValue: FkValue, inFKType: NbtViewRelatedIdType.ObjectClassId.ToString() );
                 }
 
             }
@@ -404,8 +404,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtView View = _CswNbtSchemaModTrnsctn.restoreView( LfNtp.ViewId );
                 View.Root.ChildRelationships.Clear();
 
-                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters : false );
-                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters: false );
+                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
                 LabelViewXml = LabelViewXml ?? View.ToXml().ToString();
                 View.save();
             }
@@ -420,6 +420,41 @@ namespace ChemSW.Nbt.Schema
         #endregion Viola Methods
 
         #region WILLIAM Methods
+
+        #region Case 28363
+
+        private void _addPropsToJuridictionOC( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass jurisdictionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass );
+
+            CswNbtMetaDataObjectClassProp formatOCP = jurisdictionOC.getObjectClassProp( CswNbtObjClassJurisdiction.PropertyName.Format );
+            if( null == formatOCP )
+            {
+                formatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( jurisdictionOC )
+                {
+                    PropName = CswNbtObjClassJurisdiction.PropertyName.Format,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ListOptions = CswNbtObjClassDocument.Formats.Options.ToString()
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp languageOCP = jurisdictionOC.getObjectClassProp( CswNbtObjClassJurisdiction.PropertyName.Language );
+            if( null == languageOCP )
+            {
+                languageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( jurisdictionOC )
+                {
+                    PropName = CswNbtObjClassJurisdiction.PropertyName.Language,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ListOptions = "en,fr,es,de"
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
 
         #endregion WILLIAM Methods
 
@@ -444,6 +479,8 @@ namespace ChemSW.Nbt.Schema
             #endregion VIOLA
 
             #region WILLIAM
+
+            _addPropsToJuridictionOC( CswDeveloper.MB, 28363 );
 
             #endregion WILLIAM
 
