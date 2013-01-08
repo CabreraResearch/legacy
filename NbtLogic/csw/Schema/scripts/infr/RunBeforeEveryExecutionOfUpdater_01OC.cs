@@ -423,7 +423,7 @@ namespace ChemSW.Nbt.Schema
 
         #region Case 28363
 
-        private void _addPropsToJuridictionNT( CswDeveloper Dev, Int32 CaseNo )
+        private void _addPropsToJuridictionOC( CswDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -480,7 +480,7 @@ namespace ChemSW.Nbt.Schema
 
             #region WILLIAM
 
-            _addPropsToJuridictionNT( CswDeveloper.MB, 28363 );
+            _addPropsToJuridictionOC( CswDeveloper.MB, 28363 );
 
             #endregion WILLIAM
 
