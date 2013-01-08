@@ -309,20 +309,35 @@ namespace ChemSW.Nbt.PropTypes
                     Options.Add( new CswPrimaryKey(), "" );
                 }
 
-                Int32 TargetNodeTypeId = Int32.MinValue;
-                Int32 TargetObjectClassId = Int32.MinValue;
+                Int32 TargetNodeTypeId;
+                Int32 TargetObjectClassId;
                 _getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
 
-                //ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false, false );
                 ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView(
                     View: View,
                     IncludeSystemNodes: false,
                     RequireViewPermissions: false,
                     IncludeHiddenNodes: false );
                 _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
-            } // if( View != null )
+            }
             return Options;
-        } // getOptions()
+        }
+
+        public static Dictionary<CswPrimaryKey, string> getOptions( CswNbtResources NbtResources, CswNbtViewId ViewId, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
+        {
+            CswNbtView View = NbtResources.ViewSelect.restoreView( ViewId );
+            Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
+            if( View != null )
+            {
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView(
+                    View: View,
+                    IncludeSystemNodes: false,
+                    RequireViewPermissions: false,
+                    IncludeHiddenNodes: false );
+                _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
+            }
+            return Options;
+        }
 
         private static void _addOptionsRecurse( Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
         {
@@ -379,6 +394,7 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
+            ParentObject["viewid"] = View.ViewId.ToString();
 
             bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp, null );
 

@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema
                     }                    
                     if( null != RolesAndUsersView )
                     {
-                        if( RolesAndUsersView.VisibilityRoleId != RoleNode.NodeId )
+                        if( RolesAndUsersView.VisibilityRoleId != RoleNode.NodeId && RolesAndUsersView.ViewVisibility != NbtViewVisibility.Global.ToString() )
                         {
                             RolesAndUsersView = _CswNbtSchemaModTrnsctn.makeNewView(
                                 "Roles and Users", RolesAndUsersView.Visibility, RoleNode.NodeId, null, RolesAndUsersView.ViewId.get());
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Schema
                     }     
                     if( null != ReportsView )
                     {
-                        if( ReportsView.VisibilityRoleId != RoleNode.NodeId )
+                        if( ReportsView.VisibilityRoleId != RoleNode.NodeId && ReportsView.ViewVisibility != NbtViewVisibility.Global.ToString() )
                         {
                             ReportsView = _CswNbtSchemaModTrnsctn.makeNewView(
                                 "Reports", ReportsView.Visibility, RoleNode.NodeId, null, ReportsView.ViewId.get() );

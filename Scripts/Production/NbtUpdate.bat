@@ -1,3 +1,20 @@
+@ECHO OFF
+setlocal
+
+IF "%1"=="" GOTO Usage
+GOTO Run
+
+:Usage
+echo # 
+echo # Invalid Argument
+echo # Usage: %0 [KilnPath]
+echo # Example: %0 C:\kiln
+echo #   [KilnPath]: The local absolute root of Kiln (e.g., "C:\kiln" )
+echo # 
+GOTO End
+
+:Run
+
 echo "Stopping Services..."
 
 net stop "ChemSW Log Service"
@@ -8,7 +25,7 @@ echo "Services stopped."
 
 echo "Compiling new code..."
 
-msbuild D:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64"
+msbuild %1\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64"
 
 echo "Compile Finished."
 
@@ -16,17 +33,18 @@ pause
 
 echo "Starting Schema updater..."
 
-D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
+%1\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
 echo "Schema update completed."
 
 echo "Listing Updated Customer Schema Versions"
 
-D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -version
+%1\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -version
 
 echo "Version Listing Complete"
 
 pause
+
 
 echo "Restarting Services..."
 
@@ -39,3 +57,5 @@ echo "Services Restarted."
 echo "All done!"
 
 pause
+
+:End
