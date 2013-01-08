@@ -462,26 +462,28 @@
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
-                cswPrivate.grid.on({
-                    select: function (rowModel, record, index, eOpts) {
-                        Csw.tryExec(cswPrivate.onSelect, record.data);
-                    },
-                    deselect: function (rowModel, record, index, eOpts) {
-                        Csw.tryExec(cswPrivate.onDeselect, record.data);
-                    },
-                    selectionchange: function (rowModel, selected, eOpts) {
-                        Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
-                    },
-                    afterrender: function (component) {
-                        var bottomToolbar = component.getDockedComponent('bottomtoolbar');
-                        if (false === Csw.isNullOrEmpty(bottomToolbar)) {
-                            bottomToolbar.items.get('refresh').hide();
+                if(cswPrivate.grid) {
+                    cswPrivate.grid.on({
+                        select: function (rowModel, record, index, eOpts) {
+                            Csw.tryExec(cswPrivate.onSelect, record.data);
+                        },
+                        deselect: function (rowModel, record, index, eOpts) {
+                            Csw.tryExec(cswPrivate.onDeselect, record.data);
+                        },
+                        selectionchange: function (rowModel, selected, eOpts) {
+                            Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
+                        },
+                        afterrender: function (component) {
+                            var bottomToolbar = component.getDockedComponent('bottomtoolbar');
+                            if (false === Csw.isNullOrEmpty(bottomToolbar)) {
+                                bottomToolbar.items.get('refresh').hide();
+                            }
                         }
+                    });
+    
+                    if (Csw.bool(cswPrivate.truncated)) {
+                        cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                     }
-                });
-
-                if (Csw.bool(cswPrivate.truncated)) {
-                    cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
 
             }); // init()
