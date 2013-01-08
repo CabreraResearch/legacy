@@ -1556,7 +1556,7 @@
                     Csw.tryExec(onClose);
                 }
 
-                Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, null, closeMe);
                 if (dialogsCount === 0) {
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
@@ -1579,7 +1579,7 @@
             afterObjectClassButtonClick(action, {
                 close: function () {
                     div.$.dialog('close');
-                    Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                    Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, null, closeMe);
                 }
             });
         }

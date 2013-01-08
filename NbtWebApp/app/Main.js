@@ -21,7 +21,7 @@ window.initMain = window.initMain || function (undefined) {
 
         if (cswPrivate.isDocumentReady && cswPrivate.isExtReady) {
 
-            Csw.unsubscribe(Csw.enums.events.domready, _onReady); //We only need to execute once
+            Csw.unsubscribe(Csw.enums.events.domready, null, _onReady); //We only need to execute once
             
             var mainTree;
             var mainGridId = 'CswNodeGrid';
@@ -488,15 +488,11 @@ window.initMain = window.initMain || function (undefined) {
 
                 var type = Csw.string(o.type).toLowerCase();
 
-                //        function itemIsSupported() {
-                //            var ret = (linkType === 'search' ||
-                //                //false === Csw.isNullOrEmpty(o.itemid) ||
-                //                type === 'action' ||
-                //                type === 'search' ||
-                //                type === 'report');
-                //            return ret;
-                //        }
-
+                //Now is a good time to purge outstanding Node-specific events
+                Csw.unsubscribe('CswMultiEdit');
+                Csw.unsubscribe('CswNodeDelete');
+                Csw.publish('initPropertyTearDown');
+                
                 if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
 
                     if (false === Csw.isNullOrEmpty(type)) {

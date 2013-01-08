@@ -108,8 +108,8 @@
                 if (false === Csw.bool(cswPrivate.ShowCheckboxes)) {
                     $cb.hide();
                 }
-                Csw.subscribe('CswMultiEdit', (function () {
-                    var onMultiEdit = function (eventObj, multiOpts) {
+                Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
+                    return function _onMulti(eventObj, multiOpts) {
                         if (multiOpts && multiOpts.viewid === viewid) {
                             if (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes)) {
                                 $cb.show();
@@ -121,10 +121,10 @@
                             }
                         } else {
                             //Csw.debug.assert(multiOpts.viewid === viewid, 'CswMultiEdit event pusblished for viewid "' + multiOpts.viewid + '" but was subscribed to from viewid "' + viewid + '".');
-                            Csw.unsubscribe('CswMultiEdit', onMultiEdit);
+                            Csw.unsubscribe('CswMultiEdit', null, _onMulti);
+                            Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
                         }
                     };
-                    return onMultiEdit;
                 }()));
 
                 if (thislocked) {
