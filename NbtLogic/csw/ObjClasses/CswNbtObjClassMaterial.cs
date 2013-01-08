@@ -229,8 +229,6 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.ViewSDS:
                         HasPermission = true;
 
-                        ButtonData.Action = NbtButtonAction.nothing;
-
                         CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
                         CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
                         CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
@@ -244,36 +242,32 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( ButtonData.SelectedText.Equals( ViewSDS.PropName ) ) //get the SDS that matches users jurisdiction
                         {
-                            ButtonData.Message = "There was no matching SDS for your Jurisdiction";
-
                             CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
                             CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
-                            string format = "xxx"; //dummy values 
-                            string language = "xxx"; //dummy values
 
                             if( null != userJurisdictionNode )
                             {
-                                format = userJurisdictionNode.Format.Value;
-                                language = userJurisdictionNode.Language.Value;
+                                CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+                                CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+
+                                docView.AddViewPropertyAndFilter( parent,
+                                    MetaDataProp: formatOCP,
+                                    Value: userJurisdictionNode.Format.Value,
+                                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                                docView.AddViewPropertyAndFilter( parent,
+                                    MetaDataProp: languageOCP,
+                                    Value: userJurisdictionNode.Language.Value,
+                                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                             }
-
-                            CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-                            CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-
-                            docView.AddViewPropertyAndFilter( parent,
-                                MetaDataProp: formatOCP,
-                                Value: format,
-                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                            docView.AddViewPropertyAndFilter( parent,
-                                MetaDataProp: languageOCP,
-                                Value: language,
-                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                            else
+                            {
+                                ButtonData.Message = "User does not have a Jurisdiction selected, cannot find matching SDS";
+                                ButtonData.Action = NbtButtonAction.nothing;
+                            }
                         }
                         else //get the SDS the user selected
                         {
-                            ButtonData.Message = "There selected SDS was not found";
-
                             CswNbtMetaDataObjectClassProp titleOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
                             docView.AddViewPropertyAndFilter( parent,
                                 MetaDataProp: titleOCP,
@@ -281,16 +275,26 @@ namespace ChemSW.Nbt.ObjClasses
                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                         }
 
-                        ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                        int childCount = docTree.getChildNodeCount();
-                        for( int i = 0; i < childCount; i++ )
+                        if( string.IsNullOrEmpty( ButtonData.Message ) ) //only iterate the tree and find an SDS if there isn't an error msg
                         {
-                            docTree.goToNthChild( i );
-                            ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
-                            ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
-                            ButtonData.Action = NbtButtonAction.editprop;
-                            ButtonData.Message = string.Empty;
-                            docTree.goToParentNode();
+                            ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+                            int childCount = docTree.getChildNodeCount();
+                            if( childCount > 0 )
+                            {
+                                for( int i = 0; i < childCount; i++ )
+                                {
+                                    docTree.goToNthChild( i );
+                                    ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
+                                    ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
+                                    ButtonData.Action = NbtButtonAction.editprop;
+                                    docTree.goToParentNode();
+                                }
+                            }
+                            else
+                            {
+                                ButtonData.Message = "Could not find a matching SDS for your Jurisdiction";
+                                ButtonData.Action = NbtButtonAction.nothing;
+                            }
                         }
 
                         break;
