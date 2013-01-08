@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ManufacturingSites = "Manufacturing Sites";
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
+            public const string ViewSDS = "View SDS";
         }
 
         public sealed class PhysicalStates
@@ -113,11 +114,11 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
                         _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp(
-                            FireClassExemptAmountNT.NodeTypeId, 
-                            CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType 
+                            FireClassExemptAmountNT.NodeTypeId,
+                            CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType
                             );
                     ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
-                }                
+                }
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -224,6 +225,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                             ButtonData.Action = NbtButtonAction.receive;
                         }
+                        break;
+                    case PropertyName.ViewSDS:
+                        //TODO implement SDS Document fetch
                         break;
                 }
                 if( false == HasPermission )
@@ -422,6 +426,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
         public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
+        public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial

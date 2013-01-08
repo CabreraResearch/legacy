@@ -2,6 +2,8 @@ using System;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Core;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -454,6 +456,25 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _addViewSDSProptoMaterial( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp viewSDS_OC = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.ViewSDS );
+            if( null == viewSDS_OC )
+            {
+                viewSDS_OC = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+                {
+                    PropName = CswNbtObjClassMaterial.PropertyName.ViewSDS,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu
+                } );
+            }
+
+            _resetBlame();
+        }
+
         #endregion
 
         #endregion WILLIAM Methods
@@ -481,6 +502,7 @@ namespace ChemSW.Nbt.Schema
             #region WILLIAM
 
             _addPropsToJuridictionOC( CswDeveloper.MB, 28363 );
+            _addViewSDSProptoMaterial( CswDeveloper.MB, 28363 );
 
             #endregion WILLIAM
 
