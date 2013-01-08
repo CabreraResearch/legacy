@@ -227,7 +227,72 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.ViewSDS:
-                        //TODO implement SDS Document fetch
+                        HasPermission = true;
+
+                        ButtonData.Action = NbtButtonAction.nothing;
+
+                        CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+                        CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+                        CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+
+                        CswNbtView docView = new CswNbtView( _CswNbtResources );
+                        CswNbtViewRelationship parent = docView.AddViewRelationship( documentOC, true );
+                        docView.AddViewPropertyAndFilter( parent,
+                            MetaDataProp: docClassOCP,
+                            Value: CswNbtObjClassDocument.DocumentClasses.SDS,
+                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                        if( ButtonData.SelectedText.Equals( ViewSDS.PropName ) ) //get the SDS that matches users jurisdiction
+                        {
+                            ButtonData.Message = "There was no matching SDS for your Jurisdiction";
+
+                            CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
+                            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
+                            string format = "xxx"; //dummy values 
+                            string language = "xxx"; //dummy values
+
+                            if( null != userJurisdictionNode )
+                            {
+                                format = userJurisdictionNode.Format.Value;
+                                language = userJurisdictionNode.Language.Value;
+                            }
+
+                            CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+                            CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+
+                            docView.AddViewPropertyAndFilter( parent,
+                                MetaDataProp: formatOCP,
+                                Value: format,
+                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                            docView.AddViewPropertyAndFilter( parent,
+                                MetaDataProp: languageOCP,
+                                Value: language,
+                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        }
+                        else //get the SDS the user selected
+                        {
+                            ButtonData.Message = "There selected SDS was not found";
+
+                            CswNbtMetaDataObjectClassProp titleOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
+                            docView.AddViewPropertyAndFilter( parent,
+                                MetaDataProp: titleOCP,
+                                Value: ButtonData.SelectedText,
+                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        }
+
+                        ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+                        int childCount = docTree.getChildNodeCount();
+                        for( int i = 0; i < childCount; i++ )
+                        {
+                            docTree.goToNthChild( i );
+                            ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
+                            ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
+                            ButtonData.Action = NbtButtonAction.editprop;
+                            ButtonData.Message = string.Empty;
+                            docTree.goToParentNode();
+                        }
+
                         break;
                 }
                 if( false == HasPermission )
