@@ -1020,7 +1020,7 @@ namespace ChemSW.Nbt
             }
         } // Delete()
 
-        public const Int32 ViewNameLength = 30;
+        public const Int32 ViewNameLength = 200;
 
         public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
