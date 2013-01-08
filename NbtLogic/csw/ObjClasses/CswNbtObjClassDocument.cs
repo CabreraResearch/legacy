@@ -158,6 +158,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            if( false == IsTemp && DocumentClass.Value.Equals( DocumentClasses.SDS ) )
+            {
+                CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Owner.RelatedNodeId];
+                material.UpdateViewSDSButtonOpts();
+                material.postChanges( false );
+            }
+
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 

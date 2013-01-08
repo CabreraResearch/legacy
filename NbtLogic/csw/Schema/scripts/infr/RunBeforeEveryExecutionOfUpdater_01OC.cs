@@ -468,6 +468,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassMaterial.PropertyName.ViewSDS,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    StaticText = CswNbtObjClassMaterial.PropertyName.ViewSDS,
                     Extended = CswNbtNodePropButton.ButtonMode.menu
                 } );
             }

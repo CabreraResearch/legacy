@@ -393,6 +393,51 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
+        /// <summary>
+        /// Gets all material documents of this material and adds them to the View SDS menu button options. Does NOT post changes!!
+        /// </summary>
+        public void UpdateViewSDSButtonOpts()
+        {
+            CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClassProp materialOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+            CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+            CswNbtMetaDataObjectClassProp documentClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+
+            CswNbtView sdsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = sdsView.AddViewRelationship( documentOC, true );
+
+            sdsView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: materialOCP,
+                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                Value: NodeId.PrimaryKey.ToString() );
+
+            sdsView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: archivedOCP,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                Value: CswConvert.ToDbVal( false ).ToString() );
+
+            sdsView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: documentClassOCP,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                Value: CswNbtObjClassDocument.DocumentClasses.SDS );
+
+            CswCommaDelimitedString viewSDSMenuOpts = new CswCommaDelimitedString();
+            viewSDSMenuOpts.Add( ViewSDS.PropName );
+
+            ICswNbtTree sdsTree = _CswNbtResources.Trees.getTreeFromView( sdsView, false, false, false );
+            int childCount = sdsTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                sdsTree.goToNthChild( i );
+                CswNbtObjClassDocument doc = sdsTree.getNodeForCurrentPosition();
+                viewSDSMenuOpts.Add( doc.Title.Text );
+                sdsTree.goToParentNode();
+            }
+
+            ViewSDS.MenuOptions = viewSDSMenuOpts.ToString();
+        }
+
         #endregion Custom Logic
 
         #region Object class specific properties
