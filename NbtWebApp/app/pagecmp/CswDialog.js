@@ -1030,11 +1030,11 @@
                 enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
-                    Csw.ajax.post({
-                        urlMethod: o.TextUrl,
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Mol/saveMolPropText',
                         data: {
-                            molData: molTxtArea.val(),
-                            PropId: o.PropId
+                            molString: molTxtArea.val(),
+                            propId: o.PropId
                         },
                         success: function (data) {
                             div.$.dialog('close');
