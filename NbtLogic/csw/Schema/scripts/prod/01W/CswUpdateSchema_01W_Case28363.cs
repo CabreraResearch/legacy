@@ -1,6 +1,8 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Core;
 using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
@@ -75,6 +77,8 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
+            //Create the Assigned SDS Link Grid prop on materials
+            _createLinkGridProp();
 
         } //Update()
 
@@ -112,6 +116,103 @@ namespace ChemSW.Nbt.Schema
                 else if( parent.ChildRelationships.Count > 0 && false == complete ) //continue searching only if we haven't found what we're looking for
                 {
                     _addDocumentClassPropFilter( parent.ChildRelationships, materialDocumentNT, docClassNTP, docsView );
+                }
+            }
+        }
+
+        private void _createLinkGridProp()
+        {
+            //Add the Assigned SDS link grid prop
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+
+            CswNbtMetaDataNodeType materialDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
+            if( null != materialDocumentNT )
+            {
+                CswNbtMetaDataNodeTypeProp documentMaterialOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+                CswNbtMetaDataNodeTypeProp archivedOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+                CswNbtMetaDataNodeTypeProp docClassOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+
+                CswNbtMetaDataNodeTypeProp titleOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
+                CswNbtMetaDataNodeTypeProp languageOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+                CswNbtMetaDataNodeTypeProp formatOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+                CswNbtMetaDataNodeTypeProp revisionDateNTP = materialDocumentNT.getNodeTypeProp( "Revision Date" );
+                CswNbtMetaDataNodeTypeProp fileOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
+                CswNbtMetaDataNodeTypeProp linkOCP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
+
+                Collection<CswNbtMetaDataNodeTypeProp> propsToAdd = new Collection<CswNbtMetaDataNodeTypeProp>();
+                propsToAdd.Add( titleOCP );
+                propsToAdd.Add( languageOCP );
+                propsToAdd.Add( formatOCP );
+                if( null != revisionDateNTP )
+                {
+                    propsToAdd.Add( revisionDateNTP );
+                }
+                propsToAdd.Add( fileOCP );
+                propsToAdd.Add( linkOCP );
+
+                CswNbtView assignedSDSView_1 = _CswNbtSchemaModTrnsctn.makeNewView( "Assigned SDS", NbtViewVisibility.Property );
+                CswNbtView assignedSDSView_2 = _CswNbtSchemaModTrnsctn.makeNewView( "Assigned SDS", NbtViewVisibility.Property );
+                CswNbtView assignedSDSView_3 = _CswNbtSchemaModTrnsctn.makeNewView( "Assigned SDS", NbtViewVisibility.Property );
+
+                Collection<CswNbtView> sdsViews = new Collection<CswNbtView>();
+                sdsViews.Add( assignedSDSView_1 );
+                sdsViews.Add( assignedSDSView_2 );
+                sdsViews.Add( assignedSDSView_3 );
+
+                foreach( CswNbtView sdsView in sdsViews )
+                {
+                    sdsView.SetViewMode( NbtViewRenderingMode.Grid );
+                    CswNbtViewRelationship materialParent = sdsView.AddViewRelationship( materialOC, true );
+                    CswNbtViewRelationship documentParent = sdsView.AddViewRelationship( materialParent, NbtViewPropOwnerType.Second, documentMaterialOCP, true );
+
+                    sdsView.AddViewPropertyAndFilter( documentParent,
+                        MetaDataProp: archivedOCP,
+                        Value: CswConvert.ToDbVal( false ).ToString(),
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                        ShowInGrid: false );
+
+                    sdsView.AddViewPropertyAndFilter( documentParent,
+                        MetaDataProp: docClassOCP,
+                        Value: CswNbtObjClassDocument.DocumentClasses.SDS,
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                        ShowInGrid: false );
+
+                    foreach( CswNbtMetaDataNodeTypeProp prop in propsToAdd )
+                    {
+                        sdsView.AddViewProperty( documentParent, prop );
+                    }
+
+                    sdsView.save();
+                }
+
+                string ntpName = "Assigned SDS";
+                int num = 0;
+                foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+                {
+                    CswNbtMetaDataNodeTypeProp assignedSDSNTP = materialNT.getNodeTypeProp( ntpName );
+                    if( null == assignedSDSNTP )
+                    {
+                        CswNbtMetaDataFieldType gridFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Grid );
+                        assignedSDSNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( materialNT, gridFT, ntpName ) );
+                        assignedSDSNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link._Name;
+                        assignedSDSNTP.ViewId = sdsViews[num].ViewId;
+                        num++;
+
+                        if( materialNT.NodeTypeName.Equals( "Chemical" ) )
+                        {
+                            CswNbtMetaDataNodeTypeProp hazardousNTP = materialNT.getNodeTypeProp( "Hazardous" );
+                            if( null != hazardousNTP )
+                            {
+                                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, assignedSDSNTP, hazardousNTP, true );
+                                hazardousNTP.removeFromAllLayouts();
+                                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, hazardousNTP, assignedSDSNTP, true );
+                            }
+                        }
+                        else
+                        {
+                            assignedSDSNTP.removeFromAllLayouts();
+                        }
+                    }
                 }
             }
         }
