@@ -51,8 +51,6 @@ namespace ChemSW.Nbt.Schema
                 if( null != documentsNTP )
                 {
                     CswNbtView documentsView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( documentsNTP.ViewId );
-                    CswNbtMetaDataObjectClass documentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
-                    CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
 
                     CswNbtMetaDataNodeType materialDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
                     if( null != materialDocumentNT )
