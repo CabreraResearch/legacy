@@ -63,6 +63,19 @@ namespace ChemSW.Nbt.Schema
 
             }
 
+            //Change the Document.Issue Date NTP name to "Revision Date"
+            CswNbtMetaDataObjectClass documentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+
+            foreach( CswNbtMetaDataNodeType documentNT in documentOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp issueDateNTP = documentNT.getNodeTypeProp( "Issue Date" );
+                if( null != issueDateNTP )
+                {
+                    issueDateNTP.PropName = "Revision Date";
+                }
+            }
+
+
         } //Update()
 
         private void _addDocumentClassPropFilter( Collection<CswNbtViewRelationship> childRelationships, CswNbtMetaDataNodeType materialDocumentNT, CswNbtMetaDataNodeTypeProp docClassNTP, CswNbtView docsView )
