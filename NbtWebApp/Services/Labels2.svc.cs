@@ -16,7 +16,7 @@ namespace NbtWebApp
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract( Namespace = "NbtWebApp" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class Labels
+    public class Labels2
     {
         private HttpContext _Context = HttpContext.Current;
 
@@ -46,9 +46,10 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}", BodyStyle = WebMessageBodyStyle.Wrapped )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get a collection of EPL texts for the selected Targets" )]
-        public CswNbtLabelEpl get( string PrintLabelId, string TargetId )
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtLabelEpl getLabel( NbtPrintLabel.Request.Get Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtLabelEpl Ret = new CswNbtLabelEpl();
@@ -56,7 +57,7 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServicePrintLabels.getEPLText,
-                ParamObj: new NbtPrintLabel.Request.Get { LabelId = PrintLabelId, TargetId = TargetId }
+                ParamObj: Request //new NbtPrintLabel.Request.Get { LabelId = PrintLabelId, TargetId = TargetId }
                 );
 
             SvcDriver.run();
