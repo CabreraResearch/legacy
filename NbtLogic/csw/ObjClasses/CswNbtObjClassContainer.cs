@@ -15,6 +15,8 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassContainer: CswNbtObjClass
     {
+        #region Properties
+
         public sealed class PropertyName
         {
             public const string Barcode = "Barcode";
@@ -45,6 +47,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string StorageTemperature = "Storage Temperature";
             public const string UseType = "Use Type";
         }
+
+        #endregion Properties
+
+        #region Enums
 
         public sealed class RequestMenu
         {
@@ -80,6 +86,32 @@ namespace ChemSW.Nbt.ObjClasses
                     Expired
                 };
         }
+
+        public sealed class StoragePressures
+        {
+            public const string Atmospheric = "1 = Atmospheric";
+            public const string Pressurized = "2 = Pressurized";
+            public const string Subatmospheric = "3 = Subatmospheric";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Atmospheric, Pressurized, Subatmospheric };
+        }
+
+        public sealed class StorageTemperatures
+        {
+            public const string RoomTemperature = "4 = RoomTemperature";
+            public const string GreaterThanRoomTemp = "5 = Greater than room temp.";
+            public const string LessThanRoomTemp = "6 = Less than room temp.";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { RoomTemperature, GreaterThanRoomTemp, LessThanRoomTemp };
+        }
+
+        public sealed class UseTypes
+        {
+            public const string Storage = "Storage";
+            public const string Closed = "Use Closed";
+            public const string Open = "Use Open";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Storage, Closed, Open };
+        }
+
+        #endregion Enums
 
         /// <summary>
         /// Has the corresponding Inventory Level been modified in a change event on this instance?
