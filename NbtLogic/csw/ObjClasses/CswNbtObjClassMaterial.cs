@@ -240,11 +240,12 @@ namespace ChemSW.Nbt.ObjClasses
                             Value: CswNbtObjClassDocument.DocumentClasses.SDS,
                             FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
+                        CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
+                        CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
+                        bool requireOne = false;
+
                         if( ButtonData.SelectedText.Equals( ViewSDS.PropName ) ) //get the SDS that matches users jurisdiction
                         {
-                            CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
-                            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
-
                             if( null != userJurisdictionNode )
                             {
                                 CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
@@ -262,11 +263,10 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                             else
                             {
-                                ButtonData.Message = "User does not have a Jurisdiction selected, cannot find matching SDS";
-                                ButtonData.Action = NbtButtonAction.nothing;
+                                requireOne = true;
                             }
                         }
-                        else //get the SDS the user selected
+                        else if( false == ButtonData.SelectedText.Equals( ViewSDS.PropName ) ) //get the SDS the user selected
                         {
                             CswNbtMetaDataObjectClassProp titleOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
                             docView.AddViewPropertyAndFilter( parent,
@@ -275,26 +275,28 @@ namespace ChemSW.Nbt.ObjClasses
                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                         }
 
-                        if( string.IsNullOrEmpty( ButtonData.Message ) ) //only iterate the tree and find an SDS if there isn't an error msg
+                        ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+                        int childCount = docTree.getChildNodeCount();
+                        if( ( childCount > 0 && requireOne == false ) || ( childCount == 1 && requireOne ) ) //if we're searching by name OR
+                        {                                                                                    //the user does not have a jurisdiction and we're returning the only SDS
+                            for( int i = 0; i < childCount; i++ )
+                            {
+                                docTree.goToNthChild( i );
+                                ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
+                                ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
+                                ButtonData.Action = NbtButtonAction.editprop;
+                                docTree.goToParentNode();
+                            }
+                        }
+                        else if( childCount > 1 && requireOne ) //There are multple SDS for a user (with no jurisdiction) requesting a match
                         {
-                            ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                            int childCount = docTree.getChildNodeCount();
-                            if( childCount > 0 )
-                            {
-                                for( int i = 0; i < childCount; i++ )
-                                {
-                                    docTree.goToNthChild( i );
-                                    ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
-                                    ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
-                                    ButtonData.Action = NbtButtonAction.editprop;
-                                    docTree.goToParentNode();
-                                }
-                            }
-                            else
-                            {
-                                ButtonData.Message = "Could not find a matching SDS for your Jurisdiction";
-                                ButtonData.Action = NbtButtonAction.nothing;
-                            }
+                            ButtonData.Message = "User does not have a Jurisdiction selected Jurisdiction and a matching SDS could not be found, please select one from the list";
+                            ButtonData.Action = NbtButtonAction.nothing;
+                        }
+                        else  //There are no SDS to display
+                        {
+                            ButtonData.Message = "There are no SDS assigned to this " + NodeType.NodeTypeName;
+                            ButtonData.Action = NbtButtonAction.nothing;
                         }
 
                         break;
