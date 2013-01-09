@@ -1,6 +1,7 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -44,9 +45,65 @@ namespace ChemSW.Nbt.Schema
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.removePropFromAllLayouts( viewSDS_NTP );
                 }
+
+                //update Material Documents grid to only display Docs have a Doc Class of anything but SDS
+                CswNbtMetaDataNodeTypeProp documentsNTP = materialNT.getNodeTypeProp( "Documents" );
+                if( null != documentsNTP )
+                {
+                    CswNbtView documentsView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( documentsNTP.ViewId );
+                    CswNbtMetaDataObjectClass documentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+                    CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+
+                    CswNbtMetaDataNodeType materialDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
+                    if( null != materialDocumentNT )
+                    {
+                        CswNbtMetaDataNodeTypeProp docClassNTP = materialDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+                        _addDocumentClassPropFilter( documentsView.Root.ChildRelationships, materialDocumentNT, docClassNTP, documentsView );
+                    }
+
+                }
+
             }
 
         } //Update()
+
+        private void _addDocumentClassPropFilter( Collection<CswNbtViewRelationship> childRelationships, CswNbtMetaDataNodeType materialDocumentNT, CswNbtMetaDataNodeTypeProp docClassNTP, CswNbtView docsView )
+        {
+            bool complete = false;
+            foreach( CswNbtViewRelationship parent in childRelationships )
+            {
+                if( parent.SecondName.Equals( materialDocumentNT.NodeTypeName ) )
+                {
+                    bool foundDocClassProp = false;
+                    foreach( CswNbtViewProperty viewProp in parent.Properties )
+                    {
+                        if( viewProp.NodeTypePropId == docClassNTP.PropId )
+                        {
+                            foundDocClassProp = true;
+                            docsView.AddViewPropertyFilter( viewProp,
+                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                Value: CswNbtObjClassDocument.DocumentClasses.SDS,
+                                SubFieldName: CswNbtSubField.SubFieldName.Value );
+                        }
+                    }
+                    if( false == foundDocClassProp ) //if the Document Class prop does not exist, add it and a filter and do no show it in the grid
+                    {
+                        docsView.AddViewPropertyAndFilter( parent,
+                            MetaDataProp: docClassNTP,
+                            Value: CswNbtObjClassDocument.DocumentClasses.SDS,
+                            SubFieldName: CswNbtSubField.SubFieldName.Value,
+                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                            ShowInGrid: false );
+                    }
+                    docsView.save();
+                    complete = true; //we no longer need to recurse
+                }
+                else if( parent.ChildRelationships.Count > 0 && false == complete ) //continue searching only if we haven't found what we're looking for
+                {
+                    _addDocumentClassPropFilter( parent.ChildRelationships, materialDocumentNT, docClassNTP, docsView );
+                }
+            }
+        }
 
     }//class CswUpdateSchema_01V_Case28363
 
