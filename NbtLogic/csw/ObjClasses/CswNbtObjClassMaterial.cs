@@ -293,7 +293,12 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Message = "User does not have a Jurisdiction selected Jurisdiction and a matching SDS could not be found, please select one from the list";
                             ButtonData.Action = NbtButtonAction.nothing;
                         }
-                        else  //There are no SDS to display
+                        else if( childCount == 0 && userJurisdictionNode != null ) //a matching SDS was not found
+                        {
+                            ButtonData.Message = "There are no SDS assigned to this " + NodeType.NodeTypeName + " that match the current users Jurisdiction";
+                            ButtonData.Action = NbtButtonAction.nothing;
+                        }
+                        else //there are no SDS to display
                         {
                             ButtonData.Message = "There are no SDS assigned to this " + NodeType.NodeTypeName;
                             ButtonData.Action = NbtButtonAction.nothing;
