@@ -396,6 +396,13 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp LabelFormatOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+
+            _acceptBlame( CswDeveloper.CF, 24424 );
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LabelFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+
+            _acceptBlame( Dev, CaseNum );
+
             CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
             CswNbtMetaDataObjectClassProp NodeTypeOcp = PrintLabelOc.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
             string LabelViewXml = null;
