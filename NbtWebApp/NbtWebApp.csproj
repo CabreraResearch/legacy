@@ -113,6 +113,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Labels2.svc.cs">
+      <DependentUpon>Labels2.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Mol.svc.cs">
       <DependentUpon>Mol.svc</DependentUpon>
     </Compile>
@@ -162,6 +165,7 @@
     <Content Include="ConfigVars.aspx" />
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\Labels2.svc" />
     <Content Include="Services\Mol.svc" />
     <Content Include="Services\Nodes.svc" />
     <Content Include="Services\LandingPages.svc" />

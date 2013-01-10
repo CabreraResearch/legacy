@@ -17,6 +17,7 @@ namespace NbtWebApp
         {
             WebServiceHostFactory Factory = new WebServiceHostFactory();
             RouteTable.Routes.Add( new ServiceRoute( "Services/Labels", Factory, typeof( Labels ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Labels2", Factory, typeof( Labels2 ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Containers", Factory, typeof( Containers ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/LandingPages", Factory, typeof( LandingPages ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Mol", Factory, typeof( Mol ) ) );
