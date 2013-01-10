@@ -113,6 +113,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Trees.svc.cs">
+      <DependentUpon>Trees.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Labels2.svc.cs">
       <DependentUpon>Labels2.svc</DependentUpon>
     </Compile>
@@ -165,6 +168,7 @@
     <Content Include="ConfigVars.aspx" />
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\Trees.svc" />
     <Content Include="Services\Labels2.svc" />
     <Content Include="Services\Mol.svc" />
     <Content Include="Services\Nodes.svc" />
@@ -1262,6 +1266,7 @@
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceSearch.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceTabsAndProps.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTree.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtSdTrees.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceView.cs" />
     <Compile Include="WebSvc\Logic\Menus\LandingPages\CswNbtWebServiceLandingPageItems.cs" />
     <Compile Include="WebSvc\Logic\Tools\TimingModule.cs" />
