@@ -158,12 +158,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
-            if( false == IsTemp && DocumentClass.Value.Equals( DocumentClasses.SDS ) )
-            {
-                CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Owner.RelatedNodeId];
-                material.UpdateViewSDSButtonOpts();
-                material.postChanges( false );
-            }
+            _updateOwnerViewSDSButtonOpts();
 
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
@@ -176,6 +171,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
+            _updateOwnerViewSDSButtonOpts();
+
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
@@ -312,6 +309,21 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
 
         #endregion
+
+        #region Custom Logic
+
+        private void _updateOwnerViewSDSButtonOpts()
+        {
+            if( false == IsTemp && DocumentClass.Value.Equals( DocumentClasses.SDS ) )
+            {
+                CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Owner.RelatedNodeId];
+                material.UpdateViewSDSButtonOpts();
+                material.postChanges( false );
+            }
+        }
+
+        #endregion
+
     }//CswNbtObjClassDocument
 
 }//namespace ChemSW.Nbt.ObjClasses
