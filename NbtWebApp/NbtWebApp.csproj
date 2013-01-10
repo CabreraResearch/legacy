@@ -131,6 +131,9 @@
     <Compile Include="Services\Labels.svc.cs">
       <DependentUpon>Labels.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\RegulatoryReporting.svc.cs">
+      <DependentUpon>RegulatoryReporting.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Reports.svc.cs">
       <DependentUpon>Reports.svc</DependentUpon>
     </Compile>
@@ -762,6 +765,7 @@
     <Content Include="Services\Labels.svc" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
+    <Content Include="Services\RegulatoryReporting.svc" />
     <Content Include="Services\Reports.svc" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
