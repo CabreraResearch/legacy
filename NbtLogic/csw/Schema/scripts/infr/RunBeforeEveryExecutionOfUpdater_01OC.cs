@@ -1587,7 +1587,7 @@ namespace ChemSW.Nbt.Schema
             _fixLocationOcps( CswDeveloper.CF, 28255 );
             _addMaterialTierIIOCP( CswDeveloper.BV, 28247 );
             _correctSpellingOnStorageCompField( CswDeveloper.CM, 28145 );
-            //_fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
+            _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
 
             #endregion VIOLA
 
