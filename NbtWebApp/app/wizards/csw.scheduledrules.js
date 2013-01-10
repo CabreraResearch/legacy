@@ -35,7 +35,7 @@
                 1: Csw.enums.wizardSteps_ScheduleRulesGrid.step1.description,
                 2: Csw.enums.wizardSteps_ScheduleRulesGrid.step2.description
             };
-                        
+
 
             cswPrivate.currentStepNo = cswPrivate.startingStep;
 
@@ -51,7 +51,7 @@
                 }
                 return false;
             };
-            
+
             cswPrivate.makeStepOne = (function () {
                 var stepOneComplete = false;
 
@@ -106,12 +106,12 @@
             } ());
 
             //Step 2: Review Scheduled Rules
-            cswPrivate.makeStepTwo = function() {
+            cswPrivate.makeStepTwo = function () {
                 var rulesGridId = 'previewGrid_outer',
                     rulesGridDiv, headerTable;
 
-                var makeRulesGrid = function() {
-                    rulesGridDiv = rulesGridDiv || cswPrivate.divStep2.div({name: rulesGridId });
+                var makeRulesGrid = function () {
+                    rulesGridDiv = rulesGridDiv || cswPrivate.divStep2.div({ name: rulesGridId });
                     rulesGridDiv.empty();
 
                     var gridId = 'rulesGrid';
@@ -124,9 +124,14 @@
                         usePaging: false,
                         showActionColumn: false,
                         canSelectRow: false,
-                        ajax: {
-                            urlMethod: 'getScheduledRulesGrid',
-                            data: { AccessId: cswPrivate.selectedCustomerId }
+//                        ajax: {
+//                            urlMethod: 'getScheduledRulesGrid',
+//                            data: cswPrivate.selectedCustomerId 
+//                        },
+//                        
+                        ajaxwcf: {
+                            urlMethod: 'Scheduler/getScheduledRulesGrid',
+                            data: cswPrivate.selectedCustomerId 
                         },
                         plugins: [
                         Ext.create('Ext.grid.plugin.CellEditing', {
@@ -134,6 +139,7 @@
                         })
                         ]
                     });
+
                 }; // makeRulesGrid()
 
                 cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step);
@@ -155,7 +161,8 @@
                         name: 'updateRules',
                         enabledText: 'Update Rules',
                         disabledText: 'Updating . . . ',
-                        onClick: function() {
+                        onClick: function () {
+                            var temp = cswPrivate.scheduledRulesGrid.getAllGridRows();
                             Csw.ajax.post({
                                 urlMethod: 'updateAllScheduledRules',
                                 data: { AccessId: cswPrivate.selectedCustomerId, Action: 'ClearAllReprobates' },
@@ -169,23 +176,23 @@
 
             };
 
-            cswPrivate.handleNext = function(newStepNo) {
+            cswPrivate.handleNext = function (newStepNo) {
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
-                case Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step:
-                    cswPrivate.makeStepTwo();
-                    break;
+                    case Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step:
+                        cswPrivate.makeStepTwo();
+                        break;
                 } // switch(newstepno)
             }; // handleNext()
 
             cswPrivate.handlePrevious = function (newStepNo) {
-                    cswPrivate.currentStepNo = newStepNo;
-                    switch (newStepNo) {
-                        case Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step:
-                            cswPrivate.makeStepOne();
-                            break;
-                    }
-                },
+                cswPrivate.currentStepNo = newStepNo;
+                switch (newStepNo) {
+                    case Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step:
+                        cswPrivate.makeStepOne();
+                        break;
+                }
+            },
 
             cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
                 Title: 'View Nbt Scheduler Rules by Schema',

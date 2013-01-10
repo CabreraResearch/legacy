@@ -6,7 +6,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.NbtSchedSvcRef;
 using ChemSW.Nbt.ObjClasses;
@@ -14,7 +13,6 @@ using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt;
 //using ChemSW.Nbt.NbtWebSvcSchedService;
 
 
@@ -105,6 +103,15 @@ namespace ChemSW.Nbt.WebServices
             }
             return RetObj;
         }
+
+
+        public static void getScheduledRulesGrid( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string PlaceHolder )
+        {
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+            CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
+            //RetObj = new JObject( new JObject( svcReturn.ExtJsGrid ) );
+            Return.Data = svcReturn.ExtJsGrid;
+        }//getScheduledRulesGrid()
 
         public JObject getScheduledRulesGrid()
         {
