@@ -11,7 +11,7 @@ namespace ChemSW.Nbt
     /// Uniquely identifies a node instance on a Tree
     /// </summary>
     [Serializable()]
-    public class CswNbtNodeKey : System.IEquatable<CswNbtNodeKey>
+    public class CswNbtNodeKey: System.IEquatable<CswNbtNodeKey>
     {
         public static char delimiter = '-';
         public static char NodeCountDelimiter = '/';
@@ -48,19 +48,19 @@ namespace ChemSW.Nbt
         {
             return _DelimitedString.ToString();
         }
-        
+
         /// <summary>
         /// Use this constructor to convert the key from the string representation of a key
         /// </summary>
         public CswNbtNodeKey( string StringKey )
         {
             if( StringKey == string.Empty )
-            {    throw new CswDniException( ErrorType.Error, "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );}
+            { throw new CswDniException( ErrorType.Error, "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" ); }
 
             _DelimitedString.FromString( StringKey );
         }//CswNbtNodeKey()
 
-     
+
         /// <summary>
         /// The depth of this node on the tree
         /// </summary>

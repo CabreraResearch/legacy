@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
-                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, SafeNodeKey );
+                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( SafeNodeKey );
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {

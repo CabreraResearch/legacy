@@ -31,7 +31,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
                     if( _View != null )
                     {
-                        _Grid.ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, null, Prop.NodeId, NodeSpecies.Plain, Prop.NodeTypeProp.NodeTypeId, Prop.NodeTypeProp.getNodeType().ObjectClassId, string.Empty, string.Empty );
+                        _Grid.ParentNodeKey = new CswNbtNodeKey( null, Prop.NodeId, NodeSpecies.Plain, Prop.NodeTypeProp.NodeTypeId, Prop.NodeTypeProp.getNodeType().ObjectClassId, string.Empty, string.Empty );
                         _Grid.View = _View;
                         _Grid.ReadOnly = ReadOnly;
                     }

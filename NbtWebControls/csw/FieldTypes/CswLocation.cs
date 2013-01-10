@@ -109,7 +109,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     bool saved = false;
                     if( _TreeView.SelectedNode != null )
                     {
-                        CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( _CswNbtResources, _TreeView.SelectedNode.Value );
+                        CswNbtNodeKey SelectedNodeKey = new CswNbtNodeKey( _TreeView.SelectedNode.Value );
                         if( SelectedNodeKey.NodeId != null && SelectedNodeKey.NodeId.PrimaryKey > 0 )
                         {
                             Prop.AsLocation.SelectedNodeId = SelectedNodeKey.NodeId;

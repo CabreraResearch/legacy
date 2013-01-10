@@ -445,7 +445,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
                     ReturnVal.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
-                    CswNbtNodeKey FakeKey = new CswNbtNodeKey( _CswNbtResources );
+                    CswNbtNodeKey FakeKey = new CswNbtNodeKey();
                     FakeKey.NodeId = CurrentUser.UserId;
                     FakeKey.NodeSpecies = NodeSpecies.Plain;
                     FakeKey.NodeTypeId = CurrentUser.UserNodeTypeId;
@@ -1224,7 +1224,7 @@ namespace ChemSW.Nbt.WebServices
 
                         CswNbtNodeKey RealIncludeNodeKey = null;
                         if( !string.IsNullOrEmpty( IncludeNodeKey ) )
-                            RealIncludeNodeKey = new CswNbtNodeKey( _CswNbtResources, IncludeNodeKey );
+                            RealIncludeNodeKey = new CswNbtNodeKey( IncludeNodeKey );
 
                         ReturnVal = ws.runTree( RealIncludeNodeId, RealIncludeNodeKey, IncludeNodeRequired, IncludeInQuickLaunch, DefaultSelect );
                     }
@@ -4450,7 +4450,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey TryKey = null;
             if( false == string.IsNullOrEmpty( NodeKeyString ) )
             {
-                TryKey = new CswNbtNodeKey( _CswNbtResources, NodeKeyString );
+                TryKey = new CswNbtNodeKey( NodeKeyString );
             }
             if( null != TryKey && null != TryKey.NodeId && Int32.MinValue != TryKey.NodeId.PrimaryKey )
             {
