@@ -33,7 +33,7 @@ namespace NbtWebApp
             var GetViewDriverType = new CswWebSvcDriver<CswNbtViewReturn, ViewSelect.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceView.getViewSelectWebSvc,
+                WebSvcMethodPtr: CswNbtSdView.getViewSelectWebSvc,
                 ParamObj: Request
                 );
 

@@ -162,6 +162,7 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="WebSvc\Logic\NbtManager\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceQuotas.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbSdView.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTable.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
