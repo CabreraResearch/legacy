@@ -13,27 +13,24 @@ namespace ChemSW.Nbt
     [Serializable()]
     public class CswNbtNodeKey : System.IEquatable<CswNbtNodeKey>
     {
-        private CswNbtResources _CswNbtResources;
         public static char delimiter = '-';
         public static char NodeCountDelimiter = '/';
-        //public static char TreePathDelimiter = '/';
         private CswDelimitedString _DelimitedString = new CswDelimitedString( delimiter );
 
         /// <summary>
         /// Use this constructor to get a blank Key
         /// </summary>
-        public CswNbtNodeKey( CswNbtResources CswNbtResources )
+        public CswNbtNodeKey()
         {
-            _CswNbtResources = CswNbtResources;
+
         }
 
         /// <summary>
         /// Use this constructor to initialize the tree at creation
         /// </summary>
         //public CswNbtNodeKey( CswNbtResources CswNbtResources, CswNbtTreeKey inCswNbtTreeKey, string inTreePath, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
-        public CswNbtNodeKey( CswNbtResources CswNbtResources, CswNbtTreeKey inCswNbtTreeKey, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
+        public CswNbtNodeKey( CswNbtTreeKey inCswNbtTreeKey, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
         {
-            _CswNbtResources = CswNbtResources;
             //TreePath.FromString( inTreePath );
             TreeKey = inCswNbtTreeKey;
             NodeId = inNodeId;
@@ -55,12 +52,10 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Use this constructor to convert the key from the string representation of a key
         /// </summary>
-        public CswNbtNodeKey( CswNbtResources CswNbtResources, string StringKey )
+        public CswNbtNodeKey( string StringKey )
         {
-            _CswNbtResources = CswNbtResources;
-
             if( StringKey == string.Empty )
-                throw new CswDniException( ErrorType.Error, "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );
+            {    throw new CswDniException( ErrorType.Error, "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );}
 
             _DelimitedString.FromString( StringKey );
         }//CswNbtNodeKey()
@@ -85,7 +80,7 @@ namespace ChemSW.Nbt
                 if( _CswNbtTreeKey == null )
                 {
                     if( string.Empty != _DelimitedString[5] )
-                        _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, _DelimitedString[5] );
+                        _CswNbtTreeKey = new CswNbtTreeKey( _DelimitedString[5] );
                 }
                 return _CswNbtTreeKey;
             }

@@ -11,16 +11,13 @@ namespace ChemSW.Nbt
     [Serializable()]
     public class CswNbtTreeKey : System.IEquatable<CswNbtTreeKey>
     {
-        private CswNbtResources _CswNbtResources;
         private string _KeyString = string.Empty;
 
         /// <summary>
         /// Constructor: from View
         /// </summary>
-        public CswNbtTreeKey( CswNbtResources CswNbtResources, CswNbtView TheView )
+        public CswNbtTreeKey( CswNbtView TheView )
         {
-            _CswNbtResources = CswNbtResources;
-
             if( TheView != null )
             {
                 if( TheView.ViewId != null && TheView.ViewId.isSet() )
@@ -42,10 +39,8 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Constructor: from String
         /// </summary>
-        public CswNbtTreeKey( CswNbtResources CswNbtResources, string KeyString )
+        public CswNbtTreeKey( string KeyString )
         {
-            _CswNbtResources = CswNbtResources;
-
             if( CswNbtViewId.isViewIdString( KeyString ) )
             {
                 _KeyString = new CswNbtViewId( KeyString ).ToString();

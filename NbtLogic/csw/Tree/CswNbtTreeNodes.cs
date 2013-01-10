@@ -83,7 +83,7 @@ namespace ChemSW.Nbt
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtNodeCollection = CswNbtNodeCollection;
-            _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, _View );
+            _CswNbtTreeKey = new CswNbtTreeKey( _View );
             _View = View;
             _IsFullyPopulated = IsFullyPopulated;
 
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt
             }
 
             // Make the key
-            NewNodeKey = new CswNbtNodeKey( _CswNbtResources );
+            NewNodeKey = new CswNbtNodeKey();
             NewNodeKey.TreeKey = _CswNbtTreeKey;
             NewNodeKey.NodeSpecies = Species;
             NewNodeKey.NodeCountPath = NodeCountPath;
