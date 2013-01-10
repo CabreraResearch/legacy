@@ -103,10 +103,20 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class HMISQty
         {
+            private Double _MAQ;
+            private Double _Qty;
             [DataMember]
-            public Double MAQ = 0.0;
+            public Double MAQ
+            {
+                get { return _MAQ; }
+                set { _MAQ = CswTools.IsDouble( value ) ? value : 0.0; }
+            }
             [DataMember]
-            public Double Qty = 0.0;
+            public Double Qty
+            {
+                get { return _Qty; }
+                set { _Qty = CswTools.IsDouble( value ) ? value : 0.0; }
+            }
         }
 
         [DataContract]
