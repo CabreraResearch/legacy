@@ -6,11 +6,9 @@ namespace ChemSW.Nbt.TreeEvents
     public class CswNbtTreeFactory : ICswNbtTreeFactory
     {
 
-        private string _SchemaPath = "";
-        public CswNbtTreeFactory( string SchemaPath )
+        public CswNbtTreeFactory( )
         {
             _CswNbtResources = CswNbtResources;
-            _SchemaPath = SchemaPath;
         }//ctor
 
         private CswNbtNodeCollection _CswNbtNodeCollection = null;

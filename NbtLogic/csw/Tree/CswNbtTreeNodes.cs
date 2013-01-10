@@ -12,12 +12,10 @@ namespace ChemSW.Nbt
 {
     public class CswNbtTreeNodes
     {
+        #region Constructor
+
         private CswNbtColumnNames _CswNbtColumnNames = new CswNbtColumnNames();
         private CswNbtResources _CswNbtResources = null;
-
-        //private JObject _CurrentNode = null;
-        //private JObject _TreeNode = null;
-        //private JObject _RootNode = null;
 
         private CswNbtTreeNode _CurrentNode = null;
         private CswNbtTreeNode _TreeNode = null;
@@ -31,7 +29,7 @@ namespace ChemSW.Nbt
 
         private Dictionary<CswNbtNodeKey, CswNbtNodeKey> NodesAndParents = null;
         private Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>> NodesById = null;
-
+        
         /*
          * The tree is structured in such a way that the elements
          * all correspond to a NodeSpecies. All other data pertaining
@@ -55,7 +53,38 @@ namespace ChemSW.Nbt
             public const string Node = "NbtNode";
             public const string Group = "NbtNodeGroup";
         }
-        
+
+        public CswNbtTreeNodes( CswNbtTreeKey CswNbtTreeKey, string TreeName, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection )
+        {
+            _CswNbtResources = CswNbtResources;
+            _CswNbtNodeCollection = CswNbtNodeCollection;
+            _CswNbtTreeKey = CswNbtTreeKey;
+
+            NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
+            NodesById = new Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>>();
+
+            // Make Tree Node
+            _makeNbtTreeNode( null,
+                              Elements.Tree,
+                              null,
+                              string.Empty,
+                              Int32.MinValue,
+                              Int32.MinValue,
+                              string.Empty,
+                              false,
+                              null,
+                              NodeSpecies.Plain,
+                              true,
+                              false,
+                              true,
+                              out _TreeNode,
+                              out _TreeNodeKey );
+
+            _TreeNode.TreeName = TreeName;
+        }//ctor
+
+        #endregion Constructor
+
         #region TreeNode
 
         private void _makeNbtTreeNode( CswNbtTreeNode ParentNode,
@@ -220,36 +249,9 @@ namespace ChemSW.Nbt
             return ret;
         } // _getMatchingGroup()
 
-        #endregion JSON
+        #endregion TreeNode
 
-        public CswNbtTreeNodes( CswNbtTreeKey CswNbtTreeKey, string TreeName, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection )
-        {
-            _CswNbtResources = CswNbtResources;
-            _CswNbtNodeCollection = CswNbtNodeCollection;
-            _CswNbtTreeKey = CswNbtTreeKey;
-
-            NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
-            NodesById = new Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>>();
-
-            // Make Tree Node
-            _makeNbtTreeNode( null,
-                              Elements.Tree,
-                              null,
-                              string.Empty,
-                              Int32.MinValue,
-                              Int32.MinValue,
-                              string.Empty,
-                              false,
-                              null,
-                              NodeSpecies.Plain,
-                              true,
-                              false,
-                              true,
-                              out _TreeNode,
-                              out _TreeNodeKey );
-
-            _TreeNode.TreeName = TreeName;
-        }//ctor
+        
 
         public void makeRootNode( string ViewName, string IconFileName, bool Selectable )
         {
@@ -290,23 +292,6 @@ namespace ChemSW.Nbt
         //{
         //    return _TreeNode;
         //}
-
-        private void _resetNodesAndParentsRecursive()
-        {
-            CswNbtNodeKey CurrentKey = getKeyForCurrentNode();
-            for( Int32 c = 0; c < getChildNodeCount(); c++ )
-            {
-                goToNthChild( c );
-                CswNbtNodeKey ChildKey = getKeyForCurrentNode();
-                if( !NodesAndParents.ContainsKey( ChildKey ) )
-                {
-                    NodesAndParents.Add( ChildKey, CurrentKey );
-                }
-                _resetNodesAndParentsRecursive();
-                goToParentNode();
-            }
-        }
-
 
         public bool isNodeDefined( CswNbtNodeKey NodeKey )
         {
