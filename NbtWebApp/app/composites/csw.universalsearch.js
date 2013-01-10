@@ -246,7 +246,16 @@
                                 text: '&nbsp;'
                             });
 
-                            table2.cell(1, 5).a({
+                            //C3 icon
+                            table2.cell(1, 5).img({
+                                src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
+                            });
+
+                            table2.cell(1, 6).div({
+                                text: '&nbsp;'
+                            });
+
+                            table2.cell(1, 7).a({
                                 cssclass: 'SearchC3Label',
                                 text: 'ChemCatCentral.',
                                 onClick: function () {
@@ -257,16 +266,7 @@
                                     });
                                 }
                             });
-
-                            table2.cell(1, 6).div({
-                                text: '&nbsp;'
-                            });
-
-                            //C3 icon
-                            table2.cell(1, 7).img({
-                                src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
-                            });
-
+                            
                         } // if (data.alternateoption != null)
 
                     } //if (data.searchtype == 'universal')
