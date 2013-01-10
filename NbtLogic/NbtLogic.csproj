@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
+    <Compile Include="csw\Actions\CswNbtActHMISReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
