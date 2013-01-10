@@ -308,7 +308,9 @@
             box: 69,
             warning: 70,
             save: 71,   //not actually in the img, but the file is present
-            search: 72  //not actually in the img, but the file is present
+            search: 72,  //not actually in the img, but the file is present
+            cat: 73, //not actually in the img, but the file is present 
+            structuresearch: 74 //not actually in the img, but the file is present
         });
 
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||

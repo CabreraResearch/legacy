@@ -53,6 +53,10 @@ namespace ChemSW.Nbt
         /// Sample Tracking
         /// </summary>
         public static readonly CswNbtModuleName STIS = new CswNbtModuleName( "STIS" );
+        /// <summary>
+        /// ChemCatCentral
+        /// </summary>
+        public static readonly CswNbtModuleName C3 = new CswNbtModuleName( "C3" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt
