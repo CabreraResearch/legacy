@@ -140,6 +140,12 @@ namespace NbtWebApp
             public string NodeTypeId = string.Empty;
             [DataMember]
             public string NodeId = string.Empty;
+            [DataMember]
+            public string ViewId = string.Empty;
+            [DataMember]
+            public Int32 TargetNodeTypeId = Int32.MinValue;
+            [DataMember]
+            public Int32 TargetObjectClassId = Int32.MinValue;
         }
     }
 
