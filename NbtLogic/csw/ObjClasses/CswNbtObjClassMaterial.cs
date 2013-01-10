@@ -228,82 +228,7 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
                     case PropertyName.ViewSDS:
                         HasPermission = true;
-
-                        CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
-                        CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-                        CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
-
-                        CswNbtView docView = new CswNbtView( _CswNbtResources );
-                        CswNbtViewRelationship parent = docView.AddViewRelationship( documentOC, true );
-                        docView.AddViewPropertyAndFilter( parent,
-                            MetaDataProp: docClassOCP,
-                            Value: CswNbtObjClassDocument.DocumentClasses.SDS,
-                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                        CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
-                        CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
-                        bool requireOne = false;
-
-                        if( ButtonData.SelectedText.Equals( ViewSDS.PropName ) ) //get the SDS that matches users jurisdiction
-                        {
-                            if( null != userJurisdictionNode )
-                            {
-                                CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-                                CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-
-                                docView.AddViewPropertyAndFilter( parent,
-                                    MetaDataProp: formatOCP,
-                                    Value: userJurisdictionNode.Format.Value,
-                                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                                docView.AddViewPropertyAndFilter( parent,
-                                    MetaDataProp: languageOCP,
-                                    Value: userJurisdictionNode.Language.Value,
-                                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                            }
-                            else
-                            {
-                                requireOne = true;
-                            }
-                        }
-                        else if( false == ButtonData.SelectedText.Equals( ViewSDS.PropName ) ) //get the SDS the user selected
-                        {
-                            CswNbtMetaDataObjectClassProp titleOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
-                            docView.AddViewPropertyAndFilter( parent,
-                                MetaDataProp: titleOCP,
-                                Value: ButtonData.SelectedText,
-                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                        }
-
-                        ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                        int childCount = docTree.getChildNodeCount();
-                        if( ( childCount > 0 && requireOne == false ) || ( childCount == 1 && requireOne ) ) //if we're searching by name OR
-                        {                                                                                    //the user does not have a jurisdiction and we're returning the only SDS
-                            for( int i = 0; i < childCount; i++ )
-                            {
-                                docTree.goToNthChild( i );
-                                ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
-                                ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
-                                ButtonData.Action = NbtButtonAction.editprop;
-                                docTree.goToParentNode();
-                            }
-                        }
-                        else if( childCount > 1 && requireOne ) //There are multple SDS for a user (with no jurisdiction) requesting a match
-                        {
-                            ButtonData.Message = "User does not have a Jurisdiction selected Jurisdiction and a matching SDS could not be found, please select one from the list";
-                            ButtonData.Action = NbtButtonAction.nothing;
-                        }
-                        else if( childCount == 0 && userJurisdictionNode != null ) //a matching SDS was not found
-                        {
-                            ButtonData.Message = "There are no SDS assigned to this " + NodeType.NodeTypeName + " that match the current users Jurisdiction";
-                            ButtonData.Action = NbtButtonAction.nothing;
-                        }
-                        else //there are no SDS to display
-                        {
-                            ButtonData.Message = "There are no SDS assigned to this " + NodeType.NodeTypeName;
-                            ButtonData.Action = NbtButtonAction.nothing;
-                        }
-
+                        _getMatchingSDSForCurrentUser( ButtonData );
                         break;
                 }
                 if( false == HasPermission )
@@ -512,6 +437,97 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             ViewSDS.MenuOptions = viewSDSMenuOpts.ToString();
+        }
+
+        private void _getMatchingSDSForCurrentUser( NbtButtonData ButtonData )
+        {
+            CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+            CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+            CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+            CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+            CswNbtMetaDataObjectClassProp titleOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
+
+            CswNbtView docView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = docView.AddViewRelationship( documentOC, true );
+            docView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: docClassOCP,
+                Value: CswNbtObjClassDocument.DocumentClasses.SDS,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            docView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: archivedOCP,
+                Value: CswConvert.ToDbVal( false ).ToString(),
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
+            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
+
+            bool foundMatchingSDS = false;
+            if( null != userJurisdictionNode && ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) ) //try to find an SDS that matches exactly
+            {
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: formatOCP,
+                    Value: userJurisdictionNode.Format.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: languageOCP,
+                    Value: userJurisdictionNode.Language.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            else if( false == ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) ) //the user selected an SDS from the list, find the SDS by title
+            {
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: titleOCP,
+                    Value: ButtonData.SelectedText,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( null != userJurisdictionNode && false == foundMatchingSDS ) //if we have't found an exact mathing SDS, try to find one that matches just the users Format
+            {
+                docView.removeViewProperty( languageOCP );
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( null != userJurisdictionNode && false == foundMatchingSDS ) //if we haven't found a match for just the Format, look for a matching language
+            {
+                docView.removeViewProperty( formatOCP );
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: languageOCP,
+                    Value: userJurisdictionNode.Language.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( false == foundMatchingSDS ) //if we haven't found an exact match, just format or just language, return any avaiable SDS
+            {
+                docView.removeViewProperty( languageOCP );
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( false == foundMatchingSDS ) //if we STILL haven't found an SDS there aren't any assigned to this Material
+            {
+                ButtonData.Message = "There are no non-archived SDS assigned to this " + NodeType.NodeTypeName;
+                ButtonData.Action = NbtButtonAction.nothing;
+            }
+        }
+        private bool _fillButtonData( CswNbtView docView, NbtButtonData ButtonData )
+        {
+            bool ret = false;
+            ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+            int childCount = docTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                docTree.goToNthChild( i );
+                ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
+                ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
+                ButtonData.Action = NbtButtonAction.editprop;
+                docTree.goToParentNode();
+                ret = true;
+            }
+            return ret;
         }
 
         #endregion Custom Logic
