@@ -117,7 +117,7 @@ namespace ChemSW.Nbt
         //    NodeSpecies ret = NodeSpecies.UnKnown;
         //    if( Depth >= 0 )
         //    {
-        //        if( TreePath[Depth + 1].Contains( CswNbtTreeNodes._ElemName_NodeGroup ) )
+        //        if( TreePath[Depth + 1].Contains( CswNbtTreeNodes.Group ) )
         //            ret = NodeSpecies.Group;
         //        else if( TreePath[Depth + 1].Contains( CswNbtTreeNodes._ElemName_Node ) )
         //            ret = NodeSpecies.Plain;
