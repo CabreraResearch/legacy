@@ -6,7 +6,6 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -14,7 +13,6 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Security;
 using NbtWebAppServices.Response;
 using NbtWebAppServices.Session;
-using Newtonsoft.Json.Linq;
 
 namespace NbtWebAppServices.WebServices
 {
@@ -55,15 +53,15 @@ namespace NbtWebAppServices.WebServices
                             if( NodeKey.ObjectClassId == LocationsOc.ObjectClassId )
                             {
                                 CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel LocationNode = new CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel();
-                                JArray Props = Tree.getChildNodePropsOfNode();
+                                Collection<CswNbtTreeNodeProp> Props = Tree.getChildNodePropsOfNode();
 
                                 // LocationNode.Name = Tree.getNodeNameForCurrentPosition();
                                 LocationNode.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
-                                foreach( JObject Prop in Props )
+                                foreach( CswNbtTreeNodeProp Prop in Props )
                                 {
-                                    if( CswConvert.ToString( Prop["fieldtype"] ).ToLower() == CswNbtMetaDataFieldType.NbtFieldType.Location.ToString().ToLower() )
+                                    if( Prop.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
                                     {
-                                        LocationNode.Name = CswConvert.ToString( Prop["gestalt"] ) + CswNbtNodePropLocation.PathDelimiter + Tree.getNodeNameForCurrentPosition();
+                                        LocationNode.Name = Prop.Gestalt + CswNbtNodePropLocation.PathDelimiter + Tree.getNodeNameForCurrentPosition();
                                     }
                                 }
                                 Locations.Add( LocationNode );

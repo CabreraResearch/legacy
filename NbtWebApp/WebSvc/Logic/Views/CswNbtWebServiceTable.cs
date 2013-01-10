@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
-using System.Linq;
-using ChemSW.Nbt.Search;
-using ChemSW.DB;
-using System.Data;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -233,19 +233,19 @@ namespace ChemSW.Nbt.WebServices
                         // Properties
                         SortedSet<CswNbtSearchPropOrder.SearchOrder> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey, _View );
 
-                        foreach( JObject PropElm in Tree.getChildNodePropsOfNode() )
+                        foreach( CswNbtTreeNodeProp PropElm in Tree.getChildNodePropsOfNode() )
                         {
                             TableProp thisProp = new TableProp();
-                            if( false == CswConvert.ToBoolean( PropElm["hidden"] ) )
+                            if( false == PropElm.Hidden )
                             {
-                                thisProp.NodeTypePropId = CswConvert.ToInt32( PropElm["nodetypepropid"].ToString() );
+                                thisProp.NodeTypePropId = PropElm.NodeTypePropId;
                                 if( PropsToHide == null || false == PropsToHide.Contains( thisProp.NodeTypePropId ) )
                                 {
                                     thisProp.PropId = new CswPropIdAttr( thisNode.NodeId, thisProp.NodeTypePropId );
-                                    thisProp.FieldType = PropElm["fieldtype"].ToString();
-                                    thisProp.PropName = PropElm["propname"].ToString();
-                                    thisProp.Gestalt = _Truncate( PropElm["gestalt"].ToString() );
-                                    thisProp.JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
+                                    thisProp.FieldType = PropElm.FieldType;
+                                    thisProp.PropName = PropElm.PropName;
+                                    thisProp.Gestalt = _Truncate( PropElm.Gestalt );
+                                    thisProp.JctNodePropId = PropElm.JctNodePropId;
 
                                     // Special case: Image becomes thumbnail
                                     if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.WebServices
                                             thisProp.PropData = (JObject) JpPropData.Value;
 
                                             JObject PropValues = new JObject();
-                                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, CswConvert.ToString( PropElm["field2"] ), CswConvert.ToString( PropElm["field1"] ) );
+                                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, PropElm.Field2, PropElm.Field1 );
                                             thisProp.PropData["values"] = PropValues;
                                         }
                                         thisNode.Props.Add( thisOrder.Order, thisProp );

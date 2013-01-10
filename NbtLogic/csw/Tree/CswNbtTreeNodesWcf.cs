@@ -92,7 +92,8 @@ namespace ChemSW.Nbt
             if( ParentNode != null )
             {
                 ParentNodeKey =  _getKey( ParentNode );
-                NodeCountPath = ParentNodeKey.NodeCountPath;
+                string ParentNodeCountPath = ParentNodeKey.NodeCountPath.ToString();
+                NodeCountPath.FromString( ParentNodeCountPath );
                 NodeCountPath.Add( ( ( ParentNode.ChildNodes.Count() ) + 1 ).ToString() );
                 ParentNode.ChildNodes.Add( NewNode );
                 NewNode.ParentNode = ParentNode;
@@ -168,20 +169,7 @@ namespace ChemSW.Nbt
 
             TreeNode.ChildProps.Add( TreeNodeProp );
         }//_makeTreeNodeProp()
-
-
-
-
-        private string _getElemName()
-        {
-            return _getElemName( _CurrentNode );
-        }
-
-        private string _getElemName( CswNbtTreeNode TreeNode )
-        {
-            return TreeNode.ElementName;
-        }
-
+        
         private Collection<CswNbtTreeNode> _getChildNodes()
         {
             return _getChildNodes( _CurrentNode );
@@ -211,26 +199,13 @@ namespace ChemSW.Nbt
         {
             return TreeNode.ChildProps;
         }
-
-
-        private CswPrimaryKey _getNodeId( CswNbtTreeNode TreeNode )
-        {
-            return TreeNode.CswNodeId;
-        }
-
+        
         private CswNbtNodeKey _getKey( CswNbtTreeNode TreeNode )
         {
             TreeNode.NodeKey.TreeKey = _CswNbtTreeKey;
             return TreeNode.NodeKey;
         }
-        private CswNbtNodeKey _getKey( string KeyAsString )
-        {
-            CswNbtNodeKey ret = new CswNbtNodeKey( _CswNbtResources, KeyAsString );
-            ret.TreeKey = _CswNbtTreeKey;
-            return ret;
-        }
-
-
+        
         private CswNbtTreeNode _getMatchingGroup( CswNbtTreeNode ParentTreeNode, string ThisGroupName )
         {
             CswNbtTreeNode ret = null;
@@ -303,6 +278,7 @@ namespace ChemSW.Nbt
                                   ( ViewRoot != null ) && ViewRoot.Included,
                                   out _RootNode,
                                   out _RootNodeKey );
+                _CurrentNode = _RootNode;
             }
             else
             {
@@ -315,15 +291,6 @@ namespace ChemSW.Nbt
         //    return _TreeNode;
         //}
 
-        /// <summary>
-        /// Repairs the NodesAndParents hashtable
-        /// </summary>
-        private void _resetNodesAndParents()
-        {
-            NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
-            goToRoot();
-            _resetNodesAndParentsRecursive();
-        }
         private void _resetNodesAndParentsRecursive()
         {
             CswNbtNodeKey CurrentKey = getKeyForCurrentNode();

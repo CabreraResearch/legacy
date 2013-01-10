@@ -443,14 +443,14 @@ namespace ChemSW.Nbt.Search
                     {
                         PropOrder = _CswNbtSearchPropOrder.getPropOrderDict( Tree.getNodeKeyForCurrentPosition() );
                     }
-                    JArray Props = Tree.getChildNodePropsOfNode();
-                    foreach( JObject Prop in Props )
+                    Collection<CswNbtTreeNodeProp> Props = Tree.getChildNodePropsOfNode();
+                    foreach( CswNbtTreeNodeProp Prop in Props )
                     {
-                        Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
-                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( CswConvert.ToString( Prop["fieldtype"] ) );
+                        Int32 NodeTypePropId = Prop.NodeTypePropId;
+                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( Prop.FieldType );
                         if( false == FilteredPropIds.Contains( NodeTypePropId ) && FieldType.Searchable )
                         {
-                            string Gestalt = Prop["gestalt"].ToString();
+                            string Gestalt = Prop.Gestalt;
                             if( Gestalt.Length > 50 )
                             {
                                 Gestalt = Gestalt.Substring( 0, 50 );

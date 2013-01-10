@@ -64,6 +64,34 @@ namespace ChemSW.Nbt
 
         [DataMember( EmitDefaultValue = false, IsRequired = true, Name = "PropName", Order = 11 )]
         public string PropName = string.Empty;
+
+        #region Helpers
+
+        public string getPropColumnValue( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            string ret = Gestalt;
+            CswNbtSubField.PropColumn Column = NodeTypeProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name].Column;
+            if( Column == CswNbtSubField.PropColumn.Field1 )
+            {
+                ret = Field1;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field2 )
+            {
+                ret = Field2;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field1_FK )
+            {
+                ret = Field1_Fk.ToString();
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field1_Numeric )
+            {
+                ret = Field1_Numeric.ToString();
+            }
+            return ret;
+        }
+
+        #endregion
+
     }
 
     [DataContract]
@@ -80,7 +108,10 @@ namespace ChemSW.Nbt
 
         public CswNbtTreeNode( CswPrimaryKey NbtNodeId, string NbtNodeName, int NbtNodeTypeId, int NbtObjectClassId, CswNbtTreeNode ParentNode = null )
         {
-            NodePk = NbtNodeId.ToString();
+            if( null != NbtNodeId )
+            {
+                NodePk = NbtNodeId.ToString();
+            }
             NodeName = NbtNodeName;
             NodeTypeId = NbtNodeTypeId;
             ObjectClassId = NbtObjectClassId;
@@ -134,7 +165,15 @@ namespace ChemSW.Nbt
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "NodePk", Order = 8 )]
         public string NodePk
         {
-            get { return _NodeId.ToString(); }
+            get
+            {
+                string ret = string.Empty;
+                if( null != _NodeId )
+                {
+                    ret = _NodeId.ToString();
+                }
+                return ret;
+            }
             set { _NodeId = CswConvert.ToPrimaryKey( value ); }
         }
 

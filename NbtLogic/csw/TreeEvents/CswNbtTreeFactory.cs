@@ -41,13 +41,11 @@ namespace ChemSW.Nbt.TreeEvents
         public ICswNbtTree makeTree( TreeMode TreeMode, CswNbtView View, bool IsFullyPopulated )
         {
             ICswNbtTree ReturnVal = null;
-            CswNbtNodeWriter CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
-            CswNbtNodeReader CswNbtNodeReader = new CswNbtNodeReader( _CswNbtResources );
 
-            CswNbtTreeDomProxy CswNbtTreeDomProxy = new CswNbtTreeDomProxy( View, _CswNbtResources, CswNbtNodeWriter, CswNbtNodeCollection, IsFullyPopulated );
+            CswNbtTreeDomProxy CswNbtTreeDomProxy = new CswNbtTreeDomProxy( View, _CswNbtResources, CswNbtNodeCollection, IsFullyPopulated );
 
-            CswNbtTreeDomProxy.onBeforeInsertNode += new CswNbtTreeDomProxy.CswNbtTreeModificationHandler( CswNbtTreeEventInsertNodeGeneric.handleBeforeInsertNode );
-            CswNbtTreeDomProxy.onAfterInsertNode += new CswNbtTreeDomProxy.CswNbtTreeModificationHandler( CswNbtTreeEventInsertNodeGeneric.handleAfterInsertNode );
+            CswNbtTreeDomProxy.onBeforeInsertNode += CswNbtTreeEventInsertNodeGeneric.handleBeforeInsertNode;
+            CswNbtTreeDomProxy.onAfterInsertNode += CswNbtTreeEventInsertNodeGeneric.handleAfterInsertNode;
 
             ReturnVal = CswNbtTreeDomProxy;
 

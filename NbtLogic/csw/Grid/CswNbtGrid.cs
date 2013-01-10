@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
@@ -195,27 +195,27 @@ namespace ChemSW.Nbt.Grid
         private void _TreeNodeToGrid( CswNbtView View, ICswNbtTree Tree, CswNbtGridExtJsGrid grid, CswNbtGridExtJsRow gridrow )
         {
             string gridUniquePrefix = _getUniquePrefix( View );
-            JArray ChildProps = Tree.getChildNodePropsOfNode();
+            Collection<CswNbtTreeNodeProp> ChildProps = Tree.getChildNodePropsOfNode();
 
-            foreach( JObject Prop in ChildProps )
+            foreach( CswNbtTreeNodeProp Prop in ChildProps )
             {
                 // Potential bug here!
                 // If the view defines the property by objectclass propname, but the nodetype propname differs, this might break
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, Prop.PropName );
 
-                bool IsHidden = CswConvert.ToBoolean( Prop[CswNbtTreeNodes._AttrName_NodePropHidden] );
+                bool IsHidden = CswConvert.ToBoolean( Prop.Hidden );
                 bool IsLocked = Tree.getNodeLockedForCurrentPosition();
                 string newValue = string.Empty;
                 if( false == IsHidden )
                 {
                     CswPrimaryKey NodeId = Tree.getNodeIdForCurrentPosition();
-                    CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop[CswNbtTreeNodes._AttrName_NodePropFieldType].ToString();
-                    Int32 JctNodePropId = CswConvert.ToInt32( Prop[CswNbtTreeNodes._AttrName_JctNodePropId] );
-                    Int32 NodeTypePropId = CswConvert.ToInt32( Prop[CswNbtTreeNodes._AttrName_NodePropId] );
-                    string PropName = CswConvert.ToString( Prop[CswNbtTreeNodes._AttrName_NodePropName] );
+                    CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.FieldType;
+                    Int32 JctNodePropId = Prop.JctNodePropId;
+                    Int32 NodeTypePropId = Prop.NodeTypePropId;
+                    string PropName = Prop.PropName;
                     CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
-                    string oldValue = Prop[CswNbtTreeNodes._AttrName_NodePropGestalt].ToString();
+                    string oldValue = Prop.Gestalt;
                     if( string.IsNullOrEmpty( oldValue ) )
                     {
                         oldValue = null;
@@ -237,8 +237,8 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.File:
-                            CswNbtSubField.PropColumn FileColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name].Column;
-                            if( false == String.IsNullOrEmpty( CswConvert.ToString( Prop[FileColumn.ToString().ToLower()] ) ) )
+                            string File = Prop.getPropColumnValue( MetaDataProp );
+                            if( false == String.IsNullOrEmpty( File ) )
                             {
                                 string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
                                 if( false == string.IsNullOrEmpty( LinkUrl ) )
@@ -255,19 +255,14 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.Link:
-                            CswNbtSubField.PropColumn HrefColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Href].Column;
-                            string Href = string.Empty;
-                            if( null != Prop[HrefColumn.ToString().ToLower()] )
+                            string Href = Prop.getPropColumnValue( MetaDataProp );
+                            if( false == string.IsNullOrEmpty( Href ) )
                             {
-                                Href = Prop[HrefColumn.ToString().ToLower()].ToString();
-                                if( false == string.IsNullOrEmpty( Href ) )
+                                if( false == Href.Contains( "http" ) )
                                 {
-                                    if( false == Href.Contains( "http" ) )
-                                    {
-                                        Href = "http://" + Href;
-                                    }
-                                    newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";
+                                    Href = "http://" + Href;
                                 }
+                                newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";
                             }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.Logical:
