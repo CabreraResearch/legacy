@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Config;
+using ChemSW.Core;
 using ChemSW.Nbt.ChemCatCentral;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
@@ -39,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
         public class C3SearchResponse
         {
             [DataMember]
-            public List<string> AvailableDataSources = new List<string>();
+            public Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
 
             [DataMember]
             public List<string> SearchTypes = new List<string>();
@@ -51,7 +53,19 @@ namespace ChemSW.Nbt.WebServices
             public CswC3Product ProductDetails = null;
         }
 
+        [DataContract]
+        public class DataSource
+        {
+            [DataMember]
+            public string value = string.Empty;
+
+            [DataMember]
+            public string display = string.Empty;
+        }
+
         #endregion
+
+
 
         public static void GetAvailableDataSources( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
@@ -61,9 +75,28 @@ namespace ChemSW.Nbt.WebServices
 
             ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
             CswRetObjSearchResults SourcesList = C3Search.getDataSources( CswC3Params );
-            List<string> newlist = new List<string>( SourcesList.AvailableDataSources );
 
-            Return.Data.AvailableDataSources = newlist;
+            Collection<DataSource> AvailableDataSources = new Collection<DataSource>();
+
+            //Create the "All Sources" option
+            CswCommaDelimitedString AllSources = new CswCommaDelimitedString();
+            AllSources.FromArray( SourcesList.AvailableDataSources );
+
+            DataSource allSourcesDs = new DataSource();
+            allSourcesDs.value = AllSources.ToString();
+            allSourcesDs.display = "All Sources";
+            AvailableDataSources.Add( allSourcesDs );
+
+            //Add available data source options
+            foreach( string DataSource in SourcesList.AvailableDataSources )
+            {
+                DataSource dS = new DataSource();
+                dS.value = DataSource;
+                dS.display = DataSource;
+                AvailableDataSources.Add( dS );
+            }
+
+            Return.Data.AvailableDataSources = AvailableDataSources;
 
         }
 
@@ -152,6 +185,7 @@ namespace ChemSW.Nbt.WebServices
             CswC3SearchParams.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
             CswC3SearchParams.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
             CswC3SearchParams.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
+            CswC3SearchParams.MaxRows = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" ) );
         }
 
         #endregion
