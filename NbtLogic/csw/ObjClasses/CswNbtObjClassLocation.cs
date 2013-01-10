@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] );
+                return ( _CswNbtNode.Properties[PropertyName.ControlZone] );
             }
         }
         public CswNbtNodePropGrid Containers

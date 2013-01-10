@@ -15,7 +15,6 @@ using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using NbtWebApp;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -593,21 +592,28 @@ namespace ChemSW.Nbt.WebServices
                 {
                     nodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
                 }
-
-                CswNbtMetaDataNodeType metaDataNodeType = NbtResources.MetaData.getNodeType( nodeTypeId );
-                if( null != metaDataNodeType )
+                Dictionary<CswPrimaryKey, string> Opts = new Dictionary<CswPrimaryKey, string>();
+                if( null == Request.ViewId )
                 {
-                    CswNbtMetaDataNodeTypeProp ntp = metaDataNodeType.getNodeTypePropByObjectClassProp( Request.ObjClassPropName );
-                    Dictionary<CswPrimaryKey, string> Opts = CswNbtNodePropRelationship.getOptions( NbtResources, ntp, null );
-
-                    foreach( KeyValuePair<CswPrimaryKey, string> pair in Opts )
+                    CswNbtMetaDataNodeType metaDataNodeType = NbtResources.MetaData.getNodeType(nodeTypeId);
+                    if (null != metaDataNodeType)
                     {
-                        Ret.Nodes.Add( new CswNbtNode.Node( null )
-                        {
-                            NodePk = pair.Key,
-                            NodeName = pair.Value
-                        } );
+                        CswNbtMetaDataNodeTypeProp ntp = metaDataNodeType.getNodeTypePropByObjectClassProp(Request.ObjClassPropName);
+                        Opts = CswNbtNodePropRelationship.getOptions(NbtResources, ntp, null);
                     }
+                }
+                else
+                {
+                    CswNbtViewId ViewId = new CswNbtViewId( Request.ViewId );
+                    Opts = CswNbtNodePropRelationship.getOptions( NbtResources, ViewId, Request.TargetNodeTypeId, Request.TargetObjectClassId );
+                }
+                foreach( KeyValuePair<CswPrimaryKey, string> pair in Opts )
+                {
+                    Ret.Nodes.Add( new CswNbtNode.Node( null )
+                    {
+                        NodePk = pair.Key,
+                        NodeName = pair.Value
+                    } );
                 }
                 Response.Data = Ret;
             }
