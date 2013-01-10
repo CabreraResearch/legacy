@@ -346,7 +346,7 @@
     <Compile Include="csw\Search\CswNbtSearchManager.cs" />
     <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
     <Compile Include="csw\Tree\CswNbtTreeContracts.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeNodesWcf.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeNodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27884.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27709.cs" />
@@ -879,7 +879,6 @@
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
     <Compile Include="csw\Tree\CswNbtTreeModEventArgs.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeNodes.cs" />
     <Compile Include="csw\Tree\ICswNbtNodePropCollData.cs" />
     <Compile Include="csw\Tree\ICswNbtNodeReaderData.cs" />
     <Compile Include="csw\Tree\ICswNbtNodeWriterFactory.cs" />

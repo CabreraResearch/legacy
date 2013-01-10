@@ -14,7 +14,7 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtTreeDomProxy : ICswNbtTree
     {
-        private CswNbtTreeNodesWcf _CswNbtTreeNodesWcf = null;
+        private CswNbtTreeNodes _cswNbtTreeNodes = null;
 
         private CswNbtNodeCollection _CswNbtNodeCollection = null;
 
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
 
             _CswNbtResources = CswNbtResources;
 
-            _CswNbtTreeNodesWcf = new CswNbtTreeNodesWcf( _Key, ViewName, _CswNbtResources, CswNbtNodeCollection );
+            _cswNbtTreeNodes = new CswNbtTreeNodes( _Key, ViewName, _CswNbtResources, CswNbtNodeCollection );
 
             _CswNbtNodeCollection = CswNbtNodeCollection;
 
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt
         /// <param name="ViewRoot">The corresponding ViewRoot node in the View</param>
         public void makeRootNode( CswNbtViewRoot ViewRoot )
         {
-            _CswNbtTreeNodesWcf.makeRootNode( ViewRoot.ViewName, ViewRoot );
+            _cswNbtTreeNodes.makeRootNode( ViewRoot.ViewName, ViewRoot );
         }
 
 
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt
         /// <param name="AddChildren">True if users can add children to the root, false otherwise</param>
         public void makeRootNode( string IconFileName, bool Selectable, NbtViewAddChildrenSetting AddChildren )
         {
-            _CswNbtTreeNodesWcf.makeRootNode( ViewName, IconFileName, Selectable );//, AddChildren);
+            _cswNbtTreeNodes.makeRootNode( ViewName, IconFileName, Selectable );//, AddChildren);
         }
 
 
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt
         public CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId )
         {
             CswNbtNodeKey ReturnVal = null;
-            Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodesWcf.getKeysForNodeId( NodeId );
+            Collection<CswNbtNodeKey> KeyList = _cswNbtTreeNodes.getKeysForNodeId( NodeId );
             if( null != KeyList && KeyList.Count > 0 )
             {
                 ReturnVal = KeyList[0];
@@ -199,7 +199,7 @@ namespace ChemSW.Nbt
 
         public Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
         {
-            return _CswNbtTreeNodesWcf.getNodeKeysByNodeIdAndViewNode( NodeId, ViewNode );
+            return _cswNbtTreeNodes.getNodeKeysByNodeIdAndViewNode( NodeId, ViewNode );
         } // getNodeKeysByNodeIdAndViewNode()
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void goToRoot()
         {
-            _CswNbtTreeNodesWcf.goToRoot();
+            _cswNbtTreeNodes.goToRoot();
         }//goToRoot()
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt
         /// <param name="ChildN">0-based Index of Child</param>
         public void goToNthChild( int ChildN )
         {
-            _CswNbtTreeNodesWcf.goToNthChild( ChildN );
+            _cswNbtTreeNodes.goToNthChild( ChildN );
         }//goToNthChild() 
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool isCurrentNodeChildOfRoot()
         {
-            return ( _CswNbtTreeNodesWcf.isCurrentNodeChildOfRoot() );
+            return ( _cswNbtTreeNodes.isCurrentNodeChildOfRoot() );
 
         }//isCurrentNodeRoot()
 
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool isCurrentPositionRoot()
         {
-            return ( _CswNbtTreeNodesWcf.isCurrentPositionRoot() );
+            return ( _cswNbtTreeNodes.isCurrentPositionRoot() );
 
         }//isCurrentNodeRoot()
 
@@ -255,7 +255,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void goToParentNode()
         {
-            _CswNbtTreeNodesWcf.goToParentNode();
+            _cswNbtTreeNodes.goToParentNode();
         }//goToParentNode()
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtNodeKey getNodeKeyForCurrentPosition()
         {
-            CswNbtNodeKey ReturnVal = _CswNbtTreeNodesWcf.getKeyForCurrentNode();
+            CswNbtNodeKey ReturnVal = _cswNbtTreeNodes.getKeyForCurrentNode();
             //ReturnVal.TreeKey = Key;
             return ( ReturnVal );
 
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswPrimaryKey getNodeIdForCurrentPosition()
         {
-            return _CswNbtTreeNodesWcf.getIdForCurrentNode();
+            return _cswNbtTreeNodes.getIdForCurrentNode();
         }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public string getNodeNameForCurrentPosition()
         {
-            return _CswNbtTreeNodesWcf.getNameForCurrentNode();
+            return _cswNbtTreeNodes.getNameForCurrentNode();
         }//getNodeNameForCurrentPosition()
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool getNodeLockedForCurrentPosition()
         {
-            return _CswNbtTreeNodesWcf.getLockedForCurrentNode();
+            return _cswNbtTreeNodes.getLockedForCurrentNode();
         }//getNodeLockedForCurrentPosition()
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool getNodeIncludedForCurrentPosition()
         {
-            return _CswNbtTreeNodesWcf.getIncludedForCurrentNode();
+            return _cswNbtTreeNodes.getIncludedForCurrentNode();
         }//getNodeIncludedForCurrentPosition()
 
         /// <summary>
@@ -306,14 +306,14 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool getNodeSelectableForCurrentPosition()
         {
-            return _CswNbtTreeNodesWcf.getSelectableForCurrentNode();
+            return _cswNbtTreeNodes.getSelectableForCurrentNode();
         }//getNodeSelectableForCurrentPosition()
         /// <summary>
         /// True if the currently indexed node is selectable, false otherwise
         /// </summary>
         public bool getNodeShowInTreeForCurrentPosition()
         {
-            return _CswNbtTreeNodesWcf.getNodeShowInTreeForCurrentNode();
+            return _cswNbtTreeNodes.getNodeShowInTreeForCurrentNode();
         }//getNodeShowInTreeForCurrentPosition()
 
         /// <summary>
@@ -321,14 +321,14 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtNodeKey getNodeKeyForParentOfCurrentPosition()
         {
-            CswNbtNodeKey ReturnVal = _CswNbtTreeNodesWcf.getNodeKeyForParentOfCurrentPosition();
+            CswNbtNodeKey ReturnVal = _cswNbtTreeNodes.getNodeKeyForParentOfCurrentPosition();
             return ( ReturnVal );
         }
 
         [DebuggerStepThrough]
         public Collection<CswNbtTreeNodeProp> getChildNodePropsOfNode()
         {
-            return _CswNbtTreeNodesWcf.getChildPropNodesOfCurrentNode();
+            return _cswNbtTreeNodes.getChildPropNodesOfCurrentNode();
         }
 
         /// <summary>
@@ -337,7 +337,7 @@ namespace ChemSW.Nbt
         /// <param name="CswNbtNodeKey">NodeKey representing the node</param>
         public void makeNodeCurrent( CswNbtNodeKey CswNbtNodeKey )
         {
-            _CswNbtTreeNodesWcf.makeNodeCurrent( CswNbtNodeKey );
+            _cswNbtTreeNodes.makeNodeCurrent( CswNbtNodeKey );
         }//makeNodeCurrent() 
         /// <summary>
         /// Sets a given node to be the currently indexed node in the tree, by node id
@@ -345,7 +345,7 @@ namespace ChemSW.Nbt
         /// <param name="CswPrimaryKey">NodeId representing the node</param>
         public void makeNodeCurrent( CswPrimaryKey NodeId )
         {
-            _CswNbtTreeNodesWcf.makeNodeCurrent( NodeId );
+            _cswNbtTreeNodes.makeNodeCurrent( NodeId );
         }//makeNodeCurrent() 
 
         /// <summary>
@@ -353,7 +353,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool isCurrentNodeDefined()
         {
-            return ( _CswNbtTreeNodesWcf.isCurrentNodeDefined() );
+            return ( _cswNbtTreeNodes.isCurrentNodeDefined() );
         }//isCurrentNodeDefined() 
 
         /// <summary>
@@ -361,7 +361,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public int getNodeCountForCurrentLevel()
         {
-            return ( _CswNbtTreeNodesWcf.getNodeCountForCurrentLevel() );
+            return ( _cswNbtTreeNodes.getNodeCountForCurrentLevel() );
         }//getNodeCountForCurrentLevel()
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public int getChildNodeCount()
         {
-            return ( _CswNbtTreeNodesWcf.getChildNodeCount() );
+            return ( _cswNbtTreeNodes.getChildNodeCount() );
         }//getChildNodeCount() 
 
         private void _collectNodesOfClass( object VisitedNodeKey, NodeVisitEventArgs NodeVisitEventArgs )
@@ -526,7 +526,7 @@ namespace ChemSW.Nbt
         /// <returns>Returns NodeKey index for node</returns>
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true )
         {
-            Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodesWcf.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, RowCount, Included );
+            Collection<CswNbtNodeKey> ReturnVal = _cswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, RowCount, Included );
             //ReturnVal.TreeKey = Key;
             //_TreeAsTransformedXml = "";
             return ( ReturnVal );
@@ -547,7 +547,7 @@ namespace ChemSW.Nbt
         /// <returns>Returns NodeKey index for node</returns>
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true )
         {
-            Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodesWcf.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Selectable, ShowInTree, AddChildren, RowCount, Included );
+            Collection<CswNbtNodeKey> ReturnVal = _cswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Selectable, ShowInTree, AddChildren, RowCount, Included );
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 
@@ -556,7 +556,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void setCurrentNodeExpandMode( string ExpandMode )
         {
-            _CswNbtTreeNodesWcf.setCurrentNodeExpandMode( ExpandMode );
+            _cswNbtTreeNodes.setCurrentNodeExpandMode( ExpandMode );
         }
 
         /// <summary>
@@ -564,7 +564,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
         {
-            _CswNbtTreeNodesWcf.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2, Field1_Fk, Field1_Numeric, Hidden );
+            _cswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2, Field1_Fk, Field1_Numeric, Hidden );
         }//addProperty
 
 
@@ -573,7 +573,7 @@ namespace ChemSW.Nbt
                                                string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
                                                string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
         {
-            return _CswNbtTreeNodesWcf._loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship,
+            return _cswNbtTreeNodes._loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship,
                                                        Selectable, ShowInTree, AddChildren, RowCount, Included,
                                                        IconFileName, NameTemplate, NodeId, NodeName, NodeTypeId,
                                                        NodeTypeName, ObjectClassId, ObjectClassName, Locked );
@@ -582,16 +582,16 @@ namespace ChemSW.Nbt
 
         public void setCurrentNodeChildrenTruncated( bool Truncated )
         {
-            _CswNbtTreeNodesWcf.setCurrentNodeChildrenTruncated( Truncated );
+            _cswNbtTreeNodes.setCurrentNodeChildrenTruncated( Truncated );
         }
         public bool getCurrentNodeChildrenTruncated()
         {
-            return _CswNbtTreeNodesWcf.getCurrentNodeChildrenTruncated();
+            return _cswNbtTreeNodes.getCurrentNodeChildrenTruncated();
         }
 
         public void removeCurrentNode()
         {
-            _CswNbtTreeNodesWcf.removeCurrentNode();
+            _cswNbtTreeNodes.removeCurrentNode();
         }
 
         #endregion //Modification******************************
