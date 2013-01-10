@@ -141,6 +141,7 @@
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRegulatoryReporting.cs" />
     <Compile Include="WebSvc\Logic\CISPro\MolDataContract.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
