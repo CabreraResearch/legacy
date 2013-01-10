@@ -1037,8 +1037,7 @@
             //DataSources Picklist
             var sourceSelect = tableInner.cell(1, 1).select({
                 name: 'C3Search_sourceSelect',
-                selected: 'All Sources',
-                values: ['All Sources']
+                selected: 'All Sources'
             });
 
             function getAvailableDataSources() {
@@ -1093,8 +1092,7 @@
                         Field: searchTypeSelect.selectedVal(),
                         Query: searchTermField.val(),
                         SearchOperator: searchOperatorSelect.selectedVal(),
-                        SourceName: sourceSelect.selectedVal(),
-                        MaxRows: 10
+                        SourceName: sourceSelect.selectedVal()
                     };
 
                     Csw.ajaxWcf.post({
