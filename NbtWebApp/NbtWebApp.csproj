@@ -163,7 +163,6 @@
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
-    <Compile Include="WebSvc\Logic\Search\CswNbtC3SearchData.cs" />
     <Compile Include="WebSvc\Logic\Search\CswNbtWebServiceC3Search.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
     <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
