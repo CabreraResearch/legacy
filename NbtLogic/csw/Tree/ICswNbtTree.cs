@@ -112,7 +112,7 @@ namespace ChemSW.Nbt
         /// <param name="IconFileName">Icon filename for root node</param>
         /// <param name="Selectable">True if the root is selectable, false otherwise</param>
         /// <param name="AddChildren">True if users can add children to the root, false otherwise</param>
-        void makeRootNode( string IconFileName, bool Selectable, NbtViewAddChildrenSetting AddChildren );
+        void makeRootNode( string IconFileName, bool Selectable );
 
         /// <summary>
         /// Returns all node keys of nodes of a given Object Class

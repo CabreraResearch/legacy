@@ -51,23 +51,7 @@ namespace ChemSW.Nbt
         {
             return _DelimitedString.ToString();
         }
-
-        ///// <summary>
-        ///// Convert the NodeKey information into a Javascript-safe delimited string
-        ///// </summary>
-        //public string ToJavaScriptParam()
-        //{
-        //    return ToString().Replace( @"\", @"\\" ).Replace( "'", @"\'" );
-        //}
-
-        ///// <summary>
-        ///// Returns the TreePath to the parent node
-        ///// </summary>
-        //public CswDelimitedString getParentTreePath()
-        //{
-        //    return TreePath.SubString( 0, TreePath.Count - 2 );
-        //}
-
+        
         /// <summary>
         /// Use this constructor to convert the key from the string representation of a key
         /// </summary>
@@ -81,86 +65,7 @@ namespace ChemSW.Nbt
             _DelimitedString.FromString( StringKey );
         }//CswNbtNodeKey()
 
-        //private CswDelimitedString _TreePath = null;
-        ///// <summary>
-        ///// Path from root of tree to this NodeKey
-        ///// </summary>
-        //public CswDelimitedString TreePath
-        //{
-        //    get
-        //    {
-        //        if( _TreePath == null )
-        //        {
-        //            _TreePath = new CswDelimitedString( TreePathDelimiter );
-        //            _TreePath.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _TreePath_OnChange );
-        //            _TreePath.FromString( _DelimitedString[0] );
-        //        }
-        //        return _TreePath;
-        //    }
-        //    set
-        //    {
-        //        _TreePath = value;
-        //        _TreePath_OnChange();
-        //    }
-        //}
-
-        //void _TreePath_OnChange()
-        //{
-        //    _DelimitedString[0] = _TreePath.ToString();
-        //}
-
-        ///// <summary>
-        ///// Returns the species of the node at a given depth in the path of parents
-        ///// </summary>
-        //public NodeSpecies TreePathNodeSpecies( Int32 Depth )
-        //{
-        //    NodeSpecies ret = NodeSpecies.UnKnown;
-        //    if( Depth >= 0 )
-        //    {
-        //        if( TreePath[Depth + 1].Contains( CswNbtTreeNodes.Group ) )
-        //            ret = NodeSpecies.Group;
-        //        else if( TreePath[Depth + 1].Contains( CswNbtTreeNodes._ElemName_Node ) )
-        //            ret = NodeSpecies.Plain;
-        //    }
-        //    return ret;
-        //}
-
-        ///// <summary>
-        ///// Returns the primary key of the node at a given depth in the path of parents
-        ///// </summary>
-        //public CswPrimaryKey TreePathNodeId( Int32 Depth )
-        //{
-        //    CswPrimaryKey ret = null;
-        //    if( Depth >= 0 )
-        //    {
-        //        string NodeStr = TreePath[Depth + 1];
-        //        if( NodeStr.Length > ( NodeStr.IndexOf( "@tablename='" ) + "@tablename='".Length ) )
-        //        {
-        //            string IdStr1 = NodeStr.Substring( NodeStr.IndexOf( "@tablename='" ) + "@tablename='".Length );
-        //            IdStr1 = IdStr1.Substring( 0, IdStr1.IndexOf( "'" ) );
-        //            string IdStr2 = NodeStr.Substring( NodeStr.IndexOf( "@nodeid=" ) + "@nodeid=".Length );
-        //            IdStr2 = IdStr2.Substring( 0, IdStr2.Length - "]".Length );
-        //            if( CswTools.IsInteger( IdStr2 ) )
-        //                ret = new CswPrimaryKey( IdStr1, CswConvert.ToInt32( IdStr2 ) );
-        //        }
-        //    }
-        //    return ret;
-        //}
-
-        ///// <summary>
-        ///// Returns the name of the group of the node at a given depth in the path of parents
-        ///// </summary>
-        //public string TreePathGroupName( Int32 Depth )
-        //{
-        //    string ret = string.Empty;
-        //    if( Depth >= 0 )
-        //    {
-        //        string NameStr = TreePath[Depth + 1].Split( '=' )[1];
-        //        ret = NameStr.Substring( 1, NameStr.Length - 2 );
-        //    }
-        //    return ret;
-        //}
-
+     
         /// <summary>
         /// The depth of this node on the tree
         /// </summary>

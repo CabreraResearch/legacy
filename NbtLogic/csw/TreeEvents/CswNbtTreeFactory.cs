@@ -40,12 +40,12 @@ namespace ChemSW.Nbt.TreeEvents
         {
             ICswNbtTree ReturnVal = null;
 
-            CswNbtTreeDomProxy CswNbtTreeDomProxy = new CswNbtTreeDomProxy( View, _CswNbtResources, CswNbtNodeCollection, IsFullyPopulated );
+            CswNbtTreeNodes CswNbtTreeNodes = new CswNbtTreeNodes( "", View, _CswNbtResources, CswNbtNodeCollection, IsFullyPopulated );
 
-            CswNbtTreeDomProxy.onBeforeInsertNode += CswNbtTreeEventInsertNodeGeneric.handleBeforeInsertNode;
-            CswNbtTreeDomProxy.onAfterInsertNode += CswNbtTreeEventInsertNodeGeneric.handleAfterInsertNode;
+            CswNbtTreeNodes.onBeforeInsertNode += CswNbtTreeEventInsertNodeGeneric.handleBeforeInsertNode;
+            CswNbtTreeNodes.onAfterInsertNode += CswNbtTreeEventInsertNodeGeneric.handleAfterInsertNode;
 
-            ReturnVal = CswNbtTreeDomProxy;
+            ReturnVal = CswNbtTreeNodes;
 
             return ( ReturnVal );
 

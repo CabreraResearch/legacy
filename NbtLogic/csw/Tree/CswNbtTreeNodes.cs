@@ -10,8 +10,43 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeNodes
+    public class CswNbtTreeNodes: ICswNbtTree
     {
+        #region Events
+
+        /// <summary>
+        /// Represents a Tree Modification Event
+        /// </summary>
+        /// <param name="CswNbtTreeDomProxy">Tree being modified</param>
+        /// <param name="CswNbtTreeModEventArgs">Modification event arguments</param>
+        public delegate void CswNbtTreeModificationHandler( object CswNbtTreeDomProxy, CswNbtTreeModEventArgs CswNbtTreeModEventArgs );
+        /// <summary>
+        /// Event occurs before inserting a new node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onBeforeInsertNode;
+        /// <summary>
+        /// Event occurs after inserting a new node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onAfterInsertNode;
+        /// <summary>
+        /// Event occurs before changing the parent of a node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onBeforeChangeParent;
+        /// <summary>
+        /// Event occurs after changing the parent of a node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onAfterChangeParent;
+        /// <summary>
+        /// Event occurs before deleting a node from the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onBeforeDeleteNode;
+        /// <summary>
+        /// Event occurs after deleting a node from the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onAfterDeleteNode;
+
+        #endregion Events
+        
         #region Constructor
 
         private CswNbtColumnNames _CswNbtColumnNames = new CswNbtColumnNames();
@@ -54,11 +89,22 @@ namespace ChemSW.Nbt
             public const string Group = "NbtNodeGroup";
         }
 
-        public CswNbtTreeNodes( CswNbtTreeKey CswNbtTreeKey, string TreeName, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection )
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="View">Tree View</param>
+        /// <param name="CswNbtResources">The CswNbtResources object</param>
+        /// <param name="CswNbtNodeWriter">A CswNbtNodeWriter object</param>
+        /// <param name="CswNbtNodeCollection">A reference to the CswNbtNodeCollection</param>
+        /// <param name="IsFullyPopulated"></param>
+        public CswNbtTreeNodes( string TreeName, CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection, bool IsFullyPopulated )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtNodeCollection = CswNbtNodeCollection;
-            _CswNbtTreeKey = CswNbtTreeKey;
+            _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, _View );
+            _View = View;
+            _IsFullyPopulated = IsFullyPopulated;
+
 
             NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
             NodesById = new Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>>();
@@ -82,9 +128,76 @@ namespace ChemSW.Nbt
 
             _TreeNode.TreeName = TreeName;
         }//ctor
-
+        
         #endregion Constructor
 
+        #region Properties
+
+        private CswNbtView _View = null;
+        /// <summary>
+        /// View which was used to build this tree
+        /// </summary>
+        public CswNbtView View
+        {
+            get { return _View; }
+            set { _View = value; }
+        }
+
+        private string _SourceViewXml = "";
+        /// <summary>
+        /// View XML that was used to create this tree
+        /// </summary>
+        public string SourceViewXml
+        {
+            set
+            {
+                _SourceViewXml = value;
+            }
+            get
+            {
+                return _SourceViewXml;
+            }
+        }
+
+        /// <summary>
+        /// Name of view that created this tree.  Also name of root node of tree.
+        /// </summary>
+        public string ViewName
+        {
+            get
+            {
+                //return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
+                string ret = string.Empty;
+                if( View != null )
+                {
+                    ret = View.ViewName;
+                }
+                return ret;
+            }
+        }
+
+        private bool _IsFullyPopulated = false;
+        public bool IsFullyPopulated
+        {
+            get
+            {
+                return _IsFullyPopulated;
+            }
+        }
+
+        private CswNbtTreeKey _Key = null;
+        /// <summary>
+        /// TreeKey which is used to index this tree.
+        /// </summary>
+        public CswNbtTreeKey Key
+        {
+            get { return ( _Key ); }
+        }
+
+        
+
+        #endregion Properties
+        
         #region TreeNode
 
         private void _makeNbtTreeNode( CswNbtTreeNode ParentNode,
@@ -251,15 +364,16 @@ namespace ChemSW.Nbt
 
         #endregion TreeNode
 
-        
+        #region Make Nodes
 
-        public void makeRootNode( string ViewName, string IconFileName, bool Selectable )
+
+        public void makeRootNode( string IconFileName, bool Selectable )
         {
             _makeRootNode( ViewName, null, IconFileName, Selectable );
         }
-        public void makeRootNode( string ViewName, CswNbtViewRoot ViewRoot )
+        public void makeRootNode( CswNbtViewRoot ViewRoot )
         {
-            _makeRootNode( ViewName, ViewRoot, ViewRoot.IconFileName, ViewRoot.Selectable );
+            _makeRootNode( ViewRoot.ViewName, ViewRoot, ViewRoot.IconFileName, ViewRoot.Selectable );
         }
         private void _makeRootNode( string ViewName, CswNbtViewRoot ViewRoot, string IconFileName, bool Selectable )
         {
@@ -286,7 +400,10 @@ namespace ChemSW.Nbt
             {
                 throw new CswDniException( "CswNbtTreeNodes attempted to add a second root node to the tree" );
             }
-        }
+        } 
+        #endregion Make Nodes
+
+        #region Get Nodes
 
         //public JObject getRawJSON()
         //{
@@ -383,11 +500,47 @@ namespace ChemSW.Nbt
 
         }//getParentNodeOf()
 
+        /// <summary>
+        /// Returns the root node of the tree
+        /// </summary>
+        public CswNbtNode getRootNode()
+        {
+            CswNbtNodeKey CurrentKey = getNodeKeyForCurrentPosition();
+            goToRoot();
 
-        //Navigation and interrogation methods*****************************************
+            CswNbtNode RootNode = _CswNbtNodeCollection.GetNode( CurrentKey.NodeId, CurrentKey.NodeTypeId, CurrentKey.NodeSpecies, DateTime.MinValue );
+            makeNodeCurrent( CurrentKey );
+            return RootNode;
+        }//getRootNode()
+
+        public Collection<CswNbtTreeNodeProp> getChildNodePropsOfNode()
+        {
+            return getChildPropNodesOfCurrentNode();
+        }
+
+        /// <summary>
+        /// Returns the NodeKey for the currently indexed node
+        /// </summary>
+        public CswNbtNodeKey getNodeKeyForCurrentPosition()
+        {
+            CswNbtNodeKey ReturnVal = getKeyForCurrentNode();
+            //ReturnVal.TreeKey = Key;
+            return ( ReturnVal );
+
+        }//getNodeKeyForCurrentPosition()
+
+        /// <summary>
+        /// Returns the currently indexed node
+        /// </summary>
+        public CswNbtNode getNodeForCurrentPosition()
+        {
+            return getNode( getNodeKeyForCurrentPosition() );
+        }//getNodeForCurrentPosition() 
+        
+        #endregion Get Nodes
+        
         #region Navigation and interrogation methods
-
-
+        
         public void goToRoot()
         {
             _CurrentNode = _RootNode;
@@ -460,8 +613,7 @@ namespace ChemSW.Nbt
         {
             return _getChildNodes().Count();
         }
-
-
+        
         public CswNbtNodeKey getNodeKeyForParentOfCurrentPosition()
         {
             if( isCurrentPositionRoot() )
@@ -469,11 +621,143 @@ namespace ChemSW.Nbt
             return _getKey( _getParentNode() );
         }
 
+        private void _collectNodesOfClass( object VisitedNodeKey, NodeVisitEventArgs NodeVisitEventArgs )
+        {
+            CswNbtNodeKey CswNbtNodeKey = (CswNbtNodeKey) VisitedNodeKey;
+            if( CswNbtNodeKey.ObjectClassId == NodeVisitEventArgs.ObjectClassIdToFilter )
+            {
+                _NodesOfClass.Add( CswNbtNodeKey.NodeId );
+            }//
 
-        #endregion //NavigationAndInterrogation******************************
+        }//_collectNodesOfClass
+
+        private Collection<CswPrimaryKey> _NodesOfClass = null;
+
+        /// <summary>
+        /// Returns all node keys of nodes of a given Object Class
+        /// </summary>
+        /// <param name="ObjectClassId">Primary key of Object Class</param>
+        public Collection<CswPrimaryKey> getNodeKeysOfClass( Int32 ObjectClassId )
+        {
+            _NodesOfClass = new Collection<CswPrimaryKey>();
+
+            OnIterateNode = new CswNbtNodeVisitHandler( _collectNodesOfClass );
+            NodeVisitEventArgs = new NodeVisitEventArgs();
+            NodeVisitEventArgs.ObjectClassIdToFilter = ObjectClassId;
+
+            iterateTree();
+
+            return ( _NodesOfClass );
+
+        }//getNodeKeysOfClass()
 
 
-        //Modification methods*****************************************
+        private void _collectNodesOfNodeType( object VisitedNodeKey, NodeVisitEventArgs NodeVisitEventArgs )
+        {
+            CswNbtNodeKey CswNbtNodeKey = (CswNbtNodeKey) VisitedNodeKey;
+            if( CswNbtNodeKey.NodeTypeId == NodeVisitEventArgs.NodeTypeIdToFilter )
+            {
+                _NodesOfNodeType.Add( CswNbtNodeKey.NodeId );
+            }//
+
+        }//_collectNodesOfNodeType
+
+        private Collection<CswPrimaryKey> _NodesOfNodeType = null;
+
+        /// <summary>
+        /// Returns all node keys of nodes of a given NodeType
+        /// </summary>
+        /// <param name="NodeTypeId">Primary key of Node Type</param>
+        public Collection<CswPrimaryKey> getNodeKeysOfNodeType( Int32 NodeTypeId )
+        {
+            _NodesOfNodeType = new Collection<CswPrimaryKey>();
+
+            OnIterateNode = new CswNbtNodeVisitHandler( _collectNodesOfNodeType );
+            NodeVisitEventArgs = new NodeVisitEventArgs();
+            NodeVisitEventArgs.NodeTypeIdToFilter = NodeTypeId;
+
+            iterateTree();
+
+            return ( _NodesOfNodeType );
+
+        }//getNodeKeysOfNodeType()
+
+
+
+        /// <summary>
+        /// Calls the OnIterateNode event on every node in the tree
+        /// </summary>
+        public void iterateTree()
+        {
+            if( null == OnIterateNode )
+            { throw ( new CswDniException( "OnIterateNode must be set before calling iterateTree()" ) ); }
+
+            //cache current position
+            CswNbtNodeKey CurrentPosition = getNodeKeyForCurrentPosition();
+
+            goToRoot();
+            _iterateNodes();
+
+            //restore current position
+            makeNodeCurrent( CurrentPosition );
+
+        }//iterateTree()
+
+        private NodeVisitEventArgs _NodeVisitEventArgs = null;
+
+        /// <summary>
+        /// Sets the Event arguments to use when iterating nodes
+        /// </summary>
+        public NodeVisitEventArgs NodeVisitEventArgs
+        {
+            set
+            {
+                _NodeVisitEventArgs = value;
+            }
+
+            get
+            {
+                return ( _NodeVisitEventArgs );
+            }
+
+        }//NodeVisitEventArgs
+
+        private CswNbtNodeVisitHandler _OnIterateNode = null;
+
+        /// <summary>
+        /// Event to call when iterating nodes.  See <see cref="iterateTree" />.
+        /// </summary>
+        public CswNbtNodeVisitHandler OnIterateNode
+        {
+            get
+            {
+                return ( _OnIterateNode );
+            }//
+            set
+            {
+                _OnIterateNode = value;
+            }//
+        }//
+
+        private void _iterateNodes()
+        {
+            OnIterateNode( getNodeKeyForCurrentPosition(), NodeVisitEventArgs );
+            int TotalChilren = getChildNodeCount();
+            if( TotalChilren > 0 )
+            {
+                for( int ChildIdx = 0; ChildIdx < TotalChilren; ChildIdx++ )
+                {
+                    goToNthChild( ChildIdx );
+                    _iterateNodes();
+                    goToParentNode();
+                }//go through all children
+            }
+
+        }//_iterateChildren()
+
+
+        #endregion Navigation And Interrogation
+        
         #region Modification Methods
 
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true )
@@ -624,7 +908,7 @@ namespace ChemSW.Nbt
             return _getKey( _CurrentNode );
         }//getKeyForCurrentNode()
 
-        public CswPrimaryKey getIdForCurrentNode()
+        public CswPrimaryKey getNodeIdForCurrentPosition()
         {
             _checkCurrentNode();
             
@@ -633,27 +917,27 @@ namespace ChemSW.Nbt
 
             return _CurrentNode.CswNodeId;
 
-        }//getIdForCurrentNode()
+        }//getNodeIdForCurrentPosition()
 
-        public string getNameForCurrentNode()
+        public string getNodeNameForCurrentPosition()
         {
             _checkCurrentNode();
             return _CurrentNode.NodeName;
-        }//getNameForCurrentNode()
+        }//getNodeNameForCurrentPosition()
 
-        public bool getLockedForCurrentNode()
+        public bool getNodeLockedForCurrentPosition()
         {
             _checkCurrentNode();
             return _CurrentNode.Locked;
-        }//getLockedForCurrentNode()
+        }//getNodeLockedForCurrentPosition()
 
-        public bool getIncludedForCurrentNode()
+        public bool getNodeIncludedForCurrentPosition()
         {
             _checkCurrentNode();
             return _CurrentNode.Included;
-        }//getIncludedForCurrentNode()
+        }//getNodeIncludedForCurrentPosition()
 
-        public bool getSelectableForCurrentNode()
+        public bool getNodeSelectableForCurrentPosition()
         {
             _checkCurrentNode();
             
@@ -661,22 +945,40 @@ namespace ChemSW.Nbt
             {    throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );}
 
             return _CurrentNode.Selectable;
-        }//getSelectableForCurrentNode()
+        }//getNodeSelectableForCurrentPosition()
 
-        public bool getNodeShowInTreeForCurrentNode()
+        public bool getNodeShowInTreeForCurrentPosition()
         {
             _checkCurrentNode();
             if( _CurrentNode.ElementName != Elements.Node )
             {    throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName.ToString() + ") is not a CswNbtNode" ) );}
 
             return _CurrentNode.ShowInTree;
-        }//getNodeShowInTreeForCurrentNode()
+        }//getNodeShowInTreeForCurrentPosition()
 
 
         public Int32 getNodeCountForCurrentLevel()
         {
             return _getChildNodes( _getParentNode() ).Count();
         }
+
+        /// <summary>
+        /// Return a node key for the first matching node in the tree
+        /// </summary>
+        /// <remarks>
+        /// Candidate to refactor to CswNbtNodes
+        /// </remarks>
+        /// <param name="NodeId">Primary key of node</param>
+        public CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId )
+        {
+            CswNbtNodeKey ReturnVal = null;
+            Collection<CswNbtNodeKey> KeyList = getKeysForNodeId( NodeId );
+            if( null != KeyList && KeyList.Count > 0 )
+            {
+                ReturnVal = KeyList[0];
+            }
+            return ( ReturnVal );
+        }//getNodeKeyByNodeId()
 
         public Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
         {
@@ -728,7 +1030,7 @@ namespace ChemSW.Nbt
             _CurrentNode = _RootNode;
         }
 
-        #endregion //Modification******************************
+        #endregion Modification Methods
 
     }//class CswNbtTreeNodes
 
