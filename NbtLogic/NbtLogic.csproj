@@ -872,7 +872,6 @@
     <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />
     <Compile Include="csw\Tree\CswNbtPropEnmrtrFiltered.cs" />
     <Compile Include="csw\Tree\CswNbtTreeBuilder.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeDomProxy.cs" />
     <Compile Include="csw\Tree\CswNbtTreeKey.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoader.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
