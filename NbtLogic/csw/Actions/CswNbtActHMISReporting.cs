@@ -28,6 +28,13 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class HMISMaterial
         {
+            public HMISMaterial()
+            {
+                Storage = new StorageData();
+                Closed = new ClosedData();
+                Open = new OpenData();
+            }
+
             [DataMember]
             public String Material = String.Empty;
             [DataMember]
@@ -45,6 +52,13 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class StorageData
         {
+            public StorageData()
+            {
+                Solid = new HMISQty();
+                Liquid = new HMISQty();
+                Gas = new HMISQty();
+            }
+
             [DataMember]
             public HMISQty Solid;
             [DataMember]
@@ -56,6 +70,13 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class ClosedData
         {
+            public ClosedData()
+            {
+                Solid = new HMISQty();
+                Liquid = new HMISQty();
+                Gas = new HMISQty();
+            }
+
             [DataMember]
             public HMISQty Solid;
             [DataMember]
@@ -67,6 +88,12 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class OpenData
         {
+            public OpenData()
+            {
+                Solid = new HMISQty();
+                Liquid = new HMISQty();
+            }
+
             [DataMember]
             public HMISQty Solid;
             [DataMember]
@@ -99,11 +126,14 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtResources _CswNbtResources;
         private HMISData Data;
+        private Collection<CswNbtObjClassFireClassExemptAmount> FireClasses;
+        private CswPrimaryKey ControlZoneId;
 
         public CswNbtActHMISReporting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             Data = new HMISData();
+            FireClasses = new Collection<CswNbtObjClassFireClassExemptAmount>();
         }
 
         #endregion Properties and ctor
@@ -112,56 +142,58 @@ namespace ChemSW.Nbt.Actions
 
         public HMISData getHMISData( HMISData.HMISDataRequest Request )
         {
-            IEnumerable<CswNbtObjClassFireClassExemptAmount> FireClasses = _getFireClasses( Request );
-            foreach( CswNbtObjClassFireClassExemptAmount FireClass in FireClasses )
+            ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
+            FireClasses = _setFireClasses();
+            CswNbtView HMISView = _getHMISView();
+            ICswNbtTree HMISTree = _CswNbtResources.Trees.getTreeFromView( HMISView, false, true, false );
+            if( HMISTree.getChildNodeCount() > 0 )
             {
-                CswNbtView FireClassView = _getFireClassView( Request, FireClass.FireHazardClassType.Value );
-                ICswNbtTree FireClassTree = _CswNbtResources.Trees.getTreeFromView( FireClassView, false, true, false );
-                if( FireClassTree.getChildNodeCount() > 0 )
+                for( int i = 0; i < HMISTree.getChildNodeCount(); i++ )//Location Nodes
                 {
-                    for( int i = 0; i < FireClassTree.getChildNodeCount(); i++ )//Location Nodes
+                    HMISTree.goToNthChild( i );
+                    if( HMISTree.getChildNodeCount() > 0 )
                     {
-                        FireClassTree.goToNthChild( i );
-                        if( FireClassTree.getChildNodeCount() > 0 )
+                        for( int j = 0; j < HMISTree.getChildNodeCount(); j++ )//Container Nodes
                         {
-                            for( int j = 0; j < FireClassTree.getChildNodeCount(); j++ )//Container Nodes
+                            HMISTree.goToNthChild( j );
+                            if( HMISTree.getChildNodeCount() > 0 )//Material Node Exists
                             {
-                                FireClassTree.goToNthChild( j );
-                                if( FireClassTree.getChildNodeCount() > 0 )//Material Node Exists
+                                CswNbtNode ContainerNode = HMISTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
+                                if( false == String.IsNullOrEmpty( ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.UseType].AsList.Value ) )
                                 {
-                                    CswNbtNode ContainerNode = FireClassTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
-                                    if( false == String.IsNullOrEmpty( ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.UseType].AsList.Value ) )
+                                    String MaterialName = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Material].AsRelationship.CachedNodeName;
+                                    bool MaterialIsNew = true;
+                                    foreach ( HMISData.HMISMaterial HMISMaterial in Data.Materials.Where( HMISMaterial => HMISMaterial.Material == MaterialName ) )
                                     {
-                                        String MaterialName = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Material].AsRelationship.PropName;
-                                        bool MaterialIsNew = true;
-                                        foreach ( HMISData.HMISMaterial HMISMaterial in Data.Materials.Where( HMISMaterial => HMISMaterial.Material == MaterialName ) )
+                                        MaterialIsNew = false;
+                                        _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
+                                    }
+                                    if( MaterialIsNew )
+                                    {
+                                        HMISTree.goToNthChild( 0 );
+                                        CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
+                                        CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
+                                        IEnumerable<CswNbtObjClassFireClassExemptAmount> HazardClasses = _getRelevantHazardClasses( MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value );
+                                        foreach (CswNbtObjClassFireClassExemptAmount HazardClass in HazardClasses)
                                         {
-                                            MaterialIsNew = false;
-                                            _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
-                                            break;
-                                        }
-                                        if( MaterialIsNew )
-                                        {
-                                            FireClassTree.goToNthChild( 0 );
                                             HMISData.HMISMaterial HMISMaterial = new HMISData.HMISMaterial();
-                                            HMISMaterial.FireClass = FireClass.FireHazardClassType.Value;
                                             HMISMaterial.Material = MaterialName;
-                                            CswNbtObjClassMaterial MaterialNode = FireClassTree.getNodeForCurrentPosition();
+                                            HMISMaterial.FireClass = HazardClass.FireHazardClassType.Value;
                                             HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
-                                            _setFireClassMAQData( HMISMaterial, FireClass );
+                                            _setFireClassMAQData( HMISMaterial, HazardClass );
                                             _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
                                             Data.Materials.Add( HMISMaterial );
-                                            FireClassTree.goToParentNode();
                                         }
+                                        HMISTree.goToParentNode();
                                     }
-                                }//Material Node Exists
-                                FireClassTree.goToParentNode();
-                            }//Container Nodes
-                        }
-                        FireClassTree.goToParentNode();
-                    }//Location Nodes
-                }
-            }            
+                                }
+                            }//Material Node Exists
+                            HMISTree.goToParentNode();
+                        }//Container Nodes
+                    }
+                    HMISTree.goToParentNode();
+                }//Location Nodes
+            }           
             return Data;
         }
 
@@ -169,52 +201,73 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Methods
 
-        private IEnumerable<CswNbtObjClassFireClassExemptAmount> _getFireClasses( HMISData.HMISDataRequest Request )
+        private Collection<CswNbtObjClassFireClassExemptAmount> _setFireClasses()
         {
-            Collection<CswNbtObjClassFireClassExemptAmount> FireClasses = new Collection<CswNbtObjClassFireClassExemptAmount>();
-            CswPrimaryKey ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
-            if( null != ControlZoneId )
+            CswNbtNode ControlZone = _CswNbtResources.Nodes.GetNode( ControlZoneId );
+            CswNbtMetaDataNodeTypeProp FireClassSetNameNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZone.NodeTypeId, "Fire Class Set Name" );
+            CswPrimaryKey FCEASId = ControlZone.Properties[FireClassSetNameNTP].AsRelationship.RelatedNodeId;
+            Data.FireClassExemptAmountSet = ControlZone.Properties[FireClassSetNameNTP].AsRelationship.CachedNodeName;
+            if( null != FCEASId )
             {
-                CswNbtNode ControlZone = _CswNbtResources.Nodes.GetNode( ControlZoneId );
-                CswNbtMetaDataNodeTypeProp FireClassSetNameNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZone.NodeTypeId, "Fire Class Set Name" );
-                CswPrimaryKey FCEASId = ControlZone.Properties[FireClassSetNameNTP].AsRelationship.RelatedNodeId;
-                if( null != FCEASId )
+                CswNbtMetaDataObjectClass FCEAOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+                foreach ( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
                 {
-                    CswNbtMetaDataObjectClass FCEAOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
-                    foreach ( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
+                    if( FCEANode.SetName.RelatedNodeId == FCEASId )
                     {
-                        if( FCEANode.SetName.RelatedNodeId == FCEASId )
-                        {
-                            FireClasses.Add(FCEANode);
-                        }
+                        FireClasses.Add(FCEANode);
                     }
                 }
             }
             return FireClasses;
         }
 
-        private CswNbtView _getFireClassView( HMISData.HMISDataRequest Request, String HazardClass )
+        private IEnumerable<CswNbtObjClassFireClassExemptAmount> _getRelevantHazardClasses( CswCommaDelimitedString MaterialHazards )
+        {
+            Collection<CswNbtObjClassFireClassExemptAmount> RelevantHazardClasses = new Collection<CswNbtObjClassFireClassExemptAmount>();
+            foreach(String Hazard in MaterialHazards)
+            {
+                foreach( CswNbtObjClassFireClassExemptAmount FireClassNode in FireClasses )
+                {
+                    if( Hazard == FireClassNode.FireHazardClassType.Value )
+                    {
+                        RelevantHazardClasses.Add( FireClassNode );
+                    }
+                }
+            }
+            return RelevantHazardClasses;
+        }
+
+        private CswNbtView _getHMISView()
         {
             CswNbtView HMISView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeType( "Control Zone" );
             if( null != ControlZoneNT )
             {
                 CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClassProp ControlZoneOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.ControlZone );
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-                CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
-                CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataObjectClassProp QuantityOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
-
                 CswNbtViewRelationship LocationVR = HMISView.AddViewRelationship( LocationOC, true );
-                CswNbtViewProperty ControlZoneVP = HMISView.AddViewProperty( LocationVR, ControlZoneOCP );
-                HMISView.AddViewPropertyFilter( ControlZoneVP, 
+
+                CswNbtViewProperty ControlZoneVP = null;
+                foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
+                {
+                    CswNbtMetaDataNodeTypeProp ControlZoneNTP = LocationNT.getNodeTypeProp( "Control Zone" );
+                    if( null != ControlZoneNTP )
+                    {
+                        ControlZoneVP = HMISView.AddViewProperty( LocationVR, ControlZoneNTP );
+                        break;
+                    }
+                }
+                HMISView.AddViewPropertyFilter( ControlZoneVP,
                     CswNbtPropFilterSql.PropertyFilterConjunction.And,
                     CswNbtPropFilterSql.FilterResultMode.Hide,
                     CswNbtSubField.SubFieldName.NodeID,
                     CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                    Request.ControlZoneId );
-                CswNbtViewRelationship ContainerVR = HMISView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.Second, LocationOCP, false );
+                    ControlZoneId.PrimaryKey.ToString() );
+
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+                CswNbtViewRelationship ContainerVR = HMISView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.Second, LocationOCP, true );
+
+                CswNbtMetaDataObjectClassProp QuantityOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
                 CswNbtViewProperty QuantityVP = HMISView.AddViewProperty( ContainerVR, QuantityOCP );
                 HMISView.AddViewPropertyFilter( QuantityVP,
                     CswNbtPropFilterSql.PropertyFilterConjunction.And,
@@ -222,33 +275,43 @@ namespace ChemSW.Nbt.Actions
                     CswNbtSubField.SubFieldName.Value,
                     CswNbtPropFilterSql.PropertyFilterMode.GreaterThan,
                     "0" );
-                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, MaterialOCP, false );
-                CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType("Chemical");
-                if( null != ChemicalNT )
+
+                CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, MaterialOCP, true );                
+
+                CswNbtViewProperty HazardClassesVP = null;
+                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialClass.getNodeTypes() )
                 {
-                    CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = ChemicalNT.getNodeTypeProp("Special Flags");
-                    if ( null != SpecialFlagsNTP )
+                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = MaterialNT.getNodeTypeProp( "Hazard Classes" );
+                    if( null != HazardClassesNTP )
                     {
-                        CswNbtViewProperty SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsNTP );
-                        HMISView.AddViewPropertyFilter( SpecialFlagsVP,
-                            CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                            CswNbtPropFilterSql.FilterResultMode.Unknown,
-                            CswNbtSubField.SubFieldName.Value,
-                            CswNbtPropFilterSql.PropertyFilterMode.NotContains,
-                            "Not Reportable");
-                    }
-                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = ChemicalNT.getNodeTypeProp("Hazard Classes");
-                    if ( null != HazardClassesNTP )
-                    {
-                        CswNbtViewProperty HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesNTP );
-                        HMISView.AddViewPropertyFilter( HazardClassesVP,
-                            CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                            CswNbtPropFilterSql.FilterResultMode.Unknown,
-                            CswNbtSubField.SubFieldName.Value,
-                            CswNbtPropFilterSql.PropertyFilterMode.Contains,
-                            HazardClass);
+                        HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesNTP );
+                        break;
                     }
                 }
+                HMISView.AddViewPropertyFilter( HazardClassesVP,
+                    CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                    CswNbtPropFilterSql.FilterResultMode.Hide,
+                    CswNbtSubField.SubFieldName.Value,
+                    CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+
+                CswNbtViewProperty SpecialFlagsVP = null;
+                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialClass.getNodeTypes() )
+                {
+                    CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = MaterialNT.getNodeTypeProp( "Special Flags" );
+                    if( null != SpecialFlagsNTP )
+                    {
+                        SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsNTP );
+                        break;
+                    }
+                }
+                HMISView.AddViewPropertyFilter( SpecialFlagsVP,
+                    CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                    CswNbtPropFilterSql.FilterResultMode.Hide,
+                    CswNbtSubField.SubFieldName.Value,
+                    CswNbtPropFilterSql.PropertyFilterMode.NotContains,
+                    "Not Reportable" );
             }
             return HMISView;
         }
@@ -273,7 +336,7 @@ namespace ChemSW.Nbt.Actions
             switch( Container.UseType.Value )
             {
                 case CswNbtObjClassContainer.UseTypes.Storage:
-                    switch( Material.PhysicalState )
+                    switch( Material.PhysicalState.ToLower() )
                     {
                         case CswNbtObjClassMaterial.PhysicalStates.Solid:
                             Material.Storage.Solid.Qty += ConvertedQty;
@@ -287,21 +350,24 @@ namespace ChemSW.Nbt.Actions
                     }
                     break;
                 case CswNbtObjClassContainer.UseTypes.Closed:
-                    switch( Material.PhysicalState )
+                    switch( Material.PhysicalState.ToLower() )
                     {
                         case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                            Material.Storage.Solid.Qty += ConvertedQty;
                             Material.Closed.Solid.Qty += ConvertedQty;
                             break;
                         case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+                            Material.Storage.Liquid.Qty += ConvertedQty;
                             Material.Closed.Liquid.Qty += ConvertedQty;
                             break;
                         case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                            Material.Storage.Gas.Qty += ConvertedQty;
                             Material.Closed.Gas.Qty += ConvertedQty;
                             break;
                     }
                     break;
                 case CswNbtObjClassContainer.UseTypes.Open:
-                    switch( Material.PhysicalState )
+                    switch( Material.PhysicalState.ToLower() )
                     {
                         case CswNbtObjClassMaterial.PhysicalStates.Solid:
                             Material.Open.Solid.Qty += ConvertedQty;
@@ -317,7 +383,7 @@ namespace ChemSW.Nbt.Actions
         private CswPrimaryKey _getBaseUnitId( String PhysicalState )
         {
             String UnitName = "";
-            switch( PhysicalState )
+            switch( PhysicalState.ToLower() )
             {
                 case CswNbtObjClassMaterial.PhysicalStates.Solid:
                 case CswNbtObjClassMaterial.PhysicalStates.NA:
@@ -331,12 +397,15 @@ namespace ChemSW.Nbt.Actions
                     break;
             }
             CswNbtMetaDataObjectClass UoMOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
-            CswPrimaryKey BaseUnitId = ( 
-                from CswNbtObjClassUnitOfMeasure UoMNode 
-                    in UoMOC.getNodes( false, false ) 
-                where UoMNode.Name.Text == UnitName 
-                select UoMNode.NodeId 
-                ).FirstOrDefault();
+            CswPrimaryKey BaseUnitId = null;
+            foreach (CswNbtObjClassUnitOfMeasure UoMNode in UoMOC.getNodes(false, false))
+            {
+                if( UoMNode.Name.Text == UnitName )
+                {
+                    BaseUnitId = UoMNode.NodeId;
+                    break;
+                }
+            }
             return BaseUnitId;
         }
 
