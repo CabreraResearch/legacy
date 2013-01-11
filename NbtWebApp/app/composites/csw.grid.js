@@ -57,6 +57,10 @@
                     groupField: '',
                     groupHeaderTpl: '{columnName}: {name}',
                     summaryEnabled: false,
+                    printingEnabled: false,
+                    gridToPrint: function (grid) {
+                        return cswPublic;
+                    },
 
                     dockedItems: []
                 };
@@ -116,66 +120,6 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
-                if (cswPrivate.groupField.length > 0) {
-                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
-
-                    var toggleGroups = function (collapse) {
-                        for (var i in cswPrivate.grid.view.features) {
-                            if (cswPrivate.grid.view.features[i].ftype === 'grouping' ||
-                            cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
-                                if (collapse) {
-                                    cswPrivate.grid.view.features[i].collapseAll();
-                                } else {
-                                    cswPrivate.grid.view.features[i].collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
-                                    cswPrivate.grid.view.features[i].expandAll();
-                                }
-                            }
-                        }
-                    };
-                    var groupingItems = [
-                        {
-                            xtype: 'button',
-                            text: 'Expand all Rows',
-                            handler: function() {
-                                toggleGroups(false);
-                            }
-                        },
-                        {
-                            xtype: 'tbseparator'
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Collapse all Rows',
-                            handler: function() {
-                                toggleGroups(true);
-                            }
-                        }];
-                    if (cswPrivate.summaryEnabled) {
-                        groupingItems.push({ xtype: 'tbseparator' });
-                        var showSummary = true;
-                        groupingItems.push({
-                            tooltip: 'Toggle the visibility of the summary row',
-                            text: 'Toggle Summary',
-                            enableToggle: true,
-                            pressed: true,
-                            handler: function () {
-                                showSummary = !showSummary;
-                                for (var i in cswPrivate.grid.view.features) {
-                                    if (cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
-                                        cswPrivate.grid.view.features[i].toggleSummaryRow(showSummary);
-                                        cswPrivate.grid.view.refresh();
-                                    }
-                                }
-                            }
-                        });
-                    }
-
-                    cswPrivate.dockedItems = [{
-                        xtype: 'toolbar',
-                        dock: 'top',
-                        items: groupingItems
-                    }];
-                }
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -201,6 +145,86 @@
 
                 return window.Ext.create('Ext.data.Store', storeopts);
             }); // makeStore()
+            
+
+            cswPrivate.makeDockedItems = function () {
+                var topToolbarItems = [];
+
+                //Printing
+                if (cswPrivate.printingEnabled) {
+                    topToolbarItems.push({
+                        tooltip: 'Print the contents of the grid',
+                        text: 'Print',
+                        handler: function () {
+                            var gridToPrint = cswPrivate.gridToPrint(cswPublic.extGrid);
+                            gridToPrint.print();
+                        }
+                    });
+                }
+
+                //Grouping and Group Summary
+                if (cswPrivate.groupField.length > 0) {
+                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+
+                    var toggleGroups = function (collapse) {
+                        for (var i in cswPrivate.grid.view.features) {
+                            if (cswPrivate.grid.view.features[i].ftype === 'grouping' ||
+                            cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
+                                if (collapse) {
+                                    cswPrivate.grid.view.features[i].collapseAll();
+                                } else {
+                                    cswPrivate.grid.view.features[i].collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
+                                    cswPrivate.grid.view.features[i].expandAll();
+                                }
+                            }
+                        }
+                    };
+                    if (topToolbarItems.length > 0) {
+                        topToolbarItems.push({ xtype: 'tbseparator' });
+                    }
+                    topToolbarItems.push({
+                        xtype: 'button',
+                        text: 'Expand all Rows',
+                        handler: function () {
+                            toggleGroups(false);
+                        }
+                    });
+                    topToolbarItems.push({ xtype: 'tbseparator' });
+                    topToolbarItems.push({
+                        xtype: 'button',
+                        text: 'Collapse all Rows',
+                        handler: function () {
+                            toggleGroups(true);
+                        }
+                    });
+                    if (cswPrivate.summaryEnabled) {
+                        topToolbarItems.push({ xtype: 'tbseparator' });
+                        var showSummary = true;
+                        topToolbarItems.push({
+                            tooltip: 'Toggle the visibility of the summary row',
+                            text: 'Toggle Summary',
+                            enableToggle: true,
+                            pressed: true,
+                            handler: function () {
+                                showSummary = !showSummary;
+                                for (var i in cswPrivate.grid.view.features) {
+                                    if (cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
+                                        cswPrivate.grid.view.features[i].toggleSummaryRow(showSummary);
+                                        cswPrivate.grid.view.refresh();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                if (topToolbarItems.length > 0) {
+                    cswPrivate.dockedItems.push({
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: topToolbarItems
+                    });
+                }
+            };
 
 
             cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
@@ -482,6 +506,7 @@
                 cswPrivate.rootDiv = cswPublic.div();
 
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
+                cswPrivate.makeDockedItems();
                 cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
                 if(cswPrivate.grid) {
