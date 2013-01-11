@@ -56,6 +56,7 @@
                     topToolbar: [],
                     groupField: '',
                     groupHeaderTpl: '{columnName}: {name}',
+                    summaryEnabled: false,
 
                     dockedItems: []
                 };
@@ -120,7 +121,8 @@
 
                     var toggleGroups = function (collapse) {
                         for (var i in cswPrivate.grid.view.features) {
-                            if (cswPrivate.grid.view.features[i].ftype === 'grouping') {
+                            if (cswPrivate.grid.view.features[i].ftype === 'grouping' ||
+                            cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
                                 if (collapse) {
                                     cswPrivate.grid.view.features[i].collapseAll();
                                 } else {
@@ -130,28 +132,48 @@
                             }
                         }
                     };
+                    var groupingItems = [
+                        {
+                            xtype: 'button',
+                            text: 'Expand all Rows',
+                            handler: function() {
+                                toggleGroups(false);
+                            }
+                        },
+                        {
+                            xtype: 'tbseparator'
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Collapse all Rows',
+                            handler: function() {
+                                toggleGroups(true);
+                            }
+                        }];
+                    if (cswPrivate.summaryEnabled) {
+                        groupingItems.push({ xtype: 'tbseparator' });
+                        var showSummary = true;
+                        groupingItems.push({
+                            tooltip: 'Toggle the visibility of the summary row',
+                            text: 'Toggle Summary',
+                            enableToggle: true,
+                            pressed: true,
+                            handler: function () {
+                                showSummary = !showSummary;
+                                for (var i in cswPrivate.grid.view.features) {
+                                    if (cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
+                                        cswPrivate.grid.view.features[i].toggleSummaryRow(showSummary);
+                                        cswPrivate.grid.view.refresh();
+                                    }
+                                }
+                            }
+                        });
+                    }
 
                     cswPrivate.dockedItems = [{
                         xtype: 'toolbar',
                         dock: 'top',
-                        items: [
-                            {
-                                xtype: 'button',
-                                text: 'Expand all Rows',
-                                handler: function () {
-                                    toggleGroups(false);
-                                }
-                            },
-                            {
-                                xtype: 'tbseparator'
-                            },
-                            {
-                                xtype: 'button',
-                                text: 'Collapse all Rows',
-                                handler: function () {
-                                    toggleGroups(true);
-                                }
-                            }]
+                        items: groupingItems
                     }];
                 }
                 var storeopts = {
@@ -233,7 +255,7 @@
                     },
                     {
                         id: 'group',
-                        ftype: 'grouping',
+                        ftype: 'grouping'+ (cswPrivate.summaryEnabled ? 'summary' : ''),
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
                         enableGroupingMenu: false,
