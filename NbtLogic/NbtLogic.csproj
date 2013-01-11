@@ -106,8 +106,11 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -115,12 +118,39 @@
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28254.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28260.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947_part2.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27867_part2.cs" />
+    <Compile Include="csw\Mobile\CswNbtCISProNbtMobileData.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleC3.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28295.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28293.cs" />
+    <Compile Include="Service References\ChemCatCentral\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ChemCatCentral\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ChemCatCentral\configuration.svcinfo" />
+    <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
+    <None Include="Service References\ChemCatCentral\Search.disco" />
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28254.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28260.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947_part2.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27867_part2.cs" />
     <Compile Include="csw\Actions\CswNbtContainerDataContract.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassGHSPhrase.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassGHS.cs" />
@@ -130,7 +160,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpContainerReconciliationActions.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerGroup.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28146.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28146.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerUpdate.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropCASNo.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtTierII.cs" />
@@ -282,8 +312,8 @@
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Requesting_Case27542.cs" />
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_RequestItem_Case27488.cs" />
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Size_Case27438.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27551.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27551.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case28421.cs" />
     <Compile Include="csw\Schema\scripts\plsql\CswUpdateSchemaPLSQLTypes.cs" />
@@ -302,12 +332,12 @@
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case27864_part2.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case27864.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case24524.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28020.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28020.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case24489_Part2.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case28069.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case27866.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27912.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27920.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27912.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27920.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItem.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemAdd.cs" />
@@ -317,10 +347,11 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemTab.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemType.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27881.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27881.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case27876.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case24489.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28267.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28374B.cs" />
@@ -347,7 +378,7 @@
     <Compile Include="csw\Search\CswNbtSearchManager.cs" />
     <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27884.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27884.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27709.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28016_2.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case28016.cs" />
@@ -606,7 +637,7 @@
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_CaseXXXXX.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case26760.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27528.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27528.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27551_part2.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27578.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27578_part2.cs" />
@@ -635,20 +666,20 @@
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_MobileModule_Case27859.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27606.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27694.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27740.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27801.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27865_part1.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27867.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27869.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27872.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27873.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27880.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_CertMethod_Case27868.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_IdentityTab_Case27965.cs" />
-    <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27865_part2.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27606.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27694.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27740.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27801.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27865_part1.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27867.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27869.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27872.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27873.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27880.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_CertMethod_Case27868.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_IdentityTab_Case27965.cs" />
+    <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27865_part2.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
@@ -918,6 +949,11 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Resources\SqlRptViewDict.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -926,6 +962,28 @@
     </Compile>
     <None Include="ChemSW.snk" />
     <None Include="csw\Actions\Example.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search.wsdl" />
+    <None Include="Service References\ChemCatCentral\Search.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search41.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search42.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -969,6 +1027,12 @@
   <ItemGroup>
     <Content Include="Resources\SMTP.Net.dll" />
     <Content Include="Resources\SMTP.Net.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ChemCatCentral\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

@@ -19,6 +19,7 @@
                 showSave: true,
                 allowEdit: true,
                 allowDelete: true,
+                allowImport: false, //c3 addition
                 extraAction: null,
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onExtraAction: null,  // function(nodeObj) {}
@@ -66,6 +67,7 @@
                     }
                 }; // onFilterClick()
 
+                // Nodetype Filter Menu
                 Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
@@ -114,11 +116,56 @@
 
                     } // success
                 }); // ajax
-                
+
+                // Search Menu
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Menus/getSearchMenuItems',
+                    success: function (data) {
+                        var srchMenuItems = [];
+
+                        srchMenuItems.push({
+                            text: 'Search',
+                            icon: Csw.getIconUrlString(16, Csw.enums.iconType.magglass),
+                            handler: function () { srchOnClick(); }
+                        });
+
+                        var selectedText = 'Search';
+                        var selectedIcon = '';
+                        Csw.each(data.searchTypes, function (st) {
+                            if (false === Csw.isNullOrEmpty(st.name)) {
+                                srchMenuItems.push({
+                                    text: st.name,
+                                    icon: st.iconfilename,
+                                    handler: function () { srchOnClick(st.name); }
+                                });
+                            }
+                        });
+
+                        cswPrivate.searchButton = window.Ext.create('Ext.SplitButton', {
+                            text: selectedText,
+                            icon: selectedIcon,
+                            width: (selectedText.length * 8) + 16,
+                            renderTo: cswtable.cell(1, 3).getId(),
+                            handler: srchOnClick,
+                            menu: {
+                                items: srchMenuItems
+                            }
+                        }); // searchButton
+
+                    } // success
+                }); // ajaxWcf
+
                 var srchOnClick = function (selectedOption) {
                     switch (selectedOption) {
                         case 'Structure Search':
                             $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                            break;
+                        case 'ChemCatCentral Search':
+                            $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
+                                c3searchterm: cswPrivate.searchinput.val(),
+                                c3handleresults: cswPublic.handleResults,
+                                clearview: cswPrivate.onBeforeSearch
+                            });
                             break;
                         default:
                             Csw.publish('initPropertyTearDown');
@@ -126,7 +173,6 @@
                             cswPrivate.newsearch();
                     }
                 };
-
                 cswPrivate.searchinput = cswtable.cell(1, 2).input({
                     type: Csw.enums.inputTypes.search,
                     width: cswPrivate.searchbox_width,
@@ -134,15 +180,6 @@
                     onKeyEnter: function () {
                         Csw.tryExec(srchOnClick, cswPrivate.searchButton.selectedOption);
                     }
-                });
-
-                cswPrivate.searchButton = cswtable.cell(1, 3).menuButton({
-                    name: 'searchBtn',
-                    width: ('Search'.length * 8) + 16,
-                    menuOptions: ['Search', 'Structure Search'],
-                    selectedText: 'Search',
-                    size: 'small',
-                    onClick: srchOnClick
                 });
             })();
 
@@ -158,13 +195,13 @@
                         ObjectClassId: cswPrivate.objectclassid
                     },
                     success: function (data) {
-                        cswPrivate.handleResults(data);
+                        cswPublic.handleResults(data);
                         Csw.tryExec(cswPrivate.onAfterNewSearch, cswPrivate.sessiondataid);
                     }
                 });
             }; // search()
 
-            cswPrivate.handleResults = function (data) {
+            cswPublic.handleResults = function (data) {
                 var fdiv, ftable;
 
                 cswPrivate.sessiondataid = data.sessiondataid;
@@ -181,10 +218,77 @@
                         width: '100%'
                     });
 
-                    resultstable.cell(1, 1).div({
-                        cssclass: 'SearchLabel',
-                        text: 'Search Results: (' + data.table.results + ')'
-                    });
+                    var table2 = resultstable.cell(1, 1).table({
+                        cellvalign: 'bottom'
+                    }).css({ 'padding-bottom': '5px' });
+
+                    //If user is performing a universal search, direct them to C3 search
+                    if (data.searchtype == 'universal') {
+
+                        table2.cell(1, 1).div({
+                            cssclass: 'SearchLabel',
+                            text: 'Search Results: (' + data.table.results + ')'
+                        });
+
+                        //If the C3 module is enabled
+                        if (data.alternateoption) {
+
+                            table2.cell(1, 2).div({
+                                text: '&nbsp; &nbsp;'
+                            });
+
+                            table2.cell(1, 3).div({
+                                cssclass: 'SearchC3Label',
+                                text: 'Not the results you wanted? Try searching'
+                            });
+
+                            table2.cell(1, 4).div({
+                                text: '&nbsp;'
+                            });
+
+                            //C3 icon
+                            table2.cell(1, 5).img({
+                                src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
+                            });
+
+                            table2.cell(1, 6).div({
+                                text: '&nbsp;'
+                            });
+
+                            table2.cell(1, 7).a({
+                                cssclass: 'SearchC3Label',
+                                text: 'ChemCatCentral.',
+                                onClick: function () {
+                                    $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
+                                        c3searchterm: cswPrivate.searchinput.val(),
+                                        c3handleresults: cswPublic.handleResults,
+                                        clearview: cswPrivate.onBeforeSearch
+                                    });
+                                }
+                            });
+                            
+                        } // if (data.alternateoption != null)
+
+                    } //if (data.searchtype == 'universal')
+                    else {
+                        var table3 = table2.cell(1, 1).table({
+                            cellvalign: 'bottom'
+                        }).css({ 'padding-bottom': '5px' });
+
+                        //C3 icon
+                        table3.cell(1, 1).img({
+                            src: Csw.getIconUrlString(18, Csw.enums.iconType.cat)
+                        });
+
+                        table3.cell(1, 2).div({
+                            text: '&nbsp;'
+                        });
+
+                        table3.cell(1, 3).div({
+                            cssclass: 'SearchLabel',
+                            text: 'ChemCatCentral Search Results: (' + data.table.results + ')'
+                        });
+                    }
 
                     if (Csw.bool(cswPrivate.compactResults)) {
                         resultstable.cell(1, 2).css({ width: '100px' });
@@ -278,14 +382,14 @@
                 if (hasFilters && cswPrivate.showSave) {
                     fdiv.br();
                     var btntbl = fdiv.table();
-                    btntbl.cell(1,1).buttonExt({
+                    btntbl.cell(1, 1).buttonExt({
                         enabledText: 'Save',
                         disableOnClick: false,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                         onClick: cswPrivate.save
                     });
-                    if(false === Csw.isNullOrEmpty(data.searchid)) {
-                        btntbl.cell(1,2).buttonExt({
+                    if (false === Csw.isNullOrEmpty(data.searchid)) {
+                        btntbl.cell(1, 2).buttonExt({
                             enabledText: 'Delete',
                             disableOnClick: false,
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
@@ -371,7 +475,7 @@
                         Filter: JSON.stringify(thisFilter),
                         Action: action
                     },
-                    success: cswPrivate.handleResults
+                    success: cswPublic.handleResults
                 });
             }; // filter()
 
@@ -383,7 +487,7 @@
                         SessionDataId: cswPrivate.sessiondataid,
                         NodeTypeId: nodetypeid
                     },
-                    success: cswPrivate.handleResults
+                    success: cswPublic.handleResults
                 });
             }; // filter()
 
@@ -397,7 +501,7 @@
                             urlMethod: 'saveSearch',
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
-                                Name: name, 
+                                Name: name,
                                 Category: category
                             },
                             success: function (data) {
@@ -420,7 +524,7 @@
                     } // success
                 }); // ajax  
             }; // save()
-            
+
             cswPublic.restoreSearch = function (searchid) {
 
                 cswPrivate.sessiondataid = searchid;
@@ -432,7 +536,7 @@
                         SessionDataId: cswPrivate.sessiondataid
                     },
                     success: function (data) {
-                        cswPrivate.handleResults(data);
+                        cswPublic.handleResults(data);
                         Csw.tryExec(cswPrivate.onAfterNewSearch, cswPrivate.sessiondataid);
                     }
                 });
