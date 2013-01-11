@@ -103,19 +103,20 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class HMISQty
         {
+            private Int32 Precision = 6;
             private Double _MAQ;
             private Double _Qty;
             [DataMember]
             public Double MAQ
             {
                 get { return _MAQ; }
-                set { _MAQ = CswTools.IsDouble( value ) ? value : 0.0; }
+                set { _MAQ = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
             }
             [DataMember]
             public Double Qty
             {
                 get { return _Qty; }
-                set { _Qty = CswTools.IsDouble( value ) ? value : 0.0; }
+                set { _Qty = CswTools.IsDouble( value ) ? Math.Round( value, 6, MidpointRounding.AwayFromZero ) : 0.0; }
             }
         }
 
@@ -342,7 +343,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswPrimaryKey NewUnitId = _getBaseUnitId( Material.PhysicalState );
             CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, Container.Quantity.UnitId, NewUnitId );
-            Double ConvertedQty = CswConvert.ToDouble(Conversion.convertUnit( Container.Quantity.Quantity ));
+            Double ConvertedQty = Conversion.convertUnit( Container.Quantity.Quantity );
             switch( Container.UseType.Value )
             {
                 case CswNbtObjClassContainer.UseTypes.Storage:
