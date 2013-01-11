@@ -4,21 +4,8 @@
 (function csw_nbt_nodeTree() {
     "use strict";
 
-    Csw.jsTreeGetSelected = Csw.jsTreeGetSelected ||
-       Csw.register('jsTreeGetSelected', function ($treediv) {
-           var idPrefix = $treediv.CswAttrDom('id');
-           var $SelectedItem = $treediv.jstree('get_selected');
-           var ret = {
-               'iconurl': $SelectedItem.children('a').children('ins').css('background-image'),
-               'id': Csw.string($SelectedItem.CswAttrDom('id')).substring(idPrefix.length),
-               'text': Csw.string($SelectedItem.children('a').first().text()).trim(),
-               '$item': $SelectedItem
-           };
-           return ret;
-       });
-
-    Csw.nbt.nodeTree = Csw.nbt.nodeTree ||
-    Csw.nbt.register('nodeTree', function (opts) {
+    Csw.nbt.nodeTreeExt = Csw.nbt.nodeTreeExt ||
+        Csw.nbt.register('nodeTreeExt', function (opts) {
 
         var cswPrivate = {
             name: '',

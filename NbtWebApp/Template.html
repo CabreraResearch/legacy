@@ -5,8 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <link rel="shortcut icon" href="images/favicon.ico" />
     <title>ChemSW Live</title>
+</head>
+<body>
+    <div id="spinner" width="100%" style="text-align: center; display: none;">
+        <img src="images/ajax/progress.gif" /></div>
+    <div id="rptDiv">
+        
+        <div id="divBody"></div>
+    </div>
+    <div id="DialogErrorDiv"></div>
+    
     <!--#include file="MainIncludes.html" -->
-    <!--#include file="MainCswIncludes.html" -->
+    <!--#include file="DevIncludes.html" -->
     <script type="text/javascript">
 
         $(document).ready(
@@ -27,19 +37,61 @@
                 }
 
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
+
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Trees/run/Equipment By Location',
+                    success: function(data) {
+                        console.log(data.Tree[0]);
+debugger;
+                        var store = Ext.create('Ext.data.TreeStore', {
+                            root: data.Tree[0],
+
+                            sorters: [{
+                                property: 'text',
+                                direction: 'ASC'
+                            }]
+                        });
+                        
+                        var tree = Ext.create('Ext.tree.Panel', {
+                            store: store,
+                            renderTo: 'divBody',
+                            height: 300,
+                            width: 250,
+                            title: 'Ext Tree',
+                            useArrows: true,
+                            dockedItems: [{
+                                xtype: 'toolbar',
+                                items: [{
+                                    text: 'Expand All',
+                                    handler: function () {
+                                        tree.getEl().mask('Expanding tree...');
+                                        var toolbar = this.up('toolbar');
+                                        toolbar.disable();
+
+                                        tree.expandAll(function () {
+                                            tree.getEl().unmask();
+                                            toolbar.enable();
+                                        });
+                                    }
+                                }, {
+                                    text: 'Collapse All',
+                                    handler: function () {
+                                        var toolbar = this.up('toolbar');
+                                        toolbar.disable();
+
+                                        tree.collapseAll(function () {
+                                            toolbar.enable();
+                                        });
+                                    }
+                                }]
+                            }]
+                        });
+                    }
+                });
+
+
             })
         );
     </script>
-</head>
-<body>
-    <div id="spinner" width="100%" style="text-align: center; display: none;">
-        <img src="images/ajax/progress.gif" /></div>
-    <div id="rptDiv">
-        
-        <div id="divBody"></div>
-    </div>
-    <div id="DialogErrorDiv"></div>
-    
-
 </body>
 </html>
