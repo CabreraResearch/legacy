@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String PhysicalState = String.Empty;
             [DataMember]
-            public String FireClass = String.Empty;
+            public String HazardClass = String.Empty;
             [DataMember]
             public StorageData Storage;
             [DataMember]
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.Actions
                                         {
                                             HMISData.HMISMaterial HMISMaterial = new HMISData.HMISMaterial();
                                             HMISMaterial.Material = MaterialName;
-                                            HMISMaterial.FireClass = HazardClass.FireHazardClassType.Value;
+                                            HMISMaterial.HazardClass = HazardClass.FireHazardClassType.Value;
                                             HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
                                             _setFireClassMAQData( HMISMaterial, HazardClass );
                                             _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
@@ -342,7 +342,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswPrimaryKey NewUnitId = _getBaseUnitId( Material.PhysicalState );
             CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, Container.Quantity.UnitId, NewUnitId );
-            Double ConvertedQty = Conversion.convertUnit( Container.Quantity.Quantity );
+            Double ConvertedQty = CswConvert.ToDouble(Conversion.convertUnit( Container.Quantity.Quantity ));
             switch( Container.UseType.Value )
             {
                 case CswNbtObjClassContainer.UseTypes.Storage:

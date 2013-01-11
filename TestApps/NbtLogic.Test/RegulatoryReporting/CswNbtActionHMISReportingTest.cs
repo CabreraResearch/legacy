@@ -145,7 +145,7 @@ namespace ChemSw.Nbt.Test
             };
             HMISData Data = HMISAction.getHMISData( Request );
             Assert.AreEqual( 2, Data.Materials.Count );
-            Assert.AreNotEqual( Data.Materials[0].FireClass, Data.Materials[1].FireClass );
+            Assert.AreNotEqual( Data.Materials[0].HazardClass, Data.Materials[1].HazardClass );
             foreach( HMISData.HMISMaterial Material in Data.Materials )
             {
                 Assert.AreEqual( ChemicalNode.NodeName, Material.Material );
@@ -197,7 +197,7 @@ namespace ChemSw.Nbt.Test
             Assert.AreEqual( 2, Data.Materials.Count );
             foreach( HMISData.HMISMaterial Material in Data.Materials )
             {
-                Assert.AreEqual( "Exp", Material.FireClass );
+                Assert.AreEqual( "Exp", Material.HazardClass );
                 Assert.AreEqual( 1, Material.Storage.Liquid.Qty );
             }
         }
