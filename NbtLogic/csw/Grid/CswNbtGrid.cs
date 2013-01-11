@@ -203,17 +203,13 @@ namespace ChemSW.Nbt.Grid
                 // If the view defines the property by objectclass propname, but the nodetype propname differs, this might break
                 CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, Prop.PropName );
 
-                bool IsHidden = CswConvert.ToBoolean( Prop.Hidden );
+                bool IsHidden = Prop.Hidden;
                 bool IsLocked = Tree.getNodeLockedForCurrentPosition();
                 string newValue = string.Empty;
                 if( false == IsHidden )
                 {
                     CswPrimaryKey NodeId = Tree.getNodeIdForCurrentPosition();
-                    CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.FieldType;
-                    Int32 JctNodePropId = Prop.JctNodePropId;
-                    Int32 NodeTypePropId = Prop.NodeTypePropId;
-                    string PropName = Prop.PropName;
-                    CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                    CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
 
                     string oldValue = Prop.Gestalt;
                     if( string.IsNullOrEmpty( oldValue ) )
@@ -221,7 +217,7 @@ namespace ChemSW.Nbt.Grid
                         oldValue = null;
                     }
 
-                    switch( FieldType )
+                    switch( Prop.FieldType )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.Button:
                             if( false == IsLocked )
@@ -231,8 +227,8 @@ namespace ChemSW.Nbt.Grid
                                     DataIndex = dataIndex.ToString(),
                                     RowNo = gridrow.RowNo,
                                     MenuOptions = "",
-                                    SelectedText = oldValue ?? PropName,
-                                    PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId )
+                                    SelectedText = oldValue ?? Prop.PropName,
+                                    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId )
                                 } );
                             }
                             break;
@@ -240,7 +236,7 @@ namespace ChemSW.Nbt.Grid
                             string File = Prop.getPropColumnValue( MetaDataProp );
                             if( false == String.IsNullOrEmpty( File ) )
                             {
-                                string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                                string LinkUrl = CswNbtNodePropBlob.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
                                 if( false == string.IsNullOrEmpty( LinkUrl ) )
                                 {
                                     newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ?? "File" ) + "</a>";
@@ -248,7 +244,7 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.Image:
-                            string ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                            string ImageUrl = CswNbtNodePropImage.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
                             if( false == string.IsNullOrEmpty( ImageUrl ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + ImageUrl + "\">" + ( oldValue ?? "Image" ) + "</a>";
@@ -269,7 +265,7 @@ namespace ChemSW.Nbt.Grid
                             newValue = CswConvert.ToDisplayString( CswConvert.ToTristate( oldValue ) );
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.MOL:
-                            string molUrl = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                            string molUrl = CswNbtNodePropMol.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
                             if( false == string.IsNullOrEmpty( molUrl ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + molUrl + "\">" + "Structure.jpg" + "</a>";

@@ -446,9 +446,8 @@ namespace ChemSW.Nbt.Search
                     Collection<CswNbtTreeNodeProp> Props = Tree.getChildNodePropsOfNode();
                     foreach( CswNbtTreeNodeProp Prop in Props )
                     {
-                        Int32 NodeTypePropId = Prop.NodeTypePropId;
                         CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( Prop.FieldType );
-                        if( false == FilteredPropIds.Contains( NodeTypePropId ) && FieldType.Searchable )
+                        if( false == FilteredPropIds.Contains( Prop.NodeTypePropId ) && FieldType.Searchable )
                         {
                             string Gestalt = Prop.Gestalt;
                             if( Gestalt.Length > 50 )
@@ -456,15 +455,15 @@ namespace ChemSW.Nbt.Search
                                 Gestalt = Gestalt.Substring( 0, 50 );
                             }
 
-                            if( false == PropCounts.ContainsKey( NodeTypePropId ) )
+                            if( false == PropCounts.ContainsKey( Prop.NodeTypePropId ) )
                             {
-                                PropCounts[NodeTypePropId] = new Dictionary<string, Int32>();
+                                PropCounts[Prop.NodeTypePropId] = new Dictionary<string, Int32>();
                             }
-                            if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
+                            if( false == PropCounts[Prop.NodeTypePropId].ContainsKey( Gestalt ) )
                             {
-                                PropCounts[NodeTypePropId][Gestalt] = 0;
+                                PropCounts[Prop.NodeTypePropId][Gestalt] = 0;
                             }
-                            PropCounts[NodeTypePropId][Gestalt] += 1;
+                            PropCounts[Prop.NodeTypePropId][Gestalt] += 1;
                         }
                     }
 
