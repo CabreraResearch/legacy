@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -8,65 +7,196 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Tree;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtSdTrees
     {
-        /// <summary>
-        /// View Select Return Object
-        /// </summary>
-        [DataContract]
-        public class CswNbtTreesReturn: CswWebSvcReturn
+        public class Contract
         {
-            public CswNbtTreesReturn()
+            [DataContract]
+            public class Request
             {
-                Data = new Collection<CswExtTree>();
+                public Request()
+                {
+                    IncludeNodeId = new CswPrimaryKey();
+                    IncludeNodeKey = null;
+                    ViewId = new CswNbtViewId();
+                }
+
+                public CswPrimaryKey IncludeNodeId;
+
+                [DataMember]
+                public string NodeId
+                {
+                    get
+                    {
+                        string ret = string.Empty;
+                        if( CswTools.IsPrimaryKey( IncludeNodeId ) )
+                        {
+                            ret = IncludeNodeId.ToString();
+                        }
+                        return ret;
+                    }
+                    set { IncludeNodeId = CswConvert.ToPrimaryKey( value ); }
+                }
+
+                public CswNbtNodeKey IncludeNodeKey;
+
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                public string NodeKey
+                {
+                    get
+                    {
+                        string ret = string.Empty;
+                        if( null != IncludeNodeKey )
+                        {
+                            ret = IncludeNodeKey.ToString();
+                        }
+                        return ret;
+                    } 
+                    set { IncludeNodeKey = new CswNbtNodeKey( value ); }
+                }
+
+                public CswNbtViewId ViewId = null;
+
+                [DataMember]
+                public string NbtViewId
+                {
+                    get
+                    {
+                        string ret = string.Empty;
+                        if( null != ViewId && ViewId.isSet() )
+                        {
+                            ret = ViewId.ToString();
+                        }
+                        return ret;
+                    }
+                    set
+                    {
+                        ViewId = new CswNbtViewId( value );
+                    }
+                }
+
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                public bool IncludeNodeRequired = false;
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                public bool IncludeInQuickLaunch = false;
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                public string DefaultSelect;
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                public string AccessedByObjClassId = "";
             }
 
-            [DataMember] 
-            public Collection<CswExtTree> Data;
+            public class Response: CswWebSvcReturn
+            {
+                public Response()
+                {
+                    Data = new ResponseData();
+                }
+
+                [DataMember]
+                public ResponseData Data;
+
+                [DataContract]
+                public class ResponseData
+                {
+                    public ResponseData()
+                    {
+                        Tree = new Collection<CswExtTree.TreeNode>();
+                        ViewMode = NbtViewRenderingMode.Tree;
+                        PageSize = 50;
+                    }
+
+                    [DataMember]
+                    public Collection<CswExtTree.TreeNode> Tree;
+
+                    public CswNbtSessionDataId ViewId { get; set; }
+
+                    [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                    public string NewViewId
+                    {
+                        get
+                        {
+                            string ret = string.Empty;
+                            if( null != ViewId && ViewId.isSet() )
+                            {
+                                ret = ViewId.ToString();
+                            }
+                            return ret;
+                        }
+                        set { ViewId = new CswNbtSessionDataId( value ); }
+                    }
+
+                    [IgnoreDataMember]
+                    public NbtViewRenderingMode ViewMode { get; set; }
+
+                    [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                    public string NewViewMode
+                    {
+                        get { return ViewMode.ToString(); }
+                        set { ViewMode = value; }
+                    }
+
+                    [DataMember]
+                    public int PageSize = 50;
+
+                    public CswNbtNodeKey SelectedNodeKey;
+
+                    [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                    public string SelectedId
+                    {
+                        get
+                        {
+                            string ret = string.Empty;
+                            if( null != SelectedNodeKey )
+                            {
+                                ret = SelectedNodeKey.ToString();
+                            }
+                            return ret;
+                        }
+                        set { SelectedNodeKey = new CswNbtNodeKey( value ); }
+                    }
+                }
+            }
         }
-        
+
+
         private readonly CswNbtResources _CswNbtResources;
         private CswNbtView _View;
-        private string _IdPrefix;
 
-
-        public CswNbtSdTrees( CswNbtResources CswNbtResources, CswNbtView View, string IdPrefix = "" )
+        public CswNbtSdTrees( CswNbtResources CswNbtResources, CswNbtView View )
         {
             _CswNbtResources = CswNbtResources;
-            _IdPrefix = IdPrefix;
             _View = View;
         }
 
         /// <summary>
         /// Recursively iterate the tree and add child nodes according to parent hierarchy
         /// </summary>
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, JArray GrandParentNode, bool Recurse )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, bool Recurse )
         {
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
             {
                 Tree.goToNthChild( c );
 
-                JObject ThisNodeObj = _treeNodeJObject( Tree );
-                GrandParentNode.Add( ThisNodeObj );
+                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree );
+                TreeNodes.Add( TreeNode );
 
-                if( Recurse )
+                if( Recurse && null != TreeNode.Children )
                 {
-                    _runTreeNodesRecursive( Tree, (JArray) ThisNodeObj["children"], Recurse );
+                    _runTreeNodesRecursive( Tree, TreeNode.Children, Recurse );
                 }
                 Tree.goToParentNode();
             } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
 
             if( Tree.getCurrentNodeChildrenTruncated() )
             {
-                JObject ThisTruncated = new JObject();
-                ThisTruncated["data"] = "Results Truncated";
-                ThisTruncated["icon"] = "Images/icons/truncated.gif";
-                ThisTruncated["state"] = "leaf";
-                GrandParentNode.Add( ThisTruncated );
+                CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree );
+                TruncatedTreeNode.Name = "Results Truncated";
+                TruncatedTreeNode.IsLeaf = true;
+                TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
+                TreeNodes.Add( TruncatedTreeNode );
             }
 
         } // _runTreeNodesRecursive()
@@ -75,9 +205,9 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Generate a JObject for the tree's current node
         /// </summary>
-        private JObject _treeNodeJObject( ICswNbtTree Tree )
+        private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree )
         {
-            JObject ThisNodeObj = new JObject();
+            CswExtTree.TreeNode ThisTreeNode = new CswExtTree.TreeNode();
 
             CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
@@ -91,12 +221,6 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             switch( ThisNodeKey.NodeSpecies )
             {
-                //case NodeSpecies.More:
-                //    ThisNodeId = ThisNodeKey.NodeId.ToString();
-                //    ThisNodeName = NodeSpecies.More.ToString() + "...";
-                //    ThisNodeIcon = "Images/icons/triangle_blueS.gif";
-                //    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
-                //    break;
                 case NodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
@@ -110,6 +234,7 @@ namespace ChemSW.Nbt.WebServices
                     break;
                 case NodeSpecies.Group:
                     ThisNodeRel = "group";
+                    ThisTreeNode.CssClass = "folder";
                     break;
             }
 
@@ -124,100 +249,113 @@ namespace ChemSW.Nbt.WebServices
                 ThisNodeState = "leaf";
             }
 
-            ThisNodeObj["data"] = ThisNodeName;
-            ThisNodeObj["icon"] = ThisNodeIcon;
-            ThisNodeObj["attr"] = new JObject();
-            ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeKeyString;   // This is the only unique string for this node in this tree
-            //ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeId;
-            ThisNodeObj["attr"]["rel"] = ThisNodeRel;
-            ThisNodeObj["attr"]["state"] = ThisNodeState;
-            ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
-            ThisNodeObj["attr"]["nodeid"] = ThisNodeId;
-            ThisNodeObj["attr"]["nodekey"] = ThisNodeKeyString;
-            ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
+            ThisTreeNode.Name = ThisNodeName;
+            ThisTreeNode.Icon = ThisNodeIcon;
+            ThisTreeNode.Id = ThisNodeKeyString;
+            switch( ThisNodeState )
+            {
+                case "closed":
+                    ThisTreeNode.Expanded = false;
+                    break;
+                case "leaf":
+                    ThisTreeNode.IsLeaf = true;
+                    break;
+            }
+
+            //ThisNodeObj["attr"]["rel"] = ThisNodeRel;
+            ThisTreeNode.NodeSpecies = ThisNodeKey.NodeSpecies.ToString();
+            ThisTreeNode.NodeId = ThisNodeId;
+            ThisTreeNode.IsLocked = ThisNodeLocked;
             if( ThisNodeDisabled )
             {
-                ThisNodeObj["attr"]["disabled"] = ThisNodeDisabled.ToString().ToLower();
+                ThisTreeNode.IsDisabled = true;
             }
+
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
             if( ParentKey.NodeSpecies != NodeSpecies.Root )
             {
-                ThisNodeObj["attr"]["parentkey"] = ParentKey.ToString();
+                ThisTreeNode.ParentId = ParentKey.ToString();
             }
+            else
+            {
+                ThisTreeNode.ParentId = "root";
+            }
+            if( Tree.getChildNodeCount() > 0 )
+            {
+                ThisTreeNode.Children = new Collection<CswExtTree.TreeNode>();
+            }
+            else
+            {
+                ThisTreeNode.Children = null;
+            }
+            //ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
 
-            //if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
-            //{
-            ThisNodeObj["state"] = ThisNodeState;
-            ThisNodeObj["children"] = new JArray();
-            ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
-            //}
-            return ThisNodeObj;
+            return ThisTreeNode;
         } // _treeNodeJObject()
 
-        public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect, string AccessedByObjClassId = "" )
+        public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request )
         {
-            JObject ReturnObj = new JObject();
+            ResponseData.Tree = ResponseData.Tree ?? new Collection<CswExtTree.TreeNode>();
 
             if( null != _View ) //&& ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
-                _View.SaveToCache( IncludeInQuickLaunch );
+                _View.SaveToCache( Request.IncludeInQuickLaunch );
 
-                if( IncludeNodeId != null && IncludeNodeId.PrimaryKey != Int32.MinValue && IncludeNodeKey == null )
+                if( CswTools.IsPrimaryKey( Request.IncludeNodeId ) && null == Request.IncludeNodeKey )
                 {
-                    IncludeNodeKey = Tree.getNodeKeyByNodeId( IncludeNodeId );
-                    if( IncludeNodeRequired && IncludeNodeKey == null )
+                    Request.IncludeNodeKey = Tree.getNodeKeyByNodeId( Request.IncludeNodeId );
+                    if( Request.IncludeNodeRequired && null == Request.IncludeNodeKey )
                     {
-                        CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.Nodes[IncludeNodeId].getNodeType();
+                        CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.Nodes[Request.IncludeNodeId].getNodeType();
                         _View = IncludeKeyNodeType.CreateDefaultView();
                         _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
-                        _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeId );
-                        _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
-                        ReturnObj["newviewid"] = _View.SessionViewId.ToString();
-                        ReturnObj["newviewmode"] = _View.ViewMode.ToString();
+                        _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Request.IncludeNodeId );
+                        _View.SaveToCache( Request.IncludeInQuickLaunch ); // case 22713
+                        ResponseData.ViewId = _View.SessionViewId;
+                        ResponseData.ViewMode = _View.ViewMode;
                         Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                     }
                 }
-                if( IncludeNodeRequired && IncludeNodeKey != null && Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null )
+                if( Request.IncludeNodeRequired && Request.IncludeNodeKey != null && Tree.getNodeKeyByNodeId( Request.IncludeNodeKey.NodeId ) == null )
                 {
-                    CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.MetaData.getNodeType( IncludeNodeKey.NodeTypeId );
+                    CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.MetaData.getNodeType( Request.IncludeNodeKey.NodeTypeId );
                     _View = IncludeKeyNodeType.CreateDefaultView();
                     _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
-                    _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
-                    _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
-                    ReturnObj["newviewid"] = _View.SessionViewId.ToString();
-                    ReturnObj["newviewmode"] = _View.ViewMode.ToString();
+                    _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Request.IncludeNodeKey.NodeId );
+                    _View.SaveToCache( Request.IncludeInQuickLaunch ); // case 22713
+                    ResponseData.ViewId = _View.SessionViewId;
+                    ResponseData.ViewMode = _View.ViewMode;
                     Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                 }
 
                 Tree.goToRoot();
                 bool HasResults = ( Tree.getChildNodeCount() > 0 );
-                ReturnObj["result"] = HasResults.ToString().ToLower();
-                ReturnObj["types"] = getTypes();
-                //ReturnObj["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize.ToString();
+                //ReturnObj["result"] = HasResults.ToString().ToLower();
+                //ReturnObj["types"] = getTypes();
+                ResponseData.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
 
+                ResponseData.SelectedNodeKey = null;
                 if( HasResults )
                 {
                     // Determine the default selected node:
                     // If the requested node to select is on the tree, return it.
                     // If the requested node to select is not on the tree, return the first child of the root.
-                    if( IncludeNodeKey != null )
+                    if( Request.IncludeNodeKey != null )
                     {
-                        Tree.makeNodeCurrent( IncludeNodeKey );
+                        Tree.makeNodeCurrent( Request.IncludeNodeKey );
                         if( Tree.isCurrentNodeDefined() )
                         {
-                            //ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.NodeId.ToString();
-                            ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.ToString();
+                            ResponseData.SelectedNodeKey = Request.IncludeNodeKey;
                         }
                     }
-                    if( ReturnObj["selectid"] == null )
+                    if( ResponseData.SelectedNodeKey == null )
                     {
-                        switch( DefaultSelect )
+                        switch( Request.DefaultSelect )
                         {
                             case "none":
                                 break;
                             case "root":
-                                ReturnObj["selectid"] = _IdPrefix + "root";
                                 break;
                             case "firstchild":
                                 Tree.goToRoot();
@@ -231,8 +369,7 @@ namespace ChemSW.Nbt.WebServices
                                 }
                                 if( CurrentKey != null && CurrentKey.NodeSpecies == NodeSpecies.Plain )
                                 {
-                                    // ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
-                                    ReturnObj["selectid"] = _IdPrefix + CurrentKey.ToString();
+                                    ResponseData.SelectedNodeKey = CurrentKey;
                                 }
                                 break;
                         } // switch( DefaultSelect )
@@ -240,32 +377,43 @@ namespace ChemSW.Nbt.WebServices
                 } // if( HasResults )
                 else
                 {
-                    ReturnObj["selectid"] = _IdPrefix + "root";
+                    Request.DefaultSelect = "root";
                 }
 
                 Tree.goToRoot();
-                ReturnObj["root"] = new JObject();
-                ReturnObj["root"]["data"] = _View.ViewName;
-                ReturnObj["root"]["attr"] = new JObject();
-                ReturnObj["root"]["attr"]["id"] = _IdPrefix + "root";
-                ReturnObj["root"]["attr"]["rel"] = "root";
-                ReturnObj["root"]["attr"]["disabled"] = false == Tree.getNodeIncludedForCurrentPosition();
-                //Tree.goToRoot();
-                //ReturnObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
-                ReturnObj["root"]["state"] = "open";
-                ReturnObj["root"]["children"] = new JArray();
 
+                CswExtTree.TreeNode RootNode = new CswExtTree.TreeNode();
+                ResponseData.Tree.Add( RootNode );
+
+                RootNode.Name = _View.ViewName;
+                RootNode.IsRoot = true;
+                RootNode.Expanded = true;
+                RootNode.Id = "root";
+
+                //ReturnObj["root"] = new JObject();
+                //ReturnObj["root"]["data"] = _View.ViewName;
+                //ReturnObj["root"]["attr"] = new JObject();
+                //ReturnObj["root"]["attr"]["id"] = _IdPrefix + "root";
+                //ReturnObj["root"]["attr"]["rel"] = "root";
+                //ReturnObj["root"]["attr"]["disabled"] = false == Tree.getNodeIncludedForCurrentPosition();
+                ////Tree.goToRoot();
+                ////ReturnObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                //ReturnObj["root"]["state"] = "open";
+                //ReturnObj["root"]["children"] = new JArray();
+
+                RootNode.Children = new Collection<CswExtTree.TreeNode>();
                 if( HasResults )
                 {
                     Tree.goToRoot();
-                    _runTreeNodesRecursive( Tree, (JArray) ReturnObj["root"]["children"], true );
+                    _runTreeNodesRecursive( Tree, RootNode.Children, true );
                 }
                 else
                 {
-                    JObject NoResultsObj = new JObject();
-                    NoResultsObj["state"] = "leaf";
-                    NoResultsObj["data"] = "No Results";
-                    ( (JArray) ReturnObj["root"]["children"] ).Add( NoResultsObj );
+                    CswExtTree.TreeNode EmptyNode = new CswExtTree.TreeNode();
+                    EmptyNode.Name = "No Results";
+                    EmptyNode.IsLeaf = true;
+                    EmptyNode.Id = "empty";
+                    RootNode.Children.Add( EmptyNode );
                 }
                 //_wsTreeOfView.saveTreeToCache( Tree );
                 //_View.SaveToCache( IncludeInQuickLaunch );
@@ -273,59 +421,95 @@ namespace ChemSW.Nbt.WebServices
                 //_CswNbtResources.CswSuperCycleCache.put( CacheTreeName, Tree );
                 //View.SaveToCache( IncludeInQuickLaunch );
             }
-            return ReturnObj;
         } // runTree()
 
-        public JObject getTypes()
+        public static void runTree( ICswResources CswResources, Contract.Response Response, Contract.Request Request )
         {
-            JObject TypesJson = new JObject();
-            TypesJson["root"] = new JObject();
-            TypesJson["root"]["icon"] = new JObject();
-            TypesJson["root"]["icon"]["image"] = "Images/view/viewtree.gif";
-            TypesJson["group"] = new JObject();
-            TypesJson["group"]["icon"] = new JObject();
-            TypesJson["group"]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + "folder.gif";
-            TypesJson["default"] = "";
-
-            var NodeTypes = new Dictionary<Int32, string>();
-            ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
-            foreach( CswNbtViewRelationship Rel in Relationships )
+            CswNbtResources Resources = (CswNbtResources) CswResources;
+            if( null != Resources )
             {
-                if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                CswNbtView View = Resources.ViewSelect.restoreView( Request.ViewId );
+                if( null != View )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
-                    if( null != NodeType && false == NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
-                    {
-                        NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
-                    }
-                } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
-                else
-                {
-                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
-                    if( null != ObjectClass )
-                    {
-                        foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
-                        {
-                            if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
-                            {
-                                NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
-                            }
-                        }
-                    }
-                } // else
-            } // foreach( CswNbtViewRelationship Rel in Relationships )
-
-            foreach( KeyValuePair<Int32, string> NodeType in NodeTypes )
-            {
-                TypesJson["nt_" + NodeType.Key] = new JObject();
-                TypesJson["nt_" + NodeType.Key]["icon"] = new JObject();
-                if( false == string.IsNullOrEmpty( NodeType.Value ) )
-                {
-                    TypesJson["nt_" + NodeType.Key]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.Value;
+                    CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
+                    SdTrees.runTree( Response.Data, Request );
                 }
             }
-            return TypesJson;
-        } // getTypes()
+        }
+
+        public static void runTree( ICswResources CswResources, Contract.Response Response, string ViewName )
+        {
+            CswNbtResources Resources = (CswNbtResources) CswResources;
+            if( null != Resources )
+            {
+                CswNbtView View = null;
+                foreach( KeyValuePair<CswNbtViewId, CswNbtView> EnabledView in Resources.ViewSelect.getVisibleViews( false ) )
+                {
+                    if( EnabledView.Value.ViewName.ToLower().Trim() == ViewName.ToLower().Trim() )
+                    {
+                        View = EnabledView.Value;
+                        break;
+                    }
+                }
+
+                if( null != View )
+                {
+                    CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
+                    SdTrees.runTree( Response.Data, new Contract.Request() );
+                }
+            }
+        }
+
+        //public JObject getTypes()
+        //{
+        //    JObject TypesJson = new JObject();
+        //    TypesJson["root"] = new JObject();
+        //    TypesJson["root"]["icon"] = new JObject();
+        //    TypesJson["root"]["icon"]["image"] = "Images/view/viewtree.gif";
+        //    TypesJson["group"] = new JObject();
+        //    TypesJson["group"]["icon"] = new JObject();
+        //    TypesJson["group"]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + "folder.gif";
+        //    TypesJson["default"] = "";
+
+        //    var NodeTypes = new Dictionary<Int32, string>();
+        //    ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
+        //    foreach( CswNbtViewRelationship Rel in Relationships )
+        //    {
+        //        if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
+        //        {
+        //            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
+        //            if( null != NodeType && false == NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+        //            {
+        //                NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+        //            }
+        //        } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
+        //        else
+        //        {
+        //            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
+        //            if( null != ObjectClass )
+        //            {
+        //                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+        //                {
+        //                    if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+        //                    {
+        //                        NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+        //                    }
+        //                }
+        //            }
+        //        } // else
+        //    } // foreach( CswNbtViewRelationship Rel in Relationships )
+
+        //    foreach( KeyValuePair<Int32, string> NodeType in NodeTypes )
+        //    {
+        //        TypesJson["nt_" + NodeType.Key] = new JObject();
+        //        TypesJson["nt_" + NodeType.Key]["icon"] = new JObject();
+        //        if( false == string.IsNullOrEmpty( NodeType.Value ) )
+        //        {
+        //            TypesJson["nt_" + NodeType.Key]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.Value;
+        //        }
+        //    }
+        //    return TypesJson;
+        //} // getTypes()
 
     } // class CswNbtWebServiceTree
 

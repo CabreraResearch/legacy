@@ -1202,7 +1202,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runTree( string ViewId, string IdPrefix, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
+        public string runTree( string ViewId, string IncludeNodeId, string IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -1219,7 +1219,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
                     {
-                        var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
+                        var ws = new CswNbtWebServiceTree( _CswNbtResources, View );
                         CswPrimaryKey RealIncludeNodeId = _getNodeId( IncludeNodeId );
 
                         CswNbtNodeKey RealIncludeNodeKey = null;
@@ -1248,7 +1248,7 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getTreeOfNode( string IdPrefix, string NodePk )
+        public string getTreeOfNode( string NodePk )
         {
             JObject ReturnVal = new JObject();
 
@@ -1268,7 +1268,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtView View = Node.getNodeType().CreateDefaultView( false );
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
-                        var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
+                        var ws = new CswNbtWebServiceTree( _CswNbtResources, View );
                         //ReturnVal = ws.getTree( true, null, null, false, false, false, false, true );
                         ReturnVal = ws.runTree( null, null, false, true, "firstchild" );
                         //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
