@@ -233,6 +233,8 @@ namespace ChemSW.Nbt
             Permit = new CswNbtPermit( this );
             StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
             SearchManager = new CswNbtSearchManager( this );
+
+            _CswResources.OnConfigVarChangeHandler = _onConfigVblChange;
         }
 
         public ICswSuperCycleCache CswSuperCycleCache { get { return ( _CswResources.CswSuperCycleCache ); } }
@@ -834,7 +836,7 @@ namespace ChemSW.Nbt
         public CswConfigurationVariables ConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
 
         private Int32 _TreeViewResultLimit = Int32.MinValue;
-        
+
 
         public Int32 TreeViewResultLimit
         {
@@ -1022,6 +1024,34 @@ namespace ChemSW.Nbt
 
         #endregion Pass-thru to CswResources
 
+        #region On Config Var Change Event Handling
+        #endregion
+
+        /*
+         * NOTE - we might want to consider moving this into it's set of classes at some 
+         * point if the number of config vars that need to have events fire grows bigger.
+         * 
+         * For now there is only one, so it can just live here
+         */
+        private void _onConfigVblChange( string VariableName, string NewValue )
+        {
+            if( VariableName.Equals( "locationviewrootname" ) ) //TODO: this should not be a hardcoded string here
+            {
+                CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClassProp locationOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+                CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID];
+                CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name];
+
+                string sql = @"update (select jnp.nodeid, jnp.* from jct_nodes_props jnp
+                                       join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+                                       join nodetypes nt on nt.nodetypeid = ntp.nodetypeid
+                                       join object_class oc on oc.objectclassid = nt.objectclassid and oc.objectclassid = " + locationOC.ObjectClassId +
+                                       @"join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid and ocp.objectclasspropid = " + locationOCP.ObjectClassPropId +
+                                @"where " + nodeidSubField.Column._Name + " is null and " + valueSubField.Column._Name + " is not null) set pendingupdate = 1";
+
+                _CswResources.execArbitraryPlatformNeutralSql( sql );
+            }
+        }
 
     } // CswNbtResources
 
