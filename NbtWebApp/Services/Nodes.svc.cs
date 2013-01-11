@@ -26,6 +26,9 @@ namespace NbtWebApp
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
 
+            [DataMember(IsRequired = false)] 
+            public String NodeTypeName = String.Empty;
+
             private NbtObjectClass _ObjectClass;
 
             [DataMember( IsRequired = false )]
