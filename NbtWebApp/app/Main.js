@@ -1315,7 +1315,7 @@ window.initMain = window.initMain || function (undefined) {
                         }
                     });
                     break;
-                case 'hmisreporting':
+                case 'hmis reporting':
                     Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
                         onSubmit: function () {
                             refreshWelcomeLandingPage();

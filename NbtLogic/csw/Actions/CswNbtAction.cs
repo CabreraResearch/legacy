@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Actions
         Receiving,
         Subscriptions,
         Reconciliation,
-        HMISReporting
+        HMIS_Reporting
     }
 
     public class CswNbtAction

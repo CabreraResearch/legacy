@@ -22,8 +22,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.HMISReporting, true, "", "Materials" );
-            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.HMISReporting );
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.HMIS_Reporting, true, "", "Materials" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.HMIS_Reporting );
 
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp StorageTemperatureOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.StorageTemperature );
