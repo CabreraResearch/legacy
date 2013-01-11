@@ -113,59 +113,59 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = svcReturn.ExtJsGrid;
         }//getScheduledRulesGrid()
 
-        public JObject getScheduledRulesGrid()
-        {
-            //JObject RetObj;
+        //public CswGridExtJsGrid getScheduledRulesGrid()
+        //{
+        //    //JObject RetObj;
 
-            //CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
-            //DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
+        //    //CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
+        //    //DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            //CswNbtGrid NbtActGrid = new CswNbtGrid( _OtherResources );
-            ////string TablePkColumn = "scheduledruleid";
-            ////NbtActGrid.PkColumn = TablePkColumn;
-            ////NbtActGrid.HidePkColumn = true;
+        //    //CswNbtGrid NbtActGrid = new CswNbtGrid( _OtherResources );
+        //    ////string TablePkColumn = "scheduledruleid";
+        //    ////NbtActGrid.PkColumn = TablePkColumn;
+        //    ////NbtActGrid.HidePkColumn = true;
 
-            //CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
-            //                                              {
-            //                                                  "THREADID"
-            //                                              };
-            //CswCommaDelimitedString ReadOnlyColumns = new CswCommaDelimitedString()
-            //                                              {
-            //                                                  "RULENAME",
-            //                                                  "TOTALROGUECOUNT",
-            //                                                  "RUNSTARTTIME",
-            //                                                  "RUNENDTIME",
-            //                                                  "LASTRUN",
-            //                                                  "STATUSMESSAGE"
-            //                                              };
+        //    //CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
+        //    //                                              {
+        //    //                                                  "THREADID"
+        //    //                                              };
+        //    //CswCommaDelimitedString ReadOnlyColumns = new CswCommaDelimitedString()
+        //    //                                              {
+        //    //                                                  "RULENAME",
+        //    //                                                  "TOTALROGUECOUNT",
+        //    //                                                  "RUNSTARTTIME",
+        //    //                                                  "RUNENDTIME",
+        //    //                                                  "LASTRUN",
+        //    //                                                  "STATUSMESSAGE"
+        //    //                                              };
 
-            //foreach( string ColumnName in ExcludedColumns )
-            //{
-            //    ScheduledRulesTable.Columns.Remove( ColumnName );
-            //}
+        //    //foreach( string ColumnName in ExcludedColumns )
+        //    //{
+        //    //    ScheduledRulesTable.Columns.Remove( ColumnName );
+        //    //}
 
-            ////NbtActGrid.EditableColumns = new CswCommaDelimitedString();
-            ////foreach( DataColumn Column in ScheduledRulesTable.Columns )
-            ////{
-            ////    if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
-            ////    {
-            ////        NbtActGrid.EditableColumns.Add( Column.ColumnName );
-            ////    }
-            ////}
+        //    ////NbtActGrid.EditableColumns = new CswCommaDelimitedString();
+        //    ////foreach( DataColumn Column in ScheduledRulesTable.Columns )
+        //    ////{
+        //    ////    if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
+        //    ////    {
+        //    ////        NbtActGrid.EditableColumns.Add( Column.ColumnName );
+        //    ////    }
+        //    ////}
 
-            //RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
+        //    //RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
 
-            JObject RetObj = null;
+        //    CswGridExtJsGrid RetObj = null;
 
-            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
-            CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
-            //RetObj = new JObject( new JObject( svcReturn.ExtJsGrid ) );
-            RetObj = JObject.Parse( svcReturn.ExtJsGrid );
+        //    CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+        //    CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
+        //    //RetObj = new JObject( new JObject( svcReturn.ExtJsGrid ) );
+        //    RetObj = svcReturn.ExtJsGrid;
 
 
-            //return RetObj;
-            return ( RetObj );
-        }
+        //    //return RetObj;
+        //    return ( RetObj.ToString() );
+        //}
 
         public bool updateScheduledRule( HttpContext Context )
         {
@@ -234,37 +234,37 @@ namespace ChemSW.Nbt.WebServices
             ClearAllReprobates
         }
 
-        public bool updateAllScheduledRules( string Action )
+        public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string PlaceHolder )
         {
-            bool RetSuccess = false;
+            //bool RetSuccess = false;
 
-            ScheduledRuleActions RuleAction;
-            Enum.TryParse( Action, true, out RuleAction );
+            //ScheduledRuleActions RuleAction;
+            //Enum.TryParse( Action, true, out RuleAction );
 
-            switch( RuleAction )
-            {
-                case ScheduledRuleActions.Unknown:
-                    throw new CswDniException( ErrorType.Error, "Method was invoked with an invalid action", "Cannot call this web method with action " + Action + "." );
-                case ScheduledRuleActions.ClearAllReprobates:
-                    CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "ClearAllReprobates_on_accessid_" + _OtherResources.AccessId + "_id", "scheduledrules" );
-                    DataTable RulesTable = RulesUpdate.getTable();
-                    foreach( DataRow Row in RulesTable.Rows )
-                    {
-                        Row["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
-                        Row["REPROBATE"] = CswConvert.ToDbVal( 0 );
-                        Row["STATUSMESSAGE"] = DBNull.Value;
-                    }
+            //switch( RuleAction )
+            //{
+            //    case ScheduledRuleActions.Unknown:
+            //        throw new CswDniException( ErrorType.Error, "Method was invoked with an invalid action", "Cannot call this web method with action " + Action + "." );
+            //    case ScheduledRuleActions.ClearAllReprobates:
+            //        CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "ClearAllReprobates_on_accessid_" + _OtherResources.AccessId + "_id", "scheduledrules" );
+            //        DataTable RulesTable = RulesUpdate.getTable();
+            //        foreach( DataRow Row in RulesTable.Rows )
+            //        {
+            //            Row["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
+            //            Row["REPROBATE"] = CswConvert.ToDbVal( 0 );
+            //            Row["STATUSMESSAGE"] = DBNull.Value;
+            //        }
 
-                    RetSuccess = RulesUpdate.update( RulesTable );
-                    break;
-            }
+            //        RetSuccess = RulesUpdate.update( RulesTable );
+            //        break;
+            //}
 
-            if( false == RetSuccess )
-            {
-                throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledrules on Customer ID " + _OtherResources.AccessId + "." );
-            }
-            _finalize( _OtherResources );
-            return RetSuccess;
+            //if( false == RetSuccess )
+            //{
+            //    throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledrules on Customer ID " + _OtherResources.AccessId + "." );
+            //}
+            //_finalize( _OtherResources );
+            //return RetSuccess;
         }
 
         public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )
