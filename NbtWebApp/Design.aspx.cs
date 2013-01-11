@@ -1350,7 +1350,7 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 LockedCheckbox.Checked = SelectedNodeType.IsLocked;
-                
+
                 SearchDeferSelect.Items.Clear();
                 SearchDeferSelect.Items.Add( new ListItem( "", "" ) );
                 SearchDeferSelect.Items.Add( new ListItem( "Not Searchable", CswNbtMetaDataObjectClass.NotSearchableValue.ToString() ) );
@@ -1909,6 +1909,26 @@ namespace ChemSW.Nbt.WebPages
                             ILUrlOptionsValue.Rows = 5;
                             ILUrlOptionsValue.Columns = 100;
                             ILUrlOptionsRow.Cells[1].Controls.Add( ILUrlOptionsValue );
+                            break;
+
+                        case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                            TableRow PrefixRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) PrefixRow.Cells[0].Controls[0] ).Text = "Prefix:";
+                            TextBox PrefixValue = new TextBox();
+                            PrefixValue.CssClass = "textinput";
+                            PrefixValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.Attribute1 != null )
+                                PrefixValue.Text = SelectedNodeTypeProp.Attribute1.ToString();
+                            PrefixRow.Cells[1].Controls.Add( PrefixValue );
+
+                            TableRow SuffixRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) SuffixRow.Cells[0].Controls[0] ).Text = "Suffix:";
+                            TextBox SuffixValue = new TextBox();
+                            SuffixValue.CssClass = "textinput";
+                            SuffixValue.ID = "EditProp_Attribute2" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.Attribute2 != null )
+                                SuffixValue.Text = SelectedNodeTypeProp.Attribute2.ToString();
+                            SuffixRow.Cells[1].Controls.Add( SuffixValue );
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.List:

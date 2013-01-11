@@ -6,6 +6,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -58,6 +59,7 @@ namespace ChemSW.Nbt.PropTypes
                 _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, value );
             }
         }
+
         public string Href
         {
             get
@@ -70,10 +72,48 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public string Url
+        {
+            get
+            {
+                string fullUrl = Prefix + Href + Suffix;
+                if( false == Regex.IsMatch( fullUrl, @"^https?://.*" ) ) //if the hyperlink contains http:// or https://
+                {
+                    fullUrl = "https://" + fullUrl;
+                }
+                return fullUrl;
+            }
+        }
+
+        public string Prefix
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.Attribute1;
+            }
+            set
+            {
+                _CswNbtMetaDataNodeTypeProp.Attribute1 = value;
+            }
+        }
+
+        public string Suffix
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.Attribute2;
+            }
+            set
+            {
+                _CswNbtMetaDataNodeTypeProp.Attribute2 = value;
+            }
+        }
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_HrefSubField.ToXmlNodeName( true )] = Href;
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
+            ParentObject["url"] = Url;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
