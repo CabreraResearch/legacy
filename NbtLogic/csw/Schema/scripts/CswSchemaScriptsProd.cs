@@ -50,6 +50,7 @@ namespace ChemSW.Nbt.Schema
             #region WILLIAM
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );        //01V-017   01W-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );           //01V-017   01W-001
 
             #endregion WILLIAM
 
