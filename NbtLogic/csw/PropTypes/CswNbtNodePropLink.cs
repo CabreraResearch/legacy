@@ -72,17 +72,14 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public string Url
+        public static string GetFullURL( string Prefix, string HrefBody, string Suffix )
         {
-            get
+            string fullUrl = Prefix + HrefBody + Suffix;
+            if( false == Regex.IsMatch( fullUrl, @"^https?://.*" ) ) //if the hyperlink contains http:// or https://
             {
-                string fullUrl = Prefix + Href + Suffix;
-                if( false == Regex.IsMatch( fullUrl, @"^https?://.*" ) ) //if the hyperlink contains http:// or https://
-                {
-                    fullUrl = "https://" + fullUrl;
-                }
-                return fullUrl;
+                fullUrl = "http://" + fullUrl;
             }
+            return fullUrl;
         }
 
         public string Prefix
@@ -113,7 +110,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_HrefSubField.ToXmlNodeName( true )] = Href;
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
-            ParentObject["url"] = Url;
+            ParentObject["url"] = GetFullURL( Prefix, Href, Suffix );
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
