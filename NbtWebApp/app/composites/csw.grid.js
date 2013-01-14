@@ -59,9 +59,9 @@
                     summaryEnabled: false,
                     printingEnabled: false,
                     gridToPrint: function (grid) {
-                        return cswPublic;
+                        return grid;
                     },
-
+                    onPrintSuccess: function () { },
                     dockedItems: []
                 };
 
@@ -156,7 +156,7 @@
                         tooltip: 'Print the contents of the grid',
                         text: 'Print',
                         handler: function () {
-                            var gridToPrint = cswPrivate.gridToPrint(cswPublic.extGrid);
+                            var gridToPrint = cswPrivate.gridToPrint(cswPublic);
                             gridToPrint.print();
                         }
                     });
@@ -656,13 +656,14 @@
                 return cswPrivate.store.data;
             };
 
-            cswPublic.print = Csw.method(function (onSuccess) {
+            cswPublic.print = Csw.method(function () {
                 // turn paging off
                 var printStore = cswPrivate.makeStore(cswPrivate.name + 'printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
-                window.Ext.ux.grid.Printer.stylesheetPath = 'js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
+                window.Ext.ux.grid.Printer.stylesheetPath = 'vendor/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
                 window.Ext.ux.grid.Printer.print(printGrid);
+                Csw.tryExec(cswPrivate.onPrintSuccess);
             });
 
             cswPublic.toggleShowCheckboxes = Csw.method(function (val) {
