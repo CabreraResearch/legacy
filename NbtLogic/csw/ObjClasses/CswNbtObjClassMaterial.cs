@@ -503,9 +503,18 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != docNode )
             {
-                ButtonData.Data["nodeid"] = docNode.NodeId.ToString();
-                ButtonData.Data["title"] = docNode.NodeName;
-                ButtonData.Action = NbtButtonAction.editprop;
+                string url = "";
+                switch( docNode.FileType.Value )
+                {
+                    case CswNbtObjClassDocument.FileTypes.File:
+                        url = CswNbtNodePropBlob.getLink( docNode.File.JctNodePropId, docNode.NodeId, docNode.File.NodeTypePropId );
+                        break;
+                    case CswNbtObjClassDocument.FileTypes.Link:
+                        url = docNode.Link.GetFullURL();
+                        break;
+                }
+                ButtonData.Data["url"] = url;
+                ButtonData.Action = NbtButtonAction.popup;
             }
             else
             {

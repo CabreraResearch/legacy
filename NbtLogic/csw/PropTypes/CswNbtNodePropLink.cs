@@ -82,6 +82,11 @@ namespace ChemSW.Nbt.PropTypes
             return fullUrl;
         }
 
+        public string GetFullURL()
+        {
+            return GetFullURL( Prefix, Href, Suffix );
+        }
+
         public string Prefix
         {
             get
