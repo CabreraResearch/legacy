@@ -199,18 +199,17 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                     addColumn('hazardclass', 'Hazard Class');
                     addUseTypeColumn('storage', 'Storage', true);
                     addUseTypeColumn('closed', 'Closed', true);
-                    addUseTypeColumn('open', 'Open', false);                    
+                    addUseTypeColumn('open', 'Open', false);
                     
                     //Grid Control
                     var HMISGridId = 'HMISGrid';
                     cswPrivate.gridOptions = {
                         name: HMISGridId,
                         storeId: HMISGridId,
-                        title: 'HMIS Reporting Data',
+                        title: 'HMIS Data for ' + cswPrivate.controlZoneSelect.selectedName(),
                         stateId: HMISGridId,
                         usePaging: false,
                         showActionColumn: false,
-                        canSelectRow: false,
                         height: 300,
                         forcefit: true,
                         width: '100%',
@@ -218,7 +217,11 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         columns: HMISGridColumns,
                         data: HMISGridData,
                         groupField: 'hazardclass',
-                        summaryEnabled: true
+                        summaryEnabled: true,
+                        printingEnabled: true,
+                        gridToPrint: function (grid) {
+                            return cswPrivate.makeSummaryGrid(grid);
+                        }
                     };
                     cswPrivate.gridTbl.cell(1, 1).empty();
                     cswPrivate.HMISGrid = cswPrivate.gridTbl.cell(1, 1).grid(cswPrivate.gridOptions);
@@ -226,6 +229,92 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             });
         };
         //#endregion Grid Control
+        
+        //#region Summary Grid
+
+        cswPrivate.makeSummaryGrid = function(grid) {
+            var SummaryGridColumns = [];
+            var SummaryGridFields = [];
+            var SummaryGridData = [];
+            var gridColumns = [
+                { name: 'material', display: '&nbsp;<br/>&nbsp;<br/>QtyMaterial' },
+                { name: 'hazardclass', display: '&nbsp;<br/>&nbsp;<br/>HazardClass' },
+                { name: 'storagesolidmaq', display: 'Storage<br/>Solid<br/>MAQ' },
+                { name: 'storagesolidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'storageliquidmaq', display: '&nbsp;<br/>Liquid<br/>MAQ' },
+                { name: 'storageliquidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'storagegasmaq', display: '&nbsp;<br/>Gas<br/>MAQ' },
+                { name: 'storagegasqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'closedsolidmaq', display: 'Closed<br/>Solid<br/>MAQ' },
+                { name: 'closedsolidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'closedliquidmaq', display: '&nbsp;<br/>Liquid<br/>MAQ' },
+                { name: 'closedliquidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'closedgasmaq', display: '&nbsp;<br/>Gas<br/>MAQ' },
+                { name: 'closedgasqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'opensolidmaq', display: 'Open<br/>Solid<br/>MAQ' },
+                { name: 'opensolidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'openliquidmaq', display: '&nbsp;<br/>Liquid<br/>MAQ' },
+                { name: 'openliquidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' }
+            ];
+            SummaryGridColumns.push({
+                dataIndex: gridColumns[1].name,
+                header: gridColumns[1].display,
+                id: 'hmis_' + gridColumns[1].name
+            });
+            SummaryGridFields.push({
+                name: gridColumns[1].name,
+                type: 'string',
+                useNull: true
+            });
+            var i = 0;
+            window.Ext.Array.each(grid.extGrid.view.el.query('tr.x-grid-row-summary'), function (group) {
+                var GroupName = grid.extGrid.getStore().getGroups()[i].name;
+                var HazardData = {};
+                HazardData.hazardclass = GroupName;
+                var j = 0;
+                window.Ext.Array.each(group.childNodes, function (cell) {
+                    if (j > 1) {
+                        var summaryValue = cell.textContent;
+                        if (i === 0) {
+                            SummaryGridColumns.push({
+                                dataIndex: gridColumns[j].name,
+                                header: gridColumns[j].display,
+                                id: 'hmis_' + gridColumns[j].name
+                            });
+                            SummaryGridFields.push({
+                                name: gridColumns[j].name,
+                                type: 'string',
+                                useNull: true
+                            });
+                        }
+                        HazardData[gridColumns[j].name] = summaryValue;
+                    }
+                    j++;
+                });
+                SummaryGridData.push(HazardData);
+                i++;
+            }, grid.extGrid);
+            cswPrivate.gridTbl.cell(2, 1).empty();
+            var summaryGrid = cswPrivate.gridTbl.cell(2, 1).grid({
+                name: 'SummaryGrid',
+                storeId: 'SummaryGrid',
+                title: 'HMIS Report for ' + cswPrivate.controlZoneSelect.selectedName(),
+                stateId: 'SummaryGrid',
+                usePaging: false,
+                showActionColumn: false,
+                fields: SummaryGridFields,
+                columns: SummaryGridColumns,
+                data: SummaryGridData,
+                onPrintSuccess: function () {
+                    cswPrivate.gridTbl.cell(2, 1).empty();
+                    cswPrivate.gridTbl.cell(1, 1).empty();
+                    cswPrivate.HMISGrid = cswPrivate.gridTbl.cell(1, 1).grid(cswPrivate.gridOptions);
+                }
+            }).hide();
+            return summaryGrid;
+        };
+        
+        //#endregion Summary Grid
 
         //#region _postCtor
         (function _postCtor() {
