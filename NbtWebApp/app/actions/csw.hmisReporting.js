@@ -17,6 +17,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             cswPrivate.controlZoneId = cswPrivate.controlZoneId || '';
             cswPrivate.FireClassExemptAmountSet = cswPrivate.FireClassExemptAmountSet || '';
             cswPrivate.Materials = cswPrivate.Materials || [];
+            cswPrivate.CachedHMISData = [];
 
             cswParent.empty();
         }());
@@ -46,9 +47,19 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 onChange: function () {
                     if (cswPrivate.controlZoneSelect.val() !== '') {
                         cswPrivate.controlZoneId = cswPrivate.controlZoneSelect.val();
-                        cswPrivate.loadGrid({
-                            ControlZoneId: cswPrivate.controlZoneId
+                        var cached = false;
+                        Csw.each(cswPrivate.CachedHMISData, function(czData) {
+                            if (czData.controlZoneId === cswPrivate.controlZoneId) {
+                                cached = true;
+                                cswPrivate.gridTbl.cell(1, 1).empty();
+                                cswPrivate.HMISGrid = cswPrivate.gridTbl.cell(1, 1).grid(czData.gridOptions);
+                            }
                         });
+                        if (false === cached) {
+                            cswPrivate.loadGrid({
+                                ControlZoneId: cswPrivate.controlZoneId
+                            });
+                        }
                     }
                 }
             });
@@ -63,14 +74,14 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 data: hmisRequestData,
                 success: function (ajaxdata) {
                     cswPrivate.gridTbl.cell(2, 1).empty();
-                    
+
                     //FireClassExemptAmountSet Label
                     cswPrivate.FireClassExemptAmountSet = ajaxdata.FireClassExemptAmountSet || 'N/A';
                     cswPrivate.controlTbl.cell(2, 1).empty();
                     cswPrivate.controlTbl.cell(2, 1).span({ text: 'Fire Class Exempt Amount Set: ' }).addClass('propertylabel');
                     cswPrivate.controlTbl.cell(2, 2).empty();
                     cswPrivate.controlTbl.cell(2, 2).span({ text: cswPrivate.FireClassExemptAmountSet });
-                    
+
                     //Grid Data
                     cswPrivate.Materials = [{
                         Material: '',
@@ -95,7 +106,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         cswPrivate.Materials = [];
                     }
                     var HMISGridData = [];
-                    Csw.each(cswPrivate.Materials, function (row) {
+                    Csw.each(cswPrivate.Materials, function(row) {
                         HMISGridData.push({
                             material: row.Material,
                             hazardclass: row.HazardClass,
@@ -117,11 +128,11 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                             openliquidqty: row.Open.Liquid.Qty
                         });
                     });
-                    
+
                     //Grid Fields and Columns
                     var HMISGridColumns = [];
                     var HMISGridFields = [];
-                    var addColumn = function (colName, displayName, summaryType, summaryRenderer) {
+                    var addColumn = function(colName, displayName, summaryType, summaryRenderer) {
                         HMISGridColumns.push({
                             dataIndex: colName,
                             filterable: false,
@@ -136,39 +147,39 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                             useNull: true
                         });
                     };
-                    var addQtyColumn = function (Columns, maqColName, qtyColName, headerDisplay) {
+                    var addQtyColumn = function(Columns, maqColName, qtyColName, headerDisplay) {
                         var state = headerDisplay === 'Solid' ? ' lbs' : '';
                         state = headerDisplay === 'Liquid' ? ' gal' : state;
                         state = headerDisplay === 'Gas' ? ' cu.ft.' : state;
                         Columns.push({
                             text: headerDisplay,
                             columns: [{
-                                dataIndex: maqColName,
-                                filterable: false,
-                                header: 'MAQ',
-                                id: 'hmis_' + maqColName,
-                                width: 80,
-                                summaryType: 'max',
-                                renderer: function (value, metaData, record, rowIdx, colIdx, store, view) {
-                                    return value === 0 ? '' : value + state;
-                                },
-                                summaryRenderer: function (value, summaryData, dataIndex) {
-                                    return value === 0 ? '' : value + state;
-                                }
-                            }, {
-                                dataIndex: qtyColName,
-                                filterable: false,
-                                header: 'Qty',
-                                id: 'hmis_' + qtyColName,
-                                width: 80,
-                                summaryType: 'sum',
-                                renderer: function (value, metaData, record, rowIdx, colIdx, store, view) {
-                                    return value === 0 ? '' : value + state;
-                                },
-                                summaryRenderer: function (value, summaryData, dataIndex) {
-                                    return value === 0 ? '' : value + state;
-                                }
-                            }]
+                                    dataIndex: maqColName,
+                                    filterable: false,
+                                    header: 'MAQ',
+                                    id: 'hmis_' + maqColName,
+                                    width: 80,
+                                    summaryType: 'max',
+                                    renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
+                                        return value === 0 ? '' : value + state;
+                                    },
+                                    summaryRenderer: function(value, summaryData, dataIndex) {
+                                        return value === 0 ? '' : value + state;
+                                    }
+                                }, {
+                                    dataIndex: qtyColName,
+                                    filterable: false,
+                                    header: 'Qty',
+                                    id: 'hmis_' + qtyColName,
+                                    width: 80,
+                                    summaryType: 'sum',
+                                    renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
+                                        return value === 0 ? '' : value + state;
+                                    },
+                                    summaryRenderer: function(value, summaryData, dataIndex) {
+                                        return value === 0 ? '' : value + state;
+                                    }
+                                }]
                         });
                         HMISGridFields.push({
                             name: maqColName,
@@ -181,7 +192,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                             useNull: true
                         });
                     };
-                    var addUseTypeColumn = function (useType, headerDisplay, useGas) {
+                    var addUseTypeColumn = function(useType, headerDisplay, useGas) {
                         var Columns = [];
                         addQtyColumn(Columns, useType + 'solidmaq', useType + 'solidqty', 'Solid');
                         addQtyColumn(Columns, useType + 'liquidmaq', useType + 'liquidqty', 'Liquid');
@@ -193,14 +204,14 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                             columns: Columns
                         });
                     };
-                    addColumn('material', 'Material', 'count', function (value, summaryData, dataIndex) {
+                    addColumn('material', 'Material', 'count', function(value, summaryData, dataIndex) {
                         return ((value === 1) ? '(1 Material)' : '(' + value + ' Materials)');
                     });
                     addColumn('hazardclass', 'Hazard Class');
                     addUseTypeColumn('storage', 'Storage', true);
                     addUseTypeColumn('closed', 'Closed', true);
                     addUseTypeColumn('open', 'Open', false);
-                    
+
                     //Grid Control
                     var HMISGridId = 'HMISGrid';
                     cswPrivate.gridOptions = {
@@ -219,10 +230,14 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         groupField: 'hazardclass',
                         summaryEnabled: true,
                         printingEnabled: true,
-                        gridToPrint: function (grid) {
+                        gridToPrint: function(grid) {
                             return cswPrivate.makeSummaryGrid(grid);
                         }
                     };
+                    cswPrivate.CachedHMISData.push({ 
+                        controlZoneId: cswPrivate.controlZoneId, 
+                        gridOptions: cswPrivate.gridOptions
+                    });
                     cswPrivate.gridTbl.cell(1, 1).empty();
                     cswPrivate.HMISGrid = cswPrivate.gridTbl.cell(1, 1).grid(cswPrivate.gridOptions);
                 }
