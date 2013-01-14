@@ -463,71 +463,56 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
             CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
 
-            bool foundMatchingSDS = false;
-            if( null != userJurisdictionNode && ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) ) //try to find an SDS that matches exactly
-            {
-                docView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: formatOCP,
-                    Value: userJurisdictionNode.Format.Value,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                docView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: languageOCP,
-                    Value: userJurisdictionNode.Language.Value,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                foundMatchingSDS = _fillButtonData( docView, ButtonData );
-            }
-            else if( false == ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) ) //the user selected an SDS from the list, find the SDS by title
+            if( false == ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) )
             {
                 docView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: titleOCP,
                     Value: ButtonData.SelectedText,
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            }
 
-                foundMatchingSDS = _fillButtonData( docView, ButtonData );
-            }
-            if( null != userJurisdictionNode && false == foundMatchingSDS ) //if we have't found an exact mathing SDS, try to find one that matches just the users Format
-            {
-                docView.removeViewProperty( languageOCP );
-                foundMatchingSDS = _fillButtonData( docView, ButtonData );
-            }
-            if( null != userJurisdictionNode && false == foundMatchingSDS ) //if we haven't found a match for just the Format, look for a matching language
-            {
-                docView.removeViewProperty( formatOCP );
-                docView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: languageOCP,
-                    Value: userJurisdictionNode.Language.Value,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                foundMatchingSDS = _fillButtonData( docView, ButtonData );
-            }
-            if( false == foundMatchingSDS ) //if we haven't found an exact match, just format or just language, return any avaiable SDS
-            {
-                docView.removeViewProperty( languageOCP );
-                foundMatchingSDS = _fillButtonData( docView, ButtonData );
-            }
-            if( false == foundMatchingSDS ) //if we STILL haven't found an SDS there aren't any assigned to this Material
-            {
-                ButtonData.Message = "There are no non-archived SDS assigned to this " + NodeType.NodeTypeName;
-                ButtonData.Action = NbtButtonAction.nothing;
-            }
-        }
-        private bool _fillButtonData( CswNbtView docView, NbtButtonData ButtonData )
-        {
-            bool ret = false;
-            ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-            int childCount = docTree.getChildNodeCount();
+            ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+            int childCount = docsTree.getChildNodeCount();
+            CswNbtObjClassDocument docNode = null;
             for( int i = 0; i < childCount; i++ )
             {
-                docTree.goToNthChild( i );
-                ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
-                ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
-                ButtonData.Action = NbtButtonAction.editprop;
-                docTree.goToParentNode();
-                ret = true;
+                docsTree.goToNthChild( i );
+                CswNbtObjClassDocument potentialDocNode = docsTree.getNodeForCurrentPosition();
+                if( null == docNode )
+                {
+                    docNode = potentialDocNode;
+                }
+
+                if( null != userJurisdictionNode )
+                {
+                    if( potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
+                    {
+                        docNode = potentialDocNode;
+                    }
+                    if( potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) )
+                    {
+                        docNode = potentialDocNode;
+                    }
+                    if( potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) && potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
+                    {
+                        docNode = potentialDocNode;
+                    }
+                }
+                docsTree.goToParentNode();
             }
-            return ret;
+
+            if( null != docNode )
+            {
+                ButtonData.Data["nodeid"] = docNode.NodeId.ToString();
+                ButtonData.Data["title"] = docNode.NodeName;
+                ButtonData.Action = NbtButtonAction.editprop;
+            }
+            else
+            {
+                ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
+                ButtonData.Action = NbtButtonAction.nothing;
+            }
+
         }
 
         #endregion Custom Logic

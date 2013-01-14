@@ -317,8 +317,11 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == IsTemp && DocumentClass.Value.Equals( DocumentClasses.SDS ) )
             {
                 CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Owner.RelatedNodeId];
-                material.UpdateViewSDSButtonOpts();
-                material.postChanges( false );
+                if( null != material )
+                {
+                    material.UpdateViewSDSButtonOpts();
+                    material.postChanges( false );
+                }
             }
         }
 
