@@ -1044,10 +1044,8 @@ namespace ChemSW.Nbt
                     CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name];
 
                     string sql = @"update (select jnp.pendingupdate from jct_nodes_props jnp
-                                       join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-                                       join nodetypes nt on nt.nodetypeid = ntp.nodetypeid
-                                       join object_class oc on oc.objectclassid = nt.objectclassid and oc.objectclassid = " + locationOC.ObjectClassId +
-                                           @"join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid and ocp.objectclasspropid = " + locationOCP.ObjectClassPropId +
+                                       join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid and ntp.objectclasspropid = " + locationOCP.ObjectClassPropId +
+                                       @"join nodetypes nt on nt.nodetypeid = ntp.nodetypeid and nt.objectclassid = " + locationOC.ObjectClassId +
                                     @"where " + nodeidSubField.Column._Name + " is null and " + valueSubField.Column._Name + " is not null) set pendingupdate = 1";
 
                     /*
