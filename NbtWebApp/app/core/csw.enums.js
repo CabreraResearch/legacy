@@ -118,6 +118,13 @@
             stepcount: 2
         });
 
+    Csw.enums.wizardSteps_LegacyMobile = Csw.enums.wizardSteps_LegacyMobile ||
+        Csw.enums.register('wizardSteps_LegacyMobile', {
+            step1: { step: 1, description: 'Upload Data File' },
+            step2: { step: 2, description: 'Review' },
+            stepcount: 2
+        });
+
     Csw.enums.dialogButtons = Csw.enums.dialogButtons ||
         Csw.enums.register('dialogButtons', {
             1: 'ok',
