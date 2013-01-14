@@ -113,6 +113,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\LegacyMobile.svc.cs">
+      <DependentUpon>LegacyMobile.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Labels2.svc.cs">
       <DependentUpon>Labels2.svc</DependentUpon>
     </Compile>
@@ -164,6 +167,7 @@
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
+    <Compile Include="WebSvc\Logic\Mobile\Legacy\CswNbtWebServiceLegacyMobile.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
     <Compile Include="WebSvc\Logic\Search\CswNbtWebServiceC3Search.cs" />
@@ -181,6 +185,7 @@
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
     <Content Include="Services\ChemCatCentral.svc" />
+    <Content Include="Services\LegacyMobile.svc" />
     <Content Include="Services\Labels2.svc" />
     <Content Include="Services\CISProNbtMobile.svc" />
     <Content Include="Services\Menus.svc" />
