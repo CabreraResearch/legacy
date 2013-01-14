@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using ChemSW.Core;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -30,7 +28,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType JurisdictionNT = JurisdictionOC.FirstNodeType;
             if( null != JurisdictionNT )
             {
-                StringCollection Jurisdictions = new StringCollection {"North America", "China", "Europe", "Japan"};
+                StringCollection Jurisdictions = new StringCollection { "North America", "China", "Europe", "Japan" };
                 foreach( string j in Jurisdictions )
                 {
                     CswNbtObjClassJurisdiction jNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
@@ -40,17 +38,17 @@ namespace ChemSW.Nbt.Schema
             }
 
 
-            CswNbtMetaDataObjectClass GhsOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GHSClass );
-            CswNbtMetaDataObjectClassProp GhsMaterialOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
-            CswNbtMetaDataObjectClassProp GhsJurisdictionOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
-            CswNbtMetaDataObjectClassProp GhsLabelCodesOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.LabelCodes );
-            CswNbtMetaDataObjectClassProp GhsSignalWordOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.SignalWord );
+            //CswNbtMetaDataObjectClass GhsOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GHSClass );
+            //CswNbtMetaDataObjectClassProp GhsMaterialOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+            //CswNbtMetaDataObjectClassProp GhsJurisdictionOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
+            //CswNbtMetaDataObjectClassProp GhsLabelCodesOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.LabelCodes );
+            //CswNbtMetaDataObjectClassProp GhsSignalWordOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.SignalWord );
 
             // Chemical GHS tab
             CswNbtMetaDataNodeType ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
             if( null != ChemicalNT )
             {
-                CswNbtMetaDataNodeTypeTab ChemicalGhsTab = ChemicalNT.getNodeTypeTab( "GHS" ) ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "GHS", 3 );
+                //CswNbtMetaDataNodeTypeTab ChemicalGhsTab = ChemicalNT.getNodeTypeTab( "GHS" ) ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "GHS", 3 );
 
                 // Clear out old GHS tab
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( ChemicalNT.getNodeTypeProp( "GHS Classification" ) );
@@ -59,30 +57,29 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( ChemicalNT.getNodeTypeProp( "GHS Label Codes" ) );
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( ChemicalNT.getNodeTypeProp( "GHS Pictos" ) );
 
-                // Add a new grid
-                CswNbtMetaDataNodeTypeProp ChemicalGhsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( ChemicalNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Grid ), "GHS" ) );
-                CswNbtView ChemicalGhsGridView = _CswNbtSchemaModTrnsctn.restoreView( ChemicalGhsGridNTP.ViewId );
-                ChemicalGhsGridView.Root.ChildRelationships.Clear();
-                CswNbtViewRelationship ChemRel = ChemicalGhsGridView.AddViewRelationship( ChemicalNT, false );
-                CswNbtViewRelationship GhsRel = ChemicalGhsGridView.AddViewRelationship( ChemRel, NbtViewPropOwnerType.Second, GhsMaterialOCP, true );
-                CswNbtViewProperty JurisVP = ChemicalGhsGridView.AddViewProperty( GhsRel, GhsJurisdictionOCP );
-                CswNbtViewProperty SignalVP = ChemicalGhsGridView.AddViewProperty( GhsRel, GhsSignalWordOCP );
-                CswNbtViewProperty LabelVP = ChemicalGhsGridView.AddViewProperty( GhsRel, GhsLabelCodesOCP );
-                JurisVP.Order = 1;
-                SignalVP.Order = 2;
-                LabelVP.Order = 3;
-                ChemicalGhsGridView.save();
+                //// Add a new grid
+                //CswNbtMetaDataNodeTypeProp ChemicalGhsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( ChemicalNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Grid ), "GHS" ) );
+                //CswNbtView ChemicalGhsGridView = _CswNbtSchemaModTrnsctn.restoreView( ChemicalGhsGridNTP.ViewId );
+                //ChemicalGhsGridView.Root.ChildRelationships.Clear();
+                //CswNbtViewRelationship ChemRel = ChemicalGhsGridView.AddViewRelationship( ChemicalNT, false );
+                //CswNbtViewRelationship GhsRel = ChemicalGhsGridView.AddViewRelationship( ChemRel, NbtViewPropOwnerType.Second, GhsMaterialOCP, true );
+                //CswNbtViewProperty JurisVP = ChemicalGhsGridView.AddViewProperty( GhsRel, GhsJurisdictionOCP );
+                //CswNbtViewProperty SignalVP = ChemicalGhsGridView.AddViewProperty( GhsRel, GhsSignalWordOCP );
+                //CswNbtViewProperty LabelVP = ChemicalGhsGridView.AddViewProperty( GhsRel, GhsLabelCodesOCP );
+                //JurisVP.Order = 1;
+                //SignalVP.Order = 2;
+                //LabelVP.Order = 3;
+                //ChemicalGhsGridView.save();
 
-                ChemicalGhsGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ChemicalGhsTab.TabId );
+                //ChemicalGhsGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ChemicalGhsTab.TabId );
 
             } // if(null != ChemicalNT)
 
             CswNbtMetaDataNodeType GhsNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "GHS" );
             if( null != GhsNT )
             {
-
                 // Tabs
-                CswNbtMetaDataNodeTypeTab GhsGhsTab = GhsNT.getNodeTypeTab( "GHS" );
+                CswNbtMetaDataNodeTypeTab GhsGhsTab = GhsNT.getNodeTypeTab( "GHS" ) ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( GhsNT, "GHS", 1 );
 
 
                 // Properties
@@ -92,13 +89,13 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp GhsLabelCodesNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.LabelCodes );
                 CswNbtMetaDataNodeTypeProp GhsClassCodesNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.ClassCodes );
                 CswNbtMetaDataNodeTypeProp GhsPictogramsNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GhsNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ImageList ), "Pictograms" ) );
-                CswNbtMetaDataNodeTypeProp GhsClassificationNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GhsNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Text ), "Classification" ) );
+                CswNbtMetaDataNodeTypeProp GhsClassificationNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GhsNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.List ), "Classification" ) );
 
 
                 // Property Configuration
                 GhsSignalWordNTP.ListOptions = "Danger,Warning";
                 GhsSignalWordNTP.IsRequired = true;
-                
+
                 GhsMaterialNTP.IsRequired = true;
 
                 GhsPictogramsNTP.Extended = "true";
@@ -168,7 +165,7 @@ namespace ChemSW.Nbt.Schema
             //{
             //    CswNbtMetaDataNodeTypeProp GhsPhraseCodeNTP = GhsPhraseNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Code );
             //    CswNbtMetaDataNodeTypeProp GhsPhraseEnglishNTP = GhsPhraseNT.getNodeTypeProp( "English" );
-                
+
             //    string NameTemplate = CswNbtMetaData.MakeTemplateEntry( GhsPhraseCodeNTP.PropName ) + " ";
             //    if(null != GhsPhraseEnglishNTP)
             //    {
