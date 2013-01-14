@@ -1025,7 +1025,6 @@ namespace ChemSW.Nbt
         #endregion Pass-thru to CswResources
 
         #region On Config Var Change Event Handling
-        #endregion
 
         /*
          * NOTE - we might want to consider moving this into it's set of classes at some 
@@ -1035,23 +1034,33 @@ namespace ChemSW.Nbt
          */
         private void _onConfigVblChange( string VariableName, string NewValue )
         {
-            if( VariableName.Equals( "locationviewrootname" ) ) //TODO: this should not be a hardcoded string here
+            if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )  //TODO: this should not be a hardcoded string here
             {
                 CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClassProp locationOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
-                CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID];
-                CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name];
+                if( null != locationOC )
+                {
+                    CswNbtMetaDataObjectClassProp locationOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+                    CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID];
+                    CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name];
 
-                string sql = @"update (select jnp.nodeid, jnp.* from jct_nodes_props jnp
+                    string sql = @"update (select jnp.pendingupdate from jct_nodes_props jnp
                                        join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
                                        join nodetypes nt on nt.nodetypeid = ntp.nodetypeid
                                        join object_class oc on oc.objectclassid = nt.objectclassid and oc.objectclassid = " + locationOC.ObjectClassId +
-                                       @"join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid and ocp.objectclasspropid = " + locationOCP.ObjectClassPropId +
-                                @"where " + nodeidSubField.Column._Name + " is null and " + valueSubField.Column._Name + " is not null) set pendingupdate = 1";
+                                           @"join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid and ocp.objectclasspropid = " + locationOCP.ObjectClassPropId +
+                                    @"where " + nodeidSubField.Column._Name + " is null and " + valueSubField.Column._Name + " is not null) set pendingupdate = 1";
 
-                _CswResources.execArbitraryPlatformNeutralSql( sql );
+                    /*
+                     * NOTE - this is NOT how we would normally set nodes to pending update = true. If we did it the normal way of fetching the node and setting the flag on each one,
+                     * we might as well just determine the name and set it here. The goal here is to AVOID putting any additional overhead on the runtime. We want to throw the location
+                     * update to the UpdtPropVals scheduled rule
+                     */
+                    _CswResources.execArbitraryPlatformNeutralSql( sql );
+                }
             }
         }
+
+        #endregion
 
     } // CswNbtResources
 
