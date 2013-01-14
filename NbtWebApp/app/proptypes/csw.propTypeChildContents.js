@@ -25,11 +25,11 @@
                     nodeSelect.selectedNodeLink = Csw.string(cswPrivate.propVals.relatednodelink).trim();
                     nodeSelect.selectedName = Csw.string(cswPrivate.propVals.name).trim();
                     nodeSelect.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
-                    nodeSelect.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
+                    //nodeSelect.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     nodeSelect.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     nodeSelect.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
                     nodeSelect.options = cswPrivate.propVals.options;
-                    nodeSelect.useSearch = Csw.bool(cswPrivate.propVals.usesearch);
+                    nodeSelect.useSearch = false; // Csw.bool(cswPrivate.propVals.usesearch);
                     nodeSelect.cellCol = 1;
                     nodeSelect.selectedNodeType = null;
                     nodeSelect.addImage = null;
@@ -41,11 +41,11 @@
 
                     };
 
-                    // nodeSelect.relatedTo = {};
-                    // nodeSelect.relatedTo.relatednodeid = cswPublic.data.tabState.relatednodeid;
-                    // nodeSelect.relatedTo.relatednodetypeid = cswPublic.data.tabState.relatednodetypeid;
-                    // nodeSelect.relatedTo.relatednodename = cswPublic.data.tabState.relatednodename;
-                    // nodeSelect.relatedTo.relatedobjectclassid = cswPublic.data.tabState.relatedobjectclassid;
+                    nodeSelect.relatedTo = {};
+                    nodeSelect.relatedTo.relatednodeid = cswPublic.data.tabState.nodeid;
+                    nodeSelect.relatedTo.relatednodetypeid = cswPublic.data.tabState.nodetypeid;
+                    nodeSelect.relatedTo.relatednodename = cswPublic.data.tabState.nodename;
+                    //nodeSelect.relatedTo.relatedobjectclassid = cswPublic.data.tabState.relatedobjectclassid;
 
                     nodeSelect.isRequired = cswPublic.data.isRequired();
                     nodeSelect.isMulti = cswPublic.data.isMulti();
@@ -53,20 +53,16 @@
                     nodeSelect.isClickable = cswPublic.data.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
 
                     nodeSelect.doGetNodes = false;
-
-                    // nodeSelect.showSelectOnLoad = (function () {
-                    //     return cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add ||
-                    //            cswPublic.data.isMulti() ||
-                    //         (cswPublic.data.isRequired() && Csw.isNullOrEmpty(nodeSelect.selectedNodeId));
-                    // } ());
-
+                    nodeSelect.showSelectOnLoad = true;
+                    
                     cswPublic.control = cswPrivate.parentTbl.cell(1, 1).nodeSelect(nodeSelect);
 
-                    cswPublic.editLink = cswPrivate.parentTbl.cell(1, 2).a({
+                    cswPublic.editLink = cswPrivate.parentTbl.cell(1, 2).buttonExt({
                         name: 'childContentsEdit',
-                        text: 'Configure...',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                        size: 'small',
+                        enabledText: 'Edit Selected',
                         onClick: function () {
-                            //Csw.tryExec(cswPrivate.onClick);
                             $.CswDialog('EditNodeDialog', {
                                 currentNodeId: cswPublic.control.selectedNodeId(),
                                 nodenames: [cswPublic.control.selectedName()]
