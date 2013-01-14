@@ -463,63 +463,81 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
             CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
 
-            if( false == ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) )
+            if( ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) )
             {
-                docView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: titleOCP,
-                    Value: ButtonData.SelectedText,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            }
 
-            ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-            int childCount = docsTree.getChildNodeCount();
-            CswNbtObjClassDocument docNode = null;
-            for( int i = 0; i < childCount; i++ )
-            {
-                docsTree.goToNthChild( i );
-                CswNbtObjClassDocument potentialDocNode = docsTree.getNodeForCurrentPosition();
-                if( null == docNode )
+                ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+                int childCount = docsTree.getChildNodeCount();
+                CswNbtObjClassDocument docNode = null;
+                bool matchedFormat = false;
+                bool matchedLang = false;
+                bool matchedExact = false;
+                for( int i = 0; i < childCount; i++ )
                 {
-                    docNode = potentialDocNode;
-                }
-
-                if( null != userJurisdictionNode )
-                {
-                    if( potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) )
+                    docsTree.goToNthChild( i );
+                    CswNbtObjClassDocument potentialDocNode = docsTree.getNodeForCurrentPosition();
+                    if( null == docNode )
                     {
                         docNode = potentialDocNode;
                     }
-                    if( potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
-                    {
-                        docNode = potentialDocNode;
-                    }
-                    if( potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) && potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
-                    {
-                        docNode = potentialDocNode;
-                    }
-                }
-                docsTree.goToParentNode();
-            }
 
-            if( null != docNode )
-            {
-                string url = "";
-                switch( docNode.FileType.Value )
-                {
-                    case CswNbtObjClassDocument.FileTypes.File:
-                        url = CswNbtNodePropBlob.getLink( docNode.File.JctNodePropId, docNode.NodeId, docNode.File.NodeTypePropId );
-                        break;
-                    case CswNbtObjClassDocument.FileTypes.Link:
-                        url = docNode.Link.GetFullURL();
-                        break;
+                    if( null != userJurisdictionNode )
+                    {
+                        if( false == matchedFormat && potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) )
+                        {
+                            docNode = potentialDocNode;
+                            matchedFormat = true;
+                        }
+                        if( false == matchedLang && potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
+                        {
+                            docNode = potentialDocNode;
+                            matchedLang = true;
+                        }
+                        if( false == matchedExact && potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) && potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
+                        {
+                            docNode = potentialDocNode;
+                            matchedExact = true;
+                        }
+                    }
+                    docsTree.goToParentNode();
                 }
-                ButtonData.Data["url"] = url;
-                ButtonData.Action = NbtButtonAction.popup;
+
+                if( null != docNode )
+                {
+                    string url = "";
+                    switch( docNode.FileType.Value )
+                    {
+                        case CswNbtObjClassDocument.FileTypes.File:
+                            url = CswNbtNodePropBlob.getLink( docNode.File.JctNodePropId, docNode.NodeId, docNode.File.NodeTypePropId );
+                            break;
+                        case CswNbtObjClassDocument.FileTypes.Link:
+                            url = docNode.Link.GetFullURL();
+                            break;
+                    }
+                    ButtonData.Data["url"] = url;
+                    ButtonData.Action = NbtButtonAction.popup;
+                }
+                else
+                {
+                    ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
+                    ButtonData.Action = NbtButtonAction.nothing;
+                }
             }
-            else
+            else //load Assigned SDS grid dialog
             {
-                ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
-                ButtonData.Action = NbtButtonAction.nothing;
+                CswNbtMetaDataNodeTypeProp assignedSDSNTP = NodeType.getNodeTypeProp( "Assigned SDS" );
+                if( null != assignedSDSNTP )
+                {
+                    ButtonData.Data["viewid"] = assignedSDSNTP.ViewId.ToString();
+                    ButtonData.Data["title"] = assignedSDSNTP.PropName;
+                    ButtonData.Data["nodeid"] = NodeId.ToString();
+                    ButtonData.Action = NbtButtonAction.griddialog;
+                }
+                else
+                {
+                    ButtonData.Message = "Could not find the Assigned SDS prop";
+                    ButtonData.Action = NbtButtonAction.nothing;
+                }
             }
 
         }

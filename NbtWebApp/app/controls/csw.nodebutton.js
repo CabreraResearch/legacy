@@ -153,7 +153,7 @@
                     cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
                         cssclass: 'buttonmessage'
                     });
-                    
+
                 } ());
             });
             return cswPublic;
@@ -200,7 +200,7 @@
             case Csw.enums.nbtButtonAction.landingPage:
                 Csw.publish('refreshLandingPage', actionJson.landingpage);
                 break;
-                
+
             case Csw.enums.nbtButtonAction.loadView:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
@@ -251,6 +251,20 @@
                         });
                         break;
                 }
+                break;
+
+            case Csw.enums.nbtButtonAction.griddialog:
+                $.CswDialog('OpenEmptyDialog', {
+                    title: actionJson.title,
+                    onOpen: function (dialogDiv) {
+                        Csw.nbt.nodeGrid(dialogDiv, {
+                            nodeid: actionJson.nodeid,
+                            readonly: false,
+                            reinit: false,
+                            viewid: actionJson.viewid
+                        });
+                    }
+                });
                 break;
 
             default:
