@@ -485,11 +485,11 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != userJurisdictionNode )
                 {
-                    if( potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
+                    if( potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) )
                     {
                         docNode = potentialDocNode;
                     }
-                    if( potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) )
+                    if( potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
                     {
                         docNode = potentialDocNode;
                     }
