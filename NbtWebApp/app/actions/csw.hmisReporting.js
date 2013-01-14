@@ -11,7 +11,6 @@ Csw.actions.hmisReporting = Csw.actions.template ||
         //#region _preCtor
         (function _preCtor() {
             cswPrivate.name = cswPrivate.name || 'HMIS Reporting';
-            cswPrivate.onSubmit = cswPrivate.onSubmit || function () {};
             cswPrivate.onCancel = cswPrivate.onCancel || function () {};
             
             cswPrivate.controlZoneId = cswPrivate.controlZoneId || '';
@@ -24,10 +23,6 @@ Csw.actions.hmisReporting = Csw.actions.template ||
         //#endregion _preCtor
 
         //#region Action Functions
-        cswPrivate.onSubmitClick = function() {
-            Csw.tryExec(cswPrivate.onSubmit);
-        };
-
         cswPrivate.onCancelClick = function() {
             Csw.tryExec(cswPrivate.onCancel);
         };
@@ -154,32 +149,32 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         Columns.push({
                             text: headerDisplay,
                             columns: [{
-                                    dataIndex: maqColName,
-                                    filterable: false,
-                                    header: 'MAQ',
-                                    id: 'hmis_' + maqColName,
-                                    width: 80,
-                                    summaryType: 'max',
-                                    renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
-                                        return value === 0 ? '' : value + state;
-                                    },
-                                    summaryRenderer: function(value, summaryData, dataIndex) {
-                                        return value === 0 ? '' : value + state;
-                                    }
-                                }, {
-                                    dataIndex: qtyColName,
-                                    filterable: false,
-                                    header: 'Qty',
-                                    id: 'hmis_' + qtyColName,
-                                    width: 80,
-                                    summaryType: 'sum',
-                                    renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
-                                        return value === 0 ? '' : value + state;
-                                    },
-                                    summaryRenderer: function(value, summaryData, dataIndex) {
-                                        return value === 0 ? '' : value + state;
-                                    }
-                                }]
+                                dataIndex: maqColName,
+                                filterable: false,
+                                header: 'MAQ',
+                                id: 'hmis_' + maqColName,
+                                width: 80,
+                                summaryType: 'max',
+                                renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
+                                    return '';//value === 0 ? '' : value + state;
+                                },
+                                summaryRenderer: function(value, summaryData, dataIndex) {
+                                    return value === 0 ? '' : value + state;
+                                }
+                            }, {
+                                dataIndex: qtyColName,
+                                filterable: false,
+                                header: 'Qty',
+                                id: 'hmis_' + qtyColName,
+                                width: 80,
+                                summaryType: 'sum',
+                                renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
+                                    return value === 0 ? '' : value + state;
+                                },
+                                summaryRenderer: function(value, summaryData, dataIndex) {
+                                    return value === 0 ? '' : value + state;
+                                }
+                            }]
                         });
                         HMISGridFields.push({
                             name: maqColName,
@@ -255,21 +250,21 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 { name: 'material', display: '&nbsp;<br/>&nbsp;<br/>QtyMaterial' },
                 { name: 'hazardclass', display: '&nbsp;<br/>&nbsp;<br/>HazardClass' },
                 { name: 'storagesolidmaq', display: 'Storage<br/>Solid<br/>MAQ' },
-                { name: 'storagesolidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
-                { name: 'storageliquidmaq', display: '&nbsp;<br/>Liquid<br/>MAQ' },
-                { name: 'storageliquidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
-                { name: 'storagegasmaq', display: '&nbsp;<br/>Gas<br/>MAQ' },
-                { name: 'storagegasqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'storagesolidqty', display: 'Storage<br/>Solid<br/>Qty' },
+                { name: 'storageliquidmaq', display: 'Storage<br/>Liquid<br/>MAQ' },
+                { name: 'storageliquidqty', display: 'Storage<br/>Liquid<br/>Qty' },
+                { name: 'storagegasmaq', display: 'Storage<br/>Gas<br/>MAQ' },
+                { name: 'storagegasqty', display: 'Storage<br/>Gas<br/>Qty' },
                 { name: 'closedsolidmaq', display: 'Closed<br/>Solid<br/>MAQ' },
-                { name: 'closedsolidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
-                { name: 'closedliquidmaq', display: '&nbsp;<br/>Liquid<br/>MAQ' },
-                { name: 'closedliquidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
-                { name: 'closedgasmaq', display: '&nbsp;<br/>Gas<br/>MAQ' },
-                { name: 'closedgasqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
+                { name: 'closedsolidqty', display: 'Closed<br/>Solid<br/>Qty' },
+                { name: 'closedliquidmaq', display: 'Closed<br/>Liquid<br/>MAQ' },
+                { name: 'closedliquidqty', display: 'Closed<br/>Liquid<br/>Qty' },
+                { name: 'closedgasmaq', display: 'Closed<br/>Gas<br/>MAQ' },
+                { name: 'closedgasqty', display: 'Closed<br/>Gas<br/>Qty' },
                 { name: 'opensolidmaq', display: 'Open<br/>Solid<br/>MAQ' },
-                { name: 'opensolidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' },
-                { name: 'openliquidmaq', display: '&nbsp;<br/>Liquid<br/>MAQ' },
-                { name: 'openliquidqty', display: '&nbsp;<br/>&nbsp;<br/>Qty' }
+                { name: 'opensolidqty', display: 'Open<br/>Solid<br/>Qty' },
+                { name: 'openliquidmaq', display: 'Open<br/>Liquid<br/>MAQ' },
+                { name: 'openliquidqty', display: 'Open<br/>Liquid<br/>Qty' }
             ];
             SummaryGridColumns.push({
                 dataIndex: gridColumns[1].name,
@@ -335,9 +330,10 @@ Csw.actions.hmisReporting = Csw.actions.template ||
         (function _postCtor() {
             cswPrivate.action = Csw.layouts.action(cswParent, {
                 title: 'HMIS Reporting',
-                finishText: 'Finish',
-                onFinish: cswPrivate.onSubmitClick,
-                onCancel: cswPrivate.onCancelClick
+                useFinish: false,
+                cancelText: 'Close',
+                onCancel: cswPrivate.onCancelClick,
+                hasButtonGroup: true
             });
             
             cswPrivate.controlTbl = cswPrivate.action.actionDiv.table({
