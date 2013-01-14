@@ -116,6 +116,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActUploadLegacyMobileData.cs" />
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28293.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case24647.cs" />
     <Compile Include="Service References\ChemCatCentral\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -371,7 +373,7 @@
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28281.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28339.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_CaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28363.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28331.cs" />
     <Compile Include="csw\Search\CswNbtSearchFilter.cs" />
