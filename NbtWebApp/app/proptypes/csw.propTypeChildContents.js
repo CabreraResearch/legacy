@@ -37,7 +37,7 @@
                         // Csw.tryExec(cswPublic.data.onChange, nodeObj.nodeid);
                         // cswPublic.data.onPropChange({ nodeid: nodeObj.nodeid, name: nodeObj.name, relatednodeid: nodeObj.selectedNodeId, relatednodelink: nodeObj.relatednodelink });
 
-                        cswPrivate.loadNode(nodeObj);
+                        cswPrivate.loadNode(nodeObj.nodeid);
 
                     };
 
@@ -54,7 +54,7 @@
 
                     nodeSelect.doGetNodes = false;
                     nodeSelect.showSelectOnLoad = true;
-                    
+
                     cswPublic.control = cswPrivate.parentTbl.cell(1, 1).nodeSelect(nodeSelect);
 
                     cswPublic.editLink = cswPrivate.parentTbl.cell(1, 2).buttonExt({
@@ -63,9 +63,14 @@
                         size: 'small',
                         enabledText: 'Edit Selected',
                         onClick: function () {
+                            var nodeid = cswPublic.control.selectedNodeId();
                             $.CswDialog('EditNodeDialog', {
-                                currentNodeId: cswPublic.control.selectedNodeId(),
-                                nodenames: [cswPublic.control.selectedName()]
+                                currentNodeId: nodeid,
+                                nodenames: [cswPublic.control.selectedName()],
+                                onEditNode: function () {
+                                    // refresh
+                                    cswPrivate.loadNode(nodeid);
+                                }
                             }); // CswDialog
                         } // onClick
                     }); // link
@@ -73,7 +78,7 @@
                     cswPrivate.childContentsDiv = cswPrivate.parent.div();
                 }; // render()
 
-                cswPrivate.loadNode = function (nodeObj) {
+                cswPrivate.loadNode = function (nodeid) {
                     cswPrivate.childContentsDiv.empty();
 
                     Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {
@@ -81,7 +86,7 @@
                         globalState: {
                             //propertyData: cswDlgPrivate.propertyData,
                             ShowAsReport: false,
-                            currentNodeId: nodeObj.nodeid
+                            currentNodeId: nodeid
                         },
                         tabState: {
                             //                            nodetypeid: cswDlgPrivate.nodetypeid,
