@@ -115,50 +115,59 @@
                     select: function(rowModel, record, index, eOpts) {
                         //If you click a node, this event is firing. We must:
                         //1. Keep this generic. Defer to the caller for implementation-specific validation.
-                        //2. Properly enforce Multi-Edit (likely deferrals to the caller)
-                        //3. Properly track the currently and previously selected node (multiple clicks to the same node trigger this event)
+                        //2. Properly track the currently and previously selected node (multiple clicks to the same node trigger this event)
                         var ret = true;
-                        if (cswPrivate.isMulti) {
-                            if (record.raw.checked === true) {
-                                record.set('checked', false);
-                            } else {
-                                var tmpPrevNode = cswPublic.selectedTreeNode;
-                                var tmpCrntNode = record;
-                                if (null === cswPublic.selectedTreeNode || Csw.tryExec(cswPrivate.allowMultiSelection, tmpPrevNode, tmpCrntNode)) {
-                                    record.set('checked', true);
-                                    cswPublic.previousTreeNode = tmpPrevNode;
-                                    cswPublic.selectedTreeNode = tmpCrntNode;
-                                } else {
-                                    record.set('checked', false);
-                                    ret = false;
-                                    cswPublic.selectNode(cswPublic.selectedTreeNode);
-                                }
-                            }
-                        } else {
+                        if(cswPrivate.isMulti !== true) {
                             if (record != cswPublic.selectedTreeNode) {
                                 record.expand();
                                 cswPublic.previousTreeNode = cswPublic.selectedTreeNode;
                                 cswPublic.selectedTreeNode = record;
-
-                                Csw.tryExec(cswPrivate.onSelect, record.raw);
+                                //If we're in single edit mode, the count is always 1
+                                cswPrivate.selectedNodeCount = 1;
                             }
+                        }
+                        if (cswPrivate.selectedNodeCount === 1) {
+                            //In either single or multi-edit, render whenever the node count is 1
+                            Csw.tryExec(cswPrivate.onSelect, record.raw);
                         }
                         return ret;
                     },
-                    checkchange: function(node, checked, eOpts) {
-                        //Counter-intuitively, this event only fires on selected nodes, so we can't use for Multi-Edit without also using select to trigger this event
-                        var tmpPrevNode = cswPublic.selectedTreeNode;
-                        var tmpCrntNode = node;
-                        if (null === cswPublic.selectedTreeNode || Csw.tryExec(cswPrivate.allowMultiSelection, tmpPrevNode, tmpCrntNode)) {
-                            node.set('checked', true);
-                        } else {
-                            node.set('checked', false);
-                            cswPublic.selectNode(cswPublic.selectedTreeNode);
+                    checkchange: function (record, checked, eOpts) {
+                        //Unfortunately, this event doesn't fire regularly if watched. Debug carefully!
+
+                        //Ext doesn't update the raw data, which is the only thing we have to manage state.
+                        //Manually keep it up to date.
+                        record.raw.checked = checked;
+                        if (cswPrivate.isMulti) {
+                            var tmpPrevNode = cswPublic.selectedTreeNode;
+                            var tmpCrntNode = record;
+                            
+                            if (null === tmpPrevNode ||
+                                tmpPrevNode.raw.checked === false || 
+                                null === cswPublic.selectedTreeNode || 
+                                Csw.tryExec(cswPrivate.allowMultiSelection, tmpPrevNode, tmpCrntNode)
+                             ) {
+                                //if the previous node was null (starting from the root) or if the previous node is unchecked
+                                //or if the currently selected node is null (unlikely)
+                                //or if the caller's algorithm to allow simultaneous selection passes, 
+                                //then increment up or down and set the current and previous nodes accordingly
+                                var inc = (checked) ? 1 : -1;
+                                cswPublic.previousTreeNode = tmpPrevNode;
+                                cswPublic.selectedTreeNode = tmpCrntNode;
+                                cswPrivate.selectedNodeCount += inc;
+                            } else {
+                                //else, manually "uncheck" this node and select the unchanged current node
+                                record.raw.checked = false;
+                                record.set('checked', false);
+                                if (cswPrivate.selectedNodeCount > 0) {
+                                    cswPublic.selectNode(cswPublic.selectedTreeNode);
+                                } 
+                            }
                         }
                     }
                 };
             };
-
+            cswPrivate.selectedNodeCount = 0;
             cswPublic.selectedTreeNode = null;
             cswPublic.previousTreeNode = null;
 
