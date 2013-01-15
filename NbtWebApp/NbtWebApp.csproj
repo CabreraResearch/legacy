@@ -116,6 +116,9 @@
     <Compile Include="Services\LegacyMobile.svc.cs">
       <DependentUpon>LegacyMobile.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Trees.svc.cs">
+      <DependentUpon>Trees.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Labels2.svc.cs">
       <DependentUpon>Labels2.svc</DependentUpon>
     </Compile>
@@ -172,18 +175,17 @@
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
     <Compile Include="WebSvc\Logic\Search\CswNbtWebServiceC3Search.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
-    <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="WebSvc\Logic\NbtManager\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceQuotas.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbSdView.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTable.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\Trees.svc" />
     <Content Include="Services\ChemCatCentral.svc" />
     <Content Include="Services\LegacyMobile.svc" />
     <Content Include="Services\Labels2.svc" />
@@ -1285,6 +1287,7 @@
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceSearch.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceTabsAndProps.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTree.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtSdTrees.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceView.cs" />
     <Compile Include="WebSvc\Logic\Menus\LandingPages\CswNbtWebServiceLandingPageItems.cs" />
     <Compile Include="WebSvc\Logic\Tools\TimingModule.cs" />

@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
+﻿using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
+    [DataContract]
     public class CswNbtGridExtJsField
     {
         /// <summary>
@@ -24,7 +15,11 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// Data type
         /// string, date, number
         /// </summary>
+        [DataMember]
         public string type = "string";
+
+        [DataMember]
+        public string name = "";
 
         public JObject ToJson()
         {

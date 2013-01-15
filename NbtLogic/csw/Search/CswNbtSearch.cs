@@ -443,28 +443,27 @@ namespace ChemSW.Nbt.Search
                     {
                         PropOrder = _CswNbtSearchPropOrder.getPropOrderDict( Tree.getNodeKeyForCurrentPosition() );
                     }
-                    JArray Props = Tree.getChildNodePropsOfNode();
-                    foreach( JObject Prop in Props )
+                    Collection<CswNbtTreeNodeProp> Props = Tree.getChildNodePropsOfNode();
+                    foreach( CswNbtTreeNodeProp Prop in Props )
                     {
-                        Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
-                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( CswConvert.ToString( Prop["fieldtype"] ) );
-                        if( false == FilteredPropIds.Contains( NodeTypePropId ) && FieldType.Searchable )
+                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( Prop.FieldType );
+                        if( false == FilteredPropIds.Contains( Prop.NodeTypePropId ) && FieldType.Searchable )
                         {
-                            string Gestalt = Prop["gestalt"].ToString();
+                            string Gestalt = Prop.Gestalt;
                             if( Gestalt.Length > 50 )
                             {
                                 Gestalt = Gestalt.Substring( 0, 50 );
                             }
 
-                            if( false == PropCounts.ContainsKey( NodeTypePropId ) )
+                            if( false == PropCounts.ContainsKey( Prop.NodeTypePropId ) )
                             {
-                                PropCounts[NodeTypePropId] = new Dictionary<string, Int32>();
+                                PropCounts[Prop.NodeTypePropId] = new Dictionary<string, Int32>();
                             }
-                            if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
+                            if( false == PropCounts[Prop.NodeTypePropId].ContainsKey( Gestalt ) )
                             {
-                                PropCounts[NodeTypePropId][Gestalt] = 0;
+                                PropCounts[Prop.NodeTypePropId][Gestalt] = 0;
                             }
-                            PropCounts[NodeTypePropId][Gestalt] += 1;
+                            PropCounts[Prop.NodeTypePropId][Gestalt] += 1;
                         }
                     }
 

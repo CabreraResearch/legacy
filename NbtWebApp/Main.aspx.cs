@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.WebPages
                 if( _SelectedNodeKeyBox.Text != string.Empty )
                 {
                     if( _SelectedNodeKey == null || _SelectedNodeKeyBox.Text != _SelectedNodeKey.ToString() )
-                        _SelectedNodeKey = new CswNbtNodeKey( Master.CswNbtResources, _SelectedNodeKeyBox.Text );
+                        _SelectedNodeKey = new CswNbtNodeKey( _SelectedNodeKeyBox.Text );
                 }
                 else
                 {
@@ -422,7 +422,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 CswNbtNodeKey PriorSelectedNodeKey = null;
                 if( _MainTreeView.SelectedNode != null )
-                    PriorSelectedNodeKey = new CswNbtNodeKey( Master.CswNbtResources, _MainTreeView.SelectedNode.Value );
+                    PriorSelectedNodeKey = new CswNbtNodeKey( _MainTreeView.SelectedNode.Value );
 
                 bool RestoreChecked = true;
                 if( SelectedNodeKey != PriorSelectedNodeKey )
@@ -506,7 +506,7 @@ namespace ChemSW.Nbt.WebPages
                 }
                 if( NodeToSelect != null )
                 {
-                    SelectedNodeKey = new CswNbtNodeKey( Master.CswNbtResources, NodeToSelect.Value );
+                    SelectedNodeKey = new CswNbtNodeKey( NodeToSelect.Value );
                     //Node.Selected = true;
                 }
 
@@ -540,7 +540,7 @@ namespace ChemSW.Nbt.WebPages
                     GridDataItem Row = _MainGrid.Grid.Items[0];
                     if( Row != null )
                     {
-                        SelectedNodeKey = new CswNbtNodeKey( Master.CswNbtResources, Row.GetDataKeyValue( "NodeKey" ).ToString() );
+                        SelectedNodeKey = new CswNbtNodeKey( Row.GetDataKeyValue( "NodeKey" ).ToString() );
                     }
                 }
                 else
@@ -683,7 +683,7 @@ namespace ChemSW.Nbt.WebPages
                     ArrayList CheckedKeys = new ArrayList();
                     foreach( RadTreeNode TreeNode in _MainTreeView.CheckedNodes )
                     {
-                        CheckedKeys.Add( new CswNbtNodeKey( Master.CswNbtResources, TreeNode.Value ) );
+                        CheckedKeys.Add( new CswNbtNodeKey( TreeNode.Value ) );
                     }
                     PropTable.CheckedKeys = CheckedKeys;
                 }
@@ -912,7 +912,7 @@ namespace ChemSW.Nbt.WebPages
         private RadTreeNode _findTreeNodeByNodeKeyRecursive( RadTreeNode TreeNode, CswNbtNodeKey NodeKey )
         {
             RadTreeNode ret = null;
-            CswNbtNodeKey TreeNodeKey = new CswNbtNodeKey( Master.CswNbtResources, TreeNode.Value );
+            CswNbtNodeKey TreeNodeKey = new CswNbtNodeKey( TreeNode.Value );
             if( TreeNodeKey == NodeKey )
             {
                 ret = TreeNode;

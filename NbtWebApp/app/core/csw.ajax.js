@@ -186,38 +186,35 @@
         return cswExternal;
     });
 
-    cswPrivate.bindAjaxEvents = (function () {
-        if (false === cswPrivate.ajaxBindingsHaveRun) {
-            return function () {
-                function ajaxStart(eventObj, watchGlobal) {
-                    if (watchGlobal) {
-                        cswPrivate.ajaxCount += 1;
-                        if (cswPrivate.ajaxCount === 1) {
-                            Csw.publish(Csw.enums.events.ajax.globalAjaxStart);
-                        }
-                    }
-                }
-
-                Csw.subscribe(Csw.enums.events.ajax.ajaxStart, ajaxStart);
-
-                function ajaxStop(eventObj, watchGlobal) {
-                    if (watchGlobal) {
-                        cswPrivate.ajaxCount -= 1;
-                        if (cswPrivate.ajaxCount < 0) {
-                            cswPrivate.ajaxCount = 0;
-                        }
-                    }
-                    if (cswPrivate.ajaxCount <= 0) {
-                        Csw.publish(Csw.enums.events.ajax.globalAjaxStop);
-                    }
-                }
-
-                Csw.subscribe(Csw.enums.events.ajax.ajaxStop, ajaxStop);
-            };
-        } else {
-            return null;
+    cswPrivate.ajaxStart = function (eventObj, watchGlobal) {
+        if (watchGlobal) {
+            cswPrivate.ajaxCount += 1;
+            if (cswPrivate.ajaxCount === 1) {
+                Csw.publish(Csw.enums.events.ajax.globalAjaxStart);
+            }
         }
-    } ());
+    };
+    
+
+    cswPrivate.ajaxStop = function (eventObj, watchGlobal) {
+        if (watchGlobal) {
+            cswPrivate.ajaxCount -= 1;
+            if (cswPrivate.ajaxCount < 0) {
+                cswPrivate.ajaxCount = 0;
+            }
+        }
+        if (cswPrivate.ajaxCount <= 0) {
+            Csw.publish(Csw.enums.events.ajax.globalAjaxStop);
+        }
+    };
+    
+    cswPrivate.bindAjaxEvents = function () {
+        if (false === cswPrivate.ajaxBindingsHaveRun) {
+            cswPrivate.ajaxBindingsHaveRun = true;
+            Csw.subscribe(Csw.enums.events.ajax.ajaxStart, cswPrivate.ajaxStart);
+            Csw.subscribe(Csw.enums.events.ajax.ajaxStop, cswPrivate.ajaxStop);
+        }
+    };
 
     Csw.ajax.ajaxInProgress = Csw.ajax.ajaxInProgress ||
         Csw.ajax.register('ajaxInProgress', function () {

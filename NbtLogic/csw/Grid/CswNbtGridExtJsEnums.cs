@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Data;
-using System.Linq;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
@@ -46,6 +36,8 @@ namespace ChemSW.Nbt.Grid.ExtJs
         public static readonly extJsXType slider = new extJsXType( "slider" );               //Ext.slider.Single      
         public static readonly extJsXType splitbutton = new extJsXType( "splitbutton" );     //Ext.button.Split       
         public static readonly extJsXType tabpanel = new extJsXType( "tabpanel" );           //Ext.tab.Panel          
+        public static readonly extJsXType text = new extJsXType( "text" );                   //Ext.draw.Text
+        public static readonly extJsXType treecolumn = new extJsXType( "treecolumn" );       //Ext.tree.Column         
         public static readonly extJsXType treepanel = new extJsXType( "treepanel" );         //Ext.tree.Panel         
         public static readonly extJsXType viewport = new extJsXType( "viewport" );           //Ext.container.Viewport 
         public static readonly extJsXType window = new extJsXType( "window" );               //Ext.window.Window      
@@ -91,6 +83,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         public static readonly extJsXType actioncolumn = new extJsXType( "actioncolumn" );     //Ext.grid.column.Action
         public static readonly extJsXType booleancolumn = new extJsXType( "booleancolumn" );   //Ext.grid.column.Boolean
         public static readonly extJsXType datecolumn = new extJsXType( "datecolumn" );         //Ext.grid.column.Date
+        public static readonly extJsXType gridcolumn = new extJsXType( "gridcolumn" );         //Ext.grid.column.Grid
         public static readonly extJsXType numbercolumn = new extJsXType( "numbercolumn" );     //Ext.grid.column.Number
         public static readonly extJsXType templatecolumn = new extJsXType( "templatecolumn" ); //Ext.grid.column.Template
     } // extJsXType
