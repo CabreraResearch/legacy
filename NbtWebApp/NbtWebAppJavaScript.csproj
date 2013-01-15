@@ -146,6 +146,7 @@
     <Content Include="app\wizards\_template.js" />
     <Content Include="ConnectTest.html" />
     <None Include="css\csw.label.less" />
+    <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
     <Content Include="PrintTest.html" />
     <Content Include="etc\far.exe" />

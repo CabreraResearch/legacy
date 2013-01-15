@@ -129,9 +129,6 @@
                     viewid: cswPrivate.state.viewId
                 };
                 
-                // case 25844 - open children
-                //cswPublic.treeDiv.$.jstree('open_node', selected.$item);
-
                 Csw.tryExec(m.onSelectNode, optSelect);
             }; // cswPrivate.handleSelectNode()
 
@@ -172,6 +169,13 @@
                                                 'The requested view cannot be rendered as a Tree.',
                                                 'View with ViewId: ' + cswPrivate.state.viewId + ' does not exist or is not a Tree view.');
                         } else {
+                            if (Csw.clientSession.isDebug()) {
+                                data.Columns.forEach(function(column) {
+                                    if (column.dataIndex === 'text') {
+                                        column.menuDisabled = false;
+                                    }
+                                });
+                            }
                             if (false === Csw.isNullOrEmpty(data.NewViewId) && cswPrivate.state.viewId !== data.NewViewId) {
                                 cswPrivate.state.viewId = data.NewViewId;
                                 cswPrivate.state.viewMode = data.NewViewMode;

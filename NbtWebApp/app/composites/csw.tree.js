@@ -28,8 +28,7 @@
                 cswPrivate.columns = cswPrivate.columns || [{
                     xtype: 'treecolumn', //this is so we know which column will show the tree
                     dataIndex: 'text',
-                    menuDisabled: true,
-                    width: 500 - 40
+                    menuDisabled: true
                 }];
 
                 cswPrivate.fields = cswPrivate.fields || [{
@@ -77,11 +76,7 @@
                 cswPrivate.store = cswPrivate.store ||
                     window.Ext.create('Ext.data.TreeStore', {
                         model: 'Tree',
-                        root: cswPrivate.root[0],
-                        sorters: [{
-                            property: 'text',
-                            direction: 'ASC'
-                        }]
+                        root: cswPrivate.root[0]
                     });
                 return cswPrivate.store;
             };
@@ -104,6 +99,7 @@
                     afterlayout: function() {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
                         cswPublic.toggleCheckboxes();
+                        $('.x-grid-cell-treecolumn').css({ background: 'transparent' });
                     },
                     afterrender: function() {
                         //Despite the fact  that this is the last event to fire, the tree is still _NOT_ in the DOM. 
@@ -172,16 +168,19 @@
             	/// </summary>
                 /// <returns type="Ext.tree.Panel">A tree.</returns>
                 var allExpanded = false;
-
+                var hideHeaders = (false === Csw.clientSession.isDebug());
                 var treeOpts = {
                     store: cswPrivate.makeStore(), //just like grids, we need a data store
                     renderTo: cswPublic.div.getId(),
                     height: cswPrivate.height,
                     width: cswPrivate.width,
+                    //maxWidth: cswPrivate.width,
                     title: cswPrivate.root[0].text,  //root should already be validated at this point
                     useArrows: cswPrivate.useArrows, //not for List views
                     rootVisible: false, //the root node (ViewName) is displayed as the title
-                    hideHeaders: true, //this hides the tree grid column names
+                    hideHeaders: hideHeaders, //this hides the tree grid column names
+                    border: false,
+                    bodyStyle: 'background: transparent !important;',
                     listeners: cswPrivate.makeListeners(),
                     columns: cswPrivate.columns, //this is secretly a tree grid
                     dockedItems: {

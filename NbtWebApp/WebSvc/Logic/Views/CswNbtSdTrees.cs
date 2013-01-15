@@ -293,11 +293,11 @@ namespace ChemSW.Nbt.WebServices
             }
             if( int.MinValue != ThisNodeTypeId )
             {
-                Ret.NodeTypeId = ThisNodeTypeId;
+                Ret.NodeTypeId = ThisNodeTypeId.ToString();
             }
             if( int.MinValue != ThisObjectClassId )
             {
-                Ret.ObjectClassId = ThisObjectClassId;
+                Ret.ObjectClassId = ThisObjectClassId.ToString();
             }
 
             Ret.NodeSpecies = ThisNodeKey.NodeSpecies.ToString();
@@ -444,38 +444,57 @@ namespace ChemSW.Nbt.WebServices
                         ExtDataIndex = "text",
                         xtype = extJsXType.treecolumn,
                         MenuDisabled = true,
-                        width = 268,
+                        width = 269,
+                        header = "Tree",
                         resizable = false,
                     } );
                 ResponseData.Columns.Add( new CswNbtGridExtJsColumn
                     {
                         ExtDataIndex = "nodetypeid",
+                        header = "NodeTypeId",
                         hidden = true,
                         resizable = false,
+                        width = 0,
                         xtype = extJsXType.numbercolumn,
                         MenuDisabled = true
                     } );
                 ResponseData.Columns.Add( new CswNbtGridExtJsColumn
                     {
                         ExtDataIndex = "objectclassid",
+                        header = "ObjectClassId",
                         hidden = true,
                         resizable = false,
+                        width = 0,
                         xtype = extJsXType.numbercolumn,
                         MenuDisabled = true
                     } );
                 ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                {
+                    ExtDataIndex = "nodeid",
+                    header = "NodeId",
+                    hidden = true,
+                    resizable = false,
+                    width = 0,
+                    xtype = extJsXType.gridcolumn,
+                    MenuDisabled = true
+                } );
+                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
                     {
                         ExtDataIndex = "disabled",
+                        header = "Disabled",
                         hidden = true,
                         resizable = false,
+                        width = 0,
                         xtype = extJsXType.booleancolumn,
                         MenuDisabled = true
                     } );
+
 
                 //#3: The fields to map the columns to the data store
                 ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "text", type = "string" } );
                 ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodetypeid", type = "number" } );
                 ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "objectclassid", type = "number" } );
+                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodeid", type = "string" } );
                 ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "disabled", type = "bool" } );
 
                 //#4: the tree
