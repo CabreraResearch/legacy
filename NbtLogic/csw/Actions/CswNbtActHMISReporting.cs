@@ -157,54 +157,50 @@ namespace ChemSW.Nbt.Actions
             FireClasses = _setFireClasses();
             CswNbtView HMISView = _getHMISView();
             ICswNbtTree HMISTree = _CswNbtResources.Trees.getTreeFromView( HMISView, false, true, false );
-            if( HMISTree.getChildNodeCount() > 0 )
+            Int32 LocationCount = HMISTree.getChildNodeCount();
+            for( int i = 0; i < LocationCount; i++ )//Location Nodes
             {
-                for( int i = 0; i < HMISTree.getChildNodeCount(); i++ )//Location Nodes
+                HMISTree.goToNthChild( i );
+                Int32 ContainerCount = HMISTree.getChildNodeCount();
+                for( int j = 0; j < ContainerCount; j++ )//Container Nodes
                 {
-                    HMISTree.goToNthChild( i );
-                    if( HMISTree.getChildNodeCount() > 0 )
+                    HMISTree.goToNthChild( j );
+                    if( HMISTree.getChildNodeCount() > 0 )//Material Node Exists
                     {
-                        for( int j = 0; j < HMISTree.getChildNodeCount(); j++ )//Container Nodes
+                        CswNbtNode ContainerNode = HMISTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
+                        if( false == String.IsNullOrEmpty( ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.UseType].AsList.Value ) )
                         {
-                            HMISTree.goToNthChild( j );
-                            if( HMISTree.getChildNodeCount() > 0 )//Material Node Exists
+                            String MaterialName = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Material].AsRelationship.CachedNodeName;
+                            bool MaterialIsNew = true;
+                            foreach ( HMISData.HMISMaterial HMISMaterial in Data.Materials.Where( HMISMaterial => HMISMaterial.Material == MaterialName ) )
                             {
-                                CswNbtNode ContainerNode = HMISTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
-                                if( false == String.IsNullOrEmpty( ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.UseType].AsList.Value ) )
+                                MaterialIsNew = false;
+                                _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
+                            }
+                            if( MaterialIsNew )
+                            {
+                                HMISTree.goToNthChild( 0 );
+                                CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
+                                CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
+                                IEnumerable<CswNbtObjClassFireClassExemptAmount> HazardClasses = _getRelevantHazardClasses( MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value );
+                                foreach (CswNbtObjClassFireClassExemptAmount HazardClass in HazardClasses)
                                 {
-                                    String MaterialName = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Material].AsRelationship.CachedNodeName;
-                                    bool MaterialIsNew = true;
-                                    foreach ( HMISData.HMISMaterial HMISMaterial in Data.Materials.Where( HMISMaterial => HMISMaterial.Material == MaterialName ) )
-                                    {
-                                        MaterialIsNew = false;
-                                        _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
-                                    }
-                                    if( MaterialIsNew )
-                                    {
-                                        HMISTree.goToNthChild( 0 );
-                                        CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
-                                        CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
-                                        IEnumerable<CswNbtObjClassFireClassExemptAmount> HazardClasses = _getRelevantHazardClasses( MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value );
-                                        foreach (CswNbtObjClassFireClassExemptAmount HazardClass in HazardClasses)
-                                        {
-                                            HMISData.HMISMaterial HMISMaterial = new HMISData.HMISMaterial();
-                                            HMISMaterial.Material = MaterialName;
-                                            HMISMaterial.HazardClass = HazardClass.FireHazardClassType.Value;
-                                            HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
-                                            _setFireClassMAQData( HMISMaterial, HazardClass );
-                                            _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
-                                            Data.Materials.Add( HMISMaterial );
-                                        }
-                                        HMISTree.goToParentNode();
-                                    }
+                                    HMISData.HMISMaterial HMISMaterial = new HMISData.HMISMaterial();
+                                    HMISMaterial.Material = MaterialName;
+                                    HMISMaterial.HazardClass = HazardClass.FireHazardClassType.Value;
+                                    HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
+                                    _setFireClassMAQData( HMISMaterial, HazardClass );
+                                    _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
+                                    Data.Materials.Add( HMISMaterial );
                                 }
-                            }//Material Node Exists
-                            HMISTree.goToParentNode();
-                        }//Container Nodes
-                    }
+                                HMISTree.goToParentNode();
+                            }
+                        }
+                    }//Material Node Exists
                     HMISTree.goToParentNode();
-                }//Location Nodes
-            }           
+                }//Container Nodes
+                HMISTree.goToParentNode();
+            }//Location Nodes          
             return Data;
         }
 
