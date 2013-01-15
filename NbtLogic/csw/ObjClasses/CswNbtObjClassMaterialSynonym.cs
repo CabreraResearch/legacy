@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -23,6 +24,23 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string Material = "Material";
             public const string Name = "Name";
+            public const string Type = "Type";
+            public const string Language = "Language";
+        }
+
+        public sealed class Types
+        {
+            public const string Tradename = "Tradename";
+            public const string Synonym = "Synonym";
+            public const string IUPAC = "IUPAC";
+            public const string EINECS = "EINECS";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Tradename, Synonym, IUPAC, EINECS };
+        }
+
+        public sealed class Languages
+        {
+            public const string English = "English";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { English };
         }
 
         /// <summary>
@@ -85,6 +103,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
+        public CswNbtNodePropList Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
+        public CswNbtNodePropList Language { get { return ( _CswNbtNode.Properties[PropertyName.Language] ); } }
 
         //public CswNbtNodePropRelationship Assembly
         //{

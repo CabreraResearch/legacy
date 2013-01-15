@@ -3,7 +3,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
@@ -1491,7 +1490,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Case 28247
-        
+
 
         #region Case 28145
 
@@ -1663,6 +1662,38 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        #region Case 28246
+
+        private void _addPropsToMaterialSynonymOC( CswDeveloper Dev, Int32 CaseNo )
+        {
+
+            CswNbtMetaDataObjectClass MaterialSynonymOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialSynonymClass );
+
+            /* Create the new properties Type and Language */
+            CswNbtMetaDataObjectClassProp TypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialSynonymOC )
+            {
+                PropName = "Type",
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = CswNbtObjClassMaterialSynonym.Types.Options.ToString(),
+                IsRequired = false
+            } );
+
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOCP, CswNbtObjClassMaterialSynonym.Types.Synonym );
+
+            CswNbtMetaDataObjectClassProp LanguageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialSynonymOC )
+            {
+                PropName = "Language",
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = CswNbtObjClassMaterialSynonym.Languages.Options.ToString(),
+                IsRequired = false
+            } );
+
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LanguageOCP, CswNbtObjClassMaterialSynonym.Languages.English );
+
+        }
+
+        #endregion Case 28246
+
         #endregion WILLIAM Methods
 
         /// <summary>
@@ -1717,6 +1748,7 @@ namespace ChemSW.Nbt.Schema
 
             _addPropsToJuridictionOC( CswDeveloper.MB, 28363 );
             _addViewSDSProptoMaterial( CswDeveloper.MB, 28363 );
+            _addPropsToMaterialSynonymOC( CswDeveloper.CM, 28246 );
 
             #endregion WILLIAM
 
