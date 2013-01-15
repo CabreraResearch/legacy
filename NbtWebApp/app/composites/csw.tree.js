@@ -112,7 +112,7 @@
                         Csw.defer(function () {
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
                             var firstChild = cswPrivate.rootNode.childNodes[0];
-                            cswPrivate.selectNode(firstChild);
+                            cswPublic.selectNode(firstChild);
                             //firstChild.expand();
                         }, 100);
                     },
@@ -133,9 +133,9 @@
                                     cswPublic.previousTreeNode = tmpPrevNode;
                                     cswPublic.selectedTreeNode = tmpCrntNode;
                                 } else {
-                                    cswPrivate.selectNode(cswPublic.selectedTreeNode);
                                     record.set('checked', false);
                                     ret = false;
+                                    cswPublic.selectNode(cswPublic.selectedTreeNode);
                                 }
                             }
                         } else {
@@ -150,7 +150,15 @@
                         return ret;
                     },
                     checkchange: function(node, checked, eOpts) {
-                        //Counter-intuitively, this event only fires on selected nodes, so we can't use it for Multi-Edit
+                        //Counter-intuitively, this event only fires on selected nodes, so we can't use for Multi-Edit without also using select to trigger this event
+                        var tmpPrevNode = cswPublic.selectedTreeNode;
+                        var tmpCrntNode = node;
+                        if (null === cswPublic.selectedTreeNode || Csw.tryExec(cswPrivate.allowMultiSelection, tmpPrevNode, tmpCrntNode)) {
+                            node.set('checked', true);
+                        } else {
+                            node.set('checked', false);
+                            cswPublic.selectNode(cswPublic.selectedTreeNode);
+                        }
                     }
                 };
             };
@@ -235,11 +243,11 @@
                 return true;
             };
 
-            cswPrivate.toggleMultiEdit = function() {
+            cswPublic.toggleMultiEdit = function(isMultiOverride) {
             	/// <summary>
             	/// Toggles Multi-Edit state on this instance.
             	/// </summary>
-                cswPrivate.isMulti = !cswPrivate.isMulti;
+                cswPrivate.isMulti = false !== isMultiOverride && !cswPrivate.isMulti;
                 var selModel = cswPublic.tree.getSelectionModel();
                 if (cswPrivate.isMulti) {
                     selModel.setSelectionMode('MULTI');
@@ -287,12 +295,12 @@
                 return cswPublic;
             };
 
-            cswPrivate.selectNode = function(treeNode) {
+            cswPublic.selectNode = function (treeNode) {
             	/// <summary>
             	/// Selects a node from the tree and renders it as the currently selected node
             	/// </summary>
                 /// <param name="treeNode"></param>
-                var path = cswPrivate.getPath(treeNode);
+                var path = cswPublic.getPath(treeNode);
                 if (path) {
                     cswPublic.tree.selectPath(path, null, '|');
                 }
@@ -317,7 +325,7 @@
 
             //#region Getters
 
-            cswPrivate.getPath = function(treeNode) {
+            cswPublic.getPath = function (treeNode) {
             	/// <summary>
             	/// Get the path of a tree node from root
             	/// </summary>
@@ -329,12 +337,18 @@
                 return ret;
             };
 
-            cswPrivate.getChecked = function () {
+            cswPublic.getChecked = function () {
                 /// <summary>
                 /// For Multii-Edit, get all nodes which are selected (checked) in the tree.
                 /// </summary>
                 var checked = cswPublic.tree.getChecked();
-                return checked;
+                var ret = [];
+                if (checked && checked.length > 0) {
+                    checked.forEach(function(treeNode) {
+                        ret.push({ nodeid: treeNode.raw.nodeid, nodekey: treeNode.raw.id });
+                    });
+                }
+                return ret;
             };
 
             //#endregion Getters

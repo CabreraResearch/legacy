@@ -38,7 +38,7 @@
 
             (function _preCtor () {
                 Csw.extend(cswPrivate, opts);
-                cswPublic = cswParent.div();
+                cswPublic.div = cswParent.div();
             }());
 
             cswPrivate.allowMultiSelection = function(currentNode, checkedNode) {
@@ -53,7 +53,7 @@
 
             cswPrivate.make = function (data) {
                 
-                cswPublic.nodeTree = cswPublic.tree({
+                cswPublic.nodeTree = cswPublic.div.tree({
                     height: cswPrivate.height,
                     width: cswPrivate.width,
 
@@ -96,17 +96,9 @@
                 
                 Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
                     return function _onMulti(eventObj, multiOpts) {
-                        if (multiOpts && multiOpts.viewid === viewid) {
-                            if (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes)) {
-                                //$cb.show();
-                                if (cswPrivate.ValidateCheckboxes) {
-                                    //$cb.click(function () { return cswPrivate.validateCheck($cb); });
-                                }
-                            } else { // if (Csw.bool(cswPrivate.ShowCheckboxes)) {
-                               // $cb.hide();
-                            }
+                        if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
+                            cswPublic.nodeTree.toggleMultiEdit(multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
                         } else {
-                            //Csw.debug.assert(multiOpts.viewid === viewid, 'CswMultiEdit event pusblished for viewid "' + multiOpts.viewid + '" but was subscribed to from viewid "' + viewid + '".');
                             Csw.unsubscribe('CswMultiEdit', null, _onMulti);
                             Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
                         }
@@ -149,8 +141,10 @@
                 cswPrivate.make(treeData);
             };
             
-            cswPublic.checkedNodes = function () {
-                
+            cswPublic.getChecked = function () {
+                var treeNodes = cswPublic.nodeTree.getChecked();
+
+                return treeNodes;
             };
 
 
