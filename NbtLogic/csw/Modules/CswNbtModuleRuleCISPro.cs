@@ -32,7 +32,7 @@ namespace ChemSW.Nbt
                 LocationControlZoneNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 LocationControlZoneNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
 
-                CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.StorageCompatability );
+                CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.StorageCompatibility );
                 //LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
 
@@ -91,6 +91,13 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
             }
+
+            // The C3 module can only be enabled if the CISPro module is enabled.
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.C3 );
+            }
+
             // case 26717 - When CISPro is disabled, hide the following properties:
             //   Location.Inventory Group
             //   Location.Storage Compatibility
@@ -106,7 +113,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp LocationControlZoneNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.ControlZone );
                 LocationControlZoneNTP.removeFromAllLayouts();
 
-                CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.StorageCompatability );
+                CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.StorageCompatibility );
                 LocationStorCompatNTP.removeFromAllLayouts();
 
                 CswNbtMetaDataNodeTypeProp LocationContainersGridNTP = LocationNT.getNodeTypeProp( "Containers" );

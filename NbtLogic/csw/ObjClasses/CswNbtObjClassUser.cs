@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LogLevel = "Log Level";
             public const string Archived = "Archived";
             public const string Jurisdiction = "Jurisdiction";
+            public const string Barcode = "Barcode";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -358,7 +359,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 bool ReturnVal = false;
 
-                if ( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
+                if( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
                 {
                     ReturnVal = true;
                 }
@@ -483,6 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         public CswNbtNodePropRelationship Jurisdiction { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
 
 
 

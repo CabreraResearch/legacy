@@ -7,7 +7,6 @@ using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
 
-
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceSearch
@@ -124,13 +123,16 @@ namespace ChemSW.Nbt.WebServices
         private JObject _finishUniversalSearch( CswNbtSearch Search )
         {
             ICswNbtTree Tree = Search.Results();
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null, Int32.MinValue );
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, Int32.MinValue );
 
             Search.SaveToCache( true );
 
             JObject ret = Search.ToJObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
             ret["filters"] = Search.FilterOptions( Tree );
+            ret["searchtype"] = "universal";
+            ret["alternateoption"] = _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 );
+
             return ret;
         }
 
@@ -159,8 +161,9 @@ namespace ChemSW.Nbt.WebServices
             return _finishUniversalSearch( doomedSearch );
         } // deleteSearch
 
-        #endregion UniversalSearch
 
+
+        #endregion UniversalSearch
 
     } // class CswNbtWebServiceSearch
 
