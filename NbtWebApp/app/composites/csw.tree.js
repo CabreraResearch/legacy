@@ -176,13 +176,16 @@
                     hideHeaders: true, //this hides the tree grid column names
                     listeners: cswPrivate.makeListeners(),
                     columns: cswPrivate.columns, //this is secretly a tree grid
-                    dockedItems: [],
+                    dockedItems: {
+                        xtype: 'toolbar',
+                        items: []
+                    },
                     plugins: [new Ext.ux.tree.plugin.NodeDisabled()]
                 };
-                var toggles = {};
+
                 if (cswPrivate.useArrows) { //then show expand/collapse
                     if (cswPrivate.useToggles !== false) {
-                        toggles = {
+                        treeOpts.dockedItems.items.push({
                             text: 'Expand All',
                             handler: function () {
                                 var toolbar = this.up('toolbar');
@@ -205,23 +208,11 @@
                                 }
                                 allExpanded = !allExpanded;
                             }
-                        };
+                        });
 
                     }
                 }
-
-                treeOpts.dockedItems.push({
-                    xtype: 'toolbar',
-                    items: [toggles,
-                            {
-                                text: 'Multi-Edit',
-                                handler: function () {
-                                    cswPrivate.toggleMultiEdit();
-                                }
-                            }]
-                });
-
-
+                
                 cswPublic.tree = window.Ext.create('Ext.tree.Panel', treeOpts);
                 return cswPublic.tree;
             };
@@ -301,11 +292,25 @@
             	/// Selects a node from the tree and renders it as the currently selected node
             	/// </summary>
                 /// <param name="treeNode"></param>
-                var path = cswPrivate.getPath(treeNode)
+                var path = cswPrivate.getPath(treeNode);
                 if (path) {
                     cswPublic.tree.selectPath(path, null, '|');
                 }
                 return false;
+            };
+
+            cswPublic.addToolbarItem = function(itemDef, position) {
+            	/// <summary>
+            	/// Add a docked item to the toolbar
+            	/// </summary>
+            	/// <returns type="Csw.composites.tree">This tree</returns>
+                if (itemDef && itemDef.text && itemDef.handler) {
+                    if (!itemDef.dock) {
+                        itemDef.dock = 'top';
+                    }
+                    cswPublic.tree.addDocked(itemDef, position);
+                }
+                return cswPublic;
             };
 
             //#endregion Tree Mutators
