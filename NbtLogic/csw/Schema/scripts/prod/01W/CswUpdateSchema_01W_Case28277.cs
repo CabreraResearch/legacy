@@ -31,21 +31,21 @@ namespace ChemSW.Nbt.Schema
             IEnumerable<CswNbtMetaDataObjectClassProp> FireExtinguisherOCProps = FireExtinguisherOC.getObjectClassProps();
             foreach( CswNbtMetaDataObjectClassProp FireExtinguisherOCP in FireExtinguisherOCProps )
             {
+                // Remove any rows from jct_nodes_props
+                CswTableUpdate JctNodesPropsTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "removeRowsAssocWithFireExtOCP_28277", "jct_nodes_props" );
+                DataTable JctNodesPropsDt = JctNodesPropsTU.getTable( "where objectclasspropid = " + FireExtinguisherOCP.PropId );
+                foreach (DataRow CurrentDataRow in JctNodesPropsDt.Rows)
+                {
+                    CurrentDataRow.Delete();
+                }
+                JctNodesPropsTU.update( JctNodesPropsDt );
+
+                // Delete the OCP
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( FireExtinguisherOCP, true );
             }
 
-            /* Remove the row from jct_modules_objectclass */
+            /* Remove any rows from jct_modules_objectclass */
             _CswNbtSchemaModTrnsctn.deleteAllModuleObjectClassJunctions( FireExtinguisherOC );
-
-            /* Remove the row from jct_nodes_props */
-            CswTableUpdate JctNodesPropsTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "removeRowAssocWithFireExtOCP_28277", "jct_nodes_props" );
-            DataTable JctNodesPropsDt = JctNodesPropsTU.getTable( "where objectclasspropid = 1242" );
-            if( 1 == JctNodesPropsDt.Rows.Count ) // we should only get one row
-            {
-                JctNodesPropsDt.Rows[0].Delete();
-            }
-
-            JctNodesPropsTU.update( JctNodesPropsDt );
 
             /* Remove the FireExtinguisherClass from object_class */
             CswTableUpdate ObjectClassTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "removeFireExtinguisherOC_28277", "object_class" );
