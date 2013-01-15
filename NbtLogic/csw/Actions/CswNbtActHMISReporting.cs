@@ -395,16 +395,17 @@ namespace ChemSW.Nbt.Actions
         {
             String UnitName = "";
             switch( PhysicalState.ToLower() )
-            {
-                case CswNbtObjClassMaterial.PhysicalStates.Solid:
-                case CswNbtObjClassMaterial.PhysicalStates.NA:
-                    UnitName = "lb";
-                    break;
+            {                
                 case CswNbtObjClassMaterial.PhysicalStates.Liquid:
                     UnitName = "gal";
                     break;
                 case CswNbtObjClassMaterial.PhysicalStates.Gas:
                     UnitName = "cu.ft.";
+                    break;
+                case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                case CswNbtObjClassMaterial.PhysicalStates.NA:
+                default:
+                    UnitName = "lb";
                     break;
             }
             CswNbtMetaDataObjectClass UoMOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
