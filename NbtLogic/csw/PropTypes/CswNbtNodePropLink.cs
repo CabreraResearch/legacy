@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.PropTypes
         public static string GetFullURL( string Prefix, string HrefBody, string Suffix )
         {
             string fullUrl = Prefix + HrefBody + Suffix;
-            if( false == Regex.IsMatch( fullUrl, @"^https?://.*" ) ) //if the hyperlink contains http:// or https://
+            if( false == Regex.IsMatch( fullUrl, @"^https?://.*" ) ) //if the hyperlink doesn't contain http:// or https://
             {
                 fullUrl = "http://" + fullUrl;
             }
