@@ -53,10 +53,6 @@
 
             cswPrivate.make = function (data) {
                 
-                if (cswPrivate.ShowToggleLink && cswPrivate.toggleLink) {
-                    cswPrivate.toggleLink.show();
-                }
-
                 cswPublic.nodeTree = cswPublic.tree({
                     height: cswPrivate.height,
                     width: cswPrivate.width,
@@ -71,16 +67,14 @@
                     allowMultiSelection: cswPrivate.allowMultiSelection,
                         
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
+                    useToggles: cswPrivate.ShowToggleLink,
                     isMulti: cswPrivate.isMulti
                 });
 
 
-                function hoverNode(e, bindData) {
-                    //var $hoverLI = $(bindData.rslt.obj[0]);
-                    //var nodeid = $hoverLI.CswAttrDom('id').substring(cswPrivate.idPrefix.length);
-                    //cswPrivate.hoverNodeId = $hoverLI.CswAttrNonDom('nodeid');
-                    //var nodekey = $hoverLI.CswAttrNonDom('nodekey');
-                    Csw.nodeHoverIn(bindData.args[1], cswPrivate.hoverNodeId, nodekey);
+                function hoverNode(event, treeNode) {
+                    cswPrivate.hoverNodeId = treeNode.raw.nodeid;
+                    Csw.nodeHoverIn(event, cswPrivate.hoverNodeId, treeNode.raw.id);
                 }
                 
                 function deHoverNode() {
@@ -149,21 +143,12 @@
                 Csw.tryExec(m.onSelectNode, optSelect);
             }; // cswPrivate.handleSelectNode()
 
-            cswPrivate.validateCheck = function ($checkbox) {
-                //var $selected = Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
-                //return ($selected.$item.CswAttrNonDom('rel') === $checkbox.CswAttrNonDom('rel'));
-            };
-
-            cswPrivate.clearChecks = function () {
-                
-            };
-
+            
             // For making a tree without using the regular mechanism for fetching tree data
             cswPublic.makeTree = function (treeData) {
                 cswPrivate.make(treeData);
             };
-
-
+            
             cswPublic.checkedNodes = function () {
                 
             };
