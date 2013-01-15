@@ -1674,21 +1674,19 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = "Type",
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                ListOptions = CswNbtObjClassMaterialSynonym.Types.Options.ToString(),
                 IsRequired = false
             } );
 
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOCP, CswNbtObjClassMaterialSynonym.Types.Synonym );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOCP, "Synonym" );
 
             CswNbtMetaDataObjectClassProp LanguageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialSynonymOC )
             {
                 PropName = "Language",
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                ListOptions = CswNbtObjClassMaterialSynonym.Languages.Options.ToString(),
                 IsRequired = false
             } );
 
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LanguageOCP, CswNbtObjClassMaterialSynonym.Languages.English );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LanguageOCP, "English" );
 
         }
 
