@@ -109,7 +109,6 @@ namespace ChemSW.Nbt.WebServices
         {
             CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
             CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
-            //RetObj = new JObject( new JObject( svcReturn.ExtJsGrid ) );
             Return.Data = svcReturn.ExtJsGrid;
         }//getScheduledRulesGrid()
 
