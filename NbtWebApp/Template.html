@@ -42,7 +42,7 @@
                     urlMethod: 'Trees/run/Equipment By Location',
                     success: function(data) {
                         console.log(data.Tree[0]);
-debugger;
+
                         var store = Ext.create('Ext.data.TreeStore', {
                             root: data.Tree[0],
 
@@ -52,24 +52,29 @@ debugger;
                             }]
                         });
                         
-                        var tree = Ext.create('Ext.tree.Panel', {
+                        window.myExtTree = Ext.create('Ext.tree.Panel', {
                             store: store,
                             renderTo: 'divBody',
-                            height: 300,
-                            width: 250,
-                            title: 'Ext Tree',
+                            height: 600,
+                            width: 500,
+                            title: data.Tree[0].text,
+							rootVisible: false,
                             useArrows: true,
+                            //multiSelect: true,
+
+                            //selType: 'CheckboxModel',
+                            selModel : { mode: 'Multi' },
                             dockedItems: [{
                                 xtype: 'toolbar',
                                 items: [{
                                     text: 'Expand All',
                                     handler: function () {
-                                        tree.getEl().mask('Expanding tree...');
+                                        window.myExtTree.getEl().mask('Expanding tree...');
                                         var toolbar = this.up('toolbar');
                                         toolbar.disable();
 
-                                        tree.expandAll(function () {
-                                            tree.getEl().unmask();
+                                        window.myExtTree.expandAll(function () {
+                                            window.myExtTree.getEl().unmask();
                                             toolbar.enable();
                                         });
                                     }
@@ -79,7 +84,7 @@ debugger;
                                         var toolbar = this.up('toolbar');
                                         toolbar.disable();
 
-                                        tree.collapseAll(function () {
+                                        window.myExtTree.collapseAll(function () {
                                             toolbar.enable();
                                         });
                                     }

@@ -1061,10 +1061,8 @@ window.initMain = window.initMain || function (undefined) {
                     } // onEditFilters
                 }); // viewFilters
 
-                mainTree = Csw.nbt.nodeTree({
-                    name: 'main',
-                    parent: Csw.main.leftDiv,
-                    forsearch: o.forsearch,
+                mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
+                    forSearch: o.forsearch,
                     onSelectNode: function(optSelect) {
                         onSelectTreeNode({
                             tree: mainTree,
@@ -1073,16 +1071,16 @@ window.initMain = window.initMain || function (undefined) {
                             nodekey: optSelect.nodekey
                         });
                     },
-                    ShowCheckboxes: cswPrivate.multi
-                });
-                mainTree.init({
-                    viewid: o.viewid,
-                    viewmode: o.viewmode,
-                    nodeid: o.nodeid,
-                    nodekey: o.nodekey,
-                    IncludeNodeRequired: o.IncludeNodeRequired,
-                    onViewChange: function(newviewid, newviewmode) {
-                        Csw.clientState.setCurrentView(newviewid, newviewmode);
+                    isMulti: cswPrivate.multi,
+                    state: {
+                        viewId: o.viewid,
+                        viewMode: o.viewmode,
+                        nodeId: o.nodeid,
+                        nodeKey: o.nodekey,
+                        includeNodeRequired: o.IncludeNodeRequired,
+                        onViewChange: function (newviewid, newviewmode) {
+                            Csw.clientState.setCurrentView(newviewid, newviewmode);
+                        }
                     }
                 });
             } // refreshNodesTree()

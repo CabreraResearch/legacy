@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Nbt.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Tree;
@@ -55,10 +56,18 @@ namespace ChemSW.Nbt.WebServices
                         }
                         return ret;
                     } 
-                    set { IncludeNodeKey = new CswNbtNodeKey( value ); }
+                    set
+                    {
+                        string Key = value;
+                        if( false == string.IsNullOrEmpty( Key ) )
+                        {
+                            IncludeNodeKey = new CswNbtNodeKey( Key );
+                        }
+                    }
                 }
 
                 public CswNbtViewId ViewId = null;
+                public CswNbtSessionDataId SessionViewId = null;
 
                 [DataMember]
                 public string NbtViewId
@@ -74,7 +83,18 @@ namespace ChemSW.Nbt.WebServices
                     }
                     set
                     {
-                        ViewId = new CswNbtViewId( value );
+                        string Id = value;
+                        if( false == string.IsNullOrEmpty( Id ) )
+                        {
+                            if( CswNbtViewId.isViewIdString( Id ) )
+                            {
+                                ViewId = new CswNbtViewId( Id );
+                            }
+                            else if( CswNbtSessionDataId.isSessionDataIdString( Id ) )
+                            {
+                                SessionViewId = new CswNbtSessionDataId( Id );
+                            }
+                        }
                     }
                 }
 
@@ -104,12 +124,20 @@ namespace ChemSW.Nbt.WebServices
                     public ResponseData()
                     {
                         Tree = new Collection<CswExtTree.TreeNode>();
+                        Columns = new Collection<CswNbtGridExtJsColumn>();
+                        Fields = new Collection<CswNbtGridExtJsField>();
                         ViewMode = NbtViewRenderingMode.Tree;
                         PageSize = 50;
                     }
 
                     [DataMember]
                     public Collection<CswExtTree.TreeNode> Tree;
+
+                    [DataMember]
+                    public Collection<CswNbtGridExtJsColumn> Columns;
+
+                    [DataMember]
+                    public Collection<CswNbtGridExtJsField> Fields; 
 
                     public CswNbtSessionDataId ViewId { get; set; }
 
@@ -174,47 +202,48 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Recursively iterate the tree and add child nodes according to parent hierarchy
         /// </summary>
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, bool Recurse )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode )
         {
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
             {
                 Tree.goToNthChild( c );
 
-                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree );
+                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode );
                 TreeNodes.Add( TreeNode );
 
-                if( Recurse && null != TreeNode.Children )
+                if( null != TreeNode.Children )
                 {
-                    _runTreeNodesRecursive( Tree, TreeNode.Children, Recurse );
+                    _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode );
                 }
                 Tree.goToParentNode();
-            } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+                // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
 
-            if( Tree.getCurrentNodeChildrenTruncated() )
-            {
-                CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree );
-                TruncatedTreeNode.Name = "Results Truncated";
-                TruncatedTreeNode.IsLeaf = true;
-                TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
-                TreeNodes.Add( TruncatedTreeNode );
+                if( Tree.getCurrentNodeChildrenTruncated() )
+                {
+                    CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, TreeNode );
+                    TruncatedTreeNode.Name = "Results Truncated";
+                    TruncatedTreeNode.IsLeaf = true;
+                    TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
+                    TreeNodes.Add( TruncatedTreeNode );
+                }
             }
-
         } // _runTreeNodesRecursive()
 
 
         /// <summary>
         /// Generate a JObject for the tree's current node
         /// </summary>
-        private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree )
+        private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree, CswExtTree.TreeNode Parent )
         {
-            CswExtTree.TreeNode ThisTreeNode = new CswExtTree.TreeNode();
+            CswExtTree.TreeNode Ret = new CswExtTree.TreeNode();
 
             CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             string ThisNodeIcon = "";
             string ThisNodeKeyString = ThisNodeKey.ToString();
             string ThisNodeId = "";
-
+            int ThisNodeTypeId = int.MinValue;
+            int ThisObjectClassId = int.MinValue;
             string ThisNodeRel = "";
             bool ThisNodeLocked = false;
             bool ThisNodeDisabled = false;
@@ -224,7 +253,8 @@ namespace ChemSW.Nbt.WebServices
                 case NodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
-                    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
+                    ThisNodeTypeId = ThisNodeType.FirstVersionNodeTypeId;
+                    ThisObjectClassId = ThisNodeType.ObjectClassId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
                     ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
                     if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
@@ -234,7 +264,7 @@ namespace ChemSW.Nbt.WebServices
                     break;
                 case NodeSpecies.Group:
                     ThisNodeRel = "group";
-                    ThisTreeNode.CssClass = "folder";
+                    Ret.CssClass = "folder";
                     break;
             }
 
@@ -249,48 +279,59 @@ namespace ChemSW.Nbt.WebServices
                 ThisNodeState = "leaf";
             }
 
-            ThisTreeNode.Name = ThisNodeName;
-            ThisTreeNode.Icon = ThisNodeIcon;
-            ThisTreeNode.Id = ThisNodeKeyString;
+            Ret.Name = ThisNodeName;
+            Ret.Icon = ThisNodeIcon;
+            Ret.Id = ThisNodeKeyString;
             switch( ThisNodeState )
             {
                 case "closed":
-                    ThisTreeNode.Expanded = false;
+                    Ret.Expanded = false;
                     break;
                 case "leaf":
-                    ThisTreeNode.IsLeaf = true;
+                    Ret.IsLeaf = true;
                     break;
             }
-
-            //ThisNodeObj["attr"]["rel"] = ThisNodeRel;
-            ThisTreeNode.NodeSpecies = ThisNodeKey.NodeSpecies.ToString();
-            ThisTreeNode.NodeId = ThisNodeId;
-            ThisTreeNode.IsLocked = ThisNodeLocked;
+            if( int.MinValue != ThisNodeTypeId )
+            {
+                Ret.NodeTypeId = ThisNodeTypeId;
+            }
+            if( int.MinValue != ThisObjectClassId )
+            {
+                Ret.ObjectClassId = ThisObjectClassId;
+            }
+            if( null != Parent )
+            {
+                Ret.Path = "|" + Parent.Path;
+            }
+            Ret.Path += "|" + Ret.Id;
+            Ret.NodeSpecies = ThisNodeKey.NodeSpecies.ToString();
+            Ret.NodeId = ThisNodeId;
+            Ret.IsLocked = ThisNodeLocked;
             if( ThisNodeDisabled )
             {
-                ThisTreeNode.IsDisabled = true;
+                Ret.IsDisabled = true;
             }
 
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
             if( ParentKey.NodeSpecies != NodeSpecies.Root )
             {
-                ThisTreeNode.ParentId = ParentKey.ToString();
+                Ret.ParentId = ParentKey.ToString();
             }
             else
             {
-                ThisTreeNode.ParentId = "root";
+                Ret.ParentId = "root";
             }
             if( Tree.getChildNodeCount() > 0 )
             {
-                ThisTreeNode.Children = new Collection<CswExtTree.TreeNode>();
+                Ret.Children = new Collection<CswExtTree.TreeNode>();
             }
             else
             {
-                ThisTreeNode.Children = null;
+                Ret.Children = null;
             }
             //ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
 
-            return ThisTreeNode;
+            return Ret;
         } // _treeNodeJObject()
 
         public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request )
@@ -382,6 +423,9 @@ namespace ChemSW.Nbt.WebServices
 
                 Tree.goToRoot();
 
+                //Build the Respose:
+
+                //#1: the Root node
                 CswExtTree.TreeNode RootNode = new CswExtTree.TreeNode();
                 ResponseData.Tree.Add( RootNode );
 
@@ -390,22 +434,43 @@ namespace ChemSW.Nbt.WebServices
                 RootNode.Expanded = true;
                 RootNode.Id = "root";
 
-                //ReturnObj["root"] = new JObject();
-                //ReturnObj["root"]["data"] = _View.ViewName;
-                //ReturnObj["root"]["attr"] = new JObject();
-                //ReturnObj["root"]["attr"]["id"] = _IdPrefix + "root";
-                //ReturnObj["root"]["attr"]["rel"] = "root";
-                //ReturnObj["root"]["attr"]["disabled"] = false == Tree.getNodeIncludedForCurrentPosition();
-                ////Tree.goToRoot();
-                ////ReturnObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
-                //ReturnObj["root"]["state"] = "open";
-                //ReturnObj["root"]["children"] = new JArray();
+                //#2: the columns for the Tree Grid
+                ResponseData.Columns.Add(new CswNbtGridExtJsColumn
+                    {
+                        ExtDataIndex = "text",
+                        xtype = extJsXType.treecolumn,
+                        MenuDisabled = true,
+                        width = 268,
+                        resizable = false,
+                    });
+                ResponseData.Columns.Add(new CswNbtGridExtJsColumn
+                    {
+                        ExtDataIndex = "nodetypeid",
+                        hidden = true,
+                        resizable = false,
+                        xtype = extJsXType.numbercolumn,
+                        MenuDisabled = true
+                    });
+                ResponseData.Columns.Add(new CswNbtGridExtJsColumn
+                    {
+                        ExtDataIndex = "objectclassid",
+                        hidden = true,
+                        resizable = false,
+                        xtype = extJsXType.numbercolumn,
+                        MenuDisabled = true
+                    });
 
+                //#3: The fields to map the columns to the data store
+                ResponseData.Fields.Add(new CswNbtGridExtJsField { name = "text", type = "string" });
+                ResponseData.Fields.Add(new CswNbtGridExtJsField { name = "nodetypeid", type = "number" });
+                ResponseData.Fields.Add(new CswNbtGridExtJsField { name = "objectclassid", type = "number" });
+
+                //#4: the tree
                 RootNode.Children = new Collection<CswExtTree.TreeNode>();
                 if( HasResults )
                 {
                     Tree.goToRoot();
-                    _runTreeNodesRecursive( Tree, RootNode.Children, true );
+                    _runTreeNodesRecursive( Tree, RootNode.Children, RootNode );
                 }
                 else
                 {
@@ -415,11 +480,6 @@ namespace ChemSW.Nbt.WebServices
                     EmptyNode.Id = "empty";
                     RootNode.Children.Add( EmptyNode );
                 }
-                //_wsTreeOfView.saveTreeToCache( Tree );
-                //_View.SaveToCache( IncludeInQuickLaunch );
-
-                //_CswNbtResources.CswSuperCycleCache.put( CacheTreeName, Tree );
-                //View.SaveToCache( IncludeInQuickLaunch );
             }
         } // runTree()
 
@@ -428,7 +488,15 @@ namespace ChemSW.Nbt.WebServices
             CswNbtResources Resources = (CswNbtResources) CswResources;
             if( null != Resources )
             {
-                CswNbtView View = Resources.ViewSelect.restoreView( Request.ViewId );
+                CswNbtView View = null;
+                if( null != Request.ViewId && Request.ViewId.isSet() )
+                {
+                    View = Resources.ViewSelect.restoreView( Request.ViewId );
+                }
+                else if( null != Request.SessionViewId && Request.SessionViewId.isSet() )
+                {
+                    View = Resources.ViewSelect.getSessionView( Request.SessionViewId );
+                }
                 if( null != View )
                 {
                     CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
