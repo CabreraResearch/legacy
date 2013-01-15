@@ -112,10 +112,8 @@
                         Csw.defer(function () {
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
                             var firstChild = cswPrivate.rootNode.childNodes[0];
-                            if (firstChild) {
-                                cswPublic.tree.selectPath('|' + cswPrivate.rootNode.data.id + '|' + firstChild.raw.id, null, '|');
-                                firstChild.expand();
-                            }
+                            cswPrivate.selectNode(firstChild);
+                            //firstChild.expand();
                         }, 100);
                     },
                     select: function(rowModel, record, index, eOpts) {
@@ -123,6 +121,7 @@
                         //1. Keep this generic. Defer to the caller for implementation-specific validation.
                         //2. Properly enforce Multi-Edit (likely deferrals to the caller)
                         //3. Properly track the currently and previously selected node (multiple clicks to the same node trigger this event)
+                        var ret = true;
                         if (cswPrivate.isMulti) {
                             if (record.raw.checked === true) {
                                 record.set('checked', false);
@@ -134,7 +133,9 @@
                                     cswPublic.previousTreeNode = tmpPrevNode;
                                     cswPublic.selectedTreeNode = tmpCrntNode;
                                 } else {
-                                    console.log('break me');
+                                    cswPrivate.selectNode(cswPublic.selectedTreeNode);
+                                    record.set('checked', false);
+                                    ret = false;
                                 }
                             }
                         } else {
@@ -146,6 +147,7 @@
                                 Csw.tryExec(cswPrivate.onSelect, record.raw);
                             }
                         }
+                        return ret;
                     },
                     checkchange: function(node, checked, eOpts) {
                         //Counter-intuitively, this event only fires on selected nodes, so we can't use it for Multi-Edit
@@ -174,7 +176,8 @@
                     hideHeaders: true, //this hides the tree grid column names
                     listeners: cswPrivate.makeListeners(),
                     columns: cswPrivate.columns, //this is secretly a tree grid
-                    dockedItems: []
+                    dockedItems: [],
+                    plugins: [new Ext.ux.tree.plugin.NodeDisabled()]
                 };
                 var toggles = {};
                 if (cswPrivate.useArrows) { //then show expand/collapse
@@ -223,7 +226,7 @@
                 return cswPublic.tree;
             };
 
-
+            //#region Tree Mutators
 
             cswPrivate.showCheckboxes = function () {
             	/// <summary>
@@ -293,10 +296,32 @@
                 return cswPublic;
             };
 
+            cswPrivate.selectNode = function(treeNode) {
+            	/// <summary>
+            	/// Selects a node from the tree and renders it as the currently selected node
+            	/// </summary>
+                /// <param name="treeNode"></param>
+                var path = cswPrivate.getPath(treeNode)
+                if (path) {
+                    cswPublic.tree.selectPath(path, null, '|');
+                }
+                return false;
+            };
+
+            //#endregion Tree Mutators
+
             //#region Getters
 
             cswPrivate.getPath = function(treeNode) {
-                //if(treeNode)
+            	/// <summary>
+            	/// Get the path of a tree node from root
+            	/// </summary>
+            	/// <returns type="String"></returns>
+                var ret = '';
+                if (treeNode && treeNode.raw && treeNode.raw.path) {
+                    ret = treeNode.raw.path;
+                }
+                return ret;
             };
 
             cswPrivate.getChecked = function () {
