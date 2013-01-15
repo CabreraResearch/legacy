@@ -1677,16 +1677,12 @@ namespace ChemSW.Nbt.Schema
                 IsRequired = false
             } );
 
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOCP, "Synonym" );
-
             CswNbtMetaDataObjectClassProp LanguageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialSynonymOC )
             {
                 PropName = "Language",
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                 IsRequired = false
             } );
-
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LanguageOCP, "English" );
 
         }
 

@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.Schema
                                           "Synonym," +
                                           "IUPAC," +
                                           "EINECS";
+                    TypeNTP.DefaultValue.AsList.Value = "Synonym";
                     TypeNTP.removeFromLayout( LayoutType: CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                 }
 
@@ -41,6 +42,7 @@ namespace ChemSW.Nbt.Schema
                 if( null != LanguageNTP )
                 {
                     LanguageNTP.ListOptions = "English";
+                    LanguageNTP.DefaultValue.AsList.Value = "English";
                     LanguageNTP.removeFromLayout( LayoutType: CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                 }
 
