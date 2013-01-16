@@ -99,7 +99,11 @@
                                     OperationData: cswPrivate.OperationData
                                 },
                                 success: function (KioskModeData) {
-                                    cswPrivate.renderUI(KioskModeData);
+                                    cswPrivate.OperationData = KioskModeData.OperationData;
+                                    cswPrivate.renderUI();
+                                    if (cswPrivate.readyToCommit()) {
+                                        cswPrivate.commitOperation();
+                                    }
                                 }
                             });
                         }
@@ -115,14 +119,14 @@
                         },
                         success: function (KioskModeData) {
                             cswPrivate.scanArea.enable();
-                            cswPrivate.renderUI(KioskModeData);
+                            cswPrivate.OperationData = KioskModeData.OperationData;
+                            cswPrivate.renderUI();
                         }
                     });
                 };
 
-                cswPrivate.renderUI = function (KioskModeData) {
+                cswPrivate.renderUI = function () {
                     cswPrivate.scanArea.enable();
-                    cswPrivate.OperationData = KioskModeData.OperationData;
 
                     cswPrivate.actionTbl.cell(3, 1).empty();
                     cswPrivate.scanArea.val('');
@@ -143,6 +147,14 @@
                     propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
 
                     propsTbl.cell(4, 1).span({ text: cswPrivate.OperationData.OpStatusMsg });
+                };
+
+                cswPrivate.readyToCommit = function () {
+                    if (cswPrivate.OperationData.Field1.ServerValidated && cswPrivate.OperationData.Field2.ServerValidated && cswPrivate.OperationData.ModeServerValidated) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 };
 
                 (function _postCtor() {
