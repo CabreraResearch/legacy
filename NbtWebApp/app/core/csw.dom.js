@@ -71,7 +71,7 @@
             else if (Csw.isJQuery($element)) {
                 cswPublic.$ = $element;
                 cswPublic.isValid = true;
-            } 
+            }
             else if (false === Csw.isNullOrEmpty($element) && Csw.isJQuery($element.$)) {
                 /*This is already a Csw dom object*/
                 return $element;
@@ -159,7 +159,7 @@
                 /// <param name='isReadOnly" type="Object">whether or not this property is read only</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
-                    cswPublic.append(propName).addClass('propertylabel').required(isRequired, true);
+                    cswPublic.append(propName).addClass('propertylabel').required(isRequired, isReadOnly);
                 }
                 return cswPublic;
             };
@@ -293,10 +293,10 @@
                         cswPrivate.setDataObj(prop);
                     } else {
                         switch (arguments.length) {
-                            //this isn't a valid use case        
-                            //case 0:        
-                            //    ret = _internal || cswPublic.$.data();        
-                            //    break;        
+                            //this isn't a valid use case           
+                            //case 0:           
+                            //    ret = _internal || cswPublic.$.data();           
+                            //    break;           
                             case 1:
                                 ret = cswPrivate.getData(prop);
                                 break;
@@ -496,8 +496,8 @@
                     cswPublic.$.remove();
                     //Nice try, but this doesn't nuke outstanding references--only the assignment of the reference to the property on this object.
                     //Csw.each(cswPublic, function (name) {
-                        //cswPublic[name] = null;
-                        //delete cswPublic[name];
+                    //cswPublic[name] = null;
+                    //delete cswPublic[name];
                     //});
                     cswPublic = null;
                 }
@@ -769,6 +769,24 @@
             }
             return $ret;
         });
+
+    Csw.getIconUrlString = Csw.getIconUrlString || Csw.register('getIconUrlString', function (iconSize, iconType) {
+        ///<summary>Given an icon enum, builds the url to the location of the icon image.</summary>
+        ///<param name="">Size of the icon to find.</param>
+        ///<param name="">Enum of the icon to find.</param>
+        ///<returns type="">String URL of the icon image, empty string if no match found.</returns>
+        var ret = '';
+
+        var iconName = Csw.enums.getName(Csw.enums.iconType, iconType);
+
+        if (false === Csw.isNullOrEmpty(iconSize) && false === Csw.isNullOrEmpty(iconName)) {
+
+            ret = 'Images/newicons/' + iconSize + '/' + iconName + '.png';
+        }
+
+        return ret;
+
+    });
 
 } ());
 

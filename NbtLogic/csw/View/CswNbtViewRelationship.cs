@@ -53,8 +53,8 @@ namespace ChemSW.Nbt
         public Int32 SecondId { get { return _SecondId; } }
         public string SecondName { get { return _SecondName; } }
         public NbtViewRelatedIdType SecondType { get { return _SecondType; } }
-        public string SecondIconFileName 
-        { 
+        public string SecondIconFileName
+        {
             get
             {
                 if( null == _SecondIconFileName )
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt
                     setSecondIconFile();
                 }
                 return _SecondIconFileName;
-            } 
+            }
         }
         public Int32 GroupByPropId { get { return _GroupByPropId; } }
         public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt
             setProp( InOwnerType, Prop );
         }
 
-        private void setProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
+        private void setProp( NbtViewPropOwnerType InOwnerType, ICswNbtMetaDataProp Prop )
         {
             CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
             if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
@@ -225,80 +225,78 @@ namespace ChemSW.Nbt
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
-            setPropValue( InOwnerType, NbtViewPropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.getNodeTypePropLatestVersion().PropName );
-
-            if( InOwnerType == NbtViewPropOwnerType.First )
+            if( Prop is CswNbtMetaDataNodeTypeProp )
             {
-                overrideFirst( Prop.getNodeType() );
-                if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                CswNbtMetaDataNodeTypeProp NodeTypeProp = (CswNbtMetaDataNodeTypeProp) Prop;
+
+                setPropValue( InOwnerType, NbtViewPropIdType.NodeTypePropId, Prop.FirstPropVersionId, NodeTypeProp.getNodeTypePropLatestVersion().PropName );
+
+                if( InOwnerType == NbtViewPropOwnerType.First )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Prop.FKValue );
-                    if( null != NodeType )
+                    overrideFirst( NodeTypeProp.getNodeType() );
+                    if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                     {
-                        overrideSecond( NodeType );
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Prop.FKValue );
+                        if( null != NodeType )
+                        {
+                            overrideSecond( NodeType );
+                        }
+                    }
+                    else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                    {
+                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
+                        if( null != ObjectClass )
+                        {
+                            overrideSecond( ObjectClass );
+                        }
                     }
                 }
-                else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                else if( InOwnerType == NbtViewPropOwnerType.Second )
                 {
-                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
-                    if( null != ObjectClass )
+                    if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                     {
-                        overrideSecond( ObjectClass );
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Prop.FKValue );
+                        if( null != NodeType )
+                        {
+                            overrideFirst( NodeType );
+                        }
                     }
+                    else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                    {
+                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
+                        if( null != ObjectClass )
+                        {
+                            overrideFirst( ObjectClass );
+                        }
+                    }
+                    overrideSecond( NodeTypeProp.getNodeType() );
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
                 }
             }
-            else if( InOwnerType == NbtViewPropOwnerType.Second )
+            else if( Prop is CswNbtMetaDataObjectClassProp )
             {
-                if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                CswNbtMetaDataObjectClassProp ObjectClassProp = (CswNbtMetaDataObjectClassProp) Prop;
+                setPropValue( InOwnerType, NbtViewPropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
+
+                if( InOwnerType == NbtViewPropOwnerType.First )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Prop.FKValue );
-                    if( null != NodeType )
-                    {
-                        overrideFirst( NodeType );
-                    }
+                    overrideFirst( ObjectClassProp.getObjectClass() );
+                    overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
                 }
-                else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                else if( InOwnerType == NbtViewPropOwnerType.Second )
                 {
-                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
-                    if( null != ObjectClass )
-                    {
-                        overrideFirst( ObjectClass );
-                    }
+                    overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
+                    overrideSecond( ObjectClassProp.getObjectClass() );
                 }
-                overrideSecond( Prop.getNodeType() );
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
+                }
             }
-            else
-            {
-                throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
-            }
-        }
-
-        private void setProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop )
-        {
-            CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
-            if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
-            {
-                throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
-            }
-
-            setPropValue( InOwnerType, NbtViewPropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
-
-            if( InOwnerType == NbtViewPropOwnerType.First )
-            {
-                overrideFirst( Prop.getObjectClass() );
-                overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
-            }
-            else if( InOwnerType == NbtViewPropOwnerType.Second )
-            {
-                overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
-                overrideSecond( Prop.getObjectClass() );
-            }
-            else
-            {
-                throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
-            }
-        }
+        } // setProp()
 
         private void setPropValue( NbtViewPropOwnerType InOwnerType, NbtViewPropIdType InPropType, Int32 InPropId, string InPropName )
         {
@@ -388,7 +386,7 @@ namespace ChemSW.Nbt
                     ArbId += "OC_";
                 }
                 ArbId += SecondId;
-                if( Int32.MinValue != this.PropId)
+                if( Int32.MinValue != this.PropId )
                 {
                     ArbId += this.PropId.ToString();
                 }
@@ -459,20 +457,9 @@ namespace ChemSW.Nbt
                 _setDefaultFilters();
         }
         /// <summary>
-        /// For a relationship below the root level, determined by a nodetype property
+        /// For a relationship below the root level, determined by a property
         /// </summary>
-        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
-            : base( CswNbtResources, View )
-        {
-            setProp( InOwnerType, Prop );
-
-            if( IncludeDefaultFilters )
-                _setDefaultFilters();
-        }
-        /// <summary>
-        /// For a relationship below the root level, determined by an object class property
-        /// </summary>
-        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, NbtViewPropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, NbtViewPropOwnerType InOwnerType, ICswNbtMetaDataProp Prop, bool IncludeDefaultFilters )
             : base( CswNbtResources, View )
         {
             setProp( InOwnerType, Prop );
