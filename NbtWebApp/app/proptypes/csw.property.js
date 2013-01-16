@@ -26,6 +26,9 @@
                         case Csw.enums.subFieldsMap.CASNo.name:
                             cswPublic = Csw.properties.CASNo(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.ChildContents.name:
+                            cswPublic = Csw.properties.childContents(cswPrivate);
+                            break;
                         case Csw.enums.subFieldsMap.Comments.name:
                             cswPublic = Csw.properties.comments(cswPrivate);
                             break;

@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.Schema
                 _Dev = Dev;
                 _CaseNo = CaseNo;
             }
+            static Views() { }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
             public static IEnumerable<Views> _All { get { return All; } }

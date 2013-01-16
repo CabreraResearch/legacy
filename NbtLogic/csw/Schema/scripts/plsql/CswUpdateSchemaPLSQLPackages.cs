@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.Schema
                 _Dev = Dev;
                 _CaseNo = CaseNo;
             }
+            static PackageHeaders() { }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
             public static IEnumerable<PackageHeaders> _All { get { return All; } }
@@ -74,6 +75,7 @@ END UNIT_CONVERSION;" );
                 _Dev = Dev;
                 _CaseNo = CaseNo;
             }
+            static PackageBodies() { }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
             public static IEnumerable<PackageBodies> _All { get { return All; } }
