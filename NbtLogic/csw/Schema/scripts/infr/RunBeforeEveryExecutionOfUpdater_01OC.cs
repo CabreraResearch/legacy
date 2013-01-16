@@ -409,7 +409,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Case 28247
-        
+
 
         #region Case 28145
 
@@ -489,15 +489,25 @@ namespace ChemSW.Nbt.Schema
                                                                               IsRequired = true
                                                                           } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-                                                                          {
-                                                                              PropName = CswNbtObjClassGHS.PropertyName.LabelCodes,
-                                                                              FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
-                                                                          } );
+                    {
+                        PropName = CswNbtObjClassGHS.PropertyName.LabelCodes,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                    } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
-                                                                          {
-                                                                              PropName = CswNbtObjClassGHS.PropertyName.ClassCodes,
-                                                                              FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
-                                                                          } );
+                    {
+                        PropName = CswNbtObjClassGHS.PropertyName.ClassCodes,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassGHS.PropertyName.LabelCodesGrid,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassGHS.PropertyName.ClassCodesGrid,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+                    } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( GhsOC, new CswNbtWcfMetaDataModel.ObjectClassProp
                                                                           {
                                                                               PropName = CswNbtObjClassGHS.PropertyName.SignalWord,
