@@ -113,15 +113,15 @@ namespace ChemSW.Nbt.Schema
                     "Irritant"
                 };
                 CswDelimitedString PictoPaths = new CswDelimitedString( '\n' ) { 
-                    "Images/cispro/oxid.gif",
-                    "Images/cispro/flamme.gif",
-                    "Images/cispro/explos.gif",
-                    "Images/cispro/skull.gif",
-                    "Images/cispro/acide.gif",
-                    "Images/cispro/bottle.gif",
-                    "Images/cispro/silouete.gif",
-                    "Images/cispro/pollu.gif",
-                    "Images/cispro/exclam.gif"
+                    "Images/cispro/ghs/rondflam.jpg",
+                    "Images/cispro/ghs/flamme.jpg",
+                    "Images/cispro/ghs/explos.jpg",
+                    "Images/cispro/ghs/skull.jpg",
+                    "Images/cispro/ghs/acid.jpg",
+                    "Images/cispro/ghs/bottle.jpg",
+                    "Images/cispro/ghs/silhouet.jpg",
+                    "Images/cispro/ghs/pollut.jpg",
+                    "Images/cispro/ghs/exclam.jpg"
                 };
                 GhsPictogramsNTP.ListOptions = PictoNames.ToString();
                 GhsPictogramsNTP.ValueOptions = PictoPaths.ToString();
