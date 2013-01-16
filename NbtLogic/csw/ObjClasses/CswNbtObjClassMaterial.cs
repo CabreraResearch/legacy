@@ -441,24 +441,32 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _getMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
-            CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-            CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
-            CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-            CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-            CswNbtMetaDataObjectClassProp titleOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
+            CswNbtMetaDataNodeType documentNT = _CswNbtResources.MetaData.getNodeType( "Material Document" );
+            CswNbtMetaDataNodeTypeProp archivedNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+            CswNbtMetaDataNodeTypeProp docClassNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+            CswNbtMetaDataNodeTypeProp formatNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+            CswNbtMetaDataNodeTypeProp languageNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+            CswNbtMetaDataNodeTypeProp fileTypeNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
+            CswNbtMetaDataNodeTypeProp fileNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
+            CswNbtMetaDataNodeTypeProp linkNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
 
             CswNbtView docView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship parent = docView.AddViewRelationship( documentOC, true );
+            CswNbtViewRelationship parent = docView.AddViewRelationship( documentNT, true );
             docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: docClassOCP,
+                MetaDataProp: docClassNTP,
                 Value: CswNbtObjClassDocument.DocumentClasses.SDS,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: archivedOCP,
+                MetaDataProp: archivedNTP,
                 Value: CswConvert.ToDbVal( false ).ToString(),
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            docView.AddViewProperty( parent, formatNTP );
+            docView.AddViewProperty( parent, languageNTP );
+            docView.AddViewProperty( parent, fileNTP );
+            docView.AddViewProperty( parent, linkNTP );
+            docView.AddViewProperty( parent, fileTypeNTP );
 
             CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
             CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
@@ -468,50 +476,105 @@ namespace ChemSW.Nbt.ObjClasses
 
                 ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
                 int childCount = docsTree.getChildNodeCount();
-                CswNbtObjClassDocument docNode = null;
-                bool matchedFormat = false;
-                bool matchedLang = false;
-                bool matchedExact = false;
-                for( int i = 0; i < childCount; i++ )
+                int lvlMatched = Int32.MinValue;
+                string matchedFormat = "";
+                string matchedLanguage = "";
+                string matchedFileType = "";
+                CswNbtTreeNodeProp matchedFileProp = null;
+                CswNbtTreeNodeProp matchedLinkProp = null;
+                CswPrimaryKey matchedNodeId = null;
+
+                if( childCount > 0 )
                 {
-                    docsTree.goToNthChild( i );
-                    CswNbtObjClassDocument potentialDocNode = docsTree.getNodeForCurrentPosition();
-                    if( null == docNode )
+                    for( int i = 0; i < childCount; i++ )
                     {
-                        docNode = potentialDocNode;
+                        docsTree.goToNthChild( i );
+
+                        string format = "";
+                        string language = "";
+                        string fileType = "";
+                        CswNbtTreeNodeProp fileProp = null;
+                        CswNbtTreeNodeProp linkProp = null;
+                        CswPrimaryKey nodeId = docsTree.getNodeIdForCurrentPosition();
+
+                        foreach( CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode() )
+                        {
+                            switch( prop.PropName.ToString() )
+                            {
+                                case CswNbtObjClassDocument.PropertyName.Format:
+                                    format = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.Language:
+                                    language = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.FileType:
+                                    fileType = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.File:
+                                    fileProp = prop;
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.Link:
+                                    linkProp = prop;
+                                    break;
+                            }
+                        }
+
+                        if( lvlMatched < 0 )
+                        {
+                            matchedFormat = format;
+                            matchedLanguage = language;
+                            matchedFileType = fileType;
+                            matchedFileProp = fileProp;
+                            matchedLinkProp = linkProp;
+                            matchedNodeId = nodeId;
+                            lvlMatched = 0;
+                        }
+                        if( null != userJurisdictionNode )
+                        {
+                            if( lvlMatched < 1 && format.Equals( userJurisdictionNode.Format.Value ) )
+                            {
+                                matchedFormat = format;
+                                matchedLanguage = language;
+                                matchedFileType = fileType;
+                                matchedFileProp = fileProp;
+                                matchedLinkProp = linkProp;
+                                matchedNodeId = nodeId;
+                                lvlMatched = 1;
+                            }
+                            if( lvlMatched < 2 && language.Equals( userJurisdictionNode.Language.Value ) )
+                            {
+                                matchedFormat = format;
+                                matchedLanguage = language;
+                                matchedFileType = fileType;
+                                matchedFileProp = fileProp;
+                                matchedLinkProp = linkProp;
+                                matchedNodeId = nodeId;
+                                lvlMatched = 2;
+                            }
+                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( userJurisdictionNode.Language.Value ) )
+                            {
+                                matchedFormat = format;
+                                matchedLanguage = language;
+                                matchedFileType = fileType;
+                                matchedFileProp = fileProp;
+                                matchedLinkProp = linkProp;
+                                matchedNodeId = nodeId;
+                                lvlMatched = 3;
+                            }
+                        }
+                        docsTree.goToParentNode();
                     }
 
-                    if( null != userJurisdictionNode )
-                    {
-                        if( false == matchedFormat && potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) )
-                        {
-                            docNode = potentialDocNode;
-                            matchedFormat = true;
-                        }
-                        if( false == matchedLang && potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
-                        {
-                            docNode = potentialDocNode;
-                            matchedLang = true;
-                        }
-                        if( false == matchedExact && potentialDocNode.Format.Value.Equals( userJurisdictionNode.Format.Value ) && potentialDocNode.Language.Value.Equals( userJurisdictionNode.Language.Value ) )
-                        {
-                            docNode = potentialDocNode;
-                            matchedExact = true;
-                        }
-                    }
-                    docsTree.goToParentNode();
-                }
-
-                if( null != docNode )
-                {
                     string url = "";
-                    switch( docNode.FileType.Value )
+                    switch( matchedFileType )
                     {
                         case CswNbtObjClassDocument.FileTypes.File:
-                            url = CswNbtNodePropBlob.getLink( docNode.File.JctNodePropId, docNode.NodeId, docNode.File.NodeTypePropId );
+                            int jctnodepropid = CswConvert.ToInt32( matchedFileProp.JctNodePropId );
+                            int nodetypepropid = CswConvert.ToInt32( matchedLinkProp.NodeTypePropId );
+                            url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId, nodetypepropid );
                             break;
                         case CswNbtObjClassDocument.FileTypes.Link:
-                            url = docNode.Link.GetFullURL();
+                            url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2 );
                             break;
                     }
                     ButtonData.Data["url"] = url;
