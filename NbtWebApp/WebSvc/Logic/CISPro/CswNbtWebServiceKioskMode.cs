@@ -71,13 +71,11 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public bool ModeServerValidated = false;
             [DataMember]
-            public string OpStatusMsg = string.Empty;
+            public Collection<string> Log = new Collection<string>();
             [DataMember]
             public Field Field1;
             [DataMember]
             public Field Field2;
-            [DataMember]
-            public Collection<string> Log = new Collection<string>();
         }
 
         [DataContract]
@@ -227,7 +225,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value );
                     containerToMove.MoveContainer( locationToMoveTo.NodeId );
                     containerToMove.postChanges( false );
-                    OpData.OpStatusMsg = DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Location.CachedFullPath + " (" + OpData.Field1.Value + ")";
+                    OpData.Log.Add( DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Location.CachedFullPath + " (" + OpData.Field1.Value + ")" );
                     break;
                 case "Owner":
                     CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
@@ -235,7 +233,7 @@ namespace ChemSW.Nbt.WebServices
                     containerNode.Owner.RelatedNodeId = newOwnerNode.NodeId;
                     containerNode.Owner.RefreshNodeName();
                     containerNode.postChanges( false );
-                    OpData.OpStatusMsg = DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.FirstName + " " + newOwnerNode.LastName + " (" + OpData.Field1.Value + ")";
+                    OpData.Log.Add( DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.FirstName + " " + newOwnerNode.LastName + " (" + OpData.Field1.Value + ")" );
                     break;
                 case "Transfer":
                     CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
@@ -245,7 +243,7 @@ namespace ChemSW.Nbt.WebServices
                     containerToTransfer.MoveContainer( newTransferOwner.DefaultLocationId );
                     containerToTransfer.postChanges( false );
                     CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
-                    OpData.OpStatusMsg = DateTime.Now + " - Transfered container " + OpData.Field2.Value + " to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ")  and changed location to " + newLocationNode.Location.CachedFullPath;
+                    OpData.Log.Add( DateTime.Now + " - Transfered container " + OpData.Field2.Value + " to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ")  and changed location to " + newLocationNode.Location.CachedFullPath );
                     break;
                 case "DispenseContainer":
                     //TODO: dispense container

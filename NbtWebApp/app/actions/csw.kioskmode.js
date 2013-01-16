@@ -21,6 +21,7 @@
                         Mode: '',
                         ModeStatusMsg: '',
                         ModeServerValidated: false,
+                        Log: [],
                         Field1: {
                             Name: '',
                             Value: '',
@@ -146,7 +147,19 @@
                     propsTbl.cell(3, 2).span({ text: cswPrivate.OperationData.Field2.Value });
                     propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
 
-                    propsTbl.cell(4, 1).span({ text: cswPrivate.OperationData.OpStatusMsg });
+                    var logStr = '';
+                    Csw.each(cswPrivate.OperationData.Log, function (item) {
+                        logStr = item + '\n\n' + logStr;
+                    });
+
+                    cswPrivate.actionTbl.cell(4, 1).empty();
+                    cswPrivate.actionTbl.cell(4, 1).textArea({
+                        rows: 10,
+                        cols: 80,
+                        readonly: true,
+                        text: logStr
+                    });
+                    cswPrivate.scanArea.$.focus();
                 };
 
                 cswPrivate.readyToCommit = function () {
