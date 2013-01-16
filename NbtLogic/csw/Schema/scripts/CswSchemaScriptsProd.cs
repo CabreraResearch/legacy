@@ -54,8 +54,9 @@ namespace ChemSW.Nbt.Schema
 
             #region WILLIAM
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );        //01V-024   01W-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );           //01V-024   01W-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );          //01V-025   01W-002
+
 
             #endregion WILLIAM
 
@@ -75,9 +76,9 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01OC() ), RunBeforeEveryExecutionOfUpdater_01OC.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), RunBeforeEveryExecutionOfUpdater_02.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
-
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_04() ), RunBeforeEveryExecutionOfUpdater_04.Title );
+            
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), RunAfterEveryExecutionOfUpdater_02.Title );
 
         }//ctor
 

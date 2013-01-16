@@ -12,11 +12,13 @@
             (function _preCtor() {
                 cswPrivate.name = cswPrivate.name || 'action';
                 cswPrivate.title = cswPrivate.title || 'An Action';
+                if (cswPrivate.useFinish !== false) { cswPrivate.useFinish = true; }
+                if (cswPrivate.useCancel !== false) { cswPrivate.useCancel = true; }
                 cswPrivate.finishText = cswPrivate.finishText || 'Finish';
                 cswPrivate.cancelText = cswPrivate.cancelText || 'Cancel';
                 cswPrivate.onFinish = cswPrivate.onFinish || function() {};
-                cswPrivate.onCancel = cswPrivate.onCancel || function() {};
-                cswPrivate.hasButtonGroup = cswPrivate.hasButtonGroup || true;
+                cswPrivate.onCancel = cswPrivate.onCancel || function () {};
+                if (cswPrivate.hasButtonGroup !== false) { cswPrivate.hasButtonGroup = true; }
             }());
 
             cswPublic.setTitle = function(title) {
@@ -59,11 +61,15 @@
                             next: { enabled: false, hidden: true },
                             previous: { enabled: false, hidden: true },
                             finish: {
+                                enabled: cswPrivate.useFinish,
+                                hidden: false === cswPrivate.useFinish,
                                 text: cswPrivate.finishText,
                                 onclick: function() { Csw.tryExec(cswPrivate.onFinish); }
                             }
                         },
                         cancel: {
+                            enabled: cswPrivate.useCancel,
+                            hidden: false === cswPrivate.useCancel,
                             text: cswPrivate.cancelText,
                             onclick: function () { Csw.tryExec(cswPrivate.onCancel); }
                         }

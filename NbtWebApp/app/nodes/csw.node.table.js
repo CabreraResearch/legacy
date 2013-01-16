@@ -382,7 +382,7 @@
                     name: cswPrivate.name + '_tbl',
                     cellSet: cellset,
                     cellalign: cellalign,
-                    width: '',
+                    width: '100%',
                     cellspacing: cellspacing
                 });
 
