@@ -107,12 +107,14 @@
                 };
 
                 cswPrivate.commitOperation = function () {
+                    cswPrivate.scanArea.disable();
                     Csw.ajaxWcf.post({
                         urlMethod: 'KioskMode/CommitOperation',
                         data: {
                             OperationData: cswPrivate.OperationData
                         },
                         success: function (KioskModeData) {
+                            cswPrivate.scanArea.enable();
                             cswPrivate.renderUI(KioskModeData);
                         }
                     });

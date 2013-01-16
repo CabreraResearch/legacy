@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.WebServices
             else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
             {
                 NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 1 );
-                bool barcodeValid = _validateBarcode( NbtResources, NbtObjectClass.LocationClass, KioskModeData.OperationData.Field1.Value );
+                bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field1.Value );
                 if( false == barcodeValid )
                 {
                     KioskModeData.OperationData.Field1.StatusMsg = "Error: item does not exist";
@@ -228,14 +228,24 @@ namespace ChemSW.Nbt.WebServices
                     containerToMove.MoveContainer( locationToMoveTo.NodeId );
                     containerToMove.postChanges( false );
                     OpData.OpStatusMsg = DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Location.CachedFullPath + " (" + OpData.Field1.Value + ")";
-                    OpData.Field2.Value = string.Empty;
-                    OpData.Field2.ServerValidated = false;
                     break;
                 case "Owner":
-
+                    CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
+                    CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value );
+                    containerNode.Owner.RelatedNodeId = newOwnerNode.NodeId;
+                    containerNode.Owner.RefreshNodeName();
+                    containerNode.postChanges( false );
+                    OpData.OpStatusMsg = DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.FirstName + " " + newOwnerNode.LastName + " (" + OpData.Field1.Value + ")";
                     break;
                 case "Transfer":
-
+                    CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
+                    CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value );
+                    containerToTransfer.Owner.RelatedNodeId = newTransferOwner.NodeId;
+                    containerToTransfer.Owner.RefreshNodeName();
+                    containerToTransfer.MoveContainer( newTransferOwner.DefaultLocationId );
+                    containerToTransfer.postChanges( false );
+                    CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
+                    OpData.OpStatusMsg = DateTime.Now + " - Transfered container " + OpData.Field2.Value + " to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ")  and changed location to " + newLocationNode.Location.CachedFullPath;
                     break;
                 case "DispenseContainer":
                     //TODO: dispense container
@@ -244,6 +254,8 @@ namespace ChemSW.Nbt.WebServices
                     //TODO: dispose container
                     break;
             }
+            OpData.Field2.Value = string.Empty;
+            OpData.Field2.ServerValidated = false;
             KioskModeData.OperationData = OpData;
             Return.Data = KioskModeData;
         }
@@ -261,11 +273,11 @@ namespace ChemSW.Nbt.WebServices
                     OpData.Field2.Name = "Item";
                     break;
                 case "Owner":
-                    OpData.Field1.Name = "Owner";
+                    OpData.Field1.Name = "User";
                     OpData.Field2.Name = "Item";
                     break;
                 case "Transfer":
-                    OpData.Field1.Name = "Owner";
+                    OpData.Field1.Name = "User";
                     OpData.Field2.Name = "Item";
                     break;
                 case "DispenseContainer":
