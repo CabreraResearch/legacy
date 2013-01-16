@@ -1,12 +1,12 @@
 using System;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Batch;
-using ChemSW.Config;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -68,9 +68,9 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
                     {
-                        makeReconciliationActionBatchProcess();                        
+                        makeReconciliationActionBatchProcess( CswNbtResources );
                     }
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = LogicRunStatus.Succeeded;

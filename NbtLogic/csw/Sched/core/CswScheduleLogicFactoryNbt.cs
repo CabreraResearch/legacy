@@ -5,7 +5,7 @@ using ChemSW.MtSched.Rules;
 namespace ChemSW.Nbt.Sched
 {
 
-    public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin, BatchOp, ExpiredContainers, MolFingerprints, ContainerReconciliationActions }
+    public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin, BatchOp, ExpiredContainers, MolFingerprints, ContainerReconciliationActions, Reconciliation , TierII }
     public class CswScheduleLogicFactoryNbt : CswScheduleLogicFactoryBase
     {
 
@@ -26,10 +26,9 @@ namespace ChemSW.Nbt.Sched
 
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );
 
-           
+            return ( ReturnVal );
+
         }
     }
-	return( ReturnVal ); 
-}
 
-        }//_getRulesFromImplmentationPlatform()
+}//_getRulesFromImplmentationPlatform()

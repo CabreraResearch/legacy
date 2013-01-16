@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Grid
             {
                 string gridUniquePrefix = _getUniquePrefix( View );
 
-                CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid( gridUniquePrefix );
+                CswGridExtJsGrid grid = new CswGridExtJsGrid( gridUniquePrefix );
                 if( string.IsNullOrEmpty( GroupByCol ) )
                 {
                     GroupByCol = View.Root.GridGroupByCol;
@@ -61,22 +61,22 @@ namespace ChemSW.Nbt.Grid
 
                 grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
 
-                CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodeId" );
-                CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField { dataIndex = nodeIdDataIndex };
+                CswGridExtJsDataIndex nodeIdDataIndex = new CswGridExtJsDataIndex( gridUniquePrefix, "nodeId" );
+                CswGridExtJsField nodeIdFld = new CswGridExtJsField { dataIndex = nodeIdDataIndex };
                 grid.fields.Add( nodeIdFld );
-                CswNbtGridExtJsColumn nodeIdCol = new CswNbtGridExtJsColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
+                CswGridExtJsColumn nodeIdCol = new CswGridExtJsColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
                 grid.columns.Add( nodeIdCol );
 
-                CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodekey" );
-                CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField { dataIndex = nodekeyDataIndex };
+                CswGridExtJsDataIndex nodekeyDataIndex = new CswGridExtJsDataIndex( gridUniquePrefix, "nodekey" );
+                CswGridExtJsField nodekeyFld = new CswGridExtJsField { dataIndex = nodekeyDataIndex };
                 grid.fields.Add( nodekeyFld );
-                CswNbtGridExtJsColumn nodekeyCol = new CswNbtGridExtJsColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
+                CswGridExtJsColumn nodekeyCol = new CswGridExtJsColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
                 grid.columns.Add( nodekeyCol );
 
-                CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, "nodename" );
-                CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField { dataIndex = nodenameDataIndex };
+                CswGridExtJsDataIndex nodenameDataIndex = new CswGridExtJsDataIndex( gridUniquePrefix, "nodename" );
+                CswGridExtJsField nodenameFld = new CswGridExtJsField { dataIndex = nodenameDataIndex };
                 grid.fields.Add( nodenameFld );
-                CswNbtGridExtJsColumn nodenameCol = new CswNbtGridExtJsColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
+                CswGridExtJsColumn nodenameCol = new CswGridExtJsColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
                 grid.columns.Add( nodenameCol );
 
                 // View Properties determine Columns and Fields
@@ -99,14 +99,14 @@ namespace ChemSW.Nbt.Grid
                         if( null != MetaDataProp )
                         {
                             string header = MetaDataProp.PropNameWithQuestionNo;
-                            CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, MetaDataProp.PropName ); // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
+                            CswGridExtJsDataIndex dataIndex = new CswGridExtJsDataIndex( gridUniquePrefix, MetaDataProp.PropName ); // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
 
                             // Potential bug here!
                             // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
                             if( false == grid.columnsContains( header ) )
                             {
-                                CswNbtGridExtJsField fld = new CswNbtGridExtJsField { dataIndex = dataIndex };
-                                CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
+                                CswGridExtJsField fld = new CswGridExtJsField { dataIndex = dataIndex };
+                                CswGridExtJsColumn col = new CswGridExtJsColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
                                 switch( ViewProp.FieldType )
                                 {
                                     case CswNbtMetaDataFieldType.NbtFieldType.Number:
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.Grid
                 // Nodes in the Tree determine Rows
                 for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
                 {
-                    CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow( c );
+                    CswGridExtJsRow gridrow = new CswGridExtJsRow( c );
                     Tree.goToNthChild( c );
 
                     gridrow.data.Add( nodeIdDataIndex, Tree.getNodeIdForCurrentPosition().ToString() );
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.Grid
             {
                 // Potential bug here!
                 // If the view defines the property by objectclass propname, but the nodetype propname differs, this might break
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, Prop.PropName );
+                CswGridExtJsDataIndex dataIndex = new CswGridExtJsDataIndex( gridUniquePrefix, Prop.PropName );
 
                 bool IsHidden = Prop.Hidden;
                 bool IsLocked = Tree.getNodeLockedForCurrentPosition();
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.Grid
                                     RowNo = gridrow.RowNo,
                                     MenuOptions = "",
                                     SelectedText = oldValue ?? Prop.PropName,
-                                    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId )
+                                    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString()
                                 } );
                             }
                             break;
