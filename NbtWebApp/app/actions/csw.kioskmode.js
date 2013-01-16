@@ -17,6 +17,24 @@
                     cswPrivate.onCancel = cswPrivate.onCancel || function _onCancel() {
                     };
 
+                    cswPrivate.OperationData = {
+                        Mode: '',
+                        ModeStatusMsg: '',
+                        ModeServerValidated: false,
+                        Field1: {
+                            Name: '',
+                            Value: '',
+                            StatusMsg: '',
+                            ServerValidated: false
+                        },
+                        Field2: {
+                            Name: '',
+                            Value: '',
+                            StatusMsg: '',
+                            ServerValidated: false
+                        }
+                    };
+
                     cswParent.empty();
                 } ());
 
@@ -70,11 +88,47 @@
                 cswPrivate.init = function () {
                     var barcodeCell = cswPrivate.actionTbl.cell(2, 1);
                     barcodeCell.span({ text: 'Scan a barcode: ' });
-                    barcodeCell.input({
+
+                    cswPrivate.scanArea = barcodeCell.input({
                         size: '30',
                         autofocus: true,
                         onChange: function (value) {
-                            //TODO: set mode, get any additional info
+                            cswPrivate.scanArea.disable();
+                            if (false === cswPrivate.OperationData.ModeServerValidated) {
+                                cswPrivate.OperationData.Mode = value;
+                            } else if (false === cswPrivate.OperationData.Field1.ServerValidated) {
+                                cswPrivate.OperationData.Field1.Value = value;
+                            } else if (false === cswPrivate.OperationData.Field2.ServerValidated) {
+                                cswPrivate.OperationData.Field2.Value = value;
+                            }
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'KioskMode/HandleScan',
+                                data: {
+                                    OperationData: cswPrivate.OperationData
+                                },
+                                success: function (KioskModeData) {
+                                    cswPrivate.scanArea.enable();
+                                    cswPrivate.OperationData = KioskModeData.OperationData;
+
+                                    cswPrivate.actionTbl.cell(3, 1).empty();
+                                    cswPrivate.scanArea.val('');
+                                    var propsTbl = cswPrivate.actionTbl.cell(3, 1).table({
+                                        name: 'propstbl',
+                                        cellpadding: 10
+                                    });
+                                    propsTbl.cell(1, 1).span({ text: 'Mode: ' });
+                                    propsTbl.cell(1, 2).span({ text: cswPrivate.OperationData.Mode });
+                                    propsTbl.cell(1, 3).span({ text: cswPrivate.OperationData.ModeStatusMsg }).css('color', 'Red');
+
+                                    propsTbl.cell(2, 1).span({ text: cswPrivate.OperationData.Field1.Name });
+                                    propsTbl.cell(2, 2).span({ text: cswPrivate.OperationData.Field1.Value });
+                                    propsTbl.cell(2, 3).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
+
+                                    propsTbl.cell(3, 1).span({ text: cswPrivate.OperationData.Field2.Name });
+                                    propsTbl.cell(3, 2).span({ text: cswPrivate.OperationData.Field2.Value });
+                                    propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
+                                }
+                            });
                         }
                     });
                 };
@@ -94,7 +148,7 @@
                     }).css('width', '95%');
 
                     cswPrivate.actionTbl.cell(1, 1)
-                        .css({ 'text-align': 'left', 'font-size': '255%' })
+                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '80%'})
                         .span({ text: 'CISPro Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();

@@ -33,6 +33,25 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "HandleScan" )]
+        [Description( "Get all available modes for CISPro Kiosk Mode" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceKioskMode.KioskModeDataReturn DetermineDisplayProps( CswNbtWebServiceKioskMode.KioskModeData RequestData )
+        {
+            CswNbtWebServiceKioskMode.KioskModeDataReturn Ret = new CswNbtWebServiceKioskMode.KioskModeDataReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, CswNbtWebServiceKioskMode.KioskModeData>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceKioskMode.HandleScan,
+                ParamObj: RequestData
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 
 }

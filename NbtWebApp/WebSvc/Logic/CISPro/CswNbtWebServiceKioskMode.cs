@@ -7,6 +7,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using NbtWebApp.WebSvc.Returns;
+using ChemSW.Nbt.MetaData;
 using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.WebServices
@@ -38,6 +39,8 @@ namespace ChemSW.Nbt.WebServices
         {
             [DataMember]
             public Collection<Mode> AvailableModes = new Collection<Mode>();
+            [DataMember]
+            public OperationData OperationData;
         }
 
         [DataContract]
@@ -45,11 +48,95 @@ namespace ChemSW.Nbt.WebServices
         {
             [DataMember]
             public string name = string.Empty;
+            [DataMember]
+            public string imgUrl = string.Empty;
+        }
+
+        [DataContract]
+        public class ActiveMode
+        {
+            [DataMember]
+            public string field1Name = string.Empty;
+            [DataMember]
+            public string field2Name = string.Empty;
+        }
+
+        [DataContract]
+        public class OperationData
+        {
+            [DataMember]
+            public string Mode = string.Empty;
+            [DataMember]
+            public string ModeStatusMsg = string.Empty;
+            [DataMember]
+            public bool ModeServerValidated = false;
+            [DataMember]
+            public Field Field1;
+            [DataMember]
+            public Field Field2;
+        }
+
+        [DataContract]
+        public class Field
+        {
+            [DataMember]
+            public string Name = string.Empty;
+            [DataMember]
+            public string Value = string.Empty;
+            [DataMember]
+            public string StatusMsg = string.Empty;
+            [DataMember]
+            public bool ServerValidated = false;
+
+            public NbtObjectClass ExpectedObjClass( string OpMode, int FieldNumber )
+            {
+                NbtObjectClass Ret = NbtObjectClass.LocationClass;
+                switch( OpMode )
+                {
+                    case "Move":
+                        if( FieldNumber == 1 )
+                        {
+                            Ret = NbtObjectClass.LocationClass;
+                        }
+                        else
+                        {
+                            Ret = NbtObjectClass.ContainerClass;
+                        }
+                        break;
+                    case "Owner":
+                        if( FieldNumber == 1 )
+                        {
+                            Ret = NbtObjectClass.UserClass;
+                        }
+                        else
+                        {
+                            Ret = NbtObjectClass.ContainerClass;
+                        }
+                        break;
+                    case "Transfer":
+                        if( FieldNumber == 1 )
+                        {
+                            Ret = NbtObjectClass.UserClass;
+                        }
+                        else
+                        {
+                            Ret = NbtObjectClass.ContainerClass;
+                        }
+                        break;
+                    case "DispenseContainer":
+                        //TODO: dispense container
+                        break;
+                    case "DisposeContainer":
+                        //TODO: dispose container
+                        break;
+                }
+                return Ret;
+            }
         }
 
         #endregion
 
-        public static void GetAvailableModes( ICswResources CswResources, KioskModeDataReturn Return, KioskModeData ImgData )
+        public static void GetAvailableModes( ICswResources CswResources, KioskModeDataReturn Return, KioskModeData KioskModeData )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswNbtObjClassRole currentUserRoleNode = NbtResources.Nodes.makeRoleNodeFromRoleName( NbtResources.CurrentNbtUser.Rolename );
@@ -87,6 +174,128 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = kioskModeData;
         }
 
+        public static void HandleScan( ICswResources CswResources, KioskModeDataReturn Return, KioskModeData KioskModeData )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
+            {
+                NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 2 );
+                bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field2.Value );
+                if( false == barcodeValid )
+                {
+                    KioskModeData.OperationData.Field2.StatusMsg = "Error: item does not exist";
+                }
+                else
+                {
+                    KioskModeData.OperationData.Field2.ServerValidated = true;
+                    KioskModeData.OperationData.Field2.StatusMsg = "";
+                }
+            }
+            else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
+            {
+                NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 1 );
+                bool barcodeValid = _validateBarcode( NbtResources, NbtObjectClass.LocationClass, KioskModeData.OperationData.Field1.Value );
+                if( false == barcodeValid )
+                {
+                    KioskModeData.OperationData.Field1.StatusMsg = "Error: item does not exist";
+                }
+                else
+                {
+                    KioskModeData.OperationData.Field1.ServerValidated = true;
+                    KioskModeData.OperationData.Field1.StatusMsg = "";
+                }
+            }
+            else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Mode ) )
+            {
+                _setFields( KioskModeData.OperationData );
+            }
+            Return.Data = KioskModeData;
+        }
+
+        #region Private Methods
+
+        private static void _setFields( OperationData OpData )
+        {
+            OpData.ModeServerValidated = true;
+            OpData.ModeStatusMsg = string.Empty;
+            switch( OpData.Mode )
+            {
+                case "Move":
+                    OpData.Field1.Name = "Location";
+                    OpData.Field2.Name = "Item";
+                    break;
+                case "Owner":
+                    OpData.Field1.Name = "Owner";
+                    OpData.Field2.Name = "Item";
+                    break;
+                case "Transfer":
+                    OpData.Field1.Name = "Owner";
+                    OpData.Field2.Name = "Item";
+                    break;
+                case "DispenseContainer":
+                    //TODO: dispense container
+                    break;
+                case "DisposeContainer":
+                    //TODO: dispose container
+                    break;
+                default:
+                    OpData.ModeStatusMsg = "Error: Scanned mode does not exist or is unavailable";
+                    OpData.ModeServerValidated = false;
+                    break;
+            }
+        }
+
+        private static bool _validateBarcode( CswNbtResources NbtResources, NbtObjectClass ObjClass, string Barcode )
+        {
+            ICswNbtTree tree = _getTree( NbtResources, ObjClass, Barcode );
+            int childCount = tree.getChildNodeCount();
+            return childCount > 0 ? true : false; //true if the item with this barcode exists
+        }
+
+        private static CswNbtNode _getNodeByBarcode( CswNbtResources NbtResources, NbtObjectClass ObjClass, string Barcode )
+        {
+            CswNbtNode Ret = null;
+            ICswNbtTree tree = _getTree( NbtResources, ObjClass, Barcode );
+            int childCount = tree.getChildNodeCount();
+            if( childCount > 0 )
+            {
+                tree.goToNthChild( 0 );
+                Ret = tree.getNodeForCurrentPosition();
+            }
+            return Ret;
+        }
+
+        private static CswPrimaryKey _getNodeIdByBarcode( CswNbtResources NbtResources, NbtObjectClass ObjClass, string Barcode )
+        {
+            CswPrimaryKey Ret = null;
+            ICswNbtTree tree = _getTree( NbtResources, ObjClass, Barcode );
+            int childCount = tree.getChildNodeCount();
+            if( childCount > 0 )
+            {
+                tree.goToNthChild( 0 );
+                Ret = tree.getNodeIdForCurrentPosition();
+            }
+            return Ret;
+        }
+
+        private static ICswNbtTree _getTree( CswNbtResources NbtResources, NbtObjectClass ObjClass, string Barcode )
+        {
+            CswNbtMetaDataObjectClass metaDataOC = NbtResources.MetaData.getObjectClass( ObjClass );
+            CswNbtMetaDataObjectClassProp barcodeOCP = metaDataOC.getBarcodeProp();
+            CswNbtView view = new CswNbtView( NbtResources );
+            CswNbtViewRelationship parent = view.AddViewRelationship( metaDataOC, true );
+            view.AddViewPropertyAndFilter( parent,
+                MetaDataProp: barcodeOCP,
+                Value: Barcode,
+                SubFieldName: CswNbtSubField.SubFieldName.Barcode,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals
+            );
+
+            ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
+            return tree;
+        }
+
+        #endregion
     }
 
 }
