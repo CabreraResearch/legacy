@@ -251,8 +251,7 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.Link:
-                            string HrefBody = Prop.getPropColumnValue( MetaDataProp );
-                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, HrefBody, MetaDataProp.Attribute2 );
+                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field2, MetaDataProp.Attribute2 );
                             if( false == string.IsNullOrEmpty( Href ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";
