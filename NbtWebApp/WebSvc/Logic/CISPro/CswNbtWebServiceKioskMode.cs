@@ -71,9 +71,13 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public bool ModeServerValidated = false;
             [DataMember]
+            public string OpStatusMsg = string.Empty;
+            [DataMember]
             public Field Field1;
             [DataMember]
             public Field Field2;
+            [DataMember]
+            public Collection<string> Log = new Collection<string>();
         }
 
         [DataContract]
@@ -209,6 +213,38 @@ namespace ChemSW.Nbt.WebServices
             {
                 _setFields( KioskModeData.OperationData );
             }
+            Return.Data = KioskModeData;
+        }
+
+        public static void CommitOperation( ICswResources CswResources, KioskModeDataReturn Return, KioskModeData KioskModeData )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            OperationData OpData = KioskModeData.OperationData;
+            switch( OpData.Mode )
+            {
+                case "Move":
+                    CswNbtObjClassContainer containerToMove = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
+                    CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value );
+                    containerToMove.MoveContainer( locationToMoveTo.NodeId );
+                    containerToMove.postChanges( false );
+                    OpData.OpStatusMsg = DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Location.CachedFullPath + " (" + OpData.Field1.Value + ")";
+                    OpData.Field2.Value = string.Empty;
+                    OpData.Field2.ServerValidated = false;
+                    break;
+                case "Owner":
+
+                    break;
+                case "Transfer":
+
+                    break;
+                case "DispenseContainer":
+                    //TODO: dispense container
+                    break;
+                case "DisposeContainer":
+                    //TODO: dispose container
+                    break;
+            }
+            KioskModeData.OperationData = OpData;
             Return.Data = KioskModeData;
         }
 

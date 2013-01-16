@@ -39,15 +39,7 @@
                 } ());
 
                 cswPrivate.onSubmitClick = function () {
-                    Csw.ajax.post({
-                        urlMethod: '',
-                        data: {},
-                        success: function (json) {
-                            if (json.succeeded) {
-                                Csw.tryExec(cswPrivate.onSubmit);
-                            }
-                        }
-                    });
+                    cswPrivate.commitOperation();
                 };
 
                 cswPrivate.onCancelClick = function () {
@@ -107,30 +99,48 @@
                                     OperationData: cswPrivate.OperationData
                                 },
                                 success: function (KioskModeData) {
-                                    cswPrivate.scanArea.enable();
-                                    cswPrivate.OperationData = KioskModeData.OperationData;
-
-                                    cswPrivate.actionTbl.cell(3, 1).empty();
-                                    cswPrivate.scanArea.val('');
-                                    var propsTbl = cswPrivate.actionTbl.cell(3, 1).table({
-                                        name: 'propstbl',
-                                        cellpadding: 10
-                                    });
-                                    propsTbl.cell(1, 1).span({ text: 'Mode: ' });
-                                    propsTbl.cell(1, 2).span({ text: cswPrivate.OperationData.Mode });
-                                    propsTbl.cell(1, 3).span({ text: cswPrivate.OperationData.ModeStatusMsg }).css('color', 'Red');
-
-                                    propsTbl.cell(2, 1).span({ text: cswPrivate.OperationData.Field1.Name });
-                                    propsTbl.cell(2, 2).span({ text: cswPrivate.OperationData.Field1.Value });
-                                    propsTbl.cell(2, 3).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
-
-                                    propsTbl.cell(3, 1).span({ text: cswPrivate.OperationData.Field2.Name });
-                                    propsTbl.cell(3, 2).span({ text: cswPrivate.OperationData.Field2.Value });
-                                    propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
+                                    cswPrivate.renderUI(KioskModeData);
                                 }
                             });
                         }
                     });
+                };
+
+                cswPrivate.commitOperation = function () {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'KioskMode/CommitOperation',
+                        data: {
+                            OperationData: cswPrivate.OperationData
+                        },
+                        success: function (KioskModeData) {
+                            cswPrivate.renderUI(KioskModeData);
+                        }
+                    });
+                };
+
+                cswPrivate.renderUI = function (KioskModeData) {
+                    cswPrivate.scanArea.enable();
+                    cswPrivate.OperationData = KioskModeData.OperationData;
+
+                    cswPrivate.actionTbl.cell(3, 1).empty();
+                    cswPrivate.scanArea.val('');
+                    var propsTbl = cswPrivate.actionTbl.cell(3, 1).table({
+                        name: 'propstbl',
+                        cellpadding: 10
+                    });
+                    propsTbl.cell(1, 1).span({ text: 'Mode: ' });
+                    propsTbl.cell(1, 2).span({ text: cswPrivate.OperationData.Mode });
+                    propsTbl.cell(1, 3).span({ text: cswPrivate.OperationData.ModeStatusMsg }).css('color', 'Red');
+
+                    propsTbl.cell(2, 1).span({ text: cswPrivate.OperationData.Field1.Name });
+                    propsTbl.cell(2, 2).span({ text: cswPrivate.OperationData.Field1.Value });
+                    propsTbl.cell(2, 3).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
+
+                    propsTbl.cell(3, 1).span({ text: cswPrivate.OperationData.Field2.Name });
+                    propsTbl.cell(3, 2).span({ text: cswPrivate.OperationData.Field2.Value });
+                    propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
+
+                    propsTbl.cell(4, 1).span({ text: cswPrivate.OperationData.OpStatusMsg });
                 };
 
                 (function _postCtor() {
@@ -148,7 +158,7 @@
                     }).css('width', '95%');
 
                     cswPrivate.actionTbl.cell(1, 1)
-                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '80%'})
+                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '80%' })
                         .span({ text: 'CISPro Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
