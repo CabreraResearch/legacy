@@ -23,7 +23,7 @@
                     nodeSelect.name = Csw.string(cswPublic.data.propData.name).trim();
                     nodeSelect.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
                     nodeSelect.selectedNodeLink = Csw.string(cswPrivate.propVals.relatednodelink).trim();
-                    nodeSelect.selectedName = Csw.string(cswPrivate.propVals.name).trim();
+                    nodeSelect.selectedName = Csw.string(cswPrivate.propVals.relatednodename).trim();
                     nodeSelect.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     //nodeSelect.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     nodeSelect.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
@@ -76,6 +76,10 @@
                     }); // link
 
                     cswPrivate.childContentsDiv = cswPrivate.parent.div();
+                    
+                    if (false === Csw.isNullOrEmpty(nodeSelect.selectedNodeId)) {
+                        cswPrivate.loadNode(nodeSelect.selectedNodeId);
+                    }
                 }; // render()
 
                 cswPrivate.loadNode = function (nodeid) {
