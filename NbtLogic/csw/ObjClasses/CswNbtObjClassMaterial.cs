@@ -594,6 +594,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ButtonData.Data["viewid"] = assignedSDSNTP.ViewId.ToString();
                     ButtonData.Data["title"] = assignedSDSNTP.PropName;
                     ButtonData.Data["nodeid"] = NodeId.ToString();
+                    ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
                     ButtonData.Action = NbtButtonAction.griddialog;
                 }
                 else

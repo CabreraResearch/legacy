@@ -257,11 +257,49 @@
                 $.CswDialog('OpenEmptyDialog', {
                     title: actionJson.title,
                     onOpen: function (dialogDiv) {
-                        Csw.nbt.nodeGrid(dialogDiv, {
+                        var menuDiv = dialogDiv.div();
+                        var grid = Csw.nbt.nodeGrid(dialogDiv, {
                             nodeid: actionJson.nodeid,
                             readonly: false,
                             reinit: false,
-                            viewid: actionJson.viewid
+                            viewid: actionJson.viewid,
+                            onDeleteNode: function () {
+                                grid.reload();
+                            },
+                            onEditNode: function () {
+                                grid.reload();
+                            },
+                            onSuccess: function (grid) {
+                                var menuOpts = {
+                                    width: 150,
+                                    ajax: {
+                                        urlMethod: 'getMainMenu',
+                                        data: {
+                                            ViewId: actionJson.viewid,
+                                            SafeNodeKey: '',
+                                            NodeId: actionJson.nodeid,
+                                            NodeTypeId: actionJson.nodetypeid,
+                                            PropIdAttr: '',
+                                            LimitMenuTo: '',
+                                            ReadOnly: 'false'
+                                        }
+                                    },
+                                    onAlterNode: function () {
+                                        grid.reload();
+                                    },
+                                    onMultiEdit: function () {
+                                        grid.toggleShowCheckboxes();
+                                    },
+                                    onEditView: function () {
+                                        Csw.tryExec(menuDiv.$.dialog('close'));
+                                    },
+                                    onPrintView: function () {
+                                        grid.print();
+                                    },
+                                    Multi: false
+                                };
+                                menuDiv.menu(menuOpts);
+                            }
                         });
                     }
                 });
