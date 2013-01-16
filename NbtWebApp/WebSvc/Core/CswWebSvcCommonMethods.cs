@@ -9,7 +9,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
-using ChemSW.Session;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
@@ -143,7 +142,7 @@ namespace ChemSW.WebSvc
                         {
                             ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
                             SvcReturn.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
-                            CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )
+                            CswNbtNodeKey FakeKey = new CswNbtNodeKey()
                             {
                                 NodeId = CurrentUser.UserId,
                                 NodeSpecies = NodeSpecies.Plain,
@@ -200,7 +199,7 @@ namespace ChemSW.WebSvc
 
                         ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
                         SvcReturn.Authentication.ExpirationReset.UserId = CurrentUser.UserId.ToString();
-                        CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )
+                        CswNbtNodeKey FakeKey = new CswNbtNodeKey()
                         {
                             NodeId = CurrentUser.UserId,
                             NodeSpecies = NodeSpecies.Plain,

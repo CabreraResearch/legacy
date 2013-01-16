@@ -233,6 +233,9 @@
                             case 'Submit_Request':
                                 Csw.tryExec(cswPrivate.onSubmitRequest);
                                 break;
+                            default:
+                                Csw.main.handleAction({ actionname: menuItemJson.action });
+                                break;
                         } // switch(menuItemJson.action)
                     } // else if (false === Csw.isNullOrEmpty(menuItemJson.action))
                 } // if( false === Csw.isNullOrEmpty(menuItemJson))

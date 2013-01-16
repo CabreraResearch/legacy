@@ -164,9 +164,10 @@
                         /// Unbind all properties on this node's layout from the 
                         /// </summary>
                         'use strict';
-                        Csw.unsubscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
-                        Csw.unsubscribe('initPropertyTearDown', cswPrivate.tearDown);
-                        Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
+                        Csw.unsubscribe('render_' + cswPublic.tabState.nodeid, null, cswPrivate.renderer);
+                        Csw.unsubscribe('initPropertyTearDown', null, cswPrivate.tearDown);
+                        Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, null, cswPrivate.tearDown);
+                        Csw.unsubscribe('onPropChange_' + cswPublic.propid, null, cswPrivate.dataBindPropChange);
                         Csw.tryExec(cswPrivate.tearDownCallback);
                     };
 

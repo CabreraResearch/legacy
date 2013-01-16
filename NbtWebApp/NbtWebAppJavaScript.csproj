@@ -98,6 +98,7 @@
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\literals\_template.js" />
+    <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
     <Content Include="app\core\csw.ajaxWcf.js" />
@@ -145,6 +146,7 @@
     <Content Include="app\wizards\_template.js" />
     <Content Include="ConnectTest.html" />
     <None Include="css\csw.label.less" />
+    <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
     <Content Include="PrintTest.html" />
     <Content Include="etc\far.exe" />

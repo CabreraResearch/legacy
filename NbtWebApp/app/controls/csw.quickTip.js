@@ -40,7 +40,8 @@
                 if (Csw.isElementInDom(cswParent.getId())) {
                     try {
                         window.Ext.create('Ext.tip.ToolTip', {
-                            id: cswPrivate.ID + 'tooltip',
+                            //Case 28232: if this is tied to a button (for example), id will not be guaranteed to be unique for every tip.
+                            //id: cswPrivate.ID + 'tooltip',
                             target: cswParent.getId(),
                             html: cswPrivate.html,
                             autoShow: cswPrivate.autoShow,
