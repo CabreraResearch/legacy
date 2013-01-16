@@ -13,6 +13,7 @@
             var cswPublic;
 
             (function () {
+
                 cswPublic = cswParent.div();
 
                 cswPrivate = {
@@ -115,20 +116,20 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
+                var toggleGroups;
                 if (cswPrivate.groupField.length > 0) {
                     cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
 
-                    var toggleGroups = function (collapse) {
-                        for (var i in cswPrivate.grid.view.features) {
-                            if (cswPrivate.grid.view.features[i].ftype === 'grouping') {
+                    toggleGroups = function (collapse) {
+                        Csw.each(cswPrivate.grid.view.features, function (feature) {
+                            if (feature.ftype === 'grouping') {
                                 if (collapse) {
-                                    cswPrivate.grid.view.features[i].collapseAll();
+                                    feature.collapseAll();
                                 } else {
-                                    cswPrivate.grid.view.features[i].collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
-                                    cswPrivate.grid.view.features[i].expandAll();
+                                    feature.expandAll();
                                 }
                             }
-                        }
+                        });
                     };
 
                     cswPrivate.dockedItems = [{
@@ -154,6 +155,7 @@
                             }]
                     }];
                 }
+
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -177,7 +179,14 @@
                     storeopts.proxy.type = 'pagingmemory';
                 }
 
-                return window.Ext.create('Ext.data.Store', storeopts);
+                var store = window.Ext.create('Ext.data.Store', storeopts);
+
+                //Case 28476 - manually collapse all groups to fix a bug in ExtJS
+                store.on('load', function (store, records, success) {
+                    Csw.tryExec(toggleGroups, true);
+                });
+
+                return store;
             }); // makeStore()
 
 
