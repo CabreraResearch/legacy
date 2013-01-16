@@ -84,8 +84,8 @@
                         data: cswPrivate.ajaxwcf.data,
                         success: function (result) {
                             //ExJsGrid 
-                            var CswNbtScheduledRulesReturn = Csw.deserialize(result);
-                            Csw.tryExec(onSuccess, CswNbtScheduledRulesReturn );
+                            //var CswNbtScheduledRulesReturn = Csw.deserialize(result);
+                            Csw.tryExec(onSuccess, result );
                             //                                var temp = cswPrivate.store.data;
                             //var temp = result.grid.getAllGridRows();
                         } // success

@@ -103,11 +103,11 @@ namespace ChemSW.Nbt.Grid
                             {
                                 case CswNbtMetaDataFieldType.NbtFieldType.Number:
                                     fld.type = "number";
-                                    col.extJsXType = extJsXType.numbercolumn;
+                                    col.extJsXTypeVal = extJsXType.numbercolumn;
                                     break;
                                 case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                     fld.type = "date";
-                                    col.extJsXType = extJsXType.datecolumn;
+                                    col.extJsXTypeVal = extJsXType.datecolumn;
 
                                     // case 26782 - Set dateformat as client date format
                                     string dateformat = string.Empty;
