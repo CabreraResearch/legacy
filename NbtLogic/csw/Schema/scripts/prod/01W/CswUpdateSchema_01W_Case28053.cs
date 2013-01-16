@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using ChemSW.DB;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
@@ -33,16 +30,9 @@ namespace ChemSW.Nbt.Schema
                     OwnerNTP.PropName = "Tradename";
 
                     // Change view name
-                    Int32 NodeViewId = OwnerNTP.ViewId.get();
-                    CswTableUpdate NodeViewsTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updateViewNameForMaterialDocNT", "node_views" );
-                    DataTable NodeViewsDt = NodeViewsTU.getTable( "where nodeviewid = " + NodeViewId );
-                    foreach( DataRow CurrentRow in NodeViewsDt.Rows )
-                    {
-                        CurrentRow["viewname"] = "Tradename";
-                    }
-
-                    NodeViewsTU.update( NodeViewsDt );
-
+                    CswNbtView View = _CswNbtSchemaModTrnsctn.restoreView( OwnerNTP.ViewId );
+                    View.ViewName = "Tradename";
+                    View.save();
                 }
             }
 
