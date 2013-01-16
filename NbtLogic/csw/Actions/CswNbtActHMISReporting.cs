@@ -171,13 +171,12 @@ namespace ChemSW.Nbt.Actions
                         if( false == String.IsNullOrEmpty( ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.UseType].AsList.Value ) )
                         {
                             String MaterialName = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Material].AsRelationship.CachedNodeName;
-                            bool MaterialIsNew = true;
-                            foreach ( HMISData.HMISMaterial HMISMaterial in Data.Materials.Where( HMISMaterial => HMISMaterial.Material == MaterialName ) )
+                            HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( ExistingMaterial => ExistingMaterial.Material == MaterialName );
+                            if( null != HMISMaterial )
                             {
-                                MaterialIsNew = false;
                                 _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
                             }
-                            if( MaterialIsNew )
+                            else
                             {
                                 HMISTree.goToNthChild( 0 );
                                 CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
@@ -185,7 +184,7 @@ namespace ChemSW.Nbt.Actions
                                 IEnumerable<CswNbtObjClassFireClassExemptAmount> HazardClasses = _getRelevantHazardClasses( MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value );
                                 foreach (CswNbtObjClassFireClassExemptAmount HazardClass in HazardClasses)
                                 {
-                                    HMISData.HMISMaterial HMISMaterial = new HMISData.HMISMaterial();
+                                    HMISMaterial = new HMISData.HMISMaterial();
                                     HMISMaterial.Material = MaterialName;
                                     HMISMaterial.HazardClass = HazardClass.FireHazardClassType.Value;
                                     HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
