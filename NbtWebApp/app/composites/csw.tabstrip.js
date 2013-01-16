@@ -16,11 +16,11 @@
                 cswPrivate.name = cswPrivate.name || '';
                 cswPrivate.tabPanel = cswPrivate.tabPanel || {};
                 cswPrivate.tabPanel.title = cswPrivate.tabPanel.title || 'Tabs';
-                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 400;
+                cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 600;
                 //cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
-                cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable || true;
-                cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful || true;
-                cswPrivate.tabPanel.stateId = cswPrivate.tabPanel.stateId || 'CswRequestCart';
+                cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable; // || true
+                cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful;  // || true
+                cswPrivate.tabPanel.stateId = cswPrivate.tabPanel.stateId || 'CswTabStrip';
                 cswPrivate.tabs = cswPrivate.tabs || [];
                 //    [{
                 //    title: 'First tab',
@@ -32,7 +32,7 @@
                 };
                 
                 cswParent.empty();
-                cswPublic = cswParent.div();
+                cswPublic = cswParent.div().css({width: '100%', height: '100%'});
 
             }());
                 
@@ -53,6 +53,7 @@
                     html: 'Hi, I am tab ',
                     tooltip: title
                 };
+                tab.layout = 'fit';
                 var extTab = cswPublic.tabPanel.add([tab])[0];
 
                 var newTab = {
@@ -101,9 +102,9 @@
 
             cswPublic.setTitle = function (title) {
                 /// <summary>
-                /// Takes a tab instance, id or index and sets it as active/selected
+                /// Sets the title of a Tab Panel
                 /// </summary>
-                /// <returns type="Ext.tab">ExtJS tab instance</returns>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
                 title = title || 'Tab Title';
                 cswPublic.tabPanel.setTitle(title);
                 return cswPublic;
@@ -117,6 +118,38 @@
                 return cswPublic.tabPanel.getWidth();
             };
 
+            cswPublic.setWidth = function (width) {
+                /// <summary>
+                /// Sets the width of the tab strip
+                /// </summary>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
+                cswPublic.tabPanel.setWidth(width);
+                return cswPublic;
+            };
+
+            cswPublic.resetWidth = function () {
+                /// <summary>
+                /// Reset the tab strip to its original width
+                /// </summary>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
+                cswPublic.setWidth(cswPrivate.width);
+                return cswPublic;
+            };
+
+            cswPublic.setSize = function(def) {
+            	/// <summary>
+            	/// Set the heigth and width of the tab strip
+            	/// </summary>
+            	/// <param name="def">Object with 'width' and 'height' properties</param>
+                /// <returns type="tabStrip">Csw tabstrip instance</returns>
+                def = def || {
+                    width: 800,
+                    height: 600
+                };
+                cswPublic.tabPanel.setSize(def);
+                return cswPublic;
+            };
+
             //#endregion Define Class Members
               
 
@@ -127,8 +160,10 @@
                     window.Ext.tip.QuickTipManager.init();
 
                     cswPublic.tabPanel = window.Ext.create('Ext.tab.Panel', {
-                        height: cswPrivate.tabPanel.height,
-                        width: cswPrivate.tabPanel.width,
+                        id: cswPrivate.ID,
+                        layout: 'fit',
+                        height: cswPrivate.tabPanel.height, //no height will render as 0px
+                        //width: no width is fine
                         renderTo: cswPublic.getId(),
                         title: cswPrivate.tabPanel.title,
                         resizable: cswPrivate.tabPanel.resizable,
@@ -138,8 +173,8 @@
                                 ptype: 'tabscrollermenu',
                                 maxText: 15,
                                 pageSize: 5
-                            },
-                            new window.Ext.ux.TabReorderer() //there is no ptype for this plugin. Pass in an instance instead.
+                            }
+                            //new window.Ext.ux.TabReorderer() //there is no ptype for this plugin. Pass in an instance instead.
                         ],
                         listeners: {
                             click: {
@@ -151,7 +186,7 @@
                             }
                         }
                     });
-
+                    cswPrivate.width = cswPublic.getWidth();
                     cswPublic.addTabs(cswPrivate.tabs);
 
                 }());

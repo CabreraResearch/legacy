@@ -98,7 +98,7 @@
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.init = function () {
-                    Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                    Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                     Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                     //We don't have node name yet. Init the div in the right place and polyfill later.
                     cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
@@ -136,7 +136,7 @@
             };
 
             cswPublic.tearDown = function () {
-                Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                 cswPrivate.onTearDown();
             };
 
@@ -162,7 +162,7 @@
 
                 var handle = function () {
                     tabParent.empty();
-                    Csw.unsubscribe(Csw.enums.events.CswNodeDelete, handle);
+                    Csw.unsubscribe(Csw.enums.events.CswNodeDelete, null, handle);
                     return false;
                 };
 
@@ -417,7 +417,7 @@
 
             cswPrivate.setSelectedNodes = function () {
                 if (false === Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
-                    var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
+                    var nodeData = cswPrivate.nodeTreeCheck.getChecked();
                     //It's easier to nuke the collection than to remap it
                     cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
                     cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
@@ -479,12 +479,7 @@
 
             cswPrivate.onRemove = function (tabid, onRemoveData) {
                 'use strict';
-                var propid = '';
-                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
-                if (false === Csw.isNullOrEmpty(propDiv)) {
-                    propid = propDiv.first().data('propId');
-                }
-
+                var propid = onRemoveData.cellSet[1][1].data('propId');
                 cswPrivate.ajax.layoutRemove = Csw.ajax.post({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: cswPrivate.urls.RemovePropUrlMethod,
@@ -753,9 +748,10 @@
                     }
                 }
 
-                if (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
-                    (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
-                    cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp)) {
+                if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
+                    (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
+                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add && 
+                      cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp))) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,

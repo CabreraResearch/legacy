@@ -20,7 +20,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string FinalDueDate = "Final Due Date";
             public static string NextDueDate = "Next Due Date";
             public static string WarningDays = "Warning Days";
-            //public static string GraceDaysPropertyName { get { return "Grace Days"; } }
             public static string Enabled = "Enabled";
             public static string RunStatus = "Run Status";
             public static string TargetType = "Target Type";
@@ -31,9 +30,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string ParentView = "Parent View";
         }
 
-
-
-        //ICswNbtPropertySetScheduler
         public string SchedulerFinalDueDatePropertyName { get { return PropertyName.FinalDueDate; } }
         public string SchedulerNextDueDatePropertyName { get { return PropertyName.NextDueDate; } }
         public string SchedulerRunStatusPropertyName { get { return PropertyName.RunStatus; } }
@@ -93,6 +89,12 @@ namespace ChemSW.Nbt.ObjClasses
             if( TargetType.Empty )
             {
                 Enabled.Checked = Tristate.False;
+            }
+            // case 28352
+            Int32 max = DueDateInterval.getMaximumWarningDays();
+            if( WarningDays.Value > max )
+            {
+                WarningDays.Value = max;
             }
         } //beforeWriteNode()
 
@@ -274,10 +276,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
 
-            // case 28146
-            WarningDays.MinValue = 0;
-            WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
-
+            if( _CswNbtResources.EditMode != NodeEditMode.Add )  // case 28352
+            {
+                // case 28146
+                WarningDays.MinValue = 0;
+                WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+            }
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -293,6 +297,15 @@ namespace ChemSW.Nbt.ObjClasses
             {
             }
             return true;
+        }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.Node.copyPropertyValues( Node );
+            CopiedIDNode.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
+            CopiedIDNode.postChanges( true );
+            return CopiedIDNode.Node;
         }
         #endregion
 
@@ -330,13 +343,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 RunTime.setHidden( value: false, SaveToDb: true );
             }
-
-            Int32 max = DueDateInterval.getMaximumWarningDays();
-            if( WarningDays.Value > max )
-            {
-                WarningDays.Value = max;
-            }
-
         } // OnDueDateIntervalChange
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }

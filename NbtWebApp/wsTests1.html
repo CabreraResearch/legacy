@@ -82,11 +82,6 @@ function test_getDashboard($table, testno, nextfunc) {
          nextfunc);
 }
 
-function test_getTreeOfViewInit($table, testno, nextfunc) {
-    _execAction($table, testno, 'getTreeOfView', { "UsePaging": true, "ViewId": "ViewId_176", "IdPrefix": "main_", "IsFirstLoad": true, "ParentNodeKey": "", "IncludeNodeRequired": false, "IncludeNodeKey": "", "ShowEmpty": false, "ForSearch": false, "NodePk": "", "IncludeInQuickLaunch": true },
-         nextfunc);
-}
-
 function test_getTabsForEquipNode($table, testno, nextfunc) { //22983
     _execAction($table, testno, 'getTabs', { "EditMode": "Edit", "NodeId": "nodes_X2983", "SafeNodeKey": "\"/NbtTree/NbtNode/NbtNode[@tablename=\\u0027nodes\\u0027 and  @nodeid=22983]:nodes_22983:Plain:6:146:ViewId_176:8:0/1\"", "NodeTypeId": "", "Date": "", "filterToPropId": "", "Multi": false },
         nextfunc);
@@ -122,12 +117,9 @@ function _beginTests(accessid,username,password) {
                             {
                                 test_getQuickLaunchItems($table, 6, function ()
                                 {
-                                    test_getTreeOfViewInit($table, 7, function ()
+                                    test_getTabsForEquipNode($table, 8, function ()
                                     {
-                                        test_getTabsForEquipNode($table, 8, function ()
-                                        {
-                                            _endTests($table, 'Ended OK');
-                                        });
+                                        _endTests($table, 'Ended OK');
                                     });
                                 });
                             });

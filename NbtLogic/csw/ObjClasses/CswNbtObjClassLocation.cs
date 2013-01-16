@@ -23,7 +23,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InventoryGroup = "Inventory Group";
             public const string LocationCode = "Location Code";
             public const string AllowInventory = "Allow Inventory";
-            public const string StorageCompatability = "Storage Compatability";
+            public const string StorageCompatibility = "Storage Compatibility";
+            public const string ControlZone = "Control Zone";
+            public const string Containers = "Containers";
         }
 
 
@@ -218,11 +220,25 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.AllowInventory] );
             }
         }
-        public CswNbtNodePropImageList StorageCompatability
+        public CswNbtNodePropImageList StorageCompatibility
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.StorageCompatability] );
+                return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] );
+            }
+        }
+        public CswNbtNodePropRelationship ControlZone
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.ControlZone] );
+            }
+        }
+        public CswNbtNodePropGrid Containers
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.Containers] );
             }
         }
 

@@ -418,33 +418,6 @@
                 }
             };
 
-            //File upload button for Step 3
-            cswPrivate.makeInspectionDesignUpload = function (control) {
-                var f = {
-                    url: Csw.enums.ajaxUrlPrefix + 'previewInspectionFile',
-                    onSuccess: function () {
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
-                    },
-                    stepNo: Csw.enums.wizardSteps_InspectionDesign.step3.step,
-                    uploadName: 'design'
-                };
-
-                control.$.fileupload({
-                    datatype: 'json',
-                    dataType: 'json',
-                    url: f.url,
-                    paramName: 'fileupload',
-                    done: function (e, ret) {
-                        cswPrivate.gridJson = {};
-                        if (Csw.contains(ret, 'result') && Csw.contains(ret.result, 'grid')) {
-                            cswPrivate.gridJson = ret.result.grid;
-                            cswPrivate.importMsg = ret.result.error;
-                            cswPrivate.makeInspectionDesignGrid(f.onSuccess);
-                        }
-                    }
-                });
-            };
-
             //If this is a new Design, upload the template. Otherwise skip to step 5.
             cswPrivate.makeStepThree = (function () {
                 var stepThreeComplete = false;
@@ -492,9 +465,25 @@
                             //3. Upload the design
                             uploadP = step3List.li()
                                                 .span({ text: 'Upload the completed Inspection Design.' })
-                                                .p()
-                                                .input({ type: Csw.enums.inputTypes.file, name: 'fileupload', value: 'Upload' });
-                            cswPrivate.makeInspectionDesignUpload(uploadP);
+                                                .p();
+                                                
+                            
+                            uploadP.fileUpload({
+                                uploadUrl: 'previewInspectionFile',
+                                onSuccess: function (data) {
+                                    cswPrivate.gridJson = {};
+                                    if (Csw.contains(data, 'grid')) {
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
+                                        cswPrivate.gridJson = data.grid;
+                                        cswPrivate.importMsg = data.error;
+                                        cswPrivate.makeInspectionDesignGrid();
+                                    } else {
+                                       cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                                       cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+                                       Csw.debug.error('Could not upload the provided file');
+                                    }
+                                }
+                            });
 
 
 
@@ -577,7 +566,7 @@
                             confirmGridParent.div().grid(confirmGridOptions);
                         } else {
                             confirmationList.li({
-                                text: 'Assigning Inspection Design <b>' + cswPrivate.selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + cswPrivate.selectedInspectionTarget + '</b>.'
+                                text: 'Creating a new copy of Inspection Design <b>' + cswPrivate.selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + cswPrivate.selectedInspectionTarget + '</b>.'
                             }).br();
                         }
 

@@ -13,7 +13,7 @@
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td><div id="MainMenuDiv"></div></td>
+                                        <td><div id="MainMenuDiv"  style="height: 25px;"></div></td>
                                     </tr>
                                 </table>
                             </td>
@@ -59,7 +59,31 @@
     } else {
         console.log('initMain() does not exist.  Probably a javascript compilation error.');
     }
-
+	if(false) {
+		//launch Chrome with cmd to enable "C:\Program Files\Google\Chrome\Application\chrome.exe" --enable-memory-info
+		var stats = new xStats({
+			'mode': 'mem',
+			'height': 130,
+			'width': 200,
+			'padding': 10,
+			'locked': false,
+			'fps': {
+				'bg': '#330000',
+				'fg': '#cc6600'
+			},
+			'ms': {
+				'bg': '#000033',
+				'fg': '#3366ff'
+			},
+			'mem': {
+				'bg': '#000033',
+				'fg': '#660099'
+			}
+		});
+		$(document).ready(function() {
+			document.getElementById('CswFooterDiv').appendChild(stats.element);
+		});
+	}
 </script>
 
 <!--#include file="MainFooter.html" -->

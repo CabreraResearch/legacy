@@ -97,7 +97,7 @@ namespace ChemSW.Nbt
             if( !string.IsNullOrEmpty( NodeKey ) )
             {
                 //CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
-                CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( NodeKey );
                 Node = _CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
             }
             else if( !string.IsNullOrEmpty( NodeId ) )

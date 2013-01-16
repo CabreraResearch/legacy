@@ -90,8 +90,24 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassFeedback( CswNbtResources, Node );
                     break;
 
+                case NbtObjectClass.FireClassExemptAmountClass:
+                    ReturnVal = new CswNbtObjClassFireClassExemptAmount( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.FireClassExemptAmountSetClass:
+                    ReturnVal = new CswNbtObjClassFireClassExemptAmountSet( CswNbtResources, Node );
+                    break;
+
                 case NbtObjectClass.GenericClass:
                     ReturnVal = new CswNbtObjClassGeneric( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.GHSClass:
+                    ReturnVal = new CswNbtObjClassGHS( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.GHSPhraseClass:
+                    ReturnVal = new CswNbtObjClassGHSPhrase( CswNbtResources, Node );
                     break;
 
                 case NbtObjectClass.InspectionDesignClass:
@@ -228,17 +244,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassTest( CswNbtResources, Node );
                     break;
 
-                //case CswNbtMetaDataObjectClassName.NbtObjectClass.TestGroupClass:
-                //    ReturnVal = new CswNbtObjClassTestGroup(CswNbtResources, Node);
-                //    break;
-
                 case NbtObjectClass.UnitOfMeasureClass:
                     ReturnVal = new CswNbtObjClassUnitOfMeasure( CswNbtResources, Node );
                     break;
-
-                //case CswNbtMetaDataObjectClassName.NbtObjectClass.UnitTypeClass:
-                //    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources, Node );
-                //    break;//case 7608 - deprecated
 
                 case NbtObjectClass.UserClass:
                     ReturnVal = new CswNbtObjClassUser( CswNbtResources, Node );

@@ -158,8 +158,7 @@
                     };
 
                     if (false == cswPublic.data.isReport() && 
-                        (cswPublic.data.isReadOnly() ||
-                        cswPublic.data.isMulti())) {
+                        cswPublic.data.isMulti()) {
 
                         cswPublic.control = cswPrivate.parent.append('[Grid display disabled]');
                     } else {

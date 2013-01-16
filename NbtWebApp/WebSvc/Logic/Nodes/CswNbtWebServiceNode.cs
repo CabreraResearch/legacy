@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 foreach( string NodeKey in NodeKeys )
                 {
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( NodeKey );
                     if( null != NbtNodeKey &&
                         null != NbtNodeKey.NodeId &&
                         CswTools.IsPrimaryKey( NbtNodeKey.NodeId ) &&
@@ -432,7 +433,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.NodeTypeId = Request.NodeTypeId;
             Ret.ObjectClassId = Request.ObjectClassId;
 
-            Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
+            Dictionary<CswPrimaryKey, string> Nodes = new Dictionary<CswPrimaryKey, string>();
 
             // case 25956
             Int32 SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.relationshipoptionlimit.ToString() ) );
@@ -469,7 +470,7 @@ namespace ChemSW.Nbt.WebServices
             else if( Request.NodeTypeId > 0 )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId );
-                Nodes = MetaDataNodeType.getNodes( true, false );
+                Nodes = MetaDataNodeType.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
                 Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
             }
             else
@@ -524,7 +525,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     if( doGetNodes )
                     {
-                        Nodes = MetaDataObjectClass.getNodes( true, false );
+                        Nodes = MetaDataObjectClass.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
                     }
                     Ret.CanAdd = MetaDataObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
                 }
@@ -542,21 +543,20 @@ namespace ChemSW.Nbt.WebServices
                 for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
                 {
                     Tree.goToNthChild( N );
-                    Ret.Nodes.Add( new NodeSelect.Node( null )
-                    {
-                        NodePk = Tree.getNodeIdForCurrentPosition(),
-                        NodeName = Tree.getNodeNameForCurrentPosition()
-                    } );
+                    Ret.Nodes.Add( new CswNbtNode.Node( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() ) );
                     Tree.goToParentNode();
                 }
             }
-
-            Ret.UseSearch = Ret.UseSearch || Nodes.Count > SearchThreshold;
-            foreach( CswNbtNode Node in ( from _Node in Nodes orderby _Node.NodeName select _Node ).Take( SearchThreshold ) )
+            else
             {
-                Ret.Nodes.Add( new NodeSelect.Node( Node ) );
+                Ret.UseSearch = Ret.UseSearch || Nodes.Count > SearchThreshold;
+                foreach( CswPrimaryKey NodePk in Nodes.OrderBy( Pair => Pair.Value )
+                    .Select( Pair => Pair.Key )
+                    .Take( SearchThreshold ) )
+                {
+                    Ret.Nodes.Add( new CswNbtNode.Node( NodePk, Nodes[NodePk] ) );
+                }
             }
-
             return Ret;
         }
 
@@ -573,6 +573,110 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        public static void getRelationshipOpts( ICswResources CswResources, NodeSelect.Response Response, NodeSelect.PropertyView Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+                NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
+
+                int nodeTypeId;
+                CswPrimaryKey pk = new CswPrimaryKey();
+                if( false == String.IsNullOrEmpty( Request.NodeId ) )
+                {
+                    pk = CswConvert.ToPrimaryKey( Request.NodeId );
+                    nodeTypeId = NbtResources.Nodes[pk].NodeTypeId;
+                }
+                else
+                {
+                    nodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
+                }
+                Dictionary<CswPrimaryKey, string> Opts = new Dictionary<CswPrimaryKey, string>();
+                if( null == Request.ViewId )
+                {
+                    CswNbtMetaDataNodeType metaDataNodeType = NbtResources.MetaData.getNodeType(nodeTypeId);
+                    if (null != metaDataNodeType)
+                    {
+                        CswNbtMetaDataNodeTypeProp ntp = metaDataNodeType.getNodeTypePropByObjectClassProp(Request.ObjClassPropName);
+                        Opts = CswNbtNodePropRelationship.getOptions(NbtResources, ntp, null);
+                    }
+                }
+                else
+                {
+                    CswNbtViewId ViewId = new CswNbtViewId( Request.ViewId );
+                    Opts = CswNbtNodePropRelationship.getOptions( NbtResources, ViewId, Request.TargetNodeTypeId, Request.TargetObjectClassId );
+                }
+                foreach( KeyValuePair<CswPrimaryKey, string> pair in Opts )
+                {
+                    Ret.Nodes.Add( new CswNbtNode.Node( null )
+                    {
+                        NodePk = pair.Key,
+                        NodeName = pair.Value
+                    } );
+                }
+                Response.Data = Ret;
+            }
+        }
+
+        public static void getSizes( ICswResources CswResources, NodeSelect.Response Response, CswNbtNode.Node Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+                NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
+
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtMetaDataObjectClass sizeOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+
+                    CswNbtView sizesView = new CswNbtView( NbtResources );
+                    CswNbtViewRelationship parent = sizesView.AddViewRelationship( sizeOC, true );
+                    sizesView.AddViewPropertyAndFilter( parent,
+                        MetaDataProp: materialOCP,
+                        Value: pk.PrimaryKey.ToString(),
+                        SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                    ICswNbtTree tree = NbtResources.Trees.getTreeFromView( sizesView, true, false, false );
+                    for( int i = 0; i < tree.getChildNodeCount(); i++ )
+                    {
+                        tree.goToNthChild( i );
+                        Ret.Nodes.Add( new CswNbtNode.Node( null )
+                        {
+                            NodePk = tree.getNodeIdForCurrentPosition(),
+                            NodeName = tree.getNodeNameForCurrentPosition()
+                        } );
+                        tree.goToParentNode();
+                    }
+
+                }
+
+                Response.Data = Ret;
+            }
+        }
+
+        public static void getNodeLink( ICswResources CswResources, NodeSelect.NodeLinkResponse Response, NodeSelect.PropertyView Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+                NodeSelect.NodeLinkResponse.Ret ret = new NodeSelect.NodeLinkResponse.Ret();
+
+                CswPrimaryKey pk = new CswPrimaryKey();
+                pk.FromString( Request.NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtNode node = NbtResources.Nodes[pk];
+                    ret.NodeLink = node.NodeLink;
+                    Response.Data = ret;
+                }
+            }
+        }
 
     } // class CswNbtWebServiceNode
 

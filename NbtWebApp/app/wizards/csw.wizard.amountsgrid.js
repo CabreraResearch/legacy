@@ -48,7 +48,8 @@
                         quantityName: 'Net Quantity',
                         barcodeName: 'Barcodes (Optional)'
                     },
-                    customBarcodes: false
+                    customBarcodes: false,
+                    nodeTypeName: ''
                 };
                 Csw.extend(cswPrivate, options);
 
@@ -70,17 +71,6 @@
 
                 cswPrivate.getQuantity = function () {
                     var ret = false;
-                    if (Csw.isNullOrEmpty(cswPrivate.selectedSizeId) && false === Csw.isNullOrEmpty(cswPrivate.relatedNodeId)) {
-                        Csw.ajax.post({
-                            urlMethod: 'getSize',
-                            async: false,
-                            data: { RelatedNodeId: cswPrivate.relatedNodeId },
-                            success: function (data) {
-                                cswPrivate.selectedSizeId = data.sizeid;
-                                ret = false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId);
-                            }
-                        });
-                    }
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
                         Csw.ajax.post({
                             urlMethod: 'getQuantity',
@@ -94,8 +84,10 @@
                     }
                     if (false === ret) {
                         cswPrivate.quantity = {
-                            qtyReadonly: true,
-                            unitReadonly: true
+                            //qtyReadonly: true,
+                            //unitReadonly: true
+                            quantityoptional: false,
+                            isReadOnly: false
                         };
                     }
                     return ret;
@@ -107,7 +99,7 @@
                     }
                     cswPublic.containerCount = 0;
 
-                    var containerNoSpan = cswParent.span(); 
+                    var containerNoSpan = cswParent.span();
                     containerNoSpan.setLabelText('Total number of containers: ' + cswPublic.containerCount);
 
                     var containerLimitExceededSpan = cswParent.span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' The limit for containers created at receipt is [' + cswPublic.containerlimit + '].' });
@@ -144,15 +136,15 @@
                         makeAddRow: function (cswCell, columnName, rowid) {
                             'use strict';
                             var updateSizeVals = function () {
-                                cswPrivate.selectedSizeId = cswPublic.rows[rowid].sizeControl.selectedNodeId();
-                                cswPublic.rows[rowid].quantityValues.sizeid = cswPublic.rows[rowid].sizeControl.selectedNodeId();
+                                cswPrivate.selectedSizeId = cswPublic.rows[rowid].sizeControl.selectedVal();
+                                cswPublic.rows[rowid].quantityValues.sizeid = cswPublic.rows[rowid].sizeControl.selectedVal();
                                 cswPublic.rows[rowid].quantityValues.sizename = cswPublic.rows[rowid].sizeControl.selectedText();
                             };
                             var updateColumnVals = function (changeContainerNo) {
                                 if (false === Csw.isNullOrEmpty(cswPublic.rows[rowid].qtyControl)) {
-                                    cswPublic.rows[rowid].quantityValues.quantity = cswPublic.rows[rowid].qtyControl.quantityValue;
-                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.unitText;
-                                    cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.unitVal;
+                                    cswPublic.rows[rowid].quantityValues.quantity = cswPublic.rows[rowid].qtyControl.value();
+                                    cswPublic.rows[rowid].quantityValues.unit = cswPublic.rows[rowid].qtyControl.selectedUnitText();
+                                    cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.selectedUnit();
                                 }
                                 if (changeContainerNo) {
                                     cswPublic.rows[rowid].containerNoControl.val(Csw.number(cswPrivate.quantity.unitCount, 1));
@@ -194,12 +186,14 @@
                                     break;
                                 case cswPrivate.config.sizeName:
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
-                                        name: 'sizes',
+                                        name: 'Size',
                                         async: false,
+                                        nodesUrlMethod: 'Nodes/getSizes',
                                         ajaxData: {
-                                            ObjectClass: 'SizeClass'
+                                            NodeId: cswPrivate.materialId
                                         },
                                         showSelectOnLoad: true,
+                                        objectClassName: 'SizeClass',
                                         addNodeDialogTitle: 'Size',
                                         relatedTo: {
                                             objectClassName: 'MaterialClass',
@@ -211,22 +205,30 @@
                                             cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                             updateColumnVals(true);
                                         },
-                                        onSuccess: function() {
+                                        onSuccess: function () {
                                             updateSizeVals();
+                                            cswPrivate.getQuantity();
+                                            cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
+                                            updateColumnVals(true);
                                         },
                                         allowAdd: true
                                     });
-                                    
                                     break;
                                 case cswPrivate.config.quantityName:
                                     cswPrivate.getQuantity();
                                     cswPrivate.quantity.minvalue = 0;
                                     cswPrivate.quantity.excludeRangeLimits = true;
-                                    cswPrivate.quantity.onChange = function () {
+                                    cswPrivate.quantity.onNumberChange = function () {
                                         updateColumnVals(false);
                                     };
+                                    cswPrivate.quantity.onQuantityChange = function() {
+                                        updateColumnVals(false);
+                                    };
+                                    cswPrivate.quantity.quantity = cswPrivate.quantity.value;
+                                    cswPrivate.quantity.selectedNodeId = cswPrivate.quantity.nodeid;
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
+                                    
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
                                     break;

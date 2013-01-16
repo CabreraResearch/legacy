@@ -291,7 +291,13 @@ namespace ChemSW.Nbt.Batch
 
             if( false == CurrentMailReport.Recipients.Empty )
             {
-                JArray NewRecipientIds = BatchData.RecipientIds;
+                // Copy recipients
+                JArray NewRecipientIds = new JArray();
+                foreach(string UserId in BatchData.RecipientIds)
+                {
+                    NewRecipientIds.Add( UserId );
+                }
+
                 for( Int32 u = 0; u < BatchData.RecipientIds.Count() && u < NodeLimit; u++ )
                 {
                     Int32 UserId = CswConvert.ToInt32( BatchData.RecipientIds[u].ToString() );
@@ -355,7 +361,7 @@ namespace ChemSW.Nbt.Batch
                                 } // if( ViewId.isSet() )
                                 else
                                 {
-                                    EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set";
+                                    EmailReportStatusMessage += "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set\r\n";
                                 }
                             } // if( "View" == CurrentMailReport.Type.Value )
 
@@ -364,7 +370,7 @@ namespace ChemSW.Nbt.Batch
                                 ReportObjClass = (CswNbtObjClassReport) _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
                                 if( null != ReportObjClass )
                                 {
-                                    string ReportSql = ReportObjClass.getUserContextSql( UserNodeAsUser.Username );
+                                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( ReportObjClass.SQL.Text, ReportObjClass.ExtractReportParams( UserNode ) );
 
                                     CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportObjClass.NodeId.ToString() + "_Select", ReportSql );
                                     ReportTable = ReportSelect.getTable();
@@ -385,19 +391,19 @@ namespace ChemSW.Nbt.Batch
                                 }
                                 else
                                 {
-                                    EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated report's NodeId is not set";
+                                    EmailReportStatusMessage += "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated report's NodeId is not set\r\n";
                                 }//if-else report's node id is present
                             } // else if( "Report" == CurrentMailReport.Type.Value )
 
                             else
                             {
-                                EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the report type " + CurrentMailReport.Type.Value + " is unknown";
+                                EmailReportStatusMessage += "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the report type " + CurrentMailReport.Type.Value + " is unknown\r\n";
                             }//if-else-if on report type
 
 
                             if( SendMail )
                             {
-                                EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable );
+                                EmailReportStatusMessage += _sendMailMessage( CurrentMailReport, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable ) + "\r\n";
                             }
                         }//if( Email Address != string.Empty )
 

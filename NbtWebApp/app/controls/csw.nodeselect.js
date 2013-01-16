@@ -6,7 +6,7 @@
     Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
         Csw.controls.register('nodeSelect', function (cswParent, cswPrivate) {
             'use strict';
-            
+
             //#region _preCtor
 
             var cswPublic = {};
@@ -20,37 +20,39 @@
                 cswPrivate.labelText = cswPrivate.labelText || null;
                 cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
                 cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
+                cswPrivate.selectedName = cswPrivate.selectedName || '';
                 cswPrivate.viewid = cswPrivate.viewid || '';
 
                 cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
                 cswPrivate.objectClassId = cswPrivate.objectClassId || '';
                 cswPrivate.objectClassName = cswPrivate.objectClassName || '';
                 cswPrivate.addNodeDialogTitle = cswPrivate.addNodeDialogTitle || '';
-                
+
                 cswPrivate.relatedTo = cswPrivate.relatedTo || {};
                 cswPrivate.relatedTo.relatednodeid = cswPrivate.relatedTo.relatednodeid || '';
                 cswPrivate.relatedTo.relatednodename = cswPrivate.relatedTo.relatednodename || '';
                 cswPrivate.relatedTo.relatednodetypeid = cswPrivate.relatedTo.relatednodetypeid || '';
                 cswPrivate.relatedTo.relatedobjectclassid = cswPrivate.relatedTo.relatedobjectclassid || '';
-                
+
                 cswPrivate.cellCol = cswPrivate.cellCol || 1;
                 cswPrivate.width = cswPrivate.width || '200px';
-                
-                cswPrivate.onSelectNode = cswPrivate.onSelectNode || function() {};
+
+                cswPrivate.onSelectNode = cswPrivate.onSelectNode || function () { };
                 cswPrivate.onSuccess = cswPrivate.onSuccess || function () { };
-                
+
                 cswPrivate.addNewOption = cswPrivate.addNewOption; // || false;
                 cswPrivate.allowAdd = cswPrivate.allowAdd; // || false;
                 cswPrivate.isRequired = cswPrivate.isRequired; // || false;
                 cswPrivate.isMulti = cswPrivate.isMulti; // || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
-                
-                cswPrivate.options = cswPrivate.options|| [];
+                cswPrivate.isClickable = cswPrivate.isClickable; // ||true;
+                cswPrivate.useSearch = cswPrivate.useSearch;
+                cswPrivate.options = cswPrivate.options || [];
 
                 cswPublic = cswParent.div();
                 cswPrivate.table = cswPublic.table();
-                
+
                 // Default to selected node as relationship value for new nodes being added
                 if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
                     Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
@@ -63,14 +65,13 @@
                 }
 
                 cswPrivate.relationships = [];
-            }());
-            
+            } ());
+
             //#endregion _preCtor
 
             //#region AJAX
 
-            cswPrivate.getNodes = function() {
-                
+            cswPrivate.getNodes = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     async: Csw.bool(cswPrivate.async),
@@ -83,9 +84,10 @@
                         ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
+                        //cswPrivate.options = JSON.parse(data.options);
                         var options = [];
-                        data.Nodes.forEach(function(obj) {
-                            options.push({id: obj.NodeId, value: obj.NodeName});
+                        data.Nodes.forEach(function (obj) {
+                            options.push({ id: obj.NodeId, value: obj.NodeName });
                         });
                         cswPrivate.options = options;
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
@@ -93,7 +95,7 @@
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
                         cswPrivate.objectClassId = cswPrivate.objectClassId || data.ObjectClassId;
                         cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || data.RelatedToObjectClassId;
-                        
+
                         cswPrivate.makeControl();
                     }
                 });
@@ -104,6 +106,7 @@
                 cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
                     cswPrivate.table.cell(1, cswPrivate.cellCol)
                              .nodeTypeSelect({
+                                 objectClassName: cswPrivate.objectClassName,
                                  objectClassId: cswPrivate.objectClassId,
                                  onSelect: function () {
                                      if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
@@ -131,7 +134,7 @@
 
             //#region Control Construction
 
-            cswPrivate.makeControl = function() {
+            cswPrivate.makeControl = function () {
                 if (cswPrivate.useSearch) {
                     cswPrivate.makeSearch();
                 } else {
@@ -141,19 +144,19 @@
                 Csw.tryExec(cswPrivate.onSuccess, cswPrivate.relationships);
             };
 
-            cswPrivate.bindSelectMethods = function() {
-                cswPublic.val = cswPublic.select.val;
-                cswPublic.selectedText = cswPublic.select.selectedText;
-                cswPublic.selectedVal = cswPublic.select.selectedVal;
-                cswPublic.makeOption = cswPublic.select.makeOption;
-                cswPublic.makeOptions = cswPublic.select.makeOptions;
-                cswPublic.addOption = cswPublic.select.addOption;
-                cswPublic.setOptions = cswPublic.select.setOptions;
-                cswPublic.removeOption = cswPublic.select.removeOption;
-                cswPublic.option = cswPublic.select.option;
+            cswPrivate.bindSelectMethods = function () {
+                cswPublic.val = cswPrivate.select.val;
+                cswPublic.selectedText = cswPrivate.select.selectedText;
+                cswPublic.selectedVal = cswPrivate.select.selectedVal;
+                cswPublic.makeOption = cswPrivate.select.makeOption;
+                cswPublic.makeOptions = cswPrivate.select.makeOptions;
+                cswPublic.addOption = cswPrivate.select.addOption;
+                cswPublic.setOptions = cswPrivate.select.setOptions;
+                cswPublic.removeOption = cswPrivate.select.removeOption;
+                cswPublic.option = cswPrivate.select.option;
             };
 
-            cswPrivate.makeSelect = function() {
+            cswPrivate.makeSelect = function () {
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
@@ -171,12 +174,21 @@
                 //Normally, we would assign the select to cswPublic, as it's the primary control; 
                 //however, to assign now would be decoupled from the return. The caller would not receive this reference.
                 //Instead, we'll assign the select as a member and we'll reassign key methods to cswPublic.
-                cswPublic.select = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
+                cswPrivate.select = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: function () {
-                        var val = cswPublic.select.val();
-                        Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val });
+                        var val = cswPrivate.select.val();
+                        Csw.ajaxWcf.post({
+                            async: false,
+                            data: { NodeId: val },
+                            urlMethod: 'Nodes/getNodeLink',
+                            success: function (data) {
+                                var name = cswPrivate.select.selectedText();
+                                var link = data.NodeLink;
+                                Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
+                            }
+                        });
                     },
                     values: cswPrivate.relationships,
                     selected: cswPrivate.selectedNodeId,
@@ -184,13 +196,14 @@
                 });
                 cswPrivate.bindSelectMethods();
 
-                cswPublic.select.bind('change', function () {
-                    var val = cswPublic.select.val();
+                cswPrivate.select.bind('change', function () {
+                    var val = cswPrivate.select.val();
                     cswPrivate.selectedNodeId = val;
-                    Csw.tryExec(cswPrivate.onChange, cswPublic.select);
+                    cswPrivate.selectedName = cswPrivate.select.selectedText();
+                    Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
                     Csw.tryExec(cswPrivate.onSelect, val);
                 });
-                
+
                 cswPrivate.cellCol += 1;
                 cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.cellCol);
                 cswPrivate.cellCol += 1;
@@ -208,16 +221,20 @@
                     }
                 });
                 cswPrivate.cellCol += 1;
-                
+
                 cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
 
-                cswPublic.select.required(cswPrivate.isRequired);
+                cswPrivate.select.required(cswPrivate.isRequired);
 
-                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPublic.select.val()); },
-                                function (event) { Csw.nodeHoverOut(event, cswPublic.select.val()); });
+                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.select.val()); },
+                                function (event) { Csw.nodeHoverOut(event, cswPrivate.select.val()); });
+
+                // case 28427 - default private values to currently selected
+                cswPrivate.selectedNodeId = cswPrivate.select.val();
+                cswPrivate.selectedName = cswPrivate.select.selectedText();
             };
 
-            cswPrivate.makeSearch = function() {
+            cswPrivate.makeSearch = function () {
                 if (cswPrivate.useSearch) {
                     // Find value by using search in a dialog
 
@@ -238,14 +255,15 @@
                         hovertext: "Search " + cswPrivate.name,
                         size: 16,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             $.CswDialog('SearchDialog', {
                                 propname: cswPrivate.name,
                                 nodetypeid: cswPrivate.nodeTypeId,
                                 objectclassid: cswPrivate.objectClassId,
-                                onSelectNode: function(nodeObj) {
+                                onSelectNode: function (nodeObj) {
                                     cswPrivate.nameSpan.text(nodeObj.nodename);
                                     cswPrivate.hiddenValue.val(nodeObj.nodeid);
+                                    cswPrivate.selectedNodeId = nodeObj.nodeid;
                                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
                                 }
                             });
@@ -253,18 +271,18 @@
                     });
                     cswPrivate.cellCol += 1;
 
-                    cswPrivate.nameSpan.$.hover(function(event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
-                        function(event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
+                    cswPrivate.nameSpan.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
+                        function (event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
                 }
             };
 
             cswPrivate.toggleOptions = function (on) {
                 if (Csw.bool(on)) {
-                    cswPublic.select.show();
+                    cswPrivate.select.show();
                     cswPrivate.toggleButton.hide();
                     cswPrivate.nodeLinkText.hide();
                 } else {
-                    cswPublic.select.hide();
+                    cswPrivate.select.hide();
                     cswPrivate.toggleButton.show();
                     cswPrivate.nodeLinkText.show();
                 }
@@ -281,12 +299,52 @@
                 if (cswPrivate.hiddenValue) {
                     cswPrivate.hiddenValue.val(nodeid);
                 }
-                if (cswPublic && cswPublic.select) {
-                    cswPublic.select.option({ value: nodeid, display: nodename });
-                    cswPublic.select.val(nodeid);
+                if (cswPrivate.select) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Nodes/getRelationshipOpts',
+                        async: false,
+                        data: cswPrivate.ajaxData || {
+                            NodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
+                            ObjClassPropName: Csw.string(cswPrivate.name),
+                            ViewId: Csw.string(cswPrivate.viewid),
+                            TargetNodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
+                            TargetObjectClassId: Csw.number(cswPrivate.objectClassId, 0)
+                        },
+                        success: function (data) {
+                            if (data.Nodes.length > 0) {                            
+                                var options = [];
+                                var found = false;
+                                if(false === cswPrivate.isRequired) {
+                                    options.push({ id: '', value: '' });
+                                }
+                                data.Nodes.forEach(function(obj) {
+                                    if(obj.NodeId === nodeid) {
+                                        found = true;
+                                    }
+                                    options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
+                                });
+                                if(false === found) {
+                                    options.push({ id: cswPrivate.selectedNodeId, value: cswPrivate.selectedName, isSelected: true });
+                                    cswPrivate.table.cell(1, cswPrivate.cellCol).quickTip({ html: nodename + ' has been added.  However, it is not an available option for ' + cswPrivate.name + '.' });
+                                }
+                                cswPrivate.options = options;
+                                cswPrivate.select.setOptions(cswPrivate.options, true);
+                            } else {
+                                cswPrivate.select.option({ value: nodeid, display: nodename });
+                                cswPrivate.select.val(nodeid);
+                            }
+                        }
+                    });                  
                     cswPrivate.toggleOptions(true);
-                    Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid });
-                    cswPublic.select.$.valid();
+                    Csw.ajaxWcf.post({
+                        async: false,
+                        data: { NodeId: nodeid },
+                        urlMethod: 'Nodes/getNodeLink',
+                        success: function (data) {
+                            Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid, name: nodename, selectedNodeId: nodeid, relatednodelink: data.NodeLink });
+                        }
+                    });
+                    cswPrivate.select.$.valid();
                 }
             };
 
@@ -297,7 +355,7 @@
                     text: cswPrivate.name
                 });
             };
-            
+
             cswPrivate.makeAddImage = function () {
                 cswPrivate.addImage = cswPrivate.table.cell(1, cswPrivate.cellCol).div()
                     .buttonExt({
@@ -316,7 +374,7 @@
                 cswPrivate.cellCol += 1;
             };
 
-            cswPrivate.makeAdd = function() {
+            cswPrivate.makeAdd = function () {
                 if (cswPrivate.allowAdd) {
                     cswPrivate.makeAddImage();
                 } //if (allowAdd)
@@ -325,20 +383,36 @@
             //#endregion Add
 
             //#region Public
-            
-            cswPublic.selectedNodeId = function () {
-                if(cswPublic && cswPublic.select && cswPublic.select.val) {
-                    cswPrivate.selectedNodeId = cswPublic.select.val();
+
+            cswPublic.setSelectedNode = function (nodeid, nodename) {
+                cswPrivate.selectedNodeId = nodeid;
+                cswPrivate.selectedName = nodename;
+                if (cswPrivate.useSearch && cswPrivate.nameSpan && cswPrivate.hiddenValue) {
+                    cswPrivate.nameSpan.text(nodename);
+                    cswPrivate.hiddenValue.val(nodeid);
+                } else if (cswPrivate.select) {
+                    cswPrivate.select.val(nodeid);
                 }
+            }; // setSelectedNode
+
+            cswPublic.selectedNodeId = function () {
                 return cswPrivate.selectedNodeId;
-            };
+            }; // selectedNodeId
+            cswPublic.selectedName = function () {
+                return cswPrivate.selectedName;
+            }; // selectedName
 
             //#endregion Public
 
             //#region _postCtor
 
             (function _relationship() {
-                if (cswPrivate.isReadOnly) {
+                if (false === cswPrivate.isClickable) { //case 28180 - relationships not clickable from audit history grid
+                    cswPrivate.nodeTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
+                    cswPrivate.nodeText = cswPrivate.nodeTextCell.span({
+                        text: cswPrivate.selectedName
+                    });
+                } else if (cswPrivate.isReadOnly) {
                     cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink
@@ -346,16 +420,16 @@
                     cswPublic.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                     function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
                 } else {
-                    if (cswPrivate.options.length > 0) {
+                    if (cswPrivate.options.length > 0 || false === cswPrivate.doGetNodes) {
                         cswPrivate.makeControl();
                     } else {
                         cswPrivate.getNodes();
                     }
                 } // if-else (o.ReadOnly) {
-            }());
+            } ());
 
             return cswPublic;
-            
+
             //#endregion _postCtor
         });
 } ());

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -8,6 +9,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt
 {
+
     /// <summary>
     /// Editing and Display mode for Nodes
     /// </summary>
@@ -392,6 +394,61 @@ namespace ChemSW.Nbt.ObjClasses
 
     public class CswNbtNode
     {
+        [DataContract]
+        public class Node
+        {
+            public Node( CswNbtNode NbtNode )
+            {
+                if( null != NbtNode )
+                {
+                    _NodeId = NbtNode.NodeId.ToString();
+                    _NodePk = NbtNode.NodeId;
+                    NodeName = NbtNode.NodeName;
+                }
+            }
+
+            public Node( CswPrimaryKey inNodeId, string inNodeName )
+            {
+                _NodeId = inNodeId.ToString();
+                _NodePk = inNodeId;
+                NodeName = inNodeName;
+            }
+
+            private string _NodeId = string.Empty;
+            private CswPrimaryKey _NodePk = null;
+
+            public CswPrimaryKey NodePk
+            {
+                get { return _NodePk; }
+                set
+                {
+                    _NodePk = value;
+                    if( CswTools.IsPrimaryKey( value ) )
+                    {
+                        _NodeId = _NodePk.ToString();
+                    }
+                    else
+                    {
+                        _NodeId = string.Empty;
+                    }
+                }
+            }
+
+            [DataMember]
+            public string NodeId
+            {
+                get { return _NodeId; }
+                set
+                {
+                    _NodeId = value;
+                    _NodePk = CswConvert.ToPrimaryKey( _NodeId );
+                }
+            }
+
+            [DataMember( IsRequired = false )]
+            public string NodeName = String.Empty;
+        }
+
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
         public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation );
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );

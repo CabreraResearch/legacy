@@ -25,7 +25,7 @@
                 }
             };
         };
-    }());
+    } ());
     var cswPrivate = cswPrivateInit();
     cswPrivate.div = Csw.literals.div();
 
@@ -109,7 +109,7 @@
                 }
             });
 
-            openDialog(div, 400, 400, null, 'New Landing Page Item');//should this be page-specific?
+            openDialog(div, 400, 400, null, 'New Landing Page Item'); //should this be page-specific?
         }, // AddLandingPageItemDialog
         AddViewDialog: function (options) {
             var o = {
@@ -180,11 +180,10 @@
                         createData.ViewMode = o.viewmode;
                     }
 
-                    if (false === Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
-                        createData.Visibility = visSelect.$visibilityselect.val();
-                        createData.VisibilityRoleId = visSelect.$visroleselect.val();
-                        createData.VisibilityUserId = visSelect.$visuserselect.val();
-                    }
+                    var visValue = visSelect.getSelected();
+                    createData.Visibility = visValue.visibility;
+                    createData.VisibilityRoleId = visValue.roleid;
+                    createData.VisibilityUserId = visValue.userid;
 
                     Csw.ajax.post({
                         urlMethod: 'createView',
@@ -531,7 +530,7 @@
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
-                            var propOpts = [{ value: '', display: 'Select...' }];
+                            var propOpts = [{ value: '', display: 'Select...'}];
                             Csw.each(data.add, function (p) {
                                 var display = p.propname;
                                 if (Csw.bool(p.hidden)) {
@@ -557,7 +556,7 @@
                 Csw.tryExec(cswDlgPrivate.Refresh);
             }
 
-            openDialog(div, 900, 600, _onclose, 'Edit Layout', cswDlgPrivate.onOpen);
+            openDialog(div, 900, 600, _onclose, 'Configure Layouts', cswDlgPrivate.onOpen);
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var cswDlgPrivate = {
@@ -586,7 +585,7 @@
                 div: Csw.literals.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
-
+                    Csw.tryExec(cswDlgPrivate.onClose);
                 }
             };
 
@@ -651,7 +650,7 @@
 
                 // _setupTabs()
             };
-            openDialog(cswPublic.div, 900, 600, cswDlgPrivate.onClose, title, cswDlgPrivate.onOpen);
+            openDialog(cswPublic.div, 900, 600, cswPublic.close, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
@@ -850,21 +849,10 @@
 
             var div = Csw.literals.div();
 
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-
-            uploadBtn.$.fileupload({
-                dataType: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.urlMethod + '?' + $.param(o.params),
-                done: function (e, jqXHR) {
-                    var data = {};
-                    if (jqXHR.result && jqXHR.result.data) {
-                        data = jqXHR.result.data;
-                    } else if (jqXHR.data) {
-                        data = jqXHR.data;
-                    }
+            div.fileUpload({
+                uploadUrl: o.urlMethod,
+                params: o.params,
+                onSuccess: function (data) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onSuccess, data);
                 }
@@ -880,6 +868,358 @@
             });
 
             openDialog(div, 400, 300, null, 'Upload');
+        }, // FileUploadDialog
+        ImportC3RecordDialog: function (options) {
+            var cswDlgPrivate = {
+                nodes: {},
+                nodenames: [],
+                nodeids: [],
+                cswnbtnodekeys: [],
+                onDeleteNode: null, //function (nodeid, nodekey) { },
+                Multi: false,
+                nodeTreeCheck: null,
+                publishDeleteEvent: true
+            };
+
+            if (Csw.isNullOrEmpty(options)) {
+                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+            }
+            Csw.extend(cswDlgPrivate, options);
+            var cswPublic = {
+                div: Csw.literals.div(),
+                close: function () {
+                    cswPublic.div.$.dialog('close');
+                }
+            };
+
+            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
+
+            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
+
+        }, // ImportC3RecordDialog
+        C3DetailsDialog: function (options) {
+
+            var cswPrivate = {
+                title: "Product Details",
+                node: options.nodeObj,
+                searchresults: null
+            };
+
+            if (Csw.isNullOrEmpty(options)) {
+                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+            }
+            Csw.extend(cswPrivate, options);
+            var cswPublic = {
+                div: Csw.literals.div(),
+                close: function () {
+                    cswPublic.div.$.dialog('close');
+                }
+            };
+
+            //is this necessary or can i use the declaration above?
+            var div = Csw.literals.div(),
+                newNode;
+
+            var getProductDetails = function () {
+
+                var CswC3SearchParams = {
+                    Field: 'ProductId',
+                    Query: cswPrivate.node.c3productid,
+                    SearchOperator: '',
+                    SourceName: '',
+                    MaxRows: 10
+                };
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ChemCatCentral/GetProductDetails',
+                    data: CswC3SearchParams,
+                    success: function (data) {
+
+                        //Create the table
+                        var table1 = div.table({ cellspacing: '5px', align: 'left', width: '100%' });
+
+                        table1.cell(1, 1).div({
+                            text: cswPrivate.node.nodename
+                        }).css({ 'font-size': '18px', 'font-weight': 'bold' });
+
+                        table1.cell(2, 1).div({
+                            text: 'Supplier: ' + data.ProductDetails.SupplierName
+                        });
+
+                        table1.cell(3, 1).div({
+                            text: 'Catalog#: ' + data.ProductDetails.CatalogNo
+                        });
+
+                        var cell4_hidden = 'hidden';
+                        var producturl = data.ProductDetails.ProductUrl;
+                        if (null != producturl) {
+                            cell4_hidden = 'visible';
+                        }
+                        table1.cell(4, 1).div({
+                            text: '<a href=' + producturl + ' target="_blank">Product Website</a>',
+                            styles: { 'visibility': cell4_hidden }
+                        });
+
+                        var cell5_hidden = 'hidden';
+                        var msdsurl = data.ProductDetails.MsdsUrl;
+                        if (null != msdsurl) {
+                            cell5_hidden = 'visible';
+                        }
+                        table1.cell(5, 1).div({
+                            text: '<a href=' + msdsurl + ' target="_blank">MSDS</a>',
+                            styles: { 'visibility': cell5_hidden }
+                        });
+
+                        table1.cell(6, 1).grid({
+                            name: 'c3detailsgrid_size',
+                            title: 'Sizes',
+                            height: 100,
+                            width: 300,
+                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string'}],
+                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty'}],
+                            data: {
+                                items: data.ProductDetails.ProductSize,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                        table1.cell(7, 1).grid({
+                            name: 'c3detailsgrid_extradata',
+                            title: 'Extra Attributes',
+                            height: 150,
+                            width: 300,
+                            fields: [{ name: 'attribute', type: 'string' }, { name: 'value', type: 'string' }],
+                            columns: [{ header: 'Attribute', dataIndex: 'attribute' }, { header: 'Value', dataIndex: 'value' }],
+                            data: {
+                                items: data.ProductDetails.TemplateSelectedExtensionData,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                    }
+                });
+            };
+
+            var onOpen = function () {
+                getProductDetails();
+            };
+
+            openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
+
+        }, // C3DetailsDialog
+        C3SearchDialog: function (options) {
+
+            var cswPrivate = {
+                title: "ChemCatCentral Search",
+                c3searchterm: options.c3searchterm,
+                c3handleresults: options.c3handleresults,
+                clearview: options.clearview,
+                loadView: null //function () { }
+            };
+
+            if (options) {
+                Csw.extend(cswPrivate, options);
+            }
+
+            var div = Csw.literals.div(),
+                newNode;
+
+            var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
+
+            tableOuter.cell(1, 1).p({ text: '' });
+
+            var tableInner = div.table({ cellpadding: '2px' });
+
+            //DataSources Picklist
+            var sourceSelect = tableInner.cell(1, 1).select({
+                name: 'C3Search_sourceSelect',
+                selected: 'All Sources'
+            });
+
+            function getAvailableDataSources() {
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
+                    success: function (data) {
+                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
+                    }
+                });
+            };
+
+            getAvailableDataSources(); //call function
+
+            //SearchTypes Picklist
+            var searchTypeSelect = tableInner.cell(1, 2).select({
+                name: 'C3Search_searchTypeSelect'
+            });
+
+            function getSearchTypes() {
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'ChemCatCentral/GetSearchTypes',
+                    success: function (data) {
+                        searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchTypes));
+                    }
+                });
+            }
+
+            getSearchTypes(); //call function
+
+            var searchOperatorSelect = tableInner.cell(1, 3).select({
+                name: 'C3Search_searchOperatorSelect'
+            });
+            searchOperatorSelect.option({ display: 'Begins', value: 'begins' });
+            searchOperatorSelect.option({ display: 'Contains', value: 'contains' });
+            searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
+
+            var searchTermField = tableInner.cell(1, 4).input({
+                value: cswPrivate.c3searchterm
+            });
+
+            tableInner.cell(1, 5).button({
+                name: 'c3SearchBtn',
+                enabledText: 'Search',
+                disabledText: "Searching...",
+                onClick: function () {
+
+                    var CswC3SearchParams = {
+                        Field: searchTypeSelect.selectedVal(),
+                        Query: searchTermField.val(),
+                        SearchOperator: searchOperatorSelect.selectedVal(),
+                        SourceName: sourceSelect.selectedVal()
+                    };
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ChemCatCentral/Search',
+                        data: CswC3SearchParams,
+                        success: function (data) {
+                            //Convert to object from string
+                            var obj = JSON.parse(data.SearchResults);
+                            Csw.tryExec(cswPrivate.clearview);
+                            Csw.tryExec(cswPrivate.c3handleresults(obj));
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+
+
+            tableOuter.cell(2, 1).div(tableInner);
+
+            openDialog(div, 750, 300, null, cswPrivate.title);
+        }, // C3SearchDialog
+        StructureSearchDialog: function (options) {
+            var cswPrivate = {
+                title: "Structure Search",
+                loadView: null //function () { }
+            };
+
+            if (options) {
+                Csw.extend(cswPrivate, options);
+            }
+
+            var div = Csw.literals.div(),
+                newNode;
+
+            var table = div.table({ cellpadding: '2px', align: 'left' });
+
+            table.cell(3, 1).span({ text: 'MOL Text (Paste from Clipboard):' });
+            var molText = table.cell(4, 1).textArea({
+                name: '',
+                rows: 12,
+                cols: 50,
+                onChange: function () {
+                    getMolImgFromText(molText.val(), '');
+                }
+            });
+
+            var getMolImgFromText = function (molTxt, nodeId) {
+                var ret = '';
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'Mol/getImg',
+                    data: {
+                        molString: molTxt,
+                        nodeId: nodeId,
+                        molImgAsBase64String: ''
+                    },
+                    success: function (data) {
+                        table.cell(4, 2).empty();
+                        if (data.molImgAsBase64String) {
+                            molText.val(data.molString);
+                            table.cell(4, 2).img({
+                                labelText: "Query Image",
+                                src: "data:image/jpeg;base64," + data.molImgAsBase64String
+                            });
+                        }
+                    }
+                });
+                return ret;
+            };
+
+            var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
+            getMolImgFromText('', currentNodeId);
+
+            var uploadBtn = table.cell(2, 1).input({
+                name: 'fileupload',
+                labelText: "Mol File",
+                type: Csw.enums.inputTypes.file
+            }).css('float', 'left');
+            uploadBtn.$.fileupload({
+                datatype: 'json',
+                url: 'Services/Mol/getImgFromFile',
+                paramName: 'filename',
+                done: function (e, data) {
+                    molText.val(data.result.Data.molString);
+                    table.cell(4, 2).empty();
+                    table.cell(4, 2).img({
+                        labelText: "Query Image",
+                        src: "data:image/jpeg;base64," + data.result.Data.molImgAsBase64String
+                    });
+                }
+            });
+
+            var exactSearchChkBox = table.cell(5, 1).input({
+                labelText: "Exact Search",
+                useWide: true,
+                type: Csw.enums.inputTypes.checkbox
+            });
+
+            table.cell(6, 1).button({
+                name: 'ssSearchBtn',
+                enabledText: 'Search',
+                disabledText: "Searching...",
+                onClick: function () {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Mol/runStructureSearch',
+                        data: {
+                            viewId: '',
+                            viewMode: '',
+                            molString: molText.val(),
+                            exact: exactSearchChkBox.checked()
+                        },
+                        success: function (data) {
+                            var viewId = data.viewId;
+                            var viewMode = data.viewMode;
+                            Csw.tryExec(cswPrivate.loadView, viewId, viewMode);
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+
+            table.cell(9, 1).span({
+                text: "please note that larger molecules can extend the search time"
+            });
+
+            openDialog(div, 750, 500, null, cswPrivate.title);
         },
         EditMolDialog: function (options) {
             var o = {
@@ -906,14 +1246,13 @@
                 name: 'fileupload',
                 type: Csw.enums.inputTypes.file
             });
-
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.FileUrl + '?' + $.param({ PropId: o.PropId }),
+                url: 'Services/Mol/saveMolPropFile?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
                     div.$.dialog('close');
-                    o.onSuccess(data.result);
+                    o.onSuccess(data.result.Data);
                 }
             });
 
@@ -936,11 +1275,11 @@
                 enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
-                    Csw.ajax.post({
-                        urlMethod: o.TextUrl,
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Mol/saveMolPropText',
                         data: {
-                            molData: molTxtArea.val(),
-                            PropId: o.PropId
+                            molString: molTxtArea.val(),
+                            propId: o.PropId
                         },
                         success: function (data) {
                             div.$.dialog('close');
@@ -1169,6 +1508,8 @@
                 title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
+
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 name: cswDlgPrivate.name,
                 nodetypeid: cswDlgPrivate.nodetypeid,
@@ -1178,7 +1519,7 @@
                 onAfterNewSearch: function (searchid) { },
                 onAddView: function (viewid, viewmode) { },
                 onLoadView: function (viewid, viewmode) { },
-                showSaveAsView: false,
+                showSave: false,
                 allowEdit: false,
                 allowDelete: false,
                 compactResults: true,
@@ -1189,10 +1530,51 @@
                     Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
                 }
             });
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
             return cswPublic;
         }, // SearchDialog
 
+        SaveSearchDialog: function (options) {
+            var o = {
+                div: Csw.literals.div(),
+                title: 'Save Search',
+                onOk: null,
+                onClose: null,
+                height: 400,
+                width: 600,
+                name: '',
+                category: ''
+            };
+            Csw.extend(o, options);
+
+            var nameInput = o.div.input({
+                labelText: 'Name:&nbsp;',
+                value: o.name
+            });
+            o.div.br();
+
+            var categoryInput = o.div.input({
+                labelText: 'Category:&nbsp;',
+                value: o.category
+            });
+            o.div.br();
+
+            o.div.button({
+                enabledText: 'Save',
+                onClick: function () {
+                    Csw.tryExec(o.onOk, nameInput.val(), categoryInput.val());
+                    o.div.$.dialog('close');
+                }
+            });
+
+            o.div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    o.div.$.dialog('close');
+                }
+            });
+
+            openDialog(o.div, o.width, o.height, o.onClose, o.title);
+        }, // SearchDialog
         GenericDialog: function (options) {
             var o = {
                 div: Csw.literals.div(),
@@ -1419,7 +1801,7 @@
                     Csw.tryExec(onClose);
                 }
 
-                Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, null, closeMe);
                 if (dialogsCount === 0) {
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
@@ -1442,7 +1824,7 @@
             afterObjectClassButtonClick(action, {
                 close: function () {
                     div.$.dialog('close');
-                    Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                    Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, null, closeMe);
                 }
             });
         }

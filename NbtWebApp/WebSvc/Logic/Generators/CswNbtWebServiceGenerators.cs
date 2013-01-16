@@ -1,9 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.WebServices
             Collection<CswNbtObjClassBatchOp> BatchNodes = new Collection<CswNbtObjClassBatchOp>();
             foreach( string NodeKeyStr in SelectedGeneratorNodeKeys )
             {
-                CswNbtNodeKey CurrentNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKeyStr );
+                CswNbtNodeKey CurrentNodeKey = new CswNbtNodeKey( NodeKeyStr );
                 CswNbtNode CurrentGeneratorNode = _CswNbtResources.Nodes[CurrentNodeKey.NodeId];
                 BatchNodes.Add( CswNbtActGenerateFutureNodes.makeNodesBatch( CurrentGeneratorNode, EndDate ) );
                 

@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LogLevel = "Log Level";
             public const string Archived = "Archived";
             public const string Jurisdiction = "Jurisdiction";
+            public const string Barcode = "Barcode";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -85,37 +86,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Node.NodeId != null )
             {
-                //CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
-                //CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass );
-                //CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
-                //CswNbtMetaDataObjectClassProp Role_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.RolePropertyName );
-
-                //// generate the view
-                //CswNbtView View = new CswNbtView( _CswNbtResources );
-                //View.ViewName = "CswNbtObjClassUser(" + Node.NodeId.ToString() + ")";
-                //CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
-                //UserRelationship.NodeIdsToFilterIn.Add( Node.NodeId );
-                //CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( UserRelationship, PropOwnerType.First, Role_ObjectClassProp, false );
-
-                //// generate the tree
-                //ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, true );
-
-
-                //// get user node
-                //UserTree.goToRoot();
-                //if( UserTree.getChildNodeCount() > 0 )
-                //{
-                //    UserTree.goToNthChild( 0 );
-
-                //    //get role node
-                //    if( UserTree.getChildNodeCount() > 0 )
-                //    {
-                //        UserTree.goToNthChild( 0 );
-                //        _RoleNode = UserTree.getNodeForCurrentPosition();
-                //        _RoleNodeObjClass = (CswNbtObjClassRole) _RoleNode;
-                //    }
-                //}
-
                 __RoleNode = _CswNbtResources.Nodes[RoleId];
                 if( __RoleNode != null )
                 {
@@ -389,7 +359,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 bool ReturnVal = false;
 
-                if ( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
+                if( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
                 {
                     ReturnVal = true;
                 }
@@ -514,6 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         public CswNbtNodePropRelationship Jurisdiction { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
 
 
 

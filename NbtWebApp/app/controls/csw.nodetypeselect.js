@@ -11,7 +11,6 @@
                 name: '',
                 value: '',
                 selectedName: '',
-                nodeTypesUrlMethod: 'getNodeTypes',
                 nodetypeid: '',
                 objectClassName: '',
                 objectClassId: '',
@@ -56,7 +55,7 @@
                 }
 
                 Csw.ajax.post({
-                    urlMethod: cswPrivate.nodeTypesUrlMethod,
+                    urlMethod: 'getNodeTypes',
                     async: cswPrivate.async,
                     data: {
                         ObjectClassName: Csw.string(cswPrivate.objectClassName),
@@ -64,7 +63,8 @@
                         ExcludeNodeTypeIds: cswPrivate.excludeNodeTypeIds,
                         RelatedToNodeTypeId: cswPrivate.relatedToNodeTypeId,
                         RelatedObjectClassPropName: cswPrivate.relatedObjectClassPropName,
-                        FilterToPermission: cswPrivate.filterToPermission
+                        FilterToPermission: cswPrivate.filterToPermission,
+                        Searchable: false
                     },
                     success: function (data) {
                         var ret = data;

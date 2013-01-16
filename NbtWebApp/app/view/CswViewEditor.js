@@ -313,11 +313,13 @@
                     categoryTextBox.val(currentViewJson.category);
                     var visibility = Csw.string(currentViewJson.visibility);
                     if (visibility !== 'Property') {
-                        if (visSelect.$visibilityselect !== undefined) {
-                            visSelect.$visibilityselect.val(visibility).trigger('change');
-                            visSelect.$visroleselect.val('nodes_' + currentViewJson.visibilityroleid);
-                            visSelect.$visuserselect.val('nodes_' + currentViewJson.visibilityuserid);
-                        }
+                        visSelect.setSelected({
+                            visibility: visibility,
+                            roleid: 'nodes_' + currentViewJson.visibilityroleid,
+                            rolename: currentViewJson.visibilityrolename,
+                            userid: 'nodes_' + currentViewJson.visibilityuserid,
+                            username: currentViewJson.visibilityusername
+                        });
                     }
 
                     if (Csw.bool(currentViewJson.formobile)) {
@@ -343,25 +345,19 @@
             currentViewJson.viewname = viewNameTextBox.val();
             currentViewJson.category = categoryTextBox.val();
             if (currentViewJson.visibility !== 'Property') {
-                if (visSelect.$visibilityselect !== undefined) {
-                    var visibility = visSelect.$visibilityselect.val();
-                    currentViewJson.visibility = visibility;
+                if (false === Csw.isNullOrEmpty(visSelect)) {
+                    var visValue = visSelect.getSelected();
+                    currentViewJson.visibility = visValue.visibility;
 
-                    var rolenodeid = '';
-                    if (visibility === 'Role') {
-                        rolenodeid = visSelect.$visroleselect.val();
-                        if (!Csw.isNullOrEmpty(rolenodeid)) {
-                            rolenodeid = rolenodeid.substr('nodes_'.length);
-                        }
+                    var rolenodeid = visValue.roleid;
+                    if (false === Csw.isNullOrEmpty(rolenodeid)) {
+                        rolenodeid = rolenodeid.substr('nodes_'.length);
                     }
                     currentViewJson.visibilityroleid = rolenodeid;
 
-                    var usernodeid = '';
-                    if (visibility === 'User') {
-                        usernodeid = visSelect.$visuserselect.val();
-                        if (!Csw.isNullOrEmpty(usernodeid)) {
-                            usernodeid = usernodeid.substr('nodes_'.length);
-                        }
+                    var usernodeid = visValue.userid;
+                    if (false === Csw.isNullOrEmpty(usernodeid)) {
+                        usernodeid = usernodeid.substr('nodes_'.length);
                     }
                     currentViewJson.visibilityuserid = usernodeid;
                 }
@@ -617,10 +613,10 @@
                 _makeAllowCB(row, 'editrel_del', 'Delete', Csw.bool(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
                 row += 1;
 
-                if (viewmode === 'Tree') {
-                    subTable.cell(row, 1).text('Group By');
-                }
-                var groupBySelect = subTable.cell(row, 2)
+                if (viewmode === 'Tree' || viewmode === 'Grid') {
+                    var groupByText = subTable.cell(row, 1).text('Group By');
+
+                    var groupBySelect = subTable.cell(row, 2)
                                             .select({ name: o.name + '_gbs',
                                                 onChange: function () {
                                                     var selected = groupBySelect.find(':selected');
@@ -630,41 +626,61 @@
                                                         viewnodejson.groupbypropid = Csw.string(selected.val());
                                                         viewnodejson.groupbyproptype = Csw.string(selected.propNonDom('propType'));
                                                         viewnodejson.groupbypropname = Csw.string(selected.text());
+                                                        currentViewJson.gridgroupbycol = Csw.string(selected.text());
                                                     } // if (false === Csw.isNullOrEmpty(selval)) {
                                                 } // onChange
                                             }); // 
-                if (viewmode !== 'Tree') {
-                    groupBySelect.hide();
-                }
-                row += 1;
+                    groupBySelect.show();
+                    row += 1;
 
-                var jsonData = {
-                    Type: viewnodejson.secondtype,
-                    Id: viewnodejson.secondid
-                };
-                Csw.ajax.post({
-                    urlMethod: o.PropNamesUrl,
-                    data: jsonData,
-                    success: function (data) {
-                        groupBySelect.empty();
-                        groupBySelect.option({ value: 'None' });
-                        for (var propKey in data) {
-                            if (Csw.contains(data, propKey)) {
-                                var thisProp = data[propKey];
-                                var isSelected = (viewnodejson.groupbypropid === thisProp.propid &&
+                    var populateGroupBySelect = function () {
+                        if (false === $.isEmptyObject(viewnodejson.properties)) {
+                            Csw.each(viewnodejson.properties, function (property) {
+                                groupBySelect.option({
+                                    value: property.name,
+                                    display: property.name
+                                });
+                                var x = 10
+                            });
+                        } else {
+                            groupByText.hide();
+                            groupBySelect.hide();
+                        }
+                    };
+
+                    if (viewmode === 'Grid') {
+                        populateGroupBySelect();
+                    } else {
+
+                        var jsonData = {
+                            Type: viewnodejson.secondtype,
+                            Id: viewnodejson.secondid
+                        };
+                        Csw.ajax.post({
+                            urlMethod: o.PropNamesUrl,
+                            data: jsonData,
+                            success: function (data) {
+                                groupBySelect.empty();
+                                groupBySelect.option({ value: 'None' });
+                                for (var propKey in data) {
+                                    if (Csw.contains(data, propKey)) {
+                                        var thisProp = data[propKey];
+                                        var isSelected = (viewnodejson.groupbypropid === thisProp.propid &&
                                                   viewnodejson.groupbyproptype === thisProp.proptype &&
                                                   viewnodejson.groupbypropname === thisProp.propname);
-                                groupBySelect.option({
-                                    value: thisProp.propid,
-                                    display: thisProp.propname,
-                                    isSelected: isSelected
-                                }).propNonDom({
-                                    propType: thisProp.proptype
-                                });
-                            }
-                        } // each
-                    } // success
-                }); // ajax
+                                        groupBySelect.option({
+                                            value: thisProp.propid,
+                                            display: thisProp.propname,
+                                            isSelected: isSelected
+                                        }).propNonDom({
+                                            propType: thisProp.proptype
+                                        });
+                                    }
+                                } // each
+                            } // success
+                        }); // ajax
+                    }
+                } //if (viewmode === 'Tree' || viewmode === 'Grid')
 
                 var $showtreecheck;
                 if (viewmode === "Tree") {
@@ -818,8 +834,7 @@
 
 
             // case 27553 - export to code
-            if(Csw.cookie.get(Csw.cookie.cookieNames.Username) === "chemsw_admin")
-            {
+            if (Csw.cookie.get(Csw.cookie.cookieNames.Username) === "chemsw_admin") {
                 var cell21 = table6.cell(2, 1);
                 cell21.empty();
                 cell21.buttonExt({
@@ -1140,7 +1155,7 @@
                         checked: 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
-                    
+
                     //7. We don't need to do this, because we're querying the DOM from the Add button.
                     //$this.CswTristateCheckBox('reBindClick');
                     //8. What hasn't killed you, hasn't killed you yet.

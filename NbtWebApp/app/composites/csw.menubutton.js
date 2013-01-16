@@ -16,7 +16,7 @@
                 selectedText: '',
                 onClick: null,
                 state: '',
-                width: 240,
+                width: '100px',
                 disabled: false
             };
             var cswPublic = {};
@@ -26,7 +26,7 @@
                     selectedOption = cswPrivate.selectedText;
                 }
                 cswPublic.selectedOption = selectedOption;
-                Csw.tryExec(cswPrivate.onClick);
+                Csw.tryExec(cswPrivate.onClick, selectedOption);
             }; // handleMenuItemClick()
 
             //constructor
@@ -49,14 +49,15 @@
                             text: cswPrivate.selectedText,
                             handler: cswPrivate.handleMenuItemClick,
                             scale: Csw.string(cswPrivate.size, 'medium'),
+                            width: cswPrivate.width,
                             menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
                             disabled: cswPrivate.disabled
                         });
-                    } catch(e) {
+                    } catch (e) {
                         Csw.debug.error('Failed to create Ext.button.Split in csw.menuButton');
                         Csw.debug.error(e);
                     }
-                }    else {
+                } else {
                     cswPublic.menu = window.Ext.create('Ext.button.Split');
                 }
 

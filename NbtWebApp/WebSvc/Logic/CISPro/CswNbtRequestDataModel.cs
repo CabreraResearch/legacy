@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
 
@@ -75,7 +77,7 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
                 }
 
                 [DataMember( IsRequired = false )]
-                public Collection<NodeSelect.Node> RequestItems = new Collection<NodeSelect.Node>();
+                public Collection<CswNbtNode.Node> RequestItems = new Collection<CswNbtNode.Node>();
 
                 [IgnoreDataMember]
                 public CswPrimaryKey CswRequestId { get; set; }
@@ -104,18 +106,13 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
             /// </summary>
             public RequestCart()
             {
-                Data = new Ret();
+                Data = new CswNbtActRequesting.Cart();
             }
 
             [DataMember]
-            public Ret Data;
+            public CswNbtActRequesting.Cart Data;
 
-            public class Ret
-            {
-                public string PendingItemsViewId = string.Empty;
-                public string FavoriteItemsViewId = string.Empty;
-                public string SubmittedItemsViewId = string.Empty;
-            }
+
 
         }
 

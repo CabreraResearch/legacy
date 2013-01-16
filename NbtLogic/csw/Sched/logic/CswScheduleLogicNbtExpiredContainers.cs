@@ -1,7 +1,5 @@
 using System;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
@@ -67,39 +65,42 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    CswNbtView expiredContainersView = new CswNbtView( CswNbtResources );
-                    CswNbtMetaDataObjectClass containerOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-                    CswNbtMetaDataObjectClassProp expirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
-                    CswNbtViewRelationship parent = expiredContainersView.AddViewRelationship( containerOC, true );
-                    expiredContainersView.AddViewPropertyAndFilter( parent,
-                        MetaDataProp: expirationDateOCP,
-                        Value: DateTime.Today.ToShortDateString(),
-                        SubFieldName: CswNbtSubField.SubFieldName.Value,
-                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-
-                    CswCommaDelimitedString expiredContainers = new CswCommaDelimitedString();
-                    ICswNbtTree expiredContainersTree = CswNbtResources.Trees.getTreeFromView( expiredContainersView, false, false, false );
-                    int expiredContainersCount = expiredContainersTree.getChildNodeCount();
-                    for( int i = 0; i < expiredContainersCount; i++ )
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
                     {
-                        expiredContainersTree.goToNthChild( i );
-                        expiredContainers.Add( expiredContainersTree.getNodeIdForCurrentPosition().ToString() );
-                        expiredContainersTree.goToParentNode();
+                        CswNbtView expiredContainersView = new CswNbtView( _CswNbtResources );
+                        CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                        CswNbtMetaDataObjectClassProp expirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
+                        CswNbtViewRelationship parent = expiredContainersView.AddViewRelationship( containerOC, true );
+                        expiredContainersView.AddViewPropertyAndFilter( parent,
+                            MetaDataProp: expirationDateOCP,
+                            Value: DateTime.Today.ToShortDateString(),
+                            SubFieldName: CswNbtSubField.SubFieldName.Value,
+                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+
+                        CswCommaDelimitedString expiredContainers = new CswCommaDelimitedString();
+                        ICswNbtTree expiredContainersTree = _CswNbtResources.Trees.getTreeFromView( expiredContainersView, false, false, false );
+                        int expiredContainersCount = expiredContainersTree.getChildNodeCount();
+                        for( int i = 0; i < expiredContainersCount; i++ )
+                        {
+                            expiredContainersTree.goToNthChild( i );
+                            expiredContainers.Add( expiredContainersTree.getNodeIdForCurrentPosition().ToString() );
+                            expiredContainersTree.goToParentNode();
+                        }
+
+                        CswNbtBatchOpExpiredContainers batchOp = new CswNbtBatchOpExpiredContainers( _CswNbtResources );
+                        int ContainersProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                        batchOp.makeBatchOp( expiredContainers, ContainersProcessedPerIteration );
+
+                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                        _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
                     }
-
-                    CswNbtBatchOpExpiredContainers batchOp = new CswNbtBatchOpExpiredContainers( CswNbtResources );
-                    int ContainersProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    batchOp.makeBatchOp( expiredContainers, ContainersProcessedPerIteration );
-
-                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }//try
 
                 catch( Exception Exception )
                 {
 
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtMTBF::GetUpdatedItems() exception: " + Exception.Message;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicExpiredContainers::GetExpiredContainers() exception: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
@@ -121,7 +122,7 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-    }//CswScheduleLogicNbtUpdtMTBF
+    }//CswScheduleLogicNbtExpiredContainers
 
 
 }//namespace ChemSW.Nbt.Sched

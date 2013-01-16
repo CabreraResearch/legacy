@@ -38,6 +38,7 @@
     Csw.nbt.nodePreview = Csw.nbt.nodePreview ||
         Csw.nbt.register('nodePreview', function (cswParent, options) {
             'use strict';
+            
             var cswPrivate = {
                 name: '',
                 nodeid: '',
@@ -51,51 +52,55 @@
             var cswPublic = {};
 
             cswPrivate.fixDimensions = function() {
-                // Make sure preview div is within the window
-                var windowX = $(window).width() - 10;
-                var windowY = $(window).height() - 10;
-                var divwidth = cswPrivate.div.$.width();
-                var divheight = cswPrivate.div.$.height();
-                var X = cswPrivate.eventArg.pageX + 20; // move it to the right of the cursor, to keep from preventing click events
-                var Y = cswPrivate.eventArg.pageY;
+                if (cswPrivate.div) {
+                    // Make sure preview div is within the window
+                    var windowX = $(window).width() - 10;
+                    var windowY = $(window).height() - 10;
+                    var divwidth = cswPrivate.div.$.width();
+                    var divheight = cswPrivate.div.$.height();
+                    var X = cswPrivate.eventArg.pageX + 20; // move it to the right of the cursor, to keep from preventing click events
+                    var Y = cswPrivate.eventArg.pageY;
 
-                if (X + divwidth > windowX) X = windowX - divwidth;
-                // this doesn't work with page scrolling
-                // if(Y + divheight > windowY) Y = windowY - divheight;
+                    if (X + divwidth > windowX) X = windowX - divwidth;
+                    // this doesn't work with page scrolling
+                    // if(Y + divheight > windowY) Y = windowY - divheight;
 
-                cswPrivate.div.css({
-                    maxWidth: windowX,
-                    maxHeight: windowY,
-                    top: Y + 'px',
-                    left: X + 'px'
-                });
-                cswPrivate.div.css('z-index', '100');
+                    cswPrivate.div.css({
+                        maxWidth: windowX,
+                        maxHeight: windowY,
+                        top: Y + 'px',
+                        left: X + 'px'
+                    });
+                    cswPrivate.div.css('z-index', '100');
+                }
             };// fixDimensions()
 
             cswPrivate.loadPreview = function() {
-                cswPrivate.div.show();
+                if (cswPrivate.div) {
+                    cswPrivate.div.show();
 
-                Csw.layouts.tabsAndProps(cswPrivate.div, {
-                    name: cswPrivate.name + 'tabs',
-                    globalState: {
-                        currentNodeId: cswPrivate.nodeid,
-                        currentNodeKey: cswPrivate.nodekey,
-                        ShowAsReport: false
-                    },
-                    tabState: {
-                        EditMode: Csw.enums.editMode.Preview,
-                        showSaveButton: false
-                    },
-                    AjaxWatchGlobal: false,
-                    onInitFinish: function(AtLeastOneProp) {
-                        cswPrivate.loadingDiv.remove();
-                        if (AtLeastOneProp) {
-                            cswPrivate.fixDimensions();
-                        } else {
-                            cswPrivate.div.hide();
+                    cswPrivate.previewTabsAndProps = Csw.layouts.tabsAndProps(cswPrivate.div, {
+                        name: cswPrivate.name + 'tabs',
+                        globalState: {
+                            currentNodeId: cswPrivate.nodeid,
+                            currentNodeKey: cswPrivate.nodekey,
+                            ShowAsReport: false
+                        },
+                        tabState: {
+                            EditMode: Csw.enums.editMode.Preview,
+                            showSaveButton: false
+                        },
+                        AjaxWatchGlobal: false,
+                        onInitFinish: function(AtLeastOneProp) {
+                            cswPrivate.loadingDiv.remove();
+                            if (AtLeastOneProp) {
+                                cswPrivate.fixDimensions();
+                            } else {
+                                cswPrivate.div.hide();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }; // loadPreview()
 
             cswPrivate.hoverIn = function() {
@@ -116,7 +121,7 @@
                 clearTimeout(cswPrivate.openTimeoutHandle);
 //                // Clear all node previews, in case other ones are hanging around
 //                $('.CswNodePreview').remove();
-                cswPrivate.closeTimeoutHandle = Csw.defer(function() { cswPrivate.div.remove(); }, cswPrivate.closeDelay);
+                cswPrivate.closeTimeoutHandle = Csw.defer(cswPrivate.unBindThisPreview, cswPrivate.closeDelay);
             }; // close()
 
             // constructor
@@ -134,6 +139,25 @@
                         backgroundColor: '#ffffff'
                     })
                     .hide();
+
+                //Case 28397
+                //1st: nuke any existing previews
+                Csw.publish('CswUnbindOldPreviews');
+
+                //2nd: declare the nuke _this_ preview
+                cswPrivate.unBindThisPreview = function () {
+                    if (cswPrivate.div) {
+                        //cswPrivate.div.unbind('mouseenter mouseleave');
+                        cswPrivate.div.remove();
+                    }
+                    if(cswPrivate.previewTabsAndProps) {
+                        cswPrivate.previewTabsAndProps.tearDown();
+                    }
+                    Csw.unsubscribe('CswUnbindOldPreviews', null, cswPrivate.unBindThisPreview);
+                };
+                //3rd: bind to nuke _this_ preview
+                Csw.subscribe('CswUnbindOldPreviews', cswPrivate.unBindThisPreview);
+                
                 cswPrivate.div.$.hover(cswPrivate.hoverIn, cswPrivate.hoverOut);
 
                 cswPrivate.fixDimensions();

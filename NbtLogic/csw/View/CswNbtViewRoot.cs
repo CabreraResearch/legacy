@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt
 {
@@ -262,7 +263,19 @@ namespace ChemSW.Nbt
             }
         } // IsDemo
 
-        private Int32 _PropCount = 18;
+        public string GridGroupByCol
+        {
+            get
+            {
+                return _RootString[18];
+            }
+            set
+            {
+                _RootString[18] = value;
+            }
+        }
+
+        private Int32 _PropCount = 19;
 
         #endregion Properties in _RootString
 
@@ -272,7 +285,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                return "Images/view/view" + ViewMode.ToString().ToLower() + ".gif"; ;
+                return "Images/view/view" + ViewMode.ToString().ToLower() + ".gif";
             }
         }
 
@@ -371,6 +384,8 @@ namespace ChemSW.Nbt
                     Included = Convert.ToBoolean( Node.Attributes["included"].Value );
                 if( Node.Attributes["isdemo"] != null )
                     IsDemo = Convert.ToBoolean( Node.Attributes["isdemo"].Value );
+                if( Node.Attributes["gridgroupbycol"] != null )
+                    GridGroupByCol = Node.Attributes["gridgroupbycol"].Value;
             }
             catch( Exception ex )
             {
@@ -477,6 +492,11 @@ namespace ChemSW.Nbt
                 {
                     bool _isDemo = CswConvert.ToBoolean( Node["isdemo"] );
                     IsDemo = _isDemo;
+                }
+
+                if( Node["gridgroupbycol"] != null )
+                {
+                    GridGroupByCol = Regex.Replace( Node["gridgroupbycol"].ToString(), @"[nN]one", "" );
                 }
             }
             catch( Exception ex )
@@ -607,8 +627,12 @@ namespace ChemSW.Nbt
             RootXmlNode.Attributes.Append( IncludedAttribute );
 
             XmlAttribute IsDemoAttribute = XmlDoc.CreateAttribute( "isdemo" );
-            IsDemoAttribute.Value = Included.ToString().ToLower();
+            IsDemoAttribute.Value = IsDemo.ToString().ToLower();
             RootXmlNode.Attributes.Append( IsDemoAttribute );
+
+            XmlAttribute GridGroupByColAttribute = XmlDoc.CreateAttribute( "gridgroupbycol" );
+            GridGroupByColAttribute.Value = GridGroupByCol.ToString().ToLower();
+            RootXmlNode.Attributes.Append( GridGroupByColAttribute );
 
             // Recurse on child ViewNodes
             foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
@@ -638,10 +662,13 @@ namespace ChemSW.Nbt
             RootPropObj["category"] = Category;
             RootPropObj["visibility"] = Visibility.ToString();
             RootPropObj["visibilityroleid"] = ( VisibilityRoleId != null ) ? VisibilityRoleId.PrimaryKey.ToString() : "";
+            RootPropObj["visibilityrolename"] = ( VisibilityRoleId != null ) ? _CswNbtResources.Nodes[VisibilityRoleId].NodeName : "";
             RootPropObj["visibilityuserid"] = ( VisibilityUserId != null ) ? VisibilityUserId.PrimaryKey.ToString() : "";
+            RootPropObj["visibilityusername"] = ( VisibilityUserId != null ) ? _CswNbtResources.Nodes[VisibilityUserId].NodeName : "";
             RootPropObj["formobile"] = ForMobile.ToString().ToLower();
             RootPropObj["included"] = Included.ToString().ToLower();
             RootPropObj["isdemo"] = IsDemo.ToString().ToLower();
+            RootPropObj["gridgroupbycol"] = GridGroupByCol.ToString().ToLower();
 
             JObject ChildObject = new JObject();
             if( null == RootPropObj[_ChildRelationshipsName] ||

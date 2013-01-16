@@ -22,15 +22,14 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtDisableCswAdmin() );
             ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
             ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
+            ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
 
-            //I do not have data for this rule right now -- temporarily commenting out
-            //ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
+            ReturnVal.Add( new CswScheduleLogicNbtTierII() );
 
-            return ( ReturnVal );
+           
+        }
+    }
+	return( ReturnVal ); 
+}
 
         }//_getRulesFromImplmentationPlatform()
-
-    }//CswReportTimingDaily
-
-}//namespace ChemSW.MailRpt
-

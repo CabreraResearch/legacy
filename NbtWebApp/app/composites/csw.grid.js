@@ -9,55 +9,62 @@
 
             //#region _preCtor
 
-            var cswPrivate = {
-                name: 'extjsGrid',
-                //storeId: '',
-                title: '',
-                truncated: false,
-                //stateId: '',
-                usePaging: true,
-                forceFit: false,   // expand all columns to fill width (makes column resizing weird)
+            var cswPrivate;
+            var cswPublic;
 
-                ajax: {
-                    urlMethod: '',
-                    data: {}
-                },
+            (function () {
+                cswPublic = cswParent.div();
 
-                showCheckboxes: false,
-                showActionColumn: true,
-                showView: true,
-                showLock: true,
-                showEdit: true,
-                showDelete: true,
+                cswPrivate = {
+                    name: 'extjsGrid',
+                    title: '',
+                    truncated: false,
+                    usePaging: true,
+                    forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
-                canSelectRow: false,
+                    ajax: {
+                        urlMethod: '',
+                        data: {}
+                    },
+
+                    showCheckboxes: false,
+                    showActionColumn: true,
+                    showView: true,
+                    showLock: true,
+                    showEdit: true,
+                    showDelete: true,
+
+                    canSelectRow: false,
 
                 onLoad: function (grid, ajaxResult) { },
                 onEdit: function (rows) { },
                 onDelete: function (rows) { },
                 onSelect: function (rows) { },
-                onDeselect: function (row) { },
-                onSelectChange: function (rowCount) { },
+                    onDeselect: function (row) { },
+                    onSelectChange: function (rowCount) { },
 
-                height: '',  // overridden by webservice if paging is on
-                //width: '100%',
-                width: '',
+                    height: '',  // overridden by webservice if paging is on
+                    width: '',
 
-                fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
-                columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
-                data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
-                pageSize: '',  // overridden by webservice
+                    fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
+                    columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
+                    data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
+                    pageSize: '',  // overridden by webservice
 
-                actionDataIndex: 'action',
+                    actionDataIndex: 'action',
 
-                topToolbar: [],
-                groupField: '',
-                groupHeaderTpl: '{name}',
+                    topToolbar: [],
+                    groupField: '',
                 plugins: null
-            };
-            var cswPublic = {};
+                    groupHeaderTpl: '{columnName}: {name}',
 
-            window.Ext.require('Ext.ux.grid.FiltersFeature');
+                    dockedItems: []
+                };
+
+                Csw.extend(cswPrivate, options);
+                cswPrivate.ID = cswPrivate.ID || cswPublic.getId();
+                cswPrivate.ID += cswPrivate.suffix;
+            } ());
 
             //#endregion _preCtor
 
@@ -101,23 +108,25 @@
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
-                    var cell = Csw.domNode({ ID: cellId });
-                    cell.empty();
-                    var iconopts = {
-                        name: cswPrivate.name + cellId + buttonName,
-                        hovertext: buttonName,
-                        iconType: iconType,
-                        state: Csw.enums.iconState.normal,
-                        isButton: false,
-                        size: 18
-                    };
-                    if (false === Csw.isNullOrEmpty(clickFunc)) {
-                        iconopts.isButton = true;
-                        iconopts.onClick = function () {
-                            Csw.tryExec(clickFunc, [record.data]);
+                    if (Csw.isElementInDom(cellId)) {
+                        var cell = Csw.domNode({ ID: cellId });
+                        cell.empty();
+                        var iconopts = {
+                            name: cswPrivate.name + cellId + buttonName,
+                            hovertext: buttonName,
+                            iconType: iconType,
+                            state: Csw.enums.iconState.normal,
+                            isButton: false,
+                            size: 18
                         };
+                        if (false === Csw.isNullOrEmpty(clickFunc)) {
+                            iconopts.isButton = true;
+                            iconopts.onClick = function () {
+                                Csw.tryExec(clickFunc, [record.data]);
+                            };
+                        }
+                        cell.icon(iconopts);
                     }
-                    cell.icon(iconopts);
                 }, 50);
             }; // makeActionButton()
 
@@ -125,6 +134,45 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
+                if (cswPrivate.groupField.length > 0) {
+                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+
+                    var toggleGroups = function (collapse) {
+                        for (var i in cswPrivate.grid.view.features) {
+                            if (cswPrivate.grid.view.features[i].ftype === 'grouping') {
+                                if (collapse) {
+                                    cswPrivate.grid.view.features[i].collapseAll();
+                                } else {
+                                    cswPrivate.grid.view.features[i].collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
+                                    cswPrivate.grid.view.features[i].expandAll();
+                                }
+                            }
+                        }
+                    };
+
+                    cswPrivate.dockedItems = [{
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: [
+                            {
+                                xtype: 'button',
+                                text: 'Expand all Rows',
+                                handler: function () {
+                                    toggleGroups(false);
+                                }
+                            },
+                            {
+                                xtype: 'tbseparator'
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'Collapse all Rows',
+                                handler: function () {
+                                    toggleGroups(true);
+                                }
+                            }]
+                    }];
+                }
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -195,7 +243,7 @@
                             grid.filters.createFilters();
                         }
                     },
-                    dockedItems: [],
+                    dockedItems: cswPrivate.dockedItems,
                     features: [{
                         ftype: 'filters',
                         autoReload: false,
@@ -204,10 +252,11 @@
                     },
                     {
                         id: 'group',
-                        ftype: 'groupingsummary',
+                        ftype: 'grouping',
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
-                        enableGroupingMenu: false
+                        enableGroupingMenu: false,
+                        startCollapsed: true
                     }]
                 };
 
@@ -255,11 +304,7 @@
                             return ret;
                         } // renderer()
                     }; // newcol
-                    var position = 0;
-                    if (cswPrivate.showCheckboxes) {
-                        position = gridopts.columns.length;
-                    }
-                    gridopts.columns.splice(position, 0, newcol);
+                    gridopts.columns.splice(0, 0, newcol);
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
 
                 //Render buttons in a callback
@@ -285,13 +330,18 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function () {
-                                    var div = Csw.domNode({ ID: id });
-                                    div.nodeButton({
-                                        value: colObj.header,
-                                        size: 'small',
-                                        propId: thisBtn[0].propattr
-                                    });
+                                Csw.defer(function _tryMakeBtn() {
+                                    //Case 28343. The problem here is that 
+                                    // a) our div is not in the DOM until this method returns and 
+                                    // b) we're not always guaranteed to be the writable porion of the cell--the div we return might be thrown away by Ext
+                                    if (Csw.isElementInDom(id)) {
+                                        var div = Csw.domNode({ ID: id });
+                                        div.nodeButton({
+                                            value: colObj.header,
+                                            size: 'small',
+                                            propId: thisBtn[0].propattr
+                                        });
+                                    }
                                 }, 100);
                             }
                             return '<div id="' + id + '"></div>';
@@ -383,7 +433,7 @@
                     cswPrivate.topToolbar.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
 
-                if (cswPrivate.topToolbar.length === '1') {
+                if (cswPrivate.topToolbar.length > 0) {
                     gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
@@ -391,10 +441,10 @@
                     }); // panelopts.dockedItems
                 }
 
-                if (Csw.isElementInDom(cswParent.getId())) {
+                if (Csw.isElementInDom(cswPublic.getId())) {
                     cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
                 } else {
-                    cswPublic.extGrid = window.Ext.create('Ext.grid.Panel');
+                    cswPublic.extGrid = window.Ext.create('Ext.panel.Panel');
                 }
                 return cswPublic.extGrid;
             }); // makeGrid()
@@ -416,7 +466,11 @@
                     cswPrivate.grid.removeAll();
                     cswPrivate.grid.destroy();
                 }
-                cswParent.empty();
+                cswPublic.empty();
+            };
+
+            cswPublic.destroy = function () {
+                cswPrivate.removeAll();
             };
 
             //#endregion Grid Control Constructors
@@ -426,31 +480,33 @@
             cswPrivate.init = Csw.method(function () {
                 cswPrivate.removeAll();
 
-                cswPrivate.rootDiv = cswParent.div();
+                cswPrivate.rootDiv = cswPublic.div();
 
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
-                cswPrivate.grid.on({
-                    select: function (rowModel, record, index, eOpts) {
-                        Csw.tryExec(cswPrivate.onSelect, record.data);
-                    },
-                    deselect: function (rowModel, record, index, eOpts) {
-                        Csw.tryExec(cswPrivate.onDeselect, record.data);
-                    },
+                if(cswPrivate.grid) {
+                    cswPrivate.grid.on({
+                        select: function (rowModel, record, index, eOpts) {
+                            Csw.tryExec(cswPrivate.onSelect, record.data);
+                        },
+                        deselect: function (rowModel, record, index, eOpts) {
+                            Csw.tryExec(cswPrivate.onDeselect, record.data);
+                        },
                     selectionchange: function (rowModel, selected, eOpts) {
-                        Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
-                    },
-                    afterrender: function (component) {
-                        var bottomToolbar = component.getDockedComponent('bottomtoolbar');
-                        if (false === Csw.isNullOrEmpty(bottomToolbar)) {
-                            bottomToolbar.items.get('refresh').hide();
+                            Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
+                        },
+                        afterrender: function (component) {
+                            var bottomToolbar = component.getDockedComponent('bottomtoolbar');
+                            if (false === Csw.isNullOrEmpty(bottomToolbar)) {
+                                bottomToolbar.items.get('refresh').hide();
+                            }
                         }
+                    });
+    
+                    if (Csw.bool(cswPrivate.truncated)) {
+                        cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                     }
-                });
-
-                if (Csw.bool(cswPrivate.truncated)) {
-                    cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
 
             }); // init()
@@ -463,14 +519,14 @@
                             if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
                                 cswPrivate.truncated = result.grid.truncated;
                             }
-                            if (false === Csw.isNullOrEmpty(result.grid.title)) {
+                            if (cswPrivate.title.length === 0 && result.grid.title && result.grid.title.length > 0) {
                                 cswPrivate.title = result.grid.title;
                             }
                             cswPrivate.fields = result.grid.fields;
                             cswPrivate.columns = result.grid.columns;
                             cswPrivate.data = result.grid.data;
-                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.ajaxResult = result;
+                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.init();
 
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
@@ -560,6 +616,11 @@
                 return ret;
             });
 
+            cswPublic.deselectAll = Csw.method(function () {
+                ///<summary>Deselect all records</summary>
+                cswPrivate.grid.getSelectionModel().deselectAll();
+            });
+
             cswPublic.setSelection = Csw.method(function (rowindex) {
                 ///<summary>Sets the selected row by index</summary>
                 if (rowindex > -1) {
@@ -600,14 +661,10 @@
 
             //#endregion Public methods
 
-
             //#region _postCtor
 
             //constructor
-            (function () {
-                Csw.extend(cswPrivate, options);
-                cswPrivate.ID = cswPrivate.ID || cswParent.getId();
-                cswPrivate.ID += cswPrivate.suffix;
+            (function _postCtor() {
                 cswPrivate.reInit();
             } ());
 

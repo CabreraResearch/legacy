@@ -43,6 +43,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Approved = "Approved";
             public const string ManufacturingSites = "Manufacturing Sites";
             public const string UNCode = "UN Code";
+            public const string IsTierII = "Is Tier II";
+            public const string ViewSDS = "View SDS";
         }
 
         public sealed class PhysicalStates
@@ -102,6 +104,23 @@ namespace ChemSW.Nbt.ObjClasses
                     _updateRegulatoryLists();
                 }
             }
+
+            CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
+            if( null != ChemicalHazardClassesNTP )
+            {
+                CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+                CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
+                if( null != FireClassExemptAmountNT )
+                {
+                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
+                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp(
+                            FireClassExemptAmountNT.NodeTypeId,
+                            CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType
+                            );
+                    ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -153,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
                         {
                             HasPermission = true;
-                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActRequesting.RequestItem( CswNbtActRequesting.RequestItem.Material ), NodeId, ButtonData );
                             NodeAsPropSet.postChanges( false );
@@ -183,6 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
+                            ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
 
                             CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
                             if( false == CswDate.IsNull )
@@ -205,6 +225,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                             ButtonData.Action = NbtButtonAction.receive;
                         }
+                        break;
+                    case PropertyName.ViewSDS:
+                        HasPermission = true;
+                        _getMatchingSDSForCurrentUser( ButtonData );
                         break;
                 }
                 if( false == HasPermission )
@@ -370,6 +394,142 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
+        /// <summary>
+        /// Gets all material documents of this material and adds them to the View SDS menu button options. Does NOT post changes!!
+        /// </summary>
+        public void UpdateViewSDSButtonOpts()
+        {
+            CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClassProp materialOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+            CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+            CswNbtMetaDataObjectClassProp documentClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+
+            CswNbtView sdsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = sdsView.AddViewRelationship( documentOC, true );
+
+            sdsView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: materialOCP,
+                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                Value: NodeId.PrimaryKey.ToString() );
+
+            sdsView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: archivedOCP,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                Value: CswConvert.ToDbVal( false ).ToString() );
+
+            sdsView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: documentClassOCP,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                Value: CswNbtObjClassDocument.DocumentClasses.SDS );
+
+            CswCommaDelimitedString viewSDSMenuOpts = new CswCommaDelimitedString();
+            viewSDSMenuOpts.Add( ViewSDS.PropName );
+
+            ICswNbtTree sdsTree = _CswNbtResources.Trees.getTreeFromView( sdsView, false, false, false );
+            int childCount = sdsTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                sdsTree.goToNthChild( i );
+                CswNbtObjClassDocument doc = sdsTree.getNodeForCurrentPosition();
+                viewSDSMenuOpts.Add( doc.Title.Text );
+                sdsTree.goToParentNode();
+            }
+
+            ViewSDS.MenuOptions = viewSDSMenuOpts.ToString();
+        }
+
+        private void _getMatchingSDSForCurrentUser( NbtButtonData ButtonData )
+        {
+            CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+            CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+            CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+            CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+            CswNbtMetaDataObjectClassProp titleOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
+
+            CswNbtView docView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = docView.AddViewRelationship( documentOC, true );
+            docView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: docClassOCP,
+                Value: CswNbtObjClassDocument.DocumentClasses.SDS,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            docView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: archivedOCP,
+                Value: CswConvert.ToDbVal( false ).ToString(),
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
+            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
+
+            bool foundMatchingSDS = false;
+            if( null != userJurisdictionNode && ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) ) //try to find an SDS that matches exactly
+            {
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: formatOCP,
+                    Value: userJurisdictionNode.Format.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: languageOCP,
+                    Value: userJurisdictionNode.Language.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            else if( false == ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) ) //the user selected an SDS from the list, find the SDS by title
+            {
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: titleOCP,
+                    Value: ButtonData.SelectedText,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( null != userJurisdictionNode && false == foundMatchingSDS ) //if we have't found an exact mathing SDS, try to find one that matches just the users Format
+            {
+                docView.removeViewProperty( languageOCP );
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( null != userJurisdictionNode && false == foundMatchingSDS ) //if we haven't found a match for just the Format, look for a matching language
+            {
+                docView.removeViewProperty( formatOCP );
+                docView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: languageOCP,
+                    Value: userJurisdictionNode.Language.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( false == foundMatchingSDS ) //if we haven't found an exact match, just format or just language, return any avaiable SDS
+            {
+                docView.removeViewProperty( languageOCP );
+                foundMatchingSDS = _fillButtonData( docView, ButtonData );
+            }
+            if( false == foundMatchingSDS ) //if we STILL haven't found an SDS there aren't any assigned to this Material
+            {
+                ButtonData.Message = "There are no non-archived SDS assigned to this " + NodeType.NodeTypeName;
+                ButtonData.Action = NbtButtonAction.nothing;
+            }
+        }
+        private bool _fillButtonData( CswNbtView docView, NbtButtonData ButtonData )
+        {
+            bool ret = false;
+            ICswNbtTree docTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+            int childCount = docTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                docTree.goToNthChild( i );
+                ButtonData.Data["nodeid"] = docTree.getNodeIdForCurrentPosition().ToString();
+                ButtonData.Data["title"] = docTree.getNodeNameForCurrentPosition();
+                ButtonData.Action = NbtButtonAction.editprop;
+                docTree.goToParentNode();
+                ret = true;
+            }
+            return ret;
+        }
+
         #endregion Custom Logic
 
         #region Object class specific properties
@@ -402,6 +562,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Approved { get { return ( _CswNbtNode.Properties[PropertyName.Approved] ); } }
         public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
         public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
+        public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
+        public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial

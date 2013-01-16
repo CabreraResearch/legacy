@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -17,7 +18,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents an NBT View based on Relationships
     /// </summary>
-    [Serializable()]
+    [DataContract]
     public class CswNbtView : IEquatable<CswNbtView>
     {
         /// <summary>
@@ -40,14 +41,78 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtViewRoot Root;
 
+        #region DataMembers
+
         /// <summary>
         /// Name of View
         /// </summary>
+        [DataMember]
         public string ViewName
         {
             get { return Root.ViewName; }
             set { Root.ViewName = value; }
         }
+
+        [DataMember( Name = "SessionViewId" )]
+        public string NbtSessionViewId
+        {
+            get { return SessionViewId.ToString(); }
+            set { SessionViewId = new CswNbtSessionDataId( value ); }
+        }
+
+        [DataMember( Name = "Visibility" )]
+        public string ViewVisibility
+        {
+            get { return Visibility.ToString(); }
+            set { Visibility = (NbtViewVisibility) value; }
+        }
+
+        /// <summary>
+        /// Is Demo View
+        /// </summary>
+        [DataMember]
+        public bool IsDemo
+        {
+            get { return Root.IsDemo; }
+            set { Root.IsDemo = value; }
+        }
+
+        [DataMember( Name = "ViewMode" )]
+        public string NbtViewMode
+        {
+            get { return ViewMode.ToString(); }
+            set { ViewMode = (NbtViewRenderingMode) value; }
+        }
+
+        /// <summary>
+        /// Category name (arbitrary string) 
+        /// </summary>
+        [DataMember]
+        public string Category
+        {
+            get { return Root.Category; }
+            set { Root.Category = value; }
+        }
+
+        /// <summary>
+        /// Grid Width
+        /// </summary>
+        [DataMember]
+        public Int32 Width
+        {
+            get { return Root.Width; }
+            set { Root.Width = value; }
+        }
+
+        [DataMember( Name = "ViewId" )]
+        public string NbtViewId
+        {
+            get { return ViewId.ToString(); }
+            set { ViewId = new CswNbtViewId( value ); }
+        }
+
+        #endregion DataMembers
+
 
         /// <summary>
         /// Icon for View
@@ -102,6 +167,7 @@ namespace ChemSW.Nbt
             get { return Root.Visibility; }
             set { Root.Visibility = value; }
         }
+
         /// <summary>
         /// Visibility permission setting (restrict to user)
         /// </summary>
@@ -119,15 +185,7 @@ namespace ChemSW.Nbt
             set { Root.VisibilityUserId = value; }
         }
 
-        /// <summary>
-        /// Is Demo View
-        /// </summary>
-        public bool IsDemo
-        {
-            get { return Root.IsDemo; }
-            set { Root.IsDemo = value; }
-        }
-
+        //TODO: ForMobile needs to go.
         /// <summary>
         /// Use view in Mobile
         /// </summary>
@@ -137,14 +195,12 @@ namespace ChemSW.Nbt
             set { Root.ForMobile = value; }
         }
 
-        /// <summary>
-        /// Category name (arbitrary string) 
-        /// </summary>
-        public string Category
+        public string GridGroupByCol
         {
-            get { return Root.Category; }
-            set { Root.Category = value; }
+            get { return Root.GridGroupByCol; }
+            set { Root.GridGroupByCol = value; }
         }
+
         /// <summary>
         /// Sets the View's Visibility
         /// </summary>
@@ -162,6 +218,7 @@ namespace ChemSW.Nbt
             get { return Root.ViewMode; }
             set { Root.ViewMode = value; }
         }
+
         /// <summary>
         /// Sets the ViewMode
         /// </summary>
@@ -169,14 +226,7 @@ namespace ChemSW.Nbt
         {
             Root.ViewMode = value;
         }
-        /// <summary>
-        /// Grid Width
-        /// </summary>
-        public Int32 Width
-        {
-            get { return Root.Width; }
-            set { Root.Width = value; }
-        }
+
         /// <summary>
         /// Database Primary Key
         /// </summary>
@@ -659,6 +709,15 @@ namespace ChemSW.Nbt
             if( Visibility == NbtViewVisibility.Unknown )
                 throw new CswDniException( ErrorType.Error, "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
 
+            if( Visibility == NbtViewVisibility.User && VisibilityUserId == null )
+            {
+                throw new CswDniException( ErrorType.Warning, "View Visibility User is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == User, but no user selected" );
+            }
+            if( Visibility == NbtViewVisibility.Role && VisibilityRoleId == null )
+            {
+                throw new CswDniException( ErrorType.Warning, "View Visibility Role is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Role, but no role selected" );
+            }
+
             if( !ViewIsUnique( _CswNbtResources, ViewId, ViewName, Visibility, VisibilityUserId, VisibilityRoleId ) )
                 throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
 
@@ -674,6 +733,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["viewname"] = ViewName;
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
+            //TODO: formobile needs to go.
             ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
@@ -739,36 +799,56 @@ namespace ChemSW.Nbt
         public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
         {
             if( ViewName == string.Empty )
+            {
                 throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
+            }
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
+            {
                 throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
+            }
 
             // Before New View Events
             Collection<object> BeforeNewEvents = _CswNbtResources.CswEventLinker.Trigger( BeforeNewViewEventName );
             foreach( object Handler in BeforeNewEvents )
             {
                 if( Handler is BeforeNewViewEventHandler )
+                {
                     ( (BeforeNewViewEventHandler) Handler )();
+                }
             }
 
             // Insert a new view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "ViewTableUpdate", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getEmptyTable();
 
+            NbtViewRenderingMode NewViewMode = this.ViewMode;
+            string NewViewCategory = Category;
+            if( null != CopyView )
+            {
+                NewViewMode = CopyView.ViewMode;
+                NewViewCategory = CopyView.Category;
+            }
+
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
+            //TODO: formobile needs to go.
             NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
             NewRow["visibility"] = Visibility.ToString();
-            NewRow["viewmode"] = ViewMode.ToString();
+            NewRow["viewmode"] = NewViewMode.ToString();
+            NewRow["category"] = NewViewCategory;
             NewRow["userid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( UserId != null )
+            {
                 NewRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
+            }
 
             NewRow["roleid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( Visibility == NbtViewVisibility.Role && RoleId != null )
+            {
                 NewRow["roleid"] = CswConvert.ToDbVal( RoleId.PrimaryKey );
+            }
 
             ViewTable.Rows.Add( NewRow );
             ViewTableUpdate.update( ViewTable );
@@ -776,12 +856,17 @@ namespace ChemSW.Nbt
             // Reset this view info to the new one
             Clear();
             if( CopyView != null )
+            {
                 this.LoadXml( CopyView.ToXml() );
+            }
             this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
             this.ViewName = ViewName;
+            this.ViewMode = NewViewMode;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
             this.VisibilityUserId = UserId;
+            this.Category = NewViewCategory;
+            //TODO: ForMobile needs to go.
             this.ForMobile = ForMobile;
 
             // The XML includes the viewid and viewname, so it has to be updated before it can be saved
@@ -796,7 +881,9 @@ namespace ChemSW.Nbt
             foreach( object Handler in AfterNewEvents )
             {
                 if( Handler is AfterNewViewEventHandler )
+                {
                     ( (AfterNewViewEventHandler) Handler )( this );
+                }
             }
         }
 
@@ -933,7 +1020,7 @@ namespace ChemSW.Nbt
             }
         } // Delete()
 
-        public const Int32 ViewNameLength = 30;
+        public const Int32 ViewNameLength = 200;
 
         public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
@@ -951,19 +1038,33 @@ namespace ChemSW.Nbt
 
                 if( Visibility == NbtViewVisibility.User )
                 {
-                    // Must be unique against other private views for this user
-                    // Must be unique against all role and global views 
-                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                    WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
-                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    if( null != UserId )
+                    {
+                        // Must be unique against other private views for this user
+                        // Must be unique against all role and global views 
+                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                        WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
+                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning, "User is required", "A specific user must be selected for User-visible views" );
+                    }
                 }
                 else if( Visibility == NbtViewVisibility.Role )
                 {
-                    // Must be unique against other role views for the same role
-                    // Must be unique against all private and global views 
-                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                    WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
-                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    if( null != RoleId )
+                    {
+                        // Must be unique against other role views for the same role
+                        // Must be unique against all private and global views 
+                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                        WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
+                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Role is required", "A specific role must be selected for Role-visible views" );
+                    }
                 }
                 else if( Visibility == NbtViewVisibility.Global )
                 {
@@ -1671,6 +1772,8 @@ namespace ChemSW.Nbt
             }
             set { _SessionViewId = value; }
         }
+
+
 
         #endregion Session Cache functions
 

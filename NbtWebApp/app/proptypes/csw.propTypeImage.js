@@ -27,8 +27,10 @@
                     } else {
 
                         cswPrivate.href = Csw.string(cswPrivate.propVals.href);
-                        cswPrivate.href += '&usenodetypeasplaceholder=false'; // case 27596
-
+                        if (cswPrivate.href.length > 0) {
+                            cswPrivate.href += '&usenodetypeasplaceholder=false'; // case 27596
+                        }
+                        
                         if (false === Csw.isNullOrEmpty(cswPrivate.propVals.width) &&
                             Csw.isNumeric(cswPrivate.propVals.width)) {
                             cswPrivate.width = Math.abs(Csw.number(cswPrivate.propVals.width, 100) - 36);

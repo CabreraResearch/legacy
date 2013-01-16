@@ -40,21 +40,15 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding Modules, 
             // which often become required by other business logic and can cause prior scripts to fail.
-
-            #region URSULA
-
-            _CswNbtSchemaModTrnsctn.deleteModule( "mobile" );
-
-            #endregion URSULA
-
-            #region VIOLA
-
-            #endregion VIOLA
             
             #region VIOLA
             
 
             #endregion VIOLA
+
+            #region WILLIAM
+
+            #endregion WILLIAM
         }
 
 

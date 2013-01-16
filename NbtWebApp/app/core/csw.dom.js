@@ -71,7 +71,7 @@
             else if (Csw.isJQuery($element)) {
                 cswPublic.$ = $element;
                 cswPublic.isValid = true;
-            } 
+            }
             else if (false === Csw.isNullOrEmpty($element) && Csw.isJQuery($element.$)) {
                 /*This is already a Csw dom object*/
                 return $element;
@@ -293,10 +293,10 @@
                         cswPrivate.setDataObj(prop);
                     } else {
                         switch (arguments.length) {
-                            //this isn't a valid use case        
-                            //case 0:        
-                            //    ret = _internal || cswPublic.$.data();        
-                            //    break;        
+                            //this isn't a valid use case           
+                            //case 0:           
+                            //    ret = _internal || cswPublic.$.data();           
+                            //    break;           
                             case 1:
                                 ret = cswPrivate.getData(prop);
                                 break;
@@ -492,13 +492,18 @@
             cswPublic.remove = function () {
                 /// <summary>Remove the element and delete the object.</summary>
                 /// <returns type="null"></returns> 
-                if (cswPrivate.isControlStillValid()) {
+                //if (cswPrivate.isControlStillValid()) {
+                //if the control isn't valid, we don't need to throw on removing it.
+                if(cswPublic && cswPublic.$) {
                     cswPublic.$.remove();
                     //Nice try, but this doesn't nuke outstanding references--only the assignment of the reference to the property on this object.
                     //Csw.each(cswPublic, function (name) {
-                        //cswPublic[name] = null;
-                        //delete cswPublic[name];
+                    //cswPublic[name] = null;
+                    //delete cswPublic[name];
                     //});
+
+                    //This is a value assignment, it doesn't affect the reference that brought you here
+                    //However, it's useful inside the closure that defines cswPublic to know we removed this element from the DOM.
                     cswPublic = null;
                 }
                 return null;
@@ -769,6 +774,24 @@
             }
             return $ret;
         });
+
+    Csw.getIconUrlString = Csw.getIconUrlString || Csw.register('getIconUrlString', function (iconSize, iconType) {
+        ///<summary>Given an icon enum, builds the url to the location of the icon image.</summary>
+        ///<param name="">Size of the icon to find.</param>
+        ///<param name="">Enum of the icon to find.</param>
+        ///<returns type="">String URL of the icon image, empty string if no match found.</returns>
+        var ret = '';
+
+        var iconName = Csw.enums.getName(Csw.enums.iconType, iconType);
+
+        if (false === Csw.isNullOrEmpty(iconSize) && false === Csw.isNullOrEmpty(iconName)) {
+
+            ret = 'Images/newicons/' + iconSize + '/' + iconName + '.png';
+        }
+
+        return ret;
+
+    });
 
 } ());
 

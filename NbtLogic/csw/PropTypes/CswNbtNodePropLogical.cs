@@ -55,14 +55,24 @@ namespace ChemSW.Nbt.PropTypes
                 if( val != DBNull.Value )
                 {
                     _CswNbtNodePropData.SetPropRowValue( _CheckedSubField.Column, val );
-                    _CswNbtNodePropData.Gestalt = CswConvert.ToDisplayString( value );
                 }
                 else
                 {
                     _CswNbtNodePropData.SetPropRowValue( _CheckedSubField.Column, string.Empty );
-                    _CswNbtNodePropData.Gestalt = string.Empty;
                 }
+                _CswNbtNodePropData.Gestalt = toLogicalGestalt( value );
             }
+        }
+
+        public static string toLogicalGestalt( Tristate Tristate )
+        {
+            object val = CswConvert.ToDbVal( Tristate );
+            string Ret = string.Empty;
+            if( val != DBNull.Value )
+            {
+                Ret = CswConvert.ToDisplayString( Tristate );
+            }
+            return Ret;
         }
 
         public override void ToJSON( JObject ParentObject )

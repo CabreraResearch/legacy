@@ -115,6 +115,23 @@
     </Compile>
     <Compile Include="Services\Scheduler.svc.cs">
       <DependentUpon>Scheduler.svc</DependentUpon>
+    <Compile Include="Services\Trees.svc.cs">
+      <DependentUpon>Trees.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Labels2.svc.cs">
+      <DependentUpon>Labels2.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ChemCatCentral.svc.cs">
+      <DependentUpon>ChemCatCentral.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\CISProNbtMobile.svc.cs">
+      <DependentUpon>CISProNbtMobile.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Menus.svc.cs">
+      <DependentUpon>Menus.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Mol.svc.cs">
+      <DependentUpon>Mol.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\Nodes.svc.cs">
       <DependentUpon>Nodes.svc</DependentUpon>
@@ -141,9 +158,13 @@
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\MolDataContract.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceMols.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceSearchMenu.cs" />
+    <Compile Include="WebSvc\Logic\Mobile\CISProNbt\CswNbtWebServiceCISProNbtMobile.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
@@ -151,19 +172,25 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
     <Compile Include="WebSvc\Logic\Scheduler\CswNbtScheduledRulesReturn.cs" />
+    <Compile Include="WebSvc\Logic\Search\CswNbtWebServiceC3Search.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
-    <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="WebSvc\Logic\NbtManager\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceQuotas.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbSdView.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTable.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
     <Content Include="Services\Scheduler.svc" />
+    <Content Include="Services\Trees.svc" />
+    <Content Include="Services\ChemCatCentral.svc" />
+    <Content Include="Services\Labels2.svc" />
+    <Content Include="Services\CISProNbtMobile.svc" />
+    <Content Include="Services\Menus.svc" />
+    <Content Include="Services\Mol.svc" />
     <Content Include="Services\Nodes.svc" />
     <Content Include="Services\LandingPages.svc" />
     <Content Include="Services\Containers.svc" />
@@ -1007,7 +1034,6 @@
     <Content Include="Images\menu\sub.gif" />
     <Content Include="Images\pagelayout\blank.gif" />
     <Content Include="Images\pagelayout\dash.gif" />
-    <Content Include="Images\pagelayout\header_logo.gif" />
     <Content Include="Images\pagelayout\header_logo32.gif" />
     <Content Include="Images\pagelayout\pagelayoutcorners.gif" />
     <Content Include="Images\pagelayout\pagelayoutx.gif" />
@@ -1209,7 +1235,6 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
     <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
@@ -1261,6 +1286,7 @@
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceSearch.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceTabsAndProps.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTree.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtSdTrees.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceView.cs" />
     <Compile Include="WebSvc\Logic\Menus\LandingPages\CswNbtWebServiceLandingPageItems.cs" />
     <Compile Include="WebSvc\Logic\Tools\TimingModule.cs" />
@@ -1355,12 +1381,6 @@
     </Compile>
     <Compile Include="Statistics.aspx.designer.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.aspx.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.aspx.designer.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
     </Compile>
     <Compile Include="TermsOfUse.aspx.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>

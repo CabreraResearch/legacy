@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Sched
                                                 ThisDueDateValue = ThisDueDateValue.Date;
                                                 InitialDueDateValue = InitialDueDateValue.Date;
                                                 FinalDueDateValue = FinalDueDateValue.Date;
-                                                NowDateValue = NowDateValue.Date;
+                                                //NowDateValue = NowDateValue.Date;
                                                 MinDateValue = MinDateValue.Date;
 
                                                 // BZ 7124 - set runtime

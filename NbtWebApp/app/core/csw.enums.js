@@ -237,11 +237,13 @@
             infobox: 0,
             info: 1,
             plus: 2,
+            add: 2,
             minus: 3,
             up: 4,
             right: 5,
             down: 6,
             left: 7,
+            back: 7,
             play: 8,
             fastforward: 9,
             rewind: 10,
@@ -304,10 +306,11 @@
             door: 67,
             cabinet: 68,
             box: 69,
-            save: 70, //not actually in the img, but the file is present
-            back: 71, //called left above but the file is 'back.png'
-            add: 72, //called left above but the file is 'back.png'
-            search: 73 //called ?? above but the file is 'back.png'
+            warning: 70,
+            save: 71,   //not actually in the img, but the file is present
+            search: 72,  //not actually in the img, but the file is present
+            cat: 73, //not actually in the img, but the file is present 
+            structuresearch: 74 //not actually in the img, but the file is present
         });
 
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||

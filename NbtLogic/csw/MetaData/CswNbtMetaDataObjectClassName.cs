@@ -30,8 +30,12 @@ namespace ChemSW.Nbt.MetaData
             { EquipmentClass                    , EquipmentClass                     },
             { EquipmentTypeClass                , EquipmentTypeClass                 },
             { FeedbackClass                     , FeedbackClass                      },
+            { FireClassExemptAmountClass        , FireClassExemptAmountClass         },
+            { FireClassExemptAmountSetClass     , FireClassExemptAmountSetClass      },
             { GeneratorClass                    , GeneratorClass                     },
             { GenericClass                      , GenericClass                       },
+            { GHSClass                          , GHSClass                           },
+            { GHSPhraseClass                    , GHSPhraseClass                     },
             { InspectionDesignClass             , InspectionDesignClass              },
             { InspectionRouteClass              , InspectionRouteClass               },
             { InventoryGroupClass               , InventoryGroupClass                },
@@ -46,7 +50,6 @@ namespace ChemSW.Nbt.MetaData
             { MethodClass                       , MethodClass                        },
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
-            { NotificationClass                 , NotificationClass                  },
             { ParameterClass                    , ParameterClass                     },
             { PrintLabelClass                   , PrintLabelClass                    },
             { ProblemClass                      , ProblemClass                       },
@@ -67,7 +70,7 @@ namespace ChemSW.Nbt.MetaData
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
-            {  WorkUnitClass                    , WorkUnitClass                      }
+            { WorkUnitClass                     , WorkUnitClass                      }
         };
         /// <summary>
         /// The string value of the current instance
@@ -136,8 +139,12 @@ namespace ChemSW.Nbt.MetaData
         public const string EquipmentClass = "EquipmentClass";
         public const string EquipmentTypeClass = "EquipmentTypeClass";
         public const string FeedbackClass = "FeedbackClass";
+        public const string FireClassExemptAmountClass = "FireClassExemptAmountClass";
+        public const string FireClassExemptAmountSetClass = "FireClassExemptAmountSetClass";
         public const string GeneratorClass = "GeneratorClass";
         public const string GenericClass = "GenericClass";
+        public const string GHSClass = "GHSClass";
+        public const string GHSPhraseClass = "GHSPhraseClass"; 
         public const string InspectionDesignClass = "InspectionDesignClass";
         public const string InspectionRouteClass = "InspectionRouteClass";
         public const string InventoryGroupClass = "InventoryGroupClass";
@@ -153,7 +160,6 @@ namespace ChemSW.Nbt.MetaData
         public const string MethodClass = "MethodClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
-        public const string NotificationClass = "NotificationClass";
         public const string ParameterClass = "ParameterClass";
         public const string PrintLabelClass = "PrintLabelClass";
         public const string ProblemClass = "ProblemClass";
@@ -175,7 +181,7 @@ namespace ChemSW.Nbt.MetaData
         public const string UserClass = "UserClass";
         public const string VendorClass = "VendorClass";
         public const string WorkUnitClass = "WorkUnitClass";
-
+        
         #endregion Enum members
 
 

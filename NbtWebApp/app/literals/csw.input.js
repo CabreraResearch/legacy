@@ -33,6 +33,7 @@
             canCheck: false, /* if this is a radio or checkbox */
             onChange: null,
             onClick: null,
+            onKeyEnter: null,
             isRequired: false
         };
         var cswPublic = {};
@@ -67,7 +68,6 @@
                     attr.add('checked', true);
                 }
             }
-
             html += attr.get();
             html += style.get();
             html += ' />';
@@ -87,6 +87,15 @@
             cswPublic.bind('click', function () {
                 Csw.tryExec(cswPrivate.onClick, cswPublic.val(), cswPublic);
             });
+            
+            if(false === Csw.isNullOrEmpty(cswPrivate.onKeyEnter)) {
+                cswPublic.bind('keydown', function (event) {
+                    if(event.keyCode === 13) {
+                        Csw.tryExec(cswPrivate.onKeyEnter, cswPublic.val(), cswPublic);
+                    }
+                });
+            }
+
         } ());
 
         cswPublic.change = function (func) {

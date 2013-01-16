@@ -32,14 +32,12 @@ namespace ChemSW.Nbt.MetaData
         public DataRow _DataRow
         {
             get { return _ObjectClassRow; }
-            //set { _ObjectClassRow = value; }
         }
 
         private Int32 _UniqueId;
         public Int32 UniqueId
         {
             get { return _UniqueId; }
-            //set { _UniqueId = value; }
         }
 
         public const string MetaDataUniqueType = "objectclassid";
@@ -55,10 +53,6 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return CswConvert.ToInt32( _ObjectClassRow["objectclassid"].ToString() ); }
         }
-        //public string TableName
-        //{
-        //    get { return _ObjectClassRow["tablename"].ToString(); }
-        //}
         public NbtObjectClass ObjectClass
         {
             get { return getObjectClassFromString( _ObjectClassRow["objectclass"].ToString() ); }
@@ -66,6 +60,12 @@ namespace ChemSW.Nbt.MetaData
         public string IconFileName
         {
             get { return _ObjectClassRow["iconfilename"].ToString(); }
+        }
+
+        public const Int32 NotSearchableValue = 0;
+        public Int32 SearchDeferPropId
+        {
+            get { return CswConvert.ToInt32( _ObjectClassRow["searchdeferpropid"] ); }
         }
 
         public Int32 Quota
@@ -92,30 +92,10 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                //CswNbtMetaDataNodeType ret = null;
-                //foreach( CswNbtMetaDataNodeType NT in NodeTypes )
-                //{
-                //    ret = NT;
-                //    break;
-                //}
-                //return ret;
                 return getNodeTypes().First<CswNbtMetaDataNodeType>();
             }
-        } // FirstNodeType
+        }
 
-        //private Hashtable _ObjectClassPropsByPropId;
-        //private SortedList _ObjectClassPropsByPropName;
-
-        //public delegate void AddPropEventHandler( CswNbtMetaDataObjectClassProp NewProp );
-        //public event AddPropEventHandler OnAddProp = null;
-
-        //public void AddProp( CswNbtMetaDataObjectClassProp Prop )
-        //{
-        //    _ObjectClassPropsByPropId.Add( Prop.PropId, Prop );
-        //    _ObjectClassPropsByPropName.Add( Prop.PropName, Prop );
-        //    //if ( OnAddProp != null )
-        //    //    OnAddProp( Prop );
-        //}
         private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
         public CswNbtMetaDataObjectClassProp getBarcodeProp()
         {
@@ -125,7 +105,6 @@ namespace ChemSW.Nbt.MetaData
                                      in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId )
                                  where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode
                                  select _Prop ).FirstOrDefault();
-
             }
             return _BarcodeProp;
         }
@@ -142,36 +121,23 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataObjectClassProp getObjectClassProp( string ObjectClassPropName )
         {
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassId, ObjectClassPropName );
-            //if ( _ObjectClassPropsByPropName.Contains( ObjectClassPropName ) )
-            //    return _ObjectClassPropsByPropName[ ObjectClassPropName ] as CswNbtMetaDataObjectClassProp;
-            //else
-            //    return null;
         }
         public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassPropId )
         {
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassId, ObjectClassPropId );
-            //if ( _ObjectClassPropsByPropId.Contains( ObjectClassPropId ) )
-            //    return _ObjectClassPropsByPropId[ ObjectClassPropId ] as CswNbtMetaDataObjectClassProp;
-            //else
-            //    return null;
         }
 
         public CswNbtView CreateDefaultView( bool IncludeDefaultFilters = true )
         {
             CswNbtView DefaultView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
             DefaultView.ViewName = this.ObjectClass.ToString();
-
             CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, IncludeDefaultFilters );
-            //RelationshipToMe.ArbitraryId = RelationshipToMe.SecondId.ToString();
-            //DefaultView.Root.addChildRelationship( RelationshipToMe );
-
             return DefaultView;
         }
 
         public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool IncludeDefaultFilters = true, bool IncludeHiddenNodes = false )
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
-
             CswNbtView View = CreateDefaultView( IncludeDefaultFilters );
             ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, false, includeSystemNodes, IncludeHiddenNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
@@ -181,7 +147,21 @@ namespace ChemSW.Nbt.MetaData
                 Tree.goToParentNode();
             }
             return Collection;
-        }
+        } // getNodes()
+
+        public Dictionary<CswPrimaryKey, string> getNodeIdAndNames( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false, bool IncludeHiddenNodes = false )
+        {
+            Dictionary<CswPrimaryKey, string> Dict = new Dictionary<CswPrimaryKey, string>();
+            CswNbtView View = CreateDefaultView( includeDefaultFilters );
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, true, includeSystemNodes, IncludeHiddenNodes );
+            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+            {
+                Tree.goToNthChild( c );
+                Dict.Add( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() );
+                Tree.goToParentNode();
+            }
+            return Dict;
+        } // getNodeIdAndNames()
 
         public bool CanAdd
         {
@@ -197,7 +177,7 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != NbtObjectClass.RequestMaterialDispenseClass &&
                        ObjectClass != NbtObjectClass.ContainerClass &&
                        ObjectClass != NbtObjectClass.ContainerLocationClass &&
-                       ObjectClass != NbtObjectClass.MaterialClass &&
+                       //ObjectClass != NbtObjectClass.MaterialClass &&
                        ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass &&
                        ObjectClass != NbtObjectClass.BatchOpClass &&
                        ObjectClass != NbtObjectClass.ReceiptLotClass );

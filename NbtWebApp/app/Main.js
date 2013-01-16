@@ -1,6 +1,4 @@
-/// <reference path="~/app/CswApp-vsdoc.js" />
-
-/// <reference path="../globals/CswEnums.js" />
+/// <reference path="CswApp-vsdoc.js" />
 
 window.initMain = window.initMain || function (undefined) {
 
@@ -23,7 +21,7 @@ window.initMain = window.initMain || function (undefined) {
 
         if (cswPrivate.isDocumentReady && cswPrivate.isExtReady) {
 
-            Csw.unsubscribe(Csw.enums.events.domready, _onReady); //We only need to execute once
+            Csw.unsubscribe(Csw.enums.events.domready, null, _onReady); //We only need to execute once
             
             var mainTree;
             var mainGridId = 'CswNodeGrid';
@@ -65,7 +63,7 @@ window.initMain = window.initMain || function (undefined) {
 
             function refreshMain(eventObj, data) {
                 Csw.clientChanges.unsetChanged();
-                multi = false;
+                cswPrivate.multi = false;
                 clear({ all: true });
                 Csw.tryExec(refreshSelected, data);
             }
@@ -140,19 +138,19 @@ window.initMain = window.initMain || function (undefined) {
                         Csw.clientSession.logout();
                     },
                     onQuotas: function() {
-                        handleAction({ 'actionname': 'Quotas' });
+                        Csw.main.handleAction({ 'actionname': 'Quotas' });
                     },
                     onModules: function() {
-                        handleAction({ 'actionname': 'Modules' });
+                        Csw.main.handleAction({ 'actionname': 'Modules' });
                     },
                     onSubmitRequest: function() {
-                        handleAction({ 'actionname': 'Submit_Request' });
+                        Csw.main.handleAction({ 'actionname': 'Submit_Request' });
                     },
                     onSessions: function() {
-                        handleAction({ 'actionname': 'Sessions' });
+                        Csw.main.handleAction({ 'actionname': 'Sessions' });
                     },
                     onSubscriptions: function() {
-                        handleAction({ 'actionname': 'Subscriptions' });
+                        Csw.main.handleAction({ 'actionname': 'Subscriptions' });
                     },
                     onImpersonate: function(userid, username) {
                         handleImpersonation(userid, username, function() {
@@ -191,7 +189,7 @@ window.initMain = window.initMain || function (undefined) {
                 if (false == Csw.isNullOrEmpty(qs.action)) {
                     var actopts = {};
                     Csw.extend(actopts, qs);
-                    handleAction({ actionname: qs.action, ActionOptions: actopts });
+                    Csw.main.handleAction({ actionname: qs.action, ActionOptions: actopts });
 
                 } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
                     var setView = function(viewid, viewmode) {
@@ -318,9 +316,7 @@ window.initMain = window.initMain || function (undefined) {
                 }); // CswLogin
 
             }
-
-            initAll();
-
+            
             function refreshDashboard() {
                 Csw.main.headerDashboard.empty().$.CswDashboard();
             }
@@ -487,27 +483,23 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.extend(o, options);
                 }
 
-                multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
+                cswPrivate.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
                 var linkType = Csw.string(o.linktype).toLowerCase();
 
                 var type = Csw.string(o.type).toLowerCase();
 
-                //        function itemIsSupported() {
-                //            var ret = (linkType === 'search' ||
-                //                //false === Csw.isNullOrEmpty(o.itemid) ||
-                //                type === 'action' ||
-                //                type === 'search' ||
-                //                type === 'report');
-                //            return ret;
-                //        }
-
+                //Now is a good time to purge outstanding Node-specific events
+                Csw.unsubscribe('CswMultiEdit');
+                Csw.unsubscribe('CswNodeDelete');
+                Csw.publish('initPropertyTearDown');
+                
                 if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
 
                     if (false === Csw.isNullOrEmpty(type)) {
                         switch (type) {
                         case 'action':
                             clear({ all: true });
-                            handleAction({
+                            Csw.main.handleAction({
                                 'actionname': o.name,
                                 'actionurl': o.url
                             });
@@ -569,9 +561,7 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 } //if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
 
-            }
-
-            //handleItemSelect
+            } //handleItemSelect
 
             function handleReport(reportid) {
                 Csw.openPopup("Report.html?reportid=" + reportid);
@@ -617,9 +607,9 @@ window.initMain = window.initMain || function (undefined) {
                             o.grid.toggleShowCheckboxes();
                             break;
                         default:
-                            multi = (false === multi);
+                            cswPrivate.multi = (false === cswPrivate.multi);
                             Csw.publish('CswMultiEdit', {
-                                multi: multi,
+                                multi: cswPrivate.multi,
                                 nodeid: o.nodeid,
                                 viewid: o.viewid
                             });
@@ -628,7 +618,7 @@ window.initMain = window.initMain || function (undefined) {
                         } // switch
                     },
                     onEditView: function() {
-                        handleAction({
+                        Csw.main.handleAction({
                             'actionname': 'Edit_View',
                             'ActionOptions': {
                                 'viewid': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId),
@@ -651,7 +641,7 @@ window.initMain = window.initMain || function (undefined) {
                             break;
                         }
                     },
-                    Multi: multi,
+                    Multi: cswPrivate.multi,
                     nodeTreeCheck: mainTree
                 };
 
@@ -691,7 +681,7 @@ window.initMain = window.initMain || function (undefined) {
                 o.onRefresh = function(options) {
                     clear({ centertop: true, centerbottom: true });
                     Csw.clientChanges.unsetChanged();
-                    multi = false; // semi-kludge for multi-edit batch op
+                    cswPrivate.multi = false; // semi-kludge for multi-edit batch op
                     refreshSelected(options);
                 };
                 clear({ centertop: true, centerbottom: true });
@@ -732,7 +722,7 @@ window.initMain = window.initMain || function (undefined) {
                         }
                     },
                     onEditView: function(viewid) {
-                        handleAction({
+                        Csw.main.handleAction({
                             'actionname': 'Edit_View',
                             'ActionOptions': {
                                 viewid: viewid,
@@ -794,7 +784,7 @@ window.initMain = window.initMain || function (undefined) {
 //            nodeid: o.nodeid,
 //            nodekey: o.nodekey,
                     name: mainTableId,
-                    Multi: multi,
+                    Multi: cswPrivate.multi,
                     //'onAddNode': o.onAddNode,
                     onEditNode: o.onEditNode,
                     onDeleteNode: o.onDeleteNode,
@@ -864,9 +854,7 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ right: true });
                 Csw.main.rightDiv.$.CswDefaultContent(v);
 
-            }
-
-            // showDefaultContentTree()
+            } // showDefaultContentTree()
 
             function showDefaultContentTable(viewopts) {
                 var v = {
@@ -887,9 +875,7 @@ window.initMain = window.initMain || function (undefined) {
 
                 div.$.CswDefaultContent(v);
 
-            }
-
-            // showDefaultContentTable()
+            } // showDefaultContentTable()
 
             function getTabs(options) {
                 Csw.publish('initPropertyTearDown');
@@ -912,7 +898,7 @@ window.initMain = window.initMain || function (undefined) {
                             currentNodeKey: o.nodekey
                         },
                         tabState: {
-                            ShowCheckboxes: multi,
+                            ShowCheckboxes: cswPrivate.multi,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                         },
                         onSave: function() {
@@ -923,7 +909,7 @@ window.initMain = window.initMain || function (undefined) {
                         },
                         Refresh: function(options) {
                             Csw.clientChanges.unsetChanged();
-                            multi = false; // semi-kludge for multi-edit batch op
+                            cswPrivate.multi = false; // semi-kludge for multi-edit batch op
                             refreshSelected(options);
                         },
                         onTabSelect: function(tabid) {
@@ -933,7 +919,7 @@ window.initMain = window.initMain || function (undefined) {
                             Csw.clientChanges.setChanged();
                         },
                         onEditView: function(viewid) {
-                            handleAction({
+                            Csw.main.handleAction({
                                 actionname: 'Edit_View',
                                 ActionOptions: {
                                     viewid: viewid,
@@ -1028,15 +1014,13 @@ window.initMain = window.initMain || function (undefined) {
                         } // switch
                     } // if (false === Csw.isNullOrEmpty(o.searchid))
                 } // if (manuallyCheckChanges())
-            }
-
-            // refreshSelected()
+            } // refreshSelected()
             Csw.subscribe(Csw.enums.events.main.refreshSelected,
                 function(eventObj, opts) {
                     refreshSelected(opts);
                 });
 
-            var multi = false;
+            cswPrivate.multi = false;
 
             function refreshNodesTree(options) {
                 var o = {
@@ -1077,10 +1061,8 @@ window.initMain = window.initMain || function (undefined) {
                     } // onEditFilters
                 }); // viewFilters
 
-                mainTree = Csw.nbt.nodeTree({
-                    name: 'main',
-                    parent: Csw.main.leftDiv,
-                    forsearch: o.forsearch,
+                mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
+                    forSearch: o.forsearch,
                     onSelectNode: function(optSelect) {
                         onSelectTreeNode({
                             tree: mainTree,
@@ -1089,344 +1071,347 @@ window.initMain = window.initMain || function (undefined) {
                             nodekey: optSelect.nodekey
                         });
                     },
-                    ShowCheckboxes: multi
-                });
-                mainTree.init({
-                    viewid: o.viewid,
-                    viewmode: o.viewmode,
-                    nodeid: o.nodeid,
-                    nodekey: o.nodekey,
-                    IncludeNodeRequired: o.IncludeNodeRequired,
-                    onViewChange: function(newviewid, newviewmode) {
-                        Csw.clientState.setCurrentView(newviewid, newviewmode);
-                    }
-                });
-            }
-
-            // refreshNodesTree()
-
-
-            function handleAction(options) {
-                var o = {
-                    actionname: '',
-                    actionurl: '',
-                    ActionOptions: {}
-                };
-                Csw.extend(o, options);
-
-                var designOpt = {};
-
-                Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
-
-                Csw.ajax.post({
-                    urlMethod: 'SaveActionToQuickLaunch',
-                    'data': { 'ActionName': o.actionname }
-                });
-
-                clear({ 'all': true });
-                refreshMainMenu();
-
-                var actionName = Csw.string(o.actionname).replace('_', ' ').trim().toLowerCase();
-                switch (actionName) {
-                case 'create inspection':
-                    designOpt = {
-                        name: 'cswInspectionDesignWizard',
-                        viewid: o.ActionOptions.viewid,
-                        viewmode: o.ActionOptions.viewmode,
-                        onCancel: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        },
-                        onFinish: function(viewid) {
-                            clear({ 'all': true });
-                            handleItemSelect({
-                                type: 'view',
-                                mode: 'tree',
-                                itemid: viewid
-                            });
-
-                        },
-                        startingStep: o.ActionOptions.startingStep,
-                        menuRefresh: refreshSelected
-                    };
-                    Csw.nbt.createInspectionWizard(Csw.main.centerTopDiv, designOpt);
-
-                    break;
-                case 'create material':
-                    var createOpt = {
-                        state: o.state,
-                        request: o.requestitem,
-                        onCancel: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        },
-                        onFinish: function(actionData) {
-                            var createMaterialLandingPage = function() {
-                                setLandingPage(function() {
-                                    Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
-                                        name: 'createMaterialLandingPage',
-                                        Title: 'Created:',
-                                        ActionId: actionData.ActionId,
-                                        ObjectClassId: actionData.RelatedObjectClassId,
-                                        onLinkClick: handleItemSelect,
-                                        onAddClick: function(itemData) {
-                                            $.CswDialog('AddNodeDialog', {
-                                                text: itemData.Text,
-                                                nodetypeid: itemData.NodeTypeId,
-                                                relatednodeid: actionData.RelatedNodeId,
-                                                relatednodename: actionData.RelatedNodeName,
-                                                relatednodetypeid: actionData.RelatedNodeTypeId,
-                                                relatedobjectclassid: actionData.RelatedObjectClassId,
-                                                onAddNode: function(nodeid, nodekey) {
-                                                    clear({ all: true });
-                                                    refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
-                                                }
-                                            });
-                                        },
-                                        onTabClick: function(itemData) {
-                                            Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
-                                            handleItemSelect(itemData);
-                                        },
-                                        onButtonClick: function(itemData) {
-                                            Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
-                                                name: itemData.Text,
-                                                value: itemData.ActionName,
-                                                mode: 'landingpage',
-                                                propId: itemData.NodeTypePropId
-                                            });
-                                        },
-                                        onAddComponent: createMaterialLandingPage,
-                                        landingPageRequestData: actionData,
-                                        onActionLinkClick: function(viewId) {
-                                            handleItemSelect({
-                                                type: 'view',
-                                                mode: 'tree',
-                                                itemid: viewId
-                                            });
-                                        },
-                                        isConfigurable: actionData.isConfigurable
-                                    });
-                                });
-                            };
-                            createMaterialLandingPage();
-                        },
-                        startingStep: o.ActionOptions.startingStep
-                    };
-                    Csw.nbt.createMaterialWizard(Csw.main.centerTopDiv, createOpt);
-                    break;
-                case 'dispensecontainer':
-                    var requestItemId = '', requestMode = '';
-                    if (o.requestitem) {
-                        requestItemId = o.requestitem.requestitemid;
-                        requestMode = o.requestitem.requestMode;
-                    }
-                    var title = o.title;
-                    if (false === title) {
-                        title = 'Dispense from ';
-                        if (false === Csw.isNullOrEmpty(o.barcode)) {
-                            title += 'Barcode [' + o.barcode + ']';
-                        } else {
-                            title += 'Selected Container';
+                    isMulti: cswPrivate.multi,
+                    state: {
+                        viewId: o.viewid,
+                        viewMode: o.viewmode,
+                        nodeId: o.nodeid,
+                        nodeKey: o.nodekey,
+                        includeNodeRequired: o.IncludeNodeRequired,
+                        onViewChange: function (newviewid, newviewmode) {
+                            Csw.clientState.setCurrentView(newviewid, newviewmode);
                         }
                     }
-                    designOpt = {
-                        title: title,
-                        state: {
-                            sourceContainerNodeId: o.sourceContainerNodeId,
-                            currentQuantity: o.currentQuantity,
-                            currentUnitName: o.currentUnitName,
-                            precision: o.precision,
-                            initialQuantity: Csw.deserialize(o.initialQuantity),
-                            requestItemId: requestItemId,
-                            requestMode: requestMode,
-                            title: title,
-                            location: o.location,
-                            material: o.material,
-                            barcode: o.barcode,
-                            containerNodeTypeId: o.containernodetypeid,
-                            containerObjectClassId: o.containerobjectclassid,
-                            customBarcodes: o.customBarcodes,
-                            netQuantityEnforced: o.netQuantityEnforced
-                        },
-                        onCancel: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        },
-                        onFinish: function(viewid) {
-                            clear({ 'all': true });
-                            handleItemSelect({
-                                type: 'view',
-                                mode: 'tree',
-                                itemid: viewid
-                            });
-                        }
+                });
+            } // refreshNodesTree()
+
+
+            Csw.main.handleAction = Csw.main.handleAction ||
+                Csw.main.register('handleAction', function(options) {
+                    var o = {
+                        actionname: '',
+                        actionurl: '',
+                        ActionOptions: {}
                     };
-                    Csw.nbt.dispenseContainerWizard(Csw.main.centerTopDiv, designOpt);
-                    break;
-                case 'movecontainer':
-                    designOpt = {
-                        title: o.title,
-                        requestitemid: (o.requestitem) ? o.requestitem.requestitemid : '',
-                        location: o.location,
-                        onCancel: function() {
-                            clear({ all: true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        },
-                        onSubmit: function(viewid) {
-                            clear({ all: true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        }
-                    };
-                    Csw.actions.containerMove(Csw.main.centerTopDiv, designOpt);
-                    break;
-                case 'edit view':
-                    var editViewOptions = {
-                        'viewid': o.ActionOptions.viewid,
-                        'viewmode': o.ActionOptions.viewmode,
-                        'onCancel': function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        },
-                        'onFinish': function(viewid, viewmode) {
-                            clear({ 'all': true });
-                            //refreshViewSelect();
-                            if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
+                    Csw.extend(o, options);
+
+                    var designOpt = {};
+
+                    Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
+
+                    Csw.ajax.post({
+                        urlMethod: 'SaveActionToQuickLaunch',
+                        'data': { 'ActionName': o.actionname }
+                    });
+
+                    clear({ 'all': true });
+                    refreshMainMenu();
+
+                    var actionName = Csw.string(o.actionname).replace('_', ' ').trim().toLowerCase();
+                    switch (actionName) {
+                    case 'create inspection':
+                        designOpt = {
+                            name: 'cswInspectionDesignWizard',
+                            viewid: o.ActionOptions.viewid,
+                            viewmode: o.ActionOptions.viewmode,
+                            onCancel: function() {
+                                clear({ 'all': true });
                                 Csw.clientState.setCurrent(Csw.clientState.getLast());
                                 refreshSelected();
+                            },
+                            onFinish: function(viewid) {
+                                clear({ 'all': true });
+                                handleItemSelect({
+                                    type: 'view',
+                                    mode: 'tree',
+                                    itemid: viewid
+                                });
+
+                            },
+                            startingStep: o.ActionOptions.startingStep,
+                            menuRefresh: refreshSelected
+                        };
+                        Csw.nbt.createInspectionWizard(Csw.main.centerTopDiv, designOpt);
+
+                        break;
+                    case 'create material':
+                        var createOpt = {
+                            state: o.state,
+                            request: o.requestitem,
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            onFinish: function(actionData) {
+                                var createMaterialLandingPage = function() {
+                                    setLandingPage(function() {
+                                        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+                                            name: 'createMaterialLandingPage',
+                                            Title: 'Created:',
+                                            ActionId: actionData.ActionId,
+                                            ObjectClassId: actionData.RelatedObjectClassId,
+                                            onLinkClick: handleItemSelect,
+                                            onAddClick: function(itemData) {
+                                                $.CswDialog('AddNodeDialog', {
+                                                    text: itemData.Text,
+                                                    nodetypeid: itemData.NodeTypeId,
+                                                    relatednodeid: actionData.RelatedNodeId,
+                                                    relatednodename: actionData.RelatedNodeName,
+                                                    relatednodetypeid: actionData.RelatedNodeTypeId,
+                                                    relatedobjectclassid: actionData.RelatedObjectClassId,
+                                                    onAddNode: function(nodeid, nodekey) {
+                                                        clear({ all: true });
+                                                        refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                                                    }
+                                                });
+                                            },
+                                            onTabClick: function(itemData) {
+                                                Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                                                handleItemSelect(itemData);
+                                            },
+                                            onButtonClick: function(itemData) {
+                                                Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
+                                                    name: itemData.Text,
+                                                    value: itemData.ActionName,
+                                                    mode: 'landingpage',
+                                                    propId: itemData.NodeTypePropId
+                                                });
+                                            },
+                                            onAddComponent: createMaterialLandingPage,
+                                            landingPageRequestData: actionData,
+                                            onActionLinkClick: function(viewId) {
+                                                handleItemSelect({
+                                                    type: 'view',
+                                                    mode: 'tree',
+                                                    itemid: viewId
+                                                });
+                                            },
+                                            isConfigurable: actionData.isConfigurable
+                                        });
+                                    });
+                                };
+                                createMaterialLandingPage();
+                            },
+                            startingStep: o.ActionOptions.startingStep
+                        };
+                        Csw.nbt.createMaterialWizard(Csw.main.centerTopDiv, createOpt);
+                        break;
+                    case 'dispensecontainer':
+                        var requestItemId = '', requestMode = '';
+                        if (o.requestitem) {
+                            requestItemId = o.requestitem.requestitemid;
+                            requestMode = o.requestitem.requestMode;
+                        }
+                        var title = o.title;
+                        if (false === title) {
+                            title = 'Dispense from ';
+                            if (false === Csw.isNullOrEmpty(o.barcode)) {
+                                title += 'Barcode [' + o.barcode + ']';
                             } else {
+                                title += 'Selected Container';
+                            }
+                        }
+                        designOpt = {
+                            title: title,
+                            state: {
+                                sourceContainerNodeId: o.sourceContainerNodeId,
+                                currentQuantity: o.currentQuantity,
+                                currentUnitName: o.currentUnitName,
+                                precision: o.precision,
+                                initialQuantity: Csw.deserialize(o.initialQuantity),
+                                requestItemId: requestItemId,
+                                requestMode: requestMode,
+                                title: title,
+                                location: o.location,
+                                material: o.material,
+                                barcode: o.barcode,
+                                containerNodeTypeId: o.containernodetypeid,
+                                containerObjectClassId: o.containerobjectclassid,
+                                customBarcodes: o.customBarcodes,
+                                netQuantityEnforced: o.netQuantityEnforced
+                            },
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            onFinish: function(viewid) {
+                                clear({ 'all': true });
+                                handleItemSelect({
+                                    type: 'view',
+                                    mode: 'tree',
+                                    itemid: viewid
+                                });
+                            }
+                        };
+                        Csw.nbt.dispenseContainerWizard(Csw.main.centerTopDiv, designOpt);
+                        break;
+                    case 'movecontainer':
+                        designOpt = {
+                            title: o.title,
+                            requestitemid: (o.requestitem) ? o.requestitem.requestitemid : '',
+                            location: o.location,
+                            onCancel: function() {
+                                clear({ all: true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            onSubmit: function(viewid) {
+                                clear({ all: true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        };
+                        Csw.actions.containerMove(Csw.main.centerTopDiv, designOpt);
+                        break;
+                    case 'edit view':
+                        var editViewOptions = {
+                            'viewid': o.ActionOptions.viewid,
+                            'viewmode': o.ActionOptions.viewmode,
+                            'onCancel': function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            'onFinish': function(viewid, viewmode) {
+                                clear({ 'all': true });
+                                //refreshViewSelect();
+                                if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
+                                    Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                    refreshSelected();
+                                } else {
+                                    handleItemSelect({ itemid: viewid, mode: viewmode });
+                                }
+                            },
+                            onAddView: function(deletedviewid) {
+                            },
+                            onDeleteView: function(deletedviewid) {
+                                var current = Csw.clientState.getCurrent();
+                                if (current.viewid == deletedviewid) {
+                                    Csw.clientState.clearCurrent();
+                                }
+                                var last = Csw.clientState.getLast();
+                                if (last.viewid == deletedviewid) {
+                                    Csw.clientState.clearLast();
+                                }
+                                refreshViewSelect();
+                            },
+                            'startingStep': o.ActionOptions.startingStep
+                        };
+
+                        Csw.main.centerTopDiv.$.CswViewEditor(editViewOptions);
+                        break;
+                    case 'future scheduling':
+                        Csw.nbt.futureSchedulingWizard(Csw.main.centerTopDiv, {
+                            onCancel: refreshSelected,
+                            onFinish: function(viewid, viewmode) {
                                 handleItemSelect({ itemid: viewid, mode: viewmode });
                             }
-                        },
-                        onAddView: function(deletedviewid) {
-                        },
-                        onDeleteView: function(deletedviewid) {
-                            var current = Csw.clientState.getCurrent();
-                            if (current.viewid == deletedviewid) {
-                                Csw.clientState.clearCurrent();
-                            }
-                            var last = Csw.clientState.getLast();
-                            if (last.viewid == deletedviewid) {
-                                Csw.clientState.clearLast();
-                            }
-                            refreshViewSelect();
-                        },
-                        'startingStep': o.ActionOptions.startingStep
-                    };
-
-                    Csw.main.centerTopDiv.$.CswViewEditor(editViewOptions);
-                    break;
-                case 'future scheduling':
-                    Csw.nbt.futureSchedulingWizard(Csw.main.centerTopDiv, {
-                        onCancel: refreshSelected,
-                        onFinish: function(viewid, viewmode) {
-                            handleItemSelect({ itemid: viewid, mode: viewmode });
-                        }
-                    });
-                    break;
-                //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
-                //				break;                                                                                                 
-                //			case 'Inspection_Design':                                                                                                 
-                //				break;                                                                                                 
-                case 'quotas':
-                    Csw.actions.quotas(Csw.main.centerTopDiv, {
-                        onQuotaChange: function() {
-                            Csw.actions.quotaImage(Csw.main.headerQuota);
-                        }
-                    });
-
-                    break;
-                case 'modules':
-                    Csw.actions.modules(Csw.main.centerTopDiv, {
-                        onModuleChange: function() {
-                            refreshDashboard();
-                            refreshViewSelect();
-                        }
-                    });
-                    break;
-                case 'receiving':
-                    o.onFinish = function(viewid) {
-                        clear({ 'all': true });
-                        handleItemSelect({
-                            type: 'view',
-                            mode: 'tree',
-                            itemid: viewid
                         });
-                    };
-                    o.onCancel = function() {
-                        clear({ 'all': true });
-                        Csw.clientState.setCurrent(Csw.clientState.getLast());
-                        refreshSelected();
-                    };
-                    Csw.nbt.receiveMaterialWizard(Csw.main.centerTopDiv, o);
-                    break;
-                case 'reconciliation':
-                    var reconciliationOptions = {
-                        onCancel: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        },
-                        onFinish: function() {
-                            refreshWelcomeLandingPage();
-                        },
-                        startingStep: o.ActionOptions.startingStep
-                    };
-                    Csw.nbt.ReconciliationWizard(Csw.main.centerTopDiv, reconciliationOptions);
-                    break;
-                case 'sessions':
-                    Csw.actions.sessions(Csw.main.centerTopDiv);
-                    break;
-                case 'submit request':
-                    Csw.actions.requestCarts(Csw.main.centerTopDiv, {
-                        onSubmit: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                            refreshHeaderMenu();
-                        },
-                        onCancel: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        }
-                    });
-                    break;
-                case 'subscriptions':
-                    Csw.actions.subscriptions(Csw.main.centerTopDiv);
-                    break;
-                case 'view scheduled rules':
-                    var rulesOpt = {
-                        exitFunc: function() {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        },
-                        menuRefresh: refreshSelected
-                    };
+                        break;
+                    //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
+                    //				break;                                                                                                 
+                    //			case 'Inspection_Design':                                                                                                 
+                    //				break;                                                                                                 
+                    case 'quotas':
+                        Csw.actions.quotas(Csw.main.centerTopDiv, {
+                            onQuotaChange: function() {
+                                Csw.actions.quotaImage(Csw.main.headerQuota);
+                            }
+                        });
 
-                    Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
-                    break;
-                default:
-                    if (false == Csw.isNullOrEmpty(o.actionurl)) {
-                        Csw.window.location(o.actionurl);
-                    } else {
-                        refreshWelcomeLandingPage();
+                        break;
+                    case 'modules':
+                        Csw.actions.modules(Csw.main.centerTopDiv, {
+                            onModuleChange: function() {
+                                refreshDashboard();
+                                refreshViewSelect();
+                            }
+                        });
+                        break;
+                    case 'receiving':
+                        o.onFinish = function(viewid) {
+                            clear({ 'all': true });
+                            handleItemSelect({
+                                type: 'view',
+                                mode: 'tree',
+                                itemid: viewid
+                            });
+                        };
+                        o.onCancel = function() {
+                            clear({ 'all': true });
+                            Csw.clientState.setCurrent(Csw.clientState.getLast());
+                            refreshSelected();
+                        };
+                        Csw.nbt.receiveMaterialWizard(Csw.main.centerTopDiv, o);
+                        break;
+                    case 'reconciliation':
+                        var reconciliationOptions = {
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            onFinish: function() {
+                                refreshWelcomeLandingPage();
+                            },
+                            startingStep: o.ActionOptions.startingStep
+                        };
+                        Csw.nbt.ReconciliationWizard(Csw.main.centerTopDiv, reconciliationOptions);
+                        break;
+                    case 'sessions':
+                        Csw.actions.sessions(Csw.main.centerTopDiv);
+                        break;
+                    case 'submit request':
+                        Csw.actions.requestCarts(Csw.main.centerTopDiv, {
+                            onSubmit: function() {
+                                //Nada
+                            },
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
+                        break;
+                    case 'subscriptions':
+                        Csw.actions.subscriptions(Csw.main.centerTopDiv);
+                        break;
+                    case 'view scheduled rules':
+                        var rulesOpt = {
+                            exitFunc: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            menuRefresh: refreshSelected
+                        };
+
+                        Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
+                        break;
+                    default:
+                        if (false == Csw.isNullOrEmpty(o.actionurl)) {
+                            Csw.window.location(o.actionurl);
+                        } else {
+                            refreshWelcomeLandingPage();
+                        }
+                        break;
                     }
-                    break;
-                }
-            }
+                });
 
             Csw.subscribe(Csw.enums.events.main.handleAction, function(eventObj, opts) {
-                handleAction(opts);
-            });
-            // _handleAction()
+                Csw.main.handleAction(opts);
+            }); // _handleAction()
+
+
+            (function _postCtor() {
+                //Case 28307: don't exec anything until all function expressions have been read
+                initAll();
+            }());
+
         }
     });
 };
+
 
