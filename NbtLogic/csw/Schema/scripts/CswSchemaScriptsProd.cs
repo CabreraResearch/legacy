@@ -47,15 +47,17 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28408_Part2() ) );     //01V-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28295() ) );           //01V-020
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27649() ) );           //01V-021
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436() ) );           //01V-022
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436B() ) );          //01V-023
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436() ) );                         //01V-022
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436B() ) );                        //01V-023
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436C() ) );                        //01V-024
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436D() ) );                        //01V-025
 
             #endregion VIOLA
 
             #region WILLIAM
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );        //01V-024   01W-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );           //01V-024   01W-001
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );        //01V-026   01W-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );           //01V-026   01W-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );           //01V-025   01W-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );           //01V-026   01W-003
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );           //01V-027   01W-004
@@ -79,9 +81,9 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01OC() ), RunBeforeEveryExecutionOfUpdater_01OC.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), RunBeforeEveryExecutionOfUpdater_02.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
-
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_04() ), RunBeforeEveryExecutionOfUpdater_04.Title );
+            
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), RunAfterEveryExecutionOfUpdater_02.Title );
 
         }//ctor
 
