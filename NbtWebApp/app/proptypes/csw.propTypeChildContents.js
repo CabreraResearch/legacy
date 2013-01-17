@@ -49,7 +49,7 @@
 
                     nodeSelect.isRequired = cswPublic.data.isRequired();
                     nodeSelect.isMulti = cswPublic.data.isMulti();
-                    nodeSelect.isReadOnly = cswPublic.data.isReadOnly();
+                    nodeSelect.isReadOnly = false; // cswPublic.data.isReadOnly();
                     nodeSelect.isClickable = cswPublic.data.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
 
                     nodeSelect.doGetNodes = false;
@@ -76,7 +76,7 @@
                     }); // link
 
                     cswPrivate.childContentsDiv = cswPrivate.parent.div();
-                    
+
                     if (false === Csw.isNullOrEmpty(nodeSelect.selectedNodeId)) {
                         cswPrivate.loadNode(nodeSelect.selectedNodeId);
                     }
