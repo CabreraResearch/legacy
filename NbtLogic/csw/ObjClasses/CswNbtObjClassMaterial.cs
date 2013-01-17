@@ -449,6 +449,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeTypeProp fileTypeNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
             CswNbtMetaDataNodeTypeProp fileNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
             CswNbtMetaDataNodeTypeProp linkNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
+            CswNbtMetaDataNodeTypeProp ownerNTP = documentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
 
             CswNbtView docView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = docView.AddViewRelationship( documentNT, true );
@@ -459,7 +460,14 @@ namespace ChemSW.Nbt.ObjClasses
 
             docView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: archivedNTP,
-                Value: CswConvert.ToDbVal( false ).ToString(),
+                SubFieldName: CswNbtSubField.SubFieldName.Checked,
+                Value: false.ToString(),
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            docView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: ownerNTP,
+                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                Value: NodeId.PrimaryKey.ToString(),
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             docView.AddViewProperty( parent, formatNTP );
