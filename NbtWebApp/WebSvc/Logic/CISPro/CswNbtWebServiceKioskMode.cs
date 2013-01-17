@@ -89,6 +89,8 @@ namespace ChemSW.Nbt.WebServices
             public string StatusMsg = string.Empty;
             [DataMember]
             public bool ServerValidated = false;
+            [DataMember]
+            public string SecondValue = string.Empty;
 
             public NbtObjectClass ExpectedObjClass( string OpMode, int FieldNumber )
             {
@@ -216,6 +218,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     KioskModeData.OperationData.Field1.ServerValidated = true;
                     KioskModeData.OperationData.Field1.StatusMsg = "";
+                    if( expectedOC.Equals( NbtObjectClass.LocationClass ) )
+                    {
+                        CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field2.Value );
+                        KioskModeData.OperationData.Field1.SecondValue = " (" + scannedLocation.Name.Text + ")";
+                    }
                 }
             }
             else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Mode ) )
@@ -236,7 +243,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value );
                     containerToMove.MoveContainer( locationToMoveTo.NodeId );
                     containerToMove.postChanges( false );
-                    OpData.Log.Add( DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Location.CachedFullPath + " (" + OpData.Field1.Value + ")" );
+                    OpData.Log.Add( DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
                     break;
                 case "Owner":
                     CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
@@ -254,7 +261,7 @@ namespace ChemSW.Nbt.WebServices
                     containerToTransfer.MoveContainer( newTransferOwner.DefaultLocationId );
                     containerToTransfer.postChanges( false );
                     CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
-                    OpData.Log.Add( DateTime.Now + " - Transfered container " + OpData.Field2.Value + " to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ")  and changed location to " + newLocationNode.Location.CachedFullPath );
+                    OpData.Log.Add( DateTime.Now + " - Transfered container ownership" + OpData.Field2.Value + " to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ")  and changed location to " + newLocationNode.Name.Text );
                     break;
                 case "DispenseContainer":
                     //TODO: dispense container
@@ -264,6 +271,7 @@ namespace ChemSW.Nbt.WebServices
                     break;
             }
             OpData.Field2.Value = string.Empty;
+            OpData.Field2.SecondValue = string.Empty;
             OpData.Field2.ServerValidated = false;
             KioskModeData.OperationData = OpData;
             Return.Data = KioskModeData;

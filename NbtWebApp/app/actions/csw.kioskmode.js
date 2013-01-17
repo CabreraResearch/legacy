@@ -26,13 +26,15 @@
                             Name: '',
                             Value: '',
                             StatusMsg: '',
-                            ServerValidated: false
+                            ServerValidated: false,
+                            SecondValue: ''
                         },
                         Field2: {
                             Name: '',
                             Value: '',
                             StatusMsg: '',
-                            ServerValidated: false
+                            ServerValidated: false,
+                            SecondValue: ''
                         }
                     };
 
@@ -142,13 +144,15 @@
                             Name: '',
                             Value: '',
                             StatusMsg: '',
-                            ServerValidated: false
+                            ServerValidated: false,
+                            SecondValue: ''
                         },
                         Field2: {
                             Name: '',
                             Value: '',
                             StatusMsg: '',
-                            ServerValidated: false
+                            ServerValidated: false,
+                            SecondValue: ''
                         }
                     };
                 };
@@ -171,12 +175,14 @@
                     var field1Cell = propsTbl.cell(2, 1).css('height', '25px');
                     field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
                     propsTbl.cell(2, 2).span({ text: cswPrivate.OperationData.Field1.Value });
-                    propsTbl.cell(2, 3).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
+                    propsTbl.cell(2, 3).span({ text: cswPrivate.OperationData.Field1.SecondValue });
+                    propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
 
                     var field2Cell = propsTbl.cell(3, 1).css('height', '25px');
                     field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
                     propsTbl.cell(3, 2).span({ text: cswPrivate.OperationData.Field2.Value });
-                    propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
+                    propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.SecondValue });
+                    propsTbl.cell(3, 4).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
 
                     var logStr = '';
                     Csw.each(cswPrivate.OperationData.Log, function (item) {
