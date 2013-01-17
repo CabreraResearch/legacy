@@ -144,12 +144,12 @@
                         if (cswPublic.is.multi !== true) {
                             if (record != cswPublic.selectedTreeNode) {
                                 record.expand();
-                                cswPublic.previousTreeNode = cswPublic.selectedTreeNode; 
+                                cswPublic.previousTreeNode = cswPublic.selectedTreeNode;
                                 cswPublic.selectedTreeNode = record;
                                 //If we're in single edit mode, the count is always 1
                                 cswPrivate.selectedNodeCount = 1;
                             }
-                        }
+                        } 
                         if (cswPrivate.selectedNodeCount === 1) {
                             //In either single or multi-edit, render whenever the node count is 1
                             Csw.tryExec(cswPrivate.onSelect, record.raw);
@@ -176,6 +176,11 @@
                                 //or if the caller's algorithm to allow simultaneous selection passes, 
                                 //then increment up or down and set the current and previous nodes accordingly
                                 var inc = (checked) ? 1 : -1;
+                                if (cswPrivate.selectedNodeCount <= 1 || null === cswPrivate.firstSelectedNode) {
+                                    cswPrivate.firstSelectedNode = tmpCrntNode;
+                                } else {
+                                    cswPublic.selectNode(cswPrivate.firstSelectedNode);
+                                }
                                 cswPublic.previousTreeNode = tmpPrevNode;
                                 cswPublic.selectedTreeNode = tmpCrntNode;
                                 cswPrivate.selectedNodeCount += inc;
@@ -184,13 +189,15 @@
                                 record.raw.checked = false;
                                 record.set('checked', false);
                                 if (cswPrivate.selectedNodeCount > 0) {
-                                    cswPublic.selectNode(cswPublic.selectedTreeNode);
+                                    cswPublic.selectNode(cswPrivate.firstSelectedNode);
                                 } 
                             }
                         }
                     }
                 };
             };
+            
+            cswPrivate.firstSelectedNode = null;
             cswPrivate.selectedNodeCount = 0;
             cswPublic.selectedTreeNode = null;
             cswPublic.previousTreeNode = null;
@@ -271,6 +278,7 @@
                 /// <summary>
                 /// For Multii-Edit, uses jQuery selector to hide all checkboxes.
                 /// </summary>
+                cswPrivate.firstSelectedNode = null;
                 $('.x-tree-checkbox').hide();
                 return true;
             };
@@ -295,9 +303,9 @@
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
                 if (true === cswPublic.is.multi) {
-                    $('.x-tree-checkbox').show();
+                    cswPrivate.showCheckboxes();
                 } else {
-                    $('.x-tree-checkbox').hide();
+                    cswPrivate.hideCheckboxes();
                 }
                 return cswPublic;
             };
