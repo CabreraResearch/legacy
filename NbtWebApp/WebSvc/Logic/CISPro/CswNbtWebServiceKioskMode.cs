@@ -95,9 +95,10 @@ namespace ChemSW.Nbt.WebServices
             public NbtObjectClass ExpectedObjClass( string OpMode, int FieldNumber )
             {
                 NbtObjectClass Ret = NbtObjectClass.LocationClass;
+                OpMode = OpMode.ToLower();
                 switch( OpMode )
                 {
-                    case "Move":
+                    case "move":
                         if( FieldNumber == 1 )
                         {
                             Ret = NbtObjectClass.LocationClass;
@@ -107,7 +108,7 @@ namespace ChemSW.Nbt.WebServices
                             Ret = NbtObjectClass.ContainerClass;
                         }
                         break;
-                    case "Owner":
+                    case "owner":
                         if( FieldNumber == 1 )
                         {
                             Ret = NbtObjectClass.UserClass;
@@ -117,7 +118,7 @@ namespace ChemSW.Nbt.WebServices
                             Ret = NbtObjectClass.ContainerClass;
                         }
                         break;
-                    case "Transfer":
+                    case "transfer":
                         if( FieldNumber == 1 )
                         {
                             Ret = NbtObjectClass.UserClass;
@@ -127,10 +128,10 @@ namespace ChemSW.Nbt.WebServices
                             Ret = NbtObjectClass.ContainerClass;
                         }
                         break;
-                    case "DispenseContainer":
+                    case "dispense":
                         //TODO: dispense container
                         break;
-                    case "DisposeContainer":
+                    case "dispose":
                         //TODO: dispose container
                         break;
                 }
@@ -150,40 +151,40 @@ namespace ChemSW.Nbt.WebServices
             kioskModeData.AvailableModes.Add( new Mode
             {
                 name = "Move",
-                imgUrl = "Images/newicons/KioskMode/Move.png"
+                imgUrl = "Images/newicons/KioskMode/Move_code39.png"
             } );
             kioskModeData.AvailableModes.Add( new Mode
             {
                 name = "Owner",
-                imgUrl = "Images/newicons/KioskMode/Owner.png"
+                imgUrl = "Images/newicons/KioskMode/Owner_code39.png"
             } );
             kioskModeData.AvailableModes.Add( new Mode
             {
                 name = "Transfer",
-                imgUrl = "Images/newicons/KioskMode/Transfer.png"
+                imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
             } );
             CswNbtPermit permissions = new CswNbtPermit( NbtResources );
             if( permissions.can( CswNbtActionName.DispenseContainer ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswNbtActionName.DispenseContainer.ToString(),
-                    imgUrl = "Images/newicons/KioskMode/Dispense.png"
+                    name = "Dispense",
+                    imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
                 } );
             }
             if( permissions.can( CswNbtActionName.DisposeContainer ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswNbtActionName.DisposeContainer.ToString(),
-                    imgUrl = "Images/newicons/KioskMode/Dispose.png"
+                    name = "Dispose",
+                    imgUrl = "Images/newicons/KioskMode/Dispose_code39.png"
                 } );
             }
 
             kioskModeData.AvailableModes.Add( new Mode
             {
                 name = "Reset",
-                imgUrl = "Images/newicons/KioskMode/Reset.png"
+                imgUrl = "Images/newicons/KioskMode/Reset_code39.png"
             } );
 
             Return.Data = kioskModeData;
@@ -236,16 +237,17 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             OperationData OpData = KioskModeData.OperationData;
-            switch( OpData.Mode )
+            string mode = OpData.Mode.ToLower();
+            switch( mode )
             {
-                case "Move":
+                case "move":
                     CswNbtObjClassContainer containerToMove = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
                     CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value );
                     containerToMove.MoveContainer( locationToMoveTo.NodeId );
                     containerToMove.postChanges( false );
                     OpData.Log.Add( DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
                     break;
-                case "Owner":
+                case "owner":
                     CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
                     CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value );
                     containerNode.Owner.RelatedNodeId = newOwnerNode.NodeId;
@@ -253,7 +255,7 @@ namespace ChemSW.Nbt.WebServices
                     containerNode.postChanges( false );
                     OpData.Log.Add( DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.FirstName + " " + newOwnerNode.LastName + " (" + OpData.Field1.Value + ")" );
                     break;
-                case "Transfer":
+                case "transfer":
                     CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
                     CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value );
                     containerToTransfer.Owner.RelatedNodeId = newTransferOwner.NodeId;
@@ -263,10 +265,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
                     OpData.Log.Add( DateTime.Now + " - Transferred container " + OpData.Field2.Value + " ownership to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );
                     break;
-                case "DispenseContainer":
+                case "dispense":
                     //TODO: dispense container
                     break;
-                case "DisposeContainer":
+                case "dispose":
                     //TODO: dispose container
                     break;
             }
@@ -283,24 +285,25 @@ namespace ChemSW.Nbt.WebServices
         {
             OpData.ModeServerValidated = true;
             OpData.ModeStatusMsg = string.Empty;
-            switch( OpData.Mode )
+            string selectedOp = OpData.Mode.ToLower();
+            switch( selectedOp )
             {
-                case "Move":
+                case "move":
                     OpData.Field1.Name = "Location:";
                     OpData.Field2.Name = "Item:";
                     break;
-                case "Owner":
+                case "owner":
                     OpData.Field1.Name = "User:";
                     OpData.Field2.Name = "Item:";
                     break;
-                case "Transfer":
+                case "transfer":
                     OpData.Field1.Name = "User:";
                     OpData.Field2.Name = "Item:";
                     break;
-                case "DispenseContainer":
+                case "dispenseContainer":
                     //TODO: dispense container
                     break;
-                case "DisposeContainer":
+                case "disposeContainer":
                     //TODO: dispose container
                     break;
                 default:
