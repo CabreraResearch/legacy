@@ -97,7 +97,7 @@
                 Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
                     return function _onMulti(eventObj, multiOpts) {
                         if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
-                            cswPublic.nodeTree.multi.set(multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
+                            cswPublic.nodeTree.is.multi = (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
                             cswPublic.nodeTree.toggleMultiEdit();
                         } else {
                             Csw.unsubscribe('CswMultiEdit', null, _onMulti);

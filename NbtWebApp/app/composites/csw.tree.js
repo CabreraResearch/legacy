@@ -6,7 +6,28 @@
 
             //#region Variables
 
-            var cswPublic = {};
+            var cswPublic = {
+                is: (function() {
+                    var isMulti = false;
+                    return {
+                        get multi () {
+                            return isMulti;
+                        },
+                        set multi (val) {
+                            if(val === true) {
+                                isMulti = true;
+                            } else {
+                                isMulti = false;
+                            }
+                            return isMulti;
+                        },
+                        toggleMulti: function() {
+                            isMulti = !isMulti;
+                            return isMulti;
+                        }
+                    };
+                }())
+            };
 
             //#endregion Variables
 
@@ -37,7 +58,7 @@
                 }];
 
                 //State
-                cswPrivate.isMulti = cswPrivate.isMulti || false;
+                cswPublic.is.multi = cswPrivate.isMulti;
                 cswPrivate.allowMultiSelection = cswPrivate.allowMultiSelection || function() {};
 
 
@@ -111,7 +132,7 @@
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
                             var firstChild = cswPrivate.rootNode.childNodes[0];
                             cswPublic.selectNode(firstChild);
-                            cswPublic.toggleMultiEdit(cswPublic.multi.is());
+                            cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
                         
                     },
@@ -120,7 +141,7 @@
                         //1. Keep this generic. Defer to the caller for implementation-specific validation.
                         //2. Properly track the currently and previously selected node (multiple clicks to the same node trigger this event)
                         var ret = true;
-                        if(cswPrivate.isMulti !== true) {
+                        if (cswPublic.is.multi !== true) {
                             if (record != cswPublic.selectedTreeNode) {
                                 record.expand();
                                 cswPublic.previousTreeNode = cswPublic.selectedTreeNode; 
@@ -141,7 +162,7 @@
                         //Ext doesn't update the raw data, which is the only thing we have to manage state.
                         //Manually keep it up to date.
                         record.raw.checked = checked;
-                        if (cswPublic.multi.is()) {
+                        if (cswPublic.is.multi) {
                             var tmpPrevNode = cswPublic.selectedTreeNode;
                             var tmpCrntNode = record;
                             
@@ -253,34 +274,13 @@
                 $('.x-tree-checkbox').hide();
                 return true;
             };
-
-            cswPublic.multi = (function() {
-                var isMulti = cswPrivate.isMulti;
-                return {
-                    is: function() {
-                        return isMulti;
-                    },
-                    set: function(val) {
-                        if(val === true) {
-                            isMulti = true;
-                        } else {
-                            isMulti = false;
-                        }
-                        return isMulti;
-                    },
-                    toggle: function() {
-                        isMulti = !isMulti;
-                        return isMulti;
-                    }
-                };
-            }());
-
+            
             cswPublic.toggleMultiEdit = function() {
             	/// <summary>
             	/// Toggles Multi-Edit state on this instance.
                 /// </summary>
                 var selModel = cswPublic.tree.getSelectionModel();
-                if (cswPublic.multi.is()) {
+                if (cswPublic.is.multi) {
                     selModel.setSelectionMode('MULTI');
                 } else {
                     selModel.setSelectionMode('SINGLE');
@@ -294,7 +294,7 @@
                 /// Shows or hides all checkboxes according to Multi-Edit state.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                if (true === cswPublic.multi.is()) {
+                if (true === cswPublic.is.multi) {
                     $('.x-tree-checkbox').show();
                 } else {
                     $('.x-tree-checkbox').hide();

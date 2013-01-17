@@ -74,7 +74,8 @@
                         var nodename = Csw.string(menuItemJson.nodename);
                         var nodetypeid = Csw.string(menuItemJson.nodetypeid);
                         var viewid = Csw.string(menuItemJson.viewid);
-
+                        var isWholePageNavigation = false; //If we're switching to a completely new context
+                        
                         switch (menuItemJson.action) {
                             case 'About':
                                 $.CswDialog('AboutDialog');
@@ -98,6 +99,7 @@
                                 });
                                 break;
                             case 'Clear Cache':
+                                isWholePageNavigation = true;
                                 window.location.reload(true);
                                 break;
                             case 'DeleteNode':
@@ -109,11 +111,15 @@
                                 });
                                 break;
                             case 'DeleteDemoNodes':
-                                $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>', 'Delete All Demo Data', function () {
+                                $.CswDialog('ConfirmDialog',
+                                    'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>',
+                                    'Delete All Demo Data',
+                                    function () {
                                     Csw.ajax.post({
                                         url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
                                         success: function (data) {
-                                            var onOpen = function(dialogDiv) {
+                                            isWholePageNavigation = true;
+                                            var onOpen = function (dialogDiv) {
                                                 var statusDiv = dialogDiv.div();
                                                 statusDiv.span({ text: data.successtext });
                                                 statusDiv.span({ text: data.failedtext });
@@ -169,6 +175,7 @@
                                 }, 'Cancel');
                                 break;
                             case 'editview':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onEditView, viewid);
                                 break;
                             case 'CopyNode':
@@ -189,9 +196,11 @@
                                 });
                                 break;
                             case 'Logout':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onLogout);
                                 break;
                             case 'Home':
+                                isWholePageNavigation = true;
                                 Csw.goHome();
                                 break;
                             case 'Profile':
@@ -213,30 +222,42 @@
                                 });
                                 break;
                             case 'Quotas':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onQuotas);
                                 break;
                             case 'Modules':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onModules);
                                 break;
                             case 'Sessions':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onSessions);
                                 break;
                             case 'Subscriptions':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onSubscriptions);
                                 break;
                             case 'Impersonate':
+                                isWholePageNavigation = true;
                                 $.CswDialog('ImpersonateDialog', { onImpersonate: cswPrivate.onImpersonate });
                                 break;
                             case 'EndImpersonation':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onEndImpersonation);
                                 break;
                             case 'Submit_Request':
+                                isWholePageNavigation = true;
                                 Csw.tryExec(cswPrivate.onSubmitRequest);
                                 break;
                             default:
                                 Csw.main.handleAction({ actionname: menuItemJson.action });
                                 break;
                         } // switch(menuItemJson.action)
+                        
+                        if (isWholePageNavigation === true) {
+                            //If we're changing the contents of the entire page, make sure all dangling events are torn down
+                            Csw.main.initGlobalEventTeardown();
+                        }
                     } // else if (false === Csw.isNullOrEmpty(menuItemJson.action))
                 } // if( false === Csw.isNullOrEmpty(menuItemJson))
             }; // handleMenuItemClick()
