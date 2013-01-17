@@ -147,31 +147,42 @@ namespace ChemSW.Nbt.WebServices
 
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = "Move"
+                name = "Move",
+                imgUrl = "Images/newicons/KioskMode/Move.png"
             } );
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = "Owner"
+                name = "Owner",
+                imgUrl = "Images/newicons/KioskMode/Owner.png"
             } );
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = "Transfer"
+                name = "Transfer",
+                imgUrl = "Images/newicons/KioskMode/Transfer.png"
             } );
             CswNbtPermit permissions = new CswNbtPermit( NbtResources );
             if( permissions.can( CswNbtActionName.DispenseContainer ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswNbtActionName.DispenseContainer.ToString()
+                    name = CswNbtActionName.DispenseContainer.ToString(),
+                    imgUrl = "Images/newicons/KioskMode/Dispense.png"
                 } );
             }
             if( permissions.can( CswNbtActionName.DisposeContainer ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswNbtActionName.DisposeContainer.ToString()
+                    name = CswNbtActionName.DisposeContainer.ToString(),
+                    imgUrl = "Images/newicons/KioskMode/Dispose.png"
                 } );
             }
+
+            kioskModeData.AvailableModes.Add( new Mode
+            {
+                name = "Reset",
+                imgUrl = "Images/newicons/KioskMode/Reset.png"
+            } );
 
             Return.Data = kioskModeData;
         }

@@ -63,9 +63,7 @@
                             Csw.each(data.AvailableModes, function (mode) {
                                 var imgCell = cswPrivate.actionTbl.cell(rowNum, 2).css({ 'width': '10%', 'padding-bottom': '10px' });
                                 imgCell.img({
-                                    src: 'http://upload.wikimedia.org/wikipedia/commons/f/fe/UPC_A.svg', //temp pic of barcode until I get real barcodes
-                                    height: '20%',
-                                    weight: '20%'
+                                    src: mode.imgUrl
                                 });
 
                                 var textCell = cswPrivate.actionTbl.cell(rowNum, 3).css({ 'vertical-align': 'middle', 'font-size': '155%' });
@@ -86,27 +84,32 @@
                         size: '30',
                         autofocus: true,
                         onChange: function (value) {
-                            cswPrivate.scanArea.disable();
-                            if (false === cswPrivate.OperationData.ModeServerValidated) {
-                                cswPrivate.OperationData.Mode = value;
-                            } else if (false === cswPrivate.OperationData.Field1.ServerValidated) {
-                                cswPrivate.OperationData.Field1.Value = value;
-                            } else if (false === cswPrivate.OperationData.Field2.ServerValidated) {
-                                cswPrivate.OperationData.Field2.Value = value;
-                            }
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'KioskMode/HandleScan',
-                                data: {
-                                    OperationData: cswPrivate.OperationData
-                                },
-                                success: function (KioskModeData) {
-                                    cswPrivate.OperationData = KioskModeData.OperationData;
-                                    cswPrivate.renderUI();
-                                    if (cswPrivate.readyToCommit()) {
-                                        cswPrivate.commitOperation();
-                                    }
+                            if (value === 'Reset') {
+                                cswPrivate.clearOpData();
+                                cswPrivate.renderUI();
+                            } else {
+                                cswPrivate.scanArea.disable();
+                                if (false === cswPrivate.OperationData.ModeServerValidated) {
+                                    cswPrivate.OperationData.Mode = value;
+                                } else if (false === cswPrivate.OperationData.Field1.ServerValidated) {
+                                    cswPrivate.OperationData.Field1.Value = value;
+                                } else if (false === cswPrivate.OperationData.Field2.ServerValidated) {
+                                    cswPrivate.OperationData.Field2.Value = value;
                                 }
-                            });
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'KioskMode/HandleScan',
+                                    data: {
+                                        OperationData: cswPrivate.OperationData
+                                    },
+                                    success: function (KioskModeData) {
+                                        cswPrivate.OperationData = KioskModeData.OperationData;
+                                        cswPrivate.renderUI();
+                                        if (cswPrivate.readyToCommit()) {
+                                            cswPrivate.commitOperation();
+                                        }
+                                    }
+                                });
+                            }
                         }
                     });
                 };
@@ -124,6 +127,28 @@
                             cswPrivate.renderUI();
                         }
                     });
+                };
+
+                cswPrivate.clearOpData = function () {
+                    var Log = cswPrivate.OperationData.Log;
+                    cswPrivate.OperationData = {
+                        Mode: '',
+                        ModeStatusMsg: '',
+                        ModeServerValidated: false,
+                        Log : Log,
+                        Field1: {
+                            Name: '',
+                            Value: '',
+                            StatusMsg: '',
+                            ServerValidated: false
+                        },
+                        Field2: {
+                            Name: '',
+                            Value: '',
+                            StatusMsg: '',
+                            ServerValidated: false
+                        }
+                    };
                 };
 
                 cswPrivate.renderUI = function () {
