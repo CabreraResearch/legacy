@@ -261,7 +261,7 @@ namespace ChemSW.Nbt.WebServices
                     containerToTransfer.MoveContainer( newTransferOwner.DefaultLocationId );
                     containerToTransfer.postChanges( false );
                     CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
-                    OpData.Log.Add( DateTime.Now + " - Transfered container ownership" + OpData.Field2.Value + " to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ")  and changed location to " + newLocationNode.Name.Text );
+                    OpData.Log.Add( DateTime.Now + " - Transferred container " + OpData.Field2.Value + " ownership to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );
                     break;
                 case "DispenseContainer":
                     //TODO: dispense container

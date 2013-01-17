@@ -116,6 +116,7 @@
                             }
                         }
                     });
+                    cswPrivate.renderUI();
                 };
 
                 cswPrivate.commitOperation = function () {
@@ -231,11 +232,10 @@
                     });
 
                     cswPrivate.operationTbl.cell(1, 1)
-                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '55%', 'padding-bottom': '120px' })
+                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '55%', 'padding-bottom': '75px' })
                         .span({ text: 'CISPro Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
-
                 } ());
 
                 return cswPublic;
