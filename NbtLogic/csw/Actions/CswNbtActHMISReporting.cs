@@ -167,14 +167,32 @@ namespace ChemSW.Nbt.Actions
                     HMISTree.goToNthChild( j );
                     if( HMISTree.getChildNodeCount() > 0 )//Material Node Exists
                     {
-                        CswNbtNode ContainerNode = HMISTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
-                        if( false == String.IsNullOrEmpty( ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.UseType].AsList.Value ) )
+                        Double Quantity = Double.NaN;
+                        CswPrimaryKey UnitId = null;
+                        String MaterialName = String.Empty;
+                        String UseType = String.Empty;
+                        foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
-                            String MaterialName = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Material].AsRelationship.CachedNodeName;
+                            switch( ContainerProp.PropName )
+                            {
+                                case CswNbtObjClassContainer.PropertyName.Quantity:
+                                    Quantity = ContainerProp.Field1_Numeric;
+                                    UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                    break;
+                                case CswNbtObjClassContainer.PropertyName.Material:
+                                    MaterialName = ContainerProp.Field1;
+                                    break;
+                                case CswNbtObjClassContainer.PropertyName.UseType:
+                                    UseType = ContainerProp.Field1;
+                                    break;
+                            }
+                        }
+                        if( false == String.IsNullOrEmpty( UseType ) )
+                        {
                             HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( ExistingMaterial => ExistingMaterial.Material == MaterialName );
                             if( null != HMISMaterial )
                             {
-                                _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
+                                _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
                             }
                             else
                             {
@@ -189,7 +207,7 @@ namespace ChemSW.Nbt.Actions
                                     HMISMaterial.HazardClass = HazardClass.FireHazardClassType.Value;
                                     HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
                                     _setFireClassMAQData( HMISMaterial, HazardClass );
-                                    _addQuantityDataToHMISMaterial( HMISMaterial, ContainerNode );
+                                    _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
                                     Data.Materials.Add( HMISMaterial );
                                 }
                                 HMISTree.goToParentNode();
@@ -282,12 +300,16 @@ namespace ChemSW.Nbt.Actions
                     CswNbtPropFilterSql.PropertyFilterMode.GreaterThan,
                     "0" );
 
+                CswNbtMetaDataObjectClassProp UseTypeOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.UseType );
+                HMISView.AddViewProperty( ContainerVR, UseTypeOCP );
+
                 CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                HMISView.AddViewProperty( ContainerVR, MaterialOCP );
                 CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, MaterialOCP, true );                
 
                 CswNbtViewProperty HazardClassesVP = null;
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialClass.getNodeTypes() )
+                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
                     CswNbtMetaDataNodeTypeProp HazardClassesNTP = MaterialNT.getNodeTypeProp( "Hazard Classes" );
                     if( null != HazardClassesNTP )
@@ -303,7 +325,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtPropFilterSql.PropertyFilterMode.NotNull );
 
                 CswNbtViewProperty SpecialFlagsVP = null;
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialClass.getNodeTypes() )
+                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
                     CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = MaterialNT.getNodeTypeProp( "Special Flags" );
                     if( null != SpecialFlagsNTP )
@@ -334,12 +356,12 @@ namespace ChemSW.Nbt.Actions
             Material.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Quantity;
         }
 
-        private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, CswNbtObjClassContainer Container )
+        private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, String UseType, Double Quantity, CswPrimaryKey UnitId )
         {
             CswPrimaryKey NewUnitId = _getBaseUnitId( Material.PhysicalState );
-            CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, Container.Quantity.UnitId, NewUnitId );
-            Double ConvertedQty = Conversion.convertUnit( Container.Quantity.Quantity );
-            switch( Container.UseType.Value )
+            CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, NewUnitId );
+            Double ConvertedQty = Conversion.convertUnit( Quantity );
+            switch( UseType )
             {
                 case CswNbtObjClassContainer.UseTypes.Storage:
                     switch( Material.PhysicalState.ToLower() )
