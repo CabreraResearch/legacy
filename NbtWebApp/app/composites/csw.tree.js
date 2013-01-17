@@ -102,15 +102,18 @@
                         $('.x-grid-cell-treecolumn').css({ background: 'transparent' });
                     },
                     afterrender: function() {
-                        //Despite the fact  that this is the last event to fire, the tree is still _NOT_ in the DOM. 
+                        //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
                         //It _will_ in the next nano-second, so we have to defer.
-                        //This might not yet be bullet-proof.
+                    },
+                    viewready: function() {
+                        //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
                         Csw.defer(function () {
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
                             var firstChild = cswPrivate.rootNode.childNodes[0];
                             cswPublic.selectNode(firstChild);
-                            //firstChild.expand();
-                        }, 100);
+                            cswPublic.toggleMultiEdit(cswPublic.multi.is());
+                        }, 10);
+                        
                     },
                     select: function(rowModel, record, index, eOpts) {
                         //If you click a node, this event is firing. We must:
@@ -120,7 +123,7 @@
                         if(cswPrivate.isMulti !== true) {
                             if (record != cswPublic.selectedTreeNode) {
                                 record.expand();
-                                cswPublic.previousTreeNode = cswPublic.selectedTreeNode;
+                                cswPublic.previousTreeNode = cswPublic.selectedTreeNode; 
                                 cswPublic.selectedTreeNode = record;
                                 //If we're in single edit mode, the count is always 1
                                 cswPrivate.selectedNodeCount = 1;
@@ -138,7 +141,7 @@
                         //Ext doesn't update the raw data, which is the only thing we have to manage state.
                         //Manually keep it up to date.
                         record.raw.checked = checked;
-                        if (cswPrivate.isMulti) {
+                        if (cswPublic.multi.is()) {
                             var tmpPrevNode = cswPublic.selectedTreeNode;
                             var tmpCrntNode = record;
                             
@@ -251,13 +254,33 @@
                 return true;
             };
 
-            cswPublic.toggleMultiEdit = function(isMultiOverride) {
+            cswPublic.multi = (function() {
+                var isMulti = cswPrivate.isMulti;
+                return {
+                    is: function() {
+                        return isMulti;
+                    },
+                    set: function(val) {
+                        if(val === true) {
+                            isMulti = true;
+                        } else {
+                            isMulti = false;
+                        }
+                        return isMulti;
+                    },
+                    toggle: function() {
+                        isMulti = !isMulti;
+                        return isMulti;
+                    }
+                };
+            }());
+
+            cswPublic.toggleMultiEdit = function() {
             	/// <summary>
             	/// Toggles Multi-Edit state on this instance.
-            	/// </summary>
-                cswPrivate.isMulti = false !== isMultiOverride && !cswPrivate.isMulti;
+                /// </summary>
                 var selModel = cswPublic.tree.getSelectionModel();
-                if (cswPrivate.isMulti) {
+                if (cswPublic.multi.is()) {
                     selModel.setSelectionMode('MULTI');
                 } else {
                     selModel.setSelectionMode('SINGLE');
@@ -271,7 +294,7 @@
                 /// Shows or hides all checkboxes according to Multi-Edit state.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                if (true === cswPrivate.isMulti) {
+                if (true === cswPublic.multi.is()) {
                     $('.x-tree-checkbox').show();
                 } else {
                     $('.x-tree-checkbox').hide();
@@ -349,14 +372,39 @@
                 /// <summary>
                 /// For Multii-Edit, get all nodes which are selected (checked) in the tree.
                 /// </summary>
-                var checked = cswPublic.tree.getChecked();
-                var ret = [];
-                if (checked && checked.length > 0) {
-                    checked.forEach(function(treeNode) {
-                        ret.push({ nodeid: treeNode.raw.nodeid, nodekey: treeNode.raw.id });
+                var checked = cswPublic.tree.getChecked() || [];
+                if (checked.length === 0) {
+                    //We've switched states and the selectionModel change has not taken effect.
+                    cswPublic.eachNode(function(node) {
+                        //Iterate the tree. If the node is checked and it validates, add it to the return.
+                        if (node && node.raw && node.raw.checked) {
+                            if (Csw.tryExec(cswPrivate.allowMultiSelection, node, cswPublic.selectedTreeNode)) {
+                                checked.push(node);
+                            } else {
+                                node.raw.checked = false;
+                                node.set('checked', false);
+                            }
+                        }
                     });
                 }
-                return ret;
+                return checked;
+            };
+
+            cswPrivate.eachNodeRecursive = function (node, callBack) {
+                if(node && callBack) {
+                    callBack(node);
+                    if(node.childNodes && node.childNodes.length > 0) {
+                        node.childNodes.forEach(function(childNode) {
+                            cswPrivate.eachNodeRecursive(childNode, callBack);
+                         });
+                    }
+                }
+            };
+
+            cswPublic.eachNode = function(callBack) {
+                if(cswPrivate.rootNode && callBack) {
+                    cswPrivate.eachNodeRecursive(cswPrivate.rootNode, callBack);
+                }
             };
 
             //#endregion Getters
