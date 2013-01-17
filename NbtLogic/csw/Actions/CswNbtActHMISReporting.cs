@@ -173,7 +173,8 @@ namespace ChemSW.Nbt.Actions
                         String UseType = String.Empty;
                         foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
-                            switch( ContainerProp.PropName )
+                            CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
+                            switch( ContainerNTP.getObjectClassProp().PropName )
                             {
                                 case CswNbtObjClassContainer.PropertyName.Quantity:
                                     Quantity = ContainerProp.Field1_Numeric;
