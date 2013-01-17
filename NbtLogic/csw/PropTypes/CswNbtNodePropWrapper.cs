@@ -386,7 +386,17 @@ namespace ChemSW.Nbt.PropTypes
                     throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropCASNo ) ) ) );
                 return ( (CswNbtNodePropCASNo) _CswNbtNodeProp );
             }
-        }//Blob
+        }//CASNo
+
+        public CswNbtNodePropChildContents AsChildContents
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropChildContents ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropChildContents ) ) ) );
+                return ( (CswNbtNodePropChildContents) _CswNbtNodeProp );
+            }
+        }//ChildContents
 
         public CswNbtNodePropComments AsComments
         {
