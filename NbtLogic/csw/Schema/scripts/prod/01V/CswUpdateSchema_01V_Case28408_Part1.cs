@@ -30,7 +30,6 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp barcodeNTP = UserOCNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Barcode );
                 if( null != barcodeNTP )
                 {
-                    barcodeNTP.IsRequired = true;
                     barcodeNTP.ReadOnly = true;
 
                     if( Int32.MinValue == barcodeNTP.SequenceId )
