@@ -26,7 +26,7 @@
                         cswPublic.control = cswPrivate.parent.append('[Image display disabled]');
                     } else {
 
-                        cswPrivate.href = Csw.string(cswPrivate.propVals.href);
+                        cswPrivate.href = Csw.hrefString(cswPrivate.propVals.href);
                         if (cswPrivate.href.length > 0) {
                             cswPrivate.href += '&usenodetypeasplaceholder=false'; // case 27596
                         }
