@@ -61,23 +61,25 @@
                         success: function (data) {
                             var rowNum = 1;
                             Csw.each(data.AvailableModes, function (mode) {
-                                var imgCell = cswPrivate.actionTbl.cell(rowNum, 2).css({ 'width': '10%', 'padding-bottom': '10px' });
+
+                                var textCell = cswPrivate.barcodesTbl.cell(rowNum, 2).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' });
+                                textCell.span({ text: mode.name });
+
+                                var imgCell = cswPrivate.barcodesTbl.cell(rowNum, 3).css({ 'padding-bottom': '10px' });
                                 imgCell.img({
                                     src: mode.imgUrl
                                 });
 
-                                var textCell = cswPrivate.actionTbl.cell(rowNum, 3).css({ 'vertical-align': 'middle', 'font-size': '155%' });
-                                textCell.span({ text: mode.name });
-
                                 rowNum = rowNum + 1;
                             });
+
                             cswPrivate.init();
                         }
                     });
                 };
 
                 cswPrivate.init = function () {
-                    var barcodeCell = cswPrivate.actionTbl.cell(2, 1);
+                    var barcodeCell = cswPrivate.operationTbl.cell(2, 1).css('padding-bottom', '20px');
                     barcodeCell.span({ text: 'Scan a barcode: ' });
 
                     cswPrivate.scanArea = barcodeCell.input({
@@ -135,7 +137,7 @@
                         Mode: '',
                         ModeStatusMsg: '',
                         ModeServerValidated: false,
-                        Log : Log,
+                        Log: Log,
                         Field1: {
                             Name: '',
                             Value: '',
@@ -154,21 +156,25 @@
                 cswPrivate.renderUI = function () {
                     cswPrivate.scanArea.enable();
 
-                    cswPrivate.actionTbl.cell(3, 1).empty();
+                    cswPrivate.operationTbl.cell(3, 1).empty();
                     cswPrivate.scanArea.val('');
-                    var propsTbl = cswPrivate.actionTbl.cell(3, 1).table({
+                    var propsTbl = cswPrivate.operationTbl.cell(3, 1).table({
                         name: 'propstbl',
                         cellpadding: 10
                     });
-                    propsTbl.cell(1, 1).span({ text: 'Mode: ' });
-                    propsTbl.cell(1, 2).span({ text: cswPrivate.OperationData.Mode });
+
+                    var modeCell = propsTbl.cell(1, 1).css('height', '25px');
+                    modeCell.span({ text: 'Mode: ' });
+                    propsTbl.cell(1, 2).span({ text: cswPrivate.OperationData.Mode }).css({ 'font-size': '160%', 'font-weight': 'bold' });
                     propsTbl.cell(1, 3).span({ text: cswPrivate.OperationData.ModeStatusMsg }).css('color', 'Red');
 
-                    propsTbl.cell(2, 1).span({ text: cswPrivate.OperationData.Field1.Name });
+                    var field1Cell = propsTbl.cell(2, 1).css('height', '25px');
+                    field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
                     propsTbl.cell(2, 2).span({ text: cswPrivate.OperationData.Field1.Value });
                     propsTbl.cell(2, 3).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
 
-                    propsTbl.cell(3, 1).span({ text: cswPrivate.OperationData.Field2.Name });
+                    var field2Cell = propsTbl.cell(3, 1).css('height', '25px');
+                    field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
                     propsTbl.cell(3, 2).span({ text: cswPrivate.OperationData.Field2.Value });
                     propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
 
@@ -177,8 +183,8 @@
                         logStr = item + '\n\n' + logStr;
                     });
 
-                    cswPrivate.actionTbl.cell(4, 1).empty();
-                    cswPrivate.actionTbl.cell(4, 1).textArea({
+                    cswPrivate.operationTbl.cell(4, 1).empty();
+                    cswPrivate.operationTbl.cell(4, 1).textArea({
                         rows: 10,
                         cols: 80,
                         readonly: true,
@@ -209,8 +215,17 @@
                         align: 'center'
                     }).css('width', '95%');
 
-                    cswPrivate.actionTbl.cell(1, 1)
-                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '80%' })
+                    cswPrivate.operationCell = cswPrivate.actionTbl.cell(1, 1).css({ 'width': '65%' });
+                    cswPrivate.operationTbl = cswPrivate.operationCell.table({
+                        name: cswPrivate.name + '_operation_tbl'
+                    });
+                    cswPrivate.barcodesCell = cswPrivate.actionTbl.cell(1, 2);
+                    cswPrivate.barcodesTbl = cswPrivate.barcodesCell.table({
+                        name: cswPrivate.name + '_barcodes_tbl'
+                    });
+
+                    cswPrivate.operationTbl.cell(1, 1)
+                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '55%', 'padding-bottom': '120px' })
                         .span({ text: 'CISPro Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
