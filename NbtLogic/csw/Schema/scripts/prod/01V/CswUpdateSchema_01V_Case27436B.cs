@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -100,7 +101,8 @@ namespace ChemSW.Nbt.Schema
                 GhsSignalWordNTP.IsRequired = true;
 
                 GhsMaterialNTP.IsRequired = true;
-
+                GhsMaterialNTP.ReadOnly = true;
+                
                 GhsPictogramsNTP.Extended = "true";
                 GhsPictogramsNTP.TextAreaColumns = 77;
                 GhsPictogramsNTP.TextAreaRows = 77;
@@ -130,7 +132,10 @@ namespace ChemSW.Nbt.Schema
                 GhsPictogramsNTP.ValueOptions = PictoPaths.ToString();
 
                 GhsLabelCodesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Small.ToString();
+                GhsLabelCodesGridNTP.MaxValue = 10;
+
                 GhsClassCodesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Small.ToString();
+                GhsClassCodesGridNTP.MaxValue = 10;
 
                 const string LabelingTabGroup = "Labeling";
                 const string ClassificationTabGroup = "Classification";
@@ -165,6 +170,7 @@ namespace ChemSW.Nbt.Schema
                 GhsClassificationNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 7, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
                 GhsClassCodesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 8, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
                 GhsClassCodesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 9, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
+
 
             } // if( null != GhsNT )
 

@@ -364,7 +364,7 @@
                 $.CswDialog('AddNodeDialog', {
                     nodetypeid: nodetypeToAdd,
                     onAddNode: cswPrivate.onAddNodeFunc,
-                    text: cswPrivate.name,
+                    text: 'Add New ' + cswPrivate.name,
                     relatednodeid: cswPrivate.relatedTo.relatednodeid,
                     relatednodename: cswPrivate.relatedTo.relatednodename,
                     relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
