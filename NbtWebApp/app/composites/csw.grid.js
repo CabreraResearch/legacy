@@ -36,10 +36,10 @@
 
                     canSelectRow: false,
 
-                onLoad: function (grid, ajaxResult) { },
-                onEdit: function (rows) { },
-                onDelete: function (rows) { },
-                onSelect: function (rows) { },
+                    onLoad: function (grid, ajaxResult) { },
+                    onEdit: function (rows) { },
+                    onDelete: function (rows) { },
+                    onSelect: function (rows) { },
                     onDeselect: function (row) { },
                     onSelectChange: function (rowCount) { },
 
@@ -55,7 +55,7 @@
 
                     topToolbar: [],
                     groupField: '',
-                plugins: null
+                    plugins: null,
                     groupHeaderTpl: '{columnName}: {name}',
 
                     dockedItems: []
@@ -92,7 +92,7 @@
                         success: function (result) {
                             //ExJsGrid 
                             //var CswNbtScheduledRulesReturn = Csw.deserialize(result);
-                            Csw.tryExec(onSuccess, result );
+                            Csw.tryExec(onSuccess, result);
                             //                                var temp = cswPrivate.store.data;
                             //var temp = result.grid.getAllGridRows();
                         } // success
@@ -485,7 +485,7 @@
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
-                if(cswPrivate.grid) {
+                if (cswPrivate.grid) {
                     cswPrivate.grid.on({
                         select: function (rowModel, record, index, eOpts) {
                             Csw.tryExec(cswPrivate.onSelect, record.data);
@@ -493,7 +493,7 @@
                         deselect: function (rowModel, record, index, eOpts) {
                             Csw.tryExec(cswPrivate.onDeselect, record.data);
                         },
-                    selectionchange: function (rowModel, selected, eOpts) {
+                        selectionchange: function (rowModel, selected, eOpts) {
                             Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
                         },
                         afterrender: function (component) {
@@ -503,7 +503,7 @@
                             }
                         }
                     });
-    
+
                     if (Csw.bool(cswPrivate.truncated)) {
                         cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                     }
