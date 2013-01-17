@@ -286,16 +286,16 @@ namespace ChemSW.Nbt.WebServices
             switch( OpData.Mode )
             {
                 case "Move":
-                    OpData.Field1.Name = "Location";
-                    OpData.Field2.Name = "Item";
+                    OpData.Field1.Name = "Location:";
+                    OpData.Field2.Name = "Item:";
                     break;
                 case "Owner":
-                    OpData.Field1.Name = "User";
-                    OpData.Field2.Name = "Item";
+                    OpData.Field1.Name = "User:";
+                    OpData.Field2.Name = "Item:";
                     break;
                 case "Transfer":
-                    OpData.Field1.Name = "User";
-                    OpData.Field2.Name = "Item";
+                    OpData.Field1.Name = "User:";
+                    OpData.Field2.Name = "Item:";
                     break;
                 case "DispenseContainer":
                     //TODO: dispense container

@@ -168,22 +168,39 @@
                         cellpadding: 10
                     });
 
-                    var modeCell = propsTbl.cell(1, 1).css('height', '25px');
+                    var modeCell = propsTbl.cell(1, 2).css('height', '25px');
                     modeCell.span({ text: 'Mode: ' });
-                    propsTbl.cell(1, 2).span({ text: cswPrivate.OperationData.Mode }).css({ 'font-size': '160%', 'font-weight': 'bold' });
-                    propsTbl.cell(1, 3).span({ text: cswPrivate.OperationData.ModeStatusMsg }).css('color', 'Red');
+                    propsTbl.cell(1, 3).span({ text: cswPrivate.OperationData.Mode }).css({ 'font-size': '160%', 'font-weight': 'bold' });
+                    propsTbl.cell(1, 4).span({ text: cswPrivate.OperationData.ModeStatusMsg }).css('color', 'Red');
 
-                    var field1Cell = propsTbl.cell(2, 1).css('height', '25px');
+                    var iconCell1 = propsTbl.cell(2, 1).css({ 'width': '10px' });
+                    var iconCell2 = propsTbl.cell(3, 1).css({ 'width': '10px' });                    
+
+                    var field1Cell = propsTbl.cell(2, 2).css('height', '25px');
                     field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
-                    propsTbl.cell(2, 2).span({ text: cswPrivate.OperationData.Field1.Value });
-                    propsTbl.cell(2, 3).span({ text: cswPrivate.OperationData.Field1.SecondValue });
+                    var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '155px' });
+                    field1Value1Cell.span({ text: cswPrivate.OperationData.Field1.Value + ' ' + cswPrivate.OperationData.Field1.SecondValue });
                     propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
 
-                    var field2Cell = propsTbl.cell(3, 1).css('height', '25px');
+                    var field2Cell = propsTbl.cell(3, 2).css('height', '25px');
                     field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
-                    propsTbl.cell(3, 2).span({ text: cswPrivate.OperationData.Field2.Value });
-                    propsTbl.cell(3, 3).span({ text: cswPrivate.OperationData.Field2.SecondValue });
+                    var field2Value1Cell = propsTbl.cell(3, 3).css({ 'width': '155px' });
+                    field2Value1Cell.span({ text: cswPrivate.OperationData.Field2.Value });
                     propsTbl.cell(3, 4).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
+
+                    if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
+                        field1Value1Cell.css({ 'background-color': 'yellow' });
+                        iconCell1.icon({
+                            iconType: Csw.enums.iconType.right,
+                            isButton: false
+                        });
+                    } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
+                        field2Value1Cell.css({ 'background-color': 'yellow' });
+                        iconCell2.icon({
+                            iconType: Csw.enums.iconType.right,
+                            isButton: false
+                        });
+                    }
 
                     var logStr = '';
                     Csw.each(cswPrivate.OperationData.Log, function (item) {
@@ -196,7 +213,7 @@
                         cols: 80,
                         readonly: true,
                         text: logStr
-                    });
+                    }).css('margin-top', '10px');
                     cswPrivate.scanArea.$.focus();
                 };
 
