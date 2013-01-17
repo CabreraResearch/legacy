@@ -477,8 +477,6 @@ namespace ChemSW.Nbt.ObjClasses
                 ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
                 int childCount = docsTree.getChildNodeCount();
                 int lvlMatched = Int32.MinValue;
-                string matchedFormat = "";
-                string matchedLanguage = "";
                 string matchedFileType = "";
                 CswNbtTreeNodeProp matchedFileProp = null;
                 CswNbtTreeNodeProp matchedLinkProp = null;
@@ -521,8 +519,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( lvlMatched < 0 )
                         {
-                            matchedFormat = format;
-                            matchedLanguage = language;
                             matchedFileType = fileType;
                             matchedFileProp = fileProp;
                             matchedLinkProp = linkProp;
@@ -533,8 +529,6 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             if( lvlMatched < 1 && format.Equals( userJurisdictionNode.Format.Value ) )
                             {
-                                matchedFormat = format;
-                                matchedLanguage = language;
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
                                 matchedLinkProp = linkProp;
@@ -543,8 +537,6 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                             if( lvlMatched < 2 && language.Equals( userJurisdictionNode.Language.Value ) )
                             {
-                                matchedFormat = format;
-                                matchedLanguage = language;
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
                                 matchedLinkProp = linkProp;
@@ -553,8 +545,6 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                             if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( userJurisdictionNode.Language.Value ) )
                             {
-                                matchedFormat = format;
-                                matchedLanguage = language;
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
                                 matchedLinkProp = linkProp;
@@ -570,7 +560,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         case CswNbtObjClassDocument.FileTypes.File:
                             int jctnodepropid = CswConvert.ToInt32( matchedFileProp.JctNodePropId );
-                            int nodetypepropid = CswConvert.ToInt32( matchedLinkProp.NodeTypePropId );
+                            int nodetypepropid = CswConvert.ToInt32( matchedFileProp.NodeTypePropId );
                             url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId, nodetypepropid );
                             break;
                         case CswNbtObjClassDocument.FileTypes.Link:
