@@ -1445,6 +1445,14 @@ window.initMain = window.initMain || function (undefined) {
 
                         Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
                         break;
+                case 'upload legacy mobile data':
+                    Csw.nbt.legacyMobileWizard(Csw.main.centerTopDiv, {
+                        onCancel: refreshSelected,
+                        onFinish: function (viewid, viewmode) {
+                            handleItemSelect({ itemid: viewid, mode: viewmode });
+                        }
+                    });
+                    break;
                     default:
                         if (false == Csw.isNullOrEmpty(o.actionurl)) {
                             Csw.window.location(o.actionurl);

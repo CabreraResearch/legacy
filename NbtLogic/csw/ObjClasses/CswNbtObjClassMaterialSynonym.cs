@@ -23,6 +23,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string Material = "Material";
             public const string Name = "Name";
+            public const string Type = "Type";
+            public const string Language = "Language";
         }
 
         /// <summary>
@@ -85,6 +87,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
+        public CswNbtNodePropList Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
+        public CswNbtNodePropList Language { get { return ( _CswNbtNode.Properties[PropertyName.Language] ); } }
 
         //public CswNbtNodePropRelationship Assembly
         //{
