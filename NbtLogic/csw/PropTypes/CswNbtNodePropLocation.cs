@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                CachedNodeName = CswNbtLocationTreeDeprecated.TopLevelName;
+                CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
                 CachedPath = CachedNodeName;
                 CachedBarcode = string.Empty;
             }
