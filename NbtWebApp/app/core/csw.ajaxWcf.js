@@ -35,8 +35,7 @@
             },
             Status: {
                 Success: true,
-                Errors: [],
-                DisplayErrors: false
+                Errors: []
             }
         };
 

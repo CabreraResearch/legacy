@@ -76,6 +76,14 @@ namespace ChemSW.Nbt.Schema
             }
             _resetBlame();
 
+
+            _acceptBlame( CswDeveloper.SS, 28492 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "to_searchid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "to_searchid", "for search items", false, false );
+            }
+            _resetBlame();
+
             #endregion VIOLA
 
             #region WILLIAM
