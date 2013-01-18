@@ -460,25 +460,24 @@ namespace ChemSW.Nbt.ObjClasses
 
                         foreach( CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode() )
                         {
-                            if( prop.PropName.Equals( formatOCP.PropName ) )
+                            CswNbtMetaDataNodeTypeProp docNTP = _CswNbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
+                            switch( docNTP.getObjectClassProp().PropName )
                             {
-                                format = prop.Field1.ToString();
-                            }
-                            else if( prop.PropName.Equals( languageOCP.PropName ) )
-                            {
-                                language = prop.Field1.ToString();
-                            }
-                            else if( prop.PropName.Equals( fileTypeOCP.PropName ) )
-                            {
-                                fileType = prop.Field1.ToString();
-                            }
-                            else if( prop.PropName.Equals( fileOCP.PropName ) )
-                            {
-                                fileProp = prop;
-                            }
-                            else if( prop.PropName.Equals( linkOCP.PropName ) )
-                            {
-                                linkProp = prop;
+                                case CswNbtObjClassDocument.PropertyName.Format:
+                                    format = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.Language:
+                                    language = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.FileType:
+                                    fileType = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.File:
+                                    fileProp = prop;
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.Link:
+                                    linkProp = prop;
+                                    break;
                             }
                         }
 
