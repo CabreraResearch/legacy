@@ -144,7 +144,14 @@ namespace ChemSW.Nbt.WebServices
                         }
                         break;
                     case Modes.Dispense:
-                        //TODO: dispense container
+                        if( FieldNumber == 1 )
+                        {
+                            Ret = NbtObjectClass.ContainerClass;
+                        }
+                        else
+                        {
+                            Ret = null; //for Dispense we are expecting a number
+                        }
                         break;
                     case Modes.Dispose:
                         Ret = NbtObjectClass.ContainerClass;
@@ -218,12 +225,12 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
                 {
                     NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 2 );
-                    KioskModeData.OperationData.Field2 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field2, KioskModeData.OperationData.Mode );
+                    KioskModeData.OperationData.Field2 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field2, ref KioskModeData.OperationData );
                 }
                 else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
                 {
                     NbtObjectClass expectedOC = KioskModeData.OperationData.Field1.ExpectedObjClass( KioskModeData.OperationData.Mode, 1 );
-                    KioskModeData.OperationData.Field1 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field1, KioskModeData.OperationData.Mode );
+                    KioskModeData.OperationData.Field1 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field1, ref KioskModeData.OperationData );
                 }
                 else
                 {
@@ -268,7 +275,22 @@ namespace ChemSW.Nbt.WebServices
                     OpData.Log.Add( DateTime.Now + " - Transferred container " + OpData.Field2.Value + " ownership to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );
                     break;
                 case Modes.Dispense:
-                    //TODO: dispense container
+                    CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+                    double quantityToDispense = CswConvert.ToDouble( OpData.Field2.Value );
+                    if( quantityToDispense > containerToDispense.Quantity.Quantity )
+                    {
+                        OpData.Field2.StatusMsg = "Cannot dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt;
+                        OpData.Log.Add( DateTime.Now + " - Attempted to dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt );
+                        OpData.Field2.ServerValidated = false;
+                        resetField2 = false;
+                    }
+                    else
+                    {
+                        containerToDispense.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, quantityToDispense, containerToDispense.Quantity.UnitId );
+                        containerToDispense.postChanges( false );
+                        OpData.Field1.SecondValue = " (current quantity: " + containerToDispense.Quantity.Quantity + containerToDispense.Quantity.CachedUnitName + ")";
+                        OpData.Log.Add( DateTime.Now + " - Dispensed " + OpData.Field2.Value + " " + containerToDispense.Quantity.CachedUnitName + " out of container " + containerToDispense.Barcode.Barcode + ". " + containerToDispense.Quantity.Gestalt + " left in container" );
+                    }
                     break;
                 case Modes.Dispose:
                     CswNbtObjClassContainer containerToDispose = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
@@ -323,7 +345,8 @@ namespace ChemSW.Nbt.WebServices
                     OpData.Field2.Name = "Item:";
                     break;
                 case Modes.Dispense:
-                    //TODO: dispense container
+                    OpData.Field1.Name = "Container:";
+                    OpData.Field2.Name = "Quantity:";
                     break;
                 case Modes.Dispose:
                     OpData.Field1.Name = "Container:";
@@ -336,55 +359,77 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private static Field _validateField( CswNbtResources NbtResources, NbtObjectClass ObjClass, Field Field, string Mode )
+        private static Field _validateField( CswNbtResources NbtResources, NbtObjectClass ObjClass, Field Field, ref OperationData OpData )
         {
             bool IsValid = false;
-            ICswNbtTree tree = _getTree( NbtResources, ObjClass, Field.Value, false );
-            int childCount = tree.getChildNodeCount();
-            string loweredMode = Mode.ToLower();
-            if( childCount > 0 )
+            if( null != ObjClass )
             {
-                switch( loweredMode )
+                ICswNbtTree tree = _getTree( NbtResources, ObjClass, Field.Value, false );
+                int childCount = tree.getChildNodeCount();
+                string loweredMode = OpData.Mode.ToLower();
+                if( childCount > 0 )
                 {
-                    case Modes.Move:
-                    case Modes.Owner:
-                    case Modes.Transfer:
-                        IsValid = true;
-                        tree.goToNthChild( 0 );
-                        foreach( CswNbtTreeNodeProp treeNodeProp in tree.getChildNodePropsOfNode() )
-                        {
-                            if( ObjClass.Equals( NbtObjectClass.ContainerClass ) && treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Disposed ) )
+                    switch( loweredMode )
+                    {
+                        case Modes.Move:
+                        case Modes.Owner:
+                        case Modes.Transfer:
+                        case Modes.Dispense:
+                            IsValid = true;
+                            tree.goToNthChild( 0 );
+                            foreach( CswNbtTreeNodeProp treeNodeProp in tree.getChildNodePropsOfNode() )
                             {
-                                bool disposed = CswConvert.ToBoolean( treeNodeProp.Field1 );
-                                if( disposed )
+                                if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
                                 {
-                                    Field.StatusMsg = "Cannot perform " + Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ); //container
+                                    if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Disposed ) )
+                                    {
+                                        bool disposed = CswConvert.ToBoolean( treeNodeProp.Field1 );
+                                        if( disposed )
+                                        {
+                                            Field.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ); //container
+                                        }
+                                        IsValid = ( false == disposed );
+                                    }
+                                    else if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Quantity ) )
+                                    {
+                                        Field.SecondValue = " (current quantity: " + treeNodeProp.Gestalt + ")";
+                                    }
                                 }
-                                IsValid = ( false == disposed );
                             }
-                        }
-                        break;
-                    case Modes.Dispose:
-                    case Modes.Dispense:
-                        IsValid = true;
-                        break;
+                            break;
+                        case Modes.Dispose:
+                            IsValid = true;
+                            break;
+                    }
+                }
+                else
+                {
+                    Field.StatusMsg = ObjClass.Value.Replace( "Class", "" ) + " does not exist";
                 }
             }
             else
             {
-                Field.StatusMsg = ObjClass.Value.Replace( "Class", "" ) + " does not exist";
+                if( CswTools.IsDouble( Field.Value ) )
+                {
+                    IsValid = true;
+                }
+                else
+                {
+                    Field.StatusMsg = "Error: " + Field.Value + " is not a number";
+                }
             }
 
             if( IsValid )
             {
                 Field.ServerValidated = true;
                 Field.StatusMsg = "";
-                if( ObjClass.Equals( NbtObjectClass.LocationClass ) )
+                if( NbtObjectClass.LocationClass.Equals( ObjClass ) )
                 {
                     CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, ObjClass, Field.Value, true );
                     Field.SecondValue = " (" + scannedLocation.Name.Text + ")";
                 }
             }
+
             return Field;
         }
 
@@ -431,6 +476,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataObjectClassProp disposedOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
                 view.AddViewProperty( parent, disposedOCP );
+
+                CswNbtMetaDataObjectClassProp quantityOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
+                view.AddViewProperty( parent, quantityOCP );
             }
 
             ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
