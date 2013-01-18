@@ -72,7 +72,12 @@
 
                                 var imgCell = cswPrivate.barcodesTbl.cell(rowNum, 3).css({ 'padding-bottom': '10px' });
                                 imgCell.img({
-                                    src: mode.imgUrl
+                                    title: mode.name,
+                                    src: mode.imgUrl,
+                                    onClick: function (clickData) {
+                                        var clickedMode = $(this).context.attributes.title.nodeValue;
+                                        cswPrivate.handleItem(clickedMode);
+                                    }
                                 });
 
                                 rowNum = rowNum + 1;
@@ -91,37 +96,41 @@
                         size: '30',
                         autofocus: true,
                         onChange: function (value) {
-                            cswPrivate.OperationData.LastItemScanned = value;
-                            if (value === 'RESET') {
-                                cswPrivate.clearOpData();
-                                cswPrivate.renderUI();
-                            } else {
-                                cswPrivate.scanArea.disable();
-                                if (false === cswPrivate.OperationData.ModeServerValidated) {
-                                    cswPrivate.OperationData.Mode = value;
-                                } else if (false === cswPrivate.OperationData.Field1.ServerValidated) {
-                                    cswPrivate.OperationData.Field1.Value = value;
-                                } else if (false === cswPrivate.OperationData.Field2.ServerValidated) {
-                                    cswPrivate.OperationData.Field2.Value = value;
-                                }
-                                Csw.ajaxWcf.post({
-                                    urlMethod: 'KioskMode/HandleScan',
-                                    data: {
-                                        OperationData: cswPrivate.OperationData
-                                    },
-                                    success: function (KioskModeData) {
-                                        cswPrivate.OperationData = KioskModeData.OperationData;
-                                        cswPrivate.renderUI();
-                                        if (cswPrivate.readyToCommit()) {
-                                            cswPrivate.commitOperation();
-                                        }
-                                    }
-                                });
-                            }
+                            cswPrivate.handleItem(value);
                         }
                     });
                     cswPrivate.renderUI();
                 };
+
+                cswPrivate.handleItem = function (value) {
+                    cswPrivate.OperationData.LastItemScanned = value;
+                    if (value.toUpperCase() === 'RESET') {
+                        cswPrivate.clearOpData();
+                        cswPrivate.renderUI();
+                    } else {
+                        cswPrivate.scanArea.disable();
+                        if (false === cswPrivate.OperationData.ModeServerValidated) {
+                            cswPrivate.OperationData.Mode = value;
+                        } else if (false === cswPrivate.OperationData.Field1.ServerValidated) {
+                            cswPrivate.OperationData.Field1.Value = value;
+                        } else if (false === cswPrivate.OperationData.Field2.ServerValidated) {
+                            cswPrivate.OperationData.Field2.Value = value;
+                        }
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'KioskMode/HandleScan',
+                            data: {
+                                OperationData: cswPrivate.OperationData
+                            },
+                            success: function (KioskModeData) {
+                                cswPrivate.OperationData = KioskModeData.OperationData;
+                                cswPrivate.renderUI();
+                                if (cswPrivate.readyToCommit()) {
+                                    cswPrivate.commitOperation();
+                                }
+                            }
+                        });
+                    }
+                }
 
                 cswPrivate.commitOperation = function () {
                     cswPrivate.scanArea.disable();
