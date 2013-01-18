@@ -851,7 +851,6 @@ namespace ChemSW.Nbt
             this.VisibilityRoleId = RoleId;
             this.VisibilityUserId = UserId;
             this.Category = NewViewCategory;
-            //TODO: GroupBySiblings needs to go.
             this.GroupBySiblings = GroupBySiblings;
 
             // The XML includes the viewid and viewname, so it has to be updated before it can be saved
