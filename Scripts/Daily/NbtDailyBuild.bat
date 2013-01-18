@@ -13,6 +13,7 @@ REM Generate default setting file
 >>%LOCALCONF% echo set ResetSchemaUsername=nbt_master
 >>%LOCALCONF% echo set ResetSchemaPassword=hj345defwu9
 >>%LOCALCONF% echo set ResetSchemaServer=nbttest
+>>%LOCALCONF% echo set env=prod
 
 echo #
 echo # Local configuration not yet set.
