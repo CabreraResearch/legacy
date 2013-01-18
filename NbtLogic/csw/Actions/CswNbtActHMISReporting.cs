@@ -174,18 +174,22 @@ namespace ChemSW.Nbt.Actions
                         foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
                             CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
-                            switch( ContainerNTP.getObjectClassProp().PropName )
+                            CswNbtMetaDataObjectClassProp ContainerOCP = ContainerNTP.getObjectClassProp();
+                            if( null != ContainerOCP )
                             {
-                                case CswNbtObjClassContainer.PropertyName.Quantity:
-                                    Quantity = ContainerProp.Field1_Numeric;
-                                    UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                    break;
-                                case CswNbtObjClassContainer.PropertyName.Material:
-                                    MaterialName = ContainerProp.Field1;
-                                    break;
-                                case CswNbtObjClassContainer.PropertyName.UseType:
-                                    UseType = ContainerProp.Field1;
-                                    break;
+                                switch( ContainerOCP.PropName )
+                                {
+                                    case CswNbtObjClassContainer.PropertyName.Quantity:
+                                        Quantity = ContainerProp.Field1_Numeric;
+                                        UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                        break;
+                                    case CswNbtObjClassContainer.PropertyName.Material:
+                                        MaterialName = ContainerProp.Field1;
+                                        break;
+                                    case CswNbtObjClassContainer.PropertyName.UseType:
+                                        UseType = ContainerProp.Field1;
+                                        break;
+                                }
                             }
                         }
                         if( false == String.IsNullOrEmpty( UseType ) )
