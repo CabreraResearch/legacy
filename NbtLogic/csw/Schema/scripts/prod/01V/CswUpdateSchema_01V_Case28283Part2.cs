@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.Schema
                     _createFireClassExemptAmountNode( 290.3, "Aero-3", "Physical", "Aerosols", Class: "3" );
                     _createFireClassExemptAmountNode( 301, "Carc", "Health", "Carcinogenic", "7,8",
                         SSEA: "NL", SSEF: "9", SLEA: "NL", SLEF: "9", SGEA: "NL", SGEF: "6,9", CSEA: "NL", CSEF: "9", CLEA: "NL", CLEF: "9", CGEA: "NL", CGEF: "6,9", OSEA: "10000", OSEF: "10", OLEA: "NL", OLEF: "10" );
-                    _createFireClassExemptAmountNode( 211.1, "CF/D (balled)", "Physical", "Combustible Fiber/Dust", Class: "(baled)",
+                    _createFireClassExemptAmountNode( 211.1, "CF/D (baled)", "Physical", "Combustible Fiber/Dust", Class: "(baled)",
                         SSEA: "(1000)", CSEA: "(100)", OSEA: "(20)" );
                     _createFireClassExemptAmountNode( 211.2, "CF/D (loose)", "Physical", "Combustible Fiber/Dust", Class: "(loose)",
                         SSEA: "(100)", CSEA: "(1000)", OSEA: "(200)" );
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.Schema
                         SLEA: "240", SLEF: "10", CLEA: "240", OLEA: "60" );
                     _createFireClassExemptAmountNode( 214, "FS", "Physical", "Flammable Solid",
                         SSEA: "250", SSEF: "6,10", SLEF: "6,10", CSEA: "125", CSEF: "6,10", OSEA: "125", OSEF: "6,10" );
-                    _createFireClassExemptAmountNode( 301.3, "H.T.", "Health", "Highly Toxic", "11",
+                    _createFireClassExemptAmountNode( 301.3, "HT", "Health", "Highly Toxic", "11",
                         SSEA: "20", SLEA: "(20)", SGEA: "40", SGEF: "12", CSEA: "20", CLEA: "(20)", CGEA: "40", CGEF: "12", OSEA: "6", OSEF: "5", OLEA: "(6)", OLEF: "5" );
                     _createFireClassExemptAmountNode( 302, "Irr", "Health", "Irritant", "7",
                         SSEA: "NL", SLEA: "NL", SGEA: "NL", SGEF: "6,9", CSEA: "NL", CLEA: "NL", CGEA: "NL", CGEF: "9", OSEA: "NL", OSEF: "9", OLEA: "NL", OLEF: "9" );
