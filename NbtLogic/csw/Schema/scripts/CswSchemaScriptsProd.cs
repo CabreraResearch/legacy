@@ -56,12 +56,13 @@ namespace ChemSW.Nbt.Schema
 
             #region WILLIAM
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );        //01V-026   01W-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );           //01V-026   01W-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );           //01V-025   01W-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );           //01V-026   01W-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );           //01V-027   01W-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );           //01V-028   01W-005
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );           //01V-026   01W-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );              //01V-026   01W-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );              //01V-025   01W-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );              //01V-026   01W-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );              //01V-027   01W-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );              //01V-028   01W-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_TreeGrouping_Case27882() ) ); //01V-029   01W-006
 
             #endregion WILLIAM
 

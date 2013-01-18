@@ -311,23 +311,21 @@ namespace ChemSW.Nbt.ImportExport
         /// Exports a view into XML
         /// </summary>
         /// <param name="ViewId">Primary key of View to Export</param>
-        /// <param name="ForMobile">True if this export is for the mobile device</param>
         /// <param name="PropsInViewOnly">Include properties included in the view only</param>
         /// <returns>XmlDocument of all metadata, node, and property data from this view</returns>
-        public XmlDocument ExportView( CswNbtViewId ViewId, bool ForMobile, bool PropsInViewOnly )
+        public XmlDocument ExportView( CswNbtViewId ViewId, bool PropsInViewOnly )
         {
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-            return ExportView( View, ForMobile, PropsInViewOnly );
+            return ExportView( View, PropsInViewOnly );
         } // ExportView()
 
         /// <summary>
         /// Exports a view into XML
         /// </summary>
         /// <param name="View">View to Export</param>
-        /// <param name="ForMobile">True if this export is for the mobile device</param>
         /// <param name="PropsInViewOnly">Include properties included in the view only</param>
         /// <returns>XmlDocument of all metadata, node, and property data from this view</returns>
-        public XmlDocument ExportView( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
+        public XmlDocument ExportView( CswNbtView View, bool PropsInViewOnly )
         {
             CswNbtImportExportFrame Frame = new CswNbtImportExportFrame( _CswNbtResources );
 

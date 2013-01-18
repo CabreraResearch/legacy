@@ -185,14 +185,13 @@ namespace ChemSW.Nbt
             set { Root.VisibilityUserId = value; }
         }
 
-        //TODO: ForMobile needs to go.
         /// <summary>
-        /// Use view in Mobile
+        /// Group by sibling nodetypes
         /// </summary>
-        public bool ForMobile
+        public bool GroupBySiblings
         {
-            get { return Root.ForMobile; }
-            set { Root.ForMobile = value; }
+            get { return Root.GroupBySiblings; }
+            set { Root.GroupBySiblings = value; }
         }
 
         public string GridGroupByCol
@@ -721,8 +720,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["viewname"] = ViewName;
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
-            //TODO: formobile needs to go.
-            ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
+            ViewTable.Rows[0]["groupbysiblings"] = CswConvert.ToDbVal( GroupBySiblings );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
             ViewTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( IsDemo );
@@ -821,8 +819,7 @@ namespace ChemSW.Nbt
 
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
-            //TODO: formobile needs to go.
-            NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
+            NewRow["groupbysiblings"] = CswConvert.ToDbVal( GroupBySiblings );
             NewRow["visibility"] = Visibility.ToString();
             NewRow["viewmode"] = NewViewMode.ToString();
             NewRow["category"] = NewViewCategory;
@@ -854,8 +851,8 @@ namespace ChemSW.Nbt
             this.VisibilityRoleId = RoleId;
             this.VisibilityUserId = UserId;
             this.Category = NewViewCategory;
-            //TODO: ForMobile needs to go.
-            this.ForMobile = ForMobile;
+            //TODO: GroupBySiblings needs to go.
+            this.GroupBySiblings = GroupBySiblings;
 
             // The XML includes the viewid and viewname, so it has to be updated before it can be saved
             NewRow["viewxml"] = this.ToString();

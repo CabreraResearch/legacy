@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.WebServices
             string ThisNodeId = "";
             int ThisNodeTypeId = int.MinValue;
             int ThisObjectClassId = int.MinValue;
-            string ThisNodeRel = "";
+            
             bool ThisNodeLocked = false;
             bool ThisNodeDisabled = false;
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
@@ -263,7 +263,6 @@ namespace ChemSW.Nbt.WebServices
                     }
                     break;
                 case NodeSpecies.Group:
-                    ThisNodeRel = "group";
                     Ret.CssClass = "folder";
                     break;
             }
@@ -455,7 +454,7 @@ namespace ChemSW.Nbt.WebServices
                         hidden = true,
                         resizable = false,
                         width = 0,
-                        xtype = extJsXType.numbercolumn,
+                        xtype = extJsXType.gridcolumn,
                         MenuDisabled = true
                     } );
                 ResponseData.Columns.Add( new CswNbtGridExtJsColumn
@@ -465,7 +464,7 @@ namespace ChemSW.Nbt.WebServices
                         hidden = true,
                         resizable = false,
                         width = 0,
-                        xtype = extJsXType.numbercolumn,
+                        xtype = extJsXType.gridcolumn,
                         MenuDisabled = true
                     } );
                 ResponseData.Columns.Add( new CswNbtGridExtJsColumn
@@ -492,8 +491,8 @@ namespace ChemSW.Nbt.WebServices
 
                 //#3: The fields to map the columns to the data store
                 ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "text", type = "string" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodetypeid", type = "number" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "objectclassid", type = "number" } );
+                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodetypeid", type = "string" } );
+                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "objectclassid", type = "string" } );
                 ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodeid", type = "string" } );
                 ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "disabled", type = "bool" } );
 
