@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Nbt.Actions;
+using ChemSW.Core;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.CISPro;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace NbtWebApp
 {
@@ -49,7 +48,7 @@ namespace NbtWebApp
         {
             CswNbtWebServiceMols.MolDataReturn Ret = new CswNbtWebServiceMols.MolDataReturn();
 
-            MultiPartFormDataFile mpfdf = new MultiPartFormDataFile( dataStream );
+            CswTools.MultiPartFormDataFile mpfdf = new CswTools.MultiPartFormDataFile( dataStream );
             MolData ImgData = new MolData();
             ImgData.molString = mpfdf.FileContents;
 
@@ -108,8 +107,8 @@ namespace NbtWebApp
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceMols.MolDataReturn saveMolPropFile( Stream dataStream )
         {
+            CswTools.MultiPartFormDataFile mpfdf = new CswTools.MultiPartFormDataFile( dataStream );
 
-            MultiPartFormDataFile mpfdf = new MultiPartFormDataFile( dataStream );
             MolData molImgData = new MolData();
             molImgData.molString = mpfdf.FileContents;
             molImgData.propId = _Context.Request.QueryString["PropId"];
@@ -145,48 +144,5 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-
-        public class MultiPartFormDataFile
-        {
-            public string ContentDisposition;
-            public string ContentType;
-            public string Filename;
-            public string FileContents;
-            public string ParamName;
-
-            public MultiPartFormDataFile( Stream stream )
-            {
-                using( StreamReader reader = new StreamReader( stream ) )
-                {
-                    while( reader.Peek() >= 0 )
-                    {
-                        string line = reader.ReadLine();
-                        if( line.Contains( "Content-Disposition" ) )
-                        {
-                            string[] split = line.Split( ';' );
-                            foreach( string s in split )
-                            {
-                                if( s.Contains( "Content-Disposition" ) )
-                                {
-                                    ContentDisposition = s.Split( ' ' )[1].Replace( ';', ' ' );
-                                }
-                                else if( s.Contains( "filename" ) )
-                                {
-                                    Filename = s.Substring( s.LastIndexOf( ':' ) + 1 ).Trim();
-                                }
-                            }
-                        }
-                        else if( line.Contains( "Content-Type" ) )
-                        {
-                            ContentType = Filename = line.Substring( line.LastIndexOf( ':' ) + 1 ).Trim();
-                            string rawFileContent = reader.ReadToEnd();
-                            FileContents = Regex.Replace( rawFileContent, @"-*WebKit.*", "" );
-                        }
-                    }
-                }
-            }
-
-        }
-
     }
 }

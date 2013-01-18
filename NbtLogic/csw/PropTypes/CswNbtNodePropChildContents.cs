@@ -155,8 +155,16 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["options"] = JOptions;
 
             Dictionary<CswPrimaryKey, string> Options = _getOptions();
+            bool first = true;
             foreach( CswPrimaryKey NodePk in Options.Keys )
             {
+                if( first )
+                {
+                    // Choose first option by default
+                    ParentObject["relatednodeid"] = NodePk.ToString();
+                    ParentObject["relatednodename"] = Options[NodePk];
+                    first = false;
+                }
                 if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
                 {
                     JObject JOption = new JObject();

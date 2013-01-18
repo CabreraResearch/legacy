@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.Actions
         Receiving,
         Subscriptions,
         Reconciliation,
+        Upload_Legacy_Mobile_Data,
         HMIS_Reporting
     }
 

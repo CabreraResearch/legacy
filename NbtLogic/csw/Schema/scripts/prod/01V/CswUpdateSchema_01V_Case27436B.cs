@@ -1,5 +1,7 @@
 ﻿using System.Collections.Specialized;
 using ChemSW.Core;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -88,6 +90,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp GhsSignalWordNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.SignalWord );
                 CswNbtMetaDataNodeTypeProp GhsLabelCodesNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.LabelCodes );
                 CswNbtMetaDataNodeTypeProp GhsClassCodesNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.ClassCodes );
+                CswNbtMetaDataNodeTypeProp GhsLabelCodesGridNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.LabelCodesGrid );
+                CswNbtMetaDataNodeTypeProp GhsClassCodesGridNTP = GhsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGHS.PropertyName.ClassCodesGrid );
                 CswNbtMetaDataNodeTypeProp GhsPictogramsNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GhsNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ImageList ), "Pictograms" ) );
                 CswNbtMetaDataNodeTypeProp GhsClassificationNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GhsNT, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.List ), "Classification" ) );
 
@@ -97,7 +101,8 @@ namespace ChemSW.Nbt.Schema
                 GhsSignalWordNTP.IsRequired = true;
 
                 GhsMaterialNTP.IsRequired = true;
-
+                GhsMaterialNTP.ReadOnly = true;
+                
                 GhsPictogramsNTP.Extended = "true";
                 GhsPictogramsNTP.TextAreaColumns = 77;
                 GhsPictogramsNTP.TextAreaRows = 77;
@@ -113,22 +118,28 @@ namespace ChemSW.Nbt.Schema
                     "Irritant"
                 };
                 CswDelimitedString PictoPaths = new CswDelimitedString( '\n' ) { 
-                    "Images/cispro/oxid.gif",
-                    "Images/cispro/flamme.gif",
-                    "Images/cispro/explos.gif",
-                    "Images/cispro/skull.gif",
-                    "Images/cispro/acide.gif",
-                    "Images/cispro/bottle.gif",
-                    "Images/cispro/silouete.gif",
-                    "Images/cispro/pollu.gif",
-                    "Images/cispro/exclam.gif"
+                    "Images/cispro/ghs/rondflam.jpg",
+                    "Images/cispro/ghs/flamme.jpg",
+                    "Images/cispro/ghs/explos.jpg",
+                    "Images/cispro/ghs/skull.jpg",
+                    "Images/cispro/ghs/acid.jpg",
+                    "Images/cispro/ghs/bottle.jpg",
+                    "Images/cispro/ghs/silhouet.jpg",
+                    "Images/cispro/ghs/pollut.jpg",
+                    "Images/cispro/ghs/exclam.jpg"
                 };
                 GhsPictogramsNTP.ListOptions = PictoNames.ToString();
                 GhsPictogramsNTP.ValueOptions = PictoPaths.ToString();
 
+                GhsLabelCodesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Small.ToString();
+                GhsLabelCodesGridNTP.MaxValue = 10;
+
+                GhsClassCodesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Small.ToString();
+                GhsClassCodesGridNTP.MaxValue = 10;
 
                 const string LabelingTabGroup = "Labeling";
                 const string ClassificationTabGroup = "Classification";
+
 
                 // Add Layout
                 GhsMaterialNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
@@ -138,6 +149,8 @@ namespace ChemSW.Nbt.Schema
                 GhsLabelCodesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DisplayRow: 5, DisplayColumn: 1, TabGroup: LabelingTabGroup );
                 GhsClassificationNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DisplayRow: 6, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
                 GhsClassCodesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DisplayRow: 7, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
+                GhsLabelCodesGridNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                GhsClassCodesGridNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
 
                 // Preview Layout
@@ -148,13 +161,16 @@ namespace ChemSW.Nbt.Schema
 
 
                 // Edit Layout
-                GhsMaterialNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, 1, 1 );
-                GhsJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, 2, 1 );
-                GhsSignalWordNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, 3, 1, LabelingTabGroup );
-                GhsPictogramsNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, 4, 1, LabelingTabGroup );
-                GhsLabelCodesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, 5, 1, LabelingTabGroup );
-                GhsClassificationNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, 6, 1, ClassificationTabGroup );
-                GhsClassCodesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, 7, 1, ClassificationTabGroup );
+                GhsMaterialNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 1, DisplayColumn: 1 );
+                GhsJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 2, DisplayColumn: 1 );
+                GhsSignalWordNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 3, DisplayColumn: 1, TabGroup: LabelingTabGroup );
+                GhsPictogramsNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 4, DisplayColumn: 1, TabGroup: LabelingTabGroup );
+                GhsLabelCodesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 5, DisplayColumn: 1, TabGroup: LabelingTabGroup );
+                GhsLabelCodesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 6, DisplayColumn: 1, TabGroup: LabelingTabGroup );
+                GhsClassificationNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 7, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
+                GhsClassCodesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 8, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
+                GhsClassCodesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, GhsGhsTab.TabId, DisplayRow: 9, DisplayColumn: 1, TabGroup: ClassificationTabGroup );
+
 
             } // if( null != GhsNT )
 

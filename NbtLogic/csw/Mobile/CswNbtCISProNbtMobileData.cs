@@ -7,6 +7,20 @@ namespace ChemSW.Nbt.csw.Mobile
     {
 
         [DataContract]
+        public class LegacyMobileResponse
+        {
+            [DataMember]
+            public string Error;
+
+            [DataMember]
+            public string FileContents;
+
+            [DataMember]
+            public string TreeData;
+
+        }
+
+        [DataContract]
         public class MobileResponse
         {
             [DataMember]
@@ -36,8 +50,13 @@ namespace ChemSW.Nbt.csw.Mobile
                     MultiOpRows = new Collection<Operation>();
                 }
 
+                // Used when uploading data from CISPro/NBT CORE mobile
                 [DataMember]
                 public string username = string.Empty;
+
+                // Used when uploading data from legacy mobile
+                [DataMember]
+                public string programname = string.Empty;
 
                 [DataMember]
                 public Collection<Operation> MultiOpRows;

@@ -4,22 +4,71 @@ window.initMain = window.initMain || function (undefined) {
 
     var cswPrivate = {
         tabsAndProps: null,
-        isDocumentReady: false,
-        isExtReady: false
+        is: (function() {
+            var isMulti = false;
+            var isExtReady = false;
+            var isDocumentReady = false;
+            var isOneTimeReset = false;
+            var trueOrFalse = function(val) {
+                var ret = false;
+                if (val === true) {
+                    ret = true;
+                }
+                return ret;
+            };
+            return {
+                get multi() {
+                    return isMulti;
+                },
+                set multi(nuVal) {
+                    isMulti = trueOrFalse(nuVal);
+                    return isMulti;
+                },
+                toggleMulti: function() {
+                    isMulti = !isMulti;
+                    return isMulti;
+                },
+                get extReady() {
+                    return isExtReady;
+                },
+                set extReady(nuVal) {
+                    isExtReady = trueOrFalse(nuVal);
+                    return isExtReady;
+                },
+                get documentReady() {
+                    return isDocumentReady;
+                },
+                set documentReady(nuVal) {
+                    isDocumentReady = trueOrFalse(nuVal);
+                    return isDocumentReady;
+                },
+                get oneTimeReset() {
+                    var ret = isOneTimeReset;
+                    if (true === ret) {
+                        isOneTimeReset = false;
+                    }
+                    return ret;
+                },
+                set oneTimeReset(nuVal) {
+                    isOneTimeReset = trueOrFalse(nuVal);
+                    return isOneTimeReset;
+                }
+            };
+        }())
     };
 
     $(document).ready(function() {
-        cswPrivate.isDocumentReady = true;
+        cswPrivate.is.documentReady = true;
         Csw.publish(Csw.enums.events.domready);
     });
     window.Ext.onReady(function() {
-        cswPrivate.isExtReady = true;
+        cswPrivate.is.extReady = true;
         Csw.publish(Csw.enums.events.domready);
     });
 
     Csw.subscribe(Csw.enums.events.domready, function _onReady() {
 
-        if (cswPrivate.isDocumentReady && cswPrivate.isExtReady) {
+        if (cswPrivate.is.documentReady && cswPrivate.is.extReady) {
 
             Csw.unsubscribe(Csw.enums.events.domready, null, _onReady); //We only need to execute once
             
@@ -48,6 +97,14 @@ window.initMain = window.initMain || function (undefined) {
 
             }());
 
+            Csw.main.initGlobalEventTeardown = Csw.main.initGlobalEventTeardown ||
+                Csw.main.register('initGlobalEventTeardown', function () {
+                    Csw.unsubscribe('CswMultiEdit'); //omitting a function handle removes all
+                    Csw.unsubscribe('CswNodeDelete'); //omitting a function handle removes all
+                    Csw.publish('initPropertyTearDown'); //omitting a function handle removes all
+                    cswPrivate.is.multi = false;
+                    cswPrivate.is.oneTimeReset = true;
+                });
 
             var startSpinner = function() {
                 Csw.main.ajaxImage.show();
@@ -63,7 +120,7 @@ window.initMain = window.initMain || function (undefined) {
 
             function refreshMain(eventObj, data) {
                 Csw.clientChanges.unsetChanged();
-                cswPrivate.multi = false;
+                cswPrivate.is.multi = false;
                 clear({ all: true });
                 Csw.tryExec(refreshSelected, data);
             }
@@ -483,15 +540,13 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.extend(o, options);
                 }
 
-                cswPrivate.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
+                cswPrivate.is.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
                 var linkType = Csw.string(o.linktype).toLowerCase();
 
                 var type = Csw.string(o.type).toLowerCase();
 
                 //Now is a good time to purge outstanding Node-specific events
-                Csw.unsubscribe('CswMultiEdit');
-                Csw.unsubscribe('CswNodeDelete');
-                Csw.publish('initPropertyTearDown');
+                
                 
                 if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
 
@@ -607,9 +662,8 @@ window.initMain = window.initMain || function (undefined) {
                             o.grid.toggleShowCheckboxes();
                             break;
                         default:
-                            cswPrivate.multi = (false === cswPrivate.multi);
                             Csw.publish('CswMultiEdit', {
-                                multi: cswPrivate.multi,
+                                multi: cswPrivate.is.toggleMulti(),
                                 nodeid: o.nodeid,
                                 viewid: o.viewid
                             });
@@ -641,7 +695,7 @@ window.initMain = window.initMain || function (undefined) {
                             break;
                         }
                     },
-                    Multi: cswPrivate.multi,
+                    Multi: cswPrivate.is.multi,
                     nodeTreeCheck: mainTree
                 };
 
@@ -681,7 +735,7 @@ window.initMain = window.initMain || function (undefined) {
                 o.onRefresh = function(options) {
                     clear({ centertop: true, centerbottom: true });
                     Csw.clientChanges.unsetChanged();
-                    cswPrivate.multi = false; // semi-kludge for multi-edit batch op
+                    cswPrivate.is.multi = false; // semi-kludge for multi-edit batch op
                     refreshSelected(options);
                 };
                 clear({ centertop: true, centerbottom: true });
@@ -784,7 +838,7 @@ window.initMain = window.initMain || function (undefined) {
 //            nodeid: o.nodeid,
 //            nodekey: o.nodekey,
                     name: mainTableId,
-                    Multi: cswPrivate.multi,
+                    Multi: cswPrivate.is.multi,
                     //'onAddNode': o.onAddNode,
                     onEditNode: o.onEditNode,
                     onDeleteNode: o.onDeleteNode,
@@ -888,7 +942,8 @@ window.initMain = window.initMain || function (undefined) {
 
                 clear({ right: true });
 
-                if (Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
+                if (cswPrivate.is.oneTimeReset ||
+                    Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
                     o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                         name: 'nodetabs',
@@ -898,7 +953,7 @@ window.initMain = window.initMain || function (undefined) {
                             currentNodeKey: o.nodekey
                         },
                         tabState: {
-                            ShowCheckboxes: cswPrivate.multi,
+                            ShowCheckboxes: cswPrivate.is.multi,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                         },
                         onSave: function() {
@@ -909,7 +964,7 @@ window.initMain = window.initMain || function (undefined) {
                         },
                         Refresh: function(options) {
                             Csw.clientChanges.unsetChanged();
-                            cswPrivate.multi = false; // semi-kludge for multi-edit batch op
+                            cswPrivate.is.multi = false; // semi-kludge for multi-edit batch op
                             refreshSelected(options);
                         },
                         onTabSelect: function(tabid) {
@@ -937,7 +992,7 @@ window.initMain = window.initMain || function (undefined) {
             }
 
             function refreshSelected(options) {
-                Csw.publish('initPropertyTearDown');
+                Csw.main.initGlobalEventTeardown();
                 if (Csw.clientChanges.manuallyCheckChanges()) {
                     var o = {
                         nodeid: '',
@@ -1019,9 +1074,7 @@ window.initMain = window.initMain || function (undefined) {
                 function(eventObj, opts) {
                     refreshSelected(opts);
                 });
-
-            cswPrivate.multi = false;
-
+            
             function refreshNodesTree(options) {
                 var o = {
                     'nodeid': '',
@@ -1060,7 +1113,7 @@ window.initMain = window.initMain || function (undefined) {
                         refreshNodesTree(newopts);
                     } // onEditFilters
                 }); // viewFilters
-
+                
                 mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
                     forSearch: o.forsearch,
                     onSelectNode: function(optSelect) {
@@ -1071,7 +1124,7 @@ window.initMain = window.initMain || function (undefined) {
                             nodekey: optSelect.nodekey
                         });
                     },
-                    isMulti: cswPrivate.multi,
+                    isMulti: cswPrivate.is.multi,
                     state: {
                         viewId: o.viewid,
                         viewMode: o.viewmode,
@@ -1094,6 +1147,8 @@ window.initMain = window.initMain || function (undefined) {
                         ActionOptions: {}
                     };
                     Csw.extend(o, options);
+
+                    Csw.main.initGlobalEventTeardown();
 
                     var designOpt = {};
 
@@ -1402,6 +1457,14 @@ window.initMain = window.initMain || function (undefined) {
 
                         Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
                         break;
+                case 'upload legacy mobile data':
+                    Csw.nbt.legacyMobileWizard(Csw.main.centerTopDiv, {
+                        onCancel: refreshSelected,
+                        onFinish: function (viewid, viewmode) {
+                            handleItemSelect({ itemid: viewid, mode: viewmode });
+                        }
+                    });
+                    break;
                     default:
                         if (false == Csw.isNullOrEmpty(o.actionurl)) {
                             Csw.window.location(o.actionurl);

@@ -121,6 +121,9 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
+                
+
+
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -157,6 +160,7 @@
 
             cswPrivate.makeDockedItems = function () {
                 var topToolbarItems = [];
+                var toggleGroups;
 
                 //Printing
                 if (cswPrivate.printingEnabled) {
