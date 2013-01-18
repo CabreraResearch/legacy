@@ -54,7 +54,7 @@
                     partNo: '',
                     properties: {},
                     documentProperties: {},
-                    useExistingMaterial: false,
+                    useExistingTempNode: false,
                     materialProperies: {}
                 }
             };
@@ -141,7 +141,7 @@
                                 cswPrivate.state.materialId = '';
                                 cswPrivate.state.documentId = '';
                                 cswPrivate.state.properties = {};
-                                cswPrivate.state.useExistingMaterial = false;
+                                cswPrivate.state.useExistingTempNode = false;
                                 cswPrivate.reinitSteps(2);
                             }
                             cswPrivate.createMaterial();
@@ -171,7 +171,7 @@
                     function changeMaterial() {
                         var hasChanged = false;
                         if (cswPrivate.materialTypeSelect &&
-                            cswPrivate.state.materialType.val !== cswPrivate.materialTypeSelect.val()) {
+                            Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
 
                             hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
@@ -201,7 +201,7 @@
                             cswPrivate.state.materialId = '';
                             cswPrivate.state.documentId = '';
                             cswPrivate.state.properties = {};
-                            cswPrivate.state.useExistingMaterial = false;
+                            cswPrivate.state.useExistingTempNode = false;
                             cswPrivate.reinitSteps(2);
                         }
                     }
@@ -263,7 +263,7 @@
                                 width: '200px',
                                 nodesUrlMethod: 'Nodes/getRelationshipOpts',
                                 ajaxData:{
-                                    NodeTypeId: NodeTypeId,
+                                    NodeTypeId: NodeTypeId || cswPrivate.state.materialType.val,
                                     ObjClassPropName: 'Supplier'
                                 },
                                 showSelectOnLoad: true,
@@ -275,6 +275,8 @@
                                 isRequired: true
                             });
                         };
+                        // Call the function to create the Supplier Picklist
+                        cswPrivate.makeSupplierCtrl();
 
                         // PARTNO
                         tbl.cell(4, 1).span().setLabelText('Part No:  ');
@@ -303,7 +305,8 @@
                                     NodeTypeId: cswPrivate.state.materialType.val,
                                     Tradename: cswPrivate.state.tradeName,
                                     Supplier: cswPrivate.state.supplier.val,
-                                    PartNo: cswPrivate.state.partNo
+                                    PartNo: cswPrivate.state.partNo,
+                                    NodeId: cswPrivate.state.materialId
                                 },
                                 success: function (data) {
                                     removeFoundMaterialLabel();
@@ -345,8 +348,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                    if (false === cswPrivate.stepTwoComplete &&
-                        false === cswPrivate.state.useExistingMaterial) {
+                    if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
 
@@ -357,26 +359,44 @@
                         cswPrivate.divStep2.br({ number: 4 });
 
                         div = cswPrivate.divStep2.div();
-                        Csw.subscribe('CreateMaterialSuccess', function () {
-                            cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                globalState: {
-                                    excludeOcProps: ['tradename', 'supplier', 'partno'],
-                                    currentNodeId: cswPrivate.state.materialId,
-                                    propertyData: cswPrivate.state.properties,
-                                    ShowAsReport: false
-                                },
-                                tabState: {
-                                    showSaveButton: false,
-                                    nodetypeid: cswPrivate.state.materialType.val,
-                                    EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
-                                },
-                                ReloadTabOnSave: false,
-                                async: false
-                            });
+                        if (false === cswPrivate.state.useExistingTempNode) {
+                            Csw.subscribe('CreateMaterialSuccess', function() {
+                                cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                                    globalState: {
+                                        excludeOcProps: ['tradename', 'supplier', 'partno'],
+                                        currentNodeId: cswPrivate.state.materialId,
+                                        propertyData: cswPrivate.state.properties,
+                                        ShowAsReport: false
+                                    },
+                                    tabState: {
+                                        showSaveButton: false,
+                                        nodetypeid: cswPrivate.state.materialType.val,
+                                        EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
+                                    },
+                                    ReloadTabOnSave: false,
+                                    async: false
+                                });
 
-                            //cswPrivate.stepTwoComplete = true;
-                        });
-                    }
+                                //cswPrivate.stepTwoComplete = true;
+                            });
+                        } else {
+                            cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                                    globalState: {
+                                        excludeOcProps: ['tradename', 'supplier', 'partno'],
+                                        currentNodeId: cswPrivate.state.materialId,
+                                        propertyData: cswPrivate.state.properties,
+                                        ShowAsReport: false
+                                    },
+                                    tabState: {
+                                        showSaveButton: false,
+                                        nodetypeid: cswPrivate.state.materialType.val,
+                                        EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
+                                    },
+                                    ReloadTabOnSave: false,
+                                    async: false
+                            });
+                        }
+                    } // if (false === cswPrivate.stepTwoComplete)
                 };
             }());
             //#endregion Step 2: Additional Properties
@@ -406,6 +426,10 @@
                         div.br({ number: 1 });
 
                         var makeGrid = function () {
+
+//                            cswPrivate.rows = [
+//                                [{ "value": 5 }, { "value": "9 kg" }, { "value": "AAAL135-09" }]
+//                            ];
 
                             //get Units of Measure for this Material
                             var unitsOfMeasure = [];
@@ -439,9 +463,9 @@
                             if (cswPrivate.showDispensable) {
                                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false}]);
                             }
-                            if (cswPrivate.rows.length === 0) {
-                                cswPrivate.rows.push(cswPrivate.header);
-                            }
+                            //if (cswPrivate.rows.length === 0) {
+                                cswPrivate.rows.unshift(cswPrivate.header);
+                           //}
                             cswPublic.sizesForm = cswPrivate.divStep3.form();
                             cswPublic.sizeGrid = cswPublic.sizesForm.thinGrid({
                                 linkText: '',
@@ -661,12 +685,13 @@
                 cswPrivate.finalize = function () {
                     function getMaterialDefinition() {
                         var createMaterialDef = {
-                            useexistingmaterial: cswPrivate.state.useExistingMaterial,
+                            useexistingmaterial: cswPrivate.state.useExistingTempNode,
                             sizes: cswPrivate.sizeNodes,
                             sizeNodes: []
                         };
 
-                        if (false === cswPrivate.state.useExistingMaterial) {
+                        //TODO: Come back to this logic with CF to make sure removing this if/else is ok.
+                        //if (false === cswPrivate.state.useExistingTempNode) {
                             createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
                             createMaterialDef.materialId = cswPrivate.state.materialId;
                             createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
@@ -682,9 +707,9 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
                                 createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
                             }
-                        } else {
-                            createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
-                        }
+                        //} else {
+                            //createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
+                        //}
                         return JSON.stringify(createMaterialDef);
                     }
 

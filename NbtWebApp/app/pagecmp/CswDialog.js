@@ -869,34 +869,34 @@
 
             openDialog(div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
-        ImportC3RecordDialog: function (options) {
-            var cswDlgPrivate = {
-                nodes: {},
-                nodenames: [],
-                nodeids: [],
-                cswnbtnodekeys: [],
-                onDeleteNode: null, //function (nodeid, nodekey) { },
-                Multi: false,
-                nodeTreeCheck: null,
-                publishDeleteEvent: true
-            };
+//        ImportC3RecordDialog: function (options) {
+//            var cswDlgPrivate = {
+//                nodes: {},
+//                nodenames: [],
+//                nodeids: [],
+//                cswnbtnodekeys: [],
+//                onDeleteNode: null, //function (nodeid, nodekey) { },
+//                Multi: false,
+//                nodeTreeCheck: null,
+//                publishDeleteEvent: true
+//            };
 
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
-            }
-            Csw.extend(cswDlgPrivate, options);
-            var cswPublic = {
-                div: Csw.literals.div(),
-                close: function () {
-                    cswPublic.div.$.dialog('close');
-                }
-            };
+//            if (Csw.isNullOrEmpty(options)) {
+//                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+//            }
+//            Csw.extend(cswDlgPrivate, options);
+//            var cswPublic = {
+//                div: Csw.literals.div(),
+//                close: function () {
+//                    cswPublic.div.$.dialog('close');
+//                }
+//            };
 
-            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
+//            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
 
-            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
+//            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
 
-        }, // ImportC3RecordDialog
+//        }, // ImportC3RecordDialog
         C3DetailsDialog: function (options) {
 
             var cswPrivate = {
