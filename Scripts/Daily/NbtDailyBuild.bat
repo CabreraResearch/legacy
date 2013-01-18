@@ -13,6 +13,7 @@ REM Generate default setting file
 >>%LOCALCONF% echo set ResetSchemaUsername=nbt_master
 >>%LOCALCONF% echo set ResetSchemaPassword=hj345defwu9
 >>%LOCALCONF% echo set ResetSchemaServer=nbttest
+>>%LOCALCONF% echo set env=prod
 
 echo #
 echo # Local configuration not yet set.
@@ -75,6 +76,12 @@ timeout /T 30
 >>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /v:q
 >>%LogFile% net start "ChemSW Log Service"
 
+>>%LogFile% echo ====================================================================
+>>%LogFile% echo Starting Mobile Build
+>>%LogFile% date /T
+>>%LogFile% time /T
+
+>>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:web:%env%
 
 :SchemaReset
 IF "%ResetSchema%" NEQ "Y" GOTO Continue

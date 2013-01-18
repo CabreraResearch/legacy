@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -12,10 +10,12 @@ namespace ChemSW.Nbt.ObjClasses
         public sealed class PropertyName
         {
             public const string SetName = "Set Name";
-            public const string SortOrder = "Sort Order";
-            public const string FireHazardClassType = "Fire Hazard Class Type";
+            public const string HazardCategory = "Hazard Category";
+            public const string Class = "Class";
+            public const string HazardClass = "Hazard Class";
             public const string HazardType = "Hazard Type";
-            public const string Material = "Material";
+            public const string CategoryFootnotes = "Category Footnotes";
+            public const string SortOrder = "Sort Order";
             public const string StorageSolidExemptAmount = "Storage Solid Exempt Amount";
             public const string StorageSolidExemptFootnotes = "Storage Solid Exempt Footnotes";
             public const string StorageLiquidExemptAmount = "Storage Liquid Exempt Amount";
@@ -105,25 +105,27 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship SetName { get { return _CswNbtNode.Properties[PropertyName.SetName]; } }
-        public CswNbtNodePropNumber SortOrder { get { return _CswNbtNode.Properties[PropertyName.SortOrder]; } }
-        public CswNbtNodePropList FireHazardClassType { get { return _CswNbtNode.Properties[PropertyName.FireHazardClassType]; } }
+        public CswNbtNodePropText HazardCategory { get { return _CswNbtNode.Properties[PropertyName.HazardCategory]; } }
+        public CswNbtNodePropText Class { get { return _CswNbtNode.Properties[PropertyName.Class]; } }
+        public CswNbtNodePropList HazardClass { get { return _CswNbtNode.Properties[PropertyName.HazardClass]; } }
         public CswNbtNodePropList HazardType { get { return _CswNbtNode.Properties[PropertyName.HazardType]; } }
-        public CswNbtNodePropText Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-        public CswNbtNodePropQuantity StorageSolidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.StorageSolidExemptAmount]; } }
+        public CswNbtNodePropText CategoryFootnotes { get { return _CswNbtNode.Properties[PropertyName.CategoryFootnotes]; } }
+        public CswNbtNodePropNumber SortOrder { get { return _CswNbtNode.Properties[PropertyName.SortOrder]; } }
+        public CswNbtNodePropText StorageSolidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.StorageSolidExemptAmount]; } }
         public CswNbtNodePropText StorageSolidExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.StorageSolidExemptFootnotes]; } }
-        public CswNbtNodePropQuantity StorageLiquidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.StorageLiquidExemptAmount]; } }
+        public CswNbtNodePropText StorageLiquidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.StorageLiquidExemptAmount]; } }
         public CswNbtNodePropText StorageLiquidExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.StorageLiquidExemptFootnotes]; } }
-        public CswNbtNodePropQuantity StorageGasExemptAmount { get { return _CswNbtNode.Properties[PropertyName.StorageGasExemptAmount]; } }
+        public CswNbtNodePropText StorageGasExemptAmount { get { return _CswNbtNode.Properties[PropertyName.StorageGasExemptAmount]; } }
         public CswNbtNodePropText StorageGasExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.StorageGasExemptFootnotes]; } }
-        public CswNbtNodePropQuantity ClosedSolidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.ClosedSolidExemptAmount]; } }
+        public CswNbtNodePropText ClosedSolidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.ClosedSolidExemptAmount]; } }
         public CswNbtNodePropText ClosedSolidExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.ClosedSolidExemptFootnotes]; } }
-        public CswNbtNodePropQuantity ClosedLiquidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.ClosedLiquidExemptAmount]; } }
+        public CswNbtNodePropText ClosedLiquidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.ClosedLiquidExemptAmount]; } }
         public CswNbtNodePropText ClosedLiquidExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.ClosedLiquidExemptFootnotes]; } }
-        public CswNbtNodePropQuantity ClosedGasExemptAmount { get { return _CswNbtNode.Properties[PropertyName.ClosedGasExemptAmount]; } }
+        public CswNbtNodePropText ClosedGasExemptAmount { get { return _CswNbtNode.Properties[PropertyName.ClosedGasExemptAmount]; } }
         public CswNbtNodePropText ClosedGasExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.ClosedGasExemptFootnotes]; } }
-        public CswNbtNodePropQuantity OpenSolidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.OpenSolidExemptAmount]; } }
+        public CswNbtNodePropText OpenSolidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.OpenSolidExemptAmount]; } }
         public CswNbtNodePropText OpenSolidExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.OpenSolidExemptFootnotes]; } }
-        public CswNbtNodePropQuantity OpenLiquidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.OpenLiquidExemptAmount]; } }
+        public CswNbtNodePropText OpenLiquidExemptAmount { get { return _CswNbtNode.Properties[PropertyName.OpenLiquidExemptAmount]; } }
         public CswNbtNodePropText OpenLiquidExemptFootnotes { get { return _CswNbtNode.Properties[PropertyName.OpenLiquidExemptFootnotes]; } }
 
         #endregion
