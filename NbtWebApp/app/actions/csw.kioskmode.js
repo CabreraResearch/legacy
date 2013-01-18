@@ -215,7 +215,7 @@
                             iconType: Csw.enums.iconType.right,
                             isButton: false
                         });
-                    } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
+                    } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
                         field2Value1Cell.css({ 'background-color': 'yellow' });
                         iconCell3.icon({
                             iconType: Csw.enums.iconType.right,
