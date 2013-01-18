@@ -125,6 +125,7 @@
                     afterrender: function() {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
                         //It _will_ in the next nano-second, so we have to defer.
+                        cswPublic.toggleCheckboxes();
                     },
                     viewready: function() {
                         //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
@@ -135,6 +136,9 @@
                             cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
                         
+                    },
+                    afteritemcollapse: function() {
+                        cswPublic.toggleCheckboxes();
                     },
                     select: function(rowModel, record, index, eOpts) {
                         //If you click a node, this event is firing. We must:
@@ -315,9 +319,9 @@
                 /// Collapses all nodes in the tree.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                cswPublic.tree.getEl().mask('Collapsing tree...');
+                //cswPublic.tree.getEl().mask('Collapsing tree...');
                 cswPublic.tree.collapseAll(function () {
-                    cswPublic.tree.getEl().unmask();
+                    //cswPublic.tree.getEl().unmask();
                 });
                 return cswPublic;
             };
@@ -327,9 +331,9 @@
                 /// Expand all nodes in the tree.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                cswPublic.tree.getEl().mask('Expanding tree...');
+                //cswPublic.tree.getEl().mask('Expanding tree...');
                 cswPublic.tree.expandAll(function () {
-                    cswPublic.tree.getEl().unmask();
+                    //cswPublic.tree.getEl().unmask();
                 });
                 return cswPublic;
             };
