@@ -23,7 +23,7 @@
                         cswPublic.control.cell(1, 1).append('[File display disabled]');
                     } else {
 
-                        cswPrivate.href = Csw.string(cswPrivate.propVals.href).trim();
+                        cswPrivate.href = Csw.hrefString(cswPrivate.propVals.href);
                         cswPrivate.fileName = Csw.string(cswPrivate.propVals.name).trim();
 
                         cswPrivate.fileCell = cswPublic.control.cell(1, 1);

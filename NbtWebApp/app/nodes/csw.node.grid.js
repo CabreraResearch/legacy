@@ -106,7 +106,13 @@
                             Multi: (nodes.length > 1),
                             publishDeleteEvent: false
                         });
-                    } // onDelete
+                    }, // onDelete
+                    onMouseEnter: function(event, nodeObj) {
+                        Csw.nodeHoverIn(event, nodeObj.raw.nodeid);
+                    },
+                    onMouseExit: function (event, nodeObj) {
+                        Csw.nodeHoverOut(event, nodeObj.raw.nodeid);
+                    }
                 }); // grid()
 
                 Csw.tryExec(cswPrivate.onSuccess, cswPublic);
