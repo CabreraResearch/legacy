@@ -71,6 +71,29 @@ namespace NbtWebApp.WebSvc.Logic.Labels
     }
 
     /// <summary>
+    /// Request to register a label printer
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer registration" )]
+    public class LabelPrinter
+    {
+        /// <summary>
+        /// LPC name is unique in nt schem to identify printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "LPC Name uniquely identifies an NBT Label Printer to users" )]
+        public string LpcName = string.Empty;
+
+        /// <summary>
+        /// Additional descriptive info about the label printer
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "Additional descriptive info about the label printer" )]
+        public string Description = string.Empty;
+
+    }
+
+    /// <summary>
     /// The data contract for a Print Label Request/Response
     /// </summary>
     [DataContract]
@@ -193,9 +216,39 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 public string SelectedLabelId = string.Empty;
             }
 
+            /// <summary>
+            /// Returns status of register printer request
+            /// </summary>
+            [DataContract]
+            [Description( "Returns status of register printer request" )]
+            public class registeredLpc
+            {
+                /// <summary>
+                /// Printer
+                /// </summary>
+                [DataMember]
+                [Description( "The label printer" )]
+                public LabelPrinter printer = new LabelPrinter();
+
+                /// <summary>
+                /// printer is enabled
+                /// </summary>
+                [DataMember]
+                [Description( "Whether printer is enabled in NBT" )]
+                public bool enabled = false;
+
+                /// <summary>
+                /// status string of request
+                /// </summary>
+                [DataMember]
+                [Description( "Status string of this request" )]
+                public string status = string.Empty;
+
+            }
 
         }
 
+    
     }
 
 }

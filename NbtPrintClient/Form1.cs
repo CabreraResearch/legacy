@@ -16,20 +16,17 @@ namespace CswPrintClient1
 {
     public partial class Form1 : Form
     {
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void button1_Click( object sender, EventArgs e )
+        private void  btnPrintEPL_Click( object sender, EventArgs e )
         {
-            if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, textBox1.Text ) == true )
+            if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, textBox1.Text ) != true )
             {
-
-            }
-            else
-            {
-
+                MessageBox.Show( "Print failed!" );
             }
         }
 
@@ -40,29 +37,34 @@ namespace CswPrintClient1
 
         protected void Log( string msg )
         {
-            Status( msg );
-            if( tbLog.Lines.Length > 10 )
+            if( tbLog.Lines.Length > 100 )
             {
-                tbLog.Lines = tbLog.Lines.Skip( tbLog.Lines.Length - 10 ).ToArray();
+                tbLog.Text = tbLog.Text.Substring( 0, tbLog.Text.LastIndexOf( "\r\n" ) ); // Skip( tbLog.Lines.Length - 100 ).ToArray();
             }
-            tbLog.AppendText( DateTime.Now.ToString() + " " + msg + "\n" );
+            tbLog.Text = DateTime.Now.ToString() + " " + msg + "\r\n" + tbLog.Text;
+            //tbLog.AppendText( DateTime.Now.ToString() + " " + msg + "\n" );
         }
 
-        private void button2_Click( object sender, EventArgs e )
-        {
-            CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
 
-            SessionClient s = new SessionClient();
-            s.Endpoint.Behaviors.Add( cookieBehavior );
-            NbtSession.CswWebSvcReturn ret = s.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+
+        private void btnTestPrintService_Click( object sender, EventArgs e )
+        {
+            //try login
+            CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
+            SessionClient mySession = new SessionClient();
+            mySession.Endpoint.Behaviors.Add( cookieBehavior );
+
+            NbtSession.CswWebSvcReturn ret = mySession.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
             {
                 CustomerId = tbAccessId.Text,
                 UserName = tbUsername.Text,
                 Password = tbPassword.Text,
                 IsMobile = false
             } );
+
             if( ret.Authentication.AuthenticationStatus == "Authenticated" )
             {
+                //logged in
                 Labels2Client l = new NbtLabels.Labels2Client();
                 l.Endpoint.Behaviors.Add( cookieBehavior );
 
@@ -91,12 +93,19 @@ namespace CswPrintClient1
                     }
                 }
                 l.Close();
-                s.End();
-                s.Close();
+                //LOGOUT
+                mySession.End();
             }
+            else
+            {
+                Status( "Authentication error: " + ret.Authentication.AuthenticationStatus );
+            }
+            mySession.Close();
         }
 
-        private void button3_Click( object sender, EventArgs e )
+
+
+        private void btnSelPrn_Click( object sender, EventArgs e )
         {
             if( printDialog1.ShowDialog() == DialogResult.OK )
             {
@@ -104,11 +113,116 @@ namespace CswPrintClient1
             }
         }
 
-        private void button4_Click( object sender, EventArgs e )
+        private bool doRegister(string accessid,string userid,string pwd,ref string status)
         {
-            Log( " register printer tried" );
-            lblRegisterStatus.Text = "not implemented: registerLpc() now!";
-            Log( " register printer failed" );
+            bool myReturn = false;
+            //try login
+            CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
+            SessionClient mySession = new SessionClient();
+            mySession.Endpoint.Behaviors.Add( cookieBehavior );
+
+            NbtSession.CswWebSvcReturn ret = mySession.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+            {
+                CustomerId = accessid,
+                UserName = userid,
+                Password = pwd,
+                IsMobile = false
+            } );
+
+            status = "";
+            if( ret.Authentication.AuthenticationStatus == "Authenticated" )
+            {
+                //logged in
+                Labels2Client l = new NbtLabels.Labels2Client();
+                l.Endpoint.Behaviors.Add( cookieBehavior );
+                LabelPrinter lblPrn = new LabelPrinter();
+                lblPrn.LpcName = tbLPCname.Text;
+                lblPrn.Description = "some description of printer here";
+                CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg Ret = l.registerLpc( lblPrn );
+                l.Close();
+                if( Ret.Status.Success == true )
+                {
+                    status = "Printer " + lblPrn.LpcName + " registered successfully.";
+                    status += " PrinterKey=" + Ret.PrinterKey;
+                    myReturn = true;
+                }
+                else
+                {
+                    status = "Printer " + lblPrn.LpcName + " registration failed. ";
+                    if( Ret.Status.Errors.Count() > 0 )
+                    {
+                        status += Ret.Status.Errors[0].Message.ToString();
+                    }
+                }
+                //LOGOUT
+                mySession.End();
+            }
+            else
+            {
+                status = "Authentication error: " + ret.Authentication.AuthenticationStatus;
+            }
+            mySession.Close();
+            return myReturn;
+        }
+
+
+        private void btnRegister_Click( object sender, EventArgs e )
+        {
+/*
+            //try login
+            CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
+            SessionClient mySession = new SessionClient();
+            mySession.Endpoint.Behaviors.Add( cookieBehavior );
+
+            NbtSession.CswWebSvcReturn ret = mySession.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+            {
+                CustomerId = tbAccessId.Text,
+                UserName = tbUsername.Text,
+                Password = tbPassword.Text,
+                IsMobile = false
+            } );
+
+            string status = "";
+            if( ret.Authentication.AuthenticationStatus == "Authenticated" )
+            {
+                //logged in
+                Labels2Client l = new NbtLabels.Labels2Client();
+                l.Endpoint.Behaviors.Add( cookieBehavior );
+                LabelPrinter lblPrn = new LabelPrinter();
+                lblPrn.LpcName = tbLPCname.Text;
+                lblPrn.Description = "some description of printer here";
+                CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg Ret = l.registerLpc( lblPrn );
+                l.Close();
+                if( Ret.Status.Success == true )
+                {
+                    status = "Printer " + lblPrn.LpcName + " registered successfully.";
+                    status += " PrinterKey=" + Ret.PrinterKey;
+                }
+                else
+                {
+                    status = "Printer " + lblPrn.LpcName + " registration failed. ";
+                    if( Ret.Status.Errors.Count() > 0 )
+                    {
+                        status += Ret.Status.Errors[0].Message.ToString();
+                    }
+                }
+                //LOGOUT
+                mySession.End();
+            }
+            else
+            {
+                status = "Authentication error: " + ret.Authentication.AuthenticationStatus;
+            }
+            mySession.Close();
+*/
+            string status = "";
+            //btnRegister.Enabled = (!
+            doRegister(tbAccessId.Text,tbUsername.Text,tbPassword.Text,ref status);
+            //);
+
+            Status( status );
+            Log( status );
+            lblRegisterStatus.Text = status;
         }
 
         private void Form1_Load( object sender, EventArgs e )
@@ -177,11 +291,10 @@ namespace CswPrintClient1
             timer1.Enabled = cbEnabled.Checked;
         }
 
-        private void button5_Click( object sender, EventArgs e )
+        private void btnSave_Click( object sender, EventArgs e )
         {
             SaveSettings();
         }
-
 
     }
 }

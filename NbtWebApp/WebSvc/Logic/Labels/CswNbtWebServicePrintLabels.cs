@@ -43,6 +43,25 @@ namespace ChemSW.Nbt.WebServices
         public NbtPrintLabel.Response.Epl Data;
     }
 
+    /// <summary>
+    /// Label EPL Return Object
+    /// </summary>
+    [DataContract]
+    public class CswNbtLabelPrinterReg : CswWebSvcReturn
+    {
+        /// <summary> ctor </summary>
+        public CswNbtLabelPrinterReg()
+        {
+            PrinterKey = string.Empty;
+        }
+
+        /// <summary> data </summary>
+        [DataMember]
+        public string PrinterKey;
+
+    }
+
+
 
     public class CswNbtWebServicePrintLabels
     {
@@ -248,6 +267,20 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // GenerateEPLScript()
 
+        public static void registerLpc( ICswResources CswResources, CswNbtLabelPrinterReg Return, LabelPrinter Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            if( Request.LpcName == "*TEST.DUPLICATE*" )
+            {
+                Return.Status.Success = false;
+                Return.addException( new CswDniException( ErrorType.Error, "That printer is already registered.", "registerLpc()" ) );
+            }
+            else
+            {
+                Return.Status.Success = true;
+                Return.PrinterKey = "nodeid_9bogus1";
+            }
+        } // getEPLText()
 
 
     } // class CswNbtWebServiceTabsAndProps

@@ -18,21 +18,21 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost/nbtwebapp/Services/Labels2.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Labels2.xsd" MetadataType="Schema" ID="b8ffaab2-a121-4b36-abc4-3a5cf59c4295" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd3" />
-    <MetadataFile FileName="Labels21.wsdl" MetadataType="Wsdl" ID="1834663d-d498-4cb1-8af1-5bb3dc023a88" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?wsdl=wsdl0" />
-    <MetadataFile FileName="Labels21.xsd" MetadataType="Schema" ID="da868970-7d9f-4d4e-9874-a92778531136" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd1" />
-    <MetadataFile FileName="Labels22.xsd" MetadataType="Schema" ID="c1963896-fed7-41d7-b309-ce19a13b2c03" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd0" />
-    <MetadataFile FileName="Labels23.xsd" MetadataType="Schema" ID="8121365a-03c7-48a7-8be3-ad1b4560381f" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd8" />
-    <MetadataFile FileName="Labels24.xsd" MetadataType="Schema" ID="6a02cd0f-a5f8-4918-9616-28d9bbf6b780" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd6" />
-    <MetadataFile FileName="Labels25.xsd" MetadataType="Schema" ID="ec3c734b-5192-4df1-a019-3114740b53a0" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd4" />
-    <MetadataFile FileName="Labels26.xsd" MetadataType="Schema" ID="f308d614-36db-479f-9c89-753844c29e6d" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd2" />
-    <MetadataFile FileName="Labels27.xsd" MetadataType="Schema" ID="be7d1b8c-62f7-466d-803b-40a1338da3d6" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd7" />
-    <MetadataFile FileName="Labels21.disco" MetadataType="Disco" ID="230849e1-411b-434a-a037-2d60fae4a270" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?disco" />
-    <MetadataFile FileName="Labels28.xsd" MetadataType="Schema" ID="c03162ec-929f-41fd-bfdf-12da3d11ee54" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd5" />
-    <MetadataFile FileName="Labels211.wsdl" MetadataType="Wsdl" ID="b3046362-ad23-47a9-b4df-8181054dad4a" SourceId="1" SourceUrl="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?wsdl" />
+    <MetadataFile FileName="Labels2.wsdl" MetadataType="Wsdl" ID="7a557229-3adc-4dd3-bf9f-cb2675c3b191" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="Labels29.xsd" MetadataType="Schema" ID="4675e32d-40ad-4890-968b-3c960c15bf89" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd2" />
+    <MetadataFile FileName="Labels291.xsd" MetadataType="Schema" ID="09bf5bcc-2396-4049-90f6-1c08e8e8a38a" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd8" />
+    <MetadataFile FileName="Labels292.xsd" MetadataType="Schema" ID="48fa2051-ebf5-40f0-9391-0f8817fe10b4" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd3" />
+    <MetadataFile FileName="Labels293.xsd" MetadataType="Schema" ID="ea7c44bb-fb35-4d45-ae02-0c5460cc638c" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd6" />
+    <MetadataFile FileName="Labels294.xsd" MetadataType="Schema" ID="4934729a-b0ce-4913-a49a-995743529ef0" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd7" />
+    <MetadataFile FileName="Labels2.disco" MetadataType="Disco" ID="c83cdab3-965d-4b3c-ad8d-8eb250abe138" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?disco" />
+    <MetadataFile FileName="Labels295.xsd" MetadataType="Schema" ID="d7b90cc3-7ab9-4d67-b72e-04a3ba069a78" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd5" />
+    <MetadataFile FileName="Labels296.xsd" MetadataType="Schema" ID="0ca02830-c4e4-4a5e-9ad3-f465d148f5bf" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd1" />
+    <MetadataFile FileName="Labels297.xsd" MetadataType="Schema" ID="af6d283f-474b-45d5-abaf-7b0e73247a38" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd0" />
+    <MetadataFile FileName="Labels21.wsdl" MetadataType="Wsdl" ID="06180d52-7219-4e0c-9fd7-c17ad90d13d2" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?wsdl" />
+    <MetadataFile FileName="Labels298.xsd" MetadataType="Schema" ID="85c40575-910c-4218-b8c7-848ac4675c4f" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd4" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

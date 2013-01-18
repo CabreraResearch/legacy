@@ -36,15 +36,16 @@
             this.tbLog = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnSave = new System.Windows.Forms.Button();
             this.cbEnabled = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.lblRegisterStatus = new System.Windows.Forms.Label();
             this.tbURL = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.button4 = new System.Windows.Forms.Button();
+            this.btnRegister = new System.Windows.Forms.Button();
             this.tbLPCname = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnSelPrn = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -56,17 +57,16 @@
             this.tbPrinter = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.label8 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnTestPrintSvc = new System.Windows.Forms.Button();
             this.tbPrintLabelId = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tbTargetId = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnPrintEPL = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button5 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -119,16 +119,16 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.button5);
+            this.tabPage2.Controls.Add(this.btnSave);
             this.tabPage2.Controls.Add(this.cbEnabled);
             this.tabPage2.Controls.Add(this.label12);
             this.tabPage2.Controls.Add(this.label11);
             this.tabPage2.Controls.Add(this.lblRegisterStatus);
             this.tabPage2.Controls.Add(this.tbURL);
             this.tabPage2.Controls.Add(this.label9);
-            this.tabPage2.Controls.Add(this.button4);
+            this.tabPage2.Controls.Add(this.btnRegister);
             this.tabPage2.Controls.Add(this.tbLPCname);
-            this.tabPage2.Controls.Add(this.button3);
+            this.tabPage2.Controls.Add(this.btnSelPrn);
             this.tabPage2.Controls.Add(this.label10);
             this.tabPage2.Controls.Add(this.tbPassword);
             this.tabPage2.Controls.Add(this.label5);
@@ -145,6 +145,16 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Setup";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(283, 340);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(115, 23);
+            this.btnSave.TabIndex = 52;
+            this.btnSave.Text = "Save Settings";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // cbEnabled
             // 
@@ -191,7 +201,7 @@
             this.tbURL.ReadOnly = true;
             this.tbURL.Size = new System.Drawing.Size(244, 20);
             this.tbURL.TabIndex = 47;
-            this.tbURL.Text = "https://nbtdaily.chemswlive.com/DevNbt/";
+            this.tbURL.Text = "https://localhost/nbtwebapp/";
             // 
             // label9
             // 
@@ -202,15 +212,15 @@
             this.label9.TabIndex = 46;
             this.label9.Text = "ChemSW Server URL";
             // 
-            // button4
+            // btnRegister
             // 
-            this.button4.Location = new System.Drawing.Point(323, 68);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 45;
-            this.button4.Text = "Register";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.btnRegister.Location = new System.Drawing.Point(323, 68);
+            this.btnRegister.Name = "btnRegister";
+            this.btnRegister.Size = new System.Drawing.Size(75, 23);
+            this.btnRegister.TabIndex = 45;
+            this.btnRegister.Text = "Register";
+            this.btnRegister.UseVisualStyleBackColor = true;
+            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
             // 
             // tbLPCname
             // 
@@ -220,15 +230,15 @@
             this.tbLPCname.TabIndex = 44;
             this.tbLPCname.Text = "Label Printer 1";
             // 
-            // button3
+            // btnSelPrn
             // 
-            this.button3.Location = new System.Drawing.Point(323, 40);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 43;
-            this.button3.Text = "Select...";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSelPrn.Location = new System.Drawing.Point(323, 40);
+            this.btnSelPrn.Name = "btnSelPrn";
+            this.btnSelPrn.Size = new System.Drawing.Size(75, 23);
+            this.btnSelPrn.TabIndex = 43;
+            this.btnSelPrn.Text = "Select...";
+            this.btnSelPrn.UseVisualStyleBackColor = true;
+            this.btnSelPrn.Click += new System.EventHandler(this.btnSelPrn_Click);
             // 
             // label10
             // 
@@ -311,13 +321,13 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.label8);
-            this.tabPage3.Controls.Add(this.button2);
+            this.tabPage3.Controls.Add(this.btnTestPrintSvc);
             this.tabPage3.Controls.Add(this.tbPrintLabelId);
             this.tabPage3.Controls.Add(this.label7);
             this.tabPage3.Controls.Add(this.tbTargetId);
             this.tabPage3.Controls.Add(this.label6);
             this.tabPage3.Controls.Add(this.label2);
-            this.tabPage3.Controls.Add(this.button1);
+            this.tabPage3.Controls.Add(this.btnPrintEPL);
             this.tabPage3.Controls.Add(this.textBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -337,14 +347,15 @@
             this.label8.TabIndex = 45;
             this.label8.Text = "getLabel() Service Test Info";
             // 
-            // button2
+            // btnTestPrintSvc
             // 
-            this.button2.Location = new System.Drawing.Point(20, 308);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 44;
-            this.button2.Text = "Print Service";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnTestPrintSvc.Location = new System.Drawing.Point(20, 308);
+            this.btnTestPrintSvc.Name = "btnTestPrintSvc";
+            this.btnTestPrintSvc.Size = new System.Drawing.Size(75, 23);
+            this.btnTestPrintSvc.TabIndex = 44;
+            this.btnTestPrintSvc.Text = "Print Service";
+            this.btnTestPrintSvc.UseVisualStyleBackColor = true;
+            this.btnTestPrintSvc.Click += new System.EventHandler(this.btnTestPrintService_Click);
             // 
             // tbPrintLabelId
             // 
@@ -390,14 +401,15 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Printer Data Test Info";
             // 
-            // button1
+            // btnPrintEPL
             // 
-            this.button1.Location = new System.Drawing.Point(17, 196);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Print EPL";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnPrintEPL.Location = new System.Drawing.Point(17, 196);
+            this.btnPrintEPL.Name = "btnPrintEPL";
+            this.btnPrintEPL.Size = new System.Drawing.Size(75, 23);
+            this.btnPrintEPL.TabIndex = 6;
+            this.btnPrintEPL.Text = "Print EPL";
+            this.btnPrintEPL.UseVisualStyleBackColor = true;
+            this.btnPrintEPL.Click += new System.EventHandler(this.btnPrintEPL_Click);
             // 
             // textBox1
             // 
@@ -418,16 +430,6 @@
             // 
             this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(283, 340);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(115, 23);
-            this.button5.TabIndex = 52;
-            this.button5.Text = "Save Settings";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // Form1
             // 
@@ -467,27 +469,27 @@
         private System.Windows.Forms.TextBox tbPrinter;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnPrintEPL;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.PrintDialog printDialog1;
         private System.Windows.Forms.TextBox tbURL;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button btnRegister;
         private System.Windows.Forms.TextBox tbLPCname;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnSelPrn;
         private System.Windows.Forms.TextBox tbPrintLabelId;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbTargetId;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnTestPrintSvc;
         private System.Windows.Forms.TextBox tbLog;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblRegisterStatus;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.CheckBox cbEnabled;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button btnSave;
 
     }
 }
