@@ -248,11 +248,12 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
                 }
+                else
+                {
+                    KioskModeData.OperationData.ModeStatusMsg = "Error: Scanned mode does not exist or is unavailable";
+                    KioskModeData.OperationData.ModeServerValidated = false;
+                }
             }
-            //else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Mode ) )
-            //{
-            //    _setFields( KioskModeData.OperationData );
-            //}
             Return.Data = KioskModeData;
         }
 

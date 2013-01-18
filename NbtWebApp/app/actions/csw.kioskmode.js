@@ -99,6 +99,12 @@
                             cswPrivate.handleItem(value);
                         }
                     });
+                    cswPrivate.scanArea.$.blur(function () {
+                        setTimeout(function () {
+                            cswPrivate.scanArea.$.focus();
+                        }, 5);
+                    });
+
                     cswPrivate.renderUI();
                 };
 
@@ -191,13 +197,13 @@
                     var iconCell2 = propsTbl.cell(2, 1).css({ 'width': '10px' });
                     var iconCell3 = propsTbl.cell(3, 1).css({ 'width': '10px' });
 
-                    var field1Cell = propsTbl.cell(2, 2).css('height', '25px');
+                    var field1Cell = propsTbl.cell(2, 2).css({ 'height': '25px', 'width': '85px' });
                     field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
                     var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '155px' });
                     field1Value1Cell.span({ text: cswPrivate.OperationData.Field1.Value + ' ' + cswPrivate.OperationData.Field1.SecondValue });
                     propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
 
-                    var field2Cell = propsTbl.cell(3, 2).css('height', '25px');
+                    var field2Cell = propsTbl.cell(3, 2).css({ 'height': '25px', 'width': '85px' });
                     field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
                     var field2Value1Cell = propsTbl.cell(3, 3).css({ 'width': '155px' });
                     field2Value1Cell.span({ text: cswPrivate.OperationData.Field2.Value });
