@@ -6,6 +6,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using System.Collections.Generic;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt.LandingPage
 {
@@ -58,10 +59,23 @@ namespace ChemSW.Nbt.LandingPage
                 CswNbtNode ThisReportNode = _CswNbtResources.Nodes[ReportPk];
                 if( null != ThisReportNode )
                 {
-                    _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : ThisReportNode.NodeName;                    
+                    _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : ThisReportNode.NodeName;
                     _ItemData.ReportId = ReportPk.ToString();
                     _ItemData.Type = "report";
                     _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisReportNode.getNodeType().IconFileName;
+                }
+            } 
+            Int32 SearchId = CswConvert.ToInt32( LandingPageRow["to_searchid"] );
+            if( SearchId != Int32.MinValue )
+            {
+                CswPrimaryKey SearchPk = new CswPrimaryKey( "search", SearchId );
+                CswNbtSearch Search = _CswNbtResources.SearchManager.restoreSearch( SearchPk );
+                if( null != Search )
+                {
+                    _ItemData.Text = Search.Name;
+                    _ItemData.ReportId = SearchPk.ToString();
+                    _ItemData.Type = "search";
+                    _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + "magglass.png";
                 }
             }
             _setCommonItemDataForUI( LandingPageRow );
@@ -82,6 +96,11 @@ namespace ChemSW.Nbt.LandingPage
             {
                 CswPrimaryKey ReportPk = CswConvert.ToPrimaryKey( Request.PkValue );
                 _ItemRow["to_reportid"] = CswConvert.ToDbVal( ReportPk.PrimaryKey );
+            }
+            else if( ViewType == CswNbtView.ViewType.Search )
+            {
+                CswPrimaryKey SearchPk = CswConvert.ToPrimaryKey( Request.PkValue );
+                _ItemRow["to_searchid"] = CswConvert.ToDbVal( SearchPk.PrimaryKey );
             }
             else
             {
