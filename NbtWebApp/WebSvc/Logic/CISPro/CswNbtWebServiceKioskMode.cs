@@ -21,6 +21,19 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
+        private sealed class Modes
+        {
+            public const string Move = "move";
+            public const string Owner = "owner";
+            public const string Transfer = "transfer";
+            public const string Dispense = "dispense";
+            public const string Dispose = "dispose";
+            public static readonly CswCommaDelimitedString All = new CswCommaDelimitedString()
+            {
+                Move, Owner, Transfer, Dispense, Dispose
+            };
+        }
+
         #region Data Contracts
 
         [DataContract]
@@ -76,6 +89,8 @@ namespace ChemSW.Nbt.WebServices
             public Field Field1;
             [DataMember]
             public Field Field2;
+            [DataMember]
+            public string LastItemScanned;
         }
 
         [DataContract]
@@ -98,7 +113,7 @@ namespace ChemSW.Nbt.WebServices
                 OpMode = OpMode.ToLower();
                 switch( OpMode )
                 {
-                    case "move":
+                    case Modes.Move:
                         if( FieldNumber == 1 )
                         {
                             Ret = NbtObjectClass.LocationClass;
@@ -108,7 +123,7 @@ namespace ChemSW.Nbt.WebServices
                             Ret = NbtObjectClass.ContainerClass;
                         }
                         break;
-                    case "owner":
+                    case Modes.Owner:
                         if( FieldNumber == 1 )
                         {
                             Ret = NbtObjectClass.UserClass;
@@ -118,7 +133,7 @@ namespace ChemSW.Nbt.WebServices
                             Ret = NbtObjectClass.ContainerClass;
                         }
                         break;
-                    case "transfer":
+                    case Modes.Transfer:
                         if( FieldNumber == 1 )
                         {
                             Ret = NbtObjectClass.UserClass;
@@ -128,10 +143,10 @@ namespace ChemSW.Nbt.WebServices
                             Ret = NbtObjectClass.ContainerClass;
                         }
                         break;
-                    case "dispense":
+                    case Modes.Dispense:
                         //TODO: dispense container
                         break;
-                    case "dispose":
+                    case Modes.Dispose:
                         //TODO: dispose container
                         break;
                 }
@@ -150,17 +165,17 @@ namespace ChemSW.Nbt.WebServices
 
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = "Move",
+                name = CswTools.UppercaseFirst( Modes.Move ),
                 imgUrl = "Images/newicons/KioskMode/Move_code39.png"
             } );
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = "Owner",
+                name = CswTools.UppercaseFirst( Modes.Owner ),
                 imgUrl = "Images/newicons/KioskMode/Owner_code39.png"
             } );
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = "Transfer",
+                name = CswTools.UppercaseFirst( Modes.Transfer ),
                 imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
             } );
             CswNbtPermit permissions = new CswNbtPermit( NbtResources );
@@ -168,7 +183,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = "Dispense",
+                    name = CswTools.UppercaseFirst( Modes.Dispense ),
                     imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
                 } );
             }
@@ -176,7 +191,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = "Dispose",
+                    name = CswTools.UppercaseFirst( Modes.Dispose ),
                     imgUrl = "Images/newicons/KioskMode/Dispose_code39.png"
                 } );
             }
@@ -193,43 +208,51 @@ namespace ChemSW.Nbt.WebServices
         public static void HandleScan( ICswResources CswResources, KioskModeDataReturn Return, KioskModeData KioskModeData )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
+            if( _isModeScan( KioskModeData.OperationData.LastItemScanned ) )
             {
-                NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 2 );
-                bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field2.Value );
-                if( false == barcodeValid )
-                {
-                    KioskModeData.OperationData.Field2.StatusMsg = "Error: item does not exist";
-                }
-                else
-                {
-                    KioskModeData.OperationData.Field2.ServerValidated = true;
-                    KioskModeData.OperationData.Field2.StatusMsg = "";
-                }
+                KioskModeData.OperationData.Mode = KioskModeData.OperationData.LastItemScanned;
+                _setFields( KioskModeData.OperationData );
             }
-            else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
+            else
             {
-                NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 1 );
-                bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field1.Value );
-                if( false == barcodeValid )
+                if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
                 {
-                    KioskModeData.OperationData.Field1.StatusMsg = "Error: item does not exist";
-                }
-                else
-                {
-                    KioskModeData.OperationData.Field1.ServerValidated = true;
-                    KioskModeData.OperationData.Field1.StatusMsg = "";
-                    if( expectedOC.Equals( NbtObjectClass.LocationClass ) )
+                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 2 );
+                    bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field2.Value );
+                    if( false == barcodeValid )
                     {
-                        CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field2.Value );
-                        KioskModeData.OperationData.Field1.SecondValue = " (" + scannedLocation.Name.Text + ")";
+                        KioskModeData.OperationData.Field2.StatusMsg = "Error: item does not exist";
+                    }
+                    else
+                    {
+                        KioskModeData.OperationData.Field2.ServerValidated = true;
+                        KioskModeData.OperationData.Field2.StatusMsg = "";
+                    }
+                }
+                else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
+                {
+                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 1 );
+                    bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field1.Value );
+                    if( false == barcodeValid )
+                    {
+                        KioskModeData.OperationData.Field1.StatusMsg = "Error: item does not exist";
+                    }
+                    else
+                    {
+                        KioskModeData.OperationData.Field1.ServerValidated = true;
+                        KioskModeData.OperationData.Field1.StatusMsg = "";
+                        if( expectedOC.Equals( NbtObjectClass.LocationClass ) )
+                        {
+                            CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field2.Value );
+                            KioskModeData.OperationData.Field1.SecondValue = " (" + scannedLocation.Name.Text + ")";
+                        }
                     }
                 }
             }
-            else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Mode ) )
-            {
-                _setFields( KioskModeData.OperationData );
-            }
+            //else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Mode ) )
+            //{
+            //    _setFields( KioskModeData.OperationData );
+            //}
             Return.Data = KioskModeData;
         }
 
@@ -240,14 +263,14 @@ namespace ChemSW.Nbt.WebServices
             string mode = OpData.Mode.ToLower();
             switch( mode )
             {
-                case "move":
+                case Modes.Move:
                     CswNbtObjClassContainer containerToMove = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
                     CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value );
                     containerToMove.MoveContainer( locationToMoveTo.NodeId );
                     containerToMove.postChanges( false );
                     OpData.Log.Add( DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
                     break;
-                case "owner":
+                case Modes.Owner:
                     CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
                     CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value );
                     containerNode.Owner.RelatedNodeId = newOwnerNode.NodeId;
@@ -255,7 +278,7 @@ namespace ChemSW.Nbt.WebServices
                     containerNode.postChanges( false );
                     OpData.Log.Add( DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.FirstName + " " + newOwnerNode.LastName + " (" + OpData.Field1.Value + ")" );
                     break;
-                case "transfer":
+                case Modes.Transfer:
                     CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value );
                     CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value );
                     containerToTransfer.Owner.RelatedNodeId = newTransferOwner.NodeId;
@@ -265,10 +288,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
                     OpData.Log.Add( DateTime.Now + " - Transferred container " + OpData.Field2.Value + " ownership to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );
                     break;
-                case "dispense":
+                case Modes.Dispense:
                     //TODO: dispense container
                     break;
-                case "dispose":
+                case Modes.Dispose:
                     //TODO: dispose container
                     break;
             }
@@ -285,25 +308,27 @@ namespace ChemSW.Nbt.WebServices
         {
             OpData.ModeServerValidated = true;
             OpData.ModeStatusMsg = string.Empty;
+            OpData.Field1 = new Field();
+            OpData.Field2 = new Field();
             string selectedOp = OpData.Mode.ToLower();
             switch( selectedOp )
             {
-                case "move":
+                case Modes.Move:
                     OpData.Field1.Name = "Location:";
                     OpData.Field2.Name = "Item:";
                     break;
-                case "owner":
+                case Modes.Owner:
                     OpData.Field1.Name = "User:";
                     OpData.Field2.Name = "Item:";
                     break;
-                case "transfer":
+                case Modes.Transfer:
                     OpData.Field1.Name = "User:";
                     OpData.Field2.Name = "Item:";
                     break;
-                case "dispenseContainer":
+                case Modes.Dispense:
                     //TODO: dispense container
                     break;
-                case "disposeContainer":
+                case Modes.Dispose:
                     //TODO: dispose container
                     break;
                 default:
@@ -361,6 +386,19 @@ namespace ChemSW.Nbt.WebServices
 
             ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
             return tree;
+        }
+
+        private static bool _isModeScan( string ScannedMode )
+        {
+            bool Ret = false;
+            foreach( string mode in Modes.All )
+            {
+                if( mode.Equals( ScannedMode.ToLower() ) )
+                {
+                    Ret = true;
+                }
+            }
+            return Ret;
         }
 
         #endregion

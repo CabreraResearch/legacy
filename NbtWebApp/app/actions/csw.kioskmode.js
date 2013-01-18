@@ -17,6 +17,7 @@
                     cswPrivate.onCancel = cswPrivate.onCancel || function _onCancel() {
                     };
 
+                    cswPrivate.availableModes = [];
                     cswPrivate.OperationData = {
                         Mode: '',
                         ModeStatusMsg: '',
@@ -35,7 +36,8 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: ''
-                        }
+                        },
+                        LastItemScanned: ''
                     };
 
                     cswParent.empty();
@@ -62,6 +64,7 @@
                         urlMethod: 'KioskMode/GetAvailableModes',
                         success: function (data) {
                             var rowNum = 1;
+                            cswPrivate.availableModes = data.AvailableModes;
                             Csw.each(data.AvailableModes, function (mode) {
 
                                 var textCell = cswPrivate.barcodesTbl.cell(rowNum, 2).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' });
@@ -88,6 +91,7 @@
                         size: '30',
                         autofocus: true,
                         onChange: function (value) {
+                            cswPrivate.OperationData.LastItemScanned = value;
                             if (value === 'RESET') {
                                 cswPrivate.clearOpData();
                                 cswPrivate.renderUI();
@@ -231,6 +235,18 @@
                     } else {
                         return false;
                     }
+                };
+
+                cswPrivate.isModeScan = function (scannedItem) {
+                    var Ret = false;
+                    if (false === Csw.isNullOrEmpty(cswPrivate.availableModes)) {
+                        Csw.each(cswPrivate.availableModes, function (mode) {
+                            if (mode.name.toLowerCase() === scannedItem.toLowerCase()) {
+                                Ret = true;
+                            }
+                        });
+                    }
+                    return Ret;
                 };
 
                 (function _postCtor() {
