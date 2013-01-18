@@ -156,10 +156,10 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                                 width: 80,
                                 summaryType: 'max',
                                 renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
-                                    return '';//value === 0 ? '' : value + state;
+                                    return '';
                                 },
                                 summaryRenderer: function(value, summaryData, dataIndex) {
-                                    return value === 0 ? '' : value + state;
+                                    return value === '' ? '' : value;// + state;
                                 }
                             }, {
                                 dataIndex: qtyColName,
@@ -172,13 +172,13 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                                     return value === 0 ? '' : value + state;
                                 },
                                 summaryRenderer: function(value, summaryData, dataIndex) {
-                                    return value === 0 ? '' : value + state;
+                                    return value === 0 ? '' : value;// + state;
                                 }
                             }]
                         });
                         HMISGridFields.push({
                             name: maqColName,
-                            type: 'float',
+                            type: 'string',
                             useNull: true
                         });
                         HMISGridFields.push({
@@ -189,10 +189,10 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                     };
                     var addUseTypeColumn = function(useType, headerDisplay, useGas) {
                         var Columns = [];
-                        addQtyColumn(Columns, useType + 'solidmaq', useType + 'solidqty', 'Solid');
-                        addQtyColumn(Columns, useType + 'liquidmaq', useType + 'liquidqty', 'Liquid');
+                        addQtyColumn(Columns, useType + 'solidmaq', useType + 'solidqty', 'Solid - lbs');
+                        addQtyColumn(Columns, useType + 'liquidmaq', useType + 'liquidqty', 'Liquid - gal (lbs)');
                         if (useGas) {
-                            addQtyColumn(Columns, useType + 'gasmaq', useType + 'gasqty', 'Gas');
+                            addQtyColumn(Columns, useType + 'gasmaq', useType + 'gasqty', 'Gas - cu.ft.');
                         }
                         HMISGridColumns.push({
                             text: headerDisplay,
@@ -249,22 +249,22 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             var gridColumns = [
                 { name: 'material', display: '&nbsp;<br/>&nbsp;<br/>QtyMaterial' },
                 { name: 'hazardclass', display: '&nbsp;<br/>&nbsp;<br/>HazardClass' },
-                { name: 'storagesolidmaq', display: 'Storage<br/>Solid<br/>MAQ' },
-                { name: 'storagesolidqty', display: 'Storage<br/>Solid<br/>Qty' },
-                { name: 'storageliquidmaq', display: 'Storage<br/>Liquid<br/>MAQ' },
-                { name: 'storageliquidqty', display: 'Storage<br/>Liquid<br/>Qty' },
-                { name: 'storagegasmaq', display: 'Storage<br/>Gas<br/>MAQ' },
-                { name: 'storagegasqty', display: 'Storage<br/>Gas<br/>Qty' },
-                { name: 'closedsolidmaq', display: 'Closed<br/>Solid<br/>MAQ' },
-                { name: 'closedsolidqty', display: 'Closed<br/>Solid<br/>Qty' },
-                { name: 'closedliquidmaq', display: 'Closed<br/>Liquid<br/>MAQ' },
-                { name: 'closedliquidqty', display: 'Closed<br/>Liquid<br/>Qty' },
-                { name: 'closedgasmaq', display: 'Closed<br/>Gas<br/>MAQ' },
-                { name: 'closedgasqty', display: 'Closed<br/>Gas<br/>Qty' },
-                { name: 'opensolidmaq', display: 'Open<br/>Solid<br/>MAQ' },
-                { name: 'opensolidqty', display: 'Open<br/>Solid<br/>Qty' },
-                { name: 'openliquidmaq', display: 'Open<br/>Liquid<br/>MAQ' },
-                { name: 'openliquidqty', display: 'Open<br/>Liquid<br/>Qty' }
+                { name: 'storagesolidmaq', display: 'Storage<br/>Solid - lbs<br/>MAQ' },
+                { name: 'storagesolidqty', display: 'Storage<br/>Solid - lbs<br/>Qty' },
+                { name: 'storageliquidmaq', display: 'Storage<br/>Liquid - gal (lbs)<br/>MAQ' },
+                { name: 'storageliquidqty', display: 'Storage<br/>Liquid - gal<br/>Qty' },
+                { name: 'storagegasmaq', display: 'Storage<br/>Gas - cu.ft.<br/>MAQ' },
+                { name: 'storagegasqty', display: 'Storage<br/>Gas - cu.ft.<br/>Qty' },
+                { name: 'closedsolidmaq', display: 'Closed<br/>Solid - lbs<br/>MAQ' },
+                { name: 'closedsolidqty', display: 'Closed<br/>Solid - lbs<br/>Qty' },
+                { name: 'closedliquidmaq', display: 'Closed<br/>Liquid - gal (lbs)<br/>MAQ' },
+                { name: 'closedliquidqty', display: 'Closed<br/>Liquid - gal<br/>Qty' },
+                { name: 'closedgasmaq', display: 'Closed<br/>Gas - cu.ft.<br/>MAQ' },
+                { name: 'closedgasqty', display: 'Closed<br/>Gas - cu.ft.<br/>Qty' },
+                { name: 'opensolidmaq', display: 'Open<br/>Solid - lbs<br/>MAQ' },
+                { name: 'opensolidqty', display: 'Open<br/>Solid - lbs<br/>Qty' },
+                { name: 'openliquidmaq', display: 'Open<br/>Liquid - gal (lbs)<br/>MAQ' },
+                { name: 'openliquidqty', display: 'Open<br/>Liquid - gal<br/>Qty' }
             ];
             SummaryGridColumns.push({
                 dataIndex: gridColumns[1].name,
