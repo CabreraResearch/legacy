@@ -119,12 +119,12 @@ namespace ChemSw.Nbt.Test
             };
             HMISData Data = HMISAction.getHMISData( Request );
             Assert.AreEqual( 1, Data.Materials.Count );
-            Assert.AreEqual( 1, Data.Materials[0].Storage.Solid.MAQ );
-            Assert.AreEqual( -1, Data.Materials[0].Storage.Liquid.MAQ );
-            Assert.AreEqual( 0.25, Data.Materials[0].Closed.Solid.MAQ );
-            Assert.AreEqual( -0.25, Data.Materials[0].Closed.Liquid.MAQ );
-            Assert.AreEqual( 0.25, Data.Materials[0].Open.Solid.MAQ );
-            Assert.AreEqual( -0.25, Data.Materials[0].Open.Liquid.MAQ );
+            Assert.AreEqual( "1", Data.Materials[0].Storage.Solid.MAQ );
+            Assert.AreEqual( "(1)", Data.Materials[0].Storage.Liquid.MAQ );
+            Assert.AreEqual( "0.25", Data.Materials[0].Closed.Solid.MAQ );
+            Assert.AreEqual( "(0.25)", Data.Materials[0].Closed.Liquid.MAQ );
+            Assert.AreEqual( "0.25", Data.Materials[0].Open.Solid.MAQ );
+            Assert.AreEqual( "(0.25)", Data.Materials[0].Open.Liquid.MAQ );
         }
 
         /// <summary>

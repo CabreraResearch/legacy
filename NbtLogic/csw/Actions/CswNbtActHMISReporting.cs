@@ -104,19 +104,14 @@ namespace ChemSW.Nbt.Actions
         public class HMISQty
         {
             private Int32 Precision = 6;
-            private Double _MAQ;
             private Double _Qty;
             [DataMember]
-            public Double MAQ
-            {
-                get { return _MAQ; }
-                set { _MAQ = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
-            }
+            public String MAQ = String.Empty;
             [DataMember]
             public Double Qty
             {
                 get { return _Qty; }
-                set { _Qty = CswTools.IsDouble( value ) ? Math.Round( value, 6, MidpointRounding.AwayFromZero ) : 0.0; }
+                set { _Qty = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
             }
         }
 
@@ -209,7 +204,7 @@ namespace ChemSW.Nbt.Actions
                                 {
                                     HMISMaterial = new HMISData.HMISMaterial();
                                     HMISMaterial.Material = MaterialName;
-                                    HMISMaterial.HazardClass = HazardClass.FireHazardClassType.Value;
+                                    HMISMaterial.HazardClass = HazardClass.HazardClass.Value;
                                     HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
                                     _setFireClassMAQData( HMISMaterial, HazardClass );
                                     _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
@@ -257,7 +252,7 @@ namespace ChemSW.Nbt.Actions
             {
                 foreach( CswNbtObjClassFireClassExemptAmount FireClassNode in FireClasses )
                 {
-                    if( Hazard == FireClassNode.FireHazardClassType.Value )
+                    if( Hazard == FireClassNode.HazardClass.Value )
                     {
                         RelevantHazardClasses.Add( FireClassNode );
                     }
@@ -351,14 +346,14 @@ namespace ChemSW.Nbt.Actions
 
         private void _setFireClassMAQData( HMISData.HMISMaterial Material, CswNbtObjClassFireClassExemptAmount FireClass )
         {
-            Material.Storage.Solid.MAQ = FireClass.StorageSolidExemptAmount.Quantity;
-            Material.Storage.Liquid.MAQ = FireClass.StorageLiquidExemptAmount.Quantity;
-            Material.Storage.Gas.MAQ = FireClass.StorageGasExemptAmount.Quantity;
-            Material.Closed.Solid.MAQ = FireClass.ClosedSolidExemptAmount.Quantity;
-            Material.Closed.Liquid.MAQ = FireClass.ClosedLiquidExemptAmount.Quantity;
-            Material.Closed.Gas.MAQ = FireClass.ClosedGasExemptAmount.Quantity;
-            Material.Open.Solid.MAQ = FireClass.OpenSolidExemptAmount.Quantity;
-            Material.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Quantity;
+            Material.Storage.Solid.MAQ = FireClass.StorageSolidExemptAmount.Text;
+            Material.Storage.Liquid.MAQ = FireClass.StorageLiquidExemptAmount.Text;
+            Material.Storage.Gas.MAQ = FireClass.StorageGasExemptAmount.Text;
+            Material.Closed.Solid.MAQ = FireClass.ClosedSolidExemptAmount.Text;
+            Material.Closed.Liquid.MAQ = FireClass.ClosedLiquidExemptAmount.Text;
+            Material.Closed.Gas.MAQ = FireClass.ClosedGasExemptAmount.Text;
+            Material.Open.Solid.MAQ = FireClass.OpenSolidExemptAmount.Text;
+            Material.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Text;
         }
 
         private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, String UseType, Double Quantity, CswPrimaryKey UnitId )

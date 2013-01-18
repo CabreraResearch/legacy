@@ -169,9 +169,6 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
-                
-
-
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -199,7 +196,7 @@
 
                 //Case 28476 - manually collapse all groups to fix a bug in ExtJS
                 store.on('load', function (store, records, success) {
-                    Csw.tryExec(toggleGroups, true);
+                    Csw.tryExec(cswPrivate.toggleGroups, true);
                 });
 
                 return store;
@@ -208,7 +205,6 @@
 
             cswPrivate.makeDockedItems = function () {
                 var topToolbarItems = [];
-                var toggleGroups;
 
                 //Printing
                 if (cswPrivate.printingEnabled) {
@@ -226,13 +222,13 @@
                 if (cswPrivate.groupField.length > 0) {
                     cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
 
-                    toggleGroups = function (collapse) {
+                    cswPrivate.toggleGroups = function (collapse) {
                         Csw.each(cswPrivate.grid.view.features, function (feature) {
-                            if (cswPrivate.grid.view.features[i].ftype === 'grouping' ||
-                            cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
+                            if (feature.ftype === 'grouping' || feature.ftype === 'groupingsummary') {
                                 if (collapse) {
                                     feature.collapseAll();
                                 } else {
+                                    feature.collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
                                     feature.expandAll();
                                 }
                             }
@@ -245,7 +241,7 @@
                         xtype: 'button',
                         text: 'Expand all Rows',
                         handler: function () {
-                            toggleGroups(false);
+                            cswPrivate.toggleGroups(false);
                         }
                     });
                     topToolbarItems.push({ xtype: 'tbseparator' });
@@ -253,7 +249,7 @@
                         xtype: 'button',
                         text: 'Collapse all Rows',
                         handler: function () {
-                            toggleGroups(true);
+                            cswPrivate.toggleGroups(true);
                         }
                     });
                     if (cswPrivate.summaryEnabled) {
@@ -266,13 +262,12 @@
                             pressed: true,
                             handler: function () {
                                 showSummary = !showSummary;
-                                for (var i in cswPrivate.grid.view.features) {
-                                    if (cswPrivate.grid.view.features[i].ftype === 'groupingsummary') {
-                                        cswPrivate.grid.view.features[i].toggleSummaryRow(showSummary);
+                                Csw.each(cswPrivate.grid.view.features, function(feature) {
+                                    if (feature.ftype === 'groupingsummary') {
+                                        feature.toggleSummaryRow(showSummary);
                                         cswPrivate.grid.view.refresh();
                                     }
-
-                                }
+                                });
                             }
                         });
                     }
@@ -559,8 +554,8 @@
 
                 cswPrivate.rootDiv = cswPublic.div();
 
-                cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.makeDockedItems();
+                cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
                 if(cswPrivate.grid) {
@@ -575,12 +570,12 @@
                             Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
                         },
                         afterrender: function (component) {
-                            var bottomToolbar = component.getDockedComponent('bottomtoolbar');
-                            if (false === Csw.isNullOrEmpty(bottomToolbar)) {
-                                bottomToolbar.items.get('refresh').hide();
-                            }
+                            //debugger;
+                        },
+                        viewready: function () {
+                            //debugger;
                         }
-                    });
+                    }); // init()
     
                     if (Csw.bool(cswPrivate.truncated)) {
                         cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
