@@ -221,7 +221,8 @@ namespace ChemSW.Nbt.WebServices
                     bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field2.Value );
                     if( false == barcodeValid )
                     {
-                        KioskModeData.OperationData.Field2.StatusMsg = "Error: item does not exist";
+                        string itemType = expectedOC.Value.Replace( "Class", "" );
+                        KioskModeData.OperationData.Field2.StatusMsg = "Error: " + itemType + " does not exist";
                     }
                     else
                     {
@@ -235,7 +236,8 @@ namespace ChemSW.Nbt.WebServices
                     bool barcodeValid = _validateBarcode( NbtResources, expectedOC, KioskModeData.OperationData.Field1.Value );
                     if( false == barcodeValid )
                     {
-                        KioskModeData.OperationData.Field1.StatusMsg = "Error: item does not exist";
+                        string itemType = expectedOC.Value.Replace( "Class", "" );
+                        KioskModeData.OperationData.Field1.StatusMsg = "Error: " + itemType + " does not exist";
                     }
                     else
                     {
