@@ -134,7 +134,8 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
-                if (cswPrivate.groupField.length > 0) {
+                if (cswPrivate.groupField &&
+                    cswPrivate.groupField.length > 0) {
                     cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
 
                     var toggleGroups = function (collapse) {

@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.Grid
                 {
                     GroupByCol = View.Root.GridGroupByCol;
                 }
-                grid.GroupByCol = GroupByCol;
+                grid.groupfield = GroupByCol;
                 grid.title = View.ViewName;
                 if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
                 {
@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.Grid
                     _TreeNodeToGrid( View, Tree, grid, gridrow );
 
                     Tree.goToParentNode();
-                    grid.rows.Add( gridrow );
+                    grid.rowData.rows.Add( gridrow );
 
                 }
                 Ret = grid.ToJson();
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.Grid
                         case CswNbtMetaDataFieldType.NbtFieldType.Button:
                             if( false == IsLocked )
                             {
-                                grid.buttons.Add( new CswGridExtJsButton
+                                grid.rowData.btns.Add( new CswGridExtJsButton
                                 {
                                     DataIndex = dataIndex.ToString(),
                                     RowNo = gridrow.RowNo,
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.Grid
             string gridUniquePrefix = DT.TableName;
 
             CswGridExtJsGrid grid = new CswGridExtJsGrid( gridUniquePrefix );
-            grid.GroupByCol = GroupByCol;
+            grid.groupfield = GroupByCol;
             grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
             {
@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.Grid
                 {
                     gridrow.data[new CswGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName )] = Row[Column].ToString();
                 }
-                grid.rows.Add( gridrow );
+                grid.rowData.rows.Add( gridrow );
                 RowNo += 1;
             } // foreach( DataRow Row in DT.Rows )
 
