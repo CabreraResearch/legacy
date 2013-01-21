@@ -510,6 +510,7 @@ namespace ChemSW.Nbt.Search
                                                   Removeable,
                                                   Source );
             ret.FirstVersionId = NodeType.FirstVersionNodeTypeId;
+            ret.UseMoreLink = false;
             return ret;
         }
 
@@ -524,6 +525,7 @@ namespace ChemSW.Nbt.Search
                                                   Removeable,
                                                   Source );
             ret.ObjectClassId = ObjectClass.ObjectClassId;
+            ret.UseMoreLink = false;
             return ret;
         }
 

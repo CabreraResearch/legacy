@@ -72,6 +72,9 @@ namespace ChemSW.Nbt.Search
         // for PropVal Filters
         [DataMember]
         public Int32 FirstPropVersionId;
+        
+        [DataMember]
+        public bool UseMoreLink = true;
 
         #region Serialization
 
@@ -84,6 +87,7 @@ namespace ChemSW.Nbt.Search
             FilterObj["count"] = Count;
             FilterObj["icon"] = Icon;
             FilterObj["removeable"] = Removeable;
+            FilterObj["usemorelink"] = UseMoreLink;
             FilterObj["source"] = Source.ToString();
 
             if( FilterValue != string.Empty )
