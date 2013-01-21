@@ -92,72 +92,76 @@
             //#region Grid Control Constructors
 
             cswPrivate.makeActionColumns = function (delay) {
-                delay = delay || 100;
-                Csw.defer(Csw.method(function () {
+                if (cswPrivate.showActionColumn) {
+                    delay = delay || 100;
+                    Csw.defer(Csw.method(function() {
 
-                    cswPrivate.actionTableIds.forEach(function (tblObj) {
-                        if (Csw.isElementInDom(tblObj.cellId)) {
-                            var div = Csw.domNode({
-                                ID: tblObj.cellId,
-                                tagName: 'DIV'
-                            });
-                            div.empty();
-
-                            var table = div.table({ cellpadding: 0 });
-
-                            var editCell = table.cell(1, 1).css({ width: '26px' });
-                            var delCel = table.cell(1, 2).css({ width: '26px' });
-
-                            var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(tblObj.cellData.canedit, true);
-                            var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
-                            var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
-                            var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
-
-                            // only show one of edit/view/lock
-                            var doHover = false;
-                            if (islocked) {
-                                cswPrivate.makeActionButton(editCell, 'Locked', Csw.enums.iconType.lock, null, tblObj.cellData);
-                                doHover = true;
-                            } else if (canedit) {
-                                doHover = true;
-                                cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj.cellData);
-                            } else if (canview) {
-                                doHover = true;
-                                cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, tblObj.cellData);
-                            }
-
-                            if (doHover) {
-                                table.$.hover(function (event) {
-                                    Csw.tryExec(cswPrivate.onMouseEnter, event, tblObj);
-                                }, function (event) {
-                                    Csw.tryExec(cswPrivate.onMouseExit, event, tblObj);
+                        cswPrivate.actionTableIds.forEach(function(tblObj) {
+                            if (Csw.isElementInDom(tblObj.cellId)) {
+                                var div = Csw.domNode({
+                                    ID: tblObj.cellId,
+                                    tagName: 'DIV'
                                 });
-                            }
+                                div.empty();
 
-                            if (candelete) {
-                                cswPrivate.makeActionButton(delCel, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, tblObj.cellData);
+                                var table = div.table({ cellpadding: 0 });
+
+                                var editCell = table.cell(1, 1).css({ width: '26px' });
+                                var delCel = table.cell(1, 2).css({ width: '26px' });
+
+                                var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(tblObj.cellData.canedit, true);
+                                var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
+                                var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
+                                var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
+
+                                // only show one of edit/view/lock
+                                var doHover = false;
+                                if (islocked) {
+                                    cswPrivate.makeActionButton(editCell, 'Locked', Csw.enums.iconType.lock, null, tblObj.cellData);
+                                    doHover = true;
+                                } else if (canedit) {
+                                    doHover = true;
+                                    cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj.cellData);
+                                } else if (canview) {
+                                    doHover = true;
+                                    cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, tblObj.cellData);
+                                }
+
+                                if (doHover) {
+                                    table.$.hover(function(event) {
+                                        Csw.tryExec(cswPrivate.onMouseEnter, event, tblObj);
+                                    }, function(event) {
+                                        Csw.tryExec(cswPrivate.onMouseExit, event, tblObj);
+                                    });
+                                }
+
+                                if (candelete) {
+                                    cswPrivate.makeActionButton(delCel, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, tblObj.cellData);
+                                }
                             }
-                        }
-                    });
-                }), delay);
+                        });
+                    }), delay);
+                }
             };
 
             cswPrivate.makeActionButton = function (tableCell, buttonName, iconType, clickFunc, cellData) {
-                var iconopts = {
-                    name: cswPrivate.name + buttonName,
-                    hovertext: buttonName,
-                    iconType: iconType,
-                    state: Csw.enums.iconState.normal,
-                    isButton: false,
-                    size: 18
-                };
-                if (false === Csw.isNullOrEmpty(clickFunc)) {
-                    iconopts.isButton = true;
-                    iconopts.onClick = function () {
-                        Csw.tryExec(clickFunc, [cellData]);
+                if (cswPrivate.showActionColumn) {
+                    var iconopts = {
+                        name: cswPrivate.name + buttonName,
+                        hovertext: buttonName,
+                        iconType: iconType,
+                        state: Csw.enums.iconState.normal,
+                        isButton: false,
+                        size: 18
                     };
+                    if (false === Csw.isNullOrEmpty(clickFunc)) {
+                        iconopts.isButton = true;
+                        iconopts.onClick = function() {
+                            Csw.tryExec(clickFunc, [cellData]);
+                        };
+                    }
+                    tableCell.icon(iconopts);
                 }
-                tableCell.icon(iconopts);
             }; // makeActionButton()
 
 
@@ -258,10 +262,10 @@
                         cswPrivate.makeActionColumns(100);
                     },
                     //sortchange: function () { debugFunc(); },
-                    render: function () {
+                    //render: function () {
                         //of the methods we're listening to here, called 1st
                         //debugFunc();
-                    },
+                    //},
                     //activate: function () { debugFunc(); },
                     //add: function () { debugFunc(); },
                     //added: function () { debugFunc(); },
