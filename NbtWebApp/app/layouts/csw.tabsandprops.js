@@ -1,7 +1,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function () {
+(function () {  
 
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
@@ -275,35 +275,24 @@
                                     cswPrivate.tabState.tabid = '';
                                 }
 
-                                var tabStrips = [];
-                                var tabUls= [];
-                                var tabLis = [];
+                                var tabdivs = [];
                                 var tabno = 0;
-                                
+                                var tabDiv, tabUl;
+
                                 var tabFunc = function (thisTab) {
-                                    var tabStrip, tabUl;
                                     var thisTabId = thisTab.id;
 
-                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabStrips.length === 0) {
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
                                         // For PrintReports, we're going to make a separate tabstrip for each tab
-                                        tabStrip = cswPrivate.outerTabDiv.tabDiv();
-                                        tabUl = tabStrip.ul();
-                                        tabStrips[tabStrips.length] = tabStrip;
-                                        tabUls[tabUls.length] = tabUl;
-                                    } else {
-                                        tabStrip = tabStrips[tabStrips.length - 1];
-                                        tabUl = tabUls[tabUls.length - 1];
+                                        tabDiv = cswPrivate.outerTabDiv.tabDiv();
+                                        tabUl = tabDiv.ul();
+                                        tabdivs[tabdivs.length] = tabDiv;
                                     }
+                                    tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
 
-                                    var tabLi = tabUl.li();
-                                    tabLis.push(tabLi);
-                                    tabLi.data({
-                                        tabid: thisTabId,
-                                        tabno: tabLis.length
-                                    })
-                                    tabLi.a({ href: '#' + thisTabId, text: thisTab.name });
-                                    
-                                    cswPrivate.makeTabContentDiv(tabStrip, thisTabId, thisTab.canEditLayout);
+                                    tabUl = tabUl || tabDiv.ul();
+                                    tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name }).data('tabid', thisTabId);
+                                    cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
                                     if (Csw.string(thisTabId) === Csw.string(cswPrivate.tabState.tabid)) {
                                         cswPrivate.tabState.tabNo = tabno;
                                     }
@@ -323,19 +312,19 @@
                                     return false;
                                 };
 
-                                Csw.each(tabStrips, function (thisTabDiv) {
+                                Csw.each(tabdivs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
-                                        active: cswPrivate.tabState.tabNo,
-                                        beforeActivate: function(event, ui) {
-                                            var selectTabContentDiv = Csw.domNode({ el: ui.newTab[0], ID: ui.newTab[0].id, tagName: 'LI' });
-                                            cswPrivate.tabState.tabNo = selectTabContentDiv.data('tabno');
+                                        selected: cswPrivate.tabState.tabNo,
+                                        select: function (event, ui) {
+                                            var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
+                                            cswPrivate.tabState.tabNo = Csw.number(ui.index);
                                             cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
                                             return cswPrivate.genTab();
-                                        }
+                                        } // select()
                                     }); // tabs
                                     var eachTabContentDiv;
                                     if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
-                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'active')) + ')');
+                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
                                         if (eachTabContentDiv.isValid) {
                                             cswPrivate.tabState.tabid = eachTabContentDiv.data('tabid');
                                         }
