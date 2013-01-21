@@ -101,27 +101,29 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         cswPrivate.Materials = [];
                     }
                     var HMISGridData = [];
-                    Csw.each(cswPrivate.Materials, function(row) {
-                        HMISGridData.push({
-                            material: row.Material,
-                            hazardclass: row.HazardClass,
-                            storagesolidmaq: row.Storage.Solid.MAQ,
-                            storagesolidqty: row.Storage.Solid.Qty,
-                            storageliquidmaq: row.Storage.Liquid.MAQ,
-                            storageliquidqty: row.Storage.Liquid.Qty,
-                            storagegasmaq: row.Storage.Gas.MAQ,
-                            storagegasqty: row.Storage.Gas.Qty,
-                            closedsolidmaq: row.Closed.Solid.MAQ,
-                            closedsolidqty: row.Closed.Solid.Qty,
-                            closedliquidmaq: row.Closed.Liquid.MAQ,
-                            closedliquidqty: row.Closed.Liquid.Qty,
-                            closedgasmaq: row.Closed.Gas.MAQ,
-                            closedgasqty: row.Closed.Gas.Qty,
-                            opensolidmaq: row.Open.Solid.MAQ,
-                            opensolidqty: row.Open.Solid.Qty,
-                            openliquidmaq: row.Open.Liquid.MAQ,
-                            openliquidqty: row.Open.Liquid.Qty
-                        });
+                    Csw.each(cswPrivate.Materials, function (row) {
+                        if (false === Csw.isNullOrEmpty(row.Material)) {
+                            HMISGridData.push({
+                                material: row.Material,
+                                hazardclass: row.HazardClass,
+                                storagesolidmaq: row.Storage.Solid.MAQ,
+                                storagesolidqty: row.Storage.Solid.Qty,
+                                storageliquidmaq: row.Storage.Liquid.MAQ,
+                                storageliquidqty: row.Storage.Liquid.Qty,
+                                storagegasmaq: row.Storage.Gas.MAQ,
+                                storagegasqty: row.Storage.Gas.Qty,
+                                closedsolidmaq: row.Closed.Solid.MAQ,
+                                closedsolidqty: row.Closed.Solid.Qty,
+                                closedliquidmaq: row.Closed.Liquid.MAQ,
+                                closedliquidqty: row.Closed.Liquid.Qty,
+                                closedgasmaq: row.Closed.Gas.MAQ,
+                                closedgasqty: row.Closed.Gas.Qty,
+                                opensolidmaq: row.Open.Solid.MAQ,
+                                opensolidqty: row.Open.Solid.Qty,
+                                openliquidmaq: row.Open.Liquid.MAQ,
+                                openliquidqty: row.Open.Liquid.Qty
+                            });
+                        }
                     });
 
                     //Grid Fields and Columns
@@ -143,9 +145,6 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         });
                     };
                     var addQtyColumn = function(Columns, maqColName, qtyColName, headerDisplay) {
-                        var state = headerDisplay === 'Solid' ? ' lbs' : '';
-                        state = headerDisplay === 'Liquid' ? ' gal' : state;
-                        state = headerDisplay === 'Gas' ? ' cu.ft.' : state;
                         Columns.push({
                             text: headerDisplay,
                             columns: [{
@@ -155,11 +154,8 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                                 id: 'hmis_' + maqColName,
                                 width: 80,
                                 summaryType: 'max',
-                                renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
-                                    return '';
-                                },
                                 summaryRenderer: function(value, summaryData, dataIndex) {
-                                    return value === '' ? '' : value;// + state;
+                                    return value === '' ? '' : value;
                                 }
                             }, {
                                 dataIndex: qtyColName,
@@ -167,13 +163,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                                 header: 'Qty',
                                 id: 'hmis_' + qtyColName,
                                 width: 80,
-                                summaryType: 'sum',
-                                renderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
-                                    return value === 0 ? '' : value + state;
-                                },
-                                summaryRenderer: function(value, summaryData, dataIndex) {
-                                    return value === 0 ? '' : value;// + state;
-                                }
+                                summaryType: 'sum'
                             }]
                         });
                         HMISGridFields.push({
@@ -266,43 +256,33 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 { name: 'openliquidmaq', display: 'Open<br/>Liquid - gal (lbs)<br/>MAQ' },
                 { name: 'openliquidqty', display: 'Open<br/>Liquid - gal<br/>Qty' }
             ];
-            SummaryGridColumns.push({
-                dataIndex: gridColumns[1].name,
-                header: gridColumns[1].display,
-                id: 'hmis_' + gridColumns[1].name
-            });
-            SummaryGridFields.push({
-                name: gridColumns[1].name,
-                type: 'string',
-                useNull: true
-            });
-            var i = 0;
+            var rowIdx = 0;
             window.Ext.Array.each(grid.extGrid.view.el.query('tr.x-grid-row-summary'), function (group) {
-                var GroupName = grid.extGrid.getStore().getGroups()[i].name;
                 var HazardData = {};
-                HazardData.hazardclass = GroupName;
-                var j = 0;
+                var colIdx = 0;
                 window.Ext.Array.each(group.childNodes, function (cell) {
-                    if (j > 1) {
+                    if (colIdx > 0) {
                         var summaryValue = cell.textContent;
-                        if (i === 0) {
+                        if (rowIdx === 0) {
                             SummaryGridColumns.push({
-                                dataIndex: gridColumns[j].name,
-                                header: gridColumns[j].display,
-                                id: 'hmis_' + gridColumns[j].name
+                                dataIndex: gridColumns[colIdx].name,
+                                header: gridColumns[colIdx].display,
+                                id: 'hmis_' + gridColumns[colIdx].name
                             });
                             SummaryGridFields.push({
-                                name: gridColumns[j].name,
+                                name: gridColumns[colIdx].name,
                                 type: 'string',
                                 useNull: true
                             });
                         }
-                        HazardData[gridColumns[j].name] = summaryValue;
+                        HazardData[gridColumns[colIdx].name] = summaryValue;
                     }
-                    j++;
+                    colIdx++;
                 });
+                var GroupName = grid.extGrid.getStore().getGroups()[rowIdx].name;
+                HazardData.hazardclass = GroupName;
                 SummaryGridData.push(HazardData);
-                i++;
+                rowIdx++;
             }, grid.extGrid);
             cswPrivate.gridTbl.cell(2, 1).empty();
             var summaryGrid = cswPrivate.gridTbl.cell(2, 1).grid({

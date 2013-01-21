@@ -1,4 +1,5 @@
-﻿using ChemSW.Core;
+﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,6 +13,7 @@ namespace ChemSw.Nbt.Test
 
         private TestData TestData;
         private CswNbtActHMISReporting HMISAction;
+        private const Int32 HazardClassCount = 48;
 
         [TestInitialize()]
         public void MyTestInitialize()
@@ -43,7 +45,7 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 0, Data.Materials.Count );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
         }
 
         /// <summary>
@@ -60,7 +62,7 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 0, Data.Materials.Count );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
         }
 
         /// <summary>
@@ -79,7 +81,11 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 0, Data.Materials.Count );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
+            foreach( HMISData.HMISMaterial Material in Data.Materials )
+            {
+                Assert.AreEqual( String.Empty, Material.Material );
+            }
         }
 
         /// <summary>
@@ -98,7 +104,11 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 0, Data.Materials.Count );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
+            foreach( HMISData.HMISMaterial Material in Data.Materials )
+            {
+                Assert.AreEqual( String.Empty, Material.Material );
+            }
         }
 
         /// <summary>
@@ -118,13 +128,19 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 1, Data.Materials.Count );
-            Assert.AreEqual( "1", Data.Materials[0].Storage.Solid.MAQ );
-            Assert.AreEqual( "(1)", Data.Materials[0].Storage.Liquid.MAQ );
-            Assert.AreEqual( "0.25", Data.Materials[0].Closed.Solid.MAQ );
-            Assert.AreEqual( "(0.25)", Data.Materials[0].Closed.Liquid.MAQ );
-            Assert.AreEqual( "0.25", Data.Materials[0].Open.Solid.MAQ );
-            Assert.AreEqual( "(0.25)", Data.Materials[0].Open.Liquid.MAQ );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
+            foreach( HMISData.HMISMaterial Material in Data.Materials )
+            {
+                if( false == String.IsNullOrEmpty( Material.Material ) )
+                {
+                    Assert.AreEqual( "1", Material.Storage.Solid.MAQ );
+                    Assert.AreEqual( "(1)", Material.Storage.Liquid.MAQ );
+                    Assert.AreEqual( "0.25", Material.Closed.Solid.MAQ );
+                    Assert.AreEqual( "(0.25)", Material.Closed.Liquid.MAQ );
+                    Assert.AreEqual( "0.25", Material.Open.Solid.MAQ );
+                    Assert.AreEqual( "(0.25)", Material.Open.Liquid.MAQ );
+                }
+            }
         }
 
         /// <summary>
@@ -144,12 +160,14 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 2, Data.Materials.Count );
-            Assert.AreNotEqual( Data.Materials[0].HazardClass, Data.Materials[1].HazardClass );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
             foreach( HMISData.HMISMaterial Material in Data.Materials )
             {
-                Assert.AreEqual( ChemicalNode.NodeName, Material.Material );
-                Assert.AreEqual( 1, Material.Storage.Liquid.Qty );
+                if( false == String.IsNullOrEmpty( Material.Material ) )
+                {
+                    Assert.AreEqual( ChemicalNode.NodeName, Material.Material );
+                    Assert.AreEqual( 1, Material.Storage.Liquid.Qty );
+                }
             }
         }
 
@@ -171,8 +189,14 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 1, Data.Materials.Count );
-            Assert.AreEqual( 2, Data.Materials[0].Storage.Liquid.Qty );
+            Assert.AreEqual( HazardClassCount, Data.Materials.Count );
+            foreach( HMISData.HMISMaterial Material in Data.Materials )
+            {
+                if( false == String.IsNullOrEmpty( Material.Material ) )
+                {
+                    Assert.AreEqual( 2, Material.Storage.Liquid.Qty );
+                }
+            }
         }
 
         /// <summary>
@@ -194,11 +218,14 @@ namespace ChemSw.Nbt.Test
                 ControlZoneId = ControlZoneId.ToString()
             };
             HMISData Data = HMISAction.getHMISData( Request );
-            Assert.AreEqual( 2, Data.Materials.Count );
+            Assert.AreEqual( HazardClassCount + 1, Data.Materials.Count );
             foreach( HMISData.HMISMaterial Material in Data.Materials )
             {
-                Assert.AreEqual( "Exp", Material.HazardClass );
-                Assert.AreEqual( 1, Material.Storage.Liquid.Qty );
+                if( false == String.IsNullOrEmpty( Material.Material ) )
+                {
+                    Assert.AreEqual("Exp", Material.HazardClass);
+                    Assert.AreEqual(1, Material.Storage.Liquid.Qty);
+                }
             }
         }
 

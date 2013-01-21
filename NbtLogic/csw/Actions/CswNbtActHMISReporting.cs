@@ -42,6 +42,8 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String HazardClass = String.Empty;
             [DataMember]
+            public Double SortOrder = 0.0;
+            [DataMember]
             public StorageData Storage;
             [DataMember]
             public ClosedData Closed;
@@ -132,14 +134,12 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtResources _CswNbtResources;
         private HMISData Data;
-        private Collection<CswNbtObjClassFireClassExemptAmount> FireClasses;
         private CswPrimaryKey ControlZoneId;
 
         public CswNbtActHMISReporting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             Data = new HMISData();
-            FireClasses = new Collection<CswNbtObjClassFireClassExemptAmount>();
         }
 
         #endregion Properties and ctor
@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.Actions
         public HMISData getHMISData( HMISData.HMISDataRequest Request )
         {
             ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );
-            FireClasses = _setFireClasses();
+            _setFireClasses();
             CswNbtView HMISView = _getHMISView();
             ICswNbtTree HMISTree = _CswNbtResources.Trees.getTreeFromView( HMISView, false, true, false );
             Int32 LocationCount = HMISTree.getChildNodeCount();
@@ -199,16 +199,30 @@ namespace ChemSW.Nbt.Actions
                                 HMISTree.goToNthChild( 0 );
                                 CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
                                 CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
-                                IEnumerable<CswNbtObjClassFireClassExemptAmount> HazardClasses = _getRelevantHazardClasses( MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value );
-                                foreach (CswNbtObjClassFireClassExemptAmount HazardClass in HazardClasses)
+                                foreach( String HazardClass in MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value )
                                 {
-                                    HMISMaterial = new HMISData.HMISMaterial();
-                                    HMISMaterial.Material = MaterialName;
-                                    HMISMaterial.HazardClass = HazardClass.HazardClass.Value;
-                                    HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
-                                    _setFireClassMAQData( HMISMaterial, HazardClass );
-                                    _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
-                                    Data.Materials.Add( HMISMaterial );
+                                    HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
+                                    if( null != HMISMaterial )//This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
+                                    {
+                                        if ( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
+                                        {
+                                            HMISMaterial = new HMISData.HMISMaterial
+                                            {
+                                                Material = MaterialName, 
+                                                HazardClass = HazardClass, 
+                                                PhysicalState = MaterialNode.PhysicalState.Value
+                                            };
+                                            _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
+                                            Data.Materials.Add( HMISMaterial );
+                                        }
+                                        else
+                                        {
+                                            HMISMaterial.Material = MaterialName;
+                                            HMISMaterial.HazardClass = HazardClass;
+                                            HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
+                                            _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
+                                        }   
+                                    }
                                 }
                                 HMISTree.goToParentNode();
                             }
@@ -217,7 +231,8 @@ namespace ChemSW.Nbt.Actions
                     HMISTree.goToParentNode();
                 }//Container Nodes
                 HMISTree.goToParentNode();
-            }//Location Nodes          
+            }//Location Nodes 
+            //TODO - sort Data.Materials in SortOrder order
             return Data;
         }
 
@@ -225,7 +240,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Methods
 
-        private Collection<CswNbtObjClassFireClassExemptAmount> _setFireClasses()
+        private void _setFireClasses()
         {
             CswNbtNode ControlZone = _CswNbtResources.Nodes.GetNode( ControlZoneId );
             CswNbtMetaDataNodeTypeProp FireClassSetNameNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZone.NodeTypeId, "Fire Class Set Name" );
@@ -238,27 +253,25 @@ namespace ChemSW.Nbt.Actions
                 {
                     if( FCEANode.SetName.RelatedNodeId == FCEASId )
                     {
-                        FireClasses.Add(FCEANode);
+                        HMISData.HMISMaterial EmptyHazardClass = new HMISData.HMISMaterial();
+                        EmptyHazardClass.HazardClass = FCEANode.HazardClass.Value;
+                        _setFireClassMAQData( EmptyHazardClass, FCEANode );
+                        Data.Materials.Add( EmptyHazardClass );
                     }
                 }
             }
-            return FireClasses;
         }
 
-        private IEnumerable<CswNbtObjClassFireClassExemptAmount> _getRelevantHazardClasses( CswCommaDelimitedString MaterialHazards )
+        private void _setFireClassMAQData( HMISData.HMISMaterial Material, CswNbtObjClassFireClassExemptAmount FireClass )
         {
-            Collection<CswNbtObjClassFireClassExemptAmount> RelevantHazardClasses = new Collection<CswNbtObjClassFireClassExemptAmount>();
-            foreach(String Hazard in MaterialHazards)
-            {
-                foreach( CswNbtObjClassFireClassExemptAmount FireClassNode in FireClasses )
-                {
-                    if( Hazard == FireClassNode.HazardClass.Value )
-                    {
-                        RelevantHazardClasses.Add( FireClassNode );
-                    }
-                }
-            }
-            return RelevantHazardClasses;
+            Material.Storage.Solid.MAQ = FireClass.StorageSolidExemptAmount.Text;
+            Material.Storage.Liquid.MAQ = FireClass.StorageLiquidExemptAmount.Text;
+            Material.Storage.Gas.MAQ = FireClass.StorageGasExemptAmount.Text;
+            Material.Closed.Solid.MAQ = FireClass.ClosedSolidExemptAmount.Text;
+            Material.Closed.Liquid.MAQ = FireClass.ClosedLiquidExemptAmount.Text;
+            Material.Closed.Gas.MAQ = FireClass.ClosedGasExemptAmount.Text;
+            Material.Open.Solid.MAQ = FireClass.OpenSolidExemptAmount.Text;
+            Material.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Text;
         }
 
         private CswNbtView _getHMISView()
@@ -342,19 +355,7 @@ namespace ChemSW.Nbt.Actions
                     "Not Reportable" );
             }
             return HMISView;
-        }
-
-        private void _setFireClassMAQData( HMISData.HMISMaterial Material, CswNbtObjClassFireClassExemptAmount FireClass )
-        {
-            Material.Storage.Solid.MAQ = FireClass.StorageSolidExemptAmount.Text;
-            Material.Storage.Liquid.MAQ = FireClass.StorageLiquidExemptAmount.Text;
-            Material.Storage.Gas.MAQ = FireClass.StorageGasExemptAmount.Text;
-            Material.Closed.Solid.MAQ = FireClass.ClosedSolidExemptAmount.Text;
-            Material.Closed.Liquid.MAQ = FireClass.ClosedLiquidExemptAmount.Text;
-            Material.Closed.Gas.MAQ = FireClass.ClosedGasExemptAmount.Text;
-            Material.Open.Solid.MAQ = FireClass.OpenSolidExemptAmount.Text;
-            Material.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Text;
-        }
+        }        
 
         private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, String UseType, Double Quantity, CswPrimaryKey UnitId )
         {
@@ -410,7 +411,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswPrimaryKey _getBaseUnitId( String PhysicalState )
         {
-            String UnitName = "";
+            String UnitName;
             switch( PhysicalState.ToLower() )
             {                
                 case CswNbtObjClassMaterial.PhysicalStates.Liquid:
