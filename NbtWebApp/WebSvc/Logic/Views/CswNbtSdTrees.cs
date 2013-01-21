@@ -257,10 +257,11 @@ namespace ChemSW.Nbt.WebServices
                     ThisObjectClassId = ThisNodeType.ObjectClassId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
                     ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
-                    if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
-                    {
-                        ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
-                    }
+                    //if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
+                    //{
+                    //    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
+                    //}
+                    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + Tree.getNodeIconForCurrentPosition();
                     break;
                 case NodeSpecies.Group:
                     ThisNodeRel = "group";

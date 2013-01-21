@@ -189,7 +189,10 @@ namespace ChemSW.Nbt
         /// True if the currently indexed node should appear in the tree, false otherwise
         /// </summary>
         bool getNodeShowInTreeForCurrentPosition();
-
+        /// <summary>
+        /// Returns the icon for the currently indexed node
+        /// </summary>
+        string getNodeIconForCurrentPosition();
         /// <summary>
         /// Returns the NodeKey of the currently indexed node's parent
         /// </summary>

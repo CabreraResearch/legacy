@@ -430,6 +430,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
                 CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
+                _CswNbtNode.IconFileNameOverride = "trash.png";
             }
         }
 
@@ -456,6 +457,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
                 }
+                _CswNbtNode.IconFileNameOverride = "";
             }
         }
 
