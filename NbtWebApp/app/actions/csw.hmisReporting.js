@@ -235,7 +235,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
         cswPrivate.makeSummaryGrid = function(grid) {
             var SummaryGridColumns = [];
             var SummaryGridFields = [];
-            var SummaryGridData = [];
+            var SummaryGridData = cswPrivate.buildHazardClassEmptyDataset();
             var gridColumns = [
                 { name: 'material', display: '&nbsp;<br/>&nbsp;<br/>QtyMaterial' },
                 { name: 'hazardclass', display: '&nbsp;<br/>&nbsp;<br/>HazardClass' },
@@ -258,32 +258,34 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             ];
             var rowIdx = 0;
             window.Ext.Array.each(grid.extGrid.view.el.query('tr.x-grid-row-summary'), function (group) {
-                var HazardData = {};
-                var colIdx = 0;
-                window.Ext.Array.each(group.childNodes, function (cell) {
-                    if (colIdx > 0) {
-                        var summaryValue = cell.textContent;
-                        if (rowIdx === 0) {
-                            SummaryGridColumns.push({
-                                dataIndex: gridColumns[colIdx].name,
-                                header: gridColumns[colIdx].display,
-                                id: 'hmis_' + gridColumns[colIdx].name
-                            });
-                            SummaryGridFields.push({
-                                name: gridColumns[colIdx].name,
-                                type: 'string',
-                                useNull: true
-                            });
-                        }
-                        HazardData[gridColumns[colIdx].name] = summaryValue;
-                    }
-                    colIdx++;
-                });
                 var GroupName = grid.extGrid.getStore().getGroups()[rowIdx].name;
-                HazardData.hazardclass = GroupName;
-                SummaryGridData.push(HazardData);
+                Csw.each(SummaryGridData, function (row) {
+                    if (row.hazardclass === GroupName) {
+                        var colIdx = 0;
+                        window.Ext.Array.each(group.childNodes, function(cell) {
+                            if (colIdx > 0) {
+                                var summaryValue = colIdx === 1 ? GroupName : cell.textContent;
+                                if (rowIdx === 0) {
+                                    SummaryGridColumns.push({
+                                        dataIndex: gridColumns[colIdx].name,
+                                        header: gridColumns[colIdx].display,
+                                        id: 'hmis_' + gridColumns[colIdx].name
+                                    });
+                                    SummaryGridFields.push({
+                                        name: gridColumns[colIdx].name,
+                                        type: 'string',
+                                        useNull: true
+                                    });
+                                }
+                                row[gridColumns[colIdx].name] = summaryValue;
+                            }
+                            colIdx++;
+                        });
+                    }
+                });
                 rowIdx++;
             }, grid.extGrid);
+
             cswPrivate.gridTbl.cell(2, 1).empty();
             var summaryGrid = cswPrivate.gridTbl.cell(2, 1).grid({
                 name: 'SummaryGrid',
@@ -302,6 +304,41 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 }
             }).hide();
             return summaryGrid;
+        };
+        
+        cswPrivate.buildHazardClassEmptyDataset = function () {
+            var EmptyHazardClasses = [];
+            Csw.each(cswPrivate.Materials, function (row) {
+                var exists = false;
+                Csw.each(EmptyHazardClasses, function(hazardClass) {
+                    if (hazardClass.hazardclass === EmptyHazardClasses.hazardclass) {
+                        exists = true;
+                    }
+                });
+                if (false === exists) {
+                    EmptyHazardClasses.push({
+                        material: row.Material,
+                        hazardclass: row.HazardClass,
+                        storagesolidmaq: row.Storage.Solid.MAQ,
+                        storagesolidqty: row.Storage.Solid.Qty,
+                        storageliquidmaq: row.Storage.Liquid.MAQ,
+                        storageliquidqty: row.Storage.Liquid.Qty,
+                        storagegasmaq: row.Storage.Gas.MAQ,
+                        storagegasqty: row.Storage.Gas.Qty,
+                        closedsolidmaq: row.Closed.Solid.MAQ,
+                        closedsolidqty: row.Closed.Solid.Qty,
+                        closedliquidmaq: row.Closed.Liquid.MAQ,
+                        closedliquidqty: row.Closed.Liquid.Qty,
+                        closedgasmaq: row.Closed.Gas.MAQ,
+                        closedgasqty: row.Closed.Gas.Qty,
+                        opensolidmaq: row.Open.Solid.MAQ,
+                        opensolidqty: row.Open.Solid.Qty,
+                        openliquidmaq: row.Open.Liquid.MAQ,
+                        openliquidqty: row.Open.Liquid.Qty
+                    });
+                }
+            });
+            return EmptyHazardClasses;
         };
         
         //#endregion Summary Grid
