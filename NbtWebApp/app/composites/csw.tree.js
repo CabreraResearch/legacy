@@ -112,10 +112,10 @@
                     // Ext exposes a slew of click handlers. None of them work unless the node is *selected*, so don't bother.
                     //}
                     itemmouseenter: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
-                        Csw.tryExec(cswPrivate.onMouseEnter, event, treeNode);
+                        Csw.tryExec(cswPrivate.onMouseEnter, window.event, treeNode);
                     },
                     itemmouseleave: function(thisView, treeNode, htmlElement, index, eventObj, eOpts) {
-                        Csw.tryExec(cswPrivate.onMouseExit, event, treeNode);
+                        Csw.tryExec(cswPrivate.onMouseExit, window.event, treeNode);
                     },
                     afterlayout: function() {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
