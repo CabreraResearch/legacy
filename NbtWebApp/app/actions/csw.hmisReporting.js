@@ -105,7 +105,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         if (false === Csw.isNullOrEmpty(row.Material)) {
                             HMISGridData.push({
                                 material: row.Material,
-                                hazardclass: row.HazardClass,
+                                hazardclass: row.HazardCategory + ' ' + row.Class,
                                 storagesolidmaq: row.Storage.Solid.MAQ,
                                 storagesolidqty: row.Storage.Solid.Qty,
                                 storageliquidmaq: row.Storage.Liquid.MAQ,
@@ -213,6 +213,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         columns: HMISGridColumns,
                         data: HMISGridData,
                         groupField: 'hazardclass',
+                        groupHeaderTpl: '{name}',
                         summaryEnabled: true,
                         printingEnabled: true,
                         gridToPrint: function(grid) {
@@ -318,7 +319,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 if (false === exists) {
                     EmptyHazardClasses.push({
                         material: row.Material,
-                        hazardclass: row.HazardClass,
+                        hazardclass: row.HazardCategory + ' ' + row.Class,
                         storagesolidmaq: row.Storage.Solid.MAQ,
                         storagesolidqty: row.Storage.Solid.Qty,
                         storageliquidmaq: row.Storage.Liquid.MAQ,

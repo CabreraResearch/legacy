@@ -42,6 +42,10 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String HazardClass = String.Empty;
             [DataMember]
+            public String HazardCategory = String.Empty;
+            [DataMember]
+            public String Class = String.Empty;
+            [DataMember]
             public Double SortOrder = 0.0;
             [DataMember]
             public StorageData Storage;
@@ -253,8 +257,12 @@ namespace ChemSW.Nbt.Actions
                 {
                     if( FCEANode.SetName.RelatedNodeId == FCEASId )
                     {
-                        HMISData.HMISMaterial EmptyHazardClass = new HMISData.HMISMaterial();
-                        EmptyHazardClass.HazardClass = FCEANode.HazardClass.Value;
+                        HMISData.HMISMaterial EmptyHazardClass = new HMISData.HMISMaterial
+                        {
+                            HazardClass = FCEANode.HazardClass.Value, 
+                            HazardCategory = FCEANode.HazardCategory.Text, 
+                            Class = FCEANode.Class.Text
+                        };
                         _setFireClassMAQData( EmptyHazardClass, FCEANode );
                         Data.Materials.Add( EmptyHazardClass );
                     }
@@ -262,16 +270,16 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
-        private void _setFireClassMAQData( HMISData.HMISMaterial Material, CswNbtObjClassFireClassExemptAmount FireClass )
+        private void _setFireClassMAQData( HMISData.HMISMaterial Hazard, CswNbtObjClassFireClassExemptAmount FireClass )
         {
-            Material.Storage.Solid.MAQ = FireClass.StorageSolidExemptAmount.Text;
-            Material.Storage.Liquid.MAQ = FireClass.StorageLiquidExemptAmount.Text;
-            Material.Storage.Gas.MAQ = FireClass.StorageGasExemptAmount.Text;
-            Material.Closed.Solid.MAQ = FireClass.ClosedSolidExemptAmount.Text;
-            Material.Closed.Liquid.MAQ = FireClass.ClosedLiquidExemptAmount.Text;
-            Material.Closed.Gas.MAQ = FireClass.ClosedGasExemptAmount.Text;
-            Material.Open.Solid.MAQ = FireClass.OpenSolidExemptAmount.Text;
-            Material.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Text;
+            Hazard.Storage.Solid.MAQ = FireClass.StorageSolidExemptAmount.Text;
+            Hazard.Storage.Liquid.MAQ = FireClass.StorageLiquidExemptAmount.Text;
+            Hazard.Storage.Gas.MAQ = FireClass.StorageGasExemptAmount.Text;
+            Hazard.Closed.Solid.MAQ = FireClass.ClosedSolidExemptAmount.Text;
+            Hazard.Closed.Liquid.MAQ = FireClass.ClosedLiquidExemptAmount.Text;
+            Hazard.Closed.Gas.MAQ = FireClass.ClosedGasExemptAmount.Text;
+            Hazard.Open.Solid.MAQ = FireClass.OpenSolidExemptAmount.Text;
+            Hazard.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Text;
         }
 
         private CswNbtView _getHMISView()
