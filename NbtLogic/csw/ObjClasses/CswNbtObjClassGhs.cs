@@ -19,6 +19,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Material = "Material";
             public const string LabelCodes = "Label Codes";
             public const string ClassCodes = "Class Codes";
+            public const string LabelCodesGrid = "Label Codes Grid";
+            public const string ClassCodesGrid = "Class Codes Grid";
             public const string SignalWord = "Signal Word";
         }
 
@@ -78,10 +80,44 @@ namespace ChemSW.Nbt.ObjClasses
         {
             LabelCodes.InitOptions = _initGhsPhraseOptions;
             ClassCodes.InitOptions = _initGhsPhraseOptions;
-            
+
+            _setupPhraseView( LabelCodesGrid.View, LabelCodes.Value );
+            _setupPhraseView( ClassCodesGrid.View, ClassCodes.Value );
+
             _CswNbtObjClassDefault.afterPopulateProps();
         } //afterPopulateProps()
-        
+
+        private void _setupPhraseView( CswNbtView View, CswCommaDelimitedString SelectedPhraseIds )
+        {
+            CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSPhraseClass );
+            CswNbtMetaDataNodeType GhsPhraseNT = GhsPhraseOC.FirstNodeType;
+
+            View.SetVisibility( NbtViewVisibility.Hidden, null, null );
+            View.Root.ChildRelationships.Clear();
+            CswNbtViewRelationship PhraseVR = View.AddViewRelationship( GhsPhraseOC, false );
+            foreach( string PhraseId in SelectedPhraseIds )
+            {
+                CswPrimaryKey PhrasePk = new CswPrimaryKey();
+                PhrasePk.FromString( PhraseId );
+                PhraseVR.NodeIdsToFilterIn.Add( PhrasePk );
+            }
+
+            // Add language
+            // TODO: Make this dependent on user's default language
+            View.AddViewProperty( PhraseVR, GhsPhraseOC.getObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Code ) );
+            if( null != GhsPhraseNT )
+            {
+                CswNbtMetaDataNodeTypeProp EnglishNTP = GhsPhraseNT.getNodeTypeProp( "English" );
+                if( null != EnglishNTP )
+                {
+                    CswNbtViewProperty EnglishVP = View.AddViewProperty( PhraseVR, EnglishNTP );
+                    EnglishVP.Width = 100;
+                }
+            }
+
+            View.save();
+        }
+
         private Dictionary<string, string> _initGhsPhraseOptions()
         {
             CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSPhraseClass );
@@ -107,6 +143,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
         public CswNbtNodePropMultiList LabelCodes { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodes] ); } }
         public CswNbtNodePropMultiList ClassCodes { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodes] ); } }
+        public CswNbtNodePropGrid LabelCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodesGrid] ); } }
+        public CswNbtNodePropGrid ClassCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodesGrid] ); } }
         public CswNbtNodePropList SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
 
         #endregion

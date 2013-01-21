@@ -75,6 +75,7 @@ namespace NbtWebApp.WebSvc.Returns
         /// </summary>
         public void addException( Exception Exception )
         {
+            Status.Success = false;
             Status.Errors.Add( CswWebSvcCommonMethods.wError( _CswNbtResources, Exception ) );
         }
 

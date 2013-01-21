@@ -21,7 +21,8 @@ namespace ChemSW.Nbt.Actions
         UndisposeContainer,
         Receiving,
         Subscriptions,
-        Reconciliation
+        Reconciliation,
+        Upload_Legacy_Mobile_Data
     }
 
     public class CswNbtAction

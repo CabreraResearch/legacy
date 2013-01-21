@@ -97,7 +97,8 @@
                 Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
                     return function _onMulti(eventObj, multiOpts) {
                         if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
-                            cswPublic.nodeTree.toggleMultiEdit(multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
+                            cswPublic.nodeTree.is.multi = (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
+                            cswPublic.nodeTree.toggleMultiEdit();
                         } else {
                             Csw.unsubscribe('CswMultiEdit', null, _onMulti);
                             Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
@@ -139,9 +140,14 @@
             };
             
             cswPublic.getChecked = function () {
-                var treeNodes = cswPublic.nodeTree.getChecked();
-
-                return treeNodes;
+                var checked = cswPublic.nodeTree.getChecked();
+                var ret = [];
+                if (checked && checked.length > 0) {
+                    checked.forEach(function (treeNode) {
+                        ret.push({ nodeid: treeNode.raw.nodeid, nodekey: treeNode.raw.id });
+                    });
+                }
+                return ret;
             };
 
 
