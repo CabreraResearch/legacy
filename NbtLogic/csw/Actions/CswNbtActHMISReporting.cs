@@ -210,14 +210,17 @@ namespace ChemSW.Nbt.Actions
                                     {
                                         if ( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
                                         {
-                                            HMISMaterial = new HMISData.HMISMaterial
+                                            HMISData.HMISMaterial NewMaterial = new HMISData.HMISMaterial
                                             {
                                                 Material = MaterialName, 
-                                                HazardClass = HazardClass, 
-                                                PhysicalState = MaterialNode.PhysicalState.Value
+                                                HazardClass = HazardClass,
+                                                HazardCategory = HMISMaterial.HazardCategory,
+                                                Class = HMISMaterial.Class,
+                                                PhysicalState = MaterialNode.PhysicalState.Value,
+                                                SortOrder = HMISMaterial.SortOrder
                                             };
-                                            _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
-                                            Data.Materials.Add( HMISMaterial );
+                                            _addQuantityDataToHMISMaterial( NewMaterial, UseType, Quantity, UnitId );
+                                            Data.Materials.Add( NewMaterial );
                                         }
                                         else
                                         {

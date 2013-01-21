@@ -312,11 +312,11 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             Csw.each(cswPrivate.Materials, function (row) {
                 var exists = false;
                 Csw.each(EmptyHazardClasses, function(hazardClass) {
-                    if (hazardClass.hazardclass === EmptyHazardClasses.hazardclass) {
+                    if (hazardClass.hazardclass === row.HazardCategory + ' ' + row.Class) {
                         exists = true;
                     }
                 });
-                if (false === exists) {
+                if (false === exists){//} && Csw.isNullOrEmpty(row.Material)) {
                     EmptyHazardClasses.push({
                         material: row.Material,
                         hazardclass: row.HazardCategory + ' ' + row.Class,
