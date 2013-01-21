@@ -307,21 +307,21 @@ namespace ChemSW.Nbt.WebServices
                 Ret.IsDisabled = true;
             }
 
-            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
             {
-                Ret.ParentId = ParentKey.ToString();
-                if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
-                {
-                    Ret.Path = Parent.Path;
-                }
+                Ret.Path = Parent.Path;
             }
             else
             {
                 Ret.ParentId = "root";
                 Ret.Path = "|root";
             }
-
+            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
+            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            {
+                Ret.ParentId = ParentKey.ToString();
+            }
+            
             Ret.Path += "|" + Ret.Id;
 
             if( Tree.getChildNodeCount() > 0 )
@@ -435,6 +435,7 @@ namespace ChemSW.Nbt.WebServices
                 RootNode.Name = _View.ViewName;
                 RootNode.IsRoot = true;
                 RootNode.Expanded = true;
+                RootNode.Path = "|root";
                 RootNode.Id = "root";
 
                 //#2: the columns for the Tree Grid
@@ -508,7 +509,10 @@ namespace ChemSW.Nbt.WebServices
                     CswExtTree.TreeNode EmptyNode = new CswExtTree.TreeNode();
                     EmptyNode.Name = "No Results";
                     EmptyNode.IsLeaf = true;
+                    EmptyNode.Selected = true;
                     EmptyNode.Id = "empty";
+                    EmptyNode.ParentId = RootNode.Id;
+                    EmptyNode.Path = RootNode.Path + "|empty"; 
                     RootNode.Children.Add( EmptyNode );
                 }
             }
