@@ -26,26 +26,28 @@ namespace ChemSW.Nbt.Schema
         {
 
             CswNbtMetaDataObjectClass FireExtinguisherOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "FireExtinguisherClass" );
-
-            /* Remove the remaining object class props */
-            IEnumerable<CswNbtMetaDataObjectClassProp> FireExtinguisherOCProps = FireExtinguisherOC.getObjectClassProps();
-            foreach( CswNbtMetaDataObjectClassProp FireExtinguisherOCP in FireExtinguisherOCProps )
+            if (null != FireExtinguisherOC)
             {
-                // Remove any rows from jct_nodes_props
-                CswTableUpdate JctNodesPropsTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "removeRowsAssocWithFireExtOCP_28277", "jct_nodes_props" );
-                DataTable JctNodesPropsDt = JctNodesPropsTU.getTable( "where objectclasspropid = " + FireExtinguisherOCP.PropId );
-                foreach (DataRow CurrentDataRow in JctNodesPropsDt.Rows)
+                /* Remove the remaining object class props */
+                IEnumerable<CswNbtMetaDataObjectClassProp> FireExtinguisherOCProps = FireExtinguisherOC.getObjectClassProps();
+                foreach (CswNbtMetaDataObjectClassProp FireExtinguisherOCP in FireExtinguisherOCProps)
                 {
-                    CurrentDataRow.Delete();
+                    // Remove any rows from jct_nodes_props
+                    CswTableUpdate JctNodesPropsTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate("removeRowsAssocWithFireExtOCP_28277", "jct_nodes_props");
+                    DataTable JctNodesPropsDt = JctNodesPropsTU.getTable("where objectclasspropid = " + FireExtinguisherOCP.PropId);
+                    foreach (DataRow CurrentDataRow in JctNodesPropsDt.Rows)
+                    {
+                        CurrentDataRow.Delete();
+                    }
+                    JctNodesPropsTU.update(JctNodesPropsDt);
+
+                    // Delete the OCP
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp(FireExtinguisherOCP, true);
                 }
-                JctNodesPropsTU.update( JctNodesPropsDt );
 
-                // Delete the OCP
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( FireExtinguisherOCP, true );
+                /* Remove any rows from jct_modules_objectclass */
+                _CswNbtSchemaModTrnsctn.deleteAllModuleObjectClassJunctions(FireExtinguisherOC);
             }
-
-            /* Remove any rows from jct_modules_objectclass */
-            _CswNbtSchemaModTrnsctn.deleteAllModuleObjectClassJunctions( FireExtinguisherOC );
 
             /* Remove the FireExtinguisherClass from object_class */
             CswTableUpdate ObjectClassTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "removeFireExtinguisherOC_28277", "object_class" );
