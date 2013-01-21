@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -366,6 +367,16 @@ namespace ChemSW.Nbt.Search
             return Tree;
         } // Results()
 
+
+        private class NodeTypeEntry
+        {
+            public CswNbtMetaDataNodeType NodeType;
+            public Int32 NodeTypeId;
+            public string LatestName;
+            public Int32 Count;
+        }
+
+
         /// <summary>
         /// New Filters to offer, based on Results
         /// </summary>
@@ -377,7 +388,7 @@ namespace ChemSW.Nbt.Search
             if( false == SingleNodeType )
             {
                 // Filter on NodeTypes only
-                Dictionary<Int32, Int32> NodeTypeIds = new Dictionary<Int32, Int32>();
+                SortedList<string, NodeTypeEntry> NodeTypeOptions = new SortedList<string, NodeTypeEntry>();
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
@@ -385,24 +396,31 @@ namespace ChemSW.Nbt.Search
                     CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
                     if( NodeKey != null )
                     {
-                        if( false == NodeTypeIds.ContainsKey( NodeKey.NodeTypeId ) )
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId );
+                        string LatestName = NodeType.getNodeTypeLatestVersion().NodeTypeName;
+                        if( false == NodeTypeOptions.ContainsKey( LatestName ) )
                         {
-                            NodeTypeIds[NodeKey.NodeTypeId] = 0;
+                            NodeTypeOptions.Add( LatestName, new NodeTypeEntry
+                                {
+                                    NodeType = NodeType,
+                                    NodeTypeId = NodeType.NodeTypeId,
+                                    LatestName = LatestName,
+                                    Count = 0
+                                } );
                         }
-                        NodeTypeIds[NodeKey.NodeTypeId] += 1;
+                        NodeTypeOptions[LatestName].Count += 1;
                     }
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
-                if( NodeTypeIds.Keys.Count == 1 )
+                if( NodeTypeOptions.Keys.Count == 1 )
                 {
                     if( false == IsSingleNodeType() )
                     {
                         // If we have uniform results but no nodetype filter applied
                         // add the filter to the filters list for display
-                        Int32 NodeTypeId = NodeTypeIds.Keys.First();
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        CswNbtSearchFilter NodeTypeFilter = makeFilter( NodeType, NodeTypeIds[NodeTypeId], false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
+                        NodeTypeEntry entry = NodeTypeOptions.Values[0];
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         addFilter( NodeTypeFilter );
                     }
                     SingleNodeType = true;
@@ -412,17 +430,9 @@ namespace ChemSW.Nbt.Search
                     JArray FilterSet = new JArray();
                     FiltersArr.Add( FilterSet );
 
-                    // Sort by count descending, then (unfortunately) by nodetypeid
-                    Dictionary<Int32, Int32> sortedDict = ( from entry
-                                                              in NodeTypeIds
-                                                            orderby entry.Value descending, entry.Key ascending
-                                                            select entry
-                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
-                    foreach( Int32 NodeTypeId in sortedDict.Keys )
+                    foreach( NodeTypeEntry entry in NodeTypeOptions.Values )
                     {
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        Int32 Count = sortedDict[NodeTypeId];
-                        CswNbtSearchFilter NodeTypeFilter = makeFilter( NodeType, Count, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         FilterSet.Add( NodeTypeFilter.ToJObject() );
                     }
                 }
