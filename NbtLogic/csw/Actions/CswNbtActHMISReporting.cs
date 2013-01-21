@@ -236,7 +236,6 @@ namespace ChemSW.Nbt.Actions
                 }//Container Nodes
                 HMISTree.goToParentNode();
             }//Location Nodes 
-            //TODO - sort Data.Materials in SortOrder order
             return Data;
         }
 
@@ -252,6 +251,7 @@ namespace ChemSW.Nbt.Actions
             Data.FireClassExemptAmountSet = ControlZone.Properties[FireClassSetNameNTP].AsRelationship.CachedNodeName;
             if( null != FCEASId )
             {
+                List<HMISData.HMISMaterial> HazardClassList = new List<HMISData.HMISMaterial>();
                 CswNbtMetaDataObjectClass FCEAOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
                 foreach ( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
                 {
@@ -261,12 +261,15 @@ namespace ChemSW.Nbt.Actions
                         {
                             HazardClass = FCEANode.HazardClass.Value, 
                             HazardCategory = FCEANode.HazardCategory.Text, 
-                            Class = FCEANode.Class.Text
+                            Class = FCEANode.Class.Text,
+                            SortOrder = FCEANode.SortOrder.Value
                         };
                         _setFireClassMAQData( EmptyHazardClass, FCEANode );
-                        Data.Materials.Add( EmptyHazardClass );
+                        HazardClassList.Add( EmptyHazardClass );
                     }
                 }
+                HazardClassList.Sort( ( s1, s2 ) => s1.SortOrder.CompareTo( s2.SortOrder ) );
+                Data.Materials = new Collection<HMISData.HMISMaterial>( HazardClassList );
             }
         }
 
