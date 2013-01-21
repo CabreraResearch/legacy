@@ -169,6 +169,7 @@ namespace ChemSW.Nbt.Actions
                         Double Quantity = Double.NaN;
                         CswPrimaryKey UnitId = null;
                         String MaterialName = String.Empty;
+                        CswPrimaryKey MaterialId = null;
                         String UseType = String.Empty;
                         foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
@@ -184,6 +185,7 @@ namespace ChemSW.Nbt.Actions
                                         break;
                                     case CswNbtObjClassContainer.PropertyName.Material:
                                         MaterialName = ContainerProp.Field1;
+                                        MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
                                         break;
                                     case CswNbtObjClassContainer.PropertyName.UseType:
                                         UseType = ContainerProp.Field1;
@@ -196,7 +198,7 @@ namespace ChemSW.Nbt.Actions
                             HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( ExistingMaterial => ExistingMaterial.Material == MaterialName );
                             if( null != HMISMaterial )
                             {
-                                _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
+                                _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
                             }
                             else
                             {
@@ -219,7 +221,7 @@ namespace ChemSW.Nbt.Actions
                                                 PhysicalState = MaterialNode.PhysicalState.Value,
                                                 SortOrder = HMISMaterial.SortOrder
                                             };
-                                            _addQuantityDataToHMISMaterial( NewMaterial, UseType, Quantity, UnitId );
+                                            _addQuantityDataToHMISMaterial( NewMaterial, UseType, Quantity, UnitId, MaterialId );
                                             Data.Materials.Add( NewMaterial );
                                         }
                                         else
@@ -227,7 +229,7 @@ namespace ChemSW.Nbt.Actions
                                             HMISMaterial.Material = MaterialName;
                                             HMISMaterial.HazardClass = HazardClass;
                                             HMISMaterial.PhysicalState = MaterialNode.PhysicalState.Value;
-                                            _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId );
+                                            _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
                                         }   
                                     }
                                 }
@@ -369,12 +371,12 @@ namespace ChemSW.Nbt.Actions
                     "Not Reportable" );
             }
             return HMISView;
-        }        
+        }
 
-        private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, String UseType, Double Quantity, CswPrimaryKey UnitId )
+        private void _addQuantityDataToHMISMaterial( HMISData.HMISMaterial Material, String UseType, Double Quantity, CswPrimaryKey UnitId, CswPrimaryKey MaterialId )
         {
             CswPrimaryKey NewUnitId = _getBaseUnitId( Material.PhysicalState );
-            CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, NewUnitId );
+            CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, NewUnitId, MaterialId );
             Double ConvertedQty = Conversion.convertUnit( Quantity );
             switch( UseType )
             {
