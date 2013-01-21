@@ -1365,17 +1365,17 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
-                case 'hmis reporting':
-                    Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
-                        onSubmit: function () {
-                            refreshWelcomeLandingPage();
-                        },
-                        onCancel: function () {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        }
-                    });
+                    case 'hmis reporting':
+                        Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
+                            onSubmit: function () {
+                                refreshWelcomeLandingPage();
+                            },
+                            onCancel: function () {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
                     break;
                     //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
                     //				break;                                                                                                 
@@ -1445,6 +1445,18 @@ window.initMain = window.initMain || function (undefined) {
                     case 'subscriptions':
                         Csw.actions.subscriptions(Csw.main.centerTopDiv);
                         break;
+                    case 'tier ii reporting':
+                        Csw.actions.tierIIReporting(Csw.main.centerTopDiv, {
+                            onSubmit: function () {
+                                refreshWelcomeLandingPage();
+                            },
+                            onCancel: function () {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
+                        break;
                     case 'view scheduled rules':
                         var rulesOpt = {
                             exitFunc: function() {
@@ -1457,14 +1469,14 @@ window.initMain = window.initMain || function (undefined) {
 
                         Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
                         break;
-                case 'upload legacy mobile data':
-                    Csw.nbt.legacyMobileWizard(Csw.main.centerTopDiv, {
-                        onCancel: refreshSelected,
-                        onFinish: function (viewid, viewmode) {
-                            handleItemSelect({ itemid: viewid, mode: viewmode });
-                        }
-                    });
-                    break;
+                    case 'upload legacy mobile data':
+                        Csw.nbt.legacyMobileWizard(Csw.main.centerTopDiv, {
+                            onCancel: refreshSelected,
+                            onFinish: function (viewid, viewmode) {
+                                handleItemSelect({ itemid: viewid, mode: viewmode });
+                            }
+                        });
+                        break;
                     default:
                         if (false == Csw.isNullOrEmpty(o.actionurl)) {
                             Csw.window.location(o.actionurl);

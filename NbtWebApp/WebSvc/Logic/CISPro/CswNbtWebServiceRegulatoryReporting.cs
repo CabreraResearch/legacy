@@ -22,6 +22,20 @@ namespace ChemSW.Nbt.WebServices
             public HMISData Data;
         }
 
+        /// <summary>
+        /// Return Object for TierII Data
+        /// </summary>
+        [DataContract]
+        public class TierIIDataReturn : CswWebSvcReturn
+        {
+            public TierIIDataReturn()
+            {
+                Data = new TierIIData();
+            }
+            [DataMember]
+            public TierIIData Data;
+        }
+
         #endregion DataContract
 
         #region Public
@@ -33,6 +47,15 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
             Return.Data = _CswNbtActHMISReporting.getHMISData( Request );
+        }
+
+        /// <summary>
+        /// Gets all reportable Materials and their max and average quantities in a given Location for the given timeframe
+        /// </summary>
+        public static void getTierIIData( ICswResources CswResources, TierIIDataReturn Return, TierIIData.TierIIDataRequest Request )
+        {
+            CswNbtActTierIIReporting _CswNbtActTierIIReporting = new CswNbtActTierIIReporting( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActTierIIReporting.getTierIIData( Request );
         }
 
         #endregion Public
