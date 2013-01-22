@@ -304,12 +304,13 @@
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.genTab = function () {
-                                    Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                    cswPrivate.form.empty();
-                                    cswPrivate.onTearDown();
-                                    makeTabs();
-                                    return false;
+                                    if (false !== Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                        cswPrivate.form.empty();
+                                        cswPrivate.onTearDown();
+                                        makeTabs();
+                                        return false;
+                                    }
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {

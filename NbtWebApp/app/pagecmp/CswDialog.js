@@ -1824,9 +1824,11 @@
         posY += incrPosBy;
 
         var doClose = function () {
-            Csw.tryExec(onClose);
-            div.$.dialog('close');
-            unbindEvents();
+            if (Csw.clientChanges.manuallyCheckChanges()) {
+                Csw.tryExec(onClose);
+                div.$.dialog('close');
+                unbindEvents();
+            }
         };
         var closeMe = function (eventObj, action) {
             afterObjectClassButtonClick(action, {
