@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.Sched
@@ -30,7 +26,6 @@ namespace ChemSW.Nbt.Sched
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
-            set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
 

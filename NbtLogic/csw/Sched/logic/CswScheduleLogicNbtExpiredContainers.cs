@@ -31,7 +31,6 @@ namespace ChemSW.Nbt.Sched
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
-            set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
 
@@ -91,9 +90,10 @@ namespace ChemSW.Nbt.Sched
                         int ContainersProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
                         batchOp.makeBatchOp( expiredContainers, ContainersProcessedPerIteration );
 
-                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                        _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
                     }
+
+                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }//try
 
