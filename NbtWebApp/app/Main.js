@@ -104,6 +104,7 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.publish('initPropertyTearDown'); //omitting a function handle removes all
                     cswPrivate.is.multi = false;
                     cswPrivate.is.oneTimeReset = true;
+                    Csw.clientChanges.unsetChanged();
                 });
 
             var startSpinner = function() {

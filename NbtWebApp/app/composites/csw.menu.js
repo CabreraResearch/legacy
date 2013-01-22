@@ -256,6 +256,7 @@
                         
                         if (isWholePageNavigation === true) {
                             //If we're changing the contents of the entire page, make sure all dangling events are torn down
+                            Csw.publish('initGlobalEventTeardown');
                             Csw.main.initGlobalEventTeardown();
                         }
                     } // else if (false === Csw.isNullOrEmpty(menuItemJson.action))
