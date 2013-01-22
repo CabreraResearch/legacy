@@ -372,7 +372,7 @@
                                 disabledText: 'Copying...',
                                 onClick: function () {
                                     $.CswDialog('ConfirmDialog',
-                                        'This will replace this view with a copy of ' + copyViewSel.selectedText() + '. Are you sure?',
+                                        'This will replace the ' + currentViewJson.viewname + ' view with a copy of the ' + copyViewSel.selectedText() + ' view. Are you sure?',
                                         'Copy View Warning',
                                         function _okClick() {
                                             Csw.ajax.post({
@@ -388,6 +388,9 @@
                                                     btn.enable();
                                                 }
                                             });
+                                        },
+                                        function _cancelClick() {
+                                            btn.enable();
                                         }
                                     );
                                 }
