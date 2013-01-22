@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.WebServices
                     if( quantityToDispense > containerToDispense.Quantity.Quantity )
                     {
                         OpData.Field2.StatusMsg = "Cannot dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt;
-                        OpData.Log.Add( DateTime.Now + " - Attempted to dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt );
+                        OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt );
                         OpData.Field2.ServerValidated = false;
                         resetField2 = false;
                     }
@@ -299,7 +299,7 @@ namespace ChemSW.Nbt.WebServices
                     if( Tristate.True == containerToDispose.Disposed.Checked )
                     {
                         OpData.Field1.StatusMsg = "Container " + OpData.Field1.Value + " is already disposed";
-                        OpData.Log.Add( DateTime.Now + " - Attempted to dispose already disposed container " + OpData.Field1.Value );
+                        OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispose already disposed container " + OpData.Field1.Value );
                     }
                     else
                     {
@@ -385,7 +385,8 @@ namespace ChemSW.Nbt.WebServices
                                     bool disposed = CswConvert.ToBoolean( treeNodeProp.Field1 );
                                     if( disposed )
                                     {
-                                        Field.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ); //container
+                                        Field.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ) + " " + Field.Value;
+                                        OpData.Log.Add( DateTime.Now + " - ERROR: " + Field.StatusMsg );
                                     }
                                     IsValid = ( false == disposed );
                                 }
@@ -407,7 +408,8 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    Field.StatusMsg = ObjClass.Value.Replace( "Class", "" ) + " does not exist";
+                    Field.StatusMsg = ObjClass.Value.Replace( "Class", "" ) + Field.Value + " does not exist";
+                    OpData.Log.Add( DateTime.Now + " - ERROR: " + Field.StatusMsg );
                 }
             }
             else
