@@ -203,7 +203,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
       inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
       where ocp.propname = 'Material') m on n.nodeid = m.nodeid
-    left join (select n.nodeid, cas.casno, t2.istier2, sg.spec_grav
+    left join (select n.nodeid, cas.casno, sg.spec_grav
       from nodes n
       left join (select jnp.nodeid, jnp.field1 as casno
         from jct_nodes_props jnp
@@ -215,11 +215,6 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
         inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
         where ocp.propname = 'Specific Gravity') sg on n.nodeid = sg.nodeid
-      left join (select jnp.nodeid, jnp.field1 as istier2
-        from jct_nodes_props jnp
-        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-        where ocp.propname = 'Is Tier II') t2 on n.nodeid = t2.nodeid
       inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
         inner join object_class oc on nt.objectclassid = oc.objectclassid
         where oc.objectclass = 'MaterialClass') mat on m.materialid = mat.nodeid
@@ -232,8 +227,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       inner join object_class oc on nt.objectclassid = oc.objectclassid
       where oc.objectclass = 'ContainerClass'
       and qty.quantity > 0
-      and loc.locationid = LocId
-      and mat.istier2 = '1';
+      and loc.locationid = LocId;
       
     for i in 1..containers.count loop
       --For each Container, get all of its Material's Constituent amounts based on their percentage and add them to containers
