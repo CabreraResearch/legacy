@@ -130,9 +130,22 @@
                     viewready: function () {
                         //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
                         Csw.defer(function () {
+                            var lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
+
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
                             var firstChild = cswPrivate.rootNode.childNodes[0];
-                            cswPublic.selectNode(firstChild);
+                            
+                            if (!lastSelectedPath) {
+                                lastSelectedPath = firstChild.raw.path;
+                            }
+                            Csw.clientDb.setItem('CswTree_LastSelectedPath', lastSelectedPath);
+                            cswPublic.selectNode(null, lastSelectedPath, function _success(succeeded, oLastNode) {
+                                if (!succeeded || oLastNode.isRoot()) {
+                                    lastSelectedPath = firstChild.raw.path;
+                                    Csw.clientDb.setItem('CswTree_LastSelectedPath', lastSelectedPath);
+                                    cswPublic.selectNode(null, lastSelectedPath);
+                                }
+                            });
                             cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
 
@@ -150,6 +163,7 @@
                                 record.expand();
                                 cswPublic.previousTreeNode = cswPublic.selectedTreeNode;
                                 cswPublic.selectedTreeNode = record;
+                                Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
                                 //If we're in single edit mode, the count is always 1
                                 cswPrivate.selectedNodeCount = 1;
                             }
@@ -340,14 +354,16 @@
                 cswPrivate.allExpanded = !cswPrivate.allExpanded;
             };
 
-            cswPublic.selectNode = function (treeNode) {
+            cswPublic.selectNode = function (treeNode, path, onSuccess) {
                 /// <summary>
                 /// Selects a node from the tree and renders it as the currently selected node
                 /// </summary>
                 /// <param name="treeNode"></param>
-                var path = cswPublic.getPath(treeNode);
+                path = path || cswPublic.getPath(treeNode);
                 if (path) {
-                    cswPublic.tree.selectPath(path, null, '|');
+                    cswPublic.tree.selectPath(path, null, '|', function(succeeded, oLastNode) {
+                        Csw.tryExec(onSuccess, succeeded, oLastNode);
+                    });
                 }
                 return false;
             };
