@@ -333,13 +333,15 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // case 26166 - apply to all matching properties
                     CswNbtViewPropertyFilter ViewPropFilter = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FilterArbitraryId );
+                    string OrigValue = ViewPropFilter.Value;
+                    
                     CswNbtViewProperty ViewParentProp = (CswNbtViewProperty) ViewPropFilter.Parent;
                     foreach( CswNbtViewPropertyFilter OtherPropFilter in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) )
                     {
                         CswNbtViewProperty OtherParentProp = ( (CswNbtViewProperty) OtherPropFilter.Parent );
                         if( OtherParentProp.Name == ViewParentProp.Name &&
                             OtherParentProp.FieldType == ViewParentProp.FieldType &&
-                            OtherPropFilter.Value == ViewPropFilter.Value )
+                            OtherPropFilter.Value == OrigValue )
                         {
                             OtherPropFilter.Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) NewFilter["conjunction"].ToString();
                             OtherPropFilter.FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) NewFilter["filter"].ToString();
