@@ -104,6 +104,7 @@
                                 }
                                 break;
                             case 'DeleteNode':
+                                Csw.clientChanges.unsetChanged();
                                 $.CswDialog('DeleteNodeDialog', {
                                     nodes: cswPrivate.getSelectedNodes(menuItemJson),
                                     onDeleteNode: cswPrivate.onAlterNode,
@@ -185,12 +186,14 @@
                                 }
                                 break;
                             case 'CopyNode':
-                                $.CswDialog('CopyNodeDialog', {
-                                    nodename: nodename,
-                                    nodeid: nodeid,
-                                    nodetypeid: nodetypeid,
-                                    onCopyNode: cswPrivate.onAlterNode
-                                });
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    $.CswDialog('CopyNodeDialog', {
+                                        nodename: nodename,
+                                        nodeid: nodeid,
+                                        nodetypeid: nodetypeid,
+                                        onCopyNode: cswPrivate.onAlterNode
+                                    });
+                                }
                                 break;
                             case 'PrintView':
                                 Csw.tryExec(cswPrivate.onPrintView);
