@@ -91,6 +91,8 @@ namespace ChemSW.Nbt.WebServices
             public Field Field2;
             [DataMember]
             public string LastItemScanned;
+            [DataMember]
+            public string ScanTextLabel;
         }
 
         [DataContract]
@@ -329,6 +331,7 @@ namespace ChemSW.Nbt.WebServices
             OpData.ModeStatusMsg = string.Empty;
             OpData.Field1 = new Field();
             OpData.Field2 = new Field();
+            OpData.ScanTextLabel = "Scan a barcode:";
             string selectedOp = OpData.Mode.ToLower();
             switch( selectedOp )
             {
@@ -369,37 +372,37 @@ namespace ChemSW.Nbt.WebServices
                 string loweredMode = OpData.Mode.ToLower();
                 if( childCount > 0 )
                 {
-                    switch( loweredMode )
+                    if( false == loweredMode.Equals( Modes.Dispose ) )
                     {
-                        case Modes.Move:
-                        case Modes.Owner:
-                        case Modes.Transfer:
-                        case Modes.Dispense:
-                            IsValid = true;
-                            tree.goToNthChild( 0 );
-                            foreach( CswNbtTreeNodeProp treeNodeProp in tree.getChildNodePropsOfNode() )
+                        IsValid = true;
+                        tree.goToNthChild( 0 );
+                        foreach( CswNbtTreeNodeProp treeNodeProp in tree.getChildNodePropsOfNode() )
+                        {
+                            if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
                             {
-                                if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
+                                if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Disposed ) )
                                 {
-                                    if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Disposed ) )
+                                    bool disposed = CswConvert.ToBoolean( treeNodeProp.Field1 );
+                                    if( disposed )
                                     {
-                                        bool disposed = CswConvert.ToBoolean( treeNodeProp.Field1 );
-                                        if( disposed )
-                                        {
-                                            Field.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ); //container
-                                        }
-                                        IsValid = ( false == disposed );
+                                        Field.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ); //container
                                     }
-                                    else if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Quantity ) )
+                                    IsValid = ( false == disposed );
+                                }
+                                else if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Quantity ) )
+                                {
+                                    if( loweredMode.Equals( Modes.Dispense ) )
                                     {
                                         Field.SecondValue = " (current quantity: " + treeNodeProp.Gestalt + ")";
                                     }
+                                    OpData.ScanTextLabel = "Enter a quantity (" + treeNodeProp.Field1 + ") :";
                                 }
                             }
-                            break;
-                        case Modes.Dispose:
-                            IsValid = true;
-                            break;
+                        }
+                    }
+                    else
+                    {
+                        IsValid = true;
                     }
                 }
                 else

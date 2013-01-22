@@ -19,6 +19,7 @@
 
                     cswPrivate.availableModes = [];
                     cswPrivate.OperationData = {
+                        ScanTextLabel: 'Scan a barcode:',
                         Mode: '',
                         ModeStatusMsg: '',
                         ModeServerValidated: false,
@@ -83,29 +84,9 @@
                                 rowNum = rowNum + 1;
                             });
 
-                            cswPrivate.init();
+                            cswPrivate.renderUI();
                         }
                     });
-                };
-
-                cswPrivate.init = function () {
-                    var barcodeCell = cswPrivate.operationTbl.cell(2, 1).css('padding-bottom', '20px');
-                    barcodeCell.span({ text: 'Scan a barcode: ' });
-
-                    cswPrivate.scanArea = barcodeCell.input({
-                        size: '30',
-                        autofocus: true,
-                        onChange: function (value) {
-                            cswPrivate.handleItem(value);
-                        }
-                    });
-                    cswPrivate.scanArea.$.blur(function () {
-                        setTimeout(function () {
-                            cswPrivate.scanArea.$.focus();
-                        }, 5);
-                    });
-
-                    cswPrivate.renderUI();
                 };
 
                 cswPrivate.handleItem = function (value) {
@@ -156,6 +137,7 @@
                 cswPrivate.clearOpData = function () {
                     var Log = cswPrivate.OperationData.Log;
                     cswPrivate.OperationData = {
+                        ScanTextLabel: 'Scan a barcode:',
                         Mode: '',
                         ModeStatusMsg: '',
                         ModeServerValidated: false,
@@ -178,6 +160,24 @@
                 };
 
                 cswPrivate.renderUI = function () {
+
+                    cswPrivate.operationTbl.cell(2, 1).empty();
+                    var barcodeCell = cswPrivate.operationTbl.cell(2, 1).css('padding-bottom', '20px');
+                    barcodeCell.span({ text: cswPrivate.OperationData.ScanTextLabel });
+
+                    cswPrivate.scanArea = barcodeCell.input({
+                        size: '30',
+                        autofocus: true,
+                        onChange: function (value) {
+                            cswPrivate.handleItem(value);
+                        }
+                    });
+                    cswPrivate.scanArea.$.blur(function () {
+                        setTimeout(function () {
+                            cswPrivate.scanArea.$.focus();
+                        }, 5);
+                    });
+
                     cswPrivate.scanArea.enable();
 
                     cswPrivate.operationTbl.cell(3, 1).empty();
@@ -211,22 +211,28 @@
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
                         field1Value1Cell.css({ 'background-color': 'yellow' });
+                        field1Cell.css({ 'background-color': 'yellow' });
                         iconCell2.icon({
                             iconType: Csw.enums.iconType.right,
                             isButton: false
                         });
+                        iconCell2.css({ 'background-color': 'yellow' });
                     } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
                         field2Value1Cell.css({ 'background-color': 'yellow' });
+                        field2Cell.css({ 'background-color': 'yellow' });
                         iconCell3.icon({
                             iconType: Csw.enums.iconType.right,
                             isButton: false
                         });
+                        iconCell3.css({ 'background-color': 'yellow' });
                     } else if (Csw.isNullOrEmpty(cswPrivate.OperationData.Mode)) {
                         modeValCell.css({ 'background-color': 'yellow' });
+                        modeCell.css({ 'background-color': 'yellow' });
                         iconCell1.icon({
                             iconType: Csw.enums.iconType.right,
                             isButton: false
                         });
+                        iconCell1.css({ 'background-color': 'yellow' });
                     }
 
                     var logStr = '';
