@@ -1366,6 +1366,18 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
+                case 'hmis reporting':
+                    Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
+                        onSubmit: function () {
+                            refreshWelcomeLandingPage();
+                        },
+                        onCancel: function () {
+                            clear({ 'all': true });
+                            Csw.clientState.setCurrent(Csw.clientState.getLast());
+                            refreshSelected();
+                        }
+                    });
+                    break;
                     //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
                     //				break;                                                                                                 
                     //			case 'Inspection_Design':                                                                                                 

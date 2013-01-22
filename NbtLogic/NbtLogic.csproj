@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActUploadLegacyMobileData.cs" />
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
+    <Compile Include="csw\Actions\CswNbtActHMISReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
@@ -383,6 +384,7 @@
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28281.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28339.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_CaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28393B.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28363.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28331.cs" />
     <Compile Include="csw\Search\CswNbtSearchFilter.cs" />

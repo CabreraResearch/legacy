@@ -61,7 +61,12 @@
                     topToolbar: [],
                     groupField: '',
                     groupHeaderTpl: '{columnName}: {name}',
-
+                    summaryEnabled: false,
+                    printingEnabled: false,
+                    gridToPrint: function (grid) {
+                        return grid;
+                    },
+                    onPrintSuccess: function () { },
                     dockedItems: []
                 };
 
@@ -168,46 +173,6 @@
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
-                var toggleGroups;
-                if (cswPrivate.groupField.length > 0) {
-                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
-
-                    toggleGroups = function (collapse) {
-                        Csw.each(cswPrivate.grid.view.features, function (feature) {
-                            if (feature.ftype === 'grouping') {
-                                if (collapse) {
-                                    feature.collapseAll();
-                                } else {
-                                    feature.expandAll();
-                                }
-                            }
-                        });
-                    };
-
-                    cswPrivate.dockedItems = [{
-                        xtype: 'toolbar',
-                        dock: 'top',
-                        items: [
-                            {
-                                xtype: 'button',
-                                text: 'Expand all Rows',
-                                handler: function () {
-                                    toggleGroups(false);
-                                }
-                            },
-                            {
-                                xtype: 'tbseparator'
-                            },
-                            {
-                                xtype: 'button',
-                                text: 'Collapse all Rows',
-                                handler: function () {
-                                    toggleGroups(true);
-                                }
-                            }]
-                    }];
-                }
-
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -235,11 +200,91 @@
 
                 //Case 28476 - manually collapse all groups to fix a bug in ExtJS
                 store.on('load', function (store, records, success) {
-                    Csw.tryExec(toggleGroups, true);
+                    Csw.tryExec(cswPrivate.toggleGroups, true);
                 });
 
                 return store;
             }); // makeStore()
+            
+
+            cswPrivate.makeDockedItems = function () {
+                var topToolbarItems = [];
+
+                //Printing
+                if (cswPrivate.printingEnabled) {
+                    topToolbarItems.push({
+                        tooltip: 'Print the contents of the grid',
+                        text: 'Print',
+                        handler: function () {
+                            var gridToPrint = cswPrivate.gridToPrint(cswPublic);
+                            gridToPrint.print();
+                        }
+                    });
+                }
+
+                //Grouping and Group Summary
+                if (cswPrivate.groupField.length > 0) {
+                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+
+                    cswPrivate.toggleGroups = function (collapse) {
+                        Csw.each(cswPrivate.grid.view.features, function (feature) {
+                            if (feature.ftype === 'grouping' || feature.ftype === 'groupingsummary') {
+                                if (collapse) {
+                                    feature.collapseAll();
+                                } else {
+                                    feature.collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
+                                    feature.expandAll();
+                                }
+                            }
+                        });
+                    };
+                    if (topToolbarItems.length > 0) {
+                        topToolbarItems.push({ xtype: 'tbseparator' });
+                    }
+                    topToolbarItems.push({
+                        xtype: 'button',
+                        text: 'Expand all Rows',
+                        handler: function () {
+                            cswPrivate.toggleGroups(false);
+                        }
+                    });
+                    topToolbarItems.push({ xtype: 'tbseparator' });
+                    topToolbarItems.push({
+                        xtype: 'button',
+                        text: 'Collapse all Rows',
+                        handler: function () {
+                            cswPrivate.toggleGroups(true);
+                        }
+                    });
+                    if (cswPrivate.summaryEnabled) {
+                        topToolbarItems.push({ xtype: 'tbseparator' });
+                        var showSummary = true;
+                        topToolbarItems.push({
+                            tooltip: 'Toggle the visibility of the summary row',
+                            text: 'Toggle Summary',
+                            enableToggle: true,
+                            pressed: true,
+                            handler: function () {
+                                showSummary = !showSummary;
+                                Csw.each(cswPrivate.grid.view.features, function(feature) {
+                                    if (feature.ftype === 'groupingsummary') {
+                                        feature.toggleSummaryRow(showSummary);
+                                        cswPrivate.grid.view.refresh();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+                if (topToolbarItems.length > 0) {
+                    cswPrivate.dockedItems.push({
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: topToolbarItems
+                    });
+                }
+            };
+                
 
             cswPrivate.makeListeners = function () {
                 //Case 28555: ExtJS documentation is awful, 
@@ -412,7 +457,7 @@
                     },
                     {
                         id: 'group',
-                        ftype: 'grouping',
+                        ftype: 'grouping'+ (cswPrivate.summaryEnabled ? 'summary' : ''),
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
                         enableGroupingMenu: false,
@@ -630,6 +675,7 @@
 
                 cswPrivate.rootDiv = cswPublic.div();
 
+                cswPrivate.makeDockedItems();
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
@@ -784,13 +830,14 @@
                 return cswPrivate.store.data;
             };
 
-            cswPublic.print = Csw.method(function (onSuccess) {
+            cswPublic.print = Csw.method(function () {
                 // turn paging off
                 var printStore = cswPrivate.makeStore(cswPrivate.name + 'printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
-                window.Ext.ux.grid.Printer.stylesheetPath = 'js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
+                window.Ext.ux.grid.Printer.stylesheetPath = 'vendor/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
                 window.Ext.ux.grid.Printer.print(printGrid);
+                Csw.tryExec(cswPrivate.onPrintSuccess);
             });
 
             cswPublic.toggleShowCheckboxes = Csw.method(function (val) {
