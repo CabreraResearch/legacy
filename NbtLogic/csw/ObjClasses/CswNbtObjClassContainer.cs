@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             Material.SetOnPropChange( OnMaterialPropChange );
-            Dispose.SetOnPropChange( OnDisposedPropChange );
+            Dispose.SetOnPropChange( OnDisposePropChange );
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
@@ -462,6 +462,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
                 CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
+                _CswNbtNode.IconFileNameOverride = "trash.png";
             }
         }
 
@@ -488,6 +489,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
                 }
+                _CswNbtNode.IconFileNameOverride = "";
             }
         }
 
@@ -807,18 +809,18 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( ContDispTransNT != null )
         } // _createContainerTransactionNode
 
-        private void _setDisposedReadOnly( bool isReadOnly )//case 25814
+        private void _setDisposedReadOnly( bool isReadOnly ) //case 25814
         {
-            Barcode.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Material.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Location.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Status.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Missing.setReadOnly( value: isReadOnly, SaveToDb: true );
-            SourceContainer.setReadOnly( value: isReadOnly, SaveToDb: true );
-            ExpirationDate.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Size.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
-        }
+            foreach( CswNbtNodePropWrapper prop in _CswNbtNode.Properties )
+            {
+                if( prop.ObjectClassPropName != PropertyName.ContainerFamily &&
+                    prop.ObjectClassPropName != PropertyName.Undispose &&
+                    prop.ObjectClassPropName != PropertyName.Disposed )
+                {
+                    prop.setReadOnly( isReadOnly, SaveToDb: true );
+                }
+            }
+        } // _setDisposedReadOnly()
 
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
@@ -1010,9 +1012,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
         public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[PropertyName.Missing] ); } }
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[PropertyName.Disposed] ); } }
-        private void OnDisposedPropChange( CswNbtNodeProp Prop )
+        private void OnDisposePropChange( CswNbtNodeProp Prop )
         {
-            Disposed.setHidden( value: true, SaveToDb: true );
+            Dispose.setHidden( value: true, SaveToDb: true );
             if( CswConvert.ToTristate( Disposed.GetOriginalPropRowValue() ) != Disposed.Checked &&
                 Disposed.Checked == Tristate.True )
             {

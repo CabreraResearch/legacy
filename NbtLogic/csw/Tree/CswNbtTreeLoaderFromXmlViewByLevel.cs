@@ -249,7 +249,7 @@ namespace ChemSW.Nbt
             {
                 Select += @", n.nodename, 
                               n.locked,
-                              t.iconfilename,
+                              nvl(n.iconfilename, t.iconfilename) iconfilename,
                               t.nodetypename,
                               t.nametemplate,
                               t.nodetypeid,
