@@ -116,7 +116,8 @@
                 var viewid = _getSelectedViewId();
                 if (false === Csw.isNullOrEmpty(viewid)) {
                     var dataJson = {
-                        ViewId: viewid
+                        ViewId: viewid,
+                        CopyToViewId: ''
                     };
 
                     Csw.ajax.post({
@@ -238,6 +239,10 @@
                 Precision: '0'
             });
 
+        table2.cell(7, 1).br();
+        var step2CopyFromSelectCell = table2.cell(8, 2);
+        var step2CopyFromButtonCell = table2.cell(8, 3);
+
         // Step 3 - Add Relationships
         var $div3 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.relationships.step);
         $div3.append('Add relationships from the select boxes below:<br/><br/>');
@@ -311,45 +316,86 @@
                 urlMethod: o.ViewInfoUrl,
                 data: jsonData,
                 success: function (data) {
-                    currentViewJson = data.TreeView;
+                    if (data && data.view.TreeView) {
+                        currentViewJson = data.view.TreeView;
 
-                    viewNameTextBox.val(currentViewJson.viewname);
-                    categoryTextBox.val(currentViewJson.category);
-                    var visibility = Csw.string(currentViewJson.visibility);
-                    if (visibility !== 'Property') {
-                        visSelect.setSelected({
-                            visibility: visibility,
-                            roleid: 'nodes_' + currentViewJson.visibilityroleid,
-                            rolename: currentViewJson.visibilityrolename,
-                            userid: 'nodes_' + currentViewJson.visibilityuserid,
-                            username: currentViewJson.visibilityusername
-                        });
+                        viewNameTextBox.val(currentViewJson.viewname);
+                        categoryTextBox.val(currentViewJson.category);
+                        var visibility = Csw.string(currentViewJson.visibility);
+                        if (visibility !== 'Property') {
+                            visSelect.setSelected({
+                                visibility: visibility,
+                                roleid: 'nodes_' + currentViewJson.visibilityroleid,
+                                rolename: currentViewJson.visibilityrolename,
+                                userid: 'nodes_' + currentViewJson.visibilityuserid,
+                                username: currentViewJson.visibilityusername
+                            });
+                        }
+
+                        if (Csw.bool(currentViewJson.groupbysiblings)) {
+                            groupBySiblings.propDom('checked', 'checked');
+                        } else {
+                            groupBySiblings.removeProp('checked');
+                        }
+                        var mode = currentViewJson.mode;
+                        displayModeSpan.text(mode);
+                        gridWidthTextBox.val(currentViewJson.width);
+
+                        gridWidthLabelCell.hide();
+                        gridWidthTextBox.hide();
+                        groupBySiblings.hide();
+                        groupBySibCell.hide();
+
+                        if (mode === 'Tree') {
+                            if (currentViewJson.visibility !== 'Property') {
+                                groupBySiblings.show();
+                                groupBySibCell.show();
+                            }
+                        } else if (mode === "Grid") {
+                            gridWidthLabelCell.show();
+                            gridWidthTextBox.show();
+                        }
+
+                        step2CopyFromSelectCell.empty();
+                        step2CopyFromButtonCell.empty();
+                        
+                        var copyViewSel = step2CopyFromSelectCell.select();
+
+                        if (data.viewlist && data.viewlist.length > 0) {
+                            data.viewlist.forEach(function(val) {
+                                copyViewSel.option({ value: val.id, display: val.name });
+                            });
+
+                            var btn = step2CopyFromButtonCell.button({
+                                disableOnClick: true,
+                                enabledText: 'Copy from View',
+                                disabledText: 'Copying...',
+                                onClick: function () {
+                                    $.CswDialog('ConfirmDialog',
+                                        'This will replace this view with a copy of ' + copyViewSel.selectedText() + '. Are you sure?',
+                                        'Copy View Warning',
+                                        function _okClick() {
+                                            Csw.ajax.post({
+                                                urlMethod: o.CopyViewUrl,
+                                                data: {
+                                                    ViewId: copyViewSel.val(),
+                                                    CopyToViewId: o.viewid
+                                                },
+                                                success: function() {
+                                                    _initStepTwo($nextWizard);
+                                                },
+                                                error: function() {
+                                                    btn.enable();
+                                                }
+                                            });
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                        
+                        $nextWizard.CswWizard('button', 'next', 'enable');
                     }
-
-                    if (Csw.bool(currentViewJson.groupbysiblings)) {
-                        groupBySiblings.propDom('checked', 'checked');
-                    } else {
-                        groupBySiblings.removeProp('checked');
-                    }
-                    var mode = currentViewJson.mode;
-                    displayModeSpan.text(mode);
-                    gridWidthTextBox.val(currentViewJson.width);
-
-                    gridWidthLabelCell.hide();
-                    gridWidthTextBox.hide();
-                    groupBySiblings.hide();
-                    groupBySibCell.hide();
-
-                    if (mode === 'Tree') {
-                        groupBySiblings.show();
-                        groupBySibCell.show();
-                    }
-                    else if (mode === "Grid") {
-                        gridWidthLabelCell.show();
-                        gridWidthTextBox.show();
-                    }
-
-                    $nextWizard.CswWizard('button', 'next', 'enable');
                 } // success
             }); // ajax
         } // _initStepTwo()
@@ -357,6 +403,7 @@
         function cacheStepTwo() {
             currentViewJson.viewname = viewNameTextBox.val();
             currentViewJson.category = categoryTextBox.val();
+            
             if (currentViewJson.visibility !== 'Property') {
                 if (false === Csw.isNullOrEmpty(visSelect)) {
                     var visValue = visSelect.getSelected();
@@ -373,10 +420,12 @@
                         usernodeid = usernodeid.substr('nodes_'.length);
                     }
                     currentViewJson.visibilityuserid = usernodeid;
+                    var doGroupBySiblings = (groupBySiblings.$.is(':checked') ? 'true' : 'false');
+                    currentViewJson.groupbysiblings = doGroupBySiblings;
+                } else {
+                    currentViewJson.groupbysiblings = false;
                 }
             }
-            var doGroupBySiblings = (groupBySiblings.$.is(':checked') ? 'true' : 'false');
-            currentViewJson.groupbysiblings = doGroupBySiblings;
             currentViewJson.width = gridWidthTextBox.val();
         }
 

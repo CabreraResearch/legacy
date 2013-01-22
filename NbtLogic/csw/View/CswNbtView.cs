@@ -1112,6 +1112,21 @@ namespace ChemSW.Nbt
             Root.ViewId = ViewId;
         }
 
+        public void CopyFromView( CswNbtView ViewToCopy )
+        {
+            if( null != ViewToCopy && ViewToCopy.Root.ChildRelationships.Count > 0 )
+            {
+                this.Root.ChildRelationships.Clear();
+                foreach( CswNbtViewRelationship Relationship in ViewToCopy.Root.ChildRelationships )
+                {
+                    this.Root.addChildRelationship( Relationship );
+                }
+                this.save();
+            }
+        }
+
+        
+
         #region Find ViewNode
 
         public bool IsEmpty()
