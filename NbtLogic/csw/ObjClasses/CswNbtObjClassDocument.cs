@@ -158,8 +158,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
-            _updateOwnerViewSDSButtonOpts();
-
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -171,8 +169,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
-            _updateOwnerViewSDSButtonOpts();
-
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
@@ -311,19 +307,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Custom Logic
-
-        private void _updateOwnerViewSDSButtonOpts()
-        {
-            if( false == IsTemp && DocumentClass.Value.Equals( DocumentClasses.SDS ) )
-            {
-                CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Owner.RelatedNodeId];
-                if( null != material )
-                {
-                    material.UpdateViewSDSButtonOpts();
-                    material.postChanges( false );
-                }
-            }
-        }
 
         #endregion
 

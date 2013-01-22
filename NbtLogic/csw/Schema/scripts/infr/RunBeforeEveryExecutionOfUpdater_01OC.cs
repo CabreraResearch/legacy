@@ -105,29 +105,87 @@ namespace ChemSW.Nbt.Schema
                 IsFk = true,
                 FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                 FkValue = FireClassExemptAmountSetOC.ObjectClassId,
+                IsRequired = true,
                 SetValOnAdd = true,
                 DisplayColAdd = 1,
                 DisplayRowAdd = 1
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.SortOrder,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.HazardCategory,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                ReadOnly = true,
                 SetValOnAdd = true,
                 DisplayColAdd = 1,
                 DisplayRowAdd = 2
             } );
-            String FireHazardClassTypes = @"Aero-1,Aero-2,Aero-3,Carc,CF/D (balled),CF/D (loose),CL-II,CL-IIIA,CL-IIIB,
-                    Corr,CRY-FG,CRY-OXY,Exp,FG (gaseous),FG (liquified),FL-1A,FL-1B,FL-1C,FL-Comb,FS,H.T.,Irr,OHH,
-                    Oxy1,Oxy2,Oxy3,Oxy4,Oxy-Gas,Oxy-Gas (liquid),Perox-Det,Perox-I,Perox-II,Perox-III,Perox-IV,Perox-V,Pyro,
-                    RAD-Alpha,RAD-Beta,RAD-Gamma,Sens,Tox,UR-1,UR-2,UR-3,UR-4,WR-1,WR-2,WR-3";
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.FireHazardClassType,
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.Class,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                ReadOnly = true,
+                SetValOnAdd = true,
+                DisplayColAdd = 2,
+                DisplayRowAdd = 2
+            } );
+            CswCommaDelimitedString FireHazardClassTypes = new CswCommaDelimitedString {
+                "Aero-1",
+                "Aero-2",
+                "Aero-3",
+                "Carc",
+                "CF/D (baled)",
+                "CF/D (loose)",
+                "CL-II",
+                "CL-IIIA",
+                "CL-IIIB",
+                "Corr",
+                "CRY-FG",
+                "CRY-OXY",
+                "Exp",
+                "FG (gaseous)",
+                "FG (liquified)",
+                "FL-1A",
+                "FL-1B",
+                "FL-1C",
+                "FL-Comb",
+                "FS",
+                "HT",
+                "Irr",
+                "OHH",
+                "Oxy-1",
+                "Oxy-2",
+                "Oxy-3",
+                "Oxy-4",
+                "Oxy-Gas",
+                "Oxy-Gas (liquid)",
+                "Perox-Det",
+                "Perox-I",
+                "Perox-II",
+                "Perox-III",
+                "Perox-IV",
+                "Perox-V",
+                "Pyro",
+                "RAD-Alpha",
+                "RAD-Beta",
+                "RAD-Gamma",
+                "Sens",
+                "Tox",
+                "UR-1",
+                "UR-2",
+                "UR-3",
+                "UR-4",
+                "WR-1",
+                "WR-2",
+                "WR-3"
+            };
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ReadOnly = true,
                 SetValOnAdd = true,
                 IsRequired = true,
-                ListOptions = FireHazardClassTypes,
+                ListOptions = FireHazardClassTypes.ToString(),
                 DisplayColAdd = 1,
                 DisplayRowAdd = 3
             } );
@@ -142,7 +200,7 @@ namespace ChemSW.Nbt.Schema
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
-                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.Material,
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.CategoryFootnotes,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                 SetValOnAdd = true,
                 DisplayColAdd = 1,
@@ -150,8 +208,16 @@ namespace ChemSW.Nbt.Schema
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
+                PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.SortOrder,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                SetValOnAdd = true,
+                DisplayColAdd = 1,
+                DisplayRowAdd = 6
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
+            {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageSolidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
@@ -161,7 +227,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageLiquidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
@@ -171,7 +237,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.StorageGasExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
@@ -181,7 +247,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedSolidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
@@ -191,7 +257,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedLiquidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
@@ -201,7 +267,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.ClosedGasExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
@@ -211,7 +277,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenSolidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
@@ -221,7 +287,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {
                 PropName = CswNbtObjClassFireClassExemptAmount.PropertyName.OpenLiquidExemptAmount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( FireClassExemptAmountOC )
             {

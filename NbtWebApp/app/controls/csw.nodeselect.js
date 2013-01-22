@@ -24,6 +24,7 @@
                 cswPrivate.viewid = cswPrivate.viewid || '';
 
                 cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
+                cswPrivate.nodeTypeName = cswPrivate.nodeTypeName || '';
                 cswPrivate.objectClassId = cswPrivate.objectClassId || '';
                 cswPrivate.objectClassName = cswPrivate.objectClassName || '';
                 cswPrivate.addNodeDialogTitle = cswPrivate.addNodeDialogTitle || '';
@@ -87,6 +88,7 @@
                     async: Csw.bool(cswPrivate.async),
                     data: cswPrivate.ajaxData || {
                         NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
+                        NodeTypeName: Csw.string(cswPrivate.nodeTypeName),
                         ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
                         ObjectClass: Csw.string(cswPrivate.objectClassName),
                         RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
@@ -96,6 +98,9 @@
                     success: function (data) {
                         //cswPrivate.options = JSON.parse(data.options);
                         var options = [];
+                        if (false === cswPrivate.isRequired) {
+                            options.push({ id: '', value: '' });
+                        }
                         data.Nodes.forEach(function (obj) {
                             options.push({ id: obj.NodeId, value: obj.NodeName });
                         });
