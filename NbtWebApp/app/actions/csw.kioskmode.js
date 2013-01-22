@@ -12,8 +12,6 @@
                 (function _preCtor() {
                     //set default values on cswPrivate if none are supplied
                     cswPrivate.name = cswPrivate.name || 'Kiosk Mode';
-                    cswPrivate.onSubmit = cswPrivate.onSubmit || function _onSubmit() {
-                    };
                     cswPrivate.onCancel = cswPrivate.onCancel || function _onCancel() {
                     };
 
@@ -43,22 +41,6 @@
 
                     cswParent.empty();
                 } ());
-
-                cswPrivate.onSubmitClick = function () {
-                    cswPrivate.commitOperation();
-                };
-
-                cswPrivate.onCancelClick = function () {
-                    Csw.ajax.post({
-                        urlMethod: '',
-                        data: {},
-                        success: function (json) {
-                            if (json.succeeded) {
-                                Csw.tryExec(cswPrivate.onCancel);
-                            }
-                        }
-                    });
-                };
 
                 cswPrivate.renderAvailableModes = function () {
                     Csw.ajaxWcf.post({
@@ -274,10 +256,12 @@
 
                     cswPrivate.action = Csw.layouts.action(cswParent, {
                         title: 'CISPro Kiosk Mode',
-                        finishText: 'Done',
+                        cancelText: 'Exit Kiosk Mode',
                         onFinish: cswPrivate.onSubmitClick,
-                        onCancel: cswPrivate.onCancelClick
+                        onCancel: cswPrivate.onCancel
                     });
+
+                    cswPrivate.action.finish.hide();
 
                     cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({
                         name: cswPrivate.name + '_tbl',

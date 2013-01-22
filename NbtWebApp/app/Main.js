@@ -1454,7 +1454,13 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     case 'kioskmode':
-                        Csw.actions.kioskmode(Csw.main.centerTopDiv, {});
+                        Csw.actions.kioskmode(Csw.main.centerTopDiv, {
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
                         break;
                     default:
                         if (false == Csw.isNullOrEmpty(o.actionurl)) {
