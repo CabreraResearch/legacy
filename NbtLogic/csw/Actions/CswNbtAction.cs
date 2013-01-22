@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.Actions
         Subscriptions,
         Reconciliation,
         Upload_Legacy_Mobile_Data,
+        HMIS_Reporting,
         KioskMode
     }
 
