@@ -66,6 +66,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );           //01V-031   01W-005
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );          //01V-032   01W-006
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28345() ) );           //01V-033   01W-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28507() ) );           //01V-034   01W-008
 
             #endregion WILLIAM
 
