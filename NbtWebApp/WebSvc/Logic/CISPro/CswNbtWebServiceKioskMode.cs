@@ -395,8 +395,8 @@ namespace ChemSW.Nbt.WebServices
                                     if( loweredMode.Equals( Modes.Dispense ) )
                                     {
                                         Field.SecondValue = " (current quantity: " + treeNodeProp.Gestalt + ")";
+                                        OpData.ScanTextLabel = "Enter a quantity (" + treeNodeProp.Field1 + ") :";
                                     }
-                                    OpData.ScanTextLabel = "Enter a quantity (" + treeNodeProp.Field1 + ") :";
                                 }
                             }
                         }
@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    Field.StatusMsg = ObjClass.Value.Replace( "Class", "" ) + Field.Value + " does not exist";
+                    Field.StatusMsg = ObjClass.Value.Replace( "Class", "" ) + " " + Field.Value + " does not exist";
                     OpData.Log.Add( DateTime.Now + " - ERROR: " + Field.StatusMsg );
                 }
             }
