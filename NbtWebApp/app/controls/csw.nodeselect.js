@@ -42,6 +42,8 @@
 
                 cswPrivate.addNewOption = cswPrivate.addNewOption; // || false;
                 cswPrivate.allowAdd = cswPrivate.allowAdd; // || false;
+                cswPrivate.onAfterAdd = cswPrivate.onAfterAdd;
+
                 cswPrivate.isRequired = cswPrivate.isRequired; // || false;
                 cswPrivate.isMulti = cswPrivate.isMulti; // || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
@@ -342,6 +344,7 @@
                             } else {
                                 cswPrivate.select.option({ value: nodeid, display: nodename });
                             }
+                            Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                         }
                     });
                     cswPrivate.toggleOptions(true);
