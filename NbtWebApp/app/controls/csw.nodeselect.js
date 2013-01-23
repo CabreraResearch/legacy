@@ -95,7 +95,7 @@
                         //cswPrivate.options = JSON.parse(data.options);
                         var options = [];
                         data.Nodes.forEach(function (obj) {
-                            options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
+                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                         });
                         cswPrivate.options = options;
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
