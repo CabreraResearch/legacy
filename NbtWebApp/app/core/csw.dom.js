@@ -159,7 +159,7 @@
                 /// <param name='isReadOnly" type="Object">whether or not this property is read only</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
-                    cswPublic.append(propName).addClass('propertylabel').required(isRequired, isReadOnly);
+                    cswPublic.append(propName).addClass('propertylabel').required(isRequired, false == isReadOnly);
                 }
                 return cswPublic;
             };
