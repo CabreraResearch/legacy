@@ -77,7 +77,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns the root node of the tree
         /// </summary>
-        CswNbtNode getRootNode();
+        CswNbtTreeNode getRootNode();
 
         /// <summary>
         /// Return a node key for the first matching node in the tree

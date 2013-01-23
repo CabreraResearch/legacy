@@ -104,6 +104,7 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.publish('initPropertyTearDown'); //omitting a function handle removes all
                     cswPrivate.is.multi = false;
                     cswPrivate.is.oneTimeReset = true;
+                    Csw.clientChanges.unsetChanged();
                 });
 
             var startSpinner = function() {
@@ -549,7 +550,7 @@ window.initMain = window.initMain || function (undefined) {
                 
                 
                 if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
-
+                    Csw.main.initGlobalEventTeardown();
                     if (false === Csw.isNullOrEmpty(type)) {
                         switch (type) {
                         case 'action':
@@ -603,6 +604,7 @@ window.initMain = window.initMain || function (undefined) {
                                     data: { ViewId: o.viewid },
                                     success: function(data) {
                                         o.mode = Csw.string(data.viewmode, 'tree');
+
                                         renderView();
                                     }
                                 });

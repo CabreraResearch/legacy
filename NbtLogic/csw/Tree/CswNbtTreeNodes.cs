@@ -411,15 +411,9 @@ namespace ChemSW.Nbt
         /// <summary>
         ///     Returns the root node of the tree
         /// </summary>
-        public CswNbtNode getRootNode()
+        public CswNbtTreeNode getRootNode()
         {
-            CswNbtNodeKey CurrentKey = getNodeKeyForCurrentPosition();
-            goToRoot();
-
-            CswNbtNode RootNode = _CswNbtNodeCollection.GetNode( CurrentKey.NodeId, CurrentKey.NodeTypeId,
-                                                                 CurrentKey.NodeSpecies, DateTime.MinValue );
-            makeNodeCurrent( CurrentKey );
-            return RootNode;
+           return _RootNode;
         }
 
 //getRootNode()

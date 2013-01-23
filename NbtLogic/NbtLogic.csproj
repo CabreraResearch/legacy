@@ -128,6 +128,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleC3.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropChildContents.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_04.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28570.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28498.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436C.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436D.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28277.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28246.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case24647.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_TreeGrouping_Case27882.cs" />
     <Compile Include="Service References\ChemCatCentral\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -922,7 +924,7 @@
     <Compile Include="csw\Tree\CswNbtTreeLoader.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
+    <None Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
     <Compile Include="csw\Tree\CswNbtTreeModEventArgs.cs" />
     <Compile Include="csw\Tree\ICswNbtNodePropCollData.cs" />
     <Compile Include="csw\Tree\ICswNbtNodeReaderData.cs" />
