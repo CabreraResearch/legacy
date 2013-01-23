@@ -375,7 +375,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
                 TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
-                TargetObjectClass = TargetNodeType.getObjectClass();
+                if( null != TargetNodeType )
+                {
+                    TargetObjectClass = TargetNodeType.getObjectClass();
+                }
             }
             else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
             {

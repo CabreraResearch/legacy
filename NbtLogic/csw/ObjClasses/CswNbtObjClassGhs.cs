@@ -94,29 +94,31 @@ namespace ChemSW.Nbt.ObjClasses
 
             View.SetVisibility( NbtViewVisibility.Hidden, null, null );
             View.Root.ChildRelationships.Clear();
-            CswNbtViewRelationship PhraseVR = View.AddViewRelationship( GhsPhraseOC, false );
-            foreach( string PhraseId in SelectedPhraseIds )
+            if( SelectedPhraseIds.Count > 0 )
             {
-                CswPrimaryKey PhrasePk = new CswPrimaryKey();
-                PhrasePk.FromString( PhraseId );
-                PhraseVR.NodeIdsToFilterIn.Add( PhrasePk );
-            }
-
-            // Add language
-            // TODO: Make this dependent on user's default language
-            View.AddViewProperty( PhraseVR, GhsPhraseOC.getObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Code ) );
-            if( null != GhsPhraseNT )
-            {
-                CswNbtMetaDataNodeTypeProp EnglishNTP = GhsPhraseNT.getNodeTypeProp( "English" );
-                if( null != EnglishNTP )
+                CswNbtViewRelationship PhraseVR = View.AddViewRelationship( GhsPhraseOC, false );
+                foreach( string PhraseId in SelectedPhraseIds )
                 {
-                    CswNbtViewProperty EnglishVP = View.AddViewProperty( PhraseVR, EnglishNTP );
-                    EnglishVP.Width = 100;
+                    CswPrimaryKey PhrasePk = new CswPrimaryKey();
+                    PhrasePk.FromString( PhraseId );
+                    PhraseVR.NodeIdsToFilterIn.Add( PhrasePk );
                 }
-            }
 
+                // Add language
+                // TODO: Make this dependent on user's default language
+                View.AddViewProperty( PhraseVR, GhsPhraseOC.getObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Code ) );
+                if( null != GhsPhraseNT )
+                {
+                    CswNbtMetaDataNodeTypeProp EnglishNTP = GhsPhraseNT.getNodeTypeProp( "English" );
+                    if( null != EnglishNTP )
+                    {
+                        CswNbtViewProperty EnglishVP = View.AddViewProperty( PhraseVR, EnglishNTP );
+                        EnglishVP.Width = 100;
+                    }
+                }
+            } // if( SelectedPhraseIds.Count > 0 )
             View.save();
-        }
+        } // _setupPhraseView()
 
         private Dictionary<string, string> _initGhsPhraseOptions()
         {

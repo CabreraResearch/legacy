@@ -149,11 +149,11 @@ namespace ChemSW.Nbt.Schema
                         SSEA: "NL", SLEA: "NL", SGEA: "NL", SGEF: "6,9", CSEA: "NL", CLEA: "NL", CGEA: "NL", CGEF: "6,9", OSEA: "NL", OSEF: "9", OLEA: "NL", OLEF: "9" );
                     _createFireClassExemptAmountNode( 217.6, "Oxy-1", "Physical", "Oxidizer", Class: "1",
                         SSEA: "8000", SSEF: "6,10", SLEA: "(8000)", SLEF: "10,12", CSEA: "8000", CSEF: "6", CLEA: "(8000)", OSEA: "2000", OSEF: "6", OLEA: "(2000)", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 217.5, "Oxy-2", "Physical", "Oxidizer", Class: "1",
+                    _createFireClassExemptAmountNode( 217.5, "Oxy-2", "Physical", "Oxidizer", Class: "2",
                         SSEA: "500", SSEF: "6,10", SLEA: "(500)", SLEF: "6,10", CSEA: "500", CSEF: "6", CLEA: "(500)", OSEA: "100", OSEF: "6", OLEA: "(100)", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 217.4, "Oxy-3", "Physical", "Oxidizer", Class: "1",
+                    _createFireClassExemptAmountNode( 217.4, "Oxy-3", "Physical", "Oxidizer", Class: "3",
                         SSEA: "20", SSEF: "6,10", SLEA: "(20)", SLEF: "6,10", CSEA: "4", CSEF: "6", CLEA: "(4)", OSEA: "4", OSEF: "6", OLEA: "(4)", OLEF: "6" );
-                    _createFireClassExemptAmountNode( 217.3, "Oxy-4", "Physical", "Oxidizer", Class: "1",
+                    _createFireClassExemptAmountNode( 217.3, "Oxy-4", "Physical", "Oxidizer", Class: "4",
                         SSEA: "1", SSEF: "10,12", SLEA: "(1)", SLEF: "6,10", CSEA: "0.25", CSEF: "12", CLEA: "(0.25)", OSEA: "0.25", OSEF: "12", OLEA: "(0.25)", OLEF: "12" );
                     _createFireClassExemptAmountNode( 217.7, "Oxy-Gas", "Physical", "Oxidizer - Gas",
                         SGEA: "3000", CGEA: "3000" );
