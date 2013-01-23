@@ -93,11 +93,10 @@
                     },
                     success: function (data) {
                         //cswPrivate.options = JSON.parse(data.options);
-                        var options = [];
+                        cswPrivate.options = [];
                         data.Nodes.forEach(function (obj) {
                             cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                         });
-                        cswPrivate.options = options;
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
@@ -330,7 +329,7 @@
                                 data.Nodes.forEach(function (obj) {
                                     if (obj.NodeId === nodeid) {
                                         found = true;
-                                        options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
+                                        cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
                                         cswPrivate.select.option({ value: obj.NodeId, display: obj.NodeName, selected: true }).data({ link: obj.NodeLink });
                                         cswPrivate.select.val(obj.NodeId);
                                         cswPrivate.selectedNodeId = obj.NodeId;
