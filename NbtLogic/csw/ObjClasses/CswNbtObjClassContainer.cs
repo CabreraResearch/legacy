@@ -462,7 +462,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
                 CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
-                _CswNbtNode.IconFileNameOverride = "trash.png";
+                _CswNbtNode.IconFileNameOverride = "x.png";
             }
         }
 
