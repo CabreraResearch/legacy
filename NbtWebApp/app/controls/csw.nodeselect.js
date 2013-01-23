@@ -95,7 +95,7 @@
                         //cswPrivate.options = JSON.parse(data.options);
                         var options = [];
                         data.Nodes.forEach(function (obj) {
-                            options.push({ id: obj.NodeId, value: obj.NodeName });
+                            options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                         });
                         cswPrivate.options = options;
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
@@ -171,21 +171,12 @@
                 cswPrivate.select = cswPrivate.table.cell(1, cswPrivate.selectCellCol).select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
-                    onChange: function (val, option) {
-                        //var val = cswPrivate.select.val();
-                        //Csw.ajaxWcf.post({
-                        //    async: false,
-                        //    data: { NodeId: val },
-                        //    urlMethod: 'Nodes/getNodeLink',
-                        //    success: function (data) {
-                        //        var name = cswPrivate.select.selectedText();
-                        //        var link = data.NodeLink;
-                                Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
-                        //    }
-                        //});
+                    onChange: function () {
+                        var val = cswPrivate.select.selectedVal();
+                        var name = cswPrivate.select.selectedText();
+                        var link = cswPrivate.select.selectedData('link');
+                        Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
                     },
-                    //values: cswPrivate.relationships,
-                    //selected: cswPrivate.selectedNodeId,
                     width: cswPrivate.width
                 });
                 // Select value in a selectbox
@@ -198,12 +189,10 @@
                     } else {
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.nodelink });
                     }
-                    //cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value });
                 });
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
                     // case 25820 - guarantee selected option appears
                     cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName }).data({ link: cswPrivate.selectedNodeLink });
-                    //cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
                 }
 
                 cswPrivate.bindSelectMethods();
@@ -250,7 +239,7 @@
                     // Find value by using search in a dialog
 
                     cswPrivate.nameSpan = cswPrivate.table.cell(1, cswPrivate.searchCellCol).nodeLink({
-                        text: cswPrivate.selectedNodeLink + '&nbsp;'
+                        text: Csw.string(cswPrivate.selectedNodeLink) + '&nbsp;'
                     });
 
                     cswPrivate.hiddenValue = cswPrivate.table.cell(1, cswPrivate.searchCellCol).input({

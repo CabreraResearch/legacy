@@ -410,9 +410,11 @@
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = nodekey;
                         cswPrivate.globalState.currentNodeId = nodeid;
+                        cswPrivate.globalState.currentNodeLink = data.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
-                    }
+                    }   
                     delete data.nodeid;
+                    delete data.nodelink;
                 }
                 return nodeid;
             };

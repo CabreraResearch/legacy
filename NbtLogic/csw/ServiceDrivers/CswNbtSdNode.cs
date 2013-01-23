@@ -234,9 +234,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                     from PropJProp
                         in PropsObj.Properties()
                     where null != PropJProp.Value
-                    select (JObject) PropJProp.Value
+                    select CswConvert.ToJObject( PropJProp.Value )
                         into PropObj
-                        where PropObj.HasValues
+                        where PropObj.HasValues 
                         select PropObj )
                 {
                     addSingleNodeProp( Node, PropObj, Tab );
@@ -402,7 +402,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     Ret = _CswNbtResources.ViewSelect.restoreView( Request.ViewId );
                 }
-                if( null != Request.ViewId && Request.ViewId.isSet() )
+                if( null != Request.SessionViewId && Request.SessionViewId.isSet() )
                 {
                     Ret = _CswNbtResources.ViewSelect.getSessionView( Request.SessionViewId );
                 }
@@ -431,7 +431,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView View = _getView( Request );
             if( null != View )
             {
-                if( Int32.MinValue == Request.NodeTypeId && Int32.MinValue == Request.ObjectClassId &&
+                if( Request.NodeTypeId <= 0 && Request.ObjectClassId <= 0 &&
                     CswNbtResources.UnknownEnum == Request.ObjectClass )
                 {
                     // Absent a MetaDataObject ID, 
