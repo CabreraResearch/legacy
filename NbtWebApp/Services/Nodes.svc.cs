@@ -56,26 +56,7 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
-
-        //[OperationContract]
-        //[WebInvoke( Method = "POST" )]
-        //[FaultContract( typeof( FaultException ) )]
-        //[Description( "Get the options for a relationship property" )]
-        //public NodeSelect.Response getRelationshipOpts( NodeSelect.PropertyView Request )
-        //{
-        //    //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-        //    NodeSelect.Response Ret = new NodeSelect.Response();
-        //    var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, NodeSelect.PropertyView>(
-        //        CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-        //        ReturnObj: Ret,
-        //        WebSvcMethodPtr: CswNbtWebServiceNode.getRelationshipOpts,
-        //        ParamObj: Request
-        //        );
-
-        //    GetViewDriverType.run();
-        //    return ( Ret );
-        //}
-
+        
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
@@ -94,24 +75,5 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
-
-        //[OperationContract]
-        //[WebInvoke( Method = "POST" )]
-        //[FaultContract( typeof( FaultException ) )]
-        //[Description( "Get the node link for a given node" )]
-        //public NodeSelect.NodeLinkResponse getNodeLink( NodeSelect.PropertyView Request )
-        //{
-        //    //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-        //    NodeSelect.NodeLinkResponse Ret = new NodeSelect.NodeLinkResponse();
-        //    var GetViewDriverType = new CswWebSvcDriver<NodeSelect.NodeLinkResponse, NodeSelect.PropertyView>(
-        //        CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-        //        ReturnObj: Ret,
-        //        WebSvcMethodPtr: CswNbtWebServiceNode.getNodeLink,
-        //        ParamObj: Request
-        //        );
-
-        //    GetViewDriverType.run();
-        //    return ( Ret );
-        //}
     }
 }

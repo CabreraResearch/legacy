@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.Actions
                 Ret.Supplier.RelatedNodeId = SupplierId;
 
                 Ret.IsTemp = ( false == RemoveTempStatus );
-                Ret.postChanges( ForceUpdate: false );
+                Ret.postChanges( ForceUpdate : false );
 
                 return Ret;
             }
@@ -351,14 +351,14 @@ namespace ChemSW.Nbt.Actions
                     if( null != Ret )
                     {
                         Ret.IsTemp = false;
-                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
+                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab : false );
 
                         NewMaterial FinalMaterial = new NewMaterial( _CswNbtResources, Ret );
                         FinalMaterial.TradeName = CswConvert.ToString( MaterialObj["tradename"] );
                         FinalMaterial.SupplierId = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
                         FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
 
-                        CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
+                        CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus : true );
 
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
                         if( RequestObj.HasValues )
@@ -370,7 +370,7 @@ namespace ChemSW.Nbt.Actions
                                 RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
                                 RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
                                 RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
-                                RequestCreate.postChanges( ForceUpdate: false );
+                                RequestCreate.postChanges( ForceUpdate : false );
                             }
                         }
                         CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
@@ -502,7 +502,7 @@ namespace ChemSW.Nbt.Actions
             if( null != MaterialNode )
             {
                 MaterialNodeView = MaterialNodeView ?? CswNbtObjClassMaterial.getMaterialNodeView( NbtResources, MaterialNode );
-                MaterialNodeView.SaveToCache( IncludeInQuickLaunch: false );
+                MaterialNodeView.SaveToCache( IncludeInQuickLaunch : false );
 
                 Ret["ActionId"] = NbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
                 //Used for Tab and Button items
@@ -579,6 +579,26 @@ namespace ChemSW.Nbt.Actions
                 }
             }
             return ret;
+        }
+
+        public CswNbtView getMaterialSuppliersView()
+        {
+            CswNbtView Ret = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass VendorOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtViewRelationship SupplierVr = Ret.AddViewRelationship( VendorOc, IncludeDefaultFilters : true );
+
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            {
+                CswNbtMetaDataObjectClassProp CoorporateOcp = VendorOc.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                Ret.AddViewPropertyAndFilter( SupplierVr,
+                                              MetaDataProp : CoorporateOcp,
+                                              Value : CswNbtObjClassVendor.VendorTypes.Corporate,
+                                              FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            }
+            
+            Ret.ViewName = "Create Material Supplier";
+            Ret.SaveToCache( IncludeInQuickLaunch : false );
+            return Ret;
         }
 
         #endregion Public

@@ -4,6 +4,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
+using NbtWebApp.Services;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -57,6 +58,20 @@ namespace ChemSW.Nbt.WebServices
         public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
         {
             return CswNbtActCreateMaterial.getMaterialSizes( CswNbtResources, MaterialId );
+        }
+
+        public static void getCreateMaterialViews( ICswResources CswResources, MaterialResponse Response, object Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswNbtActCreateMaterial act = new CswNbtActCreateMaterial(NbtResources);
+                CswNbtView SupplierView = act.getMaterialSuppliersView();
+                if( null != SupplierView )
+                {
+                    Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
+                }
+            }
         }
 
         /// <summary>

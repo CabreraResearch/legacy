@@ -434,52 +434,6 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        //public static void getRelationshipOpts( ICswResources CswResources, NodeSelect.Response Response, NodeSelect.PropertyView Request )
-        //{
-        //    if( null != CswResources )
-        //    {
-        //        CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
-        //        NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
-
-        //        int nodeTypeId;
-        //        CswPrimaryKey pk = new CswPrimaryKey();
-        //        if( false == String.IsNullOrEmpty( Request.NodeId ) )
-        //        {
-        //            pk = CswConvert.ToPrimaryKey( Request.NodeId );
-        //            nodeTypeId = NbtResources.Nodes[pk].NodeTypeId;
-        //        }
-        //        else
-        //        {
-        //            nodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
-        //        }
-        //        Dictionary<CswPrimaryKey, string> Opts = new Dictionary<CswPrimaryKey, string>();
-        //        if( null == Request.ViewId )
-        //        {
-        //            CswNbtMetaDataNodeType metaDataNodeType = NbtResources.MetaData.getNodeType(nodeTypeId);
-        //            if (null != metaDataNodeType)
-        //            {
-        //                CswNbtMetaDataNodeTypeProp ntp = metaDataNodeType.getNodeTypePropByObjectClassProp(Request.ObjClassPropName);
-        //                Opts = CswNbtNodePropRelationship.getOptions(NbtResources, ntp, null);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            CswNbtViewId ViewId = new CswNbtViewId( Request.ViewId );
-        //            Opts = CswNbtNodePropRelationship.getOptions( NbtResources, ViewId, Request.TargetNodeTypeId, Request.TargetObjectClassId );
-        //        }
-        //        foreach( KeyValuePair<CswPrimaryKey, string> pair in Opts )
-        //        {
-        //            Ret.Nodes.Add( new CswNbtNode.Node( null )
-        //            {
-        //                NodePk = pair.Key,
-        //                NodeName = pair.Value
-        //            } );
-        //        }
-        //        Response.Data = Ret;
-        //    }
-        //}
-
         public static void getSizes( ICswResources CswResources, NodeResponse Response, CswNbtNode.Node Request )
         {
             if( null != CswResources )
@@ -515,25 +469,6 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
         }
-
-        //public static void getNodeLink( ICswResources CswResources, NodeSelect.NodeLinkResponse Response, NodeSelect.PropertyView Request )
-        //{
-        //    if( null != CswResources )
-        //    {
-        //        CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
-        //        NodeSelect.NodeLinkResponse.Ret ret = new NodeSelect.NodeLinkResponse.Ret();
-
-        //        CswPrimaryKey pk = new CswPrimaryKey();
-        //        pk.FromString( Request.NodeId );
-        //        if( CswTools.IsPrimaryKey( pk ) )
-        //        {
-        //            CswNbtNode node = NbtResources.Nodes[pk];
-        //            ret.NodeLink = node.NodeLink;
-        //            Response.Data = ret;
-        //        }
-        //    }
-        //}
 
     } // class CswNbtWebServiceNode
 

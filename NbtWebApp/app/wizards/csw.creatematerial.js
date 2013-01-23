@@ -175,11 +175,10 @@
 
                             hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
-                            cswPrivate.makeSupplierCtrl(cswPrivate.state.materialType.val);
                         }
                         if (cswPrivate.supplierSelect &&
                             cswPrivate.supplierSelect.selectedText &&
-                            cswPrivate.state.supplier.val !== cswPrivate.supplierSelect.val()) {
+                            Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
 
                             hasChanged = true;
                             cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
@@ -256,26 +255,30 @@
                             tbl.cell(3,1).empty();
                             tbl.cell(3,2).empty();
                             tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
+
+                            var ajaxData = {};
+                            if (cswPrivate.supplierViewId) {
+                                ajaxData.ViewId = cswPrivate.supplierViewId;
+                            } else {
+                                ajaxData.ObjectClass = 'VendorClass';
+                            }
+
                             cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
                                 name: 'Supplier',
                                 async: false,
                                 cssclass: 'required',
                                 width: '200px',
-                                nodesUrlMethod: 'Nodes/getRelationshipOpts',
-                                ajaxData:{
-                                    NodeTypeId: NodeTypeId,
-                                    ObjClassPropName: 'Supplier'
-                                },
+                                ajaxData: ajaxData,
                                 showSelectOnLoad: true,
                                 allowAdd: true,
-                                objectClassName: 'VendorClass',
                                 addNodeDialogTitle: 'Vendor',
                                 selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                                 onChange: changeMaterial,
                                 isRequired: true
                             });
                         };
-
+                        cswPrivate.makeSupplierCtrl();
+                        
                         // PARTNO
                         tbl.cell(4, 1).span().setLabelText('Part No:  ');
                         cswPrivate.partNoInput = tbl.cell(4,2).input({
@@ -714,6 +717,14 @@
                     },
                     onFinish: cswPrivate.finalize,
                     doNextOnInit: false
+                });
+
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Materials/views',
+                    async: false,
+                    success: function(data) {
+                        cswPrivate.supplierViewId = data.SuppliersView.ViewId;
+                    }
                 });
 
             } ());
