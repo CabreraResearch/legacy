@@ -167,54 +167,41 @@ namespace ChemSW.Nbt
         private void _synchNodeName( CswNbtNode Node )
         {
             string OldNodeName = Node.NodeName;
-
+            string NewNodeName = string.Empty;
             string NameTemplate = Node.getNodeType().NameTemplateValue;
+
             if( NameTemplate.Length > 0 )
             {
                 //we assume that the nodetype has nodetype_props corresponding to all "[]" 
                 //parameters in the nametemplate. 
-                //                string NewName = "";
                 if( Node.Properties.Count > 0 )
                 {
-                    //                    string RegExpInitialDivision = @"^\s*(select.*\sfrom\s+)([^\s].*)$";
+                    NewNodeName = NameTemplate;
                     RegexOptions RegExOpts = new RegexOptions();
                     RegExOpts |= RegexOptions.IgnoreCase;
 
-                    //int FilledTemplateParameters = 0;
                     foreach( CswNbtNodePropWrapper CurrentProp in Node.Properties )
                     {
-                        //if( !CurrentProp.Empty )
-                        //{
                         string TemplateParamCandidate = CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() );
-                        int TemplateParamStartIdx = NameTemplate.ToLower().IndexOf( TemplateParamCandidate );
+                        int TemplateParamStartIdx = NewNodeName.ToLower().IndexOf( TemplateParamCandidate );
                         if( TemplateParamStartIdx > -1 )
                         {
                             Regex RegExObj = new Regex( "\\" + TemplateParamCandidate, RegExOpts );
-                            NameTemplate = RegExObj.Replace( NameTemplate, CurrentProp.Gestalt );
-                            //FilledTemplateParameters++;
-                        }//if current property is used in the name template
+                            NewNodeName = RegExObj.Replace( NewNodeName, CurrentProp.ValueForNameTemplate );
+                        } //if current property is used in the name template
 
-                    }//iterate props
-                    if( NameTemplate.Trim() != string.Empty )
-                    //                       0 < FilledTemplateParameters)
-                    {
-                        Node.NodeName = NameTemplate;
-                    }
-                    else
-                    {
-                        Node.NodeName = _makeDefaultNodeName( Node );
-                    }
-                }
-                else
-                {
-                    Node.NodeName = _makeDefaultNodeName( Node );
-                }
+                    } //iterate props
+                } // if( Node.Properties.Count > 0 )
+            } // if( NameTemplate.Length > 0 )
+
+            if( NewNodeName.Trim() != string.Empty )
+            {
+                Node.NodeName = NameTemplate;
             }
             else
             {
                 Node.NodeName = _makeDefaultNodeName( Node );
-            }//if-else we have a nametemplate
-
+            }
 
             // When a node's name changes, we need to update any relationships (and locations) referencing that node
             if( Node.NodeName != OldNodeName )
