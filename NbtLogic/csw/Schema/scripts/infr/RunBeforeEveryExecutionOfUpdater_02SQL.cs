@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for PL/SQL object changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_04 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_02SQL : CswUpdateSchemaTo
     {
         #region Blame Logic
 
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Schema
             #endregion Views
         }
 
-    }//class RunBeforeEveryExecutionOfUpdater_04
+    }//class RunBeforeEveryExecutionOfUpdater_02SQL
 
 }//namespace ChemSW.Nbt.Schema
 
