@@ -196,7 +196,7 @@ namespace ChemSW.Nbt
 
             if( NewNodeName.Trim() != string.Empty )
             {
-                Node.NodeName = NameTemplate;
+                Node.NodeName = NewNodeName;
             }
             else
             {
