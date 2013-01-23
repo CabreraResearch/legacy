@@ -42,14 +42,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 onChange: function () {
                     if (cswPrivate.controlZoneSelect.val() !== '') {
                         cswPrivate.controlZoneId = cswPrivate.controlZoneSelect.val();
-                        var cached = false;
-                        Csw.each(cswPrivate.CachedHMISData, function(czData) {
-                            if (czData.controlZoneId === cswPrivate.controlZoneId) {
-                                cached = true;
-                                cswPrivate.gridTbl.cell(1, 1).empty();
-                                cswPrivate.HMISGrid = cswPrivate.gridTbl.cell(1, 1).grid(czData.gridOptions);
-                            }
-                        });
+                        var cached = cswPrivate.loadCachedGrid();
                         if (false === cached) {
                             cswPrivate.loadGrid({
                                 ControlZoneId: cswPrivate.controlZoneId
@@ -229,6 +222,18 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 }
             });
         };
+
+        cswPrivate.loadCachedGrid = function () {
+            var cached = false;
+            Csw.each(cswPrivate.CachedHMISData, function (czData) {
+                if (czData.controlZoneId === cswPrivate.controlZoneId) {
+                    cached = true;
+                    cswPrivate.gridTbl.cell(1, 1).empty();
+                    cswPrivate.HMISGrid = cswPrivate.gridTbl.cell(1, 1).grid(czData.gridOptions);
+                }
+            });
+            return cached;
+        };
         //#endregion Grid Control
         
         //#region Summary Grid
@@ -300,8 +305,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 data: SummaryGridData,
                 onPrintSuccess: function () {
                     cswPrivate.gridTbl.cell(2, 1).empty();
-                    cswPrivate.gridTbl.cell(1, 1).empty();
-                    cswPrivate.HMISGrid = cswPrivate.gridTbl.cell(1, 1).grid(cswPrivate.gridOptions);
+                    cswPrivate.loadCachedGrid();
                 }
             }).hide();
             return summaryGrid;
@@ -312,7 +316,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
             Csw.each(cswPrivate.Materials, function (row) {
                 var exists = false;
                 Csw.each(EmptyHazardClasses, function(hazardClass) {
-                    if (hazardClass.hazardclass === EmptyHazardClasses.hazardclass) {
+                    if (hazardClass.hazardclass === row.HazardCategory + ' ' + row.Class) {
                         exists = true;
                     }
                 });
