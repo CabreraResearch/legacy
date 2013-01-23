@@ -147,6 +147,8 @@ namespace ChemSW.Nbt
 
         } // getSessionView()
 
+        
+
         /// <summary>
         /// Save a view to the session view collection.  Sets the SessionViewId on the view.
         /// </summary>
