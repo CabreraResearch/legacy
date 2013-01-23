@@ -833,7 +833,7 @@ namespace ChemSW.Nbt.WebPages
                             }
                         }
                     }
-                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ChildContents )
+                    else if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ChildContents )
                     {
                         string ChildRelationshipValue = getPropAttributeValue( "EditProp_FkValueValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                         if( ChildRelationshipValue != String.Empty )
