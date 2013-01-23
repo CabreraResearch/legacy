@@ -2,16 +2,16 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtViewRoot : CswNbtViewNode
+    public class CswNbtViewRoot: CswNbtViewNode
     {
         private CswDelimitedString _RootString;
         private const string _ChildRelationshipsName = "childrelationships";
@@ -214,22 +214,7 @@ namespace ChemSW.Nbt
 
         // 13 - LandingPageText (defunct)
         // 14 - RelatedViewIds (defunct)
-
-        // 15 - ForMobile
-        public bool ForMobile
-        {
-            get
-            {
-                bool ret = false;
-                if( _RootString[15] != string.Empty )
-                    ret = CswConvert.ToBoolean( _RootString[15] );
-                return ret;
-            }
-            set
-            {
-                _RootString[15] = value.ToString();
-            }
-        } // ForMobile
+        // 15 - ForMobile (defunct)
 
         // 16 - Included
         public bool Included
@@ -263,6 +248,7 @@ namespace ChemSW.Nbt
             }
         } // IsDemo
 
+        // 18
         public string GridGroupByCol
         {
             get
@@ -275,7 +261,25 @@ namespace ChemSW.Nbt
             }
         }
 
-        private Int32 _PropCount = 19;
+        // 19 - GroupBySiblings
+        public bool GroupBySiblings
+        {
+            get
+            {
+                bool ret = false;
+                if( _RootString[19] != string.Empty )
+                {
+                    ret = _View.ViewMode == NbtViewRenderingMode.Tree && CswConvert.ToBoolean( _RootString[19] );
+                }
+                return ret;
+            }
+            set
+            {
+                _RootString[19] = value.ToString();
+            }
+        } // GroupBySiblings
+
+        private Int32 _PropCount = 20;
 
         #endregion Properties in _RootString
 
@@ -345,47 +349,63 @@ namespace ChemSW.Nbt
                 _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
 
                 if( Node.Attributes["viewname"] != null )
+                {
                     _RootString[1] = Node.Attributes["viewname"].Value;    // set _RootString[1], not ViewName, because we're not *changing* the name of the view
-                //if( Node.Attributes[ "version" ] != null )
-                //    _ReadVersion = Node.Attributes[ "version" ].Value;
+                }
+
                 if( Node.Attributes["selectable"] != null )
-                    Selectable = Convert.ToBoolean( Node.Attributes["selectable"].Value );
+                {
+                    Selectable = CswConvert.ToBoolean( Node.Attributes["selectable"].Value );
+                }
                 if( Node.Attributes["mode"] != null )
                 {
-                    //ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Node.Attributes["mode"].Value, true );
-                    ViewMode = (NbtViewRenderingMode) Node.Attributes["mode"].Value;
+                    ViewMode = Node.Attributes["mode"].Value;
                 }
                 if( Node.Attributes["width"] != null && Node.Attributes["width"].Value != String.Empty )
+                {
                     Width = CswConvert.ToInt32( Node.Attributes["width"].Value );
-                //if( Node.Attributes[ "editmode" ] != null )
-                //    EditMode = ( GridEditMode ) Enum.Parse( typeof( GridEditMode ), Node.Attributes[ "editmode" ].Value, true );
+                }
+
                 if( Node.Attributes["viewid"] != null && Node.Attributes["viewid"].Value != String.Empty )
+                {
                     ViewId = new CswNbtViewId( CswConvert.ToInt32( Node.Attributes["viewid"].Value ) );
+                }
                 if( Node.Attributes["category"] != null && Node.Attributes["category"].Value != String.Empty )
+                {
                     Category = Node.Attributes["category"].Value;
+                }
                 if( Node.Attributes["visibility"] != null && Node.Attributes["visibility"].Value != String.Empty )
                 {
-                    //Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), Node.Attributes["visibility"].Value, true );
+
                     Visibility = (NbtViewVisibility) Node.Attributes["visibility"].Value;
                 }
-                //if (Node.Attributes["addchildren"] != null && Node.Attributes["addchildren"].Value != String.Empty)
-                //    AddChildren = ( NbtViewAddChildrenSetting ) Enum.Parse( typeof( NbtViewAddChildrenSetting ), Node.Attributes[ "addchildren" ].Value, true );
-                if( Node.Attributes["visibilityroleid"] != null && Node.Attributes["visibilityroleid"].Value != String.Empty )
+
+                if( Node.Attributes["visibilityroleid"] != null &&
+                    Node.Attributes["visibilityroleid"].Value != String.Empty )
+                {
                     VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.Attributes["visibilityroleid"].Value ) );
-                if( Node.Attributes["visibilityuserid"] != null && Node.Attributes["visibilityuserid"].Value != String.Empty )
+                }
+                if( Node.Attributes["visibilityuserid"] != null &&
+                    Node.Attributes["visibilityuserid"].Value != String.Empty )
+                {
                     VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.Attributes["visibilityuserid"].Value ) );
-                //if( Node.Attributes["landingpagetext"] != null && Node.Attributes["landingpagetext"].Value != string.Empty )
-                //    LandingPageText = Node.Attributes["landingpagetext"].Value;
-                //if( Node.Attributes["relatedviewids"] != null && Node.Attributes["relatedviewids"].Value != string.Empty )
-                //    RelatedViewIds = Node.Attributes["relatedviewids"].Value;
-                if( Node.Attributes["formobile"] != null )
-                    ForMobile = Convert.ToBoolean( Node.Attributes["formobile"].Value );
+                }
+                if( Node.Attributes["groupbysiblings"] != null )
+                {
+                    GroupBySiblings = CswConvert.ToBoolean( Node.Attributes["groupbysiblings"].Value );
+                }
                 if( Node.Attributes["included"] != null )
-                    Included = Convert.ToBoolean( Node.Attributes["included"].Value );
+                {
+                    Included = CswConvert.ToBoolean( Node.Attributes["included"].Value );
+                }
                 if( Node.Attributes["isdemo"] != null )
-                    IsDemo = Convert.ToBoolean( Node.Attributes["isdemo"].Value );
+                {
+                    IsDemo = CswConvert.ToBoolean( Node.Attributes["isdemo"].Value );
+                }
                 if( Node.Attributes["gridgroupbycol"] != null )
+                {
                     GridGroupByCol = Node.Attributes["gridgroupbycol"].Value;
+                }
             }
             catch( Exception ex )
             {
@@ -476,10 +496,10 @@ namespace ChemSW.Nbt
                     VisibilityUserId = new CswPrimaryKey( "nodes", _VisibilityUserId );
                 }
 
-                if( Node["formobile"] != null )
+                if( Node["groupbysiblings"] != null )
                 {
-                    bool _ForMobile = CswConvert.ToBoolean( Node["formobile"] );
-                    ForMobile = _ForMobile;
+                    bool _groupBySiblings = CswConvert.ToBoolean( Node["groupbysiblings"] );
+                    GroupBySiblings = _groupBySiblings;
                 }
 
                 if( Node["included"] != null )
@@ -577,10 +597,6 @@ namespace ChemSW.Nbt
                 WidthAttribute.Value = "";
             RootXmlNode.Attributes.Append( WidthAttribute );
 
-            //XmlAttribute EditModeAttribute = XmlDoc.CreateAttribute( "editmode" );
-            //EditModeAttribute.Value = EditMode.ToString();
-            //RootXmlNode.Attributes.Append( EditModeAttribute );
-
             XmlAttribute ViewIdAttribute = XmlDoc.CreateAttribute( "viewid" );
             if( ViewId.isSet() )
                 ViewIdAttribute.Value = ViewId.get().ToString();
@@ -596,10 +612,6 @@ namespace ChemSW.Nbt
             VisibilityAttribute.Value = Visibility.ToString();
             RootXmlNode.Attributes.Append( VisibilityAttribute );
 
-            //XmlAttribute AddChildrenAttribute = XmlDoc.CreateAttribute("addchildren");
-            //AddChildrenAttribute.Value = AddChildren.ToString();
-            //RootXmlNode.Attributes.Append( AddChildrenAttribute );
-
             XmlAttribute VisibilityRoleIdAttribute = XmlDoc.CreateAttribute( "visibilityroleid" );
             if( VisibilityRoleId != null )
                 VisibilityRoleIdAttribute.Value = VisibilityRoleId.PrimaryKey.ToString();
@@ -610,17 +622,9 @@ namespace ChemSW.Nbt
                 VisibilityUserIdAttribute.Value = VisibilityUserId.PrimaryKey.ToString();
             RootXmlNode.Attributes.Append( VisibilityUserIdAttribute );
 
-            //XmlAttribute LandingPageTextAttribute = XmlDoc.CreateAttribute( "landingpagetext" );
-            //LandingPageTextAttribute.Value = LandingPageText;
-            //RootXmlNode.Attributes.Append( LandingPageTextAttribute );
-
-            //XmlAttribute RelatedViewIdsAttribute = XmlDoc.CreateAttribute( "relatedviewids" );
-            //RelatedViewIdsAttribute.Value = RelatedViewIds;
-            //RootXmlNode.Attributes.Append( RelatedViewIdsAttribute );
-
-            XmlAttribute ForMobileAttribute = XmlDoc.CreateAttribute( "formobile" );
-            ForMobileAttribute.Value = ForMobile.ToString().ToLower();
-            RootXmlNode.Attributes.Append( ForMobileAttribute );
+            XmlAttribute GroupBySiblingsAttribute = XmlDoc.CreateAttribute( "groupbysiblings" );
+            GroupBySiblingsAttribute.Value = GroupBySiblings.ToString().ToLower();
+            RootXmlNode.Attributes.Append( GroupBySiblingsAttribute );
 
             XmlAttribute IncludedAttribute = XmlDoc.CreateAttribute( "included" );
             IncludedAttribute.Value = Included.ToString().ToLower();
@@ -665,7 +669,7 @@ namespace ChemSW.Nbt
             RootPropObj["visibilityrolename"] = ( VisibilityRoleId != null ) ? _CswNbtResources.Nodes[VisibilityRoleId].NodeName : "";
             RootPropObj["visibilityuserid"] = ( VisibilityUserId != null ) ? VisibilityUserId.PrimaryKey.ToString() : "";
             RootPropObj["visibilityusername"] = ( VisibilityUserId != null ) ? _CswNbtResources.Nodes[VisibilityUserId].NodeName : "";
-            RootPropObj["formobile"] = ForMobile.ToString().ToLower();
+            RootPropObj["groupbysiblings"] = GroupBySiblings;
             RootPropObj["included"] = Included.ToString().ToLower();
             RootPropObj["isdemo"] = IsDemo.ToString().ToLower();
             RootPropObj["gridgroupbycol"] = GridGroupByCol.ToString().ToLower();

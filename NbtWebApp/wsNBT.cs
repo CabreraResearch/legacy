@@ -1243,7 +1243,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // runTree()
-        
+
         /// <summary>
         /// Generates a tree of nodes from the view
         /// </summary>
@@ -1347,8 +1347,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
                     {
-                        ReturnVal = View.ToJson();
+                        ReturnVal["view"] = View.ToJson();
                     }
+                    CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
+                    ReturnVal["viewlist"] = ws.getAllViewNames();
                 }
 
                 _deInitResources();
@@ -1444,7 +1446,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string copyView( string ViewId )
+        public string copyView( string ViewId, string CopyToViewId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1458,57 +1460,76 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView SourceView = _getView( ViewId );
                     if( null != SourceView )
                     {
-                        string NewViewNameOrig = SourceView.ViewName.Trim();
-                        string Suffix = " Copy";
-
-                        //Truncate to give us 10 extra characters
-                        if( NewViewNameOrig.Length >= ( CswNbtView.ViewNameLength - 10 ) ) //We need enough space to append " Copy nnn"
+                        CswNbtView CopyToView = _getView( CopyToViewId );
+                        if( null != CopyToView )
                         {
-                            NewViewNameOrig = NewViewNameOrig.Substring( 0, ( CswNbtView.ViewNameLength - 11 ) );
-                        }
+                            CopyToView.CopyFromView( SourceView );
 
-                        //Get a baseline ViewName
-                        if( NewViewNameOrig.EndsWith( Suffix ) )
-                        {
-                            NewViewNameOrig = NewViewNameOrig.Substring( 0, NewViewNameOrig.Length - Suffix.Length );
+                            ReturnVal.Add( new JProperty( "copyviewid", CopyToView.ViewId.ToString() ) );
+
                         }
                         else
                         {
-                            //If we're copying a "copy n" view
-                            CswCommaDelimitedString ViewNamePieces = new CswCommaDelimitedString();
-                            string ParsedName = NewViewNameOrig.Replace( " ", "," );
-                            ViewNamePieces.FromString( ParsedName );
-                            if( Suffix != ViewNamePieces.Last() && ViewNamePieces.Contains( Suffix.Trim() ) )
+                            string NewViewNameOrig = SourceView.ViewName.Trim();
+                            string Suffix = " Copy";
+
+                            //Truncate to give us 10 extra characters
+                            if( NewViewNameOrig.Length >= ( CswNbtView.ViewNameLength - 10 ) )
+                            //We need enough space to append " Copy nnn"
                             {
-                                Int32 CopyNo = CswConvert.ToInt32( ViewNamePieces.Last() );
-                                if( Int32.MinValue != CopyNo )
+                                NewViewNameOrig = NewViewNameOrig.Substring( 0, ( CswNbtView.ViewNameLength - 11 ) );
+                            }
+
+                            //Get a baseline ViewName
+                            if( NewViewNameOrig.EndsWith( Suffix ) )
+                            {
+                                NewViewNameOrig = NewViewNameOrig.Substring( 0, NewViewNameOrig.Length - Suffix.Length );
+                            }
+                            else
+                            {
+                                //If we're copying a "copy n" view
+                                CswCommaDelimitedString ViewNamePieces = new CswCommaDelimitedString();
+                                string ParsedName = NewViewNameOrig.Replace( " ", "," );
+                                ViewNamePieces.FromString( ParsedName );
+                                if( Suffix != ViewNamePieces.Last() && ViewNamePieces.Contains( Suffix.Trim() ) )
                                 {
-                                    //NewViewNameOrig = NewViewNameOrig.Substring( 0, ( ( NewViewNameOrig.Length - ( Suffix.Length + CopyNo.ToString().Length ) ) ) );
-                                    if( NewViewNameOrig.EndsWith( Suffix + " " + CopyNo ) )
+                                    Int32 CopyNo = CswConvert.ToInt32( ViewNamePieces.Last() );
+                                    if( Int32.MinValue != CopyNo )
                                     {
-                                        Int32 NSuffixLength = ( Suffix + " " + CopyNo ).Length;
-                                        NewViewNameOrig = NewViewNameOrig.Substring( 0, NewViewNameOrig.Length - NSuffixLength );
+                                        //NewViewNameOrig = NewViewNameOrig.Substring( 0, ( ( NewViewNameOrig.Length - ( Suffix.Length + CopyNo.ToString().Length ) ) ) );
+                                        if( NewViewNameOrig.EndsWith( Suffix + " " + CopyNo ) )
+                                        {
+                                            Int32 NSuffixLength = ( Suffix + " " + CopyNo ).Length;
+                                            NewViewNameOrig = NewViewNameOrig.Substring( 0,
+                                                                                         NewViewNameOrig.Length -
+                                                                                         NSuffixLength );
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        //Now add the suffix
-                        NewViewNameOrig = NewViewNameOrig + Suffix;
-                        string NewViewName = NewViewNameOrig;
+                            //Now add the suffix
+                            NewViewNameOrig = NewViewNameOrig + Suffix;
+                            string NewViewName = NewViewNameOrig;
 
-                        Int32 Increment = 1;
-                        while( false == CswNbtView.ViewIsUnique( _CswNbtResources, new CswNbtViewId(), NewViewName, SourceView.Visibility, SourceView.VisibilityUserId, SourceView.VisibilityRoleId ) )
-                        {
-                            //I oppose this while() loop.
-                            Increment++;
-                            NewViewName = NewViewNameOrig + " " + Increment.ToString();
+                            Int32 Increment = 1;
+                            while( false ==
+                                   CswNbtView.ViewIsUnique( _CswNbtResources, new CswNbtViewId(), NewViewName,
+                                                            SourceView.Visibility, SourceView.VisibilityUserId,
+                                                            SourceView.VisibilityRoleId ) )
+                            {
+                                //I oppose this while() loop.
+                                Increment++;
+                                NewViewName = NewViewNameOrig + " " + Increment.ToString();
+                            }
+
+                            CswNbtView NewView = new CswNbtView( _CswNbtResources );
+                            NewView.saveNew( NewViewName, SourceView.Visibility, SourceView.VisibilityRoleId,
+                                             SourceView.VisibilityUserId, SourceView );
+                            //NewView.save();
+
+                            ReturnVal.Add( new JProperty( "copyviewid", NewView.ViewId.ToString() ) );
                         }
-                        
-                        CswNbtView NewView = new CswNbtView( _CswNbtResources );
-                        NewView.saveNew( NewViewName, SourceView.Visibility, SourceView.VisibilityRoleId, SourceView.VisibilityUserId, SourceView );
-                        //NewView.save();
-                        ReturnVal.Add( new JProperty( "copyviewid", NewView.ViewId.ToString() ) );
                     }
                 }
 

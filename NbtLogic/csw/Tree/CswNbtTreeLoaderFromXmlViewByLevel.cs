@@ -35,13 +35,14 @@ namespace ChemSW.Nbt
             _CswNbtTree.goToRoot();
             foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
             {
-                loadRelationshipRecursive( Relationship, RequireViewPermissions );
+                bool GroupBySiblings = _View.GroupBySiblings && _View.Root.ChildRelationships.Count > 1;
+                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings );
             }
             _CswNbtTree.goToRoot();
 
         } // load()
 
-        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship, bool RequireViewPermissions )
+        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship, bool RequireViewPermissions, bool GroupBySiblings )
         {
             CswNbtNodeKey PriorCurrentNodeKey = _CswNbtTree.getNodeKeyForCurrentPosition();
 
@@ -124,13 +125,20 @@ namespace ChemSW.Nbt
                                 }
                             }
                         }
-
+                        bool UseGroupBy = Relationship.GroupByPropId != Int32.MinValue;
                         string GroupName = string.Empty;
-                        if( Relationship.GroupByPropId != Int32.MinValue )
+                        if( UseGroupBy )
                         {
-                            GroupName = NodesRow["groupname"].ToString();
+                            GroupName = CswConvert.ToString( NodesRow["groupname"] );
                             if( GroupName == string.Empty )
+                            {
                                 GroupName = "[blank]";
+                            }
+                        }
+                        else if( GroupBySiblings )
+                        {
+                            UseGroupBy = true;
+                            GroupName = CswConvert.ToString( NodesRow["nodetypename"] );
                         }
 
                         if( NodesTable.Columns.Contains( "parentnodeid" ) )
@@ -152,7 +160,7 @@ namespace ChemSW.Nbt
                                 {
                                     _CswNbtTree.makeNodeCurrent( ParentNodeKey );
                                     Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1, Included );
+                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
                                     foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                                     {
                                         NewNodeKeys.Add( ThisNewNodeKey );
@@ -164,7 +172,7 @@ namespace ChemSW.Nbt
                         else
                         {
                             Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1, Included );
+                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
                             foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                             {
                                 NewNodeKeys.Add( ThisNewNodeKey );
@@ -208,7 +216,8 @@ namespace ChemSW.Nbt
                 // Recurse
                 foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
                 {
-                    loadRelationshipRecursive( ChildRelationship, RequireViewPermissions );
+                    bool ContinueGrupingBySibling = _View.GroupBySiblings && Relationship.ChildRelationships.Count > 1;
+                    loadRelationshipRecursive( ChildRelationship, RequireViewPermissions, ContinueGrupingBySibling );
                 }
 
                 // case 24678 - Mark truncated results
