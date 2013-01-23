@@ -86,6 +86,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app\actions\csw.hmisReporting.js" />
+    <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\_template.js" />
     <Content Include="app\composites\csw.fileupload.js" />
     <Content Include="app\controls\csw.casnotextbox.js" />

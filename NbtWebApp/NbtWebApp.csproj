@@ -119,6 +119,9 @@
     <Compile Include="Services\Trees.svc.cs">
       <DependentUpon>Trees.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\KioskMode.svc.cs">
+      <DependentUpon>KioskMode.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Labels2.svc.cs">
       <DependentUpon>Labels2.svc</DependentUpon>
     </Compile>
@@ -163,6 +166,7 @@
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRegulatoryReporting.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceKioskMode.cs" />
     <Compile Include="WebSvc\Logic\CISPro\MolDataContract.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />

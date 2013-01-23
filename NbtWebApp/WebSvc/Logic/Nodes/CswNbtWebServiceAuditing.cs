@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.WebServices
                                   x.transactionusername as Username, 
                                   x.auditeventname as Context,
                                   np.propname as Propname,
-                                  ja.field1 as Value,
+                                  ja.gestaltsearch as Value,
                                   x.audittransactionid as AuditId,
                                   ft.fieldtype as FieldType";
                 }
