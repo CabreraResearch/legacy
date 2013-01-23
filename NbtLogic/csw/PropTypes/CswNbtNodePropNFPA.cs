@@ -145,6 +145,11 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodePropData.Gestalt = newGestalt;
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_RedSubField.ToXmlNodeName( true )] = Red;

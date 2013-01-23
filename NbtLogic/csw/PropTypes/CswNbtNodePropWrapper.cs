@@ -74,6 +74,8 @@ namespace ChemSW.Nbt.PropTypes
         public string Gestalt { get { return ( _CswNbtNodeProp.Gestalt ); } }
         public string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } }
 
+        public string ValueForNameTemplate { get { return _CswNbtNodeProp.ValueForNameTemplate; } }
+
         public bool Empty { get { return ( _CswNbtNodeProp.Empty ); } }
 
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtNodeProp.getFieldType() ); }

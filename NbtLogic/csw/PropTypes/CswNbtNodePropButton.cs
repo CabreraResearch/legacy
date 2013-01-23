@@ -93,6 +93,11 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         public override void ToJSON( JObject ParentObject )
         {
             //ParentObject.Add( new JProperty( "text", Text ) );

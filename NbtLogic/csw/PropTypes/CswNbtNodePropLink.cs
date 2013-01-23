@@ -111,6 +111,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_HrefSubField.ToXmlNodeName( true )] = Href;
