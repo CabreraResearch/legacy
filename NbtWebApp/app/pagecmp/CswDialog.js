@@ -25,7 +25,7 @@
                 }
             };
         };
-    } ());
+    }());
     var cswPrivate = cswPrivateInit();
     cswPrivate.div = Csw.literals.div();
 
@@ -530,7 +530,7 @@
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
-                            var propOpts = [{ value: '', display: 'Select...'}];
+                            var propOpts = [{ value: '', display: 'Select...' }];
                             Csw.each(data.add, function (p) {
                                 var display = p.propname;
                                 if (Csw.bool(p.hidden)) {
@@ -975,8 +975,8 @@
                             title: 'Sizes',
                             height: 100,
                             width: 300,
-                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string'}],
-                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty'}],
+                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string' }],
+                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty' }],
                             data: {
                                 items: data.ProductDetails.ProductSize,
                                 buttons: []
@@ -1778,6 +1778,7 @@
 
 
     function openDialog(div, width, height, onClose, title, onOpen) {
+
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
@@ -1793,15 +1794,16 @@
             height: height,
             title: title,
             position: [posX, posY],
+            beforeClose: function () {
+                return Csw.clientChanges.manuallyCheckChanges();
+            },
             close: function () {
                 posX -= incrPosBy;
                 posY -= incrPosBy;
                 dialogsCount--;
-                if (Csw.isFunction(onClose)) {
-                    Csw.tryExec(onClose);
-                }
+                Csw.tryExec(onClose);
 
-                Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, null, closeMe);
+                unbindEvents();
                 if (dialogsCount === 0) {
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
@@ -1820,15 +1822,26 @@
         });
         posX += incrPosBy;
         posY += incrPosBy;
-        function closeMe(eventObj, action) {
+
+        var doClose = function () {
+            if (Csw.clientChanges.manuallyCheckChanges()) {
+                Csw.tryExec(onClose);
+                div.$.dialog('close');
+                unbindEvents();
+            }
+        };
+        var closeMe = function (eventObj, action) {
             afterObjectClassButtonClick(action, {
                 close: function () {
-                    div.$.dialog('close');
-                    Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, null, closeMe);
+                    doClose();
                 }
             });
-        }
-        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        };
+        var unbindEvents = function () {
+            Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            Csw.subscribe('initGlobalEventTeardown', doClose);
+        };
+
     }
 
     // Method calling logic

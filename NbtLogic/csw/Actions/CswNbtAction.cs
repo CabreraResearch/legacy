@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.Actions
         Reconciliation,
         Upload_Legacy_Mobile_Data,
         HMIS_Reporting,
+        KioskMode,
         Tier_II_Reporting
     }
 

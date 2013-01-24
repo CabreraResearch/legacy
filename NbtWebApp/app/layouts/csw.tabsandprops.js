@@ -1,7 +1,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function () {
+(function () {  
 
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
@@ -304,12 +304,13 @@
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.genTab = function () {
-                                    Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                    cswPrivate.form.empty();
-                                    cswPrivate.onTearDown();
-                                    makeTabs();
-                                    return false;
+                                    if (false !== Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                        cswPrivate.form.empty();
+                                        cswPrivate.onTearDown();
+                                        makeTabs();
+                                        return false;
+                                    }
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {
@@ -855,7 +856,7 @@
                             });
 
                         } else {
-                            labelCell.setLabelText(propName, propData.required, propData.readonly);
+                            labelCell.setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
                         }
 
                         cswPrivate.globalState.checkBoxes['check_' + propid] = labelCell.checkBox({

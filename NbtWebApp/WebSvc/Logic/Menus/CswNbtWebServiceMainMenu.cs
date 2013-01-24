@@ -129,18 +129,24 @@ namespace ChemSW.Nbt.WebServices
                             if( string.IsNullOrEmpty( SafeNodeKey ) )
                             {
                                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
-                                Tree.goToNthChild( 0 );
-                                CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
-                                Node = _CswNbtResources.Nodes[NodeKey];
-                                if( null != Node )
+                                if( Tree.getChildNodeCount() > 0 )
                                 {
-                                    RelatedNodeId = Node.NodeId;
-                                    RelatedNodeName = Node.NodeName;
-                                    RelatedNodeTypeId = Node.NodeTypeId.ToString();
-                                    RelatedObjectClassId = Node.getObjectClassId().ToString();
+                                    Tree.goToNthChild( 0 );
+                                    CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
+                                    Node = _CswNbtResources.Nodes[NodeKey];
+                                    if( null != Node )
+                                    {
+                                        RelatedNodeId = Node.NodeId;
+                                        RelatedNodeName = Node.NodeName;
+                                        RelatedNodeTypeId = Node.NodeTypeId.ToString();
+                                        RelatedObjectClassId = Node.getObjectClassId().ToString();
+                                    }
                                 }
                             }
-                            ParentNode = View.Root.ChildRelationships[0];
+                            if( View.Root.ChildRelationships.Count > 0 )
+                            {
+                                ParentNode = View.Root.ChildRelationships[0];
+                            }
                         }
                         foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstLevelRelationships )
                             .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,

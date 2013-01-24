@@ -51,21 +51,25 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436B() ) );          //01V-023
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436C() ) );          //01V-024
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436D() ) );          //01V-025
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28498() ) );                         //01V-026
-            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28498() ) );           //01V-026
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28570() ) );           //01V-027
+
 
             #endregion VIOLA
 
             #region WILLIAM
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );        //01V-026   01W-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );           //01V-026   01W-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );           //01V-025   01W-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );           //01V-026   01W-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );           //01V-027   01W-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );           //01V-028   01W-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );          //01V-029   01W-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395() ) );           //01V-030   01W-007
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );           //01V-000   01W-000
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );              //01V-028   01W-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );              //01V-029   01W-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );              //01V-030   01W-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );              //01V-031   01W-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );              //01V-032   01W-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_TreeGrouping_Case27882() ) ); //01V-033   01W-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );             //01V-034   01W-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28345() ) );              //01V-035   01W-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28507() ) );              //01V-036   01W-009
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395() ) );              //01V-037   01W-010
 
             #endregion WILLIAM
 
@@ -83,10 +87,10 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01() ), RunBeforeEveryExecutionOfUpdater_01.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01M() ), RunBeforeEveryExecutionOfUpdater_01M.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01OC() ), RunBeforeEveryExecutionOfUpdater_01OC.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02SQL() ), RunBeforeEveryExecutionOfUpdater_02SQL.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), RunBeforeEveryExecutionOfUpdater_02.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_04() ), RunBeforeEveryExecutionOfUpdater_04.Title );
-            
+
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
 
         }//ctor

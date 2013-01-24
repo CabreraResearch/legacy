@@ -154,6 +154,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
   function GET_MATERIALS (LocId in number) return tier_ii_material_table is
     materials tier_ii_material_table;
     containers tier_ii_material_table;
+    components tier_ii_material_table;
     conversion_factor number;
     specific_gravity number := 1;
     found number := 0;
@@ -202,7 +203,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
       inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
       where ocp.propname = 'Material') m on n.nodeid = m.nodeid
-    left join (select n.nodeid, cas.casno, t2.istier2, sg.spec_grav
+    left join (select n.nodeid, cas.casno, sg.spec_grav
       from nodes n
       left join (select jnp.nodeid, jnp.field1 as casno
         from jct_nodes_props jnp
@@ -214,11 +215,6 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
         inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
         where ocp.propname = 'Specific Gravity') sg on n.nodeid = sg.nodeid
-      left join (select jnp.nodeid, jnp.field1 as istier2
-        from jct_nodes_props jnp
-        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
-        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
-        where ocp.propname = 'Is Tier II') t2 on n.nodeid = t2.nodeid
       inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
         inner join object_class oc on nt.objectclassid = oc.objectclassid
         where oc.objectclass = 'MaterialClass') mat on m.materialid = mat.nodeid
@@ -231,8 +227,60 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       inner join object_class oc on nt.objectclassid = oc.objectclassid
       where oc.objectclass = 'ContainerClass'
       and qty.quantity > 0
-      and loc.locationid = LocId
-      and mat.istier2 = '1';
+      and loc.locationid = LocId;
+      
+    for i in 1..containers.count loop
+      --For each Container, get all of its Material's Constituent amounts based on their percentage and add them to containers
+      select
+        tier_ii_material
+        (
+          c.constid, 
+          mat.casno, 
+          containers(i).quantity * per.percentage / 100, 
+          containers(i).quantity * per.percentage / 100, 
+          containers(i).unitid, 
+          containers(i).unittype, 
+          containers(i).specificgravity
+        )
+      bulk collect into components
+        from nodes n
+        left join (select jnp.nodeid, jnp.field1_numeric as percentage
+      from jct_nodes_props jnp
+        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        where ocp.propname = 'Percentage') per on n.nodeid = per.nodeid
+      left join (select jnp.nodeid, jnp.field1_fk as materialid
+        from jct_nodes_props jnp
+        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        where ocp.propname = 'Mixture') m on n.nodeid = m.nodeid
+      left join (select jnp.nodeid, jnp.field1_fk as constid
+        from jct_nodes_props jnp
+        inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+        inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+        where ocp.propname = 'Constituent') c on n.nodeid = c.nodeid
+      left join (select n.nodeid, cas.casno
+        from nodes n
+        left join (select jnp.nodeid, jnp.field1 as casno
+          from jct_nodes_props jnp
+          inner join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid
+          inner join object_class_props ocp on ocp.objectclasspropid = ntp.objectclasspropid
+          where ocp.propname = 'CAS No') cas on n.nodeid = cas.nodeid
+        inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+          inner join object_class oc on nt.objectclassid = oc.objectclassid
+          where oc.objectclass = 'MaterialClass') mat on mat.nodeid = c.constid
+      inner join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        inner join object_class oc on nt.objectclassid = oc.objectclassid
+        where oc.objectclass = 'MaterialComponentClass'
+          and c.constid is not null
+          and per.percentage is not null
+          and m.materialid = containers(i).materialid;
+          
+      for j in 1..components.count loop
+        containers.extend(1);
+        containers(containers.count) := components(j);
+      end loop;
+    end loop;
 
     for i in 1..containers.count loop
       if containers(i).unitid != WEIGHT_BASE_UNIT_ID then

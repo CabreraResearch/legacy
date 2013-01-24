@@ -176,11 +176,12 @@
                     cellsetrow: cellsetrow,
                     cellsetcolumn: cellsetcolumn
                 });
-
-                cell.bind('click', function (ev, dd) {
-                    cswPrivate.onClick(ev, dd, thisRow, thisCol);
-                });
-                cswPrivate.enableDrop(cell);
+                if(cswPublic.isConfig()) {
+                    cell.bind('click', function (ev, dd) {
+                        cswPrivate.onClick(ev, dd, thisRow, thisCol);
+                    });
+                    cswPrivate.enableDrop(cell);
+                }
                 cell.div({ cssclass: 'CswLayoutTable_celldiv' });
             };
 

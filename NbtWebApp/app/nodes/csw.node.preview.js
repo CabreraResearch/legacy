@@ -14,7 +14,8 @@
                 nodekey: nodekey,
                 eventArg: event
             };
-            if (false === Csw.isNullOrEmpty(nodeid) || false === Csw.isNullOrEmpty(nodekey)) {
+            
+            if (false === Csw.isNullOrEmpty(nodeid)){
                 if (Csw.number(delay, -1) >= 0) {
                     previewopts.openDelay = delay;
                 }
@@ -51,13 +52,13 @@
                 
             var cswPublic = {};
 
-            cswPrivate.fixDimensions = function() {
-                if (cswPrivate.div) {
+            cswPrivate.fixDimensions = function(div) {
+                if (div) {
                     // Make sure preview div is within the window
                     var windowX = $(window).width() - 10;
                     var windowY = $(window).height() - 10;
-                    var divwidth = cswPrivate.div.$.width();
-                    var divheight = cswPrivate.div.$.height();
+                    var divwidth = div.$.width();
+                    var divheight = div.$.height();
                     var X = cswPrivate.eventArg.pageX + 20; // move it to the right of the cursor, to keep from preventing click events
                     var Y = cswPrivate.eventArg.pageY;
 
@@ -65,21 +66,22 @@
                     // this doesn't work with page scrolling
                     // if(Y + divheight > windowY) Y = windowY - divheight;
 
-                    cswPrivate.div.css({
+                    div.css({
                         maxWidth: windowX,
                         maxHeight: windowY,
                         top: Y + 'px',
                         left: X + 'px'
                     });
-                    cswPrivate.div.css('z-index', '100');
+                    div.css('z-index', '100');
                 }
             };// fixDimensions()
 
             cswPrivate.loadPreview = function() {
-                if (cswPrivate.div) {
-                    cswPrivate.div.show();
+                var div = cswPrivate.setup();
+                if (div) {
+                    div.show();
 
-                    cswPrivate.previewTabsAndProps = Csw.layouts.tabsAndProps(cswPrivate.div, {
+                    cswPrivate.previewTabsAndProps = Csw.layouts.tabsAndProps(div, {
                         name: cswPrivate.name + 'tabs',
                         globalState: {
                             currentNodeId: cswPrivate.nodeid,
@@ -94,9 +96,9 @@
                         onInitFinish: function(AtLeastOneProp) {
                             cswPrivate.loadingDiv.remove();
                             if (AtLeastOneProp) {
-                                cswPrivate.fixDimensions();
+                                cswPrivate.fixDimensions(div);
                             } else {
-                                cswPrivate.div.hide();
+                                div.hide();
                             }
                         }
                     });
@@ -119,18 +121,20 @@
 
             cswPublic.close = function () {
                 clearTimeout(cswPrivate.openTimeoutHandle);
-//                // Clear all node previews, in case other ones are hanging around
-//                $('.CswNodePreview').remove();
+                // Clear all node previews, in case other ones are hanging around
                 cswPrivate.closeTimeoutHandle = Csw.defer(cswPrivate.unBindThisPreview, cswPrivate.closeDelay);
             }; // close()
 
-            // constructor
-            (function() {
 
-                cswPrivate.div = cswParent.div({
-                        name: cswPrivate.name, 
-                        cssclass: 'CswNodePreview' 
-                    })
+            cswPrivate.unBindThisPreview = function() {
+            };
+
+            cswPrivate.setup = function() {
+
+                var ret = cswParent.div({
+                    name: cswPrivate.name,
+                    cssclass: 'CswNodePreview'
+                })
                     .css({
                         position: 'absolute',
                         overflow: 'auto',
@@ -145,30 +149,32 @@
                 Csw.publish('CswUnbindOldPreviews');
 
                 //2nd: declare the nuke _this_ preview
-                cswPrivate.unBindThisPreview = function () {
-                    if (cswPrivate.div) {
+                cswPrivate.unBindThisPreview = function() {
+                    if (ret) {
                         //cswPrivate.div.unbind('mouseenter mouseleave');
-                        cswPrivate.div.remove();
+                        ret.remove();
                     }
-                    if(cswPrivate.previewTabsAndProps) {
+                    if (cswPrivate.previewTabsAndProps) {
                         cswPrivate.previewTabsAndProps.tearDown();
                     }
                     Csw.unsubscribe('CswUnbindOldPreviews', null, cswPrivate.unBindThisPreview);
                 };
                 //3rd: bind to nuke _this_ preview
                 Csw.subscribe('CswUnbindOldPreviews', cswPrivate.unBindThisPreview);
+
+                ret.$.hover(cswPrivate.hoverIn, cswPrivate.hoverOut);
+
+                cswPrivate.fixDimensions(ret);
+
+                cswPrivate.loadingDiv = ret.div({
+                    text: '&nbsp;&nbsp;&nbsp;Loading...',
+                    styles: {
+                        fontStyle: 'italic'
+                    }
+                });
                 
-                cswPrivate.div.$.hover(cswPrivate.hoverIn, cswPrivate.hoverOut);
-
-                cswPrivate.fixDimensions();
-
-                cswPrivate.loadingDiv = cswPrivate.div.div({ 
-                        text: '&nbsp;&nbsp;&nbsp;Loading...',
-                        styles: { 
-                            fontStyle: 'italic'
-                        }
-                    });
-            } ()); // constructor
+                return ret;
+            }; 
 
             return cswPublic;
     }); // Csw.controls.nodeLink
