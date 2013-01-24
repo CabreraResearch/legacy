@@ -26,10 +26,14 @@ namespace ChemSW.Nbt.Grid.ExtJs
 
         private string _makeSafe(string str)
         {
-            string ret = str.ToLower();
-            ret = ret.Replace( " ", "_" );
-            ret = ret.Replace( "(", "_" );
-            ret = ret.Replace( ")", "_" );
+            string ret = str;
+            for( Int32 i = 0; i < ret.Length; i++ )
+            {
+                if( false == Char.IsLetterOrDigit( ret, i ) )
+                {
+                    ret = ret.Replace( ret[i], '_' );
+                }
+            }
             return ret;
         } // _makeSafe()
 
