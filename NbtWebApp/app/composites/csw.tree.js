@@ -120,7 +120,20 @@
                     afterlayout: function() {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
                         cswPublic.toggleCheckboxes();
-                        $('.x-grid-cell-treecolumn').css({ background: 'transparent' });
+                        $('.x-grid-cell-treecolumn').css({ 
+                            background: 'transparent', 
+                            border: '0px' 
+                        });
+                        $('#' + this.id + '-body').css({
+                            background: 'transparent', 
+                            border: '0px' 
+                        });
+                        Csw.each(this.dockedItems.items, function(item) {
+                            $('#' + item.id).css({
+                                background: 'transparent',
+                                border: '0px'
+                            });
+                        });
                     },
                     afterrender: function() {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
@@ -201,7 +214,6 @@
                     record.raw.checked = checked;
                     record.set('checked', checked);
                     cswPrivate.selectedNodeCount += inc;
-                    Csw.debug.log(cswPrivate.selectedNodeCount);
                 }
             }; // cswPrivate.check()
 
