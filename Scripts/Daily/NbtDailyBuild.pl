@@ -28,7 +28,7 @@ my @components = (
 	"NbtImport",
 	"NbtHelp",
 	"StructureSearch",
-    "chemsw-fe"
+    "incandescentsw"
 );
 
 my %repopaths;
@@ -46,10 +46,12 @@ foreach my $component (@components)
 	{
 		$repopaths{$component} = "$kilnpath/$component";
 	} 
-        elsif($component eq "chemsw-fe")
+    elsif($component eq "incandescentsw")
 	{
-		$repopaths{$component} = "$kilnpath/incandescentsw/$component";
-	} else {
+		$repopaths{$component} = "$kilnpath/incandescentsw/chemsw-fe";
+	} 
+	else 
+	{
 		$repopaths{$component} = "$kilnpath/Common/$component";
 	}
 }
@@ -86,7 +88,7 @@ foreach my $component (@components)
 	printf("Setting $component to $datestr.$increment\n");
 	
 	my $file;
-	if($component eq "NbtImport" || $component eq "NbtHelp" || $component eq "chemsw-fe")
+	if($component eq "NbtImport" || $component eq "NbtHelp")
 	{
 		# no file to update
 	}
@@ -137,6 +139,17 @@ foreach my $component (@components)
 				}
 			}
 			closedir $dh;
+		}
+		elsif( $component eq "incandescentsw" ) 
+		{
+			$file = $repopaths{$component} ."/_Assembly.txt";
+			if(open( FOUT, "> $file" ) )
+			{
+				printf( FOUT "$assemblyno" );
+				close( FOUT );
+			} else {
+				printf("ERROR: Could not open $file \n");
+			}
 		}
 		else
 		{

@@ -857,7 +857,7 @@
                             });
 
                         } else {
-                            labelCell.setLabelText(propName, propData.required, propData.readonly);
+                            labelCell.setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
                         }
 
                         cswPrivate.globalState.checkBoxes['check_' + propid] = labelCell.checkBox({
