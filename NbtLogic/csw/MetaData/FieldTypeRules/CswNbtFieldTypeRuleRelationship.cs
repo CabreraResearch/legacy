@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 RetView.ViewId = MetaDataProp.ViewId;
                 RetView.Visibility = NbtViewVisibility.Property;
-                RetView.ViewMode = NbtViewRenderingMode.List;
+                RetView.ViewMode = NbtViewRenderingMode.Tree;
                 RetView.ViewName = MetaDataProp.PropName;
                 RetView.save();
             }
