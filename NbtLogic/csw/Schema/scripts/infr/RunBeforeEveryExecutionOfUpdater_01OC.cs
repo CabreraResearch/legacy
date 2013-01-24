@@ -667,13 +667,15 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
-            CswNbtMetaDataObjectClassProp IsRecurringOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
-                {
-                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring,
-                    ServerManaged = true,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical
-                } );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsRecurringOcp, Tristate.False );
+            
+            
+            CswNbtMetaDataObjectClassProp RecurringOcp = RequestMaterialDispenseOc.getObjectClassProp( "Recurring" );
+            if( null != RecurringOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RecurringOcp, Tristate.False );
+            }
 
             _resetBlame();
         }
