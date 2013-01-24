@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.Schema
                 _CaseNo = CaseNo;
                 _Title = Title;
             }
+            static TypeHeaders() { }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
             public string _Title { get; private set; }
@@ -72,6 +73,7 @@ TYPE TIER_II_MATERIAL AS OBJECT
                 _CaseNo = CaseNo;
                 _Title = Title;
             }
+            static NestedTables() { }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
             public string _Title { get; private set; }

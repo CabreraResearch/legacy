@@ -21,7 +21,11 @@ namespace ChemSW.Nbt.Actions
         UndisposeContainer,
         Receiving,
         Subscriptions,
-        Reconciliation
+        Reconciliation,
+        Upload_Legacy_Mobile_Data,
+        HMIS_Reporting,
+        KioskMode,
+        Tier_II_Reporting
     }
 
     public class CswNbtAction

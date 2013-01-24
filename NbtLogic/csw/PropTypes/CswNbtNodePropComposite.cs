@@ -59,6 +59,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             return _CswNbtMetaDataNodeTypeProp.getCompositeTemplateText();
         }
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
 
 
         public string RecalculateCompositeValue()

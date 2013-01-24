@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtObjClassMaterial materialNode in materialOC.getNodes( false, false, false, true ) )
             {
                 materialNode.ViewSDS.State = CswNbtObjClassMaterial.PropertyName.ViewSDS;
-                materialNode.UpdateViewSDSButtonOpts();
+                materialNode.ViewSDS.MenuOptions = CswNbtObjClassMaterial.PropertyName.ViewSDS + ",View Other";
                 materialNode.postChanges( false );
             }
 

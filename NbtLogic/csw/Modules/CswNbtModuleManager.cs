@@ -105,6 +105,28 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Triggers all OnEnable and OnDisable logic for enabled and disabled modules, respectively
+        /// </summary>
+        public void TriggerModuleEventHandlers()
+        {
+            if( _ModuleRules.Count == 0 )
+            {
+                initModules();
+            }
+            foreach( CswNbtModuleName Module in _ModuleRules.Keys )
+            {
+                if( _ModuleRules[Module].Enabled )
+                {
+                    _ModuleRules[Module].OnEnable();
+                }
+                else
+                {
+                    _ModuleRules[Module].OnDisable();
+                }
+            }
+        }
+
+        /// <summary>
         /// Enable a Module and trigger its enable event
         /// </summary>
         public bool EnableModule( CswNbtModuleName ModuleToEnable )

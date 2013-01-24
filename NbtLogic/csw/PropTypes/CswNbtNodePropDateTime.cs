@@ -151,6 +151,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         } // DisplayMode
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         public override void ToJSON( JObject ParentObject )
         {
             //ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName( true ), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) ) );
@@ -161,8 +166,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["displaymode"] = DisplayMode.ToString();
 
         } // ToJSON()
-
-        // ReadXml()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

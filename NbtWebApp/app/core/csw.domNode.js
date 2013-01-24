@@ -53,6 +53,7 @@
                         case 'IMG':
                         case 'INPUT':
                         case 'LABEL':
+                        case 'LI':
                         case 'OL':
                         case 'P':
                         case 'SELECT':

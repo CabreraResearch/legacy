@@ -13,6 +13,7 @@
             var cswPublic;
 
             (function () {
+
                 cswPublic = cswParent.div();
 
                 cswPrivate = {
@@ -42,6 +43,8 @@
                     onSelect: function (rows) { },
                     onDeselect: function (row) { },
                     onSelectChange: function (rowCount) { },
+                    onMouseEnter: function (rowCount) { },
+                    onMouseExit: function (rowCount) { },
 
                     height: '',  // overridden by webservice if paging is on
                     width: '',
@@ -52,19 +55,26 @@
                     pageSize: '',  // overridden by webservice
 
                     actionDataIndex: 'action',
+                    actionTableIds: [],
+                    actionTableKeys: [],
 
                     topToolbar: [],
                     groupField: '',
                     plugins: null,
                     groupHeaderTpl: '{columnName}: {name}',
-
+                    summaryEnabled: false,
+                    printingEnabled: false,
+                    gridToPrint: function (grid) {
+                        return grid;
+                    },
+                    onPrintSuccess: function () { },
                     dockedItems: []
                 };
 
                 Csw.extend(cswPrivate, options);
                 cswPrivate.ID = cswPrivate.ID || cswPublic.getId();
                 cswPrivate.ID += cswPrivate.suffix;
-            } ());
+            }());
 
             //#endregion _preCtor
 
@@ -105,75 +115,83 @@
 
             //#region Grid Control Constructors
 
-            cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
-                // Possible race condition - have to make the button after the cell is added, but it isn't added yet
-                Csw.defer(function () {
-                    if (Csw.isElementInDom(cellId)) {
-                        var cell = Csw.domNode({ ID: cellId });
-                        cell.empty();
-                        var iconopts = {
-                            name: cswPrivate.name + cellId + buttonName,
-                            hovertext: buttonName,
-                            iconType: iconType,
-                            state: Csw.enums.iconState.normal,
-                            isButton: false,
-                            size: 18
+            cswPrivate.makeActionColumns = function (delay) {
+                if (cswPrivate.showActionColumn) {
+                    delay = delay || 100;
+                    Csw.defer(Csw.method(function() {
+
+                        cswPrivate.actionTableIds.forEach(function(tblObj) {
+                            if (Csw.isElementInDom(tblObj.cellId)) {
+                                var div = Csw.domNode({
+                                    ID: tblObj.cellId,
+                                    tagName: 'DIV'
+                                });
+                                div.empty();
+
+                                var table = div.table({ cellpadding: 0 });
+
+                                var editCell = table.cell(1, 1).css({ width: '26px' });
+                                var delCel = table.cell(1, 2).css({ width: '26px' });
+
+                                var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(tblObj.cellData.canedit, true);
+                                var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
+                                var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
+                                var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
+
+                                // only show one of edit/view/lock
+                                var doHover = false;
+                                if (islocked) {
+                                    cswPrivate.makeActionButton(editCell, 'Locked', Csw.enums.iconType.lock, null, tblObj.cellData);
+                                    doHover = true;
+                                } else if (canedit) {
+                                    doHover = true;
+                                    cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj.cellData);
+                                } else if (canview) {
+                                    doHover = true;
+                                    cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, tblObj.cellData);
+                                }
+
+                                if (doHover) {
+                                    table.$.hover(function(event) {
+                                        Csw.tryExec(cswPrivate.onMouseEnter, event, tblObj);
+                                    }, function(event) {
+                                        Csw.tryExec(cswPrivate.onMouseExit, event, tblObj);
+                                    });
+                                }
+
+                                if (candelete) {
+                                    cswPrivate.makeActionButton(delCel, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, tblObj.cellData);
+                                }
+                            }
+                        });
+                    }), delay);
+                }
+            };
+
+            cswPrivate.makeActionButton = function (tableCell, buttonName, iconType, clickFunc, cellData) {
+                if (cswPrivate.showActionColumn) {
+                    var iconopts = {
+                        name: cswPrivate.name + buttonName,
+                        hovertext: buttonName,
+                        iconType: iconType,
+                        state: Csw.enums.iconState.normal,
+                        isButton: false,
+                        size: 18
+                    };
+                    if (false === Csw.isNullOrEmpty(clickFunc)) {
+                        iconopts.isButton = true;
+                        iconopts.onClick = function() {
+                            Csw.tryExec(clickFunc, [cellData]);
                         };
-                        if (false === Csw.isNullOrEmpty(clickFunc)) {
-                            iconopts.isButton = true;
-                            iconopts.onClick = function () {
-                                Csw.tryExec(clickFunc, [record.data]);
-                            };
-                        }
-                        cell.icon(iconopts);
                     }
-                }, 50);
+                    tableCell.icon(iconopts);
+                }
             }; // makeActionButton()
 
 
             cswPrivate.makeStore = Csw.method(function (storeId, usePaging) {
                 var fields = Csw.extend([], cswPrivate.fields);
 
-                if (cswPrivate.groupField &&
-                    cswPrivate.groupField.length > 0) {
-                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
-
-                    var toggleGroups = function (collapse) {
-                        for (var i in cswPrivate.grid.view.features) {
-                            if (cswPrivate.grid.view.features[i].ftype === 'grouping') {
-                                if (collapse) {
-                                    cswPrivate.grid.view.features[i].collapseAll();
-                                } else {
-                                    cswPrivate.grid.view.features[i].collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
-                                    cswPrivate.grid.view.features[i].expandAll();
-                                }
-                            }
-                        }
-                    };
-
-                    cswPrivate.dockedItems = [{
-                        xtype: 'toolbar',
-                        dock: 'top',
-                        items: [
-                            {
-                                xtype: 'button',
-                                text: 'Expand all Rows',
-                                handler: function () {
-                                    toggleGroups(false);
-                                }
-                            },
-                            {
-                                xtype: 'tbseparator'
-                            },
-                            {
-                                xtype: 'button',
-                                text: 'Collapse all Rows',
-                                handler: function () {
-                                    toggleGroups(true);
-                                }
-                            }]
-                    }];
-                }
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
@@ -197,9 +215,349 @@
                     storeopts.proxy.type = 'pagingmemory';
                 }
 
-                return window.Ext.create('Ext.data.Store', storeopts);
-            }); // makeStore()
+                var store = window.Ext.create('Ext.data.Store', storeopts);
 
+                //Case 28476 - manually collapse all groups to fix a bug in ExtJS
+                store.on('load', function (store, records, success) {
+                    Csw.tryExec(cswPrivate.toggleGroups, true);
+                });
+
+                return store;
+            }); // makeStore()
+            
+            cswPrivate.makeListeners = function () {
+                //Case 28555: ExtJS documentation is awful, 
+                //so we frequently need to blindly test their events to discover when they fire and why.
+                //To do so, uncomment any of the available events (current as of Ext 4.1.3) and fiddle with the grid. 
+
+                //var debugFunc = function () {
+                //    debugger;
+                //};
+
+                return {
+                    afterrender: function (grid) {
+                        //of the methods we're listening to here, called 2nd, 
+                        //still nothing to see in the DOM
+                        grid.filters.createFilters();
+                    },
+                    viewready: function () {
+                        //of the methods we're listening to here, called 4th. Will also trigger afterlayout.
+                        Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
+                        cswPrivate.makeActionColumns(100);
+                    },
+                    //sortchange: function () { debugFunc(); },
+                    render: function () {
+                        //of the methods we're listening to here, called 1st
+                        //debugFunc();
+                    },
+                    //activate: function () { debugFunc(); },
+                    //add: function () { debugFunc(); },
+                    //added: function () { debugFunc(); },
+                    afterlayout: function () {
+                        //of the methods we're listening to here, called 3rd on a new grid.
+                        //empty grid is now rendered
+
+                        //Also called on any mutation to grid (sort, columns show/hide, etc)
+                        cswPrivate.makeActionColumns(0);
+                    }
+                    //beforeactivate: function () { debugFunc(); },
+                    //beforeadd: function () { debugFunc(); },
+                    //beforeclose: function () { debugFunc(); },
+                    //beforecollapse: function () { debugFunc(); },
+                    //beforecontainerclick: function () { debugFunc(); },
+                    //beforecontainercontextmenu: function () { debugFunc(); },
+                    //beforecontainerdblclick: function () { debugFunc(); },
+                    //beforecontainermousedown: function () { debugFunc(); },
+                    //beforecontainermouseout: function () { debugFunc(); },
+                    //beforecontainermouseover: function () { debugFunc(); },
+                    //beforecontainermouseup: function () { debugFunc(); },
+                    //beforedeactivate: function () { debugFunc(); },
+                    //beforedeselect: function () { debugFunc(); },
+                    //beforedestroy: function () { debugFunc(); },
+                    //beforeedit: function () { debugFunc(); },
+                    //beforeexpand: function () { debugFunc(); },
+                    //beforehide: function () { debugFunc(); },
+                    //beforeitemclick: function () { debugFunc(); },
+                    //beforeitemcontextmenu: function () { debugFunc(); },
+                    //beforeitemdblclick: function () { debugFunc(); },
+                    //beforeitemmousedown: function () { debugFunc(); },
+                    //beforeitemmouseenter: function () { debugFunc(); },
+                    //beforeitemmouseleave: function () { debugFunc(); },
+                    //beforeitemmouseup: function () { debugFunc(); },
+                    //beforereconfigure: function () { debugFunc(); },
+                    //beforeremove: function () { debugFunc(); },
+                    //beforerender: function () { debugFunc(); },
+                    //beforeselect: function () { debugFunc(); },
+                    //beforeshow: function () { debugFunc(); },
+                    //beforestaterestore: function () { debugFunc(); },
+                    //beforestatesave: function () { debugFunc(); },
+                    //blur: function () { debugFunc(); },
+                    //boxready: function () { debugFunc(); },
+                    //canceledit: function () { debugFunc(); },
+                    //cellclick: function () { debugFunc(); },
+                    //celldblclick: function () { debugFunc(); },
+                    //close: function () { debugFunc(); },
+                    //collapse: function () { debugFunc(); },
+                    //columnhide: function () { debugFunc(); },
+                    //columnmove: function () { debugFunc(); },
+                    //columnresize: function () { debugFunc(); },
+                    //columnshow: function () { debugFunc(); },
+                    //containerclick: function () {
+                    //    cswPrivate.makeActionColumns(0);
+                    //    debugFunc();
+                    //},
+                    //containercontextmenu: function () { debugFunc(); },
+                    //containerdblclick: function () { debugFunc(); },
+                    //containermouseout: function () { debugFunc(); },
+                    //containermouseover: function () { debugFunc(); },
+                    //containermouseup: function () { debugFunc(); },
+                    //deactivate: function () { debugFunc(); },
+                    //deselect: function () { debugFunc(); },
+                    //destroy: function () { debugFunc(); },
+                    //disable: function () { debugFunc(); },
+                    //edit: function () { debugFunc(); },
+                    //enable: function () { debugFunc(); },
+                    //expand: function () { debugFunc(); },
+                    //focus: function () { debugFunc(); },
+                    //hide: function () { debugFunc(); },
+                    //iconchange: function () { debugFunc(); },
+                    //iconclschange: function () { debugFunc(); },
+                    //itemclick: function () {
+                    //    cswPrivate.makeActionColumns(0);
+                    //    debugFunc();
+                    //},
+                    //itemcontextmenu: function () {
+                    //    cswPrivate.makeActionColumns(0);
+                    //    debugFunc();
+                    //},
+                    //itemdblclick: function () { debugFunc(); },
+                    //itemmousedown: function () { debugFunc(); },
+                    //itemmouseenter: function () { debugFunc(); },
+                    //itemmouseleave: function () { debugFunc(); },
+                    //itemmouseup: function () { debugFunc(); },
+                    //move: function () { debugFunc(); },
+                    //reconfigure: function () { debugFunc(); },
+                    //remove: function () { debugFunc(); },
+                    //removed: function () { debugFunc(); },
+                    //resize: function () { debugFunc(); },
+                    //select: function () { debugFunc(); },
+                    //selectionchange: function () { debugFunc(); },
+                    //show: function () { debugFunc(); },
+                    //staterestore: function () { debugFunc(); },
+                    //statesave: function () { debugFunc(); },
+                    //titlechange: function () { debugFunc(); },
+                    //unfloat: function () { debugFunc(); },
+                    //validateedit: debugFunc
+                };
+            };
+
+
+            cswPrivate.makeDockedItems = function () {
+                var topToolbarItems = [];
+
+                //Printing
+                if (cswPrivate.printingEnabled) {
+                    topToolbarItems.push({
+                        tooltip: 'Print the contents of the grid',
+                        text: 'Print',
+                        handler: function () {
+                            var gridToPrint = cswPrivate.gridToPrint(cswPublic);
+                            gridToPrint.print();
+                        }
+                    });
+                }
+
+                //Grouping and Group Summary
+           if (cswPrivate.groupField &&
+                    cswPrivate.groupField.length > 0) {
+                    cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+
+
+                    cswPrivate.toggleGroups = function (collapse) {
+                        Csw.each(cswPrivate.grid.view.features, function (feature) {
+                            if (feature.ftype === 'grouping' || feature.ftype === 'groupingsummary') {
+                                if (collapse) {
+                                    feature.collapseAll();
+                                } else {
+                                    feature.collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
+                                    feature.expandAll();
+                                }
+                            }
+                        });
+                    };
+                    if (topToolbarItems.length > 0) {
+                        topToolbarItems.push({ xtype: 'tbseparator' });
+                    }
+                    topToolbarItems.push({
+                        xtype: 'button',
+                        text: 'Expand all Rows',
+                        handler: function () {
+                            cswPrivate.toggleGroups(false);
+                        }
+                    });
+                    topToolbarItems.push({ xtype: 'tbseparator' });
+                    topToolbarItems.push({
+                        xtype: 'button',
+                        text: 'Collapse all Rows',
+                        handler: function () {
+                            cswPrivate.toggleGroups(true);
+                        }
+                    });
+                    if (cswPrivate.summaryEnabled) {
+                        topToolbarItems.push({ xtype: 'tbseparator' });
+                        var showSummary = true;
+                        topToolbarItems.push({
+                            tooltip: 'Toggle the visibility of the summary row',
+                            text: 'Toggle Summary',
+                            enableToggle: true,
+                            pressed: true,
+                            handler: function () {
+                                showSummary = !showSummary;
+                                Csw.each(cswPrivate.grid.view.features, function(feature) {
+                                    if (feature.ftype === 'groupingsummary') {
+                                        feature.toggleSummaryRow(showSummary);
+                                        cswPrivate.grid.view.refresh();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+                if (topToolbarItems.length > 0) {
+                    cswPrivate.dockedItems.push({
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: topToolbarItems
+                    });
+                }
+            };
+                
+
+            cswPrivate.makeListeners = function () {
+                //Case 28555: ExtJS documentation is awful, 
+                //so we frequently need to blindly test their events to discover when they fire and why.
+                //To do so, uncomment any of the available events (current as of Ext 4.1.3) and fiddle with the grid. 
+
+                //var debugFunc = function () {
+                //    debugger;
+                //};
+               
+                return {
+                    afterrender: function (grid) {
+                        //of the methods we're listening to here, called 2nd, 
+                        //still nothing to see in the DOM
+                        grid.filters.createFilters();
+                    },
+                    viewready: function () {
+                        //of the methods we're listening to here, called 4th. Will also trigger afterlayout.
+                        Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
+                        cswPrivate.makeActionColumns(100);
+                    },
+                    //sortchange: function () { debugFunc(); },
+                    //render: function () {
+                        //of the methods we're listening to here, called 1st
+                        //debugFunc();
+                    //},
+                    //activate: function () { debugFunc(); },
+                    //add: function () { debugFunc(); },
+                    //added: function () { debugFunc(); },
+                    afterlayout: function () {
+                        //of the methods we're listening to here, called 3rd on a new grid.
+                        //empty grid is now rendered
+                        
+                        //Also called on any mutation to grid (sort, columns show/hide, etc)
+                        cswPrivate.makeActionColumns(0);
+                    }
+                    //beforeactivate: function () { debugFunc(); },
+                    //beforeadd: function () { debugFunc(); },
+                    //beforeclose: function () { debugFunc(); },
+                    //beforecollapse: function () { debugFunc(); },
+                    //beforecontainerclick: function () { debugFunc(); },
+                    //beforecontainercontextmenu: function () { debugFunc(); },
+                    //beforecontainerdblclick: function () { debugFunc(); },
+                    //beforecontainermousedown: function () { debugFunc(); },
+                    //beforecontainermouseout: function () { debugFunc(); },
+                    //beforecontainermouseover: function () { debugFunc(); },
+                    //beforecontainermouseup: function () { debugFunc(); },
+                    //beforedeactivate: function () { debugFunc(); },
+                    //beforedeselect: function () { debugFunc(); },
+                    //beforedestroy: function () { debugFunc(); },
+                    //beforeedit: function () { debugFunc(); },
+                    //beforeexpand: function () { debugFunc(); },
+                    //beforehide: function () { debugFunc(); },
+                    //beforeitemclick: function () { debugFunc(); },
+                    //beforeitemcontextmenu: function () { debugFunc(); },
+                    //beforeitemdblclick: function () { debugFunc(); },
+                    //beforeitemmousedown: function () { debugFunc(); },
+                    //beforeitemmouseenter: function () { debugFunc(); },
+                    //beforeitemmouseleave: function () { debugFunc(); },
+                    //beforeitemmouseup: function () { debugFunc(); },
+                    //beforereconfigure: function () { debugFunc(); },
+                    //beforeremove: function () { debugFunc(); },
+                    //beforerender: function () { debugFunc(); },
+                    //beforeselect: function () { debugFunc(); },
+                    //beforeshow: function () { debugFunc(); },
+                    //beforestaterestore: function () { debugFunc(); },
+                    //beforestatesave: function () { debugFunc(); },
+                    //blur: function () { debugFunc(); },
+                    //boxready: function () { debugFunc(); },
+                    //canceledit: function () { debugFunc(); },
+                    //cellclick: function () { debugFunc(); },
+                    //celldblclick: function () { debugFunc(); },
+                    //close: function () { debugFunc(); },
+                    //collapse: function () { debugFunc(); },
+                    //columnhide: function () { debugFunc(); },
+                    //columnmove: function () { debugFunc(); },
+                    //columnresize: function () { debugFunc(); },
+                    //columnshow: function () { debugFunc(); },
+                    //containerclick: function () {
+                    //    cswPrivate.makeActionColumns(0);
+                    //    debugFunc();
+                    //},
+                    //containercontextmenu: function () { debugFunc(); },
+                    //containerdblclick: function () { debugFunc(); },
+                    //containermouseout: function () { debugFunc(); },
+                    //containermouseover: function () { debugFunc(); },
+                    //containermouseup: function () { debugFunc(); },
+                    //deactivate: function () { debugFunc(); },
+                    //deselect: function () { debugFunc(); },
+                    //destroy: function () { debugFunc(); },
+                    //disable: function () { debugFunc(); },
+                    //edit: function () { debugFunc(); },
+                    //enable: function () { debugFunc(); },
+                    //expand: function () { debugFunc(); },
+                    //focus: function () { debugFunc(); },
+                    //hide: function () { debugFunc(); },
+                    //iconchange: function () { debugFunc(); },
+                    //iconclschange: function () { debugFunc(); },
+                    //itemclick: function () {
+                    //    cswPrivate.makeActionColumns(0);
+                    //    debugFunc();
+                    //},
+                    //itemcontextmenu: function () {
+                    //    cswPrivate.makeActionColumns(0);
+                    //    debugFunc();
+                    //},
+                    //itemdblclick: function () { debugFunc(); },
+                    //itemmousedown: function () { debugFunc(); },
+                    //itemmouseenter: function () { debugFunc(); },
+                    //itemmouseleave: function () { debugFunc(); },
+                    //itemmouseup: function () { debugFunc(); },
+                    //move: function () { debugFunc(); },
+                    //reconfigure: function () { debugFunc(); },
+                    //remove: function () { debugFunc(); },
+                    //removed: function () { debugFunc(); },
+                    //resize: function () { debugFunc(); },
+                    //select: function () { debugFunc(); },
+                    //selectionchange: function () { debugFunc(); },
+                    //show: function () { debugFunc(); },
+                    //staterestore: function () { debugFunc(); },
+                    //statesave: function () { debugFunc(); },
+                    //titlechange: function () { debugFunc(); },
+                    //unfloat: function () { debugFunc(); },
+                    //validateedit: debugFunc
+                };
+            };
 
             cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
                 var columns = Csw.extend([], cswPrivate.columns);
@@ -236,14 +594,7 @@
                             return ret;
                         }
                     },
-                    listeners: {
-                        viewready: function () {
-                            Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
-                        },
-                        afterrender: function (grid) {
-                            grid.filters.createFilters();
-                        }
-                    },
+                    listeners: cswPrivate.makeListeners(),
                     dockedItems: cswPrivate.dockedItems,
                     features: [{
                         ftype: 'filters',
@@ -253,7 +604,7 @@
                     },
                     {
                         id: 'group',
-                        ftype: 'grouping',
+                        ftype: 'grouping'+ (cswPrivate.summaryEnabled ? 'summary' : ''),
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
                         enableGroupingMenu: false,
@@ -276,33 +627,24 @@
                         resizable: false,
                         xtype: 'actioncolumn',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-                            var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
-                            var cell2Id = cswPrivate.name + 'action' + rowIndex + colIndex + '2';
-                            //$('#gridActionColumn' + cell1Id).remove();
-                            var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
-                            ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
-                            ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
-                            ret += '</tr></table>';
+                            //Terrible choice in words, "renderer" means the event that will run sometime after this based on the HTML string you define.
+                            cswPrivate.actionTableIds = cswPrivate.actionTableIds || [];
 
-                            var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(record.data.canedit, true);
-                            var canview = Csw.bool(cswPrivate.showView) && Csw.bool(record.data.canview, true);
-                            var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);
-                            var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(record.data.islocked, false);
+                            //renderer may run over the same cell multiple times. Index only once.
+                            cswPrivate.actionTableKeys = cswPrivate.actionTableKeys || [];
+                            var divId = cswPrivate.name + 'action' + rowIndex + colIndex;
+                            if (-1 === cswPrivate.actionTableKeys.indexOf(divId)) {
+                                cswPrivate.actionTableKeys.push(divId);
 
-                            // only show one of edit/view/lock
-                            if (islocked) {
-                                cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
-                            } else if (canedit) {
-                                cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
-                            } else if (canview) {
-                                cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
+                                cswPrivate.actionTableIds.push({
+                                    cellId: divId,
+                                    cellData: record.data,
+                                    raw: record.raw
+                                });
+
                             }
-
-                            if (candelete) {
-                                cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
-                            }
-
-                            return ret;
+                            //Guarantee the same base return for any call to render
+                            return '<div id="' + divId + '"></div>';
                         } // renderer()
                     }; // newcol
                     gridopts.columns.splice(0, 0, newcol);
@@ -325,6 +667,7 @@
                     var i = 0;
                     Csw.each(cols, function (colObj, key) {
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            //NOTE: this can now be moved to the viewrender event. See action column logic.
                             i += 1;
                             var id = cswPrivate.ID + 'nodebutton' + i;
                             var thisBtn = cswPrivate.data.buttons.filter(function (btn) {
@@ -483,6 +826,7 @@
 
                 cswPrivate.rootDiv = cswPublic.div();
 
+                cswPrivate.makeDockedItems();
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
@@ -498,19 +842,18 @@
                             Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
                         },
                         afterrender: function (component) {
-                            var bottomToolbar = component.getDockedComponent('bottomtoolbar');
-                            if (false === Csw.isNullOrEmpty(bottomToolbar)) {
-                                bottomToolbar.items.get('refresh').hide();
-                            }
+                            //debugger;
+                        },
+                        viewready: function () {
+                            //debugger;
                         }
-                    });
+                    }); // init()
 
                     if (Csw.bool(cswPrivate.truncated)) {
                         cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                     }
                 }
-
-            }); // init()
+            });
 
             cswPrivate.reInit = function (forceRefresh) {
                 if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
@@ -544,10 +887,15 @@
             cswPublic.reload = function () {
                 cswPrivate.getData(function (result) {
                     if (result && result.grid && result.grid.data && result.grid.data.items) {
+                        cswPrivate.actionTableIds = [];
+                        cswPrivate.actionTableKeys = [];
+
                         cswPrivate.data = result.grid.data;
                         cswPrivate.store.destroy();
                         cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                         cswPrivate.grid.reconfigure(cswPrivate.store);
+
+                        cswPrivate.makeActionColumns(0);
                     } else {
                         Csw.debug.error('Failed to reload grid');
                     }
@@ -639,18 +987,22 @@
                 return return_val;
             };
 
-            cswPublic.print = Csw.method(function (onSuccess) {
+            cswPublic.print = Csw.method(function () {
                 // turn paging off
                 var printStore = cswPrivate.makeStore(cswPrivate.name + 'printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
-                window.Ext.ux.grid.Printer.stylesheetPath = 'js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
+                window.Ext.ux.grid.Printer.stylesheetPath = 'vendor/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
                 window.Ext.ux.grid.Printer.print(printGrid);
+                Csw.tryExec(cswPrivate.onPrintSuccess);
             });
 
             cswPublic.toggleShowCheckboxes = Csw.method(function (val) {
                 cswPrivate.showCheckboxes = (false === cswPrivate.showCheckboxes);
                 if (false === cswPrivate.showCheckboxes) {
+                    cswPrivate.dockedItems = cswPrivate.dockedItems.filter(function (docked) {
+                        return (docked.dock !== 'top');
+                    });
                     if (options.topToolbar) {
                         cswPrivate.topToolbar = options.topToolbar;
                     } else {
@@ -667,11 +1019,11 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.reInit();
-            } ());
+            }());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
 
-} ());
+}());

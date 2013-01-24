@@ -473,6 +473,12 @@ namespace ChemSW.Nbt.WebServices
                 Nodes = MetaDataNodeType.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
                 Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
             }
+            else if( false == String.IsNullOrEmpty( Request.NodeTypeName ) )
+            {
+                CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeName );
+                Nodes = MetaDataNodeType.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
+                Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
+            }
             else
             {
                 CswNbtMetaDataObjectClass MetaDataObjectClass = null;

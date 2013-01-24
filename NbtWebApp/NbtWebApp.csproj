@@ -116,9 +116,15 @@
         <Compile Include="Services\Scheduler.svc.cs">
             <DependentUpon>Scheduler.svc</DependentUpon>
         </Compile>
+    <Compile Include="Services\LegacyMobile.svc.cs">
+      <DependentUpon>LegacyMobile.svc</DependentUpon>
+    </Compile>
         <Compile Include="Services\Trees.svc.cs">
             <DependentUpon>Trees.svc</DependentUpon>
         </Compile>
+    <Compile Include="Services\KioskMode.svc.cs">
+      <DependentUpon>KioskMode.svc</DependentUpon>
+    </Compile>
         <Compile Include="Services\Labels2.svc.cs">
             <DependentUpon>Labels2.svc</DependentUpon>
         </Compile>
@@ -146,6 +152,9 @@
         <Compile Include="Services\Labels.svc.cs">
             <DependentUpon>Labels.svc</DependentUpon>
         </Compile>
+    <Compile Include="Services\RegulatoryReporting.svc.cs">
+      <DependentUpon>RegulatoryReporting.svc</DependentUpon>
+    </Compile>
         <Compile Include="Services\Reports.svc.cs">
             <DependentUpon>Reports.svc</DependentUpon>
         </Compile>
@@ -159,6 +168,8 @@
             <DependentUpon>Views.svc</DependentUpon>
         </Compile>
         <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRegulatoryReporting.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceKioskMode.cs" />
         <Compile Include="WebSvc\Logic\CISPro\MolDataContract.cs" />
         <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
         <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
@@ -170,6 +181,7 @@
         <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
         <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
         <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
+    <Compile Include="WebSvc\Logic\Mobile\Legacy\CswNbtWebServiceLegacyMobile.cs" />
         <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
         <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
         <Compile Include="WebSvc\Logic\Scheduler\CswNbtScheduledRulesReturn.cs" />
@@ -186,8 +198,10 @@
         <Content Include="Images\pagelayout\header_logo32.png" />
         <Content Include="Images\tab-scroller-menu.gif" />
         <Content Include="Services\Scheduler.svc" />
+    <Content Include="Services\KioskMode.svc" />
         <Content Include="Services\Trees.svc" />
         <Content Include="Services\ChemCatCentral.svc" />
+    <Content Include="Services\LegacyMobile.svc" />
         <Content Include="Services\Labels2.svc" />
         <Content Include="Services\CISProNbtMobile.svc" />
         <Content Include="Services\Menus.svc" />
@@ -783,6 +797,7 @@
         <Content Include="Services\Labels.svc" />
         <Content Include="NodeTypeTreeService.asmx" />
         <Content Include="Report.aspx" />
+    <Content Include="Services\RegulatoryReporting.svc" />
         <Content Include="Services\Reports.svc" />
         <Content Include="Scripts\es5-shim.js" />
         <Content Include="Scripts\es5-shim.min.js" />

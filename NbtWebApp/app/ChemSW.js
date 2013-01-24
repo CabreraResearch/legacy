@@ -191,14 +191,19 @@
                 /// <summary> If the supplied argument is a function, execute it. </summary>
                 /// <param name="func" type="Function"> Function to evaluate </param>
                 /// <returns type="undefined" />
+                var ret = false;
                 try {
                     if (Csw.isFunction(func)) {
-                        return func.apply(this, Array.prototype.slice.call(arguments, 1));
+                        ret = func.apply(this, Array.prototype.slice.call(arguments, 1));
                     }
                 } catch(exception) {
-                    if (exception.name !== 'TypeError' || exception.type !== 'called_non_callable') { /* ignore errors failing to exec self-executing functions */
+                    if ((exception.name !== 'TypeError' ||
+                        exception.type !== 'called_non_callable') &&
+                        exception.type !== 'non_object_property_load') { /* ignore errors failing to exec self-executing functions */
                         Csw.error.catchException(exception);
                     }
+                } finally {
+                    return ret;
                 }
             });
 

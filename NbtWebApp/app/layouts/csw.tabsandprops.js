@@ -1,7 +1,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function () {
+(function () {  
 
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
@@ -53,6 +53,7 @@
 
                 },
                 IdentityTab: null,
+                showTitle: true,
                 onNodeIdSet: null,
                 onSave: null,
                 ReloadTabOnSave: true,
@@ -113,7 +114,7 @@
                     cswPrivate.tabcnt = 0;
                 };
                 cswPrivate.init();
-            }());
+            } ());
 
             //#region Events
 
@@ -218,9 +219,10 @@
                         delete cswPrivate.IdentityTab.tabid;
 
                         cswPrivate.titleDiv.empty();
-                        cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
-                        cswPrivate.titleDiv.show();
-
+                        if (cswPrivate.showTitle) {
+                            cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
+                            cswPrivate.titleDiv.show();
+                        }
                         if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                             cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
                             cswPrivate.identityDiv.empty();
@@ -302,12 +304,13 @@
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.genTab = function () {
-                                    Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                    cswPrivate.form.empty();
-                                    cswPrivate.onTearDown();
-                                    makeTabs();
-                                    return false;
+                                    if (false !== Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                        cswPrivate.form.empty();
+                                        cswPrivate.onTearDown();
+                                        makeTabs();
+                                        return false;
+                                    }
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {
@@ -709,7 +712,7 @@
                                 cswPrivate.globalState.filterToPropId === '' &&
                                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
                                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
-                            /* Case 24437 */
+                        /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
                             globalState: cswPrivate.globalState,
@@ -750,7 +753,7 @@
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
                     (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
-                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add && 
+                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
                       cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp))) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
@@ -853,7 +856,7 @@
                             });
 
                         } else {
-                            labelCell.setLabelText(propName, propData.required, propData.readonly);
+                            labelCell.setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
                         }
 
                         cswPrivate.globalState.checkBoxes['check_' + propid] = labelCell.checkBox({
@@ -1166,7 +1169,7 @@
                 else {
                     cswPrivate.enableSaveBtn();
                 }
-            });// Save()
+            }); // Save()
 
             //#endregion commit
 
@@ -1213,9 +1216,9 @@
             (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
                 cswPrivate.refreshLinkDiv();
-            }());
+            } ());
 
             return cswPublic;
         });
-}());
+} ());
 

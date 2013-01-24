@@ -153,7 +153,7 @@
                     cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
                         cssclass: 'buttonmessage'
                     });
-                    
+
                 } ());
             });
             return cswPublic;
@@ -200,7 +200,7 @@
             case Csw.enums.nbtButtonAction.landingPage:
                 Csw.publish('refreshLandingPage', actionJson.landingpage);
                 break;
-                
+
             case Csw.enums.nbtButtonAction.loadView:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
@@ -251,6 +251,58 @@
                         });
                         break;
                 }
+                break;
+
+            case Csw.enums.nbtButtonAction.griddialog:
+                $.CswDialog('OpenEmptyDialog', {
+                    title: actionJson.title,
+                    onOpen: function (dialogDiv) {
+                        var menuDiv = dialogDiv.div();
+                        var grid = Csw.nbt.nodeGrid(dialogDiv, {
+                            nodeid: actionJson.nodeid,
+                            readonly: false,
+                            reinit: false,
+                            viewid: actionJson.viewid,
+                            onDeleteNode: function () {
+                                grid.reload();
+                            },
+                            onEditNode: function () {
+                                grid.reload();
+                            },
+                            onSuccess: function (grid) {
+                                var menuOpts = {
+                                    width: 150,
+                                    ajax: {
+                                        urlMethod: 'getMainMenu',
+                                        data: {
+                                            ViewId: actionJson.viewid,
+                                            SafeNodeKey: '',
+                                            NodeId: actionJson.nodeid,
+                                            NodeTypeId: actionJson.nodetypeid,
+                                            PropIdAttr: '',
+                                            LimitMenuTo: '',
+                                            ReadOnly: 'false'
+                                        }
+                                    },
+                                    onAlterNode: function () {
+                                        grid.reload();
+                                    },
+                                    onMultiEdit: function () {
+                                        grid.toggleShowCheckboxes();
+                                    },
+                                    onEditView: function () {
+                                        Csw.tryExec(menuDiv.$.dialog('close'));
+                                    },
+                                    onPrintView: function () {
+                                        grid.print();
+                                    },
+                                    Multi: false
+                                };
+                                menuDiv.menu(menuOpts);
+                            }
+                        });
+                    }
+                });
                 break;
 
             default:

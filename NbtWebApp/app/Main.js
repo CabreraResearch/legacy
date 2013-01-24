@@ -4,22 +4,71 @@ window.initMain = window.initMain || function (undefined) {
 
     var cswPrivate = {
         tabsAndProps: null,
-        isDocumentReady: false,
-        isExtReady: false
+        is: (function() {
+            var isMulti = false;
+            var isExtReady = false;
+            var isDocumentReady = false;
+            var isOneTimeReset = false;
+            var trueOrFalse = function(val) {
+                var ret = false;
+                if (val === true) {
+                    ret = true;
+                }
+                return ret;
+            };
+            return {
+                get multi() {
+                    return isMulti;
+                },
+                set multi(nuVal) {
+                    isMulti = trueOrFalse(nuVal);
+                    return isMulti;
+                },
+                toggleMulti: function() {
+                    isMulti = !isMulti;
+                    return isMulti;
+                },
+                get extReady() {
+                    return isExtReady;
+                },
+                set extReady(nuVal) {
+                    isExtReady = trueOrFalse(nuVal);
+                    return isExtReady;
+                },
+                get documentReady() {
+                    return isDocumentReady;
+                },
+                set documentReady(nuVal) {
+                    isDocumentReady = trueOrFalse(nuVal);
+                    return isDocumentReady;
+                },
+                get oneTimeReset() {
+                    var ret = isOneTimeReset;
+                    if (true === ret) {
+                        isOneTimeReset = false;
+                    }
+                    return ret;
+                },
+                set oneTimeReset(nuVal) {
+                    isOneTimeReset = trueOrFalse(nuVal);
+                    return isOneTimeReset;
+                }
+            };
+        }())
     };
 
     $(document).ready(function() {
-        cswPrivate.isDocumentReady = true;
+        cswPrivate.is.documentReady = true;
         Csw.publish(Csw.enums.events.domready);
     });
     window.Ext.onReady(function() {
-        cswPrivate.isExtReady = true;
+        cswPrivate.is.extReady = true;
         Csw.publish(Csw.enums.events.domready);
     });
 
     Csw.subscribe(Csw.enums.events.domready, function _onReady() {
 
-        if (cswPrivate.isDocumentReady && cswPrivate.isExtReady) {
+        if (cswPrivate.is.documentReady && cswPrivate.is.extReady) {
 
             Csw.unsubscribe(Csw.enums.events.domready, null, _onReady); //We only need to execute once
             
@@ -48,6 +97,15 @@ window.initMain = window.initMain || function (undefined) {
 
             }());
 
+            Csw.main.initGlobalEventTeardown = Csw.main.initGlobalEventTeardown ||
+                Csw.main.register('initGlobalEventTeardown', function () {
+                    Csw.unsubscribe('CswMultiEdit'); //omitting a function handle removes all
+                    Csw.unsubscribe('CswNodeDelete'); //omitting a function handle removes all
+                    Csw.publish('initPropertyTearDown'); //omitting a function handle removes all
+                    cswPrivate.is.multi = false;
+                    cswPrivate.is.oneTimeReset = true;
+                    Csw.clientChanges.unsetChanged();
+                });
 
             var startSpinner = function() {
                 Csw.main.ajaxImage.show();
@@ -63,7 +121,7 @@ window.initMain = window.initMain || function (undefined) {
 
             function refreshMain(eventObj, data) {
                 Csw.clientChanges.unsetChanged();
-                cswPrivate.multi = false;
+                cswPrivate.is.multi = false;
                 clear({ all: true });
                 Csw.tryExec(refreshSelected, data);
             }
@@ -72,8 +130,8 @@ window.initMain = window.initMain || function (undefined) {
 
             function loadImpersonation(eventObj, actionData) {
                 if (false === Csw.isNullOrEmpty(actionData.userid)) {
-                    handleImpersonation(actionData.userid, actionData.username, function() {
-                        initAll(function() {
+                    handleImpersonation(actionData.userid, actionData.username, function () {
+                        initAll(function () {
                             handleItemSelect({
                                 itemid: Csw.string(actionData.actionid, actionData.viewid),
                                 nodeid: actionData.selectedNodeId,
@@ -102,7 +160,7 @@ window.initMain = window.initMain || function (undefined) {
             if (-1 === window.internetExplorerVersionNo) {
                 Csw.ajax.post({
                     urlMethod: 'getWatermark',
-                    success: function(result) {
+                    success: function (result) {
                         if (false === Csw.isNullOrEmpty(result.watermark)) {
                             Csw.main.watermark.text(result.watermark);
                         }
@@ -115,7 +173,7 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.ajax.post({
                     urlMethod: 'impersonate',
                     data: { UserId: userid },
-                    success: function(data) {
+                    success: function (data) {
                         if (Csw.bool(data.result)) {
                             Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
                             Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
@@ -172,7 +230,7 @@ window.initMain = window.initMain || function (undefined) {
                 }); // CswMenuHeader
             }
 
-            Csw.subscribe(Csw.enums.events.main.refreshHeader, function(eventObj, opts) {
+            Csw.subscribe(Csw.enums.events.main.refreshHeader, function (eventObj, opts) {
                 refreshHeaderMenu(opts);
             });
 
@@ -192,7 +250,7 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.main.handleAction({ actionname: qs.action, ActionOptions: actopts });
 
                 } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
-                    var setView = function(viewid, viewmode) {
+                    var setView = function (viewid, viewmode) {
                         handleItemSelect({
                             type: 'view',
                             itemid: viewid,
@@ -203,7 +261,7 @@ window.initMain = window.initMain || function (undefined) {
                         Csw.ajax.post({
                             url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
                             data: { ViewId: qs.viewid },
-                            success: function(data) {
+                            success: function (data) {
                                 setView(qs.viewid, Csw.string(data.viewmode, 'tree'));
                             }
                         });
@@ -237,16 +295,16 @@ window.initMain = window.initMain || function (undefined) {
             function setUsername(username) {
                 Csw.clientSession.setUsername(username);
                 Csw.main.headerUsername.text(username)
-                    .$.hover(function() { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
+                    .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
             }
 
-            Csw.subscribe(Csw.enums.events.main.reauthenticate, function(eventObj, username) {
+            Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj, username) {
                 setUsername(username);
             });
 
             function initAll(onSuccess) {
                 Csw.main.centerBottomDiv.$.CswLogin('init', {
-                    'onAuthenticate': function(u) {
+                    'onAuthenticate': function (u) {
                         setUsername(u);
                         refreshDashboard();
                         refreshHeaderMenu();
@@ -254,19 +312,19 @@ window.initMain = window.initMain || function (undefined) {
                             searchBoxParent: Csw.main.searchDiv,
                             searchResultsParent: Csw.main.rightDiv,
                             searchFiltersParent: Csw.main.leftDiv,
-                            onBeforeSearch: function() {
+                            onBeforeSearch: function () {
                                 clear({ all: true });
                             },
-                            onAfterSearch: function(search) {
+                            onAfterSearch: function (search) {
                                 refreshMainMenu({ nodetypeid: search.getFilterToNodeTypeId() });
                             },
-                            onAfterNewSearch: function(searchid) {
+                            onAfterNewSearch: function (searchid) {
                                 Csw.clientState.setCurrentSearch(searchid);
                             },
-                            onAddView: function(viewid, viewmode) {
+                            onAddView: function (viewid, viewmode) {
                                 refreshViewSelect();
                             },
-                            onLoadView: function(viewid, viewmode) {
+                            onLoadView: function (viewid, viewmode) {
                                 handleItemSelect({
                                     type: 'view',
                                     itemid: viewid,
@@ -281,7 +339,7 @@ window.initMain = window.initMain || function (undefined) {
                         var loadCurrent = handleQueryString();
 
                         if (Csw.isNullOrEmpty(onSuccess) && loadCurrent) {
-                            onSuccess = function() {
+                            onSuccess = function () {
                                 var current = Csw.clientState.getCurrent();
                                 if (false === Csw.isNullOrEmpty(current.viewid)) {
                                     handleItemSelect({
@@ -316,7 +374,7 @@ window.initMain = window.initMain || function (undefined) {
                 }); // CswLogin
 
             }
-            
+
             function refreshDashboard() {
                 Csw.main.headerDashboard.empty().$.CswDashboard();
             }
@@ -366,27 +424,27 @@ window.initMain = window.initMain || function (undefined) {
                 }
             }
 
-            Csw.subscribe(Csw.enums.events.main.clear, function(eventObj, opts) {
+            Csw.subscribe(Csw.enums.events.main.clear, function (eventObj, opts) {
                 clear(opts);
             });
 
             function refreshWelcomeLandingPage() {
-                setLandingPage(function() {
+                setLandingPage(function () {
                     Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                         name: 'welcomeLandingPage',
                         Title: '',
                         onLinkClick: handleItemSelect,
-                        onAddClick: function(itemData) {
+                        onAddClick: function (itemData) {
                             $.CswDialog('AddNodeDialog', {
                                 text: itemData.Text,
                                 nodetypeid: itemData.NodeTypeId,
-                                onAddNode: function(nodeid, nodekey) {
+                                onAddNode: function (nodeid, nodekey) {
                                     clear({ all: true });
                                     refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                                 }
                             });
                         },
-                        onTabClick: function(itemData) {
+                        onTabClick: function (itemData) {
                             Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
                             handleItemSelect(itemData);
                         },
@@ -405,7 +463,7 @@ window.initMain = window.initMain || function (undefined) {
                 refreshViewSelect();
             }
 
-            var refreshLandingPage = function(eventObj, opts) {
+            var refreshLandingPage = function (eventObj, opts) {
                 clear({ all: true });
                 var layData = {
                     ActionId: '',
@@ -424,7 +482,7 @@ window.initMain = window.initMain || function (undefined) {
                     ActionId: layData.ActionId,
                     ObjectClassId: layData.RelatedObjectClassId,
                     onLinkClick: handleItemSelect,
-                    onAddClick: function(itemData) {
+                    onAddClick: function (itemData) {
                         $.CswDialog('AddNodeDialog', {
                             text: itemData.Text,
                             nodetypeid: itemData.NodeTypeId,
@@ -432,17 +490,17 @@ window.initMain = window.initMain || function (undefined) {
                             relatednodename: layData.RelatedNodeName,
                             relatednodetypeid: layData.RelatedNodeTypeId,
                             relatedobjectclassid: layData.RelatedObjectClassId,
-                            onAddNode: function(nodeid, nodekey) {
+                            onAddNode: function (nodeid, nodekey) {
                                 clear({ all: true });
                                 refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
                             }
                         });
                     },
-                    onTabClick: function(itemData) {
+                    onTabClick: function (itemData) {
                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
                         handleItemSelect(itemData);
                     },
-                    onButtonClick: function(itemData) {
+                    onButtonClick: function (itemData) {
                         Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
                             name: itemData.Text,
                             value: itemData.ActionName,
@@ -450,9 +508,9 @@ window.initMain = window.initMain || function (undefined) {
                             propId: itemData.NodeTypePropId
                         });
                     },
-                    onAddComponent: function() { Csw.publish('refreshLandingPage'); },
+                    onAddComponent: function () { Csw.publish('refreshLandingPage'); },
                     landingPageRequestData: layData,
-                    onActionLinkClick: function(viewId) {
+                    onActionLinkClick: function (viewId) {
                         handleItemSelect({
                             type: 'view',
                             mode: 'tree',
@@ -483,18 +541,16 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.extend(o, options);
                 }
 
-                cswPrivate.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
+                cswPrivate.is.multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
                 var linkType = Csw.string(o.linktype).toLowerCase();
 
                 var type = Csw.string(o.type).toLowerCase();
 
                 //Now is a good time to purge outstanding Node-specific events
-                Csw.unsubscribe('CswMultiEdit');
-                Csw.unsubscribe('CswNodeDelete');
-                Csw.publish('initPropertyTearDown');
+                
                 
                 if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
-
+                    Csw.main.initGlobalEventTeardown();
                     if (false === Csw.isNullOrEmpty(type)) {
                         switch (type) {
                         case 'action':
@@ -548,6 +604,7 @@ window.initMain = window.initMain || function (undefined) {
                                     data: { ViewId: o.viewid },
                                     success: function(data) {
                                         o.mode = Csw.string(data.viewmode, 'tree');
+
                                         renderView();
                                     }
                                 });
@@ -607,9 +664,8 @@ window.initMain = window.initMain || function (undefined) {
                             o.grid.toggleShowCheckboxes();
                             break;
                         default:
-                            cswPrivate.multi = (false === cswPrivate.multi);
                             Csw.publish('CswMultiEdit', {
-                                multi: cswPrivate.multi,
+                                multi: cswPrivate.is.toggleMulti(),
                                 nodeid: o.nodeid,
                                 viewid: o.viewid
                             });
@@ -626,22 +682,22 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                     },
-                    onSaveView: function(newviewid) {
+                    onSaveView: function (newviewid) {
                         handleItemSelect({ 'viewid': newviewid, 'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode) });
                     },
-                    onPrintView: function() {
+                    onPrintView: function () {
                         switch (o.viewmode) {
-                        case Csw.enums.viewMode.grid.name:
-                            if (false == Csw.isNullOrEmpty(o.grid)) {
-                                o.grid.print();
-                            }
-                            break;
-                        default:
-                            Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
-                            break;
+                            case Csw.enums.viewMode.grid.name:
+                                if (false == Csw.isNullOrEmpty(o.grid)) {
+                                    o.grid.print();
+                                }
+                                break;
+                            default:
+                                Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
+                                break;
                         }
                     },
-                    Multi: cswPrivate.multi,
+                    Multi: cswPrivate.is.multi,
                     nodeTreeCheck: mainTree
                 };
 
@@ -676,12 +732,12 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
                 }
 
-                o.onEditNode = function() { grid.reload(); };
-                o.onDeleteNode = function() { grid.reload(); };
-                o.onRefresh = function(options) {
+                o.onEditNode = function () { grid.reload(); };
+                o.onDeleteNode = function () { grid.reload(); };
+                o.onRefresh = function (options) {
                     clear({ centertop: true, centerbottom: true });
                     Csw.clientChanges.unsetChanged();
-                    cswPrivate.multi = false; // semi-kludge for multi-edit batch op
+                    cswPrivate.is.multi = false; // semi-kludge for multi-edit batch op
                     refreshSelected(options);
                 };
                 clear({ centertop: true, centerbottom: true });
@@ -690,7 +746,7 @@ window.initMain = window.initMain || function (undefined) {
                     name: 'main_viewfilters',
                     parent: Csw.main.centerTopDiv,
                     viewid: o.viewid,
-                    onEditFilters: function(newviewid) {
+                    onEditFilters: function (newviewid) {
                         var newopts = o;
                         newopts.viewid = newviewid;
                         // set the current view to be the session view, so filters are saved
@@ -710,7 +766,7 @@ window.initMain = window.initMain || function (undefined) {
                     onEditNode: o.onEditNode,
                     onDeleteNode: o.onDeleteNode,
                     onRefresh: o.onRefresh,
-                    onSuccess: function(grid) {
+                    onSuccess: function (grid) {
                         if (o.doMenuRefresh) {
                             refreshMainMenu({
                                 viewid: o.viewid,
@@ -739,8 +795,8 @@ window.initMain = window.initMain || function (undefined) {
             function getViewTable(options) {
                 var o = {
                     viewid: '',
-//            nodeid: '',
-//            nodekey: '',
+                    //            nodeid: '',
+                    //            nodekey: '',
                     //			doMenuRefresh: true,
                     //			onAddNode: '',
                     onEditNode: '',
@@ -761,8 +817,8 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
                 }
 
-                o.onEditNode = function() { getViewTable(o); };
-                o.onDeleteNode = function() { getViewTable(o); };
+                o.onEditNode = function () { getViewTable(o); };
+                o.onDeleteNode = function () { getViewTable(o); };
 
                 clear({ centertop: true, centerbottom: true });
 
@@ -770,7 +826,7 @@ window.initMain = window.initMain || function (undefined) {
                     name: 'main_viewfilters',
                     parent: Csw.main.centerTopDiv,
                     viewid: o.viewid,
-                    onEditFilters: function(newviewid) {
+                    onEditFilters: function (newviewid) {
                         var newopts = o;
                         newopts.viewid = newviewid;
                         // set the current view to be the session view, so filters are saved
@@ -784,7 +840,7 @@ window.initMain = window.initMain || function (undefined) {
 //            nodeid: o.nodeid,
 //            nodekey: o.nodekey,
                     name: mainTableId,
-                    Multi: cswPrivate.multi,
+                    Multi: cswPrivate.is.multi,
                     //'onAddNode': o.onAddNode,
                     onEditNode: o.onEditNode,
                     onDeleteNode: o.onDeleteNode,
@@ -800,7 +856,7 @@ window.initMain = window.initMain || function (undefined) {
                 });
             }
 
-            var onSelectTreeNode = function(options) {
+            var onSelectTreeNode = function (options) {
                 //if (debugOn()) Csw.debug.log('Main.onSelectTreeNode()');
                 if (Csw.clientChanges.manuallyCheckChanges()) {
                     var o = {
@@ -846,7 +902,7 @@ window.initMain = window.initMain || function (undefined) {
                 var v = {
                     viewid: '',
                     viewmode: '',
-                    onAddNode: function(nodeid, nodekey) {
+                    onAddNode: function (nodeid, nodekey) {
                         refreshSelected({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                     }
                 };
@@ -860,7 +916,7 @@ window.initMain = window.initMain || function (undefined) {
                 var v = {
                     viewid: '',
                     viewmode: '',
-                    onAddNode: function(nodeid, nodekey) {
+                    onAddNode: function (nodeid, nodekey) {
                         refreshSelected({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                     }
                 };
@@ -888,7 +944,8 @@ window.initMain = window.initMain || function (undefined) {
 
                 clear({ right: true });
 
-                if (Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
+                if (cswPrivate.is.oneTimeReset ||
+                    Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
                     o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                         name: 'nodetabs',
@@ -898,7 +955,7 @@ window.initMain = window.initMain || function (undefined) {
                             currentNodeKey: o.nodekey
                         },
                         tabState: {
-                            ShowCheckboxes: cswPrivate.multi,
+                            ShowCheckboxes: cswPrivate.is.multi,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                         },
                         onSave: function() {
@@ -909,7 +966,7 @@ window.initMain = window.initMain || function (undefined) {
                         },
                         Refresh: function(options) {
                             Csw.clientChanges.unsetChanged();
-                            cswPrivate.multi = false; // semi-kludge for multi-edit batch op
+                            cswPrivate.is.multi = false; // semi-kludge for multi-edit batch op
                             refreshSelected(options);
                         },
                         onTabSelect: function(tabid) {
@@ -937,7 +994,7 @@ window.initMain = window.initMain || function (undefined) {
             }
 
             function refreshSelected(options) {
-                Csw.publish('initPropertyTearDown');
+                Csw.main.initGlobalEventTeardown();
                 if (Csw.clientChanges.manuallyCheckChanges()) {
                     var o = {
                         nodeid: '',
@@ -968,60 +1025,58 @@ window.initMain = window.initMain || function (undefined) {
                     } else {
                         var viewMode = Csw.string(o.viewmode).toLowerCase();
                         switch (viewMode) {
-                        case 'grid':
-                            getViewGrid({
-                                viewid: o.viewid,
-                                nodeid: o.nodeid,
-                                nodekey: o.nodekey,
-                                showempty: o.showempty,
-                                forsearch: o.forsearch
-                            });
-                            break;
-                        case 'list':
-                            refreshNodesTree({
-                                nodeid: o.nodeid,
-                                nodekey: o.nodekey,
-                                nodename: o.nodename,
-                                viewid: o.viewid,
-                                viewmode: o.viewmode,
-                                showempty: o.showempty,
-                                forsearch: o.forsearch,
-                                IncludeNodeRequired: o.IncludeNodeRequired
-                            });
-                            break;
-                        case 'table':
-                            getViewTable({
-                            viewid: o.viewid //,
-//                            nodeid: o.nodeid,
-//                            nodekey: o.nodekey
-                            });
-                            break;
-                        case 'tree':
-                            refreshNodesTree({
-                                nodeid: o.nodeid,
-                                nodekey: o.nodekey,
-                                nodename: o.nodename,
-                                viewid: o.viewid,
-                                viewmode: o.viewmode,
-                                showempty: o.showempty,
-                                forsearch: o.forsearch,
-                                IncludeNodeRequired: o.IncludeNodeRequired
-                            });
-                            break;
-                        default:
-                            refreshWelcomeLandingPage();
-                            break;
+                            case 'grid':
+                                getViewGrid({
+                                    viewid: o.viewid,
+                                    nodeid: o.nodeid,
+                                    nodekey: o.nodekey,
+                                    showempty: o.showempty,
+                                    forsearch: o.forsearch
+                                });
+                                break;
+                            case 'list':
+                                refreshNodesTree({
+                                    nodeid: o.nodeid,
+                                    nodekey: o.nodekey,
+                                    nodename: o.nodename,
+                                    viewid: o.viewid,
+                                    viewmode: o.viewmode,
+                                    showempty: o.showempty,
+                                    forsearch: o.forsearch,
+                                    IncludeNodeRequired: o.IncludeNodeRequired
+                                });
+                                break;
+                            case 'table':
+                                getViewTable({
+                                    viewid: o.viewid //,
+                                    //                            nodeid: o.nodeid,
+                                    //                            nodekey: o.nodekey
+                                });
+                                break;
+                            case 'tree':
+                                refreshNodesTree({
+                                    nodeid: o.nodeid,
+                                    nodekey: o.nodekey,
+                                    nodename: o.nodename,
+                                    viewid: o.viewid,
+                                    viewmode: o.viewmode,
+                                    showempty: o.showempty,
+                                    forsearch: o.forsearch,
+                                    IncludeNodeRequired: o.IncludeNodeRequired
+                                });
+                                break;
+                            default:
+                                refreshWelcomeLandingPage();
+                                break;
                         } // switch
                     } // if (false === Csw.isNullOrEmpty(o.searchid))
                 } // if (manuallyCheckChanges())
             } // refreshSelected()
             Csw.subscribe(Csw.enums.events.main.refreshSelected,
-                function(eventObj, opts) {
+                function (eventObj, opts) {
                     refreshSelected(opts);
                 });
-
-            cswPrivate.multi = false;
-
+            
             function refreshNodesTree(options) {
                 var o = {
                     'nodeid': '',
@@ -1052,7 +1107,7 @@ window.initMain = window.initMain || function (undefined) {
                     name: 'main_viewfilters',
                     parent: Csw.main.leftDiv,
                     viewid: o.viewid,
-                    onEditFilters: function(newviewid) {
+                    onEditFilters: function (newviewid) {
                         var newopts = o;
                         newopts.viewid = newviewid;
                         // set the current view to be the session view, so filters are saved
@@ -1060,7 +1115,7 @@ window.initMain = window.initMain || function (undefined) {
                         refreshNodesTree(newopts);
                     } // onEditFilters
                 }); // viewFilters
-
+                
                 mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
                     forSearch: o.forsearch,
                     onSelectNode: function(optSelect) {
@@ -1071,7 +1126,7 @@ window.initMain = window.initMain || function (undefined) {
                             nodekey: optSelect.nodekey
                         });
                     },
-                    isMulti: cswPrivate.multi,
+                    isMulti: cswPrivate.is.multi,
                     state: {
                         viewId: o.viewid,
                         viewMode: o.viewmode,
@@ -1094,6 +1149,8 @@ window.initMain = window.initMain || function (undefined) {
                         ActionOptions: {}
                     };
                     Csw.extend(o, options);
+
+                    Csw.main.initGlobalEventTeardown();
 
                     var designOpt = {};
 
@@ -1310,6 +1367,18 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
+                    case 'hmis reporting':
+                        Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
+                            onSubmit: function () {
+                                refreshWelcomeLandingPage();
+                            },
+                            onCancel: function () {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
+                    break;
                     //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
                     //				break;                                                                                                 
                     //			case 'Inspection_Design':                                                                                                 
@@ -1378,6 +1447,18 @@ window.initMain = window.initMain || function (undefined) {
                     case 'subscriptions':
                         Csw.actions.subscriptions(Csw.main.centerTopDiv);
                         break;
+                    case 'tier ii reporting':
+                        Csw.actions.tierIIReporting(Csw.main.centerTopDiv, {
+                            onSubmit: function () {
+                                refreshWelcomeLandingPage();
+                            },
+                            onCancel: function () {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
+                        break;
                     case 'view scheduled rules':
                         var rulesOpt = {
                             exitFunc: function() {
@@ -1389,6 +1470,23 @@ window.initMain = window.initMain || function (undefined) {
                         };
 
                         Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
+                        break;
+                    case 'upload legacy mobile data':
+                        Csw.nbt.legacyMobileWizard(Csw.main.centerTopDiv, {
+                            onCancel: refreshSelected,
+                            onFinish: function (viewid, viewmode) {
+                                handleItemSelect({ itemid: viewid, mode: viewmode });
+                            }
+                        });
+                        break;
+                    case 'kioskmode':
+                        Csw.actions.kioskmode(Csw.main.centerTopDiv, {
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
                         break;
                     default:
                         if (false == Csw.isNullOrEmpty(o.actionurl)) {
@@ -1408,7 +1506,7 @@ window.initMain = window.initMain || function (undefined) {
             (function _postCtor() {
                 //Case 28307: don't exec anything until all function expressions have been read
                 initAll();
-            }());
+            } ());
 
         }
     });
