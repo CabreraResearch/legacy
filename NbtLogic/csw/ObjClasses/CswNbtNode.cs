@@ -401,52 +401,48 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( null != NbtNode )
                 {
-                    _NodeId = NbtNode.NodeId.ToString();
-                    _NodePk = NbtNode.NodeId;
+                    NodeId = NbtNode.NodeId;
                     NodeName = NbtNode.NodeName;
                 }
             }
 
             public Node( CswPrimaryKey inNodeId, string inNodeName )
             {
-                _NodeId = inNodeId.ToString();
-                _NodePk = inNodeId;
+                NodeId = inNodeId;
                 NodeName = inNodeName;
             }
 
-            private string _NodeId = string.Empty;
-            private CswPrimaryKey _NodePk = null;
+            public CswPrimaryKey NodeId = null;
 
-            public CswPrimaryKey NodePk
+            [DataMember(IsRequired = true, EmitDefaultValue = true, Name = "NodeId" )]
+            public string NodePk
             {
-                get { return _NodePk; }
-                set
+                get
                 {
-                    _NodePk = value;
-                    if( CswTools.IsPrimaryKey( value ) )
+                    string Ret = string.Empty;
+                    if( CswTools.IsPrimaryKey( NodeId ) )
                     {
-                        _NodeId = _NodePk.ToString();
+                        Ret = NodeId.ToString();
                     }
-                    else
-                    {
-                        _NodeId = string.Empty;
-                    }
+                    return Ret;
                 }
-            }
-
-            [DataMember]
-            public string NodeId
-            {
-                get { return _NodeId; }
                 set
                 {
-                    _NodeId = value;
-                    _NodePk = CswConvert.ToPrimaryKey( _NodeId );
+                    NodeId = CswConvert.ToPrimaryKey( value );
                 }
             }
 
             [DataMember( IsRequired = false )]
             public string NodeName = String.Empty;
+
+            [DataMember( IsRequired = false )]
+            public string NodeLink
+            {
+                get { return CswNbtNode.getNodeLink( NodeId, NodeName ); }
+                set { string val = value; } //this is dumb, but WCF will break without a setter
+            }
+
+
         }
 
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
@@ -727,7 +723,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         public string NodeLink
         {
-            get { return "[[" + NodeId + "][" + NodeName + "]]"; }
+            get { return getNodeLink( NodeId, NodeName ); }
+        }
+
+        public static string getNodeLink( CswPrimaryKey NodeId, string NodeName )
+        {
+            string Id = "none";
+            if( CswTools.IsPrimaryKey( NodeId ) )
+            {
+                Id = NodeId.ToString();
+            }
+            return "[[" + Id + "][" + NodeName + "]]";
         }
 
         public string IconFileNameOverride = "";

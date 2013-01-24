@@ -276,7 +276,7 @@ namespace ChemSW.Nbt.Actions
             return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
 
-        public const string SubmittedItemsViewName = "Sumbitted Request Items";
+        public const string SubmittedItemsViewName = "Submitted Request Items";
         public CswNbtView getSubmittedRequestItemsView()
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources )

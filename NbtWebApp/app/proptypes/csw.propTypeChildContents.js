@@ -40,7 +40,7 @@
                         cswPrivate.loadNode(nodeObj.nodeid);
 
                     };
-
+                    nodeSelect.onAfterAdd = cswPrivate.loadNode;
                     nodeSelect.relatedTo = {};
                     nodeSelect.relatedTo.relatednodeid = cswPublic.data.tabState.nodeid;
                     nodeSelect.relatedTo.relatednodetypeid = cswPublic.data.tabState.nodetypeid;
