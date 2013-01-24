@@ -12,9 +12,6 @@ using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
-            [DataMember(IsRequired = false)] 
-            public String NodeTypeName = String.Empty;
-
     
     [DataContract]
     public class NodeResponse : CswWebSvcReturn

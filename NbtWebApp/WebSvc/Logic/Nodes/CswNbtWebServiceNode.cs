@@ -421,12 +421,6 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
         
-                Nodes = MetaDataNodeType.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
-                Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
-            }
-            else if( false == String.IsNullOrEmpty( Request.NodeTypeName ) )
-            {
-                CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeName );
         /// <summary>
         /// WCF wrapper around getNodes
         /// </summary>

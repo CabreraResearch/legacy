@@ -21,6 +21,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             [DataMember( IsRequired = false )]
             public Int32 NodeTypeId = Int32.MinValue;
             
+            //NodeTypeName seems like a bad plan.
+            [DataMember(IsRequired = false)] 
+            public String NodeTypeName = String.Empty;
+
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
 
@@ -466,9 +470,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             // If we don't have a view, make one
             if( null == View )
             {
-                if( Request.NodeTypeId > 0 )
+                if( Request.NodeTypeId > 0 || false == string.IsNullOrEmpty(Request.NodeTypeName))
                 {
-                    CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId );
+                    CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId ) ??
+                                                                //Again, seems like a bad plan to use name
+                                                              _CswNbtResources.MetaData.getNodeType( Request.NodeTypeName );
                     if( null != MetaDataNodeType )
                     {
                         MetaDataObjectClass = MetaDataNodeType.getObjectClass();
