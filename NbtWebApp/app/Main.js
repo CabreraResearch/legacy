@@ -1368,17 +1368,17 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
-                case 'hmis reporting':
-                    Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
-                        onSubmit: function () {
-                            refreshWelcomeLandingPage();
-                        },
-                        onCancel: function () {
-                            clear({ 'all': true });
-                            Csw.clientState.setCurrent(Csw.clientState.getLast());
-                            refreshSelected();
-                        }
-                    });
+                    case 'hmis reporting':
+                        Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
+                            onSubmit: function () {
+                                refreshWelcomeLandingPage();
+                            },
+                            onCancel: function () {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
                     break;
                     //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
                     //				break;                                                                                                 
@@ -1447,6 +1447,18 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                     case 'subscriptions':
                         Csw.actions.subscriptions(Csw.main.centerTopDiv);
+                        break;
+                    case 'tier ii reporting':
+                        Csw.actions.tierIIReporting(Csw.main.centerTopDiv, {
+                            onSubmit: function () {
+                                refreshWelcomeLandingPage();
+                            },
+                            onCancel: function () {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
                         break;
                     case 'view scheduled rules':
                         var rulesOpt = {

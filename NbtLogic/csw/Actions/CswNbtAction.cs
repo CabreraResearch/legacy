@@ -24,7 +24,8 @@ namespace ChemSW.Nbt.Actions
         Reconciliation,
         Upload_Legacy_Mobile_Data,
         HMIS_Reporting,
-        KioskMode
+        KioskMode,
+        Tier_II_Reporting
     }
 
     public class CswNbtAction

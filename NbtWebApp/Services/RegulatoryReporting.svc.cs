@@ -37,5 +37,24 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get all reportable Materials and their max and average quantities in a given Location for the given timeframe" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceRegulatoryReporting.TierIIDataReturn getTierIIData( TierIIData.TierIIDataRequest Request )
+        {
+            CswNbtWebServiceRegulatoryReporting.TierIIDataReturn Ret = new CswNbtWebServiceRegulatoryReporting.TierIIDataReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.TierIIDataReturn, TierIIData.TierIIDataRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getTierIIData,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }

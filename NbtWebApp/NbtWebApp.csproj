@@ -193,6 +193,7 @@
     <Content Include="ConfigVars.aspx" />
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\KioskMode.svc" />
     <Content Include="Services\Trees.svc" />
     <Content Include="Services\ChemCatCentral.svc" />
     <Content Include="Services\LegacyMobile.svc" />

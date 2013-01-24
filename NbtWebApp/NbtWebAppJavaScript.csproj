@@ -85,6 +85,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\actions\csw.tierIIReporting.js" />
     <Content Include="app\actions\csw.hmisReporting.js" />
     <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\_template.js" />
