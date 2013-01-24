@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Mobile;
@@ -77,6 +78,9 @@ namespace ChemSW.Nbt.Batch
 
                             string operation = string.Empty;
                             operation = BatchData.Operations[0]["op"].ToString();
+                            //Fix issue of operation case variations
+                            operation = operation.ToLower();
+                            operation = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(operation);
 
                             //Get parameters from record
                             JObject update = (JObject) BatchData.Operations[0]["update"];
