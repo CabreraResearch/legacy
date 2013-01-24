@@ -131,7 +131,10 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        // ToXml()
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
 
         public override void ToJSON( JObject ParentObject )
         {

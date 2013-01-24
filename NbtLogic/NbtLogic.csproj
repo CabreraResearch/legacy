@@ -127,7 +127,7 @@
     <Compile Include="csw\Mobile\CswNbtCISProNbtMobileData.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleC3.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropChildContents.cs" />
-    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_04.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02SQL.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28570.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28498.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436C.cs" />
@@ -137,6 +137,8 @@
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28293.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28560.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28409.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28508.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28507.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28345.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28053.cs" />

@@ -730,8 +730,8 @@ namespace ChemSW.Nbt.ObjClasses
             get { return "[[" + NodeId + "][" + NodeName + "]]"; }
         }
 
-        private string _IconFileName = "";
-        public string IconFileName { get { return ( _IconFileName ); } set { _IconFileName = value; } }
+        public string IconFileNameOverride = "";
+        public string IconFileName = "";
 
         private bool _Selectable = true;
         public bool Selectable { get { return ( _Selectable ); } set { _Selectable = value; } }

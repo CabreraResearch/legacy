@@ -356,7 +356,10 @@ namespace ChemSW.Nbt.PropTypes
             } // for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
         } // _addOptionsRecurse()
 
-        //public bool isNodeReference() { return true; }
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
 
         public override void ToJSON( JObject ParentObject )
         {
