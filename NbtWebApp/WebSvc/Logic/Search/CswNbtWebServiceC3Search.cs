@@ -331,55 +331,63 @@ namespace ChemSW.Nbt.WebServices
 
                 #region Chemical
 
-                CswNbtMetaDataNodeType chemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
-
-                _Mappings.Add( "Tradename", new C3Mapping
+                CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
+                if (null != ChemicalNT)
                 {
-                    NBTNodeTypeId = chemicalNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.TradeName,
-                    NBTNodeTypePropId = chemicalNT.getNodeTypeProp( "Tradename" ).PropId,
-                    NBTSubFieldPropColName = "field1"
-                } );
+                    const string Tradename = CswNbtObjClassMaterial.PropertyName.Tradename;
+                    _Mappings.Add( Tradename, new C3Mapping
+                    {
+                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.TradeName,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( Tradename ).PropId,
+                        NBTSubFieldPropColName = "field1"
+                    } );
 
-                _Mappings.Add( "CAS No", new C3Mapping
-                {
-                    NBTNodeTypeId = chemicalNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.CasNo,
-                    NBTNodeTypePropId = chemicalNT.getNodeTypeProp( "CAS No" ).PropId,
-                    NBTSubFieldPropColName = "field1"
-                } );
+                    const string CasNo = CswNbtObjClassMaterial.PropertyName.CasNo;
+                    _Mappings.Add( CasNo, new C3Mapping
+                    {
+                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.CasNo,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( CasNo ).PropId,
+                        NBTSubFieldPropColName = "field1"
+                    } );
 
-                _Mappings.Add( "Formula", new C3Mapping
-                {
-                    NBTNodeTypeId = chemicalNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.Formula,
-                    NBTNodeTypePropId = chemicalNT.getNodeTypeProp( "Formula" ).PropId,
-                    NBTSubFieldPropColName = "field1"
-                } );
+                    //todo: null check on NTP
+                    _Mappings.Add( "Formula", new C3Mapping
+                    {
+                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.Formula,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( "Formula" ).PropId,
+                        NBTSubFieldPropColName = "field1"
+                    } );
 
-                _Mappings.Add( "Structure", new C3Mapping
-                {
-                    NBTNodeTypeId = chemicalNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.MolData,
-                    NBTNodeTypePropId = chemicalNT.getNodeTypeProp( "Structure" ).PropId,
-                    NBTSubFieldPropColName = "ClobData"
-                } );
+                    //todo: null check on NTP
+                    _Mappings.Add( "Structure", new C3Mapping
+                    {
+                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.MolData,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( "Structure" ).PropId,
+                        NBTSubFieldPropColName = "ClobData"
+                    } );
 
-                _Mappings.Add( "Part Number", new C3Mapping
-                {
-                    NBTNodeTypeId = chemicalNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.PartNo,
-                    NBTNodeTypePropId = chemicalNT.getNodeTypeProp( "Part Number" ).PropId,
-                    NBTSubFieldPropColName = "field1"
-                } );
+                    const string PartNumber = CswNbtObjClassMaterial.PropertyName.PartNumber;
+                    _Mappings.Add( PartNumber, new C3Mapping
+                    {
+                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.PartNo,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( PartNumber ).PropId,
+                        NBTSubFieldPropColName = "field1"
+                    } );
 
-                _Mappings.Add( "Physical Description", new C3Mapping
-                {
-                    NBTNodeTypeId = chemicalNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.Description,
-                    NBTNodeTypePropId = chemicalNT.getNodeTypeProp( "Physical Description" ).PropId,
-                    NBTSubFieldPropColName = "gestalt"
-                } );
+                    //todo: null check on NTP
+                    _Mappings.Add( "Physical Description", new C3Mapping
+                    {
+                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.Description,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( "Physical Description" ).PropId,
+                        NBTSubFieldPropColName = "gestalt"
+                    } );
+                }
 
                 //todo: Add MSDS, ProductURL, Extension data additional properties
 
@@ -387,36 +395,45 @@ namespace ChemSW.Nbt.WebServices
 
                 #region Vendor
 
-                CswNbtMetaDataNodeType vendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
-                _Mappings.Add( "Vendor Name", new C3Mapping
+                CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
+                if (null != VendorNT)
                 {
-                    NBTNodeTypeId = vendorNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.SupplierName,
-                    NBTNodeTypePropId = vendorNT.getNodeTypeProp( "Vendor Name" ).PropId,
-                    NBTSubFieldPropColName = "field1"
-                } );
+                    //todo: null check on NTP
+                    _Mappings.Add( "Vendor Name", new C3Mapping
+                    {
+                        NBTNodeTypeId = VendorNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.SupplierName,
+                        NBTNodeTypePropId = VendorNT.getNodeTypeProp( "Vendor Name" ).PropId,
+                        NBTSubFieldPropColName = "field1"
+                    } );
+                }
 
                 #endregion
 
                 #region Sizes
 
-                CswNbtMetaDataNodeType sizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
-
-                _Mappings.Add( "Initial Quantity", new C3Mapping
+                CswNbtMetaDataNodeType SizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
+                if (null != SizeNT)
                 {
-                    NBTNodeTypeId = sizeNT.NodeTypeId,
-                    NBTNodeTypePropId = sizeNT.getNodeTypeProp( "Initial Quantity" ).PropId,
-                    NBTSubFieldPropColName = "field1_numeric",
-                    NBTSubFieldPropColName2 = "field1"
-                } );
 
-                _Mappings.Add( "Catalog No", new C3Mapping
-                {
-                    NBTNodeTypeId = sizeNT.NodeTypeId,
-                    C3ProductPropertyValue = _ProductToImport.CatalogNo,
-                    NBTNodeTypePropId = sizeNT.getNodeTypeProp( "Catalog No" ).PropId,
-                    NBTSubFieldPropColName = "field1"
-                } );
+                    //todo: null check on NTP
+                    _Mappings.Add("Initial Quantity", new C3Mapping
+                        {
+                            NBTNodeTypeId = SizeNT.NodeTypeId,
+                            NBTNodeTypePropId = SizeNT.getNodeTypeProp("Initial Quantity").PropId,
+                            NBTSubFieldPropColName = "field1_numeric",
+                            NBTSubFieldPropColName2 = "field1"
+                        });
+
+                    //todo: null check on NTP
+                    _Mappings.Add("Catalog No", new C3Mapping
+                        {
+                            NBTNodeTypeId = SizeNT.NodeTypeId,
+                            C3ProductPropertyValue = _ProductToImport.CatalogNo,
+                            NBTNodeTypePropId = SizeNT.getNodeTypeProp("Catalog No").PropId,
+                            NBTSubFieldPropColName = "field1"
+                        });
+                }
 
                 #endregion
             }//_initMappings()
