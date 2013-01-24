@@ -84,6 +84,9 @@ namespace ChemSW.Nbt.ObjClasses
             Request.MenuOptions = Requests.Options.ToString();
             Request.State = Requests.Size;
 
+            ViewSDS.State = PropertyName.ViewSDS;
+            ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
+
             if( ApprovalStatus.WasModified )
             {
                 Receive.setHidden( value: ApprovalStatus.Checked != Tristate.True, SaveToDb: true );
@@ -113,7 +116,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != FireClassExemptAmountNT )
                 {
                     CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
-                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId,CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
+                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
                     ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
                 }
             }
@@ -225,7 +228,7 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
                     case PropertyName.ViewSDS:
                         HasPermission = true;
-                        _getMatchingSDSForCurrentUser( ButtonData );
+                        GetMatchingSDSForCurrentUser( ButtonData );
                         break;
                 }
                 if( false == HasPermission )
@@ -391,7 +394,7 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-        private void _getMatchingSDSForCurrentUser( NbtButtonData ButtonData )
+        public void GetMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
             CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
             CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
