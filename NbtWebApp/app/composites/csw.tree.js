@@ -111,30 +111,30 @@
                     //*click*: function() {
                     // Ext exposes a slew of click handlers. None of them work unless the node is *selected*, so don't bother.
                     //}
-                    itemmouseenter: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
+                    itemmouseenter: function(thisView, treeNode, htmlElement, index, eventObj, eOpts) {
                         Csw.tryExec(cswPrivate.onMouseEnter, window.event, treeNode);
                     },
-                    itemmouseleave: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
+                    itemmouseleave: function(thisView, treeNode, htmlElement, index, eventObj, eOpts) {
                         Csw.tryExec(cswPrivate.onMouseExit, window.event, treeNode);
                     },
-                    afterlayout: function () {
+                    afterlayout: function() {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
                         cswPublic.toggleCheckboxes();
                         $('.x-grid-cell-treecolumn').css({ background: 'transparent' });
                     },
-                    afterrender: function () {
+                    afterrender: function() {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
                         //It _will_ in the next nano-second, so we have to defer.
                         cswPublic.toggleCheckboxes();
                     },
-                    viewready: function () {
+                    viewready: function() {
                         //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
-                        Csw.defer(function () {
+                        Csw.defer(function() {
                             var lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
 
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
                             var firstChild = cswPrivate.rootNode.childNodes[0];
-                            
+
                             if (!lastSelectedPath) {
                                 lastSelectedPath = firstChild.raw.path;
                             }
@@ -150,75 +150,63 @@
                         }, 10);
 
                     },
-                    afteritemcollapse: function () {
+                    afteritemcollapse: function() {
                         cswPublic.toggleCheckboxes();
                     },
-                    select: function (rowModel, record, index, eOpts) {
+                    beforedeselect: function(rowModel, record, index, eOpts) {
+                        return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
+                    },
+                    beforeselect: function(rowModel, record, index, eOpts) {
+                        return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
+                    },
+                    select: function(rowModel, record, index, eOpts) {
                         //If you click a node, this event is firing. We must:
                         //1. Keep this generic. Defer to the caller for implementation-specific validation.
                         //2. Properly track the currently and previously selected node (multiple clicks to the same node trigger this event)
-                        var ret = true;
-                        if (cswPublic.is.multi !== true) {
-                            if (record != cswPublic.selectedTreeNode) {
-                                record.expand();
-                                cswPublic.previousTreeNode = cswPublic.selectedTreeNode;
-                                cswPublic.selectedTreeNode = record;
-                                Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
-                                //If we're in single edit mode, the count is always 1
-                                cswPrivate.selectedNodeCount = 1;
+                        if (cswPublic.selectedTreeNode !== record) {
+                            cswPublic.selectedTreeNode = record;
+                            cswPrivate.selectedNodeCount = 1;
+                            record.expand();
+                            Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
+                            Csw.tryExec(cswPrivate.onSelect, record.raw);
+
+                            if (cswPublic.is.multi) {
+                                // also check this node
+                                cswPrivate.check(record, true);
                             }
                         }
-                        if (cswPrivate.selectedNodeCount === 1) {
-                            //In either single or multi-edit, render whenever the node count is 1
-                            Csw.tryExec(cswPrivate.onSelect, record.raw);
-                        }
-                        return ret;
                     },
                     checkchange: function (record, checked, eOpts) {
                         //Unfortunately, this event doesn't fire regularly if watched. Debug carefully!
-
-                        //Ext doesn't update the raw data, which is the only thing we have to manage state.
-                        //Manually keep it up to date.
-                        record.raw.checked = checked;
-                        if (cswPublic.is.multi) {
-                            var tmpPrevNode = cswPublic.selectedTreeNode;
-                            var tmpCrntNode = record;
-
-                            if (null === tmpPrevNode ||
-                                tmpPrevNode.raw.checked === false ||
-                                null === cswPublic.selectedTreeNode ||
-                                Csw.tryExec(cswPrivate.allowMultiSelection, tmpPrevNode, tmpCrntNode)
-                             ) {
-                                //if the previous node was null (starting from the root) or if the previous node is unchecked
-                                //or if the currently selected node is null (unlikely)
-                                //or if the caller's algorithm to allow simultaneous selection passes, 
-                                //then increment up or down and set the current and previous nodes accordingly
-                                var inc = (checked) ? 1 : -1;
-                                if (cswPrivate.selectedNodeCount <= 1 || null === cswPrivate.firstSelectedNode) {
-                                    cswPrivate.firstSelectedNode = tmpCrntNode;
-                                } else {
-                                    cswPublic.selectNode(cswPrivate.firstSelectedNode);
-                                }
-                                cswPublic.previousTreeNode = tmpPrevNode;
-                                cswPublic.selectedTreeNode = tmpCrntNode;
-                                cswPrivate.selectedNodeCount += inc;
-                            } else {
-                                //else, manually "uncheck" this node and select the unchanged current node
-                                record.raw.checked = false;
-                                record.set('checked', false);
-                                if (cswPrivate.selectedNodeCount > 0) {
-                                    cswPublic.selectNode(cswPrivate.firstSelectedNode);
-                                }
-                            }
-                        }
+                        cswPrivate.check(record, checked);
                     }
                 };
-            };
+            }; // cswPrivate.makeListeners()
 
-            cswPrivate.firstSelectedNode = null;
+            cswPrivate.check = function(record, checked)
+            {
+                //Ext doesn't update the raw data, which is the only thing we have to manage state.
+                //Manually keep it up to date.
+                var inc = (checked) ? 1 : -1;
+                if (cswPublic.is.multi) {
+                    if (false === (null === cswPublic.selectedTreeNode || 
+                                   //cswPublic.selectedTreeNode.raw.checked === false || 
+                                   Csw.tryExec(cswPrivate.allowMultiSelection, cswPublic.selectedTreeNode, record))) {
+                        //else, manually "uncheck" this node and select the unchanged current node
+                        checked = false;
+                        inc = 0;
+                    }
+                }
+                if (record.raw.checked !== checked) {
+                    record.raw.checked = checked;
+                    record.set('checked', checked);
+                    cswPrivate.selectedNodeCount += inc;
+                    Csw.debug.log(cswPrivate.selectedNodeCount);
+                }
+            }; // cswPrivate.check()
+
             cswPrivate.selectedNodeCount = 0;
             cswPublic.selectedTreeNode = null;
-            cswPublic.previousTreeNode = null;
 
             cswPrivate.makeTree = function () {
                 /// <summary>
@@ -272,6 +260,8 @@
                 /// For Multii-Edit, uses jQuery selector to show all checkboxes.
                 /// </summary>
                 $('.x-tree-checkbox').show();
+                // Automatically check the selected node
+                cswPrivate.check(cswPublic.selectedTreeNode, true);
                 return true;
             };
 
@@ -279,7 +269,6 @@
                 /// <summary>
                 /// For Multii-Edit, uses jQuery selector to hide all checkboxes.
                 /// </summary>
-                cswPrivate.firstSelectedNode = null;
                 $('.x-tree-checkbox').hide();
                 return true;
             };
