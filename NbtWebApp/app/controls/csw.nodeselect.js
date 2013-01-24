@@ -328,6 +328,7 @@
                             if (data.Nodes.length > 0) {
                                 var found = false;
                                 
+                                //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
                                 data.Nodes.forEach(function (obj) {
                                     if (obj.NodeId === nodeid) {
                                         found = true;
@@ -339,6 +340,7 @@
                                 });
                                 if (false === found) {
                                     cswPrivate.select.val(cswPrivate.selectedNodeId);
+                                    //TODO: provide the NodeLink in the QuickTip
                                     cswPrivate.table.cell(1, cswPrivate.tipCellCol).quickTip({ html: nodename + ' has been added.  However, it is not an available option for ' + cswPrivate.name + '.' });
                                 }
                             } else {

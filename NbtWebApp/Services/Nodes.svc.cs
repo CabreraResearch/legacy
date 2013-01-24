@@ -63,7 +63,8 @@ namespace NbtWebApp
         [Description( "Get all sizes related to a given node" )]
         public NodeResponse getSizes( CswNbtNode.Node Request )
         {
-            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            // TODO: This should really be a call to Nodes/get with a proper ViewId, 
+            // but as this affects multiple wizards, it's not getting fixed today.
             NodeResponse Ret = new NodeResponse();
             var GetViewDriverType = new CswWebSvcDriver<NodeResponse, CswNbtNode.Node>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),

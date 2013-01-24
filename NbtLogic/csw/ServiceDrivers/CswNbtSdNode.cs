@@ -318,6 +318,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
+        /// <summary>
+        /// Get all NodeTypeIds of matching ObjectClassIds for each relationship at the lowest level of the View (relationships with no child relationships).
+        /// </summary>
+        /// <returns>A Dictionary of <NodeTypeId, ObjectClassId> of a single ObjectClassId</returns>
         private Dictionary<Int32, Int32> _getRelationshipSecondType( CswNbtView View )
         {
             Dictionary<Int32, Int32> SecondTypes = new Dictionary<Int32, Int32>();
@@ -328,6 +332,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             return SecondTypes;
         }
 
+        /// <summary>
+        /// Get all Nodes in this View which match the provided NodeTypes or ObjectClass
+        /// </summary>
         public Collection<CswNbtNode.Node> getOptions( CswNbtView View, Collection<Int32> NodeTypeIds, Int32 ObjectClassId )
         {
             Collection<CswNbtNode.Node> Options = new Collection<CswNbtNode.Node>();
@@ -356,6 +363,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Options;
         }
 
+        /// <summary>
+        /// Get all Nodes in this View which match the provided NodeType or ObjectClass
+        /// </summary>
         public Collection<CswNbtNode.Node> getOptions( CswNbtViewId ViewId, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
         {
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );

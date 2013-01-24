@@ -581,12 +581,16 @@ namespace ChemSW.Nbt.Actions
             return ret;
         }
 
+        /// <summary>
+        /// Get the view to drive the Supplier picklist in the Create Material wizard
+        /// </summary>
         public CswNbtView getMaterialSuppliersView()
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataObjectClass VendorOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
             CswNbtViewRelationship SupplierVr = Ret.AddViewRelationship( VendorOc, IncludeDefaultFilters : true );
 
+            //This matches the MLM module event logic, but it may need adjustment down the line
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
             {
                 CswNbtMetaDataObjectClassProp CoorporateOcp = VendorOc.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
