@@ -95,6 +95,11 @@ namespace ChemSW.Nbt.PropTypes
             return _RateInterval.getMaximumWarningDays();
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
 
 
         //private string _ElemName_Rateinterval = "Rateinterval";

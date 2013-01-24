@@ -122,6 +122,12 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty;

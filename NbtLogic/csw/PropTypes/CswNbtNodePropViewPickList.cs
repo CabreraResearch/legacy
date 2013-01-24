@@ -271,6 +271,13 @@ namespace ChemSW.Nbt.PropTypes
             return _ViewsForCBA;
         } // ViewsForCBA
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SelectedViewIdsSubField.ToXmlNodeName()] = SelectedViewIds.ToString();

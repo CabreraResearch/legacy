@@ -73,7 +73,10 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        //private string _ElemName_Value = "Value";
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
 
         public override void ToJSON( JObject ParentObject )
         {

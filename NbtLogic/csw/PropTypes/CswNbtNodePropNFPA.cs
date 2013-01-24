@@ -139,10 +139,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             string newGestalt = "Flammability: " + Red + ", ";
             newGestalt += "Reactivity: " + Yellow + ", ";
-            newGestalt += "Health: " + Blue + ", ";
-            newGestalt += "Special: " + White;
+            newGestalt += "Health: " + Blue;
+            if( White != string.Empty )
+            {
+                newGestalt += ", Special: " + White;
+            }
 
             _CswNbtNodePropData.Gestalt = newGestalt;
+        }
+
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
         }
 
         public override void ToJSON( JObject ParentObject )

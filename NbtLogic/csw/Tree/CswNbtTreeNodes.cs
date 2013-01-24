@@ -820,9 +820,7 @@ namespace ChemSW.Nbt
         {
             _checkCurrentNode();
             return _CurrentNode.Included;
-        }
-
-//getNodeIncludedForCurrentPosition()
+        } //getNodeIncludedForCurrentPosition()
 
         public bool getNodeSelectableForCurrentPosition()
         {
@@ -834,9 +832,7 @@ namespace ChemSW.Nbt
             }
 
             return _CurrentNode.Selectable;
-        }
-
-//getNodeSelectableForCurrentPosition()
+        } //getNodeSelectableForCurrentPosition()
 
         public bool getNodeShowInTreeForCurrentPosition()
         {
@@ -847,9 +843,18 @@ namespace ChemSW.Nbt
             }
 
             return _CurrentNode.ShowInTree;
-        }
+        } //getNodeShowInTreeForCurrentPosition()
 
-//getNodeShowInTreeForCurrentPosition()
+        public string getNodeIconForCurrentPosition()
+        {
+            _checkCurrentNode();
+            if( _CurrentNode.ElementName != Elements.Node )
+            {
+                throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );
+            }
+
+            return _CurrentNode.IconFileName;
+        } // getNodeIconForCurrentPosition
 
 
         public Int32 getNodeCountForCurrentLevel()
