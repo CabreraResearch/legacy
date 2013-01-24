@@ -268,9 +268,9 @@ namespace ChemSW.Nbt.WebServices
                 ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
                 // Create the temporary material node
-                CswNbtNode C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                CswNbtObjClassMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
                 // Add props to the tempnode
-                C3Import.addNodeTypeProps( C3ProductTempNode );
+                C3Import.addNodeTypeProps( C3ProductTempNode.Node );
                 C3ProductTempNode.postChanges( false );
 
                 // Get or create a vendor node
@@ -295,8 +295,8 @@ namespace ChemSW.Nbt.WebServices
 
                 C3CreateMaterialResponse.State state = new C3CreateMaterialResponse.State();
                 state.materialId = C3ProductTempNode.NodeId.ToString();
-                state.tradeName = C3ProductTempNode.Properties["Tradename"].Field1;
-                state.partNo = C3ProductTempNode.Properties["Part Number"].Field1;
+                state.tradeName = C3ProductTempNode.TradeName.Text;
+                state.partNo = C3ProductTempNode.PartNumber.Text;
                 state.useExistingTempNode = true;
                 state.supplier = supplier;
                 state.materialType = materialType;
