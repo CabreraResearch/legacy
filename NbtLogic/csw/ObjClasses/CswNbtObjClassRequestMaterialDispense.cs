@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterPropertySetWriteNode()
         {
-            
+
         }
 
         /// <summary>
@@ -595,17 +595,22 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical IsRecurring { get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; } }
         private void onIsRecurringChange( CswNbtNodeProp NodeProp )
         {
+            IsRecurring.setHidden( value : true, SaveToDb : true );
             if( Tristate.True == IsRecurring.Checked && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
             {
                 Recurring.setHidden( value : false, SaveToDb : true );
                 RecurringFrequency.setHidden( value : false, SaveToDb : true );
                 NextReorderDate.setHidden( value : false, SaveToDb : true );
+                Status.setHidden( value : true, SaveToDb : true );
+                Type.setHidden( value : true, SaveToDb : true );
             }
             else
             {
                 Recurring.setHidden( value : true, SaveToDb : true );
                 RecurringFrequency.setHidden( value : true, SaveToDb : true );
                 NextReorderDate.setHidden( value : true, SaveToDb : true );
+                Status.setHidden( value : false, SaveToDb : true );
+                Type.setHidden( value : false, SaveToDb : true );
             }
         }
 

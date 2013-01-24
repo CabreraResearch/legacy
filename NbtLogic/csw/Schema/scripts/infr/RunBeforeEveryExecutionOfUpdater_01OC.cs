@@ -662,6 +662,22 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _addRecurringRequestProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClassProp IsRecurringOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring,
+                    ServerManaged = true,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical
+                } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsRecurringOcp, Tristate.False );
+
+            _resetBlame();
+        }
+
         #endregion
 
         #region Case 28246
@@ -720,6 +736,7 @@ namespace ChemSW.Nbt.Schema
             _addPropsToJuridictionOC( CswDeveloper.MB, 28363 );
             _addViewSDSProptoMaterial( CswDeveloper.MB, 28363 );
             _addPropsToMaterialSynonymOC( CswDeveloper.CM, 28246 );
+            _addRecurringRequestProp( CswDeveloper.CF, 28340 );
 
             #endregion WILLIAM
 
