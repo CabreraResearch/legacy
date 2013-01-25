@@ -284,7 +284,7 @@ namespace ChemSW.Nbt.WebServices
                 Return.Data.success = true;
                 Return.Data.actionname = "create material";
                 Return.Data.rows = ProductSizes;
-                
+
                 C3CreateMaterialResponse.State.Supplier supplier = new C3CreateMaterialResponse.State.Supplier();
                 supplier.name = VendorNode.NodeName;
                 supplier.val = VendorNode.NodeId.ToString();
@@ -332,7 +332,7 @@ namespace ChemSW.Nbt.WebServices
                 #region Chemical
 
                 CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
-                if (null != ChemicalNT)
+                if( null != ChemicalNT )
                 {
                     const string Tradename = CswNbtObjClassMaterial.PropertyName.Tradename;
                     _Mappings.Add( Tradename, new C3Mapping
@@ -387,16 +387,44 @@ namespace ChemSW.Nbt.WebServices
                         NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( "Physical Description" ).PropId,
                         NBTSubFieldPropColName = "gestalt"
                     } );
+
+                    // THIS IS DEFAULTING TO SOLID FOR NOW
+                    //todo: write a method that attempts to figure out the physical state by looking at the incoming UOM
+                    const string PhysicalState = CswNbtObjClassMaterial.PropertyName.PhysicalState;
+                    _Mappings.Add(PhysicalState, new C3Mapping
+                    {
+                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Solid,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( PhysicalState ).PropId,
+                        NBTSubFieldPropColName = "field1"
+                    });
+
+                    // Add any additional properties
+                    foreach( CswC3Product.TemplateSlctdExtData NameValuePair in _ProductToImport.TemplateSelectedExtensionData )
+                    {
+                        string PropertyName = NameValuePair.attribute;
+                        CswNbtMetaDataNodeTypeProp ChemicalNTP = ChemicalNT.getNodeTypeProp( PropertyName );
+                        if( null != ChemicalNTP )
+                        {
+                            _Mappings.Add( PropertyName, new C3Mapping
+                            {
+                                NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                                C3ProductPropertyValue = NameValuePair.value,
+                                NBTNodeTypePropId = ChemicalNTP.PropId,
+                                NBTSubFieldPropColName = "field1"
+                            } );
+                        }
+                    }
                 }
 
-                //todo: Add MSDS, ProductURL, Extension data additional properties
+                //todo: Add MSDS, ProductURL
 
                 #endregion
 
                 #region Vendor
 
                 CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
-                if (null != VendorNT)
+                if( null != VendorNT )
                 {
                     //todo: null check on NTP
                     _Mappings.Add( "Vendor Name", new C3Mapping
@@ -413,26 +441,26 @@ namespace ChemSW.Nbt.WebServices
                 #region Sizes
 
                 CswNbtMetaDataNodeType SizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
-                if (null != SizeNT)
+                if( null != SizeNT )
                 {
 
                     //todo: null check on NTP
-                    _Mappings.Add("Initial Quantity", new C3Mapping
+                    _Mappings.Add( "Initial Quantity", new C3Mapping
                         {
                             NBTNodeTypeId = SizeNT.NodeTypeId,
-                            NBTNodeTypePropId = SizeNT.getNodeTypeProp("Initial Quantity").PropId,
+                            NBTNodeTypePropId = SizeNT.getNodeTypeProp( "Initial Quantity" ).PropId,
                             NBTSubFieldPropColName = "field1_numeric",
                             NBTSubFieldPropColName2 = "field1"
-                        });
+                        } );
 
                     //todo: null check on NTP
-                    _Mappings.Add("Catalog No", new C3Mapping
+                    _Mappings.Add( "Catalog No", new C3Mapping
                         {
                             NBTNodeTypeId = SizeNT.NodeTypeId,
                             C3ProductPropertyValue = _ProductToImport.CatalogNo,
-                            NBTNodeTypePropId = SizeNT.getNodeTypeProp("Catalog No").PropId,
+                            NBTNodeTypePropId = SizeNT.getNodeTypeProp( "Catalog No" ).PropId,
                             NBTSubFieldPropColName = "field1"
-                        });
+                        } );
                 }
 
                 #endregion
@@ -473,7 +501,6 @@ namespace ChemSW.Nbt.WebServices
                 public Int32 NBTNodeTypeId = Int32.MinValue;
                 public Int32 NBTNodeTypePropId = Int32.MinValue;
                 public string C3ProductPropertyValue = string.Empty;
-                public string C3ProductPropertyName2 = string.Empty;
                 public string NBTSubFieldPropColName = string.Empty;
                 public string NBTSubFieldPropColName2 = string.Empty;
             }
