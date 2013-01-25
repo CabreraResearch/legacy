@@ -83,6 +83,7 @@
 
                         var gridOpts = {
                             name: cswPublic.data.name + '_fieldtypegrid',
+                            title: cswPublic.data.propData.name,
                             viewid: viewid,
                             nodeid: cswPublic.data.tabState.nodeid,
                             nodekey: cswPublic.data.tabState.nodekey,

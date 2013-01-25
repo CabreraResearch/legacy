@@ -304,7 +304,7 @@
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.genTab = function () {
-                                    if (false !== Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                    if (Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
                                         Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                         cswPrivate.form.empty();
                                         cswPrivate.onTearDown();
@@ -413,7 +413,7 @@
                         cswPrivate.globalState.currentNodeId = nodeid;
                         cswPrivate.globalState.currentNodeLink = data.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
-                    }   
+                    }
                     delete data.nodeid;
                     delete data.nodelink;
                 }
@@ -843,6 +843,7 @@
 
                         labelCell = cswPrivate.getLabelCell(cellSet);
 
+                        labelCell.addClass('propertylabelcell');
                         if (Csw.bool(propData.highlight)) {
                             labelCell.addClass('ui-state-highlight');
                         }
