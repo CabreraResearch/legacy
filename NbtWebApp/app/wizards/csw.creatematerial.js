@@ -226,7 +226,7 @@
                         });
 
                         //Material
-                        tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true);
+                        tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
                         cswPrivate.materialTypeSelect = tbl.cell(1,2).nodeTypeSelect({
                             name: 'nodeTypeSelect',
                             objectClassName: 'MaterialClass',
@@ -239,7 +239,7 @@
                         });
                         
                         // TRADENAME
-                        tbl.cell(2, 1).span().setLabelText('Tradename: ', true);
+                        tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);
                         cswPrivate.tradeNameInput = tbl.cell(2,2).input({
                             name: 'tradename',
                             cssclass: 'required',
@@ -255,7 +255,7 @@
                         cswPrivate.makeSupplierCtrl = function(NodeTypeId){
                             tbl.cell(3,1).empty();
                             tbl.cell(3,2).empty();
-                            tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
+                            tbl.cell(3, 1).span().setLabelText('Supplier: ', true, false);
                             cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
                                 name: 'Supplier',
                                 async: false,

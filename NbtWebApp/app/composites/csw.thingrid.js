@@ -46,7 +46,7 @@
 
             (function () {
                 Csw.extend(cswPrivate, options);
-                
+
                 cswPublic = cswParent.form();
                 var table = cswPublic.table({
                     cellpadding: 5,
@@ -104,11 +104,14 @@
                 /// <param name="row" type="Number">Row number.</param>
                 /// <param name="col" type="Number">Column number.</param>
                 /// <returns type="Csw.table.cell">A Csw table cell.</returns>
-                var cssClass = '', thisCell;
-                //Case 28336. Yuck. Sometimes this comes in as a string, sometimes as an object, and the only member of the object that we care about is 'value'
+                var cssClass = '', thisCell, required;
+
+                if (cellValue.isRequired) {
+                    required = cellValue.isRequired;
+                }
                 cellValue = cellValue || '';
                 cellValue = cellValue.value || cellValue;
-                
+
                 if (cswPrivate.isHeaderRow(row)) {
                     if (false === Csw.isNullOrEmpty(cellValue)) {
                         cswPrivate.header[col] = cellValue;
@@ -120,7 +123,7 @@
 
                 thisCell = cswPrivate.table.cell(row, col);
                 if (false === Csw.isNullOrEmpty(cellValue)) {
-                    thisCell.span({ text: Csw.string(cellValue) });
+                    thisCell.span().setLabelText(Csw.string(cellValue), required, false);
                 }
                 thisCell.addClass(cssClass);
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {
