@@ -279,6 +279,9 @@ namespace ChemSW.Nbt.WebServices
                 // Create size node(s)
                 Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
 
+                // Create synonyms node(s)
+                C3Import.createMaterialSynonyms( C3ProductTempNode );
+
                 #region Return Object
 
                 Return.Data.success = true;
@@ -391,13 +394,13 @@ namespace ChemSW.Nbt.WebServices
                     // THIS IS DEFAULTING TO SOLID FOR NOW
                     //todo: write a method that attempts to figure out the physical state by looking at the incoming UOM
                     const string PhysicalState = CswNbtObjClassMaterial.PropertyName.PhysicalState;
-                    _Mappings.Add(PhysicalState, new C3Mapping
+                    _Mappings.Add( PhysicalState, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
                         C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Solid,
                         NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( PhysicalState ).PropId,
                         NBTSubFieldPropColName = "field1"
-                    });
+                    } );
 
                     // Add any additional properties
                     foreach( CswC3Product.TemplateSlctdExtData NameValuePair in _ProductToImport.TemplateSelectedExtensionData )
@@ -417,7 +420,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
 
-                //todo: Add MSDS, ProductURL
+                //todo: In the future, add the MSDS link if it exists
 
                 #endregion
 
@@ -464,6 +467,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 #endregion
+
             }//_initMappings()
 
             private CswNbtObjClassUnitOfMeasure _getUnitOfMeasure( string unitOfMeasurementName )
@@ -590,6 +594,23 @@ namespace ChemSW.Nbt.WebServices
 
                 return ProductSizes;
             }//createSizeNodes()
+
+            public void createMaterialSynonyms( CswNbtObjClassMaterial ChemicalNode )
+            {
+                CswNbtMetaDataNodeType MaterialSynonymNT = _CswNbtResources.MetaData.getNodeType( "Material Synonym" );
+
+                if( null != MaterialSynonymNT )
+                {
+                    for( int index = 0; index < _ProductToImport.Synonyms.Length; index++ )
+                    {
+                        CswNbtObjClassMaterialSynonym MaterialSynonymOC = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialSynonymNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        MaterialSynonymOC.Name.Text = _ProductToImport.Synonyms[index];
+                        MaterialSynonymOC.Material.RelatedNodeId = ChemicalNode.NodeId;
+                        MaterialSynonymOC.IsTemp = false;
+                        MaterialSynonymOC.postChanges( true );
+                    }
+                }
+            }
 
             /// <summary>
             /// TODO: explain what currentindex is for
