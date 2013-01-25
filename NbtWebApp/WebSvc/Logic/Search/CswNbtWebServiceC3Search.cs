@@ -519,22 +519,40 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtObjClassVendor VendorNode = null;
 
-                CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
-                if( null != VendorNT )
+                CswNbtView VendorView = new CswNbtView( _CswNbtResources );
+                VendorView.ViewName = "VendorWithNameEquals";
+
+                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                CswNbtViewRelationship Parent = VendorView.AddViewRelationship( VendorOC, true );
+
+                CswNbtMetaDataObjectClassProp VendorOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
+
+                CswNbtViewProperty ViewProperty1 = VendorView.AddViewProperty( Parent, VendorOCP );
+
+                CswNbtViewPropertyFilter Filter1 = VendorView.AddViewPropertyFilter( ViewProperty1,
+                                                          CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                          CswNbtPropFilterSql.FilterResultMode.Hide,
+                                                          CswNbtSubField.SubFieldName.Text,
+                                                          CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                          VendorName,
+                                                          false,
+                                                          false );
+
+                ICswNbtTree VendorsTree = _CswNbtResources.Trees.getTreeFromView( VendorView, false, true, true );
+                if (VendorsTree.getChildNodeCount() > 0)
                 {
-                    foreach( CswNbtObjClassVendor CurrentVendorNode in VendorNT.getNodes( false, true ) )
+                    VendorsTree.goToNthChild(0);
+                    VendorNode = VendorsTree.getNodeForCurrentPosition();
+                }
+                else
+                {
+                    CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
+                    if (null != VendorNT)
                     {
-                        if( CurrentVendorNode.VendorName.Text.Equals( VendorName ) )
-                        {
-                            VendorNode = CurrentVendorNode;
-                        }
-                    }
-                    if( null == VendorNode )
-                    {
-                        VendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                        addNodeTypeProps( VendorNode.Node );
+                        VendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId(VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp);
+                        addNodeTypeProps(VendorNode.Node);
                         VendorNode.IsTemp = false;
-                        VendorNode.postChanges( true );
+                        VendorNode.postChanges(true);
                     }
                 }
 
