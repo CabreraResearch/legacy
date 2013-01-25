@@ -193,6 +193,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["results"] = results;
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = null;
+                ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
                 ret["searchtype"] = "chemcatcentral";
             }
