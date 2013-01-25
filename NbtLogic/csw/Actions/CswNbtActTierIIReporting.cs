@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.Actions
             {
                 Storage = new Collection<StorageCodes>();
                 Locations = new Collection<StorageLocations>();
+                HazardCategories = new Collection<String>();
             }
 
             //Internal
@@ -47,10 +48,12 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String PhysicalState = String.Empty;//Solid,Liquid,Gas
             [DataMember]
-            public String SpecialFlags = String.Empty;//EHS,Not Reportable,TradeSecret
+            public bool EHS = false;
+            [DataMember]
+            public bool TradeSecret = false;
             //Physical and Health Hazards
             [DataMember]
-            public String HazardCategories = String.Empty;//Fire,Pressure,Reactive,Immediate,Delayed
+            public Collection<String> HazardCategories;//Fire,Pressure,Reactive,Immediate,Delayed
             //Inventory
             [DataMember]
             public Double MaxQty = 0.0;
@@ -97,8 +100,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String EndDate = String.Empty;
         }
-
-    } // HMISData
+    }
 
     #endregion DataContract
 
@@ -140,28 +142,27 @@ namespace ChemSW.Nbt.Actions
                     CASNo = MaterialRow["casno"].ToString(),
                     MaterialType = MaterialRow["materialtype"].ToString(),
                     PhysicalState = MaterialRow["physicalstate"].ToString(),
-                    SpecialFlags = MaterialRow["specialflags"].ToString(),
-                    HazardCategories = MaterialRow["hazardcategories"].ToString(),
+                    EHS = MaterialRow["specialflags"].ToString().Contains("EHS"),
+                    TradeSecret = MaterialRow["specialflags"].ToString().Contains( "Trade Secret" ),
                     MaxQty = CswConvert.ToDouble( MaterialRow["maxqty"] ),
                     AverageQty = CswConvert.ToDouble( MaterialRow["avgqty"] ),
                     DaysOnSite = CswConvert.ToInt32( MaterialRow["daysonsite"] ),
                     Unit = BaseUnit != null ? BaseUnit.Name.Text : "kg"
                 };
+                CswCommaDelimitedString Hazards = new CswCommaDelimitedString();
+                Hazards.FromString( MaterialRow["hazardcategories"].ToString() );
+                foreach( String Hazard in Hazards )
+                {
+                    Material.HazardCategories.Add( Hazard );
+                }
                 DataTable ContainerStorageCodesTable = _getContainerStorageProps( Material.MaterialId );
                 foreach( DataRow ContainerPropsRow in ContainerStorageCodesTable.Rows )
                 {
-                    Int32 PrevIdx = Material.Storage.Count - 1;
-                    String Pressure = ContainerPropsRow["pressure"].ToString();
-                    String Temperature = ContainerPropsRow["temperature"].ToString();
-                    String UseType = ContainerPropsRow["usetype"].ToString();
-                    String PrevPressure = PrevIdx < 0 ? String.Empty : Material.Storage[PrevIdx].Pressure;
-                    String PrevTemperature = PrevIdx < 0 ? String.Empty : Material.Storage[PrevIdx].Temperature;
-                    String PrevUseType = PrevIdx < 0 ? String.Empty : Material.Storage[PrevIdx].UseType;
                     TierIIData.StorageCodes StorageCodes = new TierIIData.StorageCodes
                     {
-                        Pressure = String.IsNullOrEmpty( Pressure ) ? PrevPressure : Pressure,
-                        Temperature = String.IsNullOrEmpty( Temperature ) ? PrevTemperature : Temperature,
-                        UseType = String.IsNullOrEmpty( UseType ) ? PrevUseType : UseType
+                        Pressure = ContainerPropsRow["pressure"].ToString(),
+                        Temperature = ContainerPropsRow["temperature"].ToString(),
+                        UseType = ContainerPropsRow["usetype"].ToString()
                     };
                     Material.Storage.Add( StorageCodes );
                 }
@@ -208,7 +209,7 @@ namespace ChemSW.Nbt.Actions
         
             String SqlText = @"
               select t.materialid, t.casno, max(t.totalquantity) as maxqty, avg(t.totalquantity) as avgqty, t.unitid, count(*) as daysonsite, 
-                p.tradename, p.materialtype, p.physicalstate, p.specialflags, p.hazardcategories
+                p.tradename, p.materialtype, p.physicalstate, p.specialflags, p.hazardcategories, p.istierII
                 from tier2 t
                   left join (select 
                   n.nodeid as MaterialId,
@@ -221,14 +222,19 @@ namespace ChemSW.Nbt.Actions
                   (select dbms_lob.substr(jnp.gestalt) as materialid from jct_nodes_props jnp 
                     where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {3}) as SpecialFlags, 
                   (select dbms_lob.substr(jnp.gestalt) as materialid from jct_nodes_props jnp 
-                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {4}) as HazardCategories
+                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {4}) as HazardCategories,
+                  (select jnp.field1 as istierII from jct_nodes_props jnp 
+                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {5}) as IsTierII
                 from nodes n) p on p.materialid = t.materialid
-                where locationid = {5} 
-                  and dateadded >= to_date('{6}', 'mm/dd/yyyy')
-                  and dateadded <= to_date('{7}', 'mm/dd/yyyy')
-                  group by t.materialid, t.casno, t.unitid, p.tradename, p.materialtype, p.physicalstate, p.specialflags, p.hazardcategories";
-            
-            #endregion
+                where locationid = {6} 
+                  and istierii = 1
+                  and casno is not null
+                  and dateadded >= to_date('{7}', 'mm/dd/yyyy')
+                  and dateadded < to_date('{8}', 'mm/dd/yyyy') + 1
+                  group by t.materialid, t.casno, t.unitid, 
+                    p.tradename, p.materialtype, p.physicalstate, p.specialflags, p.hazardcategories, p.istierII";
+
+            #endregion SQL Query Template
 
             DataTable TargetTable = null;
             CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
@@ -239,12 +245,14 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp PhysicalStateProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.PhysicalState );
                 CswNbtMetaDataNodeTypeProp SpecialFlagsProp = _CswNbtResources.MetaData.getNodeTypeProp( ChemicalNT.NodeTypeId, "Special Flags" );
                 CswNbtMetaDataNodeTypeProp HazardCategoriesProp = _CswNbtResources.MetaData.getNodeTypeProp( ChemicalNT.NodeTypeId, "Hazard Categories" );
+                CswNbtMetaDataNodeTypeProp IsTierIIProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.IsTierII );
                 String SelectText = String.Format( SqlText,
                     TradeNameProp.PropId,
                     null != MaterialTypeProp ? MaterialTypeProp.PropId : 0,
                     PhysicalStateProp.PropId,
                     null != SpecialFlagsProp ? SpecialFlagsProp.PropId : 0,
                     null != HazardCategoriesProp ? HazardCategoriesProp.PropId : 0,
+                    IsTierIIProp.PropId,
                     CswConvert.ToPrimaryKey( Request.LocationId ).PrimaryKey,
                     CswConvert.ToDbVal( DateTime.Parse( Request.StartDate ).ToShortDateString() ),
                     CswConvert.ToDbVal( DateTime.Parse( Request.EndDate ).ToShortDateString() )
@@ -267,23 +275,35 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp TemperatureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
                 CswNbtMetaDataNodeTypeProp UseTypeProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.UseType );
                 String SelectText = @"with containerids
-                  as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + " and field1_fk = " + MaterialId + @")
-                select unique jnpa.nodeid as ContainerId, p.pressure, t.temperature, u.usetype, jnpa.audittransactionid
-                  from jct_nodes_props_audit jnpa
-                  left join (select jnp.nodeid, jnp.field1 as pressure, jnp.audittransactionid
-                      from jct_nodes_props_audit jnp
-                      where jnp.nodetypepropid = " + PressureProp.PropId + @") p 
-                      on jnpa.nodeid = p.nodeid and jnpa.audittransactionid = p.audittransactionid
-                  left join (select jnp.nodeid, jnp.field1 as temperature, jnp.audittransactionid
-                      from jct_nodes_props_audit jnp
-                      where jnp.nodetypepropid = " + TemperatureProp.PropId + @") t 
-                      on jnpa.nodeid = t.nodeid and jnpa.audittransactionid = t.audittransactionid
-                  left join (select jnp.nodeid, jnp.field1 as usetype, jnp.audittransactionid
-                      from jct_nodes_props_audit jnp
-                      where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
-                      on jnpa.nodeid = u.nodeid and jnpa.audittransactionid = u.audittransactionid
-                      where exists (select nodeid from containerids where nodeid = jnpa.nodeid) 
-                      order by jnpa.audittransactionid asc";
+                    as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + " and field1_fk = " + MaterialId + @")
+                select unique codes.pressure, codes.temperature, codes.usetype from (
+                    select unique jnpa.nodeid as ContainerId,
+                        case when p.pressure is null 
+                            then lag(p.pressure) over (order by jnpa.audittransactionid) 
+                            else p.pressure end pressure,
+                        case when t.temperature is null 
+                            then lag(t.temperature) over (order by jnpa.audittransactionid) 
+                            else t.temperature end temperature,
+                        case when u.usetype is null 
+                            then lag(u.usetype) over (order by jnpa.audittransactionid) 
+                            else u.usetype end usetype,
+                        jnpa.audittransactionid
+                    from jct_nodes_props_audit jnpa
+                    left join (select jnp.nodeid, jnp.field1 as pressure, jnp.audittransactionid
+                        from jct_nodes_props_audit jnp
+                        where jnp.nodetypepropid = " + PressureProp.PropId + @") p 
+                        on jnpa.nodeid = p.nodeid and jnpa.audittransactionid = p.audittransactionid
+                    left join (select jnp.nodeid, jnp.field1 as temperature, jnp.audittransactionid
+                        from jct_nodes_props_audit jnp
+                        where jnp.nodetypepropid = " + TemperatureProp.PropId + @") t 
+                        on jnpa.nodeid = t.nodeid and jnpa.audittransactionid = t.audittransactionid
+                    left join (select jnp.nodeid, jnp.field1 as usetype, jnp.audittransactionid
+                        from jct_nodes_props_audit jnp
+                        where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
+                        on jnpa.nodeid = u.nodeid and jnpa.audittransactionid = u.audittransactionid
+                    where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
+                ) codes
+                    where codes.pressure is not null and codes.temperature is not null and codes.usetype is not null";
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Props Select", SelectText );
                 TargetTable = CswArbitrarySelect.getTable();
             }
@@ -301,7 +321,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Location );
                 String SelectText = @"with containerids
                   as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + " and field1_fk = " + MaterialId + @")
-                select unique jnp.nodeid, jnp.field1_fk as locationid, jnp.field4 as fulllocation
+                select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
                   from jct_nodes_props_audit jnp
                 where jnp.nodetypepropid = " + LocationProp.PropId + @"
                   and jnp.field1_fk is not null
