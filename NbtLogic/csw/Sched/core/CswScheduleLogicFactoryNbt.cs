@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using ChemSW.MtSched.Core;
+using ChemSW.MtSched.Rules;
 
 namespace ChemSW.Nbt.Sched
 {
 
-    public class CswScheduleLogicFactoryNbt : ICswScheduleLogicFactory
+    public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin, BatchOp, ExpiredContainers, MolFingerprints, ContainerReconciliationActions, Reconciliation , TierII }
+    public class CswScheduleLogicFactoryNbt : CswScheduleLogicFactoryBase
     {
 
-        public List<ICswScheduleLogic> getRules()
+        protected override List<ICswScheduleLogic> _getRulesFromImplmentationPlatform()
         {
             List<ICswScheduleLogic> ReturnVal = new List<ICswScheduleLogic>();
 
@@ -21,10 +23,12 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
             ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
+
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );
 
             return ( ReturnVal );
+
         }
     }
-}
 
+}//_getRulesFromImplmentationPlatform()

@@ -18,17 +18,18 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.GenEmailRpt.ToString() ); }
         }
 
-        public bool doesItemRunNow()
+        public bool hasLoad( ICswResources CswResources )
         {
 
-            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            return ( true );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
 
-        }//doesItemRunNow()
+        }//hasLoad()
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
-            set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
 
@@ -39,28 +40,33 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        private CswNbtResources _CswNbtResources = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
 
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
-        }//init() 
+        }//initScheduleLogicDetail() 
 
-        public void threadCallBack()
+
+
+
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
 
+                CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
                     string InnerErrorMessage = string.Empty;
+                    _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+                    CswResources.AuditContext = "Scheduler Task: " + RuleName;
+
+
+
                     Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
                     Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
 
@@ -150,7 +156,7 @@ namespace ChemSW.Nbt.Sched
 
                     if( MailReportIdsToRun.Count > 0 )
                     {
-                        CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( _CswNbtResources );
+                        CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( CswNbtResources );
                         BatchOp.makeBatchOp( MailReportIdsToRun );
                     }
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
@@ -161,7 +167,7 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "An exception occurred: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
@@ -178,12 +184,6 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
     }//CswScheduleLogicNbtGenEmailRpt
 
 }//namespace ChemSW.Nbt.Sched

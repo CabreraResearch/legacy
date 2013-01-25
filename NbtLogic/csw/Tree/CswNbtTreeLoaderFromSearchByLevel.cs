@@ -283,7 +283,7 @@ namespace ChemSW.Nbt
 
             if( CswTools.IsInteger( _SearchTerm ) )
             {
-                Where += " or n.nodeid = '" + _SearchTerm + "')";
+                Where += " or (n.nodeid = '" + _SearchTerm + "' and t.searchdeferpropid is null))";
             }
             else
             {
