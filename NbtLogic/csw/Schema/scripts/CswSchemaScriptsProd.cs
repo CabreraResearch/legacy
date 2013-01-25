@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436D() ) );             //01V-025
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28498() ) );              //01V-026
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28570() ) );              //01V-027
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28526() ) );                         //01V-028
 
             #endregion VIOLA
 
