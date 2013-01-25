@@ -11,7 +11,7 @@ using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Grid.ExtJs;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
                         ViewsTable.Columns.Remove( "rolename" );
                 }
 
-                ChemSW.Nbt.Grid.ExtJs.CswNbtGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
+                ChemSW.Grid.ExtJs.CswGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
                 grid.getColumn( "nodeviewid" ).hidden = true;
                 grid.getColumn( "viewid" ).hidden = true;
 

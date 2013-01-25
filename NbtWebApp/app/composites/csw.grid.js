@@ -60,6 +60,7 @@
 
                     topToolbar: [],
                     groupField: '',
+                    plugins: null,
                     groupHeaderTpl: '{columnName}: {name}',
                     summaryEnabled: false,
                     printingEnabled: false,
@@ -80,16 +81,34 @@
             //#region AJAX
 
             cswPrivate.getData = function (onSuccess) {
-                cswPublic.ajax = Csw.ajax.post({
-                    url: cswPrivate.ajax.url,
-                    urlMethod: cswPrivate.ajax.urlMethod,
-                    data: cswPrivate.ajax.data,
-                    success: function (result) {
-                        if (false === Csw.isNullOrEmpty(result.grid)) {
+                if (cswPrivate.ajax.urlMethod !== '') {
+                    cswPublic.ajax = Csw.ajax.post({
+                        url: cswPrivate.ajax.url,
+                        urlMethod: cswPrivate.ajax.urlMethod,
+                        data: cswPrivate.ajax.data,
+                        success: function (result) {
+                            if (false === Csw.isNullOrEmpty(result.grid)) {
+                                Csw.tryExec(onSuccess, result);
+                                var temp = cswPrivate.store.data;
+                                //var temp = result.grid.getAllGridRows();
+                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+                        } // success
+                    });
+                } else if (cswPrivate.ajaxwcf.urlMethod !== '') {
+
+                    cswPublic.ajaxwcf = Csw.ajaxWcf.post({
+                        urlMethod: cswPrivate.ajaxwcf.urlMethod,
+                        data: cswPrivate.ajaxwcf.data,
+                        success: function (result) {
+                            //ExJsGrid 
+                            //var CswNbtScheduledRulesReturn = Csw.deserialize(result);
                             Csw.tryExec(onSuccess, result);
-                        } // if(false === Csw.isNullOrEmpty(data.griddata)) {
-                    } // success
-                }); // ajax.post()
+                            //                                var temp = cswPrivate.store.data;
+                            //var temp = result.grid.getAllGridRows();
+                        } // success
+                    });
+                }
+                // ajax.post()
             };
 
             //#endregion AJAX
@@ -349,8 +368,10 @@
                 }
 
                 //Grouping and Group Summary
-                if (cswPrivate.groupField.length > 0) {
+           if (cswPrivate.groupField &&
+                    cswPrivate.groupField.length > 0) {
                     cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
+
 
                     cswPrivate.toggleGroups = function (collapse) {
                         Csw.each(cswPrivate.grid.view.features, function (feature) {
@@ -590,6 +611,10 @@
                         startCollapsed: true
                     }]
                 };
+
+                if (cswPrivate.plugins) {
+                    gridopts.plugins = cswPrivate.plugins;
+                }
 
                 // Action column
                 if (cswPrivate.showActionColumn) { //&& false === cswPrivate.showCheckboxes
@@ -953,7 +978,13 @@
             });
 
             cswPublic.getAllGridRows = function () {
-                return cswPrivate.store.data;
+                var return_val = null;
+
+                if (cswPrivate.store) {
+                    return_val = cswPrivate.store.data;
+                }
+
+                return return_val;
             };
 
             cswPublic.print = Csw.method(function () {

@@ -10,6 +10,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -46,6 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string StoragePressure = "Storage Pressure";
             public const string StorageTemperature = "Storage Temperature";
             public const string UseType = "Use Type";
+            public const string ViewSDS = "View SDS";
         }
 
         #endregion Properties
@@ -97,7 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public sealed class StorageTemperatures
         {
-            public const string RoomTemperature = "4 = RoomTemperature";
+            public const string RoomTemperature = "4 = Room Temperature";
             public const string GreaterThanRoomTemp = "5 = Greater than room temp.";
             public const string LessThanRoomTemp = "6 = Less than room temp.";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { RoomTemperature, GreaterThanRoomTemp, LessThanRoomTemp };
@@ -148,6 +150,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            ViewSDS.State = PropertyName.ViewSDS;
+            ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
+
             // update Request Menu
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
             if( Tristate.True != Disposed.Checked )
@@ -241,7 +246,15 @@ namespace ChemSW.Nbt.ObjClasses
                                   Requisitionable.Checked == Tristate.False ) ||
                                   IsDisposed ||
                                   false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) );
-            Request.setHidden( value : CantRequest, SaveToDb : true );
+            Request.setHidden( value: CantRequest, SaveToDb: true );
+
+            CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+            if( null != material )
+            {
+                CswNbtMetaDataNodeTypeTab materialIdentityTab = material.NodeType.getIdentityTab();
+                bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( material.NodeType, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit ).Contains( material.ViewSDS.NodeTypeProp );
+                ViewSDS.setHidden( isHidden, false );
+            }
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -315,6 +328,15 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Data["viewid"] = containerFamilyView.SessionViewId.ToString();
                         ButtonData.Data["viewmode"] = containerFamilyView.ViewMode.ToString();
                         ButtonData.Data["type"] = "view";
+                        break;
+                    case PropertyName.ViewSDS:
+                        HasPermission = true;
+
+                        CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                        if( null != material )
+                        {
+                            material.GetMatchingSDSForCurrentUser( ButtonData );
+                        }
                         break;
                 }
                 if( false == HasPermission )
@@ -1114,6 +1136,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList StoragePressure { get { return ( _CswNbtNode.Properties[PropertyName.StoragePressure] ); } }
         public CswNbtNodePropList StorageTemperature { get { return ( _CswNbtNode.Properties[PropertyName.StorageTemperature] ); } }
         public CswNbtNodePropList UseType { get { return ( _CswNbtNode.Properties[PropertyName.UseType] ); } }
+        public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         #endregion
 
 

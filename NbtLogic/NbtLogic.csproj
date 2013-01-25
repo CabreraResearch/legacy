@@ -116,6 +116,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActTierIIReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActUploadLegacyMobileData.cs" />
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
     <Compile Include="csw\Actions\CswNbtActHMISReporting.cs" />
@@ -124,6 +125,11 @@
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
+    <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="csw\Mobile\CswNbtCISProNbtMobileData.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleC3.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropChildContents.cs" />
@@ -137,9 +143,11 @@
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28293.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28513.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28560.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28409.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28508.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28507.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28395.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28345.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28053.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28277.cs" />
@@ -419,13 +427,6 @@
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
     <Compile Include="csw\Dev\CswDeveloper.cs" />
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsColumn.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsEnums.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsField.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
-    <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
     <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />
     <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
@@ -623,7 +624,6 @@
     <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
@@ -979,29 +979,52 @@
       <DependentUpon>SqlRptViewDict.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <None Include="Properties\DataSources\ChemSW.MtSched.Core.CswSchedSvcReturn.datasource" />
+    <None Include="Service References\NbtSchedSvcRef\item7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtSchedSvcRef\item8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\NbtSchedSvcRef\configuration.svcinfo" />
+    <None Include="Service References\NbtSchedSvcRef\configuration91.svcinfo" />
+    <None Include="Service References\NbtSchedSvcRef\item.disco" />
+    <None Include="app.config" />
     <None Include="ChemSW.snk" />
     <None Include="csw\Actions\Example.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtSchedSvcRef\CswSchedSvcAdminEndPoint.wsdl" />
+    <None Include="Service References\NbtSchedSvcRef\item.xsd" />
     <None Include="Service References\ChemCatCentral\Search.wsdl" />
     <None Include="Service References\ChemCatCentral\Search.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtSchedSvcRef\item1.xsd" />
     <None Include="Service References\ChemCatCentral\Search1.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtSchedSvcRef\item2.xsd" />
     <None Include="Service References\ChemCatCentral\Search2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtSchedSvcRef\item3.xsd" />
     <None Include="Service References\ChemCatCentral\Search3.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtSchedSvcRef\item4.xsd" />
     <None Include="Service References\ChemCatCentral\Search4.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtSchedSvcRef\item5.xsd" />
     <None Include="Service References\ChemCatCentral\Search41.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\NbtSchedSvcRef\item6.xsd" />
     <None Include="Service References\ChemCatCentral\Search42.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1051,6 +1074,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadataStorage Include="Service References\NbtSchedSvcRef\" />
     <WCFMetadataStorage Include="Service References\ChemCatCentral\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />

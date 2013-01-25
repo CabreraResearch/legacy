@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using ChemSW.Nbt.Grid.ExtJs;
+using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Tree;
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.WebServices
                 public string AccessedByObjClassId = "";
             }
 
-            public class Response: CswWebSvcReturn
+            public class Response : CswWebSvcReturn
             {
                 public Response()
                 {
@@ -124,8 +124,8 @@ namespace ChemSW.Nbt.WebServices
                     public ResponseData()
                     {
                         Tree = new Collection<CswExtTree.TreeNode>();
-                        Columns = new Collection<CswNbtGridExtJsColumn>();
-                        Fields = new Collection<CswNbtGridExtJsField>();
+                        Columns = new Collection<CswGridExtJsColumn>();
+                        Fields = new Collection<CswGridExtJsField>();
                         ViewMode = NbtViewRenderingMode.Tree;
                         PageSize = 50;
                     }
@@ -134,10 +134,10 @@ namespace ChemSW.Nbt.WebServices
                     public Collection<CswExtTree.TreeNode> Tree;
 
                     [DataMember]
-                    public Collection<CswNbtGridExtJsColumn> Columns;
+                    public Collection<CswGridExtJsColumn> Columns;
 
                     [DataMember]
-                    public Collection<CswNbtGridExtJsField> Fields;
+                    public Collection<CswGridExtJsField> Fields;
 
                     public CswNbtSessionDataId ViewId { get; set; }
 
@@ -440,7 +440,7 @@ namespace ChemSW.Nbt.WebServices
                 RootNode.Id = "root";
 
                 //#2: the columns for the Tree Grid
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "text",
                         xtype = extJsXType.treecolumn,
@@ -449,7 +449,7 @@ namespace ChemSW.Nbt.WebServices
                         header = "Tree",
                         resizable = false,
                     } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "nodetypeid",
                         header = "NodeTypeId",
@@ -459,7 +459,7 @@ namespace ChemSW.Nbt.WebServices
                         xtype = extJsXType.gridcolumn,
                         MenuDisabled = true
                     } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "objectclassid",
                         header = "ObjectClassId",
@@ -469,7 +469,7 @@ namespace ChemSW.Nbt.WebServices
                         xtype = extJsXType.gridcolumn,
                         MenuDisabled = true
                     } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                 {
                     ExtDataIndex = "nodeid",
                     header = "NodeId",
@@ -479,7 +479,7 @@ namespace ChemSW.Nbt.WebServices
                     xtype = extJsXType.gridcolumn,
                     MenuDisabled = true
                 } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "disabled",
                         header = "Disabled",
@@ -492,11 +492,11 @@ namespace ChemSW.Nbt.WebServices
 
 
                 //#3: The fields to map the columns to the data store
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "text", type = "string" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodetypeid", type = "string" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "objectclassid", type = "string" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodeid", type = "string" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "disabled", type = "bool" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "text", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "nodetypeid", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "objectclassid", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "nodeid", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "disabled", type = "bool" } );
 
                 //#4: the tree
                 RootNode.Children = new Collection<CswExtTree.TreeNode>();

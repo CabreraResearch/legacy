@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        
+
         private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true )
         {
             CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
@@ -690,6 +690,30 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28246
 
+        #region Case 28560
+
+        private void _addViewSDSToContainer( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp viewSDS_OCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ViewSDS );
+
+            if( null == viewSDS_OCP )
+            {
+                viewSDS_OCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
+                {
+                    PropName = CswNbtObjClassContainer.PropertyName.ViewSDS,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
+
         #endregion WILLIAM Methods
 
         /// <summary>
@@ -720,6 +744,7 @@ namespace ChemSW.Nbt.Schema
             _addPropsToJuridictionOC( CswDeveloper.MB, 28363 );
             _addViewSDSProptoMaterial( CswDeveloper.MB, 28363 );
             _addPropsToMaterialSynonymOC( CswDeveloper.CM, 28246 );
+            _addViewSDSToContainer( CswDeveloper.MB, 28560 );
 
             #endregion WILLIAM
 
