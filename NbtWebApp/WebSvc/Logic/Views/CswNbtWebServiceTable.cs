@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
@@ -237,6 +238,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     NodeObj["nodekey"] = NodeKey.ToString();
                 }
+                NodeObj["nodelink"] = CswNbtNode.getNodeLink( NodeId, NodeName );
                 NodeObj["c3productid"] = C3ProductId.ToString();
                 NodeObj["locked"] = Locked.ToString().ToLower();
                 NodeObj["disabled"] = Disabled.ToString().ToLower();

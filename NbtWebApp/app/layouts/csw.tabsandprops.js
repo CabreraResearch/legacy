@@ -411,9 +411,11 @@
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = nodekey;
                         cswPrivate.globalState.currentNodeId = nodeid;
+                        cswPrivate.globalState.currentNodeLink = data.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
-                    }
+                    }   
                     delete data.nodeid;
+                    delete data.nodelink;
                 }
                 return nodeid;
             };
@@ -1145,7 +1147,7 @@
                             cswPrivate.enableSaveBtn();
                             var onSaveSuccess = function () {
                                 var onSaveRefresh = function () {
-                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename);
+                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename, successData.nodelink);
                                     Csw.tryExec(onSuccess);
                                 };
 

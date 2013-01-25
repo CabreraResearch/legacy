@@ -69,9 +69,14 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 // For Logicals, return the property name
-                return PropName;
+                string ret = string.Empty;
+                if( Checked == Tristate.True )
+                {
+                    ret = PropName;
+                }
+                return ret;
             }
-        }
+        } // ValueForNameTemplate
 
 
         public static string toLogicalGestalt( Tristate Tristate )

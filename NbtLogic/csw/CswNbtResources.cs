@@ -17,8 +17,8 @@ using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 using ChemSW.Security;
 using ChemSW.Session;
-using ChemSW.TblDn;
 using ChemSW.StructureSearch;
+using ChemSW.TblDn;
 
 namespace ChemSW.Nbt
 {
@@ -635,6 +635,8 @@ namespace ChemSW.Nbt
                 _CswNbtMetaData.afterFinalize();
         }//finalize()
 
+
+        public bool InTransaction { get { return ( _CswResources.InTransaction ); } }
         /// <summary>
         /// Undoes all posted changes in the current transaction, to all CswTableUpdate datatables and in the database
         /// </summary>

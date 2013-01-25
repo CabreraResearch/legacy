@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -10,7 +8,6 @@ using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using NbtWebApp;
@@ -423,216 +420,26 @@ namespace ChemSW.Nbt.WebServices
             }
             return Ret;
         }
-
-        public NodeSelect.Response.Ret getNodes( NodeSelect.Request Request )
-        {
-            NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
-
-            Ret.CanAdd = true;
-            Ret.UseSearch = false;
-            Ret.NodeTypeId = Request.NodeTypeId;
-            Ret.ObjectClassId = Request.ObjectClassId;
-
-            Dictionary<CswPrimaryKey, string> Nodes = new Dictionary<CswPrimaryKey, string>();
-
-            // case 25956
-            Int32 SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.relationshipoptionlimit.ToString() ) );
-            CswNbtView View = null;
-
-            if( SearchThreshold <= 0 )
-            {
-                SearchThreshold = 100;
-            }
-
-            if( null != Request.NbtViewId && Request.NbtViewId.isSet() )
-            {
-                View = _CswNbtResources.ViewSelect.getSessionView( Request.NbtViewId );
-                foreach( CswNbtViewRelationship ChildRelationship in View.Root.ChildRelationships )
-                {
-                    ICswNbtMetaDataObject MetaDataObject = ChildRelationship.SecondMetaDataObject();
-                    if( MetaDataObject.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
-                    {
-                        CswNbtMetaDataObjectClass ObjectClass = (CswNbtMetaDataObjectClass) MetaDataObject;
-                        Ret.CanAdd = ObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
-                        Ret.ObjectClassId = ObjectClass.ObjectClassId;
-                        break;
-                    }
-                    else if( MetaDataObject.UniqueIdFieldName == CswNbtMetaDataNodeType.MetaDataUniqueType )
-                    {
-                        CswNbtMetaDataNodeType NodeType = (CswNbtMetaDataNodeType) MetaDataObject;
-                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
-                        Ret.ObjectClassId = NodeType.ObjectClassId;
-                        Ret.NodeTypeId = NodeType.NodeTypeId;
-                        break;
-                    }
-                }
-            }
-            else if( Request.NodeTypeId > 0 )
-            {
-                CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId );
-                Nodes = MetaDataNodeType.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
-                Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
-            }
-            else if( false == String.IsNullOrEmpty( Request.NodeTypeName ) )
-            {
-                CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeName );
-                Nodes = MetaDataNodeType.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
-                Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
-            }
-            else
-            {
-                CswNbtMetaDataObjectClass MetaDataObjectClass = null;
-                if( Request.ObjectClassId > 0 )
-                {
-                    MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Request.ObjectClassId );
-                }
-                else if( Request.ObjectClass != CswNbtResources.UnknownEnum )
-                {
-                    MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Request.ObjectClass );
-                    Ret.ObjectClassId = MetaDataObjectClass.ObjectClassId;
-                }
-
-                if( null != MetaDataObjectClass )
-                {
-                    bool doGetNodes = true;
-                    if( false == string.IsNullOrEmpty( Request.RelatedToObjectClass ) && CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
-                    {
-                        NbtObjectClass RealRelatedObjectClass = Request.RelatedToObjectClass;
-
-                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                        if( null != RelatedNode )
-                        {
-                            if( RelatedNode.ObjClass.ObjectClass.ObjectClass == RealRelatedObjectClass )
-                            {
-                                Collection<CswNbtMetaDataObjectClassProp> RelatedProps = new Collection<CswNbtMetaDataObjectClassProp>();
-                                CswNbtMetaDataObjectClass MetaRelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( RealRelatedObjectClass );
-                                Ret.RelatedObjectClassId = MetaRelatedObjectClass.ObjectClassId;
-                                foreach( CswNbtMetaDataObjectClassProp OcProp in from _OcProp in MetaDataObjectClass.getObjectClassProps()
-                                                                                 where _OcProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                                                                                       _OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                                                                       _OcProp.FKValue == MetaRelatedObjectClass.ObjectClassId
-                                                                                 select _OcProp )
-                                {
-                                    RelatedProps.Add( OcProp );
-                                }
-
-                                if( RelatedProps.Any() )
-                                {
-                                    doGetNodes = false;
-                                    View = new CswNbtView( _CswNbtResources );
-                                    CswNbtViewRelationship Relationship = View.AddViewRelationship( MetaDataObjectClass, true );
-                                    foreach( CswNbtMetaDataObjectClassProp RelationshipProp in RelatedProps )
-                                    {
-                                        View.AddViewPropertyAndFilter( Relationship, RelationshipProp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: Request.RelatedNodeId.PrimaryKey.ToString() );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if( doGetNodes )
-                    {
-                        Nodes = MetaDataObjectClass.getNodeIdAndNames( forceReInit: true, includeSystemNodes: false );
-                    }
-                    Ret.CanAdd = MetaDataObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
-                }
-                else
-                {
-                    Ret.CanAdd = false;
-                }
-            }
-
-            if( null != View )
-            {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
-
-                Ret.UseSearch = Ret.UseSearch || Tree.getChildNodeCount() > SearchThreshold;
-                for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
-                {
-                    Tree.goToNthChild( N );
-                    Ret.Nodes.Add( new CswNbtNode.Node( Tree.getNodeIdForCurrentPosition(), Tree.getNodeNameForCurrentPosition() ) );
-                    Tree.goToParentNode();
-                }
-            }
-            else
-            {
-                Ret.UseSearch = Ret.UseSearch || Nodes.Count > SearchThreshold;
-                foreach( CswPrimaryKey NodePk in Nodes.OrderBy( Pair => Pair.Value )
-                    .Select( Pair => Pair.Key )
-                    .Take( SearchThreshold ) )
-                {
-                    Ret.Nodes.Add( new CswNbtNode.Node( NodePk, Nodes[NodePk] ) );
-                }
-            }
-            return Ret;
-        }
-
+        
         /// <summary>
         /// WCF wrapper around getNodes
         /// </summary>
-        public static void getNodes( ICswResources CswResources, NodeSelect.Response Response, NodeSelect.Request Request )
+        public static void getNodes( ICswResources CswResources, NodeResponse Response, NodeSelect.Request Request )
         {
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( NbtResources, null );
-                Response.Data = ws.getNodes( Request );
+                CswNbtSdNode sd = new CswNbtSdNode( NbtResources );
+                Response.Data = sd.getNodes( Request );
             }
         }
 
-        public static void getRelationshipOpts( ICswResources CswResources, NodeSelect.Response Response, NodeSelect.PropertyView Request )
+        public static void getSizes( ICswResources CswResources, NodeResponse Response, CswNbtNode.Node Request )
         {
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
-                NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
-
-                int nodeTypeId;
-                CswPrimaryKey pk = new CswPrimaryKey();
-                if( false == String.IsNullOrEmpty( Request.NodeId ) )
-                {
-                    pk = CswConvert.ToPrimaryKey( Request.NodeId );
-                    nodeTypeId = NbtResources.Nodes[pk].NodeTypeId;
-                }
-                else
-                {
-                    nodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
-                }
-                Dictionary<CswPrimaryKey, string> Opts = new Dictionary<CswPrimaryKey, string>();
-                if( null == Request.ViewId )
-                {
-                    CswNbtMetaDataNodeType metaDataNodeType = NbtResources.MetaData.getNodeType(nodeTypeId);
-                    if (null != metaDataNodeType)
-                    {
-                        CswNbtMetaDataNodeTypeProp ntp = metaDataNodeType.getNodeTypePropByObjectClassProp(Request.ObjClassPropName);
-                        Opts = CswNbtNodePropRelationship.getOptions(NbtResources, ntp, null);
-                    }
-                }
-                else
-                {
-                    CswNbtViewId ViewId = new CswNbtViewId( Request.ViewId );
-                    Opts = CswNbtNodePropRelationship.getOptions( NbtResources, ViewId, Request.TargetNodeTypeId, Request.TargetObjectClassId );
-                }
-                foreach( KeyValuePair<CswPrimaryKey, string> pair in Opts )
-                {
-                    Ret.Nodes.Add( new CswNbtNode.Node( null )
-                    {
-                        NodePk = pair.Key,
-                        NodeName = pair.Value
-                    } );
-                }
-                Response.Data = Ret;
-            }
-        }
-
-        public static void getSizes( ICswResources CswResources, NodeSelect.Response Response, CswNbtNode.Node Request )
-        {
-            if( null != CswResources )
-            {
-                CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
-                NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
-
+                
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
@@ -651,35 +458,14 @@ namespace ChemSW.Nbt.WebServices
                     for( int i = 0; i < tree.getChildNodeCount(); i++ )
                     {
                         tree.goToNthChild( i );
-                        Ret.Nodes.Add( new CswNbtNode.Node( null )
+                        Response.Data.Nodes.Add( new CswNbtNode.Node( null )
                         {
-                            NodePk = tree.getNodeIdForCurrentPosition(),
+                            NodeId = tree.getNodeIdForCurrentPosition(),
                             NodeName = tree.getNodeNameForCurrentPosition()
                         } );
                         tree.goToParentNode();
                     }
 
-                }
-
-                Response.Data = Ret;
-            }
-        }
-
-        public static void getNodeLink( ICswResources CswResources, NodeSelect.NodeLinkResponse Response, NodeSelect.PropertyView Request )
-        {
-            if( null != CswResources )
-            {
-                CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
-                NodeSelect.NodeLinkResponse.Ret ret = new NodeSelect.NodeLinkResponse.Ret();
-
-                CswPrimaryKey pk = new CswPrimaryKey();
-                pk.FromString( Request.NodeId );
-                if( CswTools.IsPrimaryKey( pk ) )
-                {
-                    CswNbtNode node = NbtResources.Nodes[pk];
-                    ret.NodeLink = node.NodeLink;
-                    Response.Data = ret;
                 }
             }
         }

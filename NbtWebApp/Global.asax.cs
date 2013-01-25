@@ -22,6 +22,8 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Containers", Factory, typeof( Containers ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/ChemCatCentral", Factory, typeof( ChemCatCentral ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/LandingPages", Factory, typeof( LandingPages ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Materials", Factory, typeof( Materials ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Menus", Factory, typeof( Menus ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Mol", Factory, typeof( Mol ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Nodes", Factory, typeof( Nodes ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/RegulatoryReporting", Factory, typeof( RegulatoryReporting ) ) );
@@ -30,8 +32,8 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Session", Factory, typeof( Session ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Trees", Factory, typeof( Trees ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Views", Factory, typeof( Views ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Scheduler", Factory, typeof( Scheduler ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/CISProNbtMobile", Factory, typeof( CISProNbtMobile ) ) );
-            RouteTable.Routes.Add( new ServiceRoute( "Services/Menus", Factory, typeof( Menus ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/LegacyMobile", Factory, typeof( LegacyMobile ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/KioskMode", Factory, typeof( KioskMode ) ) );
         }
