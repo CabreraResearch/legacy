@@ -161,10 +161,6 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                //int NumberToProcess = 3;
-                //CAFImportManager importManager = new CAFImportManager( _CswNbtResources, NumberToProcess );
-                //importManager.Import();
-
                 bool HasPermission = false;
                 switch( OCP.PropName )
                 {
