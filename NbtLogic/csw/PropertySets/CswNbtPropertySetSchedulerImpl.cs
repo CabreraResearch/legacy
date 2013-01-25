@@ -2,7 +2,7 @@
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.PropertySets
 {
@@ -25,20 +25,17 @@ namespace ChemSW.Nbt.PropertySets
 
         bool _UpdateFutureTasks = false;
 
-        public void updateNextDueDate( bool ForceUpdate, bool DeleteFuture )
+        public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval )
         {
-            if( _Scheduler.DueDateInterval.WasModified ||
-                _Scheduler.FinalDueDate.WasModified ||
-                _CswNbtNode.New ||
-                DeleteFuture ||
-                ForceUpdate )
+            DateTime Ret = DateTime.MinValue;
+            if( NodePropInterval.WasModified ||
+                Node.New )
             {
-                DateTime CandidateNextDueDate = DateTime.MinValue;
-                if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
+                if( NodePropInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
                 {
                     DateTime AfterDate = DateTime.Now;
-                    DateTime NextDueDate = _Scheduler.NextDueDate.DateTimeValue;
-                    if( _Scheduler.DueDateInterval.WasModified || _CswNbtNode.New )
+                    DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
+                    if( NodePropInterval.WasModified || Node.New )
                     {
                         // Next Due Date might be invalid if the interval was altered
                         NextDueDate = DateTime.MinValue;
@@ -47,8 +44,22 @@ namespace ChemSW.Nbt.PropertySets
                     {
                         AfterDate = NextDueDate;
                     }
+
+                    Ret = NodePropInterval.getNextOccuranceAfter( AfterDate );
                     
-                    CandidateNextDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( AfterDate );
+                } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
+            }
+            return Ret;
+        } // updateNextDueDate()
+
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFuture )
+        {
+            if( _Scheduler.FinalDueDate.WasModified ||
+                DeleteFuture ||
+                ForceUpdate )
+            {
+                DateTime CandidateNextDueDate = getNextDueDate( _CswNbtNode, _Scheduler.NextDueDate, _Scheduler.DueDateInterval );
+                if(DateTime.MinValue != CandidateNextDueDate) {
 
                     DateTime FinalDueDate = _Scheduler.FinalDueDate.DateTimeValue;
                     if( DateTime.MinValue != FinalDueDate &&

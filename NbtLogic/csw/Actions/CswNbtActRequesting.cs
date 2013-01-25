@@ -7,6 +7,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
@@ -20,14 +21,19 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtMetaDataObjectClass _RequestOc = null;
+        private ICswNbtUser _ThisUser = null;
 
         #endregion Private, core methods
 
         #region Constructor
 
-        public CswNbtActRequesting( CswNbtResources CswNbtResources )
+        public CswNbtActRequesting( CswNbtResources CswNbtResources, ICswNbtUser ThisUser = null )
         {
             _CswNbtResources = CswNbtResources;
+            if( null == ThisUser )
+            {
+                _ThisUser = _CswNbtResources.CurrentNbtUser;
+            }
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
@@ -333,7 +339,7 @@ namespace ChemSW.Nbt.Actions
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ),
                 SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                Value: _CswNbtResources.CurrentNbtUser.UserId.PrimaryKey.ToString(),
+                Value: _ThisUser.UserId.PrimaryKey.ToString(),
                 ShowInGrid: false );
 
             return Ret;
@@ -377,7 +383,33 @@ namespace ChemSW.Nbt.Actions
         }
 
         public const string RecurringItemsViewName = "Recurring Request Items";
-        public CswNbtView getRecurringRequestsItemsView()
+        public CswNbtView getUsersRecurringRequestsItemsView()
+        {
+            CswNbtView Ret = getAllRecurringRequestsItemsView();
+
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
+
+            Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Requestor ), ShowInGrid: false, Value: "me" );
+            return Ret;
+        }
+
+        public CswNbtView getDueRecurringRequestsItemsView()
+        {
+            CswNbtView Ret = getAllRecurringRequestsItemsView();
+
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
+
+            Ret.AddViewPropertyAndFilter( RequestItemRel, 
+                MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate ), 
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, 
+                Value: "today" );
+
+            return Ret;
+        }
+
+        public CswNbtView getAllRecurringRequestsItemsView()
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources )
             {
@@ -390,7 +422,7 @@ namespace ChemSW.Nbt.Actions
             //Unlike other Request Items, Recurring requests are not tied to a Request, so they don't have a Name.
 
             CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
-            CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
+            CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters : false );
 
             CswNbtViewProperty Vp3 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
             Vp3.Width = 40;
@@ -400,14 +432,12 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewProperty Vp5 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate ) );
             Vp5.Order = 3;
             Vp5.SortBy = true;
-            Ret.AddViewPropertyFilter( Vp5, ShowAtRuntime: true );
+            Ret.AddViewPropertyFilter( Vp5, ShowAtRuntime : true );
 
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                                           MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring ),
-                                          Value: Tristate.True.ToString(),
-                                          ShowInGrid: false );
-
-            Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Requestor ), ShowInGrid: false, Value: "me" );
+                                          Value : Tristate.True.ToString(),
+                                          ShowInGrid : false );
             return Ret;
         }
 
@@ -447,7 +477,7 @@ namespace ChemSW.Nbt.Actions
             SubmittedItems.SaveToCache( IncludeInQuickLaunch: false );
             Cart.SubmittedItemsView = SubmittedItems;
 
-            CswNbtView RecurringItems = getRecurringRequestsItemsView();
+            CswNbtView RecurringItems = getUsersRecurringRequestsItemsView();
             RecurringItems.SaveToCache( IncludeInQuickLaunch: false );
             Cart.RecurringItemsView = RecurringItems;
 
@@ -522,9 +552,9 @@ namespace ChemSW.Nbt.Actions
                 if( null != getCurrentRequestNodeId() && null != Container )
                 {
                     CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
-                    if( CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
+                    if( CswTools.IsPrimaryKey( _ThisUser.DefaultLocationId ) )
                     {
-                        SelectedLocationId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                        SelectedLocationId = _ThisUser.DefaultLocationId;
                     }
                     else
                     {
@@ -610,12 +640,12 @@ namespace ChemSW.Nbt.Actions
                     CswNbtObjClassRequestMaterialDispense RetAsMatDisp = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RetAsRequestItem );
                     RetAsMatDisp.Request.RelatedNodeId = getCurrentRequestNodeId();
 
-                    if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
+                    if( null != _ThisUser.DefaultLocationId )
                     {
-                        CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
+                        CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _ThisUser.DefaultLocationId );
                         if( null != DefaultAsLocation )
                         {
-                            RetAsMatDisp.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            RetAsMatDisp.Location.SelectedNodeId = _ThisUser.DefaultLocationId;
                             RetAsMatDisp.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
                             RetAsMatDisp.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
                         }

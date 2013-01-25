@@ -138,14 +138,17 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Copy the Request Item
         /// </summary>
-        public CswNbtPropertySetRequestItem copyNode()
+        public CswNbtPropertySetRequestItem copyNode(bool PostChanges = true)
         {
             CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             RetCopy.Node.copyPropertyValues( Node );
             RetCopy.Status.Value = Statuses.Pending;
             RetCopy.Request.RelatedNodeId = null;
             _toggleReadOnlyProps( false, RetCopy );
-            RetCopy.postChanges( true );
+            if( PostChanges )
+            {
+                RetCopy.postChanges( true );
+            }
             return RetCopy;
         }
 
