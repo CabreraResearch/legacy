@@ -492,7 +492,6 @@
 
                 // Action column
                 if (cswPrivate.showActionColumn) { //&& false === cswPrivate.showCheckboxes
-
                     var newcol = {
                         header: 'Action',
                         dataIndex: cswPrivate.actionDataIndex,
@@ -500,6 +499,12 @@
                         flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
+                        listeners: {
+                            move: function() {
+                                cswPrivate.makeActionColumns(0);
+                            }
+                            
+                        },
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //Terrible choice in words, "renderer" means the event that will run sometime after this based on the HTML string you define.
                             cswPrivate.actionTableIds = cswPrivate.actionTableIds || [];

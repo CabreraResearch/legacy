@@ -214,7 +214,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override string setRequestDescription()
         {
-            string Ret = "Dispense ";
+            string Ret = "";
+            if( _IsRecurring )
+            {
+                Ret = RecurringFrequency.Gestalt + " Recurring ";
+            }
+            Ret += "Dispense ";
             switch( Type.Value )
             {
                 case Types.Bulk:
@@ -600,9 +605,7 @@ namespace ChemSW.Nbt.ObjClasses
             //Neither favs nor recurs represent real (aka Fulfillable) Items
             if( _IsFavorite || _IsRecurring ) 
             {
-                //Name is normally shown on status change, which doesn't happen for "fake" request items
-                Name.setHidden( value : false, SaveToDb : true );
-
+                Status.Value = "";
                 Status.setHidden( value : true, SaveToDb : true );
                 Fulfill.setHidden( value : true, SaveToDb : true );
                 AssignedTo.setHidden( value : true, SaveToDb : true );
@@ -612,7 +615,6 @@ namespace ChemSW.Nbt.ObjClasses
                 TotalDispensed.setHidden( value : true, SaveToDb : true );
                 ReceiptLotToDispense.setHidden( value : true, SaveToDb : true );
                 ReceiptLotsReceived.setHidden( value : true, SaveToDb : true );
-                NextReorderDate.setHidden( value : true, SaveToDb : true );
                 GoodsReceived.setHidden( value : true, SaveToDb : true );
             }
         }
@@ -629,10 +631,11 @@ namespace ChemSW.Nbt.ObjClasses
             // No "else": like favorites, recurring items never transition out of this state--they can only be deleted.
             if( _IsRecurring )
             {
+                _hideFakeItemProps();                    
                 Request.RelatedNodeId = null;
                 RecurringFrequency.setHidden( value : false, SaveToDb : true );
                 NextReorderDate.setHidden( value : false, SaveToDb : true );
-                _hideFakeItemProps();                    
+                Name.setHidden(value: true, SaveToDb: true );
             }
         }
         
@@ -645,7 +648,13 @@ namespace ChemSW.Nbt.ObjClasses
             if( _IsFavorite ) 
             {
                 _hideFakeItemProps();
+
+                //Name is normally shown on status change, which doesn't happen for "fake" request items
+                Name.setHidden( value : false, SaveToDb : true );
+
                 IsRecurring.setHidden( value : true, SaveToDb : true );
+                NextReorderDate.setHidden( value : true, SaveToDb : true );
+                RecurringFrequency.setHidden( value : true, SaveToDb : true );
             }
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }

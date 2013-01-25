@@ -187,7 +187,7 @@
                 }
             }; // copyFavorites()  
 
-            cswPrivate.copyRecurring = function (copyRequestItems, onSuccess) {
+            cswPrivate.copyRecurring = function (copyRequestItems, onError) {
                 if (copyRequestItems) {
                     Csw.ajaxWcf.post({
                         urlMethod: 'Requests/Recurring/copy',
@@ -196,8 +196,11 @@
                         },
                         success: function () {
                             cswPrivate.openTab('Recurring');
-                            cswPrivate.getCartCounts();
-                            onSuccess();
+                            //cswPrivate.tabs.setActiveTab(2);
+                            //cswPrivate.getCartCounts();
+                        },
+                        error: function() {
+                            onError();
                         }
                     });
                 }
@@ -294,7 +297,7 @@
                 }
             };
 
-            cswPrivate.makeCopyRecurringBtn = function (cswNode, cswGrid, callBack) {
+            cswPrivate.makeCopyRecurringBtn = function (cswNode, cswGrid, onError) {
                 var ret = cswNode.buttonExt({
                     enabledText: 'Copy to Recurring',
                     disabledText: 'Copy to Recurring',
@@ -307,7 +310,7 @@
                         });
                         cswPrivate.copyRecurring(nodes, function () {
                             cswGrid.deselectAll();
-                            callBack();
+                            onError();
                         });
                         ret.disable();
                     }

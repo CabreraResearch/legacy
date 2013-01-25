@@ -334,7 +334,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
             }
             else
-            {
+            {   
                 RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
             }
             RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
