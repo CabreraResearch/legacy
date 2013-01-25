@@ -662,6 +662,24 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _addRecurringRequestProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            
+            
+            CswNbtMetaDataObjectClassProp RecurringOcp = RequestMaterialDispenseOc.getObjectClassProp( "Recurring" );
+            if( null != RecurringOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RecurringOcp, Tristate.False );
+            }
+
+            _resetBlame();
+        }
+
         #endregion
 
         #region Case 28246
@@ -745,6 +763,7 @@ namespace ChemSW.Nbt.Schema
             _addViewSDSProptoMaterial( CswDeveloper.MB, 28363 );
             _addPropsToMaterialSynonymOC( CswDeveloper.CM, 28246 );
             _addViewSDSToContainer( CswDeveloper.MB, 28560 );
+            _addRecurringRequestProp( CswDeveloper.CF, 28340 );
 
             #endregion WILLIAM
 
