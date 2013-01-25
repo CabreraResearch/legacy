@@ -161,6 +161,9 @@
         <Compile Include="Services\Requests.svc.cs">
             <DependentUpon>Requests.svc</DependentUpon>
         </Compile>
+    <Compile Include="Services\Materials.svc.cs">
+      <DependentUpon>Materials.svc</DependentUpon>
+    </Compile>
         <Compile Include="Services\Session.svc.cs">
             <DependentUpon>Session.svc</DependentUpon>
         </Compile>
@@ -1098,6 +1101,7 @@
         <Content Include="Popup_DesignAdd.aspx" />
         <Content Include="Popup_DesignDelete.aspx" />
         <Content Include="Services\Requests.svc" />
+    <Content Include="Services\Materials.svc" />
         <Content Include="Services\Session.svc" />
         <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
         <Content Include="SkinPrint\Calendar\arrowLeft.gif" />

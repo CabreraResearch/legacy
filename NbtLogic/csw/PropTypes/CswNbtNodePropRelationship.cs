@@ -429,6 +429,7 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             JOption["id"] = NodePk.ToString();
                             JOption["value"] = Options[NodePk];
+                            JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
                         }
                         else
                         {
