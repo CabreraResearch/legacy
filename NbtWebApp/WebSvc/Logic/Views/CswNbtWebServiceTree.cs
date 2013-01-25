@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceTree
     {
         private readonly CswNbtResources _CswNbtResources;
-        private wsTreeOfView _wsTreeOfView;
         private CswNbtView _View;
         private string _IdPrefix;
 
@@ -21,7 +20,6 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
             _IdPrefix = IdPrefix;
             _View = View;
-            _wsTreeOfView = new wsTreeOfView( _CswNbtResources, _View, _IdPrefix );
         }
 
         /// <summary>

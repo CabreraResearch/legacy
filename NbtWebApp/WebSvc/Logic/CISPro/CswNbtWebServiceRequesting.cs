@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
-            Ret.Data.Succeeded = ActRequesting.submitRequest( Request.NodePk, Request.NodeName );
+            Ret.Data.Succeeded = ActRequesting.submitRequest( Request.NodeId, Request.NodeName );
         }
 
         /// <summary>

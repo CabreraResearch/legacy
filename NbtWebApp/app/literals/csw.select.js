@@ -33,6 +33,10 @@
                 return cswPublic;
             };
 
+            cswPublic.selectedData = function (propName) {
+                return cswPublic.$.find('option:selected')[0].dataset[propName];
+            };
+
             cswPublic.selectedText = function () {
                 return cswPublic.$.find('option:selected').text();
             };
@@ -174,7 +178,7 @@
                 }
 
                 if (Csw.isFunction(cswPrivate.onChange)) {
-                    cswPublic.change(cswPrivate.onChange);
+                    cswPublic.change(cswPrivate.onChange);  
                 }
 
                 var values = cswPublic.makeOptions(cswPrivate.values);

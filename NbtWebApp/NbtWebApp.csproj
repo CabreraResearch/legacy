@@ -143,6 +143,9 @@
     <Compile Include="Services\Requests.svc.cs">
       <DependentUpon>Requests.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Materials.svc.cs">
+      <DependentUpon>Materials.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Session.svc.cs">
       <DependentUpon>Session.svc</DependentUpon>
     </Compile>
@@ -165,9 +168,6 @@
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
     <Compile Include="WebSvc\Logic\Search\CswNbtWebServiceC3Search.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
-    <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="WebSvc\Logic\NbtManager\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceQuotas.cs" />
@@ -1072,6 +1072,7 @@
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
     <Content Include="Services\Requests.svc" />
+    <Content Include="Services\Materials.svc" />
     <Content Include="Services\Session.svc" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
