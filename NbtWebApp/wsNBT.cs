@@ -1043,7 +1043,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runGrid( string ViewId, string IncludeNodeKey, string IncludeNodeId, string IncludeInQuickLaunch, string ForReport )
+        public string runGrid( string Title, string ViewId, string IncludeNodeKey, string IncludeNodeId, string IncludeInQuickLaunch, string ForReport )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -1061,7 +1061,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != View )
                 {
                     var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( ForReport ) );
-                    ReturnVal = ws.runGrid( IsQuickLaunch );
+                    ReturnVal = ws.runGrid( Title, IsQuickLaunch );
                 }
 
                 _deInitResources();

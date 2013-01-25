@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Grid
             return ret;
         } // _getUniquePrefix()
 
-        public JObject TreeToJson( CswNbtView View, ICswNbtTree Tree, bool IsPropertyGrid = false, string GroupByCol = "" )
+        public JObject TreeToJson( string Title, CswNbtView View, ICswNbtTree Tree, bool IsPropertyGrid = false, string GroupByCol = "" )
         {
             JObject Ret = new JObject();
             if( null != View )
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Grid
                     GroupByCol = View.Root.GridGroupByCol;
                 }
                 grid.GroupByCol = GroupByCol;
-                grid.title = View.ViewName;
+                grid.title = Title;
                 if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
                 {
                     grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
