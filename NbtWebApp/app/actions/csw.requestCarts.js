@@ -192,12 +192,11 @@
                     Csw.ajaxWcf.post({
                         urlMethod: 'Requests/Recurring/copy',
                         data: {
-                            RequestItems: copyRequestItems
+                            RequestItems: copyRequestItems,
+                            RequestId: cswPrivate.state.pendingCartId
                         },
                         success: function () {
                             cswPrivate.openTab('Recurring');
-                            //cswPrivate.tabs.setActiveTab(2);
-                            //cswPrivate.getCartCounts();
                         },
                         error: function() {
                             onError();

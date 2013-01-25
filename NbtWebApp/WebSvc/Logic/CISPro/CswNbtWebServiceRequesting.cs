@@ -168,9 +168,22 @@ namespace ChemSW.Nbt.WebServices
         public static void copyRecurring( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.CswRequestReturn.Ret Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
-            applyCopyLogic SetRecurring = ( x ) => { x.IsRecurring.Checked = Tristate.True; };
-            Ret.Data.Succeeded = ws.copyRequestItems( Request, SetRecurring );
+            bool Succeeded = false;
+            if( CswTools.IsPrimaryKey( Request.CswRequestId ) && Request.RequestItems.Any() )
+            {
+                CswNbtObjClassRequest RequestNode = NbtResources.Nodes[Request.CswRequestId];
+                if( null != RequestNode )
+                {
+                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
+                    applyCopyLogic SetRequest = ( x ) =>
+                        {
+                            x.Request.RelatedNodeId = RequestNode.NodeId;
+                            x.IsRecurring.Checked = Tristate.True;
+                        };
+                    Succeeded = ws.copyRequestItems( Request, SetRequest );
+                }
+            }
+            Ret.Data.Succeeded = Succeeded;
         }
 
         private bool copyRequestItems( CswNbtRequestDataModel.CswRequestReturn.Ret Request, applyCopyLogic CopyLogic )

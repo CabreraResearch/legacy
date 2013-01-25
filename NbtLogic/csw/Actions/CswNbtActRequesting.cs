@@ -390,7 +390,12 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
 
-            Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Requestor ), ShowInGrid: false, Value: "me" );
+            //We'll use the Current cart for both pending and recurring items and trust the filters to keep them separate
+            Ret.AddViewPropertyAndFilter( RequestItemRel, 
+                MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ), 
+                ShowInGrid: false, 
+                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                Value: getCurrentRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }
 
