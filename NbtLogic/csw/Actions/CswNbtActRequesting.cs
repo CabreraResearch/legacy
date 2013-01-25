@@ -384,28 +384,23 @@ namespace ChemSW.Nbt.Actions
                 Category = "Request Configuration",
                 Visibility = NbtViewVisibility.Hidden,
                 ViewMode = NbtViewRenderingMode.Grid,
-                ViewName = RecurringItemsViewName,
-                GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Name
+                ViewName = RecurringItemsViewName
             };
 
+            //Unlike other Request Items, Recurring requests are not tied to a Request, so they don't have a Name.
+
             CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
-            CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: true );
+            CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
 
-            CswNbtViewProperty NameVp = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
-            NameVp.Order = 1;
-            Ret.AddViewPropertyFilter( NameVp, ShowAtRuntime: true );
-
-            CswNbtViewProperty Vp2 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
-            Vp2.Width = 5;
-            Vp2.Order = 2;
             CswNbtViewProperty Vp3 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
             Vp3.Width = 40;
-            Vp3.Order = 3;
+            Vp3.Order = 1;
             CswNbtViewProperty Vp4 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency ) );
-            Vp4.Order = 4;
+            Vp4.Order = 2;
             CswNbtViewProperty Vp5 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate ) );
-            Vp5.Order = 5;
+            Vp5.Order = 3;
             Vp5.SortBy = true;
+            Ret.AddViewPropertyFilter( Vp5, ShowAtRuntime: true );
 
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                                           MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring ),
@@ -423,13 +418,16 @@ namespace ChemSW.Nbt.Actions
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: false, IncludeHiddenNodes: false );
             if( View.Visibility == NbtViewVisibility.Property )
             {
+                if( Tree.getChildNodeCount() > 0 )
+                {
                 Tree.goToNthChild(0);
+            }
             }
             Int32 Ret = Tree.getChildNodeCount();
             return Ret;
         }
 
-        public Cart getCart( Cart Cart )
+        public Cart getCart( Cart Cart, bool CalculateCounts = false )
         {
             CswNbtObjClassRequest NodeAsRequest = getCurrentRequestNode();
             if( null != NodeAsRequest )
@@ -458,11 +456,14 @@ namespace ChemSW.Nbt.Actions
             Cart.FavoriteItemsView = FavoriteItems;
 
             Cart.Counts = new CartCounts();
+            if( CalculateCounts )
+            {
+                //This is expensive and we can do it in the next async request
             Cart.Counts.PendingRequestItems = getCartContentCount();
             Cart.Counts.SubmittedRequestItems = _getItemCount( SubmittedItems );
             Cart.Counts.RecurringRequestItems = _getItemCount( RecurringItems );
             Cart.Counts.FavoriteRequestItems = _getItemCount( FavoriteItems );
-
+            }
             return Cart;
         }
 

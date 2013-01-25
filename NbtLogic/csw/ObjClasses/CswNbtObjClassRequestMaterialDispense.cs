@@ -595,39 +595,12 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
-        public CswNbtNodePropDateTime NextReorderDate { get { return _CswNbtNode.Properties[PropertyName.NextReorderDate]; } }
-        public CswNbtNodePropLogical IsBatch { get { return _CswNbtNode.Properties[PropertyName.IsBatch]; } }
-        public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
-        
-        private void onIsRecurringChange( CswNbtNodeProp NodeProp )
+        private void _hideFakeItemProps()
         {
-            IsRecurring.setHidden( value : true, SaveToDb : true );
-            if( Tristate.True == IsRecurring.Checked && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            //Neither favs nor recurs represent real (aka Fulfillable) Items
+            if( _IsFavorite || _IsRecurring ) 
             {
-                RecurringFrequency.setHidden( value : false, SaveToDb : true );
-                NextReorderDate.setHidden( value : false, SaveToDb : true );
-                Status.setHidden( value : true, SaveToDb : true );
-                Type.setHidden( value : true, SaveToDb : true );
-            }
-            else
-            {
-                RecurringFrequency.setHidden( value : true, SaveToDb : true );
-                NextReorderDate.setHidden( value : true, SaveToDb : true );
-                Status.setHidden( value : false, SaveToDb : true );
-                Type.setHidden( value : false, SaveToDb : true );
-            }
-        }
-
-        public CswNbtNodePropLogical IsRecurring { get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; } }
-        public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
-        public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
-        private void onIsFavoritePropChange( CswNbtNodeProp NodeProp )
-        {
-            bool Fave = CswConvert.ToBoolean( IsFavorite.Gestalt );
-            if( Fave )
-            {
-                //Name is normally shown on status change, which doesn't happen for Favs
+                //Name is normally shown on status change, which doesn't happen for "fake" request items
                 Name.setHidden( value : false, SaveToDb : true );
 
                 Status.setHidden( value : true, SaveToDb : true );
@@ -637,11 +610,42 @@ namespace ChemSW.Nbt.ObjClasses
                 NeededBy.setHidden( value : true, SaveToDb : true );
                 TotalMoved.setHidden( value : true, SaveToDb : true );
                 TotalDispensed.setHidden( value : true, SaveToDb : true );
-                IsRecurring.setHidden( value : true, SaveToDb : true );
                 ReceiptLotToDispense.setHidden( value : true, SaveToDb : true );
                 ReceiptLotsReceived.setHidden( value : true, SaveToDb : true );
                 NextReorderDate.setHidden( value : true, SaveToDb : true );
                 GoodsReceived.setHidden( value : true, SaveToDb : true );
+            }
+        }
+
+        public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
+        public CswNbtNodePropDateTime NextReorderDate { get { return _CswNbtNode.Properties[PropertyName.NextReorderDate]; } }
+        public CswNbtNodePropLogical IsBatch { get { return _CswNbtNode.Properties[PropertyName.IsBatch]; } }
+        public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
+        public CswNbtNodePropLogical IsRecurring { get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; } }
+        private bool _IsRecurring { get { return Tristate.True == IsRecurring.Checked; } } //&& _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ); } }
+        private void onIsRecurringChange( CswNbtNodeProp NodeProp )
+        {
+            IsRecurring.setHidden( value : true, SaveToDb : true );
+            // No "else": like favorites, recurring items never transition out of this state--they can only be deleted.
+            if( _IsRecurring )
+            {
+                Request.RelatedNodeId = null;
+                RecurringFrequency.setHidden( value : false, SaveToDb : true );
+                NextReorderDate.setHidden( value : false, SaveToDb : true );
+                _hideFakeItemProps();                    
+            }
+        }
+        
+        public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
+        public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
+        private bool _IsFavorite { get { return CswConvert.ToBoolean( IsFavorite.Gestalt ); } }
+        private void onIsFavoritePropChange( CswNbtNodeProp NodeProp )
+        {
+            // No "else": like recurring, favorite items never transition out of this state--they can only be deleted.
+            if( _IsFavorite ) 
+            {
+                _hideFakeItemProps();
+                IsRecurring.setHidden( value : true, SaveToDb : true );
             }
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }

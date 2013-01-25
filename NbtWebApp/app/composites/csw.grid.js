@@ -28,6 +28,7 @@
                         data: {}
                     },
 
+                    showMultiEditToolbar: true,
                     showCheckboxes: false,
                     showActionColumn: true,
                     showView: true,
@@ -431,133 +432,6 @@
                     });
                 }
             };
-                
-
-            cswPrivate.makeListeners = function () {
-                //Case 28555: ExtJS documentation is awful, 
-                //so we frequently need to blindly test their events to discover when they fire and why.
-                //To do so, uncomment any of the available events (current as of Ext 4.1.3) and fiddle with the grid. 
-
-                //var debugFunc = function () {
-                //    debugger;
-                //};
-               
-                return {
-                    afterrender: function (grid) {
-                        //of the methods we're listening to here, called 2nd, 
-                        //still nothing to see in the DOM
-                        grid.filters.createFilters();
-                    },
-                    viewready: function () {
-                        //of the methods we're listening to here, called 4th. Will also trigger afterlayout.
-                        Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
-                        cswPrivate.makeActionColumns(100);
-                    },
-                    //sortchange: function () { debugFunc(); },
-                    //render: function () {
-                        //of the methods we're listening to here, called 1st
-                        //debugFunc();
-                    //},
-                    //activate: function () { debugFunc(); },
-                    //add: function () { debugFunc(); },
-                    //added: function () { debugFunc(); },
-                    afterlayout: function () {
-                        //of the methods we're listening to here, called 3rd on a new grid.
-                        //empty grid is now rendered
-                        
-                        //Also called on any mutation to grid (sort, columns show/hide, etc)
-                        cswPrivate.makeActionColumns(0);
-                    }
-                    //beforeactivate: function () { debugFunc(); },
-                    //beforeadd: function () { debugFunc(); },
-                    //beforeclose: function () { debugFunc(); },
-                    //beforecollapse: function () { debugFunc(); },
-                    //beforecontainerclick: function () { debugFunc(); },
-                    //beforecontainercontextmenu: function () { debugFunc(); },
-                    //beforecontainerdblclick: function () { debugFunc(); },
-                    //beforecontainermousedown: function () { debugFunc(); },
-                    //beforecontainermouseout: function () { debugFunc(); },
-                    //beforecontainermouseover: function () { debugFunc(); },
-                    //beforecontainermouseup: function () { debugFunc(); },
-                    //beforedeactivate: function () { debugFunc(); },
-                    //beforedeselect: function () { debugFunc(); },
-                    //beforedestroy: function () { debugFunc(); },
-                    //beforeedit: function () { debugFunc(); },
-                    //beforeexpand: function () { debugFunc(); },
-                    //beforehide: function () { debugFunc(); },
-                    //beforeitemclick: function () { debugFunc(); },
-                    //beforeitemcontextmenu: function () { debugFunc(); },
-                    //beforeitemdblclick: function () { debugFunc(); },
-                    //beforeitemmousedown: function () { debugFunc(); },
-                    //beforeitemmouseenter: function () { debugFunc(); },
-                    //beforeitemmouseleave: function () { debugFunc(); },
-                    //beforeitemmouseup: function () { debugFunc(); },
-                    //beforereconfigure: function () { debugFunc(); },
-                    //beforeremove: function () { debugFunc(); },
-                    //beforerender: function () { debugFunc(); },
-                    //beforeselect: function () { debugFunc(); },
-                    //beforeshow: function () { debugFunc(); },
-                    //beforestaterestore: function () { debugFunc(); },
-                    //beforestatesave: function () { debugFunc(); },
-                    //blur: function () { debugFunc(); },
-                    //boxready: function () { debugFunc(); },
-                    //canceledit: function () { debugFunc(); },
-                    //cellclick: function () { debugFunc(); },
-                    //celldblclick: function () { debugFunc(); },
-                    //close: function () { debugFunc(); },
-                    //collapse: function () { debugFunc(); },
-                    //columnhide: function () { debugFunc(); },
-                    //columnmove: function () { debugFunc(); },
-                    //columnresize: function () { debugFunc(); },
-                    //columnshow: function () { debugFunc(); },
-                    //containerclick: function () {
-                    //    cswPrivate.makeActionColumns(0);
-                    //    debugFunc();
-                    //},
-                    //containercontextmenu: function () { debugFunc(); },
-                    //containerdblclick: function () { debugFunc(); },
-                    //containermouseout: function () { debugFunc(); },
-                    //containermouseover: function () { debugFunc(); },
-                    //containermouseup: function () { debugFunc(); },
-                    //deactivate: function () { debugFunc(); },
-                    //deselect: function () { debugFunc(); },
-                    //destroy: function () { debugFunc(); },
-                    //disable: function () { debugFunc(); },
-                    //edit: function () { debugFunc(); },
-                    //enable: function () { debugFunc(); },
-                    //expand: function () { debugFunc(); },
-                    //focus: function () { debugFunc(); },
-                    //hide: function () { debugFunc(); },
-                    //iconchange: function () { debugFunc(); },
-                    //iconclschange: function () { debugFunc(); },
-                    //itemclick: function () {
-                    //    cswPrivate.makeActionColumns(0);
-                    //    debugFunc();
-                    //},
-                    //itemcontextmenu: function () {
-                    //    cswPrivate.makeActionColumns(0);
-                    //    debugFunc();
-                    //},
-                    //itemdblclick: function () { debugFunc(); },
-                    //itemmousedown: function () { debugFunc(); },
-                    //itemmouseenter: function () { debugFunc(); },
-                    //itemmouseleave: function () { debugFunc(); },
-                    //itemmouseup: function () { debugFunc(); },
-                    //move: function () { debugFunc(); },
-                    //reconfigure: function () { debugFunc(); },
-                    //remove: function () { debugFunc(); },
-                    //removed: function () { debugFunc(); },
-                    //resize: function () { debugFunc(); },
-                    //select: function () { debugFunc(); },
-                    //selectionchange: function () { debugFunc(); },
-                    //show: function () { debugFunc(); },
-                    //staterestore: function () { debugFunc(); },
-                    //statesave: function () { debugFunc(); },
-                    //titlechange: function () { debugFunc(); },
-                    //unfloat: function () { debugFunc(); },
-                    //validateedit: debugFunc
-                };
-            };
 
             cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
                 var columns = Csw.extend([], cswPrivate.columns);
@@ -741,7 +615,8 @@
                 }
 
                 // Multi-Edit
-                if (cswPrivate.showCheckboxes &&
+                if (cswPrivate.showMultiEditToolbar !== false &&
+                    cswPrivate.showCheckboxes &&
                     cswPrivate.showActionColumn) {
 
                     cswPrivate.editAllButton = window.Ext.create('Ext.button.Button', {

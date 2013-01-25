@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
-            ActRequesting.getCart( Ret.Data );
+            ActRequesting.getCart( Ret.Data, CalculateCounts: true );
         }
 
         /// <summary>
