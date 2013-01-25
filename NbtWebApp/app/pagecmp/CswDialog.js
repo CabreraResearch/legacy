@@ -259,10 +259,10 @@
                         EditMode: Csw.enums.editMode.Add
                     },
                     ReloadTabOnSave: false,
-                    onSave: function (nodeid, nodekey, tabcount, nodename) {
+                    onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
                         cswPublic.close();
                         cswPublic.div.$.dialog('close');
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
+                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
                     },
                     onInitFinish: function () {

@@ -331,7 +331,6 @@
                         } // if (nodeObj.allowimport)
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.extraAction)) {
-                            Csw.debug.assert(Csw.number(cswPrivate.extraActionIcon) > 0, 'No icon specified for extraAction.');
                             Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');
 
                             btnTable.cell(1, btncol).buttonExt({
