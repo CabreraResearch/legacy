@@ -304,12 +304,13 @@
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.genTab = function () {
-                                    Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                    cswPrivate.form.empty();
-                                    cswPrivate.onTearDown();
-                                    makeTabs();
-                                    return false;
+                                    if (Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                        cswPrivate.form.empty();
+                                        cswPrivate.onTearDown();
+                                        makeTabs();
+                                        return false;
+                                    }
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {
@@ -412,7 +413,7 @@
                         cswPrivate.globalState.currentNodeId = nodeid;
                         cswPrivate.globalState.currentNodeLink = data.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
-                    }   
+                    }
                     delete data.nodeid;
                     delete data.nodelink;
                 }
