@@ -3617,32 +3617,32 @@ namespace ChemSW.Nbt.WebServices
 
         } // getActiveAccessIds()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getScheduledRulesGrid( string AccessId )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getScheduledRulesGrid( string AccessId )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
-                ReturnVal = ws.getScheduledRulesGrid();
+        //        CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
+        //        ReturnVal = ws.getScheduledRulesGrid();
 
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception Ex )
+        //    {
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //    }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        } // getScheduledRulesGrid()
+        //} // getScheduledRulesGrid()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3673,32 +3673,32 @@ namespace ChemSW.Nbt.WebServices
         } // updateScheduledRule()
 
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string updateAllScheduledRules( string AccessId, string Action )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string updateAllScheduledRules( string AccessId, string Action )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
-                ReturnVal["success"] = ws.updateAllScheduledRules( Action );
+        //        CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
+        //        ReturnVal["success"] = ws.updateAllScheduledRules( Action );
 
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception Ex )
+        //    {
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //    }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        } // updateScheduledRule()
+        //} // updateScheduledRule()
 
         #endregion Nbt Manager
 

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -19,15 +18,16 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.GenNode.ToString() ); }
         }
 
-        public bool doesItemRunNow()
+        public bool hasLoad( ICswResources CswResources )
         {
-            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            return ( true );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
         }
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
-            set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
 
@@ -38,27 +38,32 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
+
+
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
-        private CswNbtResources _CswNbtResources = null;
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
-        }//init()
 
-        public void threadCallBack()
+        }//initScheduleLogicDetail()
+
+
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
+
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 try
                 {
-                    Int32 GeneratorLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
+                    Int32 GeneratorLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
                     if( Int32.MinValue == GeneratorLimit )
                     {
                         GeneratorLimit = 1;
@@ -123,7 +128,7 @@ namespace ChemSW.Nbt.Sched
                                         }
                                         else
                                         {
-                                            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+                                            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( CswNbtResources );
                                             bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
                                             if( Finished ) // case 26111
                                             {
@@ -152,7 +157,7 @@ namespace ChemSW.Nbt.Sched
                                 CurrentGenerator.Enabled.Checked = Tristate.False;
                                 CurrentGenerator.RunStatus.AddComment( "Disabled due do exception: " + Exception.Message );
                                 CurrentGenerator.postChanges( false );
-                                _CswNbtResources.logError( new CswDniException( Message ) );
+                                CswNbtResources.logError( new CswDniException( Message ) );
 
 
                             }//catch
@@ -171,7 +176,7 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
 
@@ -189,12 +194,6 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
     }//CswScheduleLogicNbtGenNode
 
 

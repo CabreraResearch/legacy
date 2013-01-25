@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -21,15 +20,16 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.UpdtInspection.ToString() ); }
         }
 
-        public bool doesItemRunNow()
+        public bool hasLoad( ICswResources CswResources )
         {
-            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
-        }//doesItemRunNow()
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            return ( true );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+        }//hasLoad()
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
-            set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
 
@@ -41,23 +41,25 @@ namespace ChemSW.Nbt.Sched
 
 
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
-        private CswNbtResources _CswNbtResources = null;
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
+
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            //_CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
+
 
         //private CswNbtNode _CswNbtNodeGenerator;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatus.Pending;
         private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatus.Overdue;
-        public void threadCallBack()
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+            //CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
@@ -75,7 +77,7 @@ namespace ChemSW.Nbt.Sched
                         CswNbtObjClassInspectionDesign CurrentInspectionDesign = InspectionDesigns[idx];
 
                         DateTime DueDate = CurrentInspectionDesign.DueDate.DateTimeValue;
-                        //CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
+                        //CswNbtNode GeneratorNode = CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
                         //if( null != GeneratorNode &&
                         if( _Pending == CurrentInspectionDesign.Status.Value &&
                             DateTime.Today >= DueDate &&
@@ -104,7 +106,7 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtInspection::threadCallBack() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
@@ -126,13 +128,6 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
-
     }//CswScheduleLogicNbtUpdtInspection
 
 
