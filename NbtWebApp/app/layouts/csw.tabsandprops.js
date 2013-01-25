@@ -842,6 +842,7 @@
 
                         labelCell = cswPrivate.getLabelCell(cellSet);
 
+                        labelCell.addClass('propertylabelcell');
                         if (Csw.bool(propData.highlight)) {
                             labelCell.addClass('ui-state-highlight');
                         }
