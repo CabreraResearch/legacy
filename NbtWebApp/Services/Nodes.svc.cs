@@ -1,155 +1,30 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
-    public class NodeSelect
+    
+    [DataContract]
+    public class NodeResponse : CswWebSvcReturn
     {
-        [DataContract]
-        public class Request
+        public NodeResponse()
         {
-            [DataMember( IsRequired = false )]
-            public Int32 NodeTypeId = Int32.MinValue;
-            [DataMember( IsRequired = false )]
-            public Int32 ObjectClassId = Int32.MinValue;
-
-            private NbtObjectClass _ObjectClass;
-
-            [DataMember( IsRequired = false )]
-            public string ObjectClass
-            {
-                get { return _ObjectClass; }
-                set { _ObjectClass = value; }
-            }
-
-            private NbtObjectClass _RelatedToObjectClass;
-
-            [DataMember( IsRequired = false )]
-            public string RelatedToObjectClass
-            {
-                get { return _RelatedToObjectClass; }
-                set { _RelatedToObjectClass = value; }
-            }
-
-            private string _RelatedToNodeId = string.Empty;
-            [DataMember( IsRequired = false )]
-            public string RelatedToNodeId
-            {
-                get { return _RelatedToNodeId; }
-                set
-                {
-                    _RelatedToNodeId = value;
-                    CswPrimaryKey RelatedPk = CswConvert.ToPrimaryKey( _RelatedToNodeId );
-                    if( CswTools.IsPrimaryKey( RelatedPk ) )
-                    {
-                        RelatedNodeId = RelatedPk;
-                    }
-                }
-            }
-
-            private string _ViewId = string.Empty;
-            [DataMember( IsRequired = false )]
-            public string ViewId
-            {
-                get { return _ViewId; }
-                set
-                {
-                    _ViewId = value;
-                    CswNbtSessionDataId ViewKey = new CswNbtSessionDataId( _ViewId );
-                    if( null != ViewKey && ViewKey.isSet() )
-                    {
-                        NbtViewId = ViewKey;
-                    }
-                }
-            }
-
-            public CswNbtSessionDataId NbtViewId = null;
-
-            public CswPrimaryKey RelatedNodeId = null;
-
+            Data = new NodeSelect.Response();
         }
-
-        [DataContract]
-        public class Response : CswWebSvcReturn
-        {
-            public Response()
-            {
-                Data = new Ret();
-            }
-
-            public class Ret
-            {
-                [DataMember]
-                public Int32 RelatedObjectClassId = Int32.MinValue;
-
-                [DataMember]
-                public bool CanAdd = false;
-                [DataMember]
-                public bool UseSearch = false;
-
-                [DataMember]
-                public Int32 NodeTypeId = Int32.MinValue;
-                [DataMember]
-                public Int32 ObjectClassId = Int32.MinValue;
-
-                [DataMember]
-                public Collection<CswNbtNode.Node> Nodes = new Collection<CswNbtNode.Node>();
-            }
-
-            [DataMember]
-            public Ret Data = null;
-        }
-
-        [DataContract]
-        public class NodeLinkResponse : CswWebSvcReturn
-        {
-            public NodeLinkResponse()
-            {
-                Data = new Ret();
-            }
-
-            public class Ret
-            {
-                [DataMember]
-                public string NodeLink = string.Empty;
-            }
-
-            [DataMember]
-            public Ret Data = null;
-        }
-
-        [DataContract]
-        public class PropertyView
-        {
-            [DataMember]
-            public string ObjClassPropName = string.Empty;
-            [DataMember]
-            public string NodeTypeId = string.Empty;
-            [DataMember]
-            public string NodeId = string.Empty;
-            [DataMember]
-            public string ViewId = string.Empty;
-            [DataMember]
-            public Int32 TargetNodeTypeId = Int32.MinValue;
-            [DataMember]
-            public Int32 TargetObjectClassId = Int32.MinValue;
-        }
+            
+        [DataMember]
+        public NodeSelect.Response Data = null;
     }
-
-
+    
     /// <summary>
     /// WCF Web Methods for View operations
     /// </summary>
@@ -167,11 +42,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Generate a Node Select" )]
-        public NodeSelect.Response get( NodeSelect.Request Request )
+        public NodeResponse get( NodeSelect.Request Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            NodeSelect.Response Ret = new NodeSelect.Response();
-            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, NodeSelect.Request>(
+            NodeResponse Ret = new NodeResponse();
+            var GetViewDriverType = new CswWebSvcDriver<NodeResponse, NodeSelect.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.getNodes,
@@ -181,57 +56,20 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST" )]
-        [FaultContract( typeof( FaultException ) )]
-        [Description( "Get the options for a relationship property" )]
-        public NodeSelect.Response getRelationshipOpts( NodeSelect.PropertyView Request )
-        {
-            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            NodeSelect.Response Ret = new NodeSelect.Response();
-            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, NodeSelect.PropertyView>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceNode.getRelationshipOpts,
-                ParamObj: Request
-                );
-
-            GetViewDriverType.run();
-            return ( Ret );
-        }
-
+        
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Get all sizes related to a given node" )]
-        public NodeSelect.Response getSizes( CswNbtNode.Node Request )
+        public NodeResponse getSizes( CswNbtNode.Node Request )
         {
-            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            NodeSelect.Response Ret = new NodeSelect.Response();
-            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.Response, CswNbtNode.Node>(
+            // TODO: This should really be a call to Nodes/get with a proper ViewId, 
+            // but as this affects multiple wizards, it's not getting fixed today.
+            NodeResponse Ret = new NodeResponse();
+            var GetViewDriverType = new CswWebSvcDriver<NodeResponse, CswNbtNode.Node>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.getSizes,
-                ParamObj: Request
-                );
-
-            GetViewDriverType.run();
-            return ( Ret );
-        }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST" )]
-        [FaultContract( typeof( FaultException ) )]
-        [Description( "Get the node link for a given node" )]
-        public NodeSelect.NodeLinkResponse getNodeLink( NodeSelect.PropertyView Request )
-        {
-            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            NodeSelect.NodeLinkResponse Ret = new NodeSelect.NodeLinkResponse();
-            var GetViewDriverType = new CswWebSvcDriver<NodeSelect.NodeLinkResponse, NodeSelect.PropertyView>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceNode.getNodeLink,
                 ParamObj: Request
                 );
 

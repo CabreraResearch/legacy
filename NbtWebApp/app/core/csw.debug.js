@@ -99,22 +99,20 @@
     };
 
     cswPrivate.tryExecSwallow = function(first, second, third) {
-        var failed = false;
+        
         try {
             first();
         } catch(e) {
-            failed = true;
-        }
-        try {
-            second();
-        } catch(e) {
-            failed = true;
-        }
-        if (failed) {
+            
             try {
-                third();
+                second();
             } catch(e) {
-                
+
+                try {
+                    third();
+                } catch(e) {
+
+                }
             }
         }
     };

@@ -276,6 +276,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( CswTools.IsPrimaryKey( Node.NodeId ) )
                 {
                     Ret["nodeid"] = Node.NodeId.ToString();
+                    Ret["nodelink"] = Node.NodeLink;
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
@@ -737,6 +738,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["result"] = "Succeeded";
                     //If we're Adding, NodeName won't be valid until now.
                     ret["nodename"] = Node.NodeName;
+                    ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
                 }

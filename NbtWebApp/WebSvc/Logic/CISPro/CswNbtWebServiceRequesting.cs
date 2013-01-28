@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
                         IsPropertyGrid = false;
                     }
                     CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
-                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
+                    ret = GridWs.runGrid( Title: null, IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
                     ret["grid"]["title"] = "";
                 }
             }
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources );
-            Ret.Data.Succeeded = ActRequesting.submitRequest( Request.NodePk, Request.NodeName );
+            Ret.Data.Succeeded = ActRequesting.submitRequest( Request.NodeId, Request.NodeName );
         }
 
         /// <summary>

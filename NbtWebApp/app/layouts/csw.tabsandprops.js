@@ -304,12 +304,13 @@
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.genTab = function () {
-                                    Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                    cswPrivate.form.empty();
-                                    cswPrivate.onTearDown();
-                                    makeTabs();
-                                    return false;
+                                    if (Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                        cswPrivate.form.empty();
+                                        cswPrivate.onTearDown();
+                                        makeTabs();
+                                        return false;
+                                    }
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {
@@ -410,9 +411,11 @@
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = nodekey;
                         cswPrivate.globalState.currentNodeId = nodeid;
+                        cswPrivate.globalState.currentNodeLink = data.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
                     }
                     delete data.nodeid;
+                    delete data.nodelink;
                 }
                 return nodeid;
             };
@@ -840,6 +843,7 @@
 
                         labelCell = cswPrivate.getLabelCell(cellSet);
 
+                        labelCell.addClass('propertylabelcell');
                         if (Csw.bool(propData.highlight)) {
                             labelCell.addClass('ui-state-highlight');
                         }
@@ -1144,7 +1148,7 @@
                             cswPrivate.enableSaveBtn();
                             var onSaveSuccess = function () {
                                 var onSaveRefresh = function () {
-                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename);
+                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename, successData.nodelink);
                                     Csw.tryExec(onSuccess);
                                 };
 
