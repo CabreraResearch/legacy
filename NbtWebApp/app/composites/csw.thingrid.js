@@ -106,6 +106,8 @@
                 /// <returns type="Csw.table.cell">A Csw table cell.</returns>
                 var cssClass = '', thisCell, required;
 
+                //Case 28336/28548. Yuck. Sometimes this comes in as a string, sometimes as an object, 
+                //   when it comes in as an object we need 'value' and 'isRequired'
                 if (cellValue.isRequired) {
                     required = cellValue.isRequired;
                 }
@@ -123,7 +125,11 @@
 
                 thisCell = cswPrivate.table.cell(row, col);
                 if (false === Csw.isNullOrEmpty(cellValue)) {
-                    thisCell.span().setLabelText(Csw.string(cellValue), required, false);
+                    if (required) {
+                        thisCell.span().setLabelText(Csw.string(cellValue), required, false);
+                    } else {
+                        thisCell.span({ text: Csw.string(cellValue) });
+                    }
                 }
                 thisCell.addClass(cssClass);
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {
