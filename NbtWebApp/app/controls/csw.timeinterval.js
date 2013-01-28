@@ -283,7 +283,7 @@
                     monthsInYear = ChemSW.makeSequentialArray(1, 12),
                     year = cswPrivate.now.getFullYear(),
                     yearsToAllow = ChemSW.makeSequentialArray(year - 10, year + 10),
-                    frequency = ChemSW.makeSequentialArray(1, 12),
+                    frequency = ChemSW.makeSequentialArray(1, 60),
                     weeksInMonth = [
                         { value: 1, display: 'First:' },
                         { value: 2, display: 'Second:' },

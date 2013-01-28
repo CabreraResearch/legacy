@@ -20,14 +20,6 @@
                         { value: 'POI', display: 'POI' },
                         { value: 'RAD', display: 'RAD' },
                         { value: 'W', display: 'W' }
-                    ],
-                    selVals: [
-                        { value: '', display: '' },
-                        { value: '0', display: '0' },
-                        { value: '1', display: '1' },
-                        { value: '2', display: '2' },
-                        { value: '3', display: '3' },
-                        { value: '4', display: '4' }
                     ]
                 };
                 var cswPublic = {
@@ -101,9 +93,19 @@
                     };
 
                     cswPrivate.makeSelect = function (cell, id, selected, div, vals) {
+                        if (Csw.isNullOrEmpty(vals)) {
+                            vals = [
+                                { value: '', display: '' },
+                                { value: '0', display: '0' },
+                                { value: '1', display: '1' },
+                                { value: '2', display: '2' },
+                                { value: '3', display: '3' },
+                                { value: '4', display: '4' }];
+                        }
+
                         var select = cell.select({
                             selected: selected,
-                            values: vals || cswPrivate.selVals,
+                            values: vals,
                             cssclass: '',
                             onChange: function () {
                                 var val = select.val();
@@ -151,13 +153,13 @@
                         if (false === cswPrivate.hideSpecial) {
                             cswPrivate.editTable.cell(4, 1).text('Special');
                         }
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'red', cswPrivate.red, cswPrivate.redDiv, cswPrivate.selVals);
+                        cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'red', cswPrivate.red, cswPrivate.redDiv, null);
                         if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
-                            cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, cswPrivate.selVals);
-                            cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, cswPrivate.selVals);
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, null);
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, null);
                         } else {
-                            cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, cswPrivate.selVals);
-                            cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, cswPrivate.selVals);
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, null);
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, null);
                         }
                         if (false === cswPrivate.hideSpecial) {
                             cswPrivate.makeSelect(cswPrivate.editTable.cell(4, 2), 'white', cswPrivate.white, cswPrivate.whiteDiv, cswPrivate.whiteVals);

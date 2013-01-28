@@ -35,7 +35,12 @@
                     nodeSelect.onAddNodeFunc = function () { };
                     nodeSelect.onSelectNode = function (nodeObj) {
                         Csw.tryExec(cswPublic.data.onChange, nodeObj.nodeid);
-                        cswPublic.data.onPropChange({ nodeid: nodeObj.nodeid, name: nodeObj.name, relatednodeid: nodeObj.selectedNodeId, relatednodelink: nodeObj.relatednodelink });
+                        cswPublic.data.onPropChange({
+                            nodeid: nodeObj.nodeid,
+                            name: nodeObj.name,
+                            relatednodeid: nodeObj.selectedNodeId,
+                            relatednodelink: nodeObj.relatednodelink
+                        });
                     };
 
                     nodeSelect.relatedTo = {};

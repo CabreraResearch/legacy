@@ -24,6 +24,7 @@
                 cswPrivate.viewid = cswPrivate.viewid || '';
 
                 cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
+                cswPrivate.nodeTypeName = cswPrivate.nodeTypeName || '';
                 cswPrivate.objectClassId = cswPrivate.objectClassId || '';
                 cswPrivate.objectClassName = cswPrivate.objectClassName || '';
                 cswPrivate.addNodeDialogTitle = cswPrivate.addNodeDialogTitle || '';
@@ -42,6 +43,8 @@
 
                 cswPrivate.addNewOption = cswPrivate.addNewOption; // || false;
                 cswPrivate.allowAdd = cswPrivate.allowAdd; // || false;
+                cswPrivate.onAfterAdd = cswPrivate.onAfterAdd;
+
                 cswPrivate.isRequired = cswPrivate.isRequired; // || false;
                 cswPrivate.isMulti = cswPrivate.isMulti; // || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly; // || false;
@@ -64,7 +67,15 @@
                     cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
                 }
 
-                cswPrivate.relationships = [];
+                cswPrivate.selectCellCol = cswPrivate.cellCol + 0;
+                cswPrivate.textCellCol = cswPrivate.cellCol + 1;
+                cswPrivate.editCellCol = cswPrivate.cellCol + 2;
+                cswPrivate.nodeTypeCellCol = cswPrivate.cellCol + 3;
+                cswPrivate.searchCellCol = cswPrivate.cellCol + 0;
+                cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 1;
+                cswPrivate.addCellCol = cswPrivate.cellCol + 4;
+                cswPrivate.tipCellCol = cswPrivate.cellCol + 5;
+
             } ());
 
             //#endregion _preCtor
@@ -77,6 +88,7 @@
                     async: Csw.bool(cswPrivate.async),
                     data: cswPrivate.ajaxData || {
                         NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
+                        NodeTypeName: Csw.string(cswPrivate.nodeTypeName),
                         ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
                         ObjectClass: Csw.string(cswPrivate.objectClassName),
                         RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
@@ -85,11 +97,13 @@
                     },
                     success: function (data) {
                         //cswPrivate.options = JSON.parse(data.options);
-                        var options = [];
+                        cswPrivate.options = [];
+                        if (false === cswPrivate.isRequired) {
+                            options.push({ id: '', value: '' });
+                        }
                         data.Nodes.forEach(function (obj) {
-                            options.push({ id: obj.NodeId, value: obj.NodeName });
+                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                         });
-                        cswPrivate.options = options;
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
@@ -104,7 +118,7 @@
             cswPrivate.getNodeTypeOptions = function () {
                 cswPrivate.blankText = '[Select One]';
                 cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
-                    cswPrivate.table.cell(1, cswPrivate.cellCol)
+                    cswPrivate.table.cell(1, cswPrivate.nodeTypeCellCol)
                              .nodeTypeSelect({
                                  objectClassName: cswPrivate.objectClassName,
                                  objectClassId: cswPrivate.objectClassId,
@@ -127,7 +141,6 @@
                                  blankOptionText: cswPrivate.blankText,
                                  filterToPermission: 'Create'
                              }).hide();
-                cswPrivate.cellCol += 1;
             };
 
             //#endregion AJAX
@@ -135,13 +148,13 @@
             //#region Control Construction
 
             cswPrivate.makeControl = function () {
+                cswPrivate.makeAddImage();
                 if (cswPrivate.useSearch) {
                     cswPrivate.makeSearch();
                 } else {
                     cswPrivate.makeSelect();
                 }
-                cswPrivate.makeAdd();
-                Csw.tryExec(cswPrivate.onSuccess, cswPrivate.relationships);
+                Csw.tryExec(cswPrivate.onSuccess, cswPrivate.options);
             };
 
             cswPrivate.bindSelectMethods = function () {
@@ -157,43 +170,37 @@
             };
 
             cswPrivate.makeSelect = function () {
+                
+                //Normally, we would assign the select to cswPublic, as it's the primary control; 
+                //however, to assign now would be decoupled from the return. The caller would not receive this reference.
+                //Instead, we'll assign the select as a member and we'll reassign key methods to cswPublic.
+                cswPrivate.select = cswPrivate.table.cell(1, cswPrivate.selectCellCol).select({
+                    name: cswPrivate.name,
+                    cssclass: 'selectinput',
+                    onChange: function () {
+                        var val = cswPrivate.select.selectedVal();
+                        var name = cswPrivate.select.selectedText();
+                        var link = cswPrivate.select.selectedData('link');
+                        Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
+                    },
+                    width: cswPrivate.width
+                });
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
                 Csw.each(cswPrivate.options, function (relatedObj) {
                     if (false === cswPrivate.isMulti && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
+                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, selected: true }).data({ link: relatedObj.nodelink });
+                    } else {
+                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.nodelink });
                     }
-                    cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value });
                 });
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
                     // case 25820 - guarantee selected option appears
-                    cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
+                    cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName }).data({ link: cswPrivate.selectedNodeLink });
                 }
 
-                //Normally, we would assign the select to cswPublic, as it's the primary control; 
-                //however, to assign now would be decoupled from the return. The caller would not receive this reference.
-                //Instead, we'll assign the select as a member and we'll reassign key methods to cswPublic.
-                cswPrivate.select = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
-                    name: cswPrivate.name,
-                    cssclass: 'selectinput',
-                    onChange: function () {
-                        var val = cswPrivate.select.val();
-                        Csw.ajaxWcf.post({
-                            async: false,
-                            data: { NodeId: val },
-                            urlMethod: 'Nodes/getNodeLink',
-                            success: function (data) {
-                                var name = cswPrivate.select.selectedText();
-                                var link = data.NodeLink;
-                                Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
-                            }
-                        });
-                    },
-                    values: cswPrivate.relationships,
-                    selected: cswPrivate.selectedNodeId,
-                    width: cswPrivate.width
-                });
                 cswPrivate.bindSelectMethods();
 
                 cswPrivate.select.bind('change', function () {
@@ -204,23 +211,22 @@
                     Csw.tryExec(cswPrivate.onSelect, val);
                 });
 
-                cswPrivate.cellCol += 1;
-                cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.cellCol);
-                cswPrivate.cellCol += 1;
+                cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.textCellCol);
+
                 if (false === cswPrivate.isMulti) {
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
                         text: cswPrivate.selectedNodeLink
                     });
                 }
 
-                cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.cellCol).icon({
-                    iconType: Csw.enums.iconType.pencil,
-                    isButton: true,
+                cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.editCellCol).buttonExt({
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                    size: 'small',
+                    enabledText: 'Edit',
                     onClick: function () {
                         cswPrivate.toggleOptions(true);
                     }
                 });
-                cswPrivate.cellCol += 1;
 
                 cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad);
 
@@ -238,38 +244,39 @@
                 if (cswPrivate.useSearch) {
                     // Find value by using search in a dialog
 
-                    cswPrivate.nameSpan = cswPrivate.table.cell(1, cswPrivate.cellCol).span({
-                        name: 'selectedname',
-                        text: cswPrivate.selectedName
+                    cswPrivate.nameSpan = cswPrivate.table.cell(1, cswPrivate.searchCellCol).nodeLink({
+                        text: Csw.string(cswPrivate.selectedNodeLink) + '&nbsp;'
                     });
 
-                    cswPrivate.hiddenValue = cswPrivate.table.cell(1, cswPrivate.cellCol).input({
+                    cswPrivate.hiddenValue = cswPrivate.table.cell(1, cswPrivate.searchCellCol).input({
                         name: 'hiddenvalue',
                         type: Csw.enums.inputTypes.hidden,
                         value: cswPrivate.selectedNodeId
                     });
-                    cswPrivate.cellCol += 1;
 
-                    cswPrivate.table.cell(1, cswPrivate.cellCol).icon({
-                        iconType: Csw.enums.iconType.magglass,
-                        hovertext: "Search " + cswPrivate.name,
-                        size: 16,
-                        isButton: true,
+                    cswPrivate.table.cell(1, cswPrivate.searchButtonCellCol).buttonExt({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                        size: 'small',
+                        enabledText: "Search",
+                        tooltip: { title: "Search " + cswPrivate.name, },
                         onClick: function () {
                             $.CswDialog('SearchDialog', {
                                 propname: cswPrivate.name,
                                 nodetypeid: cswPrivate.nodeTypeId,
                                 objectclassid: cswPrivate.objectClassId,
                                 onSelectNode: function (nodeObj) {
-                                    cswPrivate.nameSpan.text(nodeObj.nodename);
+                                    cswPrivate.nameSpan.empty();
+                                    cswPrivate.nameSpan.nodeLink({
+                                        text: nodeObj.nodelink + '&nbsp;'
+                                    });
                                     cswPrivate.hiddenValue.val(nodeObj.nodeid);
                                     cswPrivate.selectedNodeId = nodeObj.nodeid;
+                                    cswPrivate.selectedNodeLink = nodeObj.nodelink;
                                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
                                 }
                             });
                         }
                     });
-                    cswPrivate.cellCol += 1;
 
                     cswPrivate.nameSpan.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
                         function (event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
@@ -279,10 +286,16 @@
             cswPrivate.toggleOptions = function (on) {
                 if (Csw.bool(on)) {
                     cswPrivate.select.show();
+                    if (cswPrivate.addImage) {
+                        cswPrivate.addImage.show();
+                    }
                     cswPrivate.toggleButton.hide();
                     cswPrivate.nodeLinkText.hide();
                 } else {
                     cswPrivate.select.hide();
+                    if (cswPrivate.addImage) {
+                        cswPrivate.addImage.hide();
+                    }
                     cswPrivate.toggleButton.show();
                     cswPrivate.nodeLinkText.show();
                 }
@@ -292,58 +305,57 @@
 
             //#region Add
 
-            cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
+            cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename, nodelink) {
                 if (cswPrivate.nameSpan) {
-                    cswPrivate.nameSpan.text(nodename);
+                    cswPrivate.nameSpan.empty();
+                    cswPrivate.selectedNodeLink = nodelink;
+                    cswPrivate.nameSpan.nodeLink({
+                        text: nodelink
+                    });
                 }
                 if (cswPrivate.hiddenValue) {
                     cswPrivate.hiddenValue.val(nodeid);
                 }
                 if (cswPrivate.select) {
                     Csw.ajaxWcf.post({
-                        urlMethod: 'Nodes/getRelationshipOpts',
+                        urlMethod: 'Nodes/get',
                         async: false,
                         data: cswPrivate.ajaxData || {
-                            NodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
-                            ObjClassPropName: Csw.string(cswPrivate.name),
+                            RelatedToNodeTypeId: Csw.number(cswPrivate.relatedTo.relatednodetypeid, 0),
                             ViewId: Csw.string(cswPrivate.viewid),
-                            TargetNodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
-                            TargetObjectClassId: Csw.number(cswPrivate.objectClassId, 0)
+                            NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
+                            ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
+                            ObjectClass: Csw.string(cswPrivate.objectClassName),
+                            RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
+                            RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId)
                         },
                         success: function (data) {
-                            if (data.Nodes.length > 0) {                            
-                                var options = [];
+                            if (data.Nodes.length > 0) {
                                 var found = false;
-                                if(false === cswPrivate.isRequired) {
-                                    options.push({ id: '', value: '' });
-                                }
-                                data.Nodes.forEach(function(obj) {
-                                    if(obj.NodeId === nodeid) {
+                                
+                                //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
+                                data.Nodes.forEach(function (obj) {
+                                    if (obj.NodeId === nodeid) {
                                         found = true;
+                                        cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
+                                        cswPrivate.select.option({ value: obj.NodeId, display: obj.NodeName, selected: true }).data({ link: obj.NodeLink });
+                                        cswPrivate.select.val(obj.NodeId);
+                                        cswPrivate.selectedNodeId = obj.NodeId;
                                     }
-                                    options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
                                 });
-                                if(false === found) {
-                                    options.push({ id: cswPrivate.selectedNodeId, value: cswPrivate.selectedName, isSelected: true });
-                                    cswPrivate.table.cell(1, cswPrivate.cellCol).quickTip({ html: nodename + ' has been added.  However, it is not an available option for ' + cswPrivate.name + '.' });
+                                if (false === found) {
+                                    cswPrivate.select.val(cswPrivate.selectedNodeId);
+                                    //TODO: provide the NodeLink in the QuickTip
+                                    cswPrivate.table.cell(1, cswPrivate.tipCellCol).quickTip({ html: nodename + ' has been added.  However, it is not an available option for ' + cswPrivate.name + '.' });
                                 }
-                                cswPrivate.options = options;
-                                cswPrivate.select.setOptions(cswPrivate.options, true);
                             } else {
                                 cswPrivate.select.option({ value: nodeid, display: nodename });
-                                cswPrivate.select.val(nodeid);
                             }
-                        }
-                    });                  
-                    cswPrivate.toggleOptions(true);
-                    Csw.ajaxWcf.post({
-                        async: false,
-                        data: { NodeId: nodeid },
-                        urlMethod: 'Nodes/getNodeLink',
-                        success: function (data) {
-                            Csw.tryExec(cswPrivate.onSelectNode, { nodeid: nodeid, name: nodename, selectedNodeId: nodeid, relatednodelink: data.NodeLink });
+                            Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                         }
                     });
+                    cswPrivate.toggleOptions(true);
+
                     cswPrivate.select.$.valid();
                 }
             };
@@ -352,32 +364,31 @@
                 $.CswDialog('AddNodeDialog', {
                     nodetypeid: nodetypeToAdd,
                     onAddNode: cswPrivate.onAddNodeFunc,
-                    text: cswPrivate.name
+                    text: 'Add New ' + cswPrivate.name,
+                    relatednodeid: cswPrivate.relatedTo.relatednodeid,
+                    relatednodename: cswPrivate.relatedTo.relatednodename,
+                    relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
+                    relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
                 });
             };
 
             cswPrivate.makeAddImage = function () {
-                cswPrivate.addImage = cswPrivate.table.cell(1, cswPrivate.cellCol).div()
-                    .buttonExt({
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
-                        size: 'small',
-                        tooltip: { title: 'Add New ' + cswPrivate.name },
-                        onClick: function () {
-                            if (Csw.number(cswPrivate.nodeTypeId) > 0) {
-                                cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
-                            }
-                            else {
-                                cswPrivate.getNodeTypeOptions();
-                            }
-                        }
-                    });
-                cswPrivate.cellCol += 1;
-            };
-
-            cswPrivate.makeAdd = function () {
                 if (cswPrivate.allowAdd) {
-                    cswPrivate.makeAddImage();
-                } //if (allowAdd)
+                    cswPrivate.addImage = cswPrivate.table.cell(1, cswPrivate.addCellCol).div()
+                        .buttonExt({
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                            size: 'small',
+                            enabledText: 'New',
+                            tooltip: { title: 'Add New ' + cswPrivate.name },
+                            onClick: function() {
+                                if (Csw.number(cswPrivate.nodeTypeId) > 0) {
+                                    cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
+                                } else {
+                                    cswPrivate.getNodeTypeOptions();
+                                }
+                            }
+                        });
+                }
             };
 
             //#endregion Add
@@ -408,12 +419,12 @@
 
             (function _relationship() {
                 if (false === cswPrivate.isClickable) { //case 28180 - relationships not clickable from audit history grid
-                    cswPrivate.nodeTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
+                    cswPrivate.nodeTextCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
                     cswPrivate.nodeText = cswPrivate.nodeTextCell.span({
                         text: cswPrivate.selectedName
                     });
                 } else if (cswPrivate.isReadOnly) {
-                    cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
+                    cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink
                     });

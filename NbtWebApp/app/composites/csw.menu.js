@@ -74,7 +74,8 @@
                         var nodename = Csw.string(menuItemJson.nodename);
                         var nodetypeid = Csw.string(menuItemJson.nodetypeid);
                         var viewid = Csw.string(menuItemJson.viewid);
-
+                        var isWholePageNavigation = false; //If we're switching to a completely new context
+                        
                         switch (menuItemJson.action) {
                             case 'About':
                                 $.CswDialog('AboutDialog');
@@ -98,9 +99,12 @@
                                 });
                                 break;
                             case 'Clear Cache':
-                                window.location.reload(true);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    window.location.reload(true);
+                                }
                                 break;
                             case 'DeleteNode':
+                                Csw.clientChanges.unsetChanged();
                                 $.CswDialog('DeleteNodeDialog', {
                                     nodes: cswPrivate.getSelectedNodes(menuItemJson),
                                     onDeleteNode: cswPrivate.onAlterNode,
@@ -109,75 +113,87 @@
                                 });
                                 break;
                             case 'DeleteDemoNodes':
-                                $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>', 'Delete All Demo Data', function () {
-                                    Csw.ajax.post({
-                                        url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
-                                        success: function (data) {
-                                            var onOpen = function(dialogDiv) {
-                                                var statusDiv = dialogDiv.div();
-                                                statusDiv.span({ text: data.successtext });
-                                                statusDiv.span({ text: data.failedtext });
-                                                statusDiv.br();
-                                                
-                                                var table = dialogDiv.table({
-                                                    cellpadding: '3px',
-                                                    FirstCellRightAlign: true
-                                                });
-                                                var f = 1,s;
-                                                if (data.counts) {
-                                                    table.cell(1, 1).append('<b>Status</b>');
-                                                    table.cell(1, 2).append('<b>Type</b>');
-                                                    table.cell(1, 3).append('<b>Name</b>');
-                                                    table.cell(1, 4).append('<b>Id</b>');
-                                                    table.cell(1, 5).append('<b>Link</b>');
-                                                    if (Csw.number(data.counts.failed) > 0) {
-                                                       Csw.each(data.failed, function(failObj) {
-                                                            f += 1;
-                                                            table.cell(f, 1).append('Failed');
-                                                            table.cell(f, 2).append(failObj.type);
-                                                            table.cell(f, 3).append(failObj.name);
-                                                            table.cell(f, 4).append(failObj.id);
-                                                            if (failObj.link) {
-                                                                table.cell(f, 5).nodeLink({ text: failObj.link });
-                                                            } else {
-                                                                table.cell(f, 5).append('No link. This may have deleted correctly.');
-                                                            }
-                                                       });
-                                                        s = 2 + data.counts.failed;
-                                                    }
-                                                    if (Csw.number(data.counts.succeeded) > 0) {
-                                                        
-                                                        Csw.each(data.succeeded, function (successObj) {
-                                                            s += 1;
-                                                            table.cell(s, 1).append('Succeeded');
-                                                            table.cell(s, 2).append(successObj.type);
-                                                            table.cell(s, 3).append(successObj.name);
-                                                            table.cell(s, 4).append(successObj.id);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+
+                                    $.CswDialog('ConfirmDialog',
+                                        'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>',
+                                        'Delete All Demo Data',
+                                        function() {
+                                            Csw.ajax.post({
+                                                url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
+                                                success: function(data) {
+                                                    isWholePageNavigation = true;
+                                                    var onOpen = function(dialogDiv) {
+                                                        var statusDiv = dialogDiv.div();
+                                                        statusDiv.span({ text: data.successtext });
+                                                        statusDiv.span({ text: data.failedtext });
+                                                        statusDiv.br();
+
+                                                        var table = dialogDiv.table({
+                                                            cellpadding: '3px',
+                                                            FirstCellRightAlign: true
                                                         });
-                                                    }  
+                                                        var f = 1, s;
+                                                        if (data.counts) {
+                                                            table.cell(1, 1).append('<b>Status</b>');
+                                                            table.cell(1, 2).append('<b>Type</b>');
+                                                            table.cell(1, 3).append('<b>Name</b>');
+                                                            table.cell(1, 4).append('<b>Id</b>');
+                                                            table.cell(1, 5).append('<b>Link</b>');
+                                                            if (Csw.number(data.counts.failed) > 0) {
+                                                                Csw.each(data.failed, function(failObj) {
+                                                                    f += 1;
+                                                                    table.cell(f, 1).append('Failed');
+                                                                    table.cell(f, 2).append(failObj.type);
+                                                                    table.cell(f, 3).append(failObj.name);
+                                                                    table.cell(f, 4).append(failObj.id);
+                                                                    if (failObj.link) {
+                                                                        table.cell(f, 5).nodeLink({ text: failObj.link });
+                                                                    } else {
+                                                                        table.cell(f, 5).append('No link. This may have deleted correctly.');
+                                                                    }
+                                                                });
+                                                                s = 2 + data.counts.failed;
+                                                            }
+                                                            if (Csw.number(data.counts.succeeded) > 0) {
+
+                                                                Csw.each(data.succeeded, function(successObj) {
+                                                                    s += 1;
+                                                                    table.cell(s, 1).append('Succeeded');
+                                                                    table.cell(s, 2).append(successObj.type);
+                                                                    table.cell(s, 3).append(successObj.name);
+                                                                    table.cell(s, 4).append(successObj.id);
+                                                                });
+                                                            }
+                                                        }
+                                                        if (data.exceptions) {
+                                                            Csw.each(data.exceptions, function(ex) {
+                                                                Csw.debug.error(ex);
+                                                            });
+                                                        }
+                                                        Csw.publish(Csw.enums.events.main.refreshHeader);
+                                                    };
+                                                    $.CswDialog('AlertDialog', '', 'Finished ' + Csw.string(data.counts.total) + ' deletes', Csw.goHome, 800, 600, onOpen);
                                                 }
-                                                if(data.exceptions) {
-                                                    Csw.each(data.exceptions, function(ex) {
-                                                        Csw.debug.error(ex);
-                                                    });
-                                                }
-                                                Csw.publish(Csw.enums.events.main.refreshHeader);
-                                            };
-                                            $.CswDialog('AlertDialog', '', 'Finished ' + Csw.string(data.counts.total) + ' deletes', Csw.goHome, 800, 600, onOpen);
-                                        }
-                                    });
-                                }, 'Cancel');
+                                            });
+                                        }, 'Cancel');
+                                }
                                 break;
                             case 'editview':
-                                Csw.tryExec(cswPrivate.onEditView, viewid);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onEditView, viewid);
+                                }
                                 break;
                             case 'CopyNode':
-                                $.CswDialog('CopyNodeDialog', {
-                                    nodename: nodename,
-                                    nodeid: nodeid,
-                                    nodetypeid: nodetypeid,
-                                    onCopyNode: cswPrivate.onAlterNode
-                                });
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    $.CswDialog('CopyNodeDialog', {
+                                        nodename: nodename,
+                                        nodeid: nodeid,
+                                        nodetypeid: nodetypeid,
+                                        onCopyNode: cswPrivate.onAlterNode
+                                    });
+                                }
                                 break;
                             case 'PrintView':
                                 Csw.tryExec(cswPrivate.onPrintView);
@@ -189,10 +205,16 @@
                                 });
                                 break;
                             case 'Logout':
-                                Csw.tryExec(cswPrivate.onLogout);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onLogout);
+                                }
                                 break;
                             case 'Home':
-                                Csw.goHome();
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.goHome();
+                                }
                                 break;
                             case 'Profile':
                                 $.CswDialog('EditNodeDialog', {
@@ -213,30 +235,57 @@
                                 });
                                 break;
                             case 'Quotas':
-                                Csw.tryExec(cswPrivate.onQuotas);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onQuotas);
+                                }
                                 break;
                             case 'Modules':
-                                Csw.tryExec(cswPrivate.onModules);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onModules);
+                                }
                                 break;
                             case 'Sessions':
-                                Csw.tryExec(cswPrivate.onSessions);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onSessions);
+                                }
                                 break;
                             case 'Subscriptions':
-                                Csw.tryExec(cswPrivate.onSubscriptions);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onSubscriptions);
+                                }
                                 break;
                             case 'Impersonate':
-                                $.CswDialog('ImpersonateDialog', { onImpersonate: cswPrivate.onImpersonate });
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    $.CswDialog('ImpersonateDialog', { onImpersonate: cswPrivate.onImpersonate });
+                                }
                                 break;
                             case 'EndImpersonation':
-                                Csw.tryExec(cswPrivate.onEndImpersonation);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onEndImpersonation);
+                                }
                                 break;
                             case 'Submit_Request':
-                                Csw.tryExec(cswPrivate.onSubmitRequest);
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onSubmitRequest);
+                                }
                                 break;
                             default:
                                 Csw.main.handleAction({ actionname: menuItemJson.action });
                                 break;
                         } // switch(menuItemJson.action)
+                        
+                        if (isWholePageNavigation === true) {
+                            //If we're changing the contents of the entire page, make sure all dangling events are torn down
+                            Csw.publish('initGlobalEventTeardown');
+                            Csw.main.initGlobalEventTeardown();
+                        }
                     } // else if (false === Csw.isNullOrEmpty(menuItemJson.action))
                 } // if( false === Csw.isNullOrEmpty(menuItemJson))
             }; // handleMenuItemClick()

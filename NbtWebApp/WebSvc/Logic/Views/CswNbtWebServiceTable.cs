@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
@@ -150,7 +151,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // makeTableFromTree()
 
-        private string _getThumbnailUrl( CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId )
+        private string _getThumbnailUrl( string defaultIconFileName, CswPrimaryKey NodeId )
         {
             string ret = "";
 
@@ -164,9 +165,9 @@ namespace ChemSW.Nbt.WebServices
                 ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
             }
             // default image, overridden below
-            else if( NodeType.IconFileName != string.Empty )
+            else if( defaultIconFileName != string.Empty )
             {
-                ret = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
+                ret = CswNbtMetaDataObjectClass.IconPrefix100 + defaultIconFileName;
             }
             else
             {
@@ -237,6 +238,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     NodeObj["nodekey"] = NodeKey.ToString();
                 }
+                NodeObj["nodelink"] = CswNbtNode.getNodeLink( NodeId, NodeName );
                 NodeObj["c3productid"] = C3ProductId.ToString();
                 NodeObj["locked"] = Locked.ToString().ToLower();
                 NodeObj["disabled"] = Disabled.ToString().ToLower();
@@ -321,7 +323,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
-                        thisNode.ThumbnailUrl = _getThumbnailUrl( thisNode.NodeType, thisNode.NodeId );
+                        thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition(), thisNode.NodeId );
 
                         thisNode.AllowView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
                         thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );

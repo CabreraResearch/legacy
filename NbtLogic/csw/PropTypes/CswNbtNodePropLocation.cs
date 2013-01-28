@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                CachedNodeName = CswNbtLocationTreeDeprecated.TopLevelName;
+                CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
                 CachedPath = CachedNodeName;
                 CachedBarcode = string.Empty;
             }
@@ -261,6 +261,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId ) ); } // get
         } // View
+
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
 
         public override void ToJSON( JObject ParentObject )
         {

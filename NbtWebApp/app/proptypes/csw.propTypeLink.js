@@ -21,10 +21,11 @@
 
                     cswPrivate.text = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.href = Csw.string(cswPrivate.propVals.href).trim();
+                    cswPrivate.url = Csw.string(cswPrivate.propVals.url).trim();
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.a({
-                            href: cswPrivate.href,
+                            href: cswPrivate.url,
                             text: cswPrivate.text
                         });
                     } else {
@@ -36,7 +37,7 @@
                             });
                         } else {
                             cswPublic.control.cell(1, 1).a({
-                                href: cswPrivate.href,
+                                href: cswPrivate.url,
                                 text: cswPrivate.text
                             });
                         }
@@ -68,7 +69,7 @@
                             }
                         });
 
-                        cswPrivate.editTable.cell(2, 1).span({ text: 'URL' });
+                        cswPrivate.editTable.cell(2, 1).span({ text: 'URL body' });
 
                         cswPrivate.editHrefCell = cswPrivate.editTable.cell(2, 2);
                         cswPrivate.editHref = cswPrivate.editHrefCell.input({
@@ -80,6 +81,11 @@
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPublic.data.onPropChange({ href: val });
                             }
+                        });
+
+                        cswPrivate.urlCell = cswPrivate.editTable.cell(3, 2);
+                        cswPrivate.urlText = cswPrivate.urlCell.span({
+                            text: cswPrivate.url
                         });
 
                         cswPrivate.editText.required(cswPublic.data.isRequired());
@@ -95,7 +101,7 @@
 
                 //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
-                
+
                 //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
                 //cswPublic.data.unBindRender();
 

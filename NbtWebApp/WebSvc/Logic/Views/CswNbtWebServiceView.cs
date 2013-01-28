@@ -4,19 +4,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
-using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Grid.ExtJs;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -29,14 +24,45 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        
+        public JArray getAllViewNames()
+        {
+            JArray Ret = new JArray();
+
+            bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+            Dictionary<CswNbtViewId, CswNbtView> AllViews = null;
+
+            if( IsAdmin )
+            {
+                _CswNbtResources.ViewSelect.getAllEnabledViews( out AllViews );
+            }
+            else
+            {
+                _CswNbtResources.ViewSelect.getUserViews( out AllViews );
+            }
+            if( null != AllViews )
+            {
+                foreach( KeyValuePair<CswNbtViewId, CswNbtView> ViewPair in AllViews )
+                {
+                    if( null != ViewPair.Key && ViewPair.Key.isSet() && null != ViewPair.Value )
+                    {
+                        Ret.Add( new JObject
+                            {
+                                new JProperty("id", ViewPair.Key.ToString()), 
+                                new JProperty("name", ViewPair.Value.ViewName)
+                            } );
+                    }
+                }
+            }
+
+            return Ret;
+        }
+
         public JObject getViewGrid( bool All )
         {
             JObject ReturnVal = new JObject();
             CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
             bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
 
-            Dictionary<CswNbtViewId, CswNbtView> Views = new Dictionary<CswNbtViewId, CswNbtView>();
             DataTable ViewsTable = null;
             if( IsAdmin )
             {
@@ -46,9 +72,11 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    Views = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser,
+                    //ViewsTable = (via out)
+                    _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser,
                                                                          true, false, false, NbtViewRenderingMode.Any,
-                                                                         out ViewsTable, null );
+                                                                         out ViewsTable );
+
                 }
             }
             else
@@ -83,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
                         ViewsTable.Columns.Remove( "rolename" );
                 }
 
-                ChemSW.Nbt.Grid.ExtJs.CswNbtGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
+                ChemSW.Grid.ExtJs.CswGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
                 grid.getColumn( "nodeviewid" ).hidden = true;
                 grid.getColumn( "viewid" ).hidden = true;
 
@@ -272,7 +300,7 @@ namespace ChemSW.Nbt.WebServices
                                                         orderby _Property.MetaDataProp.PropNameWithQuestionNo
                                                         select _Property )
                 {
-                    JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
+                    JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly : true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
                     {
                         // case 26166 - collapse redundant filters
@@ -305,13 +333,15 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // case 26166 - apply to all matching properties
                     CswNbtViewPropertyFilter ViewPropFilter = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FilterArbitraryId );
+                    string OrigValue = ViewPropFilter.Value;
+                    
                     CswNbtViewProperty ViewParentProp = (CswNbtViewProperty) ViewPropFilter.Parent;
                     foreach( CswNbtViewPropertyFilter OtherPropFilter in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) )
                     {
                         CswNbtViewProperty OtherParentProp = ( (CswNbtViewProperty) OtherPropFilter.Parent );
                         if( OtherParentProp.Name == ViewParentProp.Name &&
                             OtherParentProp.FieldType == ViewParentProp.FieldType &&
-                            OtherPropFilter.Value == ViewPropFilter.Value )
+                            OtherPropFilter.Value == OrigValue )
                         {
                             OtherPropFilter.Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) NewFilter["conjunction"].ToString();
                             OtherPropFilter.FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) NewFilter["filter"].ToString();

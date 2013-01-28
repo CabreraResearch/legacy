@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using ChemSW.Nbt.Grid.ExtJs;
+using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Tree;
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.WebServices
                 public string AccessedByObjClassId = "";
             }
 
-            public class Response: CswWebSvcReturn
+            public class Response : CswWebSvcReturn
             {
                 public Response()
                 {
@@ -124,8 +124,8 @@ namespace ChemSW.Nbt.WebServices
                     public ResponseData()
                     {
                         Tree = new Collection<CswExtTree.TreeNode>();
-                        Columns = new Collection<CswNbtGridExtJsColumn>();
-                        Fields = new Collection<CswNbtGridExtJsField>();
+                        Columns = new Collection<CswGridExtJsColumn>();
+                        Fields = new Collection<CswGridExtJsField>();
                         ViewMode = NbtViewRenderingMode.Tree;
                         PageSize = 50;
                     }
@@ -134,10 +134,10 @@ namespace ChemSW.Nbt.WebServices
                     public Collection<CswExtTree.TreeNode> Tree;
 
                     [DataMember]
-                    public Collection<CswNbtGridExtJsColumn> Columns;
+                    public Collection<CswGridExtJsColumn> Columns;
 
                     [DataMember]
-                    public Collection<CswNbtGridExtJsField> Fields;
+                    public Collection<CswGridExtJsField> Fields;
 
                     public CswNbtSessionDataId ViewId { get; set; }
 
@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.WebServices
             string ThisNodeId = "";
             int ThisNodeTypeId = int.MinValue;
             int ThisObjectClassId = int.MinValue;
-            string ThisNodeRel = "";
+            
             bool ThisNodeLocked = false;
             bool ThisNodeDisabled = false;
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
@@ -257,13 +257,13 @@ namespace ChemSW.Nbt.WebServices
                     ThisObjectClassId = ThisNodeType.ObjectClassId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
                     ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
-                    if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
-                    {
-                        ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
-                    }
+                    //if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
+                    //{
+                    //    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
+                    //}
+                    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + Tree.getNodeIconForCurrentPosition();
                     break;
                 case NodeSpecies.Group:
-                    ThisNodeRel = "group";
                     Ret.CssClass = "folder";
                     break;
             }
@@ -308,21 +308,21 @@ namespace ChemSW.Nbt.WebServices
                 Ret.IsDisabled = true;
             }
 
-            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
             {
-                Ret.ParentId = ParentKey.ToString();
-                if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
-                {
-                    Ret.Path = Parent.Path;
-                }
+                Ret.Path = Parent.Path;
             }
             else
             {
                 Ret.ParentId = "root";
                 Ret.Path = "|root";
             }
-
+            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
+            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            {
+                Ret.ParentId = ParentKey.ToString();
+            }
+            
             Ret.Path += "|" + Ret.Id;
 
             if( Tree.getChildNodeCount() > 0 )
@@ -436,10 +436,11 @@ namespace ChemSW.Nbt.WebServices
                 RootNode.Name = _View.ViewName;
                 RootNode.IsRoot = true;
                 RootNode.Expanded = true;
+                RootNode.Path = "|root";
                 RootNode.Id = "root";
 
                 //#2: the columns for the Tree Grid
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "text",
                         xtype = extJsXType.treecolumn,
@@ -448,27 +449,27 @@ namespace ChemSW.Nbt.WebServices
                         header = "Tree",
                         resizable = false,
                     } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "nodetypeid",
                         header = "NodeTypeId",
                         hidden = true,
                         resizable = false,
                         width = 0,
-                        xtype = extJsXType.numbercolumn,
+                        xtype = extJsXType.gridcolumn,
                         MenuDisabled = true
                     } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "objectclassid",
                         header = "ObjectClassId",
                         hidden = true,
                         resizable = false,
                         width = 0,
-                        xtype = extJsXType.numbercolumn,
+                        xtype = extJsXType.gridcolumn,
                         MenuDisabled = true
                     } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                 {
                     ExtDataIndex = "nodeid",
                     header = "NodeId",
@@ -478,7 +479,7 @@ namespace ChemSW.Nbt.WebServices
                     xtype = extJsXType.gridcolumn,
                     MenuDisabled = true
                 } );
-                ResponseData.Columns.Add( new CswNbtGridExtJsColumn
+                ResponseData.Columns.Add( new CswGridExtJsColumn
                     {
                         ExtDataIndex = "disabled",
                         header = "Disabled",
@@ -491,11 +492,11 @@ namespace ChemSW.Nbt.WebServices
 
 
                 //#3: The fields to map the columns to the data store
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "text", type = "string" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodetypeid", type = "number" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "objectclassid", type = "number" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "nodeid", type = "string" } );
-                ResponseData.Fields.Add( new CswNbtGridExtJsField { name = "disabled", type = "bool" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "text", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "nodetypeid", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "objectclassid", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "nodeid", type = "string" } );
+                ResponseData.Fields.Add( new CswGridExtJsField { name = "disabled", type = "bool" } );
 
                 //#4: the tree
                 RootNode.Children = new Collection<CswExtTree.TreeNode>();
@@ -509,7 +510,10 @@ namespace ChemSW.Nbt.WebServices
                     CswExtTree.TreeNode EmptyNode = new CswExtTree.TreeNode();
                     EmptyNode.Name = "No Results";
                     EmptyNode.IsLeaf = true;
+                    EmptyNode.Selected = true;
                     EmptyNode.Id = "empty";
+                    EmptyNode.ParentId = RootNode.Id;
+                    EmptyNode.Path = RootNode.Path + "|empty"; 
                     RootNode.Children.Add( EmptyNode );
                 }
             }

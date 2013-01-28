@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.Schema
                 _Dev = Dev;
                 _CaseNo = CaseNo;
             }
+            static Procedures() { }
             public string _Dev { get; private set; }
             public Int32 _CaseNo { get; private set; }
             public static IEnumerable<Procedures> _All { get { return All; } }
@@ -101,7 +102,7 @@ end;" );
         select v.*,s.propcolname subfieldname,s.is_default,s.subfieldname subfieldalias from vwNtPropDefs v
         join field_types_subfields s on s.fieldtypeid=v.fieldtypeid and s.reportable='1'
         where v.nodetypeid=ntid order by lower(propname);
-        var_sql varchar2(32000);
+        var_sql clob;
         var_line varchar(2000);
         pname varchar2(200);
         pcount number;
@@ -174,7 +175,7 @@ end;" );
     cursor props is select v.*
     from vwObjProps v
     where v.objectclassid=objid and objectclasspropid is not null order by objectclasspropid;
-    var_sql varchar2(20000);
+    var_sql clob;
     aline varchar(2000);
     pcount number;
     viewname varchar(30);

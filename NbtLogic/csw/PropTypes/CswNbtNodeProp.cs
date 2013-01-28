@@ -237,6 +237,11 @@ namespace ChemSW.Nbt.PropTypes
         public bool PendingUpdate { get { return ( _CswNbtNodePropData.PendingUpdate ); } set { _CswNbtNodePropData.PendingUpdate = value; } }
 
         /// <summary>
+        /// Property value used in name template
+        /// </summary>
+        public abstract string ValueForNameTemplate { get; }
+
+        /// <summary>
         /// Event which fires before the node prop data row is written to the database
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>

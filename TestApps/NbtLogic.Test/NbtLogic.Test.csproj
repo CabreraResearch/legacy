@@ -110,6 +110,8 @@
     <Compile Include="CswNbtActDispenseContainerTest.cs" />
     <Compile Include="Reconciliation\CswNbtObjClassContainerLocationTest.cs" />
     <Compile Include="Reconciliation\CswScheduleLogicNbtContainerReconciliationActionsTest.cs" />
+    <Compile Include="RegulatoryReporting\CswNbtActionTierIIReportingTest.cs" />
+    <Compile Include="RegulatoryReporting\CswNbtActionHMISReportingTest.cs" />
     <Compile Include="TestData\TestDataNodes.cs" />
     <Compile Include="TestData\TestData.cs" />
   </ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
@@ -31,7 +32,7 @@ namespace ChemSw.Nbt.Test
 
         #region Nodes
 
-        internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null )
+        internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null, CswPrimaryKey ControlZoneId = null )
         {
             CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( LocationType ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             LocationNode.Name.Text = Name;
@@ -40,7 +41,11 @@ namespace ChemSw.Nbt.Test
                 LocationNode.Location.SelectedNodeId = ParentLocationId;
                 LocationNode.Location.RefreshNodeName();
             }
-            LocationNode.postChanges( false );
+            if( ControlZoneId != null )
+            {
+                LocationNode.ControlZone.RelatedNodeId = ControlZoneId;
+            }
+            LocationNode.postChanges( true );
             return LocationNode.Node;
         }
 
@@ -62,7 +67,7 @@ namespace ChemSw.Nbt.Test
                 ContainerLocationNode.Location.RefreshNodeName();
             }
             ContainerLocationNode.ContainerScan.Text = ContainerScan;
-            ContainerLocationNode.postChanges( false );
+            ContainerLocationNode.postChanges( true );
             return ContainerLocationNode.Node;
         }
 
@@ -104,22 +109,47 @@ namespace ChemSw.Nbt.Test
             return UnitOfMeasureNode.Node;
         }
 
-        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, string PPE = "" )
+        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, string PPE = "", string Hazards = "", string SpecialFlags = "" )
         {
             CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
                 MaterialNode.SpecificGravity.Value = SpecificGravity;
             MaterialNode.PhysicalState.Value = State;
-            if( false == String.IsNullOrEmpty( PPE ) )
+            if( NodeTypeName == "Chemical" )
             {
-                CswCommaDelimitedString PPEString = new CswCommaDelimitedString();
-                PPEString.FromString( PPE );
-                CswNbtMetaDataNodeTypeProp PPENTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "PPE" );
-                MaterialNode.Node.Properties[PPENTP].AsMultiList.Value = PPEString;
+                if( false == String.IsNullOrEmpty( PPE ) )
+                {
+                    _setMultiListValue( MaterialNode.Node, PPE, "PPE" );
+                }
+                if( false == String.IsNullOrEmpty( Hazards ) )
+                {
+                    _setMultiListValue( MaterialNode.Node, Hazards, "Hazard Classes" );
+                }
+                MaterialNode.postChanges( true );
+                _setMultiListValue( MaterialNode.Node, SpecialFlags, "Special Flags" );
             }
             MaterialNode.postChanges( true );
-
             return MaterialNode.Node;
+        }
+
+        internal CswNbtNode createControlZoneNode( string Name = "CZ_Test", string FireClassSetName = "Default" )
+        {
+            CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZoneNode.NodeTypeId, "Name" );
+            ControlZoneNode.Properties[NameNTP].AsText.Text = Name;
+            CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
+            foreach ( CswNbtObjClassFireClassExemptAmountSet DefaultFireClassSet in FCEASOC.getNodes( false, false ) )
+            {
+                if( DefaultFireClassSet.SetName.Text == FireClassSetName )
+                {
+                    CswNbtMetaDataNodeTypeProp FCSNNTP = _CswNbtResources.MetaData.getNodeTypeProp(ControlZoneNode.NodeTypeId, "Fire Class Set Name");
+                    ControlZoneNode.Properties[FCSNNTP].AsRelationship.RelatedNodeId = DefaultFireClassSet.NodeId;
+                    break;
+                }
+            }
+            ControlZoneNode.postChanges( true );
+
+            return ControlZoneNode;
         }
 
         #endregion
@@ -134,6 +164,14 @@ namespace ChemSw.Nbt.Test
                 throw new Exception( "Expected NodeType not found: " + NodeTypeName );
             }
             return NodeType.NodeTypeId;
+        }
+
+        private void _setMultiListValue(CswNbtNode Node, String MultiListValue, String MultiListPropName)
+        {
+            CswCommaDelimitedString MultiListString = new CswCommaDelimitedString();
+            MultiListString.FromString( MultiListValue );
+            CswNbtMetaDataNodeTypeProp MultiListNTP = _CswNbtResources.MetaData.getNodeTypeProp( Node.NodeTypeId, MultiListPropName );
+            Node.Properties[MultiListNTP].AsMultiList.Value = MultiListString;
         }
 
         #endregion

@@ -185,14 +185,13 @@ namespace ChemSW.Nbt
             set { Root.VisibilityUserId = value; }
         }
 
-        //TODO: ForMobile needs to go.
         /// <summary>
-        /// Use view in Mobile
+        /// Group by sibling nodetypes
         /// </summary>
-        public bool ForMobile
+        public bool GroupBySiblings
         {
-            get { return Root.ForMobile; }
-            set { Root.ForMobile = value; }
+            get { return Root.GroupBySiblings; }
+            set { Root.GroupBySiblings = value; }
         }
 
         public string GridGroupByCol
@@ -328,21 +327,9 @@ namespace ChemSW.Nbt
 
         /// <summary>
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
-        /// For a relationship below the root level, determined by a nodetype property
+        /// For a relationship below the root level, determined by a property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
-        {
-            CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
-            if( ParentViewRelationship != null )
-                ParentViewRelationship.addChildRelationship( NewRelationship );
-            return NewRelationship;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
-        /// For a relationship below the root level, determined by an object class property
-        /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, ICswNbtMetaDataProp Prop, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -733,8 +720,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["viewname"] = ViewName;
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
-            //TODO: formobile needs to go.
-            ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
+            ViewTable.Rows[0]["groupbysiblings"] = CswConvert.ToDbVal( GroupBySiblings );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
             ViewTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( IsDemo );
@@ -833,8 +819,7 @@ namespace ChemSW.Nbt
 
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
-            //TODO: formobile needs to go.
-            NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
+            NewRow["groupbysiblings"] = CswConvert.ToDbVal( GroupBySiblings );
             NewRow["visibility"] = Visibility.ToString();
             NewRow["viewmode"] = NewViewMode.ToString();
             NewRow["category"] = NewViewCategory;
@@ -866,8 +851,7 @@ namespace ChemSW.Nbt
             this.VisibilityRoleId = RoleId;
             this.VisibilityUserId = UserId;
             this.Category = NewViewCategory;
-            //TODO: ForMobile needs to go.
-            this.ForMobile = ForMobile;
+            this.GroupBySiblings = GroupBySiblings;
 
             // The XML includes the viewid and viewname, so it has to be updated before it can be saved
             NewRow["viewxml"] = this.ToString();
@@ -1127,6 +1111,21 @@ namespace ChemSW.Nbt
             Root.ViewName = OldName;
             Root.ViewId = ViewId;
         }
+
+        public void CopyFromView( CswNbtView ViewToCopy )
+        {
+            if( null != ViewToCopy && ViewToCopy.Root.ChildRelationships.Count > 0 )
+            {
+                this.Root.ChildRelationships.Clear();
+                foreach( CswNbtViewRelationship Relationship in ViewToCopy.Root.ChildRelationships )
+                {
+                    this.Root.addChildRelationship( Relationship );
+                }
+                this.save();
+            }
+        }
+
+        
 
         #region Find ViewNode
 

@@ -356,7 +356,10 @@ namespace ChemSW.Nbt.PropTypes
             } // for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
         } // _addOptionsRecurse()
 
-        //public bool isNodeReference() { return true; }
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
 
         public override void ToJSON( JObject ParentObject )
         {
@@ -375,7 +378,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
                 TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
-                TargetObjectClass = TargetNodeType.getObjectClass();
+                if( null != TargetNodeType )
+                {
+                    TargetObjectClass = TargetNodeType.getObjectClass();
+                }
             }
             else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
             {
@@ -423,6 +429,7 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             JOption["id"] = NodePk.ToString();
                             JOption["value"] = Options[NodePk];
+                            JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
                         }
                         else
                         {

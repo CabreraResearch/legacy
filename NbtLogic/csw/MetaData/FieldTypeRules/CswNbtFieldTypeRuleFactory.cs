@@ -24,6 +24,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = new CswNbtFieldTypeRuleCASNo( CswNbtFieldResources );
                     break;
 
+                case CswNbtMetaDataFieldType.NbtFieldType.ChildContents:
+                    ReturnVal = new CswNbtFieldTypeRuleChildContents( CswNbtFieldResources );
+                    break;
+
                 case CswNbtMetaDataFieldType.NbtFieldType.Comments:
                     ReturnVal = new CswNbtFieldTypeRuleComments( CswNbtFieldResources );
                     break;

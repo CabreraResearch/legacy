@@ -8,10 +8,10 @@
 
             var cswPrivate = {
                 selectedRowId: '',
-                runGridUrl: 'runGrid',
                 viewid: '',
                 showempty: false,
                 name: '',
+                title: '',
                 nodeid: '',
                 nodekey: '',
                 reinit: false,
@@ -37,13 +37,13 @@
 
             /* fetchGridSkeleton */
             (function() {
-
                 cswPublic = cswParent.grid({
                     name: cswPrivate.name,
                     stateId: cswPrivate.viewid,
                     ajax: {
-                        urlMethod: cswPrivate.runGridUrl,
+                        urlMethod: 'runGrid',
                         data: {
+                            Title: cswPrivate.title,
                             ViewId: cswPrivate.viewid,
                             IncludeNodeId: Csw.string(cswPrivate.nodeid),
                             IncludeNodeKey: cswPrivate.nodekey,
@@ -106,7 +106,13 @@
                             Multi: (nodes.length > 1),
                             publishDeleteEvent: false
                         });
-                    } // onDelete
+                    }, // onDelete
+                    onMouseEnter: function(event, nodeObj) {
+                        Csw.nodeHoverIn(event, nodeObj.raw.nodeid);
+                    },
+                    onMouseExit: function (event, nodeObj) {
+                        Csw.nodeHoverOut(event, nodeObj.raw.nodeid);
+                    }
                 }); // grid()
 
                 Csw.tryExec(cswPrivate.onSuccess, cswPublic);
