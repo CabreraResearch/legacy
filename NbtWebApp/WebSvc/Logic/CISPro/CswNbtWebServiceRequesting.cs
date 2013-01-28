@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
                     bool IsPropertyGrid = !( CartView.ViewName == CswNbtActRequesting.FavoriteItemsViewName ||
                                              CartView.ViewName == CswNbtActRequesting.RecurringItemsViewName );
                     CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport : false );
-                    Ret = GridWs.runGrid( IncludeInQuickLaunch : false, GetAllRowsNow : true, IsPropertyGrid : IsPropertyGrid );
+                    ret = GridWs.runGrid( Title: null, IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
                     Ret["grid"]["title"] = "";
                 }
             }
