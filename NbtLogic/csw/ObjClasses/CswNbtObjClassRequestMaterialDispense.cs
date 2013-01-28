@@ -216,9 +216,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override string setRequestDescription()
         {
             string Ret = "";
-            if( _IsRecurring )
+            if( _IsRecurring && false == RecurringFrequency.Empty )
             {
-                Ret = RecurringFrequency.Gestalt + " Recurring ";
+                Ret = "Recurring " + RecurringFrequency.RateInterval.RateType + ": ";
             }
             Ret += "Dispense ";
             switch( Type.Value )
@@ -528,7 +528,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp,
                 FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                Value : CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ),
+                Value : Tristate.True.ToString(),
                 ShowInGrid : false );
         }
 

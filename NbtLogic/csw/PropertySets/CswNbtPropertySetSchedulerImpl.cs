@@ -25,11 +25,13 @@ namespace ChemSW.Nbt.PropertySets
 
         bool _UpdateFutureTasks = false;
 
-        public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval )
+        public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval, bool ForceUpdate = false, bool DeleteFuture = false )
         {
             DateTime Ret = DateTime.MinValue;
             if( NodePropInterval.WasModified ||
-                Node.New )
+                Node.New || 
+                ForceUpdate || 
+                DeleteFuture )
             {
                 if( NodePropInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
                 {
@@ -58,7 +60,7 @@ namespace ChemSW.Nbt.PropertySets
                 DeleteFuture ||
                 ForceUpdate )
             {
-                DateTime CandidateNextDueDate = getNextDueDate( _CswNbtNode, _Scheduler.NextDueDate, _Scheduler.DueDateInterval );
+                DateTime CandidateNextDueDate = getNextDueDate( _CswNbtNode, _Scheduler.NextDueDate, _Scheduler.DueDateInterval, ForceUpdate, DeleteFuture );
                 if(DateTime.MinValue != CandidateNextDueDate) {
 
                     DateTime FinalDueDate = _Scheduler.FinalDueDate.DateTimeValue;
