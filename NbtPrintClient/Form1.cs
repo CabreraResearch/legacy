@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
-using ChemSW;
-using CswPrintClient1.NbtLabels;
-using CswPrintClient1.NbtSession;
 
 namespace CswPrintClient1
 {
@@ -18,6 +14,7 @@ namespace CswPrintClient1
             _svcThread = new ServiceThread();
             _svcThread.OnRegisterLpc += new ServiceThread.RegisterEventHandler( _ServiceThread_Register );
             _svcThread.OnNextJob += new ServiceThread.NextJobEventHandler( _ServiceThread_NextJob );
+            _svcThread.OnLabelById += new ServiceThread.LabelByIdEventHandler( _ServiceThread_LabelById );
 
         }
 
@@ -30,6 +27,10 @@ namespace CswPrintClient1
         void _ServiceThread_NextJob( ServiceThread.NextJobEventArgs e )
         {
             this.BeginInvoke( new InitNextJobHandler( _InitNextJobUI ), new object[] { e } );
+        }
+        void _ServiceThread_LabelById( ServiceThread.LabelByIdEventArgs e )
+        {
+            this.BeginInvoke( new InitLabelByIdHandler( _InitLabelByIdUI ), new object[] { e } );
         }
 
         #endregion
@@ -70,6 +71,7 @@ namespace CswPrintClient1
                     {
 
                         lblStatus.Text += "\nPrinting Done!";
+                        Log( "Labels printed." );
                     }
                     else
                     {
@@ -83,6 +85,33 @@ namespace CswPrintClient1
                 Log( e.Message );
             }
             timer1.Enabled = true;
+        }
+
+        private delegate void InitLabelByIdHandler( ServiceThread.LabelByIdEventArgs e );
+        private void _InitLabelByIdUI( ServiceThread.LabelByIdEventArgs e )
+        {
+            if( e.Succeeded )
+            {
+                if( e.LabelData != string.Empty )
+                {
+                    if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, e.LabelData ) == true )
+                    {
+
+                        lblStatus.Text += "\nPrinting Done!";
+                        Log( "Test label printed." );
+                    }
+                    else
+                    {
+                        lblStatus.Text = "Error printing!";
+                    }
+
+                }
+            }
+            else
+            {
+                Log( e.Message );
+            }
+            btnTestPrintSvc.Enabled = true;
         }
 
 
@@ -113,58 +142,10 @@ namespace CswPrintClient1
 
         private void btnTestPrintService_Click( object sender, EventArgs e )
         {
-            //try login
-            CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
-            SessionClient mySession = new SessionClient();
-            mySession.Endpoint.Behaviors.Add( cookieBehavior );
-
-            NbtSession.CswWebSvcReturn ret = mySession.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
-            {
-                CustomerId = tbAccessId.Text,
-                UserName = tbUsername.Text,
-                Password = tbPassword.Text,
-                IsMobile = false
-            } );
-
-            if( ret.Authentication.AuthenticationStatus == "Authenticated" )
-            {
-                //logged in
-                Labels2Client l = new NbtLabels.Labels2Client();
-                l.Endpoint.Behaviors.Add( cookieBehavior );
-
-                NbtPrintLabelRequestGet nbtLabelget = new NbtPrintLabelRequestGet();
-                nbtLabelget.LabelId = tbPrintLabelId.Text;
-                nbtLabelget.TargetId = tbTargetId.Text;
-                CswNbtLabelEpl epl = l.getLabel( nbtLabelget );
-                if( epl.Data.Labels.Count() < 1 )
-                {
-                    lblStatus.Text = "No labels returned.";
-                }
-                else
-                {
-                    foreach( PrintLabel p in epl.Data.Labels )
-                    {
-                        lblStatus.Text = "Printing...";
-                        if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, p.EplText ) == true )
-                        {
-
-                            lblStatus.Text += "\nDone!";
-                        }
-                        else
-                        {
-                            lblStatus.Text = "Error printing!";
-                        }
-                    }
-                }
-                l.Close();
-                //LOGOUT
-                mySession.End();
-            }
-            else
-            {
-                Status( "Authentication error: " + ret.Authentication.AuthenticationStatus );
-            }
-            mySession.Close();
+            btnTestPrintSvc.Enabled = false;
+            lblStatus.Text = "Contacting server for label data...";
+            ServiceThread.LabelByIdInvoker lblInvoke = new ServiceThread.LabelByIdInvoker( _svcThread.LabelById );
+            lblInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, tbPrintLabelId.Text, tbTargetId.Text, null, null );
         }
 
 
@@ -198,10 +179,10 @@ namespace CswPrintClient1
         private void btnRegister_Click( object sender, EventArgs e )
         {
 
-            btnRegister.Enabled = false;
+            btnTestPrintSvc.Enabled = false;
             lblRegisterStatus.Text = "Contacting server...";
             ServiceThread.RegisterInvoker regInvoke = new ServiceThread.RegisterInvoker( _svcThread.Register );
-            regInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, tbLPCname.Text, null, null );
+            regInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, tbLPCname.Text, tbDescript.Text, null, null );
         }
 
         private void Form1_Load( object sender, EventArgs e )

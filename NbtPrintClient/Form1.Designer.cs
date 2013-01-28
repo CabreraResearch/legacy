@@ -68,6 +68,8 @@
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.btnClearReg = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.tbDescript = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -120,6 +122,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.tbDescript);
+            this.tabPage2.Controls.Add(this.label13);
             this.tabPage2.Controls.Add(this.btnClearReg);
             this.tabPage2.Controls.Add(this.btnSave);
             this.tabPage2.Controls.Add(this.cbEnabled);
@@ -150,7 +154,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(283, 340);
+            this.btnSave.Location = new System.Drawing.Point(287, 344);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(115, 23);
             this.btnSave.TabIndex = 52;
@@ -161,7 +165,7 @@
             // cbEnabled
             // 
             this.cbEnabled.AutoSize = true;
-            this.cbEnabled.Location = new System.Drawing.Point(157, 295);
+            this.cbEnabled.Location = new System.Drawing.Point(137, 325);
             this.cbEnabled.Name = "cbEnabled";
             this.cbEnabled.Size = new System.Drawing.Size(108, 17);
             this.cbEnabled.TabIndex = 51;
@@ -173,7 +177,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(27, 147);
+            this.label12.Location = new System.Drawing.Point(18, 186);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(81, 13);
             this.label12.TabIndex = 50;
@@ -183,7 +187,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(14, 15);
+            this.label11.Location = new System.Drawing.Point(14, 24);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(81, 13);
             this.label11.TabIndex = 49;
@@ -191,14 +195,14 @@
             // 
             // lblRegisterStatus
             // 
-            this.lblRegisterStatus.Location = new System.Drawing.Point(157, 95);
+            this.lblRegisterStatus.Location = new System.Drawing.Point(127, 13);
             this.lblRegisterStatus.Name = "lblRegisterStatus";
-            this.lblRegisterStatus.Size = new System.Drawing.Size(241, 36);
+            this.lblRegisterStatus.Size = new System.Drawing.Size(268, 24);
             this.lblRegisterStatus.TabIndex = 48;
             // 
             // tbURL
             // 
-            this.tbURL.Location = new System.Drawing.Point(154, 174);
+            this.tbURL.Location = new System.Drawing.Point(134, 213);
             this.tbURL.Name = "tbURL";
             this.tbURL.ReadOnly = true;
             this.tbURL.Size = new System.Drawing.Size(244, 20);
@@ -208,7 +212,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(27, 177);
+            this.label9.Location = new System.Drawing.Point(10, 216);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(111, 13);
             this.label9.TabIndex = 46;
@@ -216,7 +220,7 @@
             // 
             // btnRegister
             // 
-            this.btnRegister.Location = new System.Drawing.Point(289, 68);
+            this.btnRegister.Location = new System.Drawing.Point(289, 75);
             this.btnRegister.Name = "btnRegister";
             this.btnRegister.Size = new System.Drawing.Size(60, 23);
             this.btnRegister.TabIndex = 45;
@@ -226,7 +230,7 @@
             // 
             // tbLPCname
             // 
-            this.tbLPCname.Location = new System.Drawing.Point(130, 68);
+            this.tbLPCname.Location = new System.Drawing.Point(130, 75);
             this.tbLPCname.Name = "tbLPCname";
             this.tbLPCname.Size = new System.Drawing.Size(152, 20);
             this.tbLPCname.TabIndex = 44;
@@ -234,7 +238,7 @@
             // 
             // btnSelPrn
             // 
-            this.btnSelPrn.Location = new System.Drawing.Point(289, 40);
+            this.btnSelPrn.Location = new System.Drawing.Point(289, 47);
             this.btnSelPrn.Name = "btnSelPrn";
             this.btnSelPrn.Size = new System.Drawing.Size(60, 23);
             this.btnSelPrn.TabIndex = 43;
@@ -245,7 +249,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(16, 43);
+            this.label10.Location = new System.Drawing.Point(16, 50);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(111, 13);
             this.label10.TabIndex = 42;
@@ -253,7 +257,7 @@
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(157, 256);
+            this.tbPassword.Location = new System.Drawing.Point(137, 295);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(100, 20);
             this.tbPassword.TabIndex = 35;
@@ -262,7 +266,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(85, 259);
+            this.label5.Location = new System.Drawing.Point(68, 298);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 13);
             this.label5.TabIndex = 34;
@@ -270,7 +274,7 @@
             // 
             // tbUsername
             // 
-            this.tbUsername.Location = new System.Drawing.Point(157, 230);
+            this.tbUsername.Location = new System.Drawing.Point(137, 269);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(100, 20);
             this.tbUsername.TabIndex = 33;
@@ -279,7 +283,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(83, 233);
+            this.label4.Location = new System.Drawing.Point(66, 272);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 32;
@@ -287,7 +291,7 @@
             // 
             // tbAccessId
             // 
-            this.tbAccessId.Location = new System.Drawing.Point(157, 204);
+            this.tbAccessId.Location = new System.Drawing.Point(137, 243);
             this.tbAccessId.Name = "tbAccessId";
             this.tbAccessId.Size = new System.Drawing.Size(100, 20);
             this.tbAccessId.TabIndex = 31;
@@ -296,7 +300,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(87, 207);
+            this.label3.Location = new System.Drawing.Point(70, 246);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 13);
             this.label3.TabIndex = 30;
@@ -305,7 +309,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 68);
+            this.label1.Location = new System.Drawing.Point(11, 75);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(116, 13);
             this.label1.TabIndex = 29;
@@ -313,7 +317,7 @@
             // 
             // tbPrinter
             // 
-            this.tbPrinter.Location = new System.Drawing.Point(130, 40);
+            this.tbPrinter.Location = new System.Drawing.Point(130, 47);
             this.tbPrinter.Name = "tbPrinter";
             this.tbPrinter.ReadOnly = true;
             this.tbPrinter.Size = new System.Drawing.Size(152, 20);
@@ -435,13 +439,30 @@
             // 
             // btnClearReg
             // 
-            this.btnClearReg.Location = new System.Drawing.Point(354, 68);
+            this.btnClearReg.Location = new System.Drawing.Point(354, 75);
             this.btnClearReg.Name = "btnClearReg";
             this.btnClearReg.Size = new System.Drawing.Size(60, 23);
             this.btnClearReg.TabIndex = 53;
             this.btnClearReg.Text = "Clear";
             this.btnClearReg.UseVisualStyleBackColor = true;
             this.btnClearReg.Click += new System.EventHandler(this.btnClearReg_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(34, 105);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(93, 13);
+            this.label13.TabIndex = 54;
+            this.label13.Text = "Printer Description";
+            // 
+            // tbDescript
+            // 
+            this.tbDescript.Location = new System.Drawing.Point(130, 102);
+            this.tbDescript.Multiline = true;
+            this.tbDescript.Name = "tbDescript";
+            this.tbDescript.Size = new System.Drawing.Size(219, 54);
+            this.tbDescript.TabIndex = 55;
             // 
             // Form1
             // 
@@ -503,6 +524,8 @@
         private System.Windows.Forms.CheckBox cbEnabled;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnClearReg;
+        private System.Windows.Forms.TextBox tbDescript;
+        private System.Windows.Forms.Label label13;
 
     }
 }

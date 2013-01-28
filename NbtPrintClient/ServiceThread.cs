@@ -19,8 +19,8 @@ namespace CswPrintClient1
         public delegate void RegisterEventHandler( RegisterEventArgs e );
 
         //these must match
-        public delegate void RegisterInvoker( string accessid, string userid, string pwd, string lpcname );
-        public void Register( string accessid, string userid, string pwd, string lpcname )
+        public delegate void RegisterInvoker( string accessid, string userid, string pwd, string lpcname, string descript );
+        public void Register( string accessid, string userid, string pwd, string lpcname, string descript )
         {
             RegisterEventArgs e = new RegisterEventArgs();
             e.Succeeded = false;
@@ -51,7 +51,7 @@ namespace CswPrintClient1
                         l.Endpoint.Behaviors.Add( cookieBehavior );
                         LabelPrinter lblPrn = new LabelPrinter();
                         lblPrn.LpcName = lpcname;
-                        lblPrn.Description = "some description of printer here";
+                        lblPrn.Description = descript;
                         CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg Ret = l.registerLpc( lblPrn );
                         l.Close();
                         if( Ret.Status.Success == true )
@@ -100,6 +100,109 @@ namespace CswPrintClient1
         }
 
         #endregion
+
+        #region LabelById
+        public event LabelByIdEventHandler OnLabelById = null;
+
+        public class LabelByIdEventArgs
+        {
+            public bool Succeeded;
+            public string Message;
+            public string LabelData;
+        }
+        public delegate void LabelByIdEventHandler( LabelByIdEventArgs e );
+
+        //these must match
+        public delegate void LabelByIdInvoker( string accessid, string userid, string pwd, string labelid, string targetid );
+        public void LabelById( string accessid, string userid, string pwd, string labelid, string targetid )
+        {
+            LabelByIdEventArgs e = new LabelByIdEventArgs();
+            e.Succeeded = false;
+            e.Message = "";
+
+            //try login
+            CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
+            SessionClient mySession = new SessionClient();
+            mySession.Endpoint.Behaviors.Add( cookieBehavior );
+
+            NbtSession.CswWebSvcReturn ret = mySession.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+            {
+                CustomerId = accessid,
+                UserName = userid,
+                Password = pwd,
+                IsMobile = false
+            } );
+            try
+            {
+                e.Message = "";
+                if( ret.Authentication.AuthenticationStatus == "Authenticated" )
+                {
+                    try
+                    {
+
+                        //logged in
+                        Labels2Client l = new NbtLabels.Labels2Client();
+                        l.Endpoint.Behaviors.Add( cookieBehavior );
+
+                        NbtPrintLabelRequestGet nbtLabelget = new NbtPrintLabelRequestGet();
+                        nbtLabelget.LabelId = labelid;
+                        nbtLabelget.TargetId = targetid;
+                        CswNbtLabelEpl epl = l.getLabel( nbtLabelget );
+                        if( epl.Status.Success == true )
+                        {
+
+                            if( epl.Data.Labels.Length < 1 )
+                            {
+                                e.Succeeded = false;
+                                e.Message = "No labels returned.";
+                            }
+                            else
+                            {
+                                e.Succeeded = true;
+                                foreach( PrintLabel p in epl.Data.Labels )
+                                {
+                                    e.LabelData += p.EplText + "\r\n";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            e.Succeeded = false;
+                            e.Message += epl.Status.Errors[0].Message.ToString();
+                        }
+                        l.Close();
+                    }
+                    finally
+                    {
+                        //LOGOUT
+                        mySession.End();
+                    }
+                }
+                else
+                {
+                    e.Message = "Authentication error: " + ret.Authentication.AuthenticationStatus;
+                }
+            }
+            catch( Exception ex )
+            {
+                e.Message = ex.Message;
+            }
+            finally
+            {
+                mySession.Close();
+            }
+
+
+
+            if( OnLabelById != null )
+            {
+                //return
+                OnLabelById( e );
+            }
+        }
+
+        #endregion
+
 
 
         #region GetNextPrintJob
