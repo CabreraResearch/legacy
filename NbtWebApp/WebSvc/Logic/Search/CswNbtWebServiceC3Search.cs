@@ -269,6 +269,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // Create the temporary material node
                 CswNbtObjClassMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+
                 // Add props to the tempnode
                 C3Import.addNodeTypeProps( C3ProductTempNode.Node );
                 C3ProductTempNode.postChanges( false );
@@ -333,12 +334,14 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
                 if( null != ChemicalNT )
                 {
+                    #region Object Class Properties
+
                     const string Tradename = CswNbtObjClassMaterial.PropertyName.Tradename;
                     _Mappings.Add( Tradename, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
                         C3ProductPropertyValue = _ProductToImport.TradeName,
-                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( Tradename ).PropId,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( Tradename ),
                         NBTSubFieldPropColName = "field1"
                     } );
 
@@ -347,26 +350,8 @@ namespace ChemSW.Nbt.WebServices
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
                         C3ProductPropertyValue = _ProductToImport.CasNo,
-                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( CasNo ).PropId,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( CasNo ),
                         NBTSubFieldPropColName = "field1"
-                    } );
-
-                    //todo: null check on NTP
-                    _Mappings.Add( "Formula", new C3Mapping
-                    {
-                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
-                        C3ProductPropertyValue = _ProductToImport.Formula,
-                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( "Formula" ).PropId,
-                        NBTSubFieldPropColName = "field1"
-                    } );
-
-                    //todo: null check on NTP
-                    _Mappings.Add( "Structure", new C3Mapping
-                    {
-                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
-                        C3ProductPropertyValue = _ProductToImport.MolData,
-                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( "Structure" ).PropId,
-                        NBTSubFieldPropColName = "ClobData"
                     } );
 
                     const string PartNumber = CswNbtObjClassMaterial.PropertyName.PartNumber;
@@ -374,17 +359,8 @@ namespace ChemSW.Nbt.WebServices
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
                         C3ProductPropertyValue = _ProductToImport.PartNo,
-                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( PartNumber ).PropId,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( PartNumber ),
                         NBTSubFieldPropColName = "field1"
-                    } );
-
-                    //todo: null check on NTP
-                    _Mappings.Add( "Physical Description", new C3Mapping
-                    {
-                        NBTNodeTypeId = ChemicalNT.NodeTypeId,
-                        C3ProductPropertyValue = _ProductToImport.Description,
-                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( "Physical Description" ).PropId,
-                        NBTSubFieldPropColName = "gestalt"
                     } );
 
                     // THIS IS DEFAULTING TO SOLID FOR NOW
@@ -394,9 +370,50 @@ namespace ChemSW.Nbt.WebServices
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
                         C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Solid,
-                        NBTNodeTypePropId = ChemicalNT.getNodeTypeProp( PhysicalState ).PropId,
+                        NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( PhysicalState ),
                         NBTSubFieldPropColName = "field1"
                     } );
+
+                    #endregion Object Class Properties
+
+                    #region NodeType Properties
+
+                    CswNbtMetaDataNodeTypeProp Formula = ChemicalNT.getNodeTypeProp( "Formula" );
+                    if( null != Formula )
+                    {
+                        _Mappings.Add( "Formula", new C3Mapping
+                        {
+                            NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                            C3ProductPropertyValue = _ProductToImport.Formula,
+                            NBTNodeTypePropId = Formula.PropId,
+                            NBTSubFieldPropColName = "field1"
+                        } );
+                    }
+
+                    CswNbtMetaDataNodeTypeProp Structure = ChemicalNT.getNodeTypeProp( "Structure" );
+                    if( null != Structure )
+                    {
+                        _Mappings.Add( "Structure", new C3Mapping
+                        {
+                            NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                            C3ProductPropertyValue = _ProductToImport.MolData,
+                            NBTNodeTypePropId = Structure.PropId,
+                            NBTSubFieldPropColName = "ClobData"
+                        } );
+                    }
+
+
+                    CswNbtMetaDataNodeTypeProp PhysicalDescription = ChemicalNT.getNodeTypeProp( "Physical Description" );
+                    if( null != PhysicalDescription )
+                    {
+                        _Mappings.Add( "Physical Description", new C3Mapping
+                        {
+                            NBTNodeTypeId = ChemicalNT.NodeTypeId,
+                            C3ProductPropertyValue = _ProductToImport.Description,
+                            NBTNodeTypePropId = PhysicalDescription.PropId,
+                            NBTSubFieldPropColName = "gestalt"
+                        } );
+                    }
 
                     // Add any additional properties
                     foreach( CswC3Product.TemplateSlctdExtData NameValuePair in _ProductToImport.TemplateSelectedExtensionData )
@@ -414,9 +431,11 @@ namespace ChemSW.Nbt.WebServices
                             } );
                         }
                     }
+
+                    #endregion
                 }
 
-                //todo: In the future, add the MSDS link if it exists
+                //TODO: In the future, add the MSDS link if it exists
 
                 #endregion
 
@@ -425,12 +444,12 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
                 if( null != VendorNT )
                 {
-                    //todo: null check on NTP
-                    _Mappings.Add( "Vendor Name", new C3Mapping
+                    const string VendorName = CswNbtObjClassVendor.PropertyName.VendorName;
+                    _Mappings.Add( VendorName, new C3Mapping
                     {
                         NBTNodeTypeId = VendorNT.NodeTypeId,
                         C3ProductPropertyValue = _ProductToImport.SupplierName,
-                        NBTNodeTypePropId = VendorNT.getNodeTypeProp( "Vendor Name" ).PropId,
+                        NBTNodeTypePropId = VendorNT.getNodeTypePropIdByObjectClassProp( VendorName ),
                         NBTSubFieldPropColName = "field1"
                     } );
                 }
@@ -442,56 +461,28 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType SizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
                 if( null != SizeNT )
                 {
+                    const string InitialQuantity = CswNbtObjClassSize.PropertyName.InitialQuantity;
+                    _Mappings.Add( InitialQuantity, new C3Mapping
+                    {
+                        NBTNodeTypeId = SizeNT.NodeTypeId,
+                        NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( InitialQuantity ),
+                        NBTSubFieldPropColName = "field1_numeric",
+                        NBTSubFieldPropColName2 = "field1"
+                    } );
 
-                    //todo: null check on NTP
-                    _Mappings.Add( "Initial Quantity", new C3Mapping
-                        {
-                            NBTNodeTypeId = SizeNT.NodeTypeId,
-                            NBTNodeTypePropId = SizeNT.getNodeTypeProp( "Initial Quantity" ).PropId,
-                            NBTSubFieldPropColName = "field1_numeric",
-                            NBTSubFieldPropColName2 = "field1"
-                        } );
-
-                    //todo: null check on NTP
-                    _Mappings.Add( "Catalog No", new C3Mapping
-                        {
-                            NBTNodeTypeId = SizeNT.NodeTypeId,
-                            C3ProductPropertyValue = _ProductToImport.CatalogNo,
-                            NBTNodeTypePropId = SizeNT.getNodeTypeProp( "Catalog No" ).PropId,
-                            NBTSubFieldPropColName = "field1"
-                        } );
+                    const string CatalogNo = CswNbtObjClassSize.PropertyName.InitialQuantity;
+                    _Mappings.Add( CatalogNo, new C3Mapping
+                    {
+                        NBTNodeTypeId = SizeNT.NodeTypeId,
+                        C3ProductPropertyValue = _ProductToImport.CatalogNo,
+                        NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( CatalogNo ),
+                        NBTSubFieldPropColName = "field1"
+                    } );
                 }
 
                 #endregion
 
             }//_initMappings()
-
-            private CswNbtObjClassUnitOfMeasure _getUnitOfMeasure( string unitOfMeasurementName )
-            {
-                CswNbtObjClassUnitOfMeasure unitOfMeasureNode = null;
-
-                CswNbtMetaDataObjectClass unitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
-                CswNbtMetaDataObjectClassProp nameOCP = unitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
-
-                CswNbtView unitsView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship parent = unitsView.AddViewRelationship( unitOfMeasureOC, false );
-
-                unitsView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: nameOCP,
-                    Value: unitOfMeasurementName,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( unitsView, false, false, true );
-                int count = tree.getChildNodeCount();
-                for( int i = 0; i < count; i++ )
-                {
-                    tree.goToNthChild( i );
-                    unitOfMeasureNode = tree.getNodeForCurrentPosition();
-                    tree.goToParentNode();
-                }
-
-                return unitOfMeasureNode;
-            }//_getUnitOfMeasure
 
             /// <summary>
             /// Class that contains the variables necessary for the mapping.
@@ -505,12 +496,46 @@ namespace ChemSW.Nbt.WebServices
                 public string NBTSubFieldPropColName2 = string.Empty;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="unitOfMeasurementName"></param>
+            /// <returns></returns>
+            private CswNbtObjClassUnitOfMeasure _getUnitOfMeasure( string unitOfMeasurementName )
+            {
+                CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = null;
+
+                CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+                CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+
+                CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
+
+                UnitsView.AddViewPropertyAndFilter( Parent,
+                    MetaDataProp: NameOCP,
+                    Value: unitOfMeasurementName,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
+                int Count = Tree.getChildNodeCount();
+                for( int i = 0; i < Count; i++ )
+                {
+                    Tree.goToNthChild( i );
+                    UnitOfMeasureNode = Tree.getNodeForCurrentPosition();
+                    Tree.goToParentNode();
+                }
+
+                return UnitOfMeasureNode;
+
+            }//_getUnitOfMeasure
+
             #endregion Private helper methods
 
             /// <summary>
-            /// Creates a new Vendor node if the Vendor does not already exist, otherwise gets the existing Vendor
+            /// Creates a new Vendor node if the vendor doesn't already exist otherwise uses the pre-existing Vendor node.
             /// </summary>
-            /// <returns></returns>
+            /// <param name="VendorName"></param>
+            /// <returns>A C3CreateMaterialResponse.State.Supplier object with the Vendor name and Vendor nodeid set.</returns>
             public C3CreateMaterialResponse.State.Supplier createVendorNode( string VendorName )
             {
                 C3CreateMaterialResponse.State.Supplier Supplier = new C3CreateMaterialResponse.State.Supplier();
@@ -535,9 +560,9 @@ namespace ChemSW.Nbt.WebServices
                                                           false );
 
                 ICswNbtTree VendorsTree = _CswNbtResources.Trees.getTreeFromView( VendorView, false, true, true );
-                if (VendorsTree.getChildNodeCount() > 0)
+                if( VendorsTree.getChildNodeCount() > 0 )
                 {
-                    VendorsTree.goToNthChild(0);
+                    VendorsTree.goToNthChild( 0 );
 
                     // Add to the return object
                     Supplier.name = VendorsTree.getNodeNameForCurrentPosition();
@@ -546,9 +571,9 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
-                    if (null != VendorNT)
+                    if( null != VendorNT )
                     {
-                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId(VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp);
+                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
                         addNodeTypeProps( NewVendorNode.Node );
 
                         NewVendorNode.IsTemp = false;
@@ -575,6 +600,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswC3Product.Size CurrentSize = _ProductToImport.ProductSize[index];
                         CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        // Don't forget to send in the index so that the correct values get added to the NTPs
                         addNodeTypeProps( sizeNode.Node, index );
                         sizeNode.Material.RelatedNodeId = ChemicalNode.NodeId;
 
@@ -620,7 +646,6 @@ namespace ChemSW.Nbt.WebServices
             public void createMaterialSynonyms( CswNbtObjClassMaterial ChemicalNode )
             {
                 CswNbtMetaDataNodeType MaterialSynonymNT = _CswNbtResources.MetaData.getNodeType( "Material Synonym" );
-
                 if( null != MaterialSynonymNT )
                 {
                     for( int index = 0; index < _ProductToImport.Synonyms.Length; index++ )
@@ -635,10 +660,10 @@ namespace ChemSW.Nbt.WebServices
             }
 
             /// <summary>
-            /// TODO: explain what currentindex is for
+            /// Add values to the NodeType Properties of a Node.
             /// </summary>
-            /// <param name="Node"></param>
-            /// <param name="CurrentIndex"></param>
+            /// <param name="Node">The Node whose properties are being filled in.</param>
+            /// <param name="CurrentIndex">The current index in the ProductSize array in a CswC3Product object. This is ONLY needed for Size Nodes.</param>
             public void addNodeTypeProps( CswNbtNode Node, int CurrentIndex = 0 )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
