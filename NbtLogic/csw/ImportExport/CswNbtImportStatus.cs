@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace ChemSW.Nbt.ImportExport
 {
 
-    public enum ImportProcessPhase { NothingDoneYet, LoadingInputFile, PopulatingTempTableNodes, PopulatingTempTableProps, TempTableIntegrityChecked, PopulatingNbtNodes, VerifyingNbtTargetNodes, CreatingMissingNbtTargetNodes, PopulatingNbtProps, PostProcessingNbtNodes, Completed };
+    public enum ImportProcessPhase { NothingDoneYet, LoadingInputFile, PopulatingImportTableNodes, PopulatingImportTableProps, ImportTableIntegrityChecked, PopulatingNbtNodes, VerifyingNbtTargetNodes, CreatingMissingNbtTargetNodes, PopulatingNbtProps, PostProcessingNbtNodes, Completed };
     public enum ImportProcessStati { Unprocessed, Imported, PropsAdded, RedundancyChecked, PropsError, Error };
     public enum ImportSource { ImportData, Deduced }
     public enum PhaseTypes { Incremental, Monolithic }
@@ -139,11 +139,11 @@ namespace ChemSW.Nbt.ImportExport
                         ReturnVal = "Loading import file";
                         break;
 
-                    case ImportProcessPhase.PopulatingTempTableNodes:
+                    case ImportProcessPhase.PopulatingImportTableNodes:
                         ReturnVal = _count + " node records inserted in temporary table";
                         break;
 
-                    case ImportProcessPhase.PopulatingTempTableProps:
+                    case ImportProcessPhase.PopulatingImportTableProps:
                         ReturnVal = _count + " property records inserted in temporary table";
                         break;
 

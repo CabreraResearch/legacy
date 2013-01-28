@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.Schema
             }
             else if( ImportButtonState.Stop.ToString() == ImportButton.Text )
             {
-                if( _CswNbtImportStatus.CompletedProcessPhase < ImportProcessPhase.PopulatingTempTableProps )
+                if( _CswNbtImportStatus.CompletedProcessPhase < ImportProcessPhase.PopulatingImportTableProps )
                 {
                     MessageBox.Show( "You cannot halt the import process until after temporary tables are created", "Do Import", MessageBoxButtons.OK );
                 }
