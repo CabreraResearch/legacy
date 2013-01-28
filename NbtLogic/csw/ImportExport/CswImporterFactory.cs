@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ImportExport
                     ReturnVal = new CswImporterHashTables( CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate );
                     break;
 
-                case ImportAlgorithm.Experimental:
+                case ImportAlgorithm.DbTableBased:
                     //CswNbtImportStatus CswNbtImportStatus = new CswNbtImportStatus( CswNbtResources );
                     ReturnVal = new CswImporterDbTables( CswNbtResources, CswNbtImportExportFrame, new CswImportExportStatusReporter( OnStatusUpdate, OnImportPhaseChange, CswNbtResources, CswNbtImportStatus ), CswNbtImportStatus );
                     break;

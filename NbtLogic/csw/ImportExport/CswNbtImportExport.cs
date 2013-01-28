@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.ImportExport
         public void reset()
         {
 
-            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, null, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
+            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.DbTableBased, _CswNbtResources, null, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
             CswImporter.reset();
             _CswNbtResources.finalize();
 
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.ImportExport
             _StatusUpdate( "Initializing Import Data" );
 
 
-            _CswImporter = CswImporterFactory.make( ImportAlgorithm.Experimental, _CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
+            _CswImporter = CswImporterFactory.make( ImportAlgorithm.DbTableBased, _CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
 
             _CswImporter.ImportXml( IMode, ref ViewXml, ref ResultXml, ref ErrorLog );
 
