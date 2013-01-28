@@ -470,7 +470,7 @@ namespace ChemSW.Nbt.WebServices
                         NBTSubFieldPropColName2 = "field1"
                     } );
 
-                    const string CatalogNo = CswNbtObjClassSize.PropertyName.InitialQuantity;
+                    const string CatalogNo = CswNbtObjClassSize.PropertyName.CatalogNo;
                     _Mappings.Add( CatalogNo, new C3Mapping
                     {
                         NBTNodeTypeId = SizeNT.NodeTypeId,
