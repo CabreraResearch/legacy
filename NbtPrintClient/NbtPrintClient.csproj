@@ -102,6 +102,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="ServiceThread.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -129,39 +130,39 @@
     <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelEpl.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelJobResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelList.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtLabels\Labels2.wsdl" />
-    <None Include="Service References\NbtLabels\Labels21.wsdl" />
+    <None Include="Service References\NbtLabels\Labels210.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtLabels\Labels211.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtLabels\Labels212.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtLabels\Labels213.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtLabels\Labels214.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtLabels\Labels215.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtLabels\Labels216.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtLabels\Labels22.wsdl" />
+    <None Include="Service References\NbtLabels\Labels221.wsdl" />
     <None Include="Service References\NbtLabels\Labels29.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels291.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels292.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels293.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels294.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels295.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels296.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels297.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtLabels\Labels298.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSession\CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtSessionReturn.datasource">
@@ -232,7 +233,7 @@
     <None Include="Service References\NbtSession\Session.disco" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\NbtLabels\Labels2.disco" />
+    <None Include="Service References\NbtLabels\Labels211.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

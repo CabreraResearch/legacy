@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.WebSvc.Logic.Labels
 {
@@ -90,6 +91,65 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         [DataMember( IsRequired = false )]
         [Description( "Additional descriptive info about the label printer" )]
         public string Description = string.Empty;
+
+    }
+
+    /// <summary>
+    /// Request for next label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer nodekey" )]
+    public class CswNbtLabelJobRequest
+    {
+        /// <summary>
+        /// Nodekey of defined NBT printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Nodekey of defined NBT Label Printer" )]
+        public string PrinterKey = string.Empty;
+    }
+
+    /// <summary>
+    /// Request for next label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer job" )]
+    public class CswNbtLabelJobResponse : CswWebSvcReturn
+    {
+        /// <summary>
+        /// NBT label printer job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label print JobNo" )]
+        public string JobNo = string.Empty;
+
+        /// <summary>
+        /// NBT label printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label print Owner" )]
+        public string JobOwner = string.Empty;
+
+        /// <summary>
+        /// NBT labels count
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label count for this job" )]
+        public string LabelCount = string.Empty;
+
+        /// <summary>
+        /// NBT label name
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label template name " )]
+        public string LabelName = string.Empty;
+
+        /// <summary>
+        /// NBT label printer data
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label printer data " )]
+        public string LabelData = string.Empty;
 
     }
 
@@ -248,7 +308,7 @@ namespace NbtWebApp.WebSvc.Logic.Labels
 
         }
 
-    
+
     }
 
 }

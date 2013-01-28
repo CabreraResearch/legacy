@@ -3,11 +3,9 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Core;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Labels;
-using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
@@ -80,7 +78,26 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServicePrintLabels.registerLpc,
-                ParamObj: Request 
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "attempt to register a label printer" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtLabelJobResponse getNextLpcJob( CswNbtLabelJobRequest Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtLabelJobResponse Ret = new CswNbtLabelJobResponse();
+            var SvcDriver = new CswWebSvcDriver<CswNbtLabelJobResponse, CswNbtLabelJobRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServicePrintLabels.nextLabelJob,
+                ParamObj: Request
                 );
 
             SvcDriver.run();

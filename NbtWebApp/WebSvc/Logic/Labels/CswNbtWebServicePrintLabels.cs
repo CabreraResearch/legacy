@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.WebServices
     /// Label List Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtLabelList: CswWebSvcReturn
+    public class CswNbtLabelList : CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtLabelList()
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
     /// Label EPL Return Object
     /// </summary>
     [DataContract]
-    public class CswNbtLabelEpl: CswWebSvcReturn
+    public class CswNbtLabelEpl : CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtLabelEpl()
@@ -81,11 +81,11 @@ namespace ChemSW.Nbt.WebServices
                     PrintLabelView.ViewName = "getPrintLabelsForNodeType(" + Request.TargetTypeId.ToString() + ")";
                     CswNbtViewRelationship PrintLabelRelationship = PrintLabelView.AddViewRelationship( PrintLabelObjectClass, true );
                     CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty( PrintLabelRelationship, NodeTypesProperty );
-                    PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty, 
-                                                          NodeTypesProperty.getFieldTypeRule().SubFields.Default.Name, 
-                                                          CswNbtPropFilterSql.PropertyFilterMode.Contains, 
+                    PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty,
+                                                          NodeTypesProperty.getFieldTypeRule().SubFields.Default.Name,
+                                                          CswNbtPropFilterSql.PropertyFilterMode.Contains,
                                                           Request.TargetTypeId.ToString() );
-                    
+
                     ICswNbtTree PrintLabelsTree = NbtResources.Trees.getTreeFromView( NbtResources.CurrentNbtUser, PrintLabelView, true, false, false );
                     Int32 PrintLabelCount = PrintLabelsTree.getChildNodeCount();
                     if( PrintLabelCount > 0 )
@@ -270,6 +270,7 @@ namespace ChemSW.Nbt.WebServices
         public static void registerLpc( ICswResources CswResources, CswNbtLabelPrinterReg Return, LabelPrinter Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            //replace this with the real  failure because oif trying to register a duplicate lpcname
             if( Request.LpcName == "*TEST.DUPLICATE*" )
             {
                 Return.Status.Success = false;
@@ -277,11 +278,22 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
+                //return the real printer nodeid of this newly registered lpcname (printer)
                 Return.Status.Success = true;
                 Return.PrinterKey = "nodeid_9bogus1";
             }
-        } // getEPLText()
+        }
 
+        public static void nextLabelJob( ICswResources CswResources, CswNbtLabelJobResponse Return, CswNbtLabelJobRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            //need to fetch next label job and set the various parts of Return object here
+            //success may have zero labels (and no labeldata)
+            //failure is reserved for problems with the printerkey
+
+            Return.Status.Success = false;
+            Return.addException( new CswDniException( ErrorType.Error, "Web service not implemented yet.", "nextLabelJob()" ) );
+        }
 
     } // class CswNbtWebServiceTabsAndProps
 

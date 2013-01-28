@@ -9,11 +9,82 @@ namespace CswPrintClient1
 {
     public partial class Form1 : Form
     {
+        private string _printerKey = string.Empty;
+        private ServiceThread _svcThread;
 
         public Form1()
         {
             InitializeComponent();
+            _svcThread = new ServiceThread();
+            _svcThread.OnRegisterLpc += new ServiceThread.RegisterEventHandler( _ServiceThread_Register );
+            _svcThread.OnNextJob += new ServiceThread.NextJobEventHandler( _ServiceThread_NextJob );
+
         }
+
+        #region CAN NOT TOUCH UI
+        //must not touch UI components directly!
+        void _ServiceThread_Register( ServiceThread.RegisterEventArgs e )
+        {
+            this.BeginInvoke( new InitRegisterHandler( _InitRegisterUI ), new object[] { e } );
+        }
+        void _ServiceThread_NextJob( ServiceThread.NextJobEventArgs e )
+        {
+            this.BeginInvoke( new InitNextJobHandler( _InitNextJobUI ), new object[] { e } );
+        }
+
+        #endregion
+
+
+        private delegate void InitRegisterHandler( ServiceThread.RegisterEventArgs e );
+        private void _InitRegisterUI( ServiceThread.RegisterEventArgs e )
+        {
+            if( e.Succeeded )
+            {
+                _printerKey = e.PrinterKey;
+                if( e.PrinterKey != string.Empty )
+                {
+                    setBtnRegisterState( "" );
+                    SaveSettings();
+                }
+                else
+                {
+                    setBtnRegisterState( "No PrinterKey returned, try again." );
+                }
+
+            }
+            else
+            {
+                _printerKey = string.Empty;
+                setBtnRegisterState( e.Message );
+            }
+        }
+
+        private delegate void InitNextJobHandler( ServiceThread.NextJobEventArgs e );
+        private void _InitNextJobUI( ServiceThread.NextJobEventArgs e )
+        {
+            if( e.Succeeded )
+            {
+                if( e.PrinterData != string.Empty )
+                {
+                    if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, e.PrinterData ) == true )
+                    {
+
+                        lblStatus.Text += "\nPrinting Done!";
+                    }
+                    else
+                    {
+                        lblStatus.Text = "Error printing!";
+                    }
+
+                }
+            }
+            else
+            {
+                Log( e.Message );
+            }
+            timer1.Enabled = true;
+        }
+
 
         private void btnPrintEPL_Click( object sender, EventArgs e )
         {
@@ -106,115 +177,31 @@ namespace CswPrintClient1
             }
         }
 
-        private bool doRegister( string accessid, string userid, string pwd, ref string status )
+        private void setBtnRegisterState( string errorStatus )
         {
-            bool myReturn = false;
-            //try login
-            CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
-            SessionClient mySession = new SessionClient();
-            mySession.Endpoint.Behaviors.Add( cookieBehavior );
-
-            NbtSession.CswWebSvcReturn ret = mySession.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+            if( _printerKey != string.Empty )
             {
-                CustomerId = accessid,
-                UserName = userid,
-                Password = pwd,
-                IsMobile = false
-            } );
-
-            status = "";
-            if( ret.Authentication.AuthenticationStatus == "Authenticated" )
-            {
-                //logged in
-                Labels2Client l = new NbtLabels.Labels2Client();
-                l.Endpoint.Behaviors.Add( cookieBehavior );
-                LabelPrinter lblPrn = new LabelPrinter();
-                lblPrn.LpcName = tbLPCname.Text;
-                lblPrn.Description = "some description of printer here";
-                CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg Ret = l.registerLpc( lblPrn );
-                l.Close();
-                if( Ret.Status.Success == true )
-                {
-                    status = "Printer " + lblPrn.LpcName + " registered successfully.";
-                    status += " PrinterKey=" + Ret.PrinterKey;
-                    myReturn = true;
-                }
-                else
-                {
-                    status = "Printer " + lblPrn.LpcName + " registration failed. ";
-                    if( Ret.Status.Errors.Count() > 0 )
-                    {
-                        status += Ret.Status.Errors[0].Message.ToString();
-                    }
-                }
-                //LOGOUT
-                mySession.End();
+                btnRegister.Enabled = false;
+                lblRegisterStatus.Text = "Registered PrinterKey=" + _printerKey;
             }
             else
             {
-                status = "Authentication error: " + ret.Authentication.AuthenticationStatus;
+                btnRegister.Enabled = true;
+                lblRegisterStatus.Text = errorStatus;
+                cbEnabled.Checked = false;
             }
-            mySession.Close();
-            return myReturn;
+            tbLPCname.Enabled = btnRegister.Enabled;
+            cbEnabled.Enabled = !( btnRegister.Enabled );
         }
 
 
         private void btnRegister_Click( object sender, EventArgs e )
         {
-            /*
-                        //try login
-                        CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
-                        SessionClient mySession = new SessionClient();
-                        mySession.Endpoint.Behaviors.Add( cookieBehavior );
 
-                        NbtSession.CswWebSvcReturn ret = mySession.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
-                        {
-                            CustomerId = tbAccessId.Text,
-                            UserName = tbUsername.Text,
-                            Password = tbPassword.Text,
-                            IsMobile = false
-                        } );
-
-                        string status = "";
-                        if( ret.Authentication.AuthenticationStatus == "Authenticated" )
-                        {
-                            //logged in
-                            Labels2Client l = new NbtLabels.Labels2Client();
-                            l.Endpoint.Behaviors.Add( cookieBehavior );
-                            LabelPrinter lblPrn = new LabelPrinter();
-                            lblPrn.LpcName = tbLPCname.Text;
-                            lblPrn.Description = "some description of printer here";
-                            CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg Ret = l.registerLpc( lblPrn );
-                            l.Close();
-                            if( Ret.Status.Success == true )
-                            {
-                                status = "Printer " + lblPrn.LpcName + " registered successfully.";
-                                status += " PrinterKey=" + Ret.PrinterKey;
-                            }
-                            else
-                            {
-                                status = "Printer " + lblPrn.LpcName + " registration failed. ";
-                                if( Ret.Status.Errors.Count() > 0 )
-                                {
-                                    status += Ret.Status.Errors[0].Message.ToString();
-                                }
-                            }
-                            //LOGOUT
-                            mySession.End();
-                        }
-                        else
-                        {
-                            status = "Authentication error: " + ret.Authentication.AuthenticationStatus;
-                        }
-                        mySession.Close();
-            */
-            string status = "";
-            //btnRegister.Enabled = (!
-            doRegister( tbAccessId.Text, tbUsername.Text, tbPassword.Text, ref status );
-            //);
-
-            Log( status );
-            lblRegisterStatus.Text = status;
+            btnRegister.Enabled = false;
+            lblRegisterStatus.Text = "Contacting server...";
+            ServiceThread.RegisterInvoker regInvoke = new ServiceThread.RegisterInvoker( _svcThread.Register );
+            regInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, tbLPCname.Text, null, null );
         }
 
         private void Form1_Load( object sender, EventArgs e )
@@ -230,7 +217,8 @@ namespace CswPrintClient1
             Application.CommonAppDataRegistry.SetValue( "LPCname", tbLPCname.Text );
             Application.CommonAppDataRegistry.SetValue( "Enabled", cbEnabled.Checked.ToString() );
             Application.CommonAppDataRegistry.SetValue( "printer", tbPrinter.Text );
-            Application.CommonAppDataRegistry.SetValue( "URL", tbURL.Text );
+            Application.CommonAppDataRegistry.SetValue( "printerkey", _printerKey );
+            // Application.CommonAppDataRegistry.SetValue( "URL", tbURL.Text );
             Application.CommonAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
             Application.CommonAppDataRegistry.SetValue( "logon", tbUsername.Text );
             Application.CommonAppDataRegistry.SetValue( "code", tbPassword.Text );
@@ -241,12 +229,14 @@ namespace CswPrintClient1
             tbLPCname.Text = Application.CommonAppDataRegistry.GetValue( "LPCname" ).ToString();
             cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
             tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
-            tbURL.Text = Application.CommonAppDataRegistry.GetValue( "URL" ).ToString();
+            _printerKey = Application.CommonAppDataRegistry.GetValue( "printerkey" ).ToString();
+            //tbURL.Text = Application.CommonAppDataRegistry.GetValue( "URL" ).ToString();
             tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
             tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
             tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();
 
             Log( "Loaded settings." );
+            setBtnRegisterState( "" );
         }
 
         private void Form1_FormClosed( object sender, System.Windows.Forms.FormClosedEventArgs e )
@@ -256,9 +246,13 @@ namespace CswPrintClient1
 
         private void CheckForPrintJob()
         {
-            Log( "CheckForPrintJob() not implemented." );
+            //Log( "CheckForPrintJob() not implemented." );
 
-            Status( "Waiting for print job..." );
+            //            Status( "Waiting for print job..." );
+
+            ServiceThread.NextJobInvoker jobInvoke = new ServiceThread.NextJobInvoker( _svcThread.NextJob );
+            jobInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, _printerKey, null, null );
+
         }
 
         private void timer1_Tick( object sender, EventArgs e )
@@ -266,7 +260,7 @@ namespace CswPrintClient1
             //we are polling the service
             timer1.Enabled = false;
             CheckForPrintJob();
-            timer1.Enabled = true;
+            //            timer1.Enabled = true;
         }
 
         private void cbEnabled_Click( object sender, EventArgs e )
@@ -285,6 +279,13 @@ namespace CswPrintClient1
 
         private void btnSave_Click( object sender, EventArgs e )
         {
+            SaveSettings();
+        }
+
+        private void btnClearReg_Click( object sender, EventArgs e )
+        {
+            _printerKey = string.Empty;
+            setBtnRegisterState( "" );
             SaveSettings();
         }
 

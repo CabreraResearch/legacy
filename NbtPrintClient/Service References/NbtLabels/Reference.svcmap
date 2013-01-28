@@ -18,21 +18,20 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost/nbtwebapp/Services/Labels2.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost/nbtdev/Services/Labels2.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Labels2.wsdl" MetadataType="Wsdl" ID="7a557229-3adc-4dd3-bf9f-cb2675c3b191" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?wsdl=wsdl0" />
-    <MetadataFile FileName="Labels29.xsd" MetadataType="Schema" ID="4675e32d-40ad-4890-968b-3c960c15bf89" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd2" />
-    <MetadataFile FileName="Labels291.xsd" MetadataType="Schema" ID="09bf5bcc-2396-4049-90f6-1c08e8e8a38a" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd8" />
-    <MetadataFile FileName="Labels292.xsd" MetadataType="Schema" ID="48fa2051-ebf5-40f0-9391-0f8817fe10b4" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd3" />
-    <MetadataFile FileName="Labels293.xsd" MetadataType="Schema" ID="ea7c44bb-fb35-4d45-ae02-0c5460cc638c" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd6" />
-    <MetadataFile FileName="Labels294.xsd" MetadataType="Schema" ID="4934729a-b0ce-4913-a49a-995743529ef0" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd7" />
-    <MetadataFile FileName="Labels2.disco" MetadataType="Disco" ID="c83cdab3-965d-4b3c-ad8d-8eb250abe138" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?disco" />
-    <MetadataFile FileName="Labels295.xsd" MetadataType="Schema" ID="d7b90cc3-7ab9-4d67-b72e-04a3ba069a78" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd5" />
-    <MetadataFile FileName="Labels296.xsd" MetadataType="Schema" ID="0ca02830-c4e4-4a5e-9ad3-f465d148f5bf" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd1" />
-    <MetadataFile FileName="Labels297.xsd" MetadataType="Schema" ID="af6d283f-474b-45d5-abaf-7b0e73247a38" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd0" />
-    <MetadataFile FileName="Labels21.wsdl" MetadataType="Wsdl" ID="06180d52-7219-4e0c-9fd7-c17ad90d13d2" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?wsdl" />
-    <MetadataFile FileName="Labels298.xsd" MetadataType="Schema" ID="85c40575-910c-4218-b8c7-848ac4675c4f" SourceId="1" SourceUrl="http://localhost/NbtWebApp/Services/Labels2.svc?xsd=xsd4" />
+    <MetadataFile FileName="Labels29.xsd" MetadataType="Schema" ID="8bfa2176-25f0-4bd5-b364-a72e2633e6cd" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd1" />
+    <MetadataFile FileName="Labels22.wsdl" MetadataType="Wsdl" ID="0d843520-c00d-4640-b926-8c8be8799d33" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="Labels210.xsd" MetadataType="Schema" ID="56ae65c3-09ef-4519-87e2-45278b5f5d5d" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd5" />
+    <MetadataFile FileName="Labels211.xsd" MetadataType="Schema" ID="cceeb39e-df65-4fbb-b138-16ad35f6e22e" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd4" />
+    <MetadataFile FileName="Labels212.xsd" MetadataType="Schema" ID="104859e8-8176-4996-8885-ce813967d7cd" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd7" />
+    <MetadataFile FileName="Labels213.xsd" MetadataType="Schema" ID="5c58195c-b9ec-437b-96ca-4f8a7e447433" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd6" />
+    <MetadataFile FileName="Labels211.disco" MetadataType="Disco" ID="786438d2-7c7b-40eb-aac7-930e44a3c66b" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?disco" />
+    <MetadataFile FileName="Labels214.xsd" MetadataType="Schema" ID="46eabdb5-3f9d-485c-b85a-864198282229" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd0" />
+    <MetadataFile FileName="Labels221.wsdl" MetadataType="Wsdl" ID="16329d9d-96d9-47f4-a7e5-1d413c02da85" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?wsdl" />
+    <MetadataFile FileName="Labels215.xsd" MetadataType="Schema" ID="37513ab8-b4e9-4f67-9d3f-618f4373125e" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd2" />
+    <MetadataFile FileName="Labels216.xsd" MetadataType="Schema" ID="13fb4d81-1b2a-4176-9650-4dfc8716cb2d" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd3" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

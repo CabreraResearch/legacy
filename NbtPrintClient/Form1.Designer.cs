@@ -67,6 +67,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.btnClearReg = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -119,6 +120,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.btnClearReg);
             this.tabPage2.Controls.Add(this.btnSave);
             this.tabPage2.Controls.Add(this.cbEnabled);
             this.tabPage2.Controls.Add(this.label12);
@@ -181,7 +183,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(25, 15);
+            this.label11.Location = new System.Drawing.Point(14, 15);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(81, 13);
             this.label11.TabIndex = 49;
@@ -214,9 +216,9 @@
             // 
             // btnRegister
             // 
-            this.btnRegister.Location = new System.Drawing.Point(323, 68);
+            this.btnRegister.Location = new System.Drawing.Point(289, 68);
             this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(75, 23);
+            this.btnRegister.Size = new System.Drawing.Size(60, 23);
             this.btnRegister.TabIndex = 45;
             this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = true;
@@ -224,7 +226,7 @@
             // 
             // tbLPCname
             // 
-            this.tbLPCname.Location = new System.Drawing.Point(154, 68);
+            this.tbLPCname.Location = new System.Drawing.Point(130, 68);
             this.tbLPCname.Name = "tbLPCname";
             this.tbLPCname.Size = new System.Drawing.Size(152, 20);
             this.tbLPCname.TabIndex = 44;
@@ -232,18 +234,18 @@
             // 
             // btnSelPrn
             // 
-            this.btnSelPrn.Location = new System.Drawing.Point(323, 40);
+            this.btnSelPrn.Location = new System.Drawing.Point(289, 40);
             this.btnSelPrn.Name = "btnSelPrn";
-            this.btnSelPrn.Size = new System.Drawing.Size(75, 23);
+            this.btnSelPrn.Size = new System.Drawing.Size(60, 23);
             this.btnSelPrn.TabIndex = 43;
-            this.btnSelPrn.Text = "Select...";
+            this.btnSelPrn.Text = "Choose...";
             this.btnSelPrn.UseVisualStyleBackColor = true;
             this.btnSelPrn.Click += new System.EventHandler(this.btnSelPrn_Click);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(27, 43);
+            this.label10.Location = new System.Drawing.Point(16, 43);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(111, 13);
             this.label10.TabIndex = 42;
@@ -303,7 +305,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(22, 68);
+            this.label1.Location = new System.Drawing.Point(11, 68);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(116, 13);
             this.label1.TabIndex = 29;
@@ -311,7 +313,7 @@
             // 
             // tbPrinter
             // 
-            this.tbPrinter.Location = new System.Drawing.Point(154, 40);
+            this.tbPrinter.Location = new System.Drawing.Point(130, 40);
             this.tbPrinter.Name = "tbPrinter";
             this.tbPrinter.ReadOnly = true;
             this.tbPrinter.Size = new System.Drawing.Size(152, 20);
@@ -431,6 +433,16 @@
             this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // btnClearReg
+            // 
+            this.btnClearReg.Location = new System.Drawing.Point(354, 68);
+            this.btnClearReg.Name = "btnClearReg";
+            this.btnClearReg.Size = new System.Drawing.Size(60, 23);
+            this.btnClearReg.TabIndex = 53;
+            this.btnClearReg.Text = "Clear";
+            this.btnClearReg.UseVisualStyleBackColor = true;
+            this.btnClearReg.Click += new System.EventHandler(this.btnClearReg_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -438,7 +450,7 @@
             this.ClientSize = new System.Drawing.Size(432, 403);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
-            this.Text = "ChemSW Local Printer Client";
+            this.Text = "ChemSW Local Printer Client v0.1";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
@@ -490,6 +502,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.CheckBox cbEnabled;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnClearReg;
 
     }
 }
