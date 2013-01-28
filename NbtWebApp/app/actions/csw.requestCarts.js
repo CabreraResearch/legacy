@@ -301,7 +301,7 @@
                     enabledText: 'Copy to Recurring',
                     disabledText: 'Copy to Recurring',
                     disableOnClick: true,
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.star),
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docexport),
                     onClick: function () {
                         var nodes = [];
                         cswGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {

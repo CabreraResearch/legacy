@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
                     bool IsPropertyGrid = !( CartView.ViewName == CswNbtActRequesting.FavoriteItemsViewName ||
                                              CartView.ViewName == CswNbtActRequesting.RecurringItemsViewName );
                     CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport : false );
-                    ret = GridWs.runGrid( Title: null, IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
+                    Ret = GridWs.runGrid( Title: null, IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
                     Ret["grid"]["title"] = "";
                 }
             }
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.WebServices
             bool Succeeded = false;
             if( Request.RequestItems.Any() )
             {
-                foreach( CswNbtObjClassRequestMaterialDispense NewMaterialDispense in
+                foreach( CswNbtObjClassRequestMaterialDispense NewRequestItem in 
                     from Item
                         in Request.RequestItems
                     select _CswNbtResources.Nodes[Item.NodePk]
@@ -201,15 +201,15 @@ namespace ChemSW.Nbt.WebServices
                         ( (CswNbtPropertySetRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
                         select CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest )
                             into MaterialDispense
-                            where null != MaterialDispense
-                            select MaterialDispense.copyNode()
+                            where null != MaterialDispense  
+                            select MaterialDispense.copyNode(ClearRequest: false)
                                 into NewPropSetRequest
                                 select CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest ) )
                 {
-                    NewMaterialDispense.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
-                    CopyLogic( NewMaterialDispense );
-                    NewMaterialDispense.Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                    NewMaterialDispense.postChanges( ForceUpdate : false );
+                    NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
+                    CopyLogic( NewRequestItem );
+                    //  NewRequestItem.Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                    NewRequestItem.postChanges( ForceUpdate : false );
                     Succeeded = true;
                 }
 
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.WebServices
 
         /// <summary>
         /// WCF method to fulfill request
-        /// </summary>
+        /// </summary>  
         public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );

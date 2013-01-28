@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
@@ -260,6 +261,7 @@ namespace ChemSW.Nbt.ObjClasses
             TotalMoved.SetOnPropChange( onTotalMovedPropChange );
             IsFavorite.SetOnPropChange( onIsFavoritePropChange );
             IsRecurring.SetOnPropChange( onIsRecurringChange );
+            RecurringFrequency.SetOnPropChange( onRecurringFrequencyPropChange );
         }//afterPopulateProps()
 
         /// <summary>
@@ -522,7 +524,7 @@ namespace ChemSW.Nbt.ObjClasses
                 FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
                 Value : CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ),
                 ShowInGrid : false );
-            
+
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp,
                 FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
@@ -632,7 +634,6 @@ namespace ChemSW.Nbt.ObjClasses
             if( _IsRecurring )
             {
                 _hideFakeItemProps();                    
-                Request.RelatedNodeId = null;
                 RecurringFrequency.setHidden( value : false, SaveToDb : true );
                 NextReorderDate.setHidden( value : false, SaveToDb : true );
                 Name.setHidden(value: true, SaveToDb: true );
@@ -651,7 +652,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                 //Name is normally shown on status change, which doesn't happen for "fake" request items
                 Name.setHidden( value : false, SaveToDb : true );
-
                 IsRecurring.setHidden( value : true, SaveToDb : true );
                 NextReorderDate.setHidden( value : true, SaveToDb : true );
                 RecurringFrequency.setHidden( value : true, SaveToDb : true );
@@ -660,6 +660,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropTimeInterval RecurringFrequency { get { return _CswNbtNode.Properties[PropertyName.RecurringFrequency]; } }
+        private void onRecurringFrequencyPropChange( CswNbtNodeProp NodeProp )
+        {
+            NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( this.Node, NextReorderDate, RecurringFrequency );
+        }
 
         #endregion
     }//CswNbtObjClassRequestMaterialDispense

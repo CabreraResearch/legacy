@@ -127,34 +127,37 @@ namespace ChemSW.Nbt.Actions
         private CswNbtObjClassRequest _getFirstPendingRequest()
         {
             CswNbtNode Ret = null;
-            CswNbtView CartsView = getOpenCartsView( IncludeItemProperties: false );
-            CswNbtViewRelationship RootVr = CartsView.Root.ChildRelationships[0];
-
-            CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
-            CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate );
-
-            CartsView.AddViewPropertyAndFilter( RootVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
-            CartsView.AddViewPropertyAndFilter( RootVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
-
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CartsView, false, false, false );
-            Int32 RequestCount = Tree.getChildNodeCount();
-            if( RequestCount > 0 )
+            if( false == ( _ThisUser is CswNbtSystemUser ) )
             {
-                Int32 ItemCount = 0;
-                Int32 MostItemsPosition = 0;
-                for( Int32 R = 0; R < RequestCount; R += 1 )
-                {
-                    Tree.goToNthChild( R );
-                    if( Tree.getChildNodeCount() > ItemCount )
-                    {
-                        ItemCount = Tree.getChildNodeCount();
-                        MostItemsPosition = R;
-                    }
-                    Tree.goToParentNode();
-                }
+                CswNbtView CartsView = getOpenCartsView( IncludeItemProperties: false );
+                CswNbtViewRelationship RootVr = CartsView.Root.ChildRelationships[0];
 
-                Tree.goToNthChild( MostItemsPosition );
-                Ret = Tree.getNodeForCurrentPosition();
+                CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
+                CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate );
+
+                CartsView.AddViewPropertyAndFilter( RootVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                CartsView.AddViewPropertyAndFilter( RootVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CartsView, false, false, false );
+                Int32 RequestCount = Tree.getChildNodeCount();
+                if( RequestCount > 0 )
+                {
+                    Int32 ItemCount = 0;
+                    Int32 MostItemsPosition = 0;
+                    for( Int32 R = 0; R < RequestCount; R += 1 )
+                    {
+                        Tree.goToNthChild( R );
+                        if( Tree.getChildNodeCount() > ItemCount )
+                        {
+                            ItemCount = Tree.getChildNodeCount();
+                            MostItemsPosition = R;
+                        }
+                        Tree.goToParentNode();
+                    }
+
+                    Tree.goToNthChild( MostItemsPosition );
+                    Ret = Tree.getNodeForCurrentPosition();
+                }
             }
             return Ret;
         }
@@ -162,7 +165,8 @@ namespace ChemSW.Nbt.Actions
         private CswNbtObjClassRequest _CurrentRequestNode;
         public CswNbtObjClassRequest getCurrentRequestNode()
         {
-            if( null == _CurrentRequestNode )
+            if( null == _CurrentRequestNode && 
+                false == ( _ThisUser is CswNbtSystemUser ) )
             {
                 _CurrentRequestNode = _getFirstPendingRequest();
                 if( null == _CurrentRequestNode )
@@ -391,11 +395,11 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
 
             //We'll use the Current cart for both pending and recurring items and trust the filters to keep them separate
-            Ret.AddViewPropertyAndFilter( RequestItemRel, 
-                MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ), 
-                ShowInGrid: false, 
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                Value: getCurrentRequestNode().NodeId.PrimaryKey.ToString() );
+            Ret.AddViewPropertyAndFilter( RequestItemRel,
+                MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ),
+                ShowInGrid : false,
+                SubFieldName : CswNbtSubField.SubFieldName.NodeID,
+                Value : getCurrentRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }
 
@@ -505,7 +509,7 @@ namespace ChemSW.Nbt.Actions
         #endregion Gets
 
         #region Sets
-
+        
         public bool submitRequest( CswPrimaryKey NodeId, string NodeName )
         {
             bool Ret = false;

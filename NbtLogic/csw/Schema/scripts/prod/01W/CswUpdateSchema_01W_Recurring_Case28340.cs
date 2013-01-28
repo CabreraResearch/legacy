@@ -1,6 +1,8 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.MtSched.Core;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -25,8 +27,10 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp IsRecurringOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
             foreach( CswNbtMetaDataNodeTypeProp RecurringNtp in IsRecurringOcp.getNodeTypeProps() )
             {
-                RecurringNtp.removeFromAllLayouts();
+                RecurringNtp.removeFromAllLayouts(); 
             }
+
+            _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.GenRequest, Recurrence.NSeconds, 5 );
 
         } //Update()
 

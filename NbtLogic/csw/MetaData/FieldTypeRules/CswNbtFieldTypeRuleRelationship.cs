@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 if( MetaDataProp != null && MetaDataProp.IsUserRelationship() )
                 {
-                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
+                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" && false == ( RunAsUser is CswNbtSystemUser ) )
                     {
                         CswNbtViewPropertyFilterIn.SubfieldName = NodeIDSubField.Name;
                         CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;

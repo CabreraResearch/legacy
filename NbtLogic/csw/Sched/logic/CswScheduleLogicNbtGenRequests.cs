@@ -79,68 +79,66 @@ namespace ChemSW.Nbt.Sched
 
                     for( Int32 ChildN = 0; ( ChildN < TotatRequests && TotalRequestsProcessed < RequestsLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); ChildN++ )
                     {
-                        Tree.goToNthChild( ChildN );
-                        CswNbtObjClassRequestMaterialDispense CurrentRequestItem = Tree.getNodeForCurrentPosition();
-
-                        if( CurrentRequestItem.IsRecurring.Checked == Tristate.True )
+                        string Description = "";
+                        try
                         {
-
-                            try
+                            Tree.goToNthChild( ChildN );
+                            CswNbtObjClassRequestMaterialDispense CurrentRequestItem = Tree.getNodeForCurrentPosition();
+                            
+                            if( null != CurrentRequestItem && 
+                                CurrentRequestItem.IsRecurring.Checked == Tristate.True &&
+                                false == CurrentRequestItem.RecurringFrequency.Empty )
                             {
-                                CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode ); 
-                                //CswNbtObjClassRequestMaterialDispense.fromPropertySet( CurrentRequest.copyNode( PostChanges : false ) );
-                                if( null != NewRequestItem )
+                                Description = CurrentRequestItem.Description.StaticText;
+
+                                CswNbtObjClassRequest CurrentRequest = _CswNbtResources.Nodes[CurrentRequestItem.Request.RelatedNodeId];
+                                if( null != CurrentRequest )
                                 {
-                                    CswNbtObjClassRequest CurrentRequest = _CswNbtResources.Nodes[CurrentRequestItem.Request.RelatedNodeId];
                                     CswNbtObjClassUser Requestor = _CswNbtResources.Nodes[CurrentRequest.Requestor.RelatedNodeId];
                                     if( null != Requestor )
                                     {
-                                        NewRequestItem.Request.RelatedNodeId = CurrentRequest.NodeId;
-                                        NewRequestItem.Requestor.RelatedNodeId = CurrentRequestItem.Requestor.RelatedNodeId;
-                                        NewRequestItem.Material.RelatedNodeId = CurrentRequestItem.Material.RelatedNodeId;
-                                        NewRequestItem.InventoryGroup.RelatedNodeId = CurrentRequestItem.InventoryGroup.RelatedNodeId;
-                                        NewRequestItem.Location.SelectedNodeId = CurrentRequestItem.Location.SelectedNodeId;
-                                        NewRequestItem.Comments.CommentsJson = CurrentRequestItem.Comments.CommentsJson;
-
-                                        if( CurrentRequestItem.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk )
+                                        CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                                        //CswNbtObjClassRequestMaterialDispense.fromPropertySet( CurrentRequest.copyNode( PostChanges : false ) );
+                                        if( null != NewRequestItem )
                                         {
-                                            NewRequestItem.Quantity.Quantity = CurrentRequestItem.Quantity.Quantity;
-                                            NewRequestItem.Quantity.UnitId = CurrentRequestItem.Quantity.UnitId;
+                                            NewRequestItem.Request.RelatedNodeId = CurrentRequest.NodeId;
+                                            NewRequestItem.Requestor.RelatedNodeId = CurrentRequestItem.Requestor.RelatedNodeId;
+                                            NewRequestItem.Material.RelatedNodeId = CurrentRequestItem.Material.RelatedNodeId;
+                                            NewRequestItem.InventoryGroup.RelatedNodeId = CurrentRequestItem.InventoryGroup.RelatedNodeId;
+                                            NewRequestItem.Location.SelectedNodeId = CurrentRequestItem.Location.SelectedNodeId;
+                                            NewRequestItem.Comments.CommentsJson = CurrentRequestItem.Comments.CommentsJson;
+
+                                            if( CurrentRequestItem.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk )
+                                            {
+                                                NewRequestItem.Quantity.Quantity = CurrentRequestItem.Quantity.Quantity;
+                                                NewRequestItem.Quantity.UnitId = CurrentRequestItem.Quantity.UnitId;
+                                            }
+                                            else
+                                            {
+                                                NewRequestItem.Size.RelatedNodeId = CurrentRequestItem.Size.RelatedNodeId;
+                                                NewRequestItem.Count.Value = CurrentRequestItem.Count.Value;
+                                            }
+                                            NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
+                                            NewRequestItem.postChanges( ForceUpdate : false );
+
+                                            CurrentRequestItem.NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( CurrentRequestItem.Node, CurrentRequestItem.NextReorderDate, CurrentRequestItem.RecurringFrequency );
+                                            CurrentRequestItem.postChanges( ForceUpdate : false );
                                         }
-                                        else
-                                        {
-                                            NewRequestItem.Size.RelatedNodeId = CurrentRequestItem.Size.RelatedNodeId;
-                                            NewRequestItem.Count.Value = CurrentRequestItem.Count.Value;    
-                                        }
-                                        
-                                        NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
-
-
-                                        NewRequestItem.postChanges( ForceUpdate : false );
-
-                                        CurrentRequestItem.NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( CurrentRequestItem.Node, CurrentRequestItem.NextReorderDate, CurrentRequestItem.RecurringFrequency );
-                                        CurrentRequestItem.postChanges( ForceUpdate : false );
                                     }
+
+                                    TotalRequestsProcessed += 1;
+                                    RequestDescriptions += CurrentRequestItem.Description + "; ";
                                 }
-
-                                TotalRequestsProcessed += 1;
-                                RequestDescriptions += CurrentRequestItem.Description + "; ";
-
-                            }//try
-
-                            catch( Exception Exception )
-                            {
-                                string Message = "Unable to process generator " + CurrentRequestItem.Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
-                                RequestDescriptions += Message;
-                                CurrentRequestItem.postChanges( false );
-                                _CswNbtResources.logError( new CswDniException( Message ) );
-
-                            }//catch
-
+                            }
+                            Tree.goToParentNode();
                         } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
+                        catch( Exception Exception )
+                        {
+                            string Message = "Unable to create recurring request " + Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
+                            RequestDescriptions += Message;
+                            _CswNbtResources.logError( new CswDniException( Message ) );
 
-                        Tree.goToParentNode();
-
+                        }//catch
                     }//iterate generators
 
                     _CswScheduleLogicDetail.StatusMessage = TotalRequestsProcessed.ToString() + " generators processed: " + RequestDescriptions;
