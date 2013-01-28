@@ -198,6 +198,9 @@
                             isRequired: true,
                             maxDate: cswPrivate.getCurrentDate(),
                             onChange: function () {
+                                if (startDatePicker.val().date > cswPrivate.state.EndDate) {
+                                    startDatePicker.setMaxDate(cswPrivate.state.EndDate);
+                                }
                                 cswPrivate.state.StartDate = startDatePicker.val().date;
                                 cswPrivate.reinitSteps(2);
                             }
@@ -212,6 +215,9 @@
                             isRequired: true,
                             maxDate: cswPrivate.getCurrentDate(),
                             onChange: function () {
+                                if (endDatePicker.val().date > cswPrivate.getCurrentDate()) {
+                                    endDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                                }
                                 cswPrivate.state.EndDate = endDatePicker.val().date;
                                 startDatePicker.setMaxDate(cswPrivate.state.EndDate);
                                 cswPrivate.state.StartDate = startDatePicker.val().date;

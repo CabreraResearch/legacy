@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
                         IsPropertyGrid = false;
                     }
                     CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
-                    ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
+                    ret = GridWs.runGrid( Title: null, IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
                     ret["grid"]["title"] = "";
                 }
             }
