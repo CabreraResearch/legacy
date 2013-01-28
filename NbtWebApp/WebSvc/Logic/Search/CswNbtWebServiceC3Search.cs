@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.WebServices
                 C3ProductTempNode.postChanges( false );
 
                 // Get or create a vendor node
-                CswNbtObjClassVendor VendorNode = C3Import.createVendorNode( C3ProductDetails.SupplierName );
+                C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
 
                 // Create size node(s)
                 Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
@@ -288,23 +288,19 @@ namespace ChemSW.Nbt.WebServices
                 Return.Data.actionname = "create material";
                 Return.Data.rows = ProductSizes;
 
-                C3CreateMaterialResponse.State.Supplier supplier = new C3CreateMaterialResponse.State.Supplier();
-                supplier.name = VendorNode.NodeName;
-                supplier.val = VendorNode.NodeId.ToString();
+                C3CreateMaterialResponse.State.MaterialType MaterialType = new C3CreateMaterialResponse.State.MaterialType();
+                MaterialType.name = ChemicalNT.NodeTypeName;
+                MaterialType.val = ChemicalNT.NodeTypeId;
 
-                C3CreateMaterialResponse.State.MaterialType materialType = new C3CreateMaterialResponse.State.MaterialType();
-                materialType.name = ChemicalNT.NodeTypeName;
-                materialType.val = ChemicalNT.NodeTypeId;
+                C3CreateMaterialResponse.State State = new C3CreateMaterialResponse.State();
+                State.materialId = C3ProductTempNode.NodeId.ToString();
+                State.tradeName = C3ProductTempNode.TradeName.Text;
+                State.partNo = C3ProductTempNode.PartNumber.Text;
+                State.useExistingTempNode = true;
+                State.supplier = Supplier;
+                State.materialType = MaterialType;
 
-                C3CreateMaterialResponse.State state = new C3CreateMaterialResponse.State();
-                state.materialId = C3ProductTempNode.NodeId.ToString();
-                state.tradeName = C3ProductTempNode.TradeName.Text;
-                state.partNo = C3ProductTempNode.PartNumber.Text;
-                state.useExistingTempNode = true;
-                state.supplier = supplier;
-                state.materialType = materialType;
-
-                Return.Data.state = state;
+                Return.Data.state = State;
 
                 #endregion Return Object
             }
@@ -515,9 +511,9 @@ namespace ChemSW.Nbt.WebServices
             /// Creates a new Vendor node if the Vendor does not already exist, otherwise gets the existing Vendor
             /// </summary>
             /// <returns></returns>
-            public CswNbtObjClassVendor createVendorNode( string VendorName )
+            public C3CreateMaterialResponse.State.Supplier createVendorNode( string VendorName )
             {
-                CswNbtObjClassVendor VendorNode = null;
+                C3CreateMaterialResponse.State.Supplier Supplier = new C3CreateMaterialResponse.State.Supplier();
 
                 CswNbtView VendorView = new CswNbtView( _CswNbtResources );
                 VendorView.ViewName = "VendorWithNameEquals";
@@ -542,21 +538,29 @@ namespace ChemSW.Nbt.WebServices
                 if (VendorsTree.getChildNodeCount() > 0)
                 {
                     VendorsTree.goToNthChild(0);
-                    VendorNode = VendorsTree.getNodeForCurrentPosition();
+
+                    // Add to the return object
+                    Supplier.name = VendorsTree.getNodeNameForCurrentPosition();
+                    Supplier.val = VendorsTree.getNodeIdForCurrentPosition().ToString();
                 }
                 else
                 {
                     CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
                     if (null != VendorNT)
                     {
-                        VendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId(VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp);
-                        addNodeTypeProps(VendorNode.Node);
-                        VendorNode.IsTemp = false;
-                        VendorNode.postChanges(true);
+                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId(VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp);
+                        addNodeTypeProps( NewVendorNode.Node );
+
+                        NewVendorNode.IsTemp = false;
+                        NewVendorNode.postChanges( true );
+
+                        // Add to the return object
+                        Supplier.name = NewVendorNode.NodeName;
+                        Supplier.val = NewVendorNode.NodeId.ToString();
                     }
                 }
 
-                return VendorNode;
+                return Supplier;
             }//createVendorNode()
 
             public Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> createSizeNodes( CswNbtObjClassMaterial ChemicalNode )
