@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.WebSvc.Logic.Labels
 {
@@ -67,6 +68,88 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         [DataMember]
         [Description( "Label ID" )]
         public string Id = string.Empty;
+
+    }
+
+    /// <summary>
+    /// Request to register a label printer
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer registration" )]
+    public class LabelPrinter
+    {
+        /// <summary>
+        /// LPC name is unique in nt schem to identify printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "LPC Name uniquely identifies an NBT Label Printer to users" )]
+        public string LpcName = string.Empty;
+
+        /// <summary>
+        /// Additional descriptive info about the label printer
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "Additional descriptive info about the label printer" )]
+        public string Description = string.Empty;
+
+    }
+
+    /// <summary>
+    /// Request for next label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer nodekey" )]
+    public class CswNbtLabelJobRequest
+    {
+        /// <summary>
+        /// Nodekey of defined NBT printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Nodekey of defined NBT Label Printer" )]
+        public string PrinterKey = string.Empty;
+    }
+
+    /// <summary>
+    /// Request for next label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer job" )]
+    public class CswNbtLabelJobResponse : CswWebSvcReturn
+    {
+        /// <summary>
+        /// NBT label printer job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label print JobNo" )]
+        public string JobNo = string.Empty;
+
+        /// <summary>
+        /// NBT label printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label print Owner" )]
+        public string JobOwner = string.Empty;
+
+        /// <summary>
+        /// NBT labels count
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label count for this job" )]
+        public string LabelCount = string.Empty;
+
+        /// <summary>
+        /// NBT label name
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label template name " )]
+        public string LabelName = string.Empty;
+
+        /// <summary>
+        /// NBT label printer data
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label printer data " )]
+        public string LabelData = string.Empty;
 
     }
 
@@ -193,8 +276,38 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 public string SelectedLabelId = string.Empty;
             }
 
+            /// <summary>
+            /// Returns status of register printer request
+            /// </summary>
+            [DataContract]
+            [Description( "Returns status of register printer request" )]
+            public class registeredLpc
+            {
+                /// <summary>
+                /// Printer
+                /// </summary>
+                [DataMember]
+                [Description( "The label printer" )]
+                public LabelPrinter printer = new LabelPrinter();
+
+                /// <summary>
+                /// printer is enabled
+                /// </summary>
+                [DataMember]
+                [Description( "Whether printer is enabled in NBT" )]
+                public bool enabled = false;
+
+                /// <summary>
+                /// status string of request
+                /// </summary>
+                [DataMember]
+                [Description( "Status string of this request" )]
+                public string status = string.Empty;
+
+            }
 
         }
+
 
     }
 
