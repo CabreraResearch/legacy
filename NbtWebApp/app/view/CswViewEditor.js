@@ -309,6 +309,8 @@
                 success: function (data) {
                     currentViewJson = data.TreeView;
 
+                    o.viewmode = currentViewJson.mode;
+
                     viewNameTextBox.val(currentViewJson.viewname);
                     categoryTextBox.val(currentViewJson.category);
                     var visibility = Csw.string(currentViewJson.visibility);
