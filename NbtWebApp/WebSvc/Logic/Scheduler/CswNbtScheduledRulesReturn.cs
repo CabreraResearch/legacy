@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.WebServices
     public class GridContainer
     {
         [DataMember]
-        public CswGridExtJsGrid grid = null;
+        public CswExtJsGrid grid = null;
 
     }
 
