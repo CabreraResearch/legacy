@@ -137,7 +137,6 @@ namespace ChemSW.Nbt.Sched
                                             CurrentRequestItem.postChanges( ForceUpdate: false );
                                         }
                                     }
-
                                     RequestDescriptions += CurrentRequestItem.Description + "; ";
                                 }
                             }

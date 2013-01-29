@@ -65,23 +65,29 @@ namespace ChemSW.Nbt.Sched
                     _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
                     CswResources.AuditContext = "Scheduler Task: " + RuleName;
 
-
+                    //Review K4566: limit iteration and always increment https://fogbugz.chemswlive.com/kiln/Review/K4566
+                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
+                    if( Int32.MinValue == MailReportLimit )
+                    {
+                        MailReportLimit = 1;
+                    }
+                    Int32 TotalMailReportsProcessed = 0; 
 
                     Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
                     Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
 
-                    for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < MailReports.Count && TotalMailReportsProcessed <= MailReportLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
-                        CswNbtObjClassMailReport CurrentMailReport = CurrentMailReport = MailReports[idx];
+                        CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
                         if( null != CurrentMailReport )
                         {
                             try
                             {
                                 if( CurrentMailReport.Enabled.Checked == Tristate.True &&
                                     CurrentMailReport.Recipients.SelectedUserIds.Count > 0 &&
-                                    ( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView ||                    // for notifications, 
-                                      CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() ||      // make sure at least one
-                                      false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) ) )                     // node has changed
+                                    ( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView || // for notifications, 
+                                      CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() || // make sure at least one
+                                      false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) ) ) // node has changed
                                 {
                                     if( false == CurrentMailReport.Type.Empty )
                                     {
@@ -94,7 +100,7 @@ namespace ChemSW.Nbt.Sched
                                         // BZ 7866
                                         if( DateTime.MinValue != ThisDueDateValue )
                                         {
-                                            if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType )  // Ignore runtime for hourly reports
+                                            if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly reports
                                             {
                                                 // Trim times
                                                 ThisDueDateValue = ThisDueDateValue.Date;
@@ -136,15 +142,19 @@ namespace ChemSW.Nbt.Sched
                                         CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                         CurrentMailReport.postChanges( true );
                                     }
-                                }// if( CurrentMailReport.Enabled.Checked == Tristate.True )
+                                } // if( CurrentMailReport.Enabled.Checked == Tristate.True )
 
-                            }//try 
+                            } //try 
 
                             catch( Exception Exception )
                             {
                                 InnerErrorMessage += "An exception occurred: " + Exception.Message + "; ";
                                 CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                 CurrentMailReport.postChanges( true );
+                            }
+                            finally
+                            {
+                                TotalMailReportsProcessed += 1;
                             }
                         } // if( null != CurrentMailReport )
                     } // for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
