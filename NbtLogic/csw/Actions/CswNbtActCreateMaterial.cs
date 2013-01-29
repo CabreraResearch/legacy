@@ -42,12 +42,12 @@ namespace ChemSW.Nbt.Actions
                 this.TradeName = TradeName;
                 this.SupplierId = SupplierId;
                 this.PartNo = PartNo;
+                //If we are providing an existing material
                 this._MaterialId = CswConvert.ToPrimaryKey( NodeId );
                 if( CswTools.IsPrimaryKey( _MaterialId ) )
                 {
                     Node = _NbtResources.Nodes[_MaterialId];
                 }
-
             }
 
             /// <summary>
@@ -141,7 +141,9 @@ namespace ChemSW.Nbt.Actions
             {
                 if( ForceRecalc || null == _ExistingNode )
                 {
-                    _ExistingNode = _NbtResources.Nodes[_MaterialId];
+                    // If a preexisting material was provided, Node will not be null
+                    // because it was set in the constructor
+                    _ExistingNode = Node;
                     if( null == _ExistingNode )
                     {
                         _ExistingNode = CswNbtObjClassMaterial.getExistingMaterial( _NbtResources, NodeTypeId, SupplierId, TradeName, PartNo );
