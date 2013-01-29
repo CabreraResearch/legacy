@@ -3,6 +3,8 @@ using ChemSW.Nbt.Sched;
 using ChemSW.MtSched.Core;
 using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using System.Data;
 
 namespace ChemSW.Nbt.Schema
@@ -24,7 +26,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-
+            //add the CAF Import Sched Service to the DB
             int ruleId = _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.CAFImport, Recurrence.NSeconds, 180 );
             CswTableUpdate tu = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "setCAFImport_time", "scheduledrules" );
             DataTable scheduledRulesDT = tu.getTable( "where scheduledruleid = " + ruleId );
@@ -34,6 +36,19 @@ namespace ChemSW.Nbt.Schema
                 row["disabled"] = "1";
             }
             tu.update( scheduledRulesDT );
+
+            //Hide the Legacy ID on Units of Measure
+            CswNbtMetaDataObjectClass unitsOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            foreach( CswNbtMetaDataNodeType unitsNT in unitsOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp legacyIdNTP = unitsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.LegacyId );
+                legacyIdNTP.removeFromAllLayouts();
+
+                foreach( CswNbtObjClassUnitOfMeasure unitNode in unitsNT.getNodes( false, false ) )
+                {
+                    unitNode.LegacyId.setHidden( true, true );
+                }
+            }
 
         } //Update()
 
