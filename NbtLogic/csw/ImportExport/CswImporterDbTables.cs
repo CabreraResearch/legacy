@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.ImportExport
             //*************** import_props columns (there will be additional ones per each prop's field values)
             _PropTableInfrastructureColumns.Add( _ColName_Infra_Nodes_NodeTypePropName );
             _PropTableInfrastructureColumns.Add( ColName_ImportPropsRealPropId );
-            _PropTableInfrastructureColumns.Add(_ColName_Props_ImportTargetNodeIdUnique);
+            _PropTableInfrastructureColumns.Add( _ColName_Props_ImportTargetNodeIdUnique );
 
 
             //*************** columns for both import_nodes and import_props
@@ -112,38 +112,38 @@ namespace ChemSW.Nbt.ImportExport
         public bool areImportTablesAbsent( ref string ImportTableInconsistencyMessage )
         {
 
-           bool ReturnVal = true;
+            bool ReturnVal = true;
 
-           if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TblName_ImportNodes ) )
-           {
-               if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TblName_ImportNodes ) )
-               {
-                   if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TblName_ImportProps ) )
-                   {
-                       if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TblName_ImportProps ) )
-                       {
-                           ReturnVal = false;
-                           ImportTableInconsistencyMessage = string.Empty;
-                       }
-                       else
-                       {
-                           ImportTableInconsistencyMessage = "The import nodes table is defined properly; however, the import props table is defined in the database but not in meta data";
-                       }//if-else propstable is defined in meta data
-                   }
-                   else
-                   {
-                       ImportTableInconsistencyMessage = "The import nodes nodes table is defined properly; however the import props table is not defined in the database";
-                   }//if-else props table is defined in db
-               }
-               else
-               {
-                   ImportTableInconsistencyMessage = "The import nodes table is defined in the database, but not in the meta data";
-               }//if-else Nodes table is defined in meta data
-           }
-           else
-           {
-               ImportTableInconsistencyMessage = string.Empty; //not necessarily an error condition: it just aint there
-           }//if-else Nodes table is defined in db
+            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TblName_ImportNodes ) )
+            {
+                if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TblName_ImportNodes ) )
+                {
+                    if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( TblName_ImportProps ) )
+                    {
+                        if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( TblName_ImportProps ) )
+                        {
+                            ReturnVal = false;
+                            ImportTableInconsistencyMessage = string.Empty;
+                        }
+                        else
+                        {
+                            ImportTableInconsistencyMessage = "The import nodes table is defined properly; however, the import props table is defined in the database but not in meta data";
+                        }//if-else propstable is defined in meta data
+                    }
+                    else
+                    {
+                        ImportTableInconsistencyMessage = "The import nodes nodes table is defined properly; however the import props table is not defined in the database";
+                    }//if-else props table is defined in db
+                }
+                else
+                {
+                    ImportTableInconsistencyMessage = "The import nodes table is defined in the database, but not in the meta data";
+                }//if-else Nodes table is defined in meta data
+            }
+            else
+            {
+                ImportTableInconsistencyMessage = string.Empty; //not necessarily an error condition: it just aint there
+            }//if-else Nodes table is defined in db
 
             return ( ReturnVal );
 
@@ -157,17 +157,43 @@ namespace ChemSW.Nbt.ImportExport
 
 
             _CswNbtSchemaModTrnsctn.beginTransaction();
-            _makeImportTable( TblName_ImportNodes, ColName_ImportNodesTablePk, new List<string>(), 512, _AdditonalColumns, _IndexColumns );
+
+            List<string> NodesColumns = new List<string>();
+
+            foreach( string CurrentColName in _BothTablesInfrastructureColumns )
+            {
+                NodesColumns.Add( CurrentColName );
+            }
+
+            foreach( string CurrentColName in _NodeTableInfrastructureColumns )
+            {
+                NodesColumns.Add( CurrentColName );
+            }
+
+            _makeImportTable( TblName_ImportNodes, ColName_ImportNodesTablePk, NodesColumns, 512, _IndexColumns );
 
 
 
-            _CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportNodes, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
+            //_CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportNodes, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
+
+            List<string> PropColumns = new List<string>();
+
+            foreach( string CurrentColName in _BothTablesInfrastructureColumns )
+            {
+                PropColumns.Add( CurrentColName );
+            }
+
+            foreach( string CurrentColName in _PropTableInfrastructureColumns )
+            {
+                PropColumns.Add( CurrentColName );
+            }
+
+            _makeImportTable( TblName_ImportNodes, ColName_ImportNodesTablePk, PropColumns, 512, _IndexColumns );
 
 
-
-            _makeImportTable( TblName_ImportProps, ColName_ImportPropsTablePk, NodePropColumnNames, 512, _AdditonalColumns, _IndexColumns );
-            _CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportProps, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
-            _CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportProps, ColName_ImportPropsRealPropId, "to be filled in when the node is actually created", false, false );
+            _makeImportTable( TblName_ImportProps, ColName_ImportPropsTablePk, NodePropColumnNames, 512, _IndexColumns );
+            //_CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportProps, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
+            //_CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportProps, ColName_ImportPropsRealPropId, "to be filled in when the node is actually created", false, false );
 
 
 
@@ -176,18 +202,16 @@ namespace ChemSW.Nbt.ImportExport
         }
 
 
-        private void _makeImportTable( string TableName, string PkColumnName, List<string> ColumnsToAdd, Int32 ArbitraryStringColumnLength, Collection<string> AdditionalStringColumns, Collection<string> IndexColumns )
+        private void _makeImportTable( string TableName, string PkColumnName, List<string> ColumnsToAdd, Int32 ArbitraryStringColumnLength, Collection<string> IndexColumns )
         {
 
             _CswNbtSchemaModTrnsctn.addTable( TableName, PkColumnName );
+
+
+
             foreach( string CurrentColumn in ColumnsToAdd )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( TableName, CurrentColumn, string.Empty, false, false, ArbitraryStringColumnLength );
-            }
-
-            foreach( string CurrentColumName in AdditionalStringColumns )
-            {
-                _CswNbtSchemaModTrnsctn.addStringColumn( TableName, CurrentColumName, string.Empty, false, false, ArbitraryStringColumnLength );
             }
 
             foreach( string CurrentColumnName in IndexColumns )
