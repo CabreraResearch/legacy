@@ -29,7 +29,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
         //#endregion Action Functions
 
         //#region Control Zone Control
-        cswPrivate.makeControlZoneControl = function() {
+        cswPrivate.makeControlZoneControl = function () {            
             cswPrivate.controlTbl.cell(1, 1).span({ text: 'Select Control Zone: ' }).addClass('propertylabel');
             cswPrivate.controlZoneSelect = cswPrivate.controlTbl.cell(1, 2).nodeSelect({
                 name: 'Control Zone',
@@ -37,8 +37,9 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 width: '200px',
                 showSelectOnLoad: true,
                 isRequired: false,
-                nodeTypeName: 'Control Zone',
-                objectClassName: 'GenericClass',
+                viewid: cswPrivate.controlZoneViewId,
+                //nodeTypeName: 'Control Zone',
+                //objectClassName: 'GenericClass',
                 onChange: function () {
                     if (cswPrivate.controlZoneSelect.val() !== '') {
                         cswPrivate.controlZoneId = cswPrivate.controlZoneSelect.val();
@@ -376,7 +377,14 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 width: '95%'
             });
 
-            cswPrivate.makeControlZoneControl();
+            Csw.ajaxWcf.get({
+                urlMethod: 'RegulatoryReporting/getControlZonesView',
+                async: false,
+                success: function (data) {
+                    cswPrivate.controlZoneViewId = data.ViewId;
+                    cswPrivate.makeControlZoneControl();
+                }
+            });
         }());
         //#endregion _postCtor
         

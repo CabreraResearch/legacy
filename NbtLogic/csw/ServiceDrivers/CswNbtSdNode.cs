@@ -20,10 +20,6 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             [DataMember( IsRequired = false )]
             public Int32 NodeTypeId = Int32.MinValue;
-            
-            //NodeTypeName seems like a bad plan.
-            [DataMember(IsRequired = false)] 
-            public String NodeTypeName = String.Empty;
 
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
@@ -470,11 +466,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             // If we don't have a view, make one
             if( null == View )
             {
-                if( Request.NodeTypeId > 0 || false == string.IsNullOrEmpty(Request.NodeTypeName))
+                if( Request.NodeTypeId > 0 )
                 {
-                    CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId ) ??
-                                                                //Again, seems like a bad plan to use name
-                                                              _CswNbtResources.MetaData.getNodeType( Request.NodeTypeName );
+                    CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Request.NodeTypeId );
                     if( null != MetaDataNodeType )
                     {
                         MetaDataObjectClass = MetaDataNodeType.getObjectClass();
@@ -483,8 +477,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         View.AddViewRelationship( MetaDataNodeType, IncludeDefaultFilters: true );
 
                         Ret.NodeTypeId = MetaDataNodeType.NodeTypeId;
-                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create,
-                                                                          MetaDataNodeType );
+                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
                     }
                 }
                 else
