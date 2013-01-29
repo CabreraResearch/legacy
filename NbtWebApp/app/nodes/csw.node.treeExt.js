@@ -9,9 +9,7 @@
 
             var cswPrivate = {
                 forSearch: false, // if true, used to override default behavior of list views
-                useScrollbars: true,
                 onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
-                onInitialSelectNode: null,
                 isMulti: false,
                 validateCheckboxes: true,
                 showToggleLink: true,
@@ -60,6 +58,7 @@
                     root: data.Tree,
                     columns: data.Columns,
                     fields: data.Fields,
+                    selectedId: data.SelectedId,
                     
                     onMouseEnter: hoverNode,
                     onMouseExit: deHoverNode,
@@ -80,20 +79,7 @@
                 function deHoverNode() {
                     Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
                 }
-                
-                //cswPublic.treeDiv.find('li').$.each(function () {
-                //    if (thislocked) {
-                //        $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
-                //            .appendTo($childObj.children('a').first());
-                //    }
-
-                //    if (thisdisabled) {
-                //        $childObj.children('a').addClass('disabled');
-                //    }
-
-                //}); // each()
-
-                
+               
                 Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
                     return function _onMulti(eventObj, multiOpts) {
                         if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {

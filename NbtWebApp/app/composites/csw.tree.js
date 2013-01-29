@@ -111,41 +111,47 @@
                     //*click*: function() {
                     // Ext exposes a slew of click handlers. None of them work unless the node is *selected*, so don't bother.
                     //}
-                    itemmouseenter: function(thisView, treeNode, htmlElement, index, eventObj, eOpts) {
+                    itemmouseenter: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
                         Csw.tryExec(cswPrivate.onMouseEnter, window.event, treeNode);
                     },
-                    itemmouseleave: function(thisView, treeNode, htmlElement, index, eventObj, eOpts) {
+                    itemmouseleave: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
                         Csw.tryExec(cswPrivate.onMouseExit, window.event, treeNode);
                     },
-                    afterlayout: function() {
+                    afterlayout: function () {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
                         cswPublic.toggleCheckboxes();
-                        $('.x-grid-cell-treecolumn').css({ 
-                            background: 'transparent', 
-                            border: '0px' 
+                        $('.x-grid-cell-treecolumn').css({
+                            background: 'transparent',
+                            border: '0px'
                         });
                         $('#' + this.id + '-body').css({
-                            background: 'transparent', 
-                            border: '0px' 
+                            background: 'transparent',
+                            border: '0px'
                         });
-                        Csw.each(this.dockedItems.items, function(item) {
+                        Csw.each(this.dockedItems.items, function (item) {
                             $('#' + item.id).css({
                                 background: 'transparent',
                                 border: '0px'
                             });
                         });
                     },
-                    afterrender: function() {
+                    afterrender: function () {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
                         //It _will_ in the next nano-second, so we have to defer.
                         cswPublic.toggleCheckboxes();
                     },
-                    viewready: function() {
+                    viewready: function () {
                         //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
-                        Csw.defer(function() {
-                            var lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
-
+                        Csw.defer(function () {
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
+
+                            var lastSelectedPath;
+                            if (Csw.isNullOrEmpty(cswPrivate.selectedId)) {
+                                lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
+                            } else {
+                                lastSelectedPath = cswPublic.getPathFromId(cswPrivate.selectedId);
+                            }
+
                             var firstChild = cswPrivate.rootNode.childNodes[0];
 
                             if (!lastSelectedPath) {
@@ -163,16 +169,16 @@
                         }, 10);
 
                     },
-                    afteritemcollapse: function() {
+                    afteritemcollapse: function () {
                         cswPublic.toggleCheckboxes();
                     },
-                    beforedeselect: function(rowModel, record, index, eOpts) {
+                    beforedeselect: function (rowModel, record, index, eOpts) {
                         return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
                     },
-                    beforeselect: function(rowModel, record, index, eOpts) {
+                    beforeselect: function (rowModel, record, index, eOpts) {
                         return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
                     },
-                    select: function(rowModel, record, index, eOpts) {
+                    select: function (rowModel, record, index, eOpts) {
                         //If you click a node, this event is firing. We must:
                         //1. Keep this generic. Defer to the caller for implementation-specific validation.
                         //2. Properly track the currently and previously selected node (multiple clicks to the same node trigger this event)
@@ -196,14 +202,13 @@
                 };
             }; // cswPrivate.makeListeners()
 
-            cswPrivate.check = function(record, checked)
-            {
+            cswPrivate.check = function (record, checked) {
                 //Ext doesn't update the raw data, which is the only thing we have to manage state.
                 //Manually keep it up to date.
                 var inc = (checked) ? 1 : -1;
                 if (cswPublic.is.multi) {
-                    if (false === (null === cswPublic.selectedTreeNode || 
-                                   //cswPublic.selectedTreeNode.raw.checked === false || 
+                    if (false === (null === cswPublic.selectedTreeNode ||
+                        //cswPublic.selectedTreeNode.raw.checked === false || 
                                    Csw.tryExec(cswPrivate.allowMultiSelection, cswPublic.selectedTreeNode, record))) {
                         //else, manually "uncheck" this node and select the unchanged current node
                         checked = false;
@@ -362,7 +367,7 @@
                 /// <param name="treeNode"></param>
                 path = path || cswPublic.getPath(treeNode);
                 if (path) {
-                    cswPublic.tree.selectPath(path, null, '|', function(succeeded, oLastNode) {
+                    cswPublic.tree.selectPath(path, null, '|', function (succeeded, oLastNode) {
                         Csw.tryExec(onSuccess, succeeded, oLastNode);
                     });
                 }
@@ -399,9 +404,28 @@
                 return ret;
             };
 
+            cswPublic.getPathFromId = function (id) {
+                /// <summary>
+                /// Get the path of a tree node from root
+                /// </summary>
+                /// <returns type="String"></returns>
+                var ret = '';
+                if (id) {
+                    cswPublic.eachNode(function(node) {
+                        var keepIterating = true;
+                        if (node && node.raw && node.raw.id === id) {
+                            ret = cswPublic.getPath(node);
+                            keepIterating = false; //stop iterating when we've found a match
+                        }
+                        return keepIterating;
+                    });
+                }
+                return ret;
+            };
+
             cswPublic.getChecked = function () {
                 /// <summary>
-                /// For Multii-Edit, get all nodes which are selected (checked) in the tree.
+                /// For Multi-Edit, get all nodes which are selected (checked) in the tree.
                 /// </summary>
                 var checked = cswPublic.tree.getChecked() || [];
                 if (checked.length === 0) {
@@ -422,14 +446,19 @@
             };
 
             cswPrivate.eachNodeRecursive = function (node, callBack) {
+                var ret = true;
                 if (node && callBack) {
-                    callBack(node);
-                    if (node.childNodes && node.childNodes.length > 0) {
+                    ret = callBack(node);
+                    if (false !== ret && 
+                        node.childNodes && 
+                        node.childNodes.length > 0) {
+                        
                         node.childNodes.forEach(function (childNode) {
-                            cswPrivate.eachNodeRecursive(childNode, callBack);
+                            ret = cswPrivate.eachNodeRecursive(childNode, callBack);
                         });
                     }
                 }
+                return ret;
             };
 
             cswPublic.eachNode = function (callBack) {
