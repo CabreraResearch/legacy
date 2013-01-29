@@ -266,16 +266,23 @@ namespace ChemSW.Nbt.Actions
         private DataTable _getContainerStorageProps( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
             DataTable TargetTable = null;
+            CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataNodeType MaterialComponentNT = MaterialComponentOC.FirstNodeType;
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
-            if( null != ContainerNT )
+            if( null != ContainerNT && null != MaterialComponentNT )
             {
+                CswNbtMetaDataNodeTypeProp MixtureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Mixture );
+                CswNbtMetaDataNodeTypeProp ConstituentProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Constituent );
                 CswNbtMetaDataNodeTypeProp MaterialProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Material );
                 CswNbtMetaDataNodeTypeProp PressureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StoragePressure );
                 CswNbtMetaDataNodeTypeProp TemperatureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
                 CswNbtMetaDataNodeTypeProp UseTypeProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.UseType );
                 String SelectText = @"with containerids
-                    as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + " and field1_fk = " + MaterialId + @")
+                    as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + @" and field1_fk in 
+                          (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
+                            (select nodeid from jct_nodes_props where nodetypepropid = " + ConstituentProp.PropId + @" and field1_fk = " + MaterialId + @")
+                              union (select " + MaterialId + @" from dual) ) )
                 select unique codes.pressure, codes.temperature, codes.usetype from (
                     select unique jnpa.nodeid as ContainerId,
                         case when p.pressure is null 
@@ -316,14 +323,22 @@ namespace ChemSW.Nbt.Actions
         private DataTable _getContainerLocations( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
             DataTable TargetTable = null;
+            CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataNodeType MaterialComponentNT = MaterialComponentOC.FirstNodeType;
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
-            if( null != ContainerNT )
+            if( null != ContainerNT && null != MaterialComponentNT )
             {
+                CswNbtMetaDataNodeTypeProp MixtureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Mixture );
+                CswNbtMetaDataNodeTypeProp ConstituentProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Constituent );
+
                 CswNbtMetaDataNodeTypeProp MaterialProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Material );
                 CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Location );
                 String SelectText = @"with containerids
-                    as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + " and field1_fk = " + MaterialId + @")
+                    as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + @" and field1_fk in 
+                          (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
+                            (select nodeid from jct_nodes_props where nodetypepropid = " + ConstituentProp.PropId + @" and field1_fk = " + MaterialId + @")
+                              union (select " + MaterialId + @" from dual) ) )
                 select unique locationid, fulllocation from (
                     select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation, jnp.recordcreated
                         from jct_nodes_props_audit jnp
