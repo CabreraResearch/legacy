@@ -28,9 +28,12 @@ namespace ChemSW.Nbt.Schema
             {
                 foreach( CswNbtObjClassMaterial chemicalNode in chemicalNT.getNodes( false, false, false, true ) )
                 {
-                    chemicalNode.Request.State = CswNbtObjClassMaterial.Requests.Size;
-                    chemicalNode.Request.MenuOptions = CswNbtObjClassMaterial.Requests.Options.ToString();
-                    chemicalNode.postChanges( false );
+                    if( string.IsNullOrEmpty( chemicalNode.Request.State ) || string.IsNullOrEmpty( chemicalNode.Request.MenuOptions ) )
+                    {
+                        chemicalNode.Request.State = CswNbtObjClassMaterial.Requests.Size;
+                        chemicalNode.Request.MenuOptions = CswNbtObjClassMaterial.Requests.Options.ToString();
+                        chemicalNode.postChanges( false );
+                    }
                 }
             }
 
