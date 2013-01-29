@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.Actions
             #region SQL Query Template
         
             String SqlText = @"
-              select t.materialid, t.casno, max(t.totalquantity) as maxqty, avg(t.totalquantity) as avgqty, t.unitid, count(*) as daysonsite, 
+              select t.materialid, t.casno, max(t.totalquantity) as maxqty, round(avg(t.totalquantity), 6) as avgqty, t.unitid, count(*) as daysonsite, 
                 p.tradename, p.materialtype, p.physicalstate, p.specialflags, p.hazardcategories, p.istierII
                 from tier2 t
                   left join (select 
