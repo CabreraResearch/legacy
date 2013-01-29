@@ -106,9 +106,14 @@ namespace CswPrintClient1
                     }
 
                 }
+                else
+                {
+                    lblStatus.Text = "No label returned.";
+                }
             }
             else
             {
+                lblStatus.Text = e.Message;
                 Log( e.Message );
             }
             btnTestPrintSvc.Enabled = true;
@@ -163,7 +168,7 @@ namespace CswPrintClient1
             if( _printerKey != string.Empty )
             {
                 btnRegister.Enabled = false;
-                lblRegisterStatus.Text = "Registered PrinterKey=" + _printerKey;
+                lblRegisterStatus.Text = "Success! Registered PrinterKey is " + _printerKey;
             }
             else
             {
@@ -171,6 +176,7 @@ namespace CswPrintClient1
                 lblRegisterStatus.Text = errorStatus;
                 cbEnabled.Checked = false;
             }
+            tbDescript.Enabled = btnRegister.Enabled;
             tbLPCname.Enabled = btnRegister.Enabled;
             cbEnabled.Enabled = !( btnRegister.Enabled );
         }
@@ -199,7 +205,7 @@ namespace CswPrintClient1
             Application.CommonAppDataRegistry.SetValue( "Enabled", cbEnabled.Checked.ToString() );
             Application.CommonAppDataRegistry.SetValue( "printer", tbPrinter.Text );
             Application.CommonAppDataRegistry.SetValue( "printerkey", _printerKey );
-            // Application.CommonAppDataRegistry.SetValue( "URL", tbURL.Text );
+            Application.CommonAppDataRegistry.SetValue( "description", tbDescript.Text );
             Application.CommonAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
             Application.CommonAppDataRegistry.SetValue( "logon", tbUsername.Text );
             Application.CommonAppDataRegistry.SetValue( "code", tbPassword.Text );
@@ -211,7 +217,7 @@ namespace CswPrintClient1
             cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
             tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
             _printerKey = Application.CommonAppDataRegistry.GetValue( "printerkey" ).ToString();
-            //tbURL.Text = Application.CommonAppDataRegistry.GetValue( "URL" ).ToString();
+            tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
             tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
             tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
             tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();

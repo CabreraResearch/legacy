@@ -114,6 +114,7 @@
             // lblStatus
             // 
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.Location = new System.Drawing.Point(3, 3);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(418, 56);
@@ -207,7 +208,7 @@
             this.tbURL.ReadOnly = true;
             this.tbURL.Size = new System.Drawing.Size(244, 20);
             this.tbURL.TabIndex = 47;
-            this.tbURL.Text = "https://localhost/nbtwebapp/";
+            this.tbURL.Text = "http://localhost/nbtDev/";
             // 
             // label9
             // 
