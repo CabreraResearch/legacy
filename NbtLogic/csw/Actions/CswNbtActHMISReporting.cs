@@ -154,9 +154,12 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeType( "Control Zone" );
-            ControlZonesView.AddViewRelationship( ControlZoneNT, IncludeDefaultFilters: true );
-            ControlZonesView.ViewName = "HMIS Control Zones";
-            ControlZonesView.SaveToCache( IncludeInQuickLaunch: false );
+            if( null != ControlZoneNT )
+            {
+                ControlZonesView.AddViewRelationship(ControlZoneNT, IncludeDefaultFilters: true);
+                ControlZonesView.ViewName = "HMIS Control Zones";
+                ControlZonesView.SaveToCache(IncludeInQuickLaunch: false);
+            }
             return ControlZonesView;
         }
 

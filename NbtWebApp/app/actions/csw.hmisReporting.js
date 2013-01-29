@@ -38,8 +38,6 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 showSelectOnLoad: true,
                 isRequired: false,
                 viewid: cswPrivate.controlZoneViewId,
-                //nodeTypeName: 'Control Zone',
-                //objectClassName: 'GenericClass',
                 onChange: function () {
                     if (cswPrivate.controlZoneSelect.val() !== '') {
                         cswPrivate.controlZoneId = cswPrivate.controlZoneSelect.val();
@@ -381,8 +379,10 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                 urlMethod: 'RegulatoryReporting/getControlZonesView',
                 async: false,
                 success: function (data) {
-                    cswPrivate.controlZoneViewId = data.ViewId;
-                    cswPrivate.makeControlZoneControl();
+                    if (false === Csw.isNullOrEmpty(data)) {
+                        cswPrivate.controlZoneViewId = data.ViewId;
+                        cswPrivate.makeControlZoneControl();
+                    }
                 }
             });
         }());
