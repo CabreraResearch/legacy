@@ -88,7 +88,7 @@ namespace NbtWebAppServices.Response
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in TypeProps
-                                                                        orderby _NodeTypeProp.PropNameWithQuestionNo
+                                                                        orderby CswConvert.ToInt32( _NodeTypeProp.PropNameWithQuestionNo )
                                                                         where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                                                                               false == _NodeTypeProp.ReadOnly &&
                                                                               _CswNbtWcfSessionResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, _NodeTypeProp, null )
