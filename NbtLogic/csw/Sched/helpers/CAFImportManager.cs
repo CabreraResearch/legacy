@@ -664,12 +664,12 @@ namespace ChemSW.Nbt
                                     }
                                     Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, nbtValue );
                                 }
-                                Node.Properties[ntp].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, gestalt );
                                 break;
                         }
-                    }
-                }
-            }
+                        Node.Properties[ntp].SyncGestalt();
+                    } //if( null != Node.Properties[ntp] )
+                } //if( null != Node.Properties[ntp] && _Mappings.ContainsKey( ntp.PropName ) )
+            } //foreach( CswNbtMetaDataNodeTypeProp ntp in nodeType.getNodeTypeProps() )
         }
 
         #region Unit of Measure Creation

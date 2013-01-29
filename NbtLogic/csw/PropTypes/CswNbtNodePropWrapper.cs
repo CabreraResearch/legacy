@@ -346,6 +346,11 @@ namespace ChemSW.Nbt.PropTypes
 
         } // SetDefaultValue()
 
+        public void SyncGestalt()
+        {
+            _CswNbtNodeProp.SyncGestalt();
+        }
+
         public CswNbtNodePropBarcode AsBarcode
         {
             get
