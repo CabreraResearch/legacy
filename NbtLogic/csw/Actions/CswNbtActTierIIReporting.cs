@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     Material.HazardCategories.Add( Hazard );
                 }
-                DataTable ContainerStorageCodesTable = _getContainerStorageProps( Material.MaterialId );
+                DataTable ContainerStorageCodesTable = _getContainerStorageProps( Material.MaterialId, Request );
                 foreach( DataRow ContainerPropsRow in ContainerStorageCodesTable.Rows )
                 {
                     TierIIData.StorageCodes StorageCodes = new TierIIData.StorageCodes
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.Actions
                     };
                     Material.Storage.Add( StorageCodes );
                 }
-                DataTable ContainerLocationsTable = _getContainerLocations( Material.MaterialId );
+                DataTable ContainerLocationsTable = _getContainerLocations( Material.MaterialId, Request );
                 foreach( DataRow ContainerLocsRow in ContainerLocationsTable.Rows )
                 {
                     TierIIData.StorageLocations Location = new TierIIData.StorageLocations
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.Actions
             return TargetTable;
         }
 
-        private DataTable _getContainerStorageProps( String MaterialId )
+        private DataTable _getContainerStorageProps( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
             DataTable TargetTable = null;
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
@@ -287,7 +287,8 @@ namespace ChemSW.Nbt.Actions
                         case when u.usetype is null 
                             then lag(u.usetype) over (order by jnpa.audittransactionid) 
                             else u.usetype end usetype,
-                        jnpa.audittransactionid
+                        jnpa.audittransactionid,
+                        jnpa.recordcreated
                     from jct_nodes_props_audit jnpa
                     left join (select jnp.nodeid, jnp.field1 as pressure, jnp.audittransactionid
                         from jct_nodes_props_audit jnp
@@ -302,6 +303,8 @@ namespace ChemSW.Nbt.Actions
                         where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
                         on jnpa.nodeid = u.nodeid and jnpa.audittransactionid = u.audittransactionid
                     where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
+                        and jnpa.recordcreated >= to_date('" + CswConvert.ToDbVal( DateTime.Parse( Request.StartDate ).ToShortDateString() ) + @"', 'mm/dd/yyyy')
+                        and jnpa.recordcreated < to_date('" + CswConvert.ToDbVal( DateTime.Parse( Request.EndDate ).ToShortDateString() ) + @"', 'mm/dd/yyyy') + 1
                 ) codes
                     where codes.pressure is not null and codes.temperature is not null and codes.usetype is not null";
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Props Select", SelectText );
@@ -310,7 +313,7 @@ namespace ChemSW.Nbt.Actions
             return TargetTable;
         }
 
-        private DataTable _getContainerLocations( String MaterialId )
+        private DataTable _getContainerLocations( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
             DataTable TargetTable = null;
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
@@ -320,12 +323,16 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp MaterialProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Material );
                 CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Location );
                 String SelectText = @"with containerids
-                  as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + " and field1_fk = " + MaterialId + @")
-                select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
-                  from jct_nodes_props_audit jnp
-                where jnp.nodetypepropid = " + LocationProp.PropId + @"
-                  and jnp.field1_fk is not null
-                  and exists (select nodeid from containerids where nodeid = jnp.nodeid)";
+                    as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + " and field1_fk = " + MaterialId + @")
+                select unique locationid, fulllocation from (
+                    select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation, jnp.recordcreated
+                        from jct_nodes_props_audit jnp
+                    where jnp.nodetypepropid = " + LocationProp.PropId + @"
+                        and jnp.field1_fk is not null
+                        and exists (select nodeid from containerids where nodeid = jnp.nodeid)
+                        and jnp.recordcreated >= to_date('" + CswConvert.ToDbVal(DateTime.Parse(Request.StartDate).ToShortDateString()) + @"', 'mm/dd/yyyy')
+                        and jnp.recordcreated < to_date('" + CswConvert.ToDbVal(DateTime.Parse(Request.EndDate).ToShortDateString()) + @"', 'mm/dd/yyyy') + 1
+                )";
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Locations Select", SelectText );
                 TargetTable = CswArbitrarySelect.getTable();
             }
