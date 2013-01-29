@@ -146,14 +146,14 @@ namespace ChemSW.Nbt.Sched
                         } // if ~( not null, is recurring and is due)
                         catch( Exception Exception )
                         {
-                            string Message = "Unable to create recurring request " + Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
+                            string Message = "Unable to create recurring request " + Description + ", due to the following exception: " + Exception.Message;
                             RequestDescriptions += Message;
                             _CswNbtResources.logError( new CswDniException( Message ) );
 
                         }//catch
                     }//iterate requests
 
-                    _CswScheduleLogicDetail.StatusMessage = TotalRequestsProcessed.ToString() + " generators processed: " + RequestDescriptions;
+                    _CswScheduleLogicDetail.StatusMessage = TotalRequestsProcessed.ToString() + " requests processed: " + RequestDescriptions;
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
