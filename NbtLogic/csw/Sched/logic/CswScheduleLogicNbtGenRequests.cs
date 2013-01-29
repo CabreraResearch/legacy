@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.Sched
                                 }
                             }
                             Tree.goToParentNode();
-                        } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
+                        } // if ~( not null, is recurring and is due)
                         catch( Exception Exception )
                         {
                             string Message = "Unable to create recurring request " + Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.Sched
                             _CswNbtResources.logError( new CswDniException( Message ) );
 
                         }//catch
-                    }//iterate generators
+                    }//iterate requests
 
                     _CswScheduleLogicDetail.StatusMessage = TotalRequestsProcessed.ToString() + " generators processed: " + RequestDescriptions;
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenRequests::GetUpdatedItems() exception: " + Exception.Message;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-    }//CswScheduleLogicNbtGenNode
+    }//CswScheduleLogicNbtGenRequests
 
 
 }//namespace ChemSW.Nbt.Sched
