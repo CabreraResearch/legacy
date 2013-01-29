@@ -131,14 +131,13 @@ namespace ChemSW.Nbt.Sched
                                             }
                                             NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
                                             NewRequestItem.setRequestDescription();
-                                            NewRequestItem.postChanges( ForceUpdate : false );
+                                            NewRequestItem.postChanges( ForceUpdate: false );
 
-                                            CurrentRequestItem.NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( CurrentRequestItem.Node, CurrentRequestItem.NextReorderDate, CurrentRequestItem.RecurringFrequency, ForceUpdate : true );
-                                            CurrentRequestItem.postChanges( ForceUpdate : false );
+                                            CurrentRequestItem.NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( CurrentRequestItem.Node, CurrentRequestItem.NextReorderDate, CurrentRequestItem.RecurringFrequency, ForceUpdate: true );
+                                            CurrentRequestItem.postChanges( ForceUpdate: false );
                                         }
                                     }
 
-                                    TotalRequestsProcessed += 1;
                                     RequestDescriptions += CurrentRequestItem.Description + "; ";
                                 }
                             }
@@ -150,7 +149,11 @@ namespace ChemSW.Nbt.Sched
                             RequestDescriptions += Message;
                             _CswNbtResources.logError( new CswDniException( Message ) );
 
-                        }//catch
+                        } //catch
+                        finally
+                        {
+                            TotalRequestsProcessed += 1;
+                        }
                     }//iterate requests
 
                     _CswScheduleLogicDetail.StatusMessage = TotalRequestsProcessed.ToString() + " requests processed: " + RequestDescriptions;
