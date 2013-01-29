@@ -78,7 +78,9 @@ namespace CswPrintClient1.NbtLabels {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturn", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns")]
     [System.SerializableAttribute()]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelJobResponse))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelEpl))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelList))]
     public partial class CswWebSvcReturn : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
@@ -582,9 +584,6 @@ namespace CswPrintClient1.NbtLabels {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool DisplayErrorsField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private CswPrintClient1.NbtLabels.CswWebSvcReturnBaseErrorMessage[] ErrorsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -597,19 +596,6 @@ namespace CswPrintClient1.NbtLabels {
             }
             set {
                 this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool DisplayErrors {
-            get {
-                return this.DisplayErrorsField;
-            }
-            set {
-                if ((this.DisplayErrorsField.Equals(value) != true)) {
-                    this.DisplayErrorsField = value;
-                    this.RaisePropertyChanged("DisplayErrors");
-                }
             }
         }
         
@@ -651,6 +637,88 @@ namespace CswPrintClient1.NbtLabels {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelJobResponse", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtLabelJobResponse : CswPrintClient1.NbtLabels.CswWebSvcReturn {
+        
+        private string JobNoField;
+        
+        private string JobOwnerField;
+        
+        private string LabelCountField;
+        
+        private string LabelDataField;
+        
+        private string LabelNameField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string JobNo {
+            get {
+                return this.JobNoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.JobNoField, value) != true)) {
+                    this.JobNoField = value;
+                    this.RaisePropertyChanged("JobNo");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string JobOwner {
+            get {
+                return this.JobOwnerField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.JobOwnerField, value) != true)) {
+                    this.JobOwnerField = value;
+                    this.RaisePropertyChanged("JobOwner");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string LabelCount {
+            get {
+                return this.LabelCountField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LabelCountField, value) != true)) {
+                    this.LabelCountField = value;
+                    this.RaisePropertyChanged("LabelCount");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string LabelData {
+            get {
+                return this.LabelDataField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LabelDataField, value) != true)) {
+                    this.LabelDataField = value;
+                    this.RaisePropertyChanged("LabelData");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string LabelName {
+            get {
+                return this.LabelNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LabelNameField, value) != true)) {
+                    this.LabelNameField = value;
+                    this.RaisePropertyChanged("LabelName");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelEpl", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
     [System.SerializableAttribute()]
     public partial class CswNbtLabelEpl : CswPrintClient1.NbtLabels.CswWebSvcReturn {
@@ -667,6 +735,29 @@ namespace CswPrintClient1.NbtLabels {
                 if ((object.ReferenceEquals(this.DataField, value) != true)) {
                     this.DataField = value;
                     this.RaisePropertyChanged("Data");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelPrinterReg", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtLabelPrinterReg : CswPrintClient1.NbtLabels.CswWebSvcReturn {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PrinterKeyField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PrinterKey {
+            get {
+                return this.PrinterKeyField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PrinterKeyField, value) != true)) {
+                    this.PrinterKeyField = value;
+                    this.RaisePropertyChanged("PrinterKey");
                 }
             }
         }
@@ -775,7 +866,7 @@ namespace CswPrintClient1.NbtLabels {
         private bool ShowErrorField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private CswPrintClient1.NbtLabels.ErrorType TypeField;
+        private string TypeField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -827,7 +918,7 @@ namespace CswPrintClient1.NbtLabels {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public CswPrintClient1.NbtLabels.ErrorType Type {
+        public string Type {
             get {
                 return this.TypeField;
             }
@@ -835,51 +926,6 @@ namespace CswPrintClient1.NbtLabels {
                 if ((object.ReferenceEquals(this.TypeField, value) != true)) {
                     this.TypeField = value;
                     this.RaisePropertyChanged("Type");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ErrorType", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Exceptions")]
-    [System.SerializableAttribute()]
-    public partial class ErrorType : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ValueField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Value {
-            get {
-                return this.ValueField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ValueField, value) != true)) {
-                    this.ValueField = value;
-                    this.RaisePropertyChanged("Value");
                 }
             }
         }
@@ -1229,6 +1275,110 @@ namespace CswPrintClient1.NbtLabels {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LabelPrinter", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels")]
+    [System.SerializableAttribute()]
+    public partial class LabelPrinter : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DescriptionField;
+        
+        private string LpcNameField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Description {
+            get {
+                return this.DescriptionField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DescriptionField, value) != true)) {
+                    this.DescriptionField = value;
+                    this.RaisePropertyChanged("Description");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string LpcName {
+            get {
+                return this.LpcNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LpcNameField, value) != true)) {
+                    this.LpcNameField = value;
+                    this.RaisePropertyChanged("LpcName");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelJobRequest", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtLabelJobRequest : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private string PrinterKeyField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string PrinterKey {
+            get {
+                return this.PrinterKeyField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PrinterKeyField, value) != true)) {
+                    this.PrinterKeyField = value;
+                    this.RaisePropertyChanged("PrinterKey");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="NbtWebApp", ConfigurationName="NbtLabels.Labels2")]
     public interface Labels2 {
@@ -1240,6 +1390,14 @@ namespace CswPrintClient1.NbtLabels {
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/Labels2/getLabel", ReplyAction="NbtWebApp/Labels2/getLabelResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/Labels2/getLabelFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
         CswPrintClient1.NbtLabels.CswNbtLabelEpl getLabel(CswPrintClient1.NbtLabels.NbtPrintLabelRequestGet Request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/Labels2/registerLpc", ReplyAction="NbtWebApp/Labels2/registerLpcResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/Labels2/registerLpcFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
+        CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg registerLpc(CswPrintClient1.NbtLabels.LabelPrinter Request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/Labels2/getNextLpcJob", ReplyAction="NbtWebApp/Labels2/getNextLpcJobResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/Labels2/getNextLpcJobFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
+        CswPrintClient1.NbtLabels.CswNbtLabelJobResponse getNextLpcJob(CswPrintClient1.NbtLabels.CswNbtLabelJobRequest Request);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -1275,6 +1433,14 @@ namespace CswPrintClient1.NbtLabels {
         
         public CswPrintClient1.NbtLabels.CswNbtLabelEpl getLabel(CswPrintClient1.NbtLabels.NbtPrintLabelRequestGet Request) {
             return base.Channel.getLabel(Request);
+        }
+        
+        public CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg registerLpc(CswPrintClient1.NbtLabels.LabelPrinter Request) {
+            return base.Channel.registerLpc(Request);
+        }
+        
+        public CswPrintClient1.NbtLabels.CswNbtLabelJobResponse getNextLpcJob(CswPrintClient1.NbtLabels.CswNbtLabelJobRequest Request) {
+            return base.Channel.getNextLpcJob(Request);
         }
     }
 }

@@ -1,8 +1,13 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
+/// <reference path="~/app/ChemSW.js" />
 
 (function () {
 
+    /**
+     *  
+     * @class
+     * @classdesc Node Selects are used to drive picklists in wizards, relationship and child contents properties.
+    */
     Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
         Csw.controls.register('nodeSelect', function (cswParent, cswPrivate) {
             'use strict';
@@ -82,6 +87,9 @@
 
             //#region AJAX
 
+            /**
+            
+            */
             cswPrivate.getNodes = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
@@ -191,7 +199,7 @@
                 Csw.each(cswPrivate.options, function (relatedObj) {
                     if (false === cswPrivate.isMulti && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
-                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, selected: true }).data({ link: relatedObj.nodelink });
+                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.nodelink });
                     } else {
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.nodelink });
                     }

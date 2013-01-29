@@ -125,6 +125,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case27901.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -156,6 +157,7 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28246.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case24647.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_TreeGrouping_Case27882.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Recurring_Case28340.cs" />
     <Compile Include="Service References\ChemCatCentral\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
