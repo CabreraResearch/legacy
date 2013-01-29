@@ -363,6 +363,8 @@ namespace ChemSW.Nbt.PropTypes
             return _CswNbtNodePropData.GetOriginalPropRowValue( Column );
         }
 
+        public abstract void SyncGestalt();
+
         #region Xml Operations
 
         public enum NbtDataItemType { Unknown, Reference, Value };

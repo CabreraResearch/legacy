@@ -138,6 +138,11 @@ namespace ChemSW.Nbt.PropTypes
             //ViewId = new CswNbtViewId( CswConvert.ToInt32( JObject[_ViewIdSubField.ToXmlNodeName()] ) );
             //PendingUpdate = true;
         }
+
+        public override void SyncGestalt()
+        {
+
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

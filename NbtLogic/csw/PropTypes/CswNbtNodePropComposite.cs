@@ -84,6 +84,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             PendingUpdate = true;
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
+        }
     }//CswNbtNodePropComposite
 
 }//namespace ChemSW.Nbt

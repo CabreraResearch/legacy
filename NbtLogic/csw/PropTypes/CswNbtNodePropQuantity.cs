@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.PropTypes
                     StringVal = Math.Round( value, Precision, MidpointRounding.AwayFromZero ).ToString( "0." + PrecisionString );
                     _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, StringVal );
                 }
-                _SynchGestalt();
+                SyncGestalt();
             }
         }
 
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( value != _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column ) )
                 {
                     _CswNbtNodePropData.SetPropRowValue( _UnitNameSubField.Column, value );
-                    _SynchGestalt();
+                    SyncGestalt();
                 }
             }
         }
@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private void _SynchGestalt()
+        public override void SyncGestalt()
         {
             string GestaltValue = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column ) + " " + _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
             _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, GestaltValue );

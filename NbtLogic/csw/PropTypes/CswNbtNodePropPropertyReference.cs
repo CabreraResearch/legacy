@@ -281,6 +281,11 @@ namespace ChemSW.Nbt.PropTypes
 
         #endregion Serialization
 
+        public override void SyncGestalt()
+        {
+
+        }
+
     }//CswNbtNodePropPropertyReference
 
 }//namespace ChemSW.Nbt.PropTypes

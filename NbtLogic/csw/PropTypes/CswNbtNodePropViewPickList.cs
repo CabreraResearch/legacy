@@ -320,6 +320,11 @@ namespace ChemSW.Nbt.PropTypes
             RefreshViewName();
         } // ReadJSON()
 
+        public override void SyncGestalt()
+        {
+
+        }
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

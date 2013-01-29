@@ -169,12 +169,20 @@ namespace ChemSW.Nbt.PropTypes
 
 
                 CommentsJson = _CommentsJson;
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message ); //the caches the last message and sets it to Gestalt
-
-
+                SyncGestalt();
             }
-
         }
+
+        public override void SyncGestalt()
+        {
+            JToken lastComment = CommentsJson[CommentsJson.Count];
+            string commenter = lastComment["commenter"].ToString();
+            string dateSubmitted = lastComment["datetime"].ToString();
+            string message = lastComment["message"].ToString();
+
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+        }
+
     }//CswNbtNodePropComments
 
 }//namespace ChemSW.Nbt.PropTypes

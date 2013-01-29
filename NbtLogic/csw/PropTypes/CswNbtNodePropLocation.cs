@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _PathSubField.Column, value, IsNonModifying: true );
-                _CswNbtNodePropData.Gestalt = value;
+                SyncGestalt();
             }
         }
 
@@ -432,6 +432,11 @@ namespace ChemSW.Nbt.PropTypes
             } // if(!string.IsNullOrEmpty(LocationNodeIdStr))
             return LocationNodeId;
         } // _HandleReference()
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = CachedPath;
+        }
 
     }//CswNbtNodePropLocation
 }//namespace ChemSW.Nbt.PropTypes

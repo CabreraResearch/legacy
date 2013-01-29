@@ -132,6 +132,11 @@ namespace ChemSW.Nbt.PropTypes
             RateInterval = NewRateInterval;
         }
 
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = RateInterval.ToString();
+        }
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

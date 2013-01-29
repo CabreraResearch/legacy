@@ -346,8 +346,6 @@ namespace ChemSW.Nbt.PropTypes
 
         } // SetDefaultValue()
 
-
-
         public CswNbtNodePropBarcode AsBarcode
         {
             get
