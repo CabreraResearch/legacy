@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string DateFormat = "Date Format";
             public const string TimeFormat = "Time Format";
             public const string DefaultLocation = "Default Location";
+            public const string DefaultPrinter = "Default Printer";
             public const string WorkUnit = "Work Unit";
             public const string LogLevel = "Log Level";
             public const string Archived = "Archived";
@@ -479,6 +480,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultLocation]; } }
+        public CswNbtNodePropRelationship DefaultPrinter { get { return _CswNbtNode.Properties[PropertyName.DefaultPrinter]; } }
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }

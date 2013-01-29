@@ -51,6 +51,8 @@ namespace ChemSW.Nbt.MetaData
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
             { ParameterClass                    , ParameterClass                     },
+            { PrinterClass                      , PrinterClass                       },
+            { PrintJobClass                     , PrintJobClass                      },
             { PrintLabelClass                   , PrintLabelClass                    },
             { ProblemClass                      , ProblemClass                       },
             { ReceiptLotClass                   , ReceiptLotClass                    },
@@ -161,6 +163,8 @@ namespace ChemSW.Nbt.MetaData
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
         public const string ParameterClass = "ParameterClass";
+        public const string PrinterClass = "PrinterClass";
+        public const string PrintJobClass = "PrintJobClass";
         public const string PrintLabelClass = "PrintLabelClass";
         public const string ProblemClass = "ProblemClass";
         public const string ReceiptLotClass = "ReceiptLotClass";
