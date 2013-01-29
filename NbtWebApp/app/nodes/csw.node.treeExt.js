@@ -10,6 +10,7 @@
             var cswPrivate = {
                 forSearch: false, // if true, used to override default behavior of list views
                 onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
+                onBeforeSelectNode: function () { return true; }, //false prevents selection
                 isMulti: false,
                 validateCheckboxes: true,
                 showToggleLink: true,
@@ -63,6 +64,7 @@
                     onMouseEnter: hoverNode,
                     onMouseExit: deHoverNode,
                     onSelect: cswPrivate.handleSelectNode,
+                    beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,
                         
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,

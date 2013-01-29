@@ -1118,7 +1118,8 @@ window.initMain = window.initMain || function (undefined) {
                 
                 mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
                     forSearch: o.forsearch,
-                    onSelectNode: function(optSelect) {
+                    onBeforeSelectNode: Csw.clientChanges.manuallyCheckChanges,
+                    onSelectNode: function (optSelect) {
                         onSelectTreeNode({
                             tree: mainTree,
                             viewid: optSelect.viewid,

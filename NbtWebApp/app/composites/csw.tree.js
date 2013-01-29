@@ -73,6 +73,7 @@
                 cswPrivate.onClick = cswPrivate.onClick || function () { };
                 cswPrivate.onMouseEnter = cswPrivate.onMouseEnter || function () { };
                 cswPrivate.onMouseExit = cswPrivate.onMouseExit || function () { };
+                cswPrivate.beforeSelect = cswPrivate.beforeSelect || function () { return true; };
 
                 cswParent.empty();
                 cswPublic.div = cswParent.div();
@@ -173,10 +174,14 @@
                         cswPublic.toggleCheckboxes();
                     },
                     beforedeselect: function (rowModel, record, index, eOpts) {
-                        return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
+                        return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1 );
                     },
                     beforeselect: function (rowModel, record, index, eOpts) {
-                        return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
+                        var ret = (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
+                        if (false !== ret && cswPublic.is.multi !== true) {
+                            ret = Csw.tryExec(cswPrivate.beforeSelect);
+                        }
+                        return ret;
                     },
                     select: function (rowModel, record, index, eOpts) {
                         //If you click a node, this event is firing. We must:
