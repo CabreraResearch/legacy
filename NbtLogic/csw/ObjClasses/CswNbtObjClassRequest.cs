@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string SubmittedDate = "Submitted Date";
             public const string CompletedDate = "Completed Date";
             public const string IsFavorite = "Is Favorite";
+            public const string IsRecurring = "Is Recurring";
         }
 
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
@@ -33,7 +34,9 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        }
+
+//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -70,45 +73,57 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
+        }
+
+//beforeWriteNode()
 
         public override void afterWriteNode()
         {
             _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
+        }
+
+//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
-        }//beforeDeleteNode()
+        }
+
+//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        } //afterDeleteNode()        
 
         public override void afterPopulateProps()
         {
             IsFavorite.SetOnPropChange( onIsFavortiteChange );
             _CswNbtObjClassDefault.afterPopulateProps();
-        }//afterPopulateProps()
+        } //afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
+            CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Value: Tristate.False.ToString(), ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, Value : Tristate.False.ToString(), ShowInGrid : false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            if( null != ButtonData && null != ButtonData.NodeTypeProp )
+            {
+                /*Do Something*/
+            }
             return true;
         }
+
         #endregion
 
         #region Custom Logic
@@ -198,18 +213,35 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; }
         }
-        private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
+
+        public CswNbtNodePropLogical IsRecurring
         {
-            if( IsFavorite.Checked == Tristate.True )
+            get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; }
+        }
+
+        private bool _IsFakeNode
+        {
+            get { return IsFavorite.Checked == Tristate.True || IsRecurring.Checked == Tristate.True; }
+        }
+
+        private void _toggleProps()
+        {
+            if( _IsFakeNode )
             {
-                SubmittedDate.setHidden( value: true, SaveToDb: true );
-                CompletedDate.setHidden( value: true, SaveToDb: true );
+                SubmittedDate.setHidden( value : true, SaveToDb : true );
+                CompletedDate.setHidden( value : true, SaveToDb : true );
             }
             else
             {
-                SubmittedDate.setHidden( value: false, SaveToDb: true );
-                CompletedDate.setHidden( value: false, SaveToDb: true );
-            }
+                SubmittedDate.setHidden( value : false, SaveToDb : true );
+                CompletedDate.setHidden( value : false, SaveToDb : true );
+            }            
+        }
+    
+
+        private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
+        {
+            _toggleProps();
         }
 
         #endregion
