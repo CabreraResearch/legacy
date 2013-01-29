@@ -36,30 +36,30 @@ namespace ChemSW.Nbt
             _UnitMappings.Add( "G", "g" );
             _UnitMappings.Add( "each", "Each" );            //EACH
             _UnitMappings.Add( "PKG", "Boxes" );            //EACH
-            _UnitMappings.Add( "GR", "" );                  //EACH
+            _UnitMappings.Add( "GR", "GR" );                  //EACH
             _UnitMappings.Add( "L", "Liters" );
-            _UnitMappings.Add( "PT", "" );                  //VOLUME - pint
+            _UnitMappings.Add( "PT", "PT" );                  //VOLUME - pint
             _UnitMappings.Add( "MG", "mg" );
             _UnitMappings.Add( "OZ", "ounces" );
             _UnitMappings.Add( "GAL", "gal" );
-            _UnitMappings.Add( "kt", "" );                  //EACH
+            _UnitMappings.Add( "kt", "kt" );                  //EACH
             _UnitMappings.Add( "oz", "fluid ounces" );
             _UnitMappings.Add( "ML", "mL" );
             _UnitMappings.Add( "GM", "g" );
-            _UnitMappings.Add( "k", "" );                   //EACH
-            _UnitMappings.Add( "vial", "" );                //EACH
-            _UnitMappings.Add( "Bottle", "" );              //EACH
-            _UnitMappings.Add( "uCi", "" );                 //EACH
+            _UnitMappings.Add( "k", "k" );                   //EACH
+            _UnitMappings.Add( "vial", "vial" );                //EACH
+            _UnitMappings.Add( "Bottle", "Bottle" );              //EACH
+            _UnitMappings.Add( "uCi", "uCi" );                 //EACH
             _UnitMappings.Add( "KG", "kg" );
-            _UnitMappings.Add( "QT", "" );                  //VOLUME - quart
-            _UnitMappings.Add( "PAK", "" );                 //EACH
-            _UnitMappings.Add( "IU", "" );                  //EACH
+            _UnitMappings.Add( "QT", "QT" );                  //VOLUME - quart
+            _UnitMappings.Add( "PAK", "PAK" );                 //EACH
+            _UnitMappings.Add( "IU", "IU" );                  //EACH
             _UnitMappings.Add( "ML (each)", "" );           //EACH
-            _UnitMappings.Add( "UG", "" );                  //WEIGHT - microgram
-            _UnitMappings.Add( "jin", "" );                 //WEIGHT - chinese pound?????
-            _UnitMappings.Add( "mCi", "" );                 //EACH - Millicurie, measure of radioactivity???
-            _UnitMappings.Add( "KIT", "" );                 //EACH
-            _UnitMappings.Add( "item", "" );                //EACH
+            _UnitMappings.Add( "UG", "UG" );                  //WEIGHT - microgram
+            _UnitMappings.Add( "jin", "jin" );                 //WEIGHT - chinese pound?????
+            _UnitMappings.Add( "mCi", "mCi" );                 //EACH - Millicurie, measure of radioactivity???
+            _UnitMappings.Add( "KIT", "KIT" );                 //EACH
+            _UnitMappings.Add( "item", "item" );                //EACH
             _UnitMappings.Add( "LB", "lb" );
             _UnitMappings.Add( "years", "Years" );
         }
