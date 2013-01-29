@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.Sched
                                 {
                                     // BZ 7124 - set runtime
                                     if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue &&
-                                        CswRateInterval.RateIntervalType.Hourly != CurrentGenerator.DueDateInterval.RateInterval.RateType )  // Ignore runtime for hourly generators
+                                        CswRateInterval.RateIntervalType.Hourly != CurrentGenerator.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly generators
                                     {
                                         ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
                                     }
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.Sched
                                         // It should not be possible to make more than 24 nodes per parent in a single day, 
                                         // since the fastest interval is 1 hour, and we're not creating things into the past anymore.
                                         // Therefore, disable anything that is erroneously spewing things.
-                                        if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24 * CurrentGenerator.TargetParents.Count ) )
+                                        if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24*CurrentGenerator.TargetParents.Count ) )
                                         {
                                             CurrentGenerator.Enabled.Checked = Tristate.False;
                                             CurrentGenerator.RunStatus.AddComment( "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) in a single day" );
@@ -143,12 +143,11 @@ namespace ChemSW.Nbt.Sched
                                             }
 
                                             GeneratorDescriptions += CurrentGenerator.Description + "; ";
-                                            TotalGeneratorsProcessed++;
                                         } // if-else( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
                                     } // if due
                                 } // if( ThisDueDateValue != DateTime.MinValue )
 
-                            }//try
+                            } //try
 
                             catch( Exception Exception )
                             {
@@ -160,7 +159,12 @@ namespace ChemSW.Nbt.Sched
                                 CswNbtResources.logError( new CswDniException( Message ) );
 
 
-                            }//catch
+                            } //catch
+                            finally
+                            {
+                                //Review K4566: always increment https://fogbugz.chemswlive.com/kiln/Review/K4566
+                                TotalGeneratorsProcessed += 1;                                
+                            }
 
                         } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
 

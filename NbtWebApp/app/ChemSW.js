@@ -4,6 +4,13 @@
 
     window.internetExplorerVersionNo = window.internetExplorerVersionNo || -1;
 
+    /**
+        The Csw Namespace object
+        @global
+        @module
+        @namespace
+        @exports ChemSW Namespace
+    */
     window.ChemSW = window.Csw = (function() {
         'use strict';
         var cswPrivate = {

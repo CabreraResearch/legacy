@@ -138,14 +138,20 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Copy the Request Item
         /// </summary>
-        public CswNbtPropertySetRequestItem copyNode()
+        public CswNbtPropertySetRequestItem copyNode(bool PostChanges = true, bool ClearRequest = true)
         {
             CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             RetCopy.Node.copyPropertyValues( Node );
             RetCopy.Status.Value = Statuses.Pending;
-            RetCopy.Request.RelatedNodeId = null;
+            if( ClearRequest )
+            {
+                RetCopy.Request.RelatedNodeId = null;
+            }
             _toggleReadOnlyProps( false, RetCopy );
-            RetCopy.postChanges( true );
+            if( PostChanges )
+            {
+                RetCopy.postChanges( true );
+            }
             return RetCopy;
         }
 
@@ -265,7 +271,12 @@ namespace ChemSW.Nbt.ObjClasses
             if ( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
             {
                 CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
-                Request.RelatedNodeId = RequestAct.getCurrentRequestNode().NodeId;
+                CswNbtObjClassRequest CurrentRequest = RequestAct.getCurrentRequestNode();
+                if( null != CurrentRequest )
+                {
+                    // In sched rule(s), no Current Cart will exist
+                    Request.RelatedNodeId = CurrentRequest.NodeId;
+                }
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
             }
