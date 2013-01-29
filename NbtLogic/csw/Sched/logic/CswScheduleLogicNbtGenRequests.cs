@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Sched
                                 CurrentRequestItem.IsRecurring.Checked == Tristate.True && // This is actually a recurring request
                                 false == CurrentRequestItem.RecurringFrequency.Empty && // The recurring frequency has been defined
                                 CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswRateInterval.RateIntervalType.Hourly || // Recurring on any frequency other than hourly
-                                ( CurrentRequestItem.NextReorderDate.DateTimeValue.Date == DateTime.Today && // Recurring no more than once per hour
+                                ( CurrentRequestItem.NextReorderDate.DateTimeValue.Date <= DateTime.Today && // Recurring no more than once per hour
                                   DateTime.Now.AddHours( 1 ).Subtract( CurrentRequestItem.NextReorderDate.DateTimeValue ).Hours >= 1 ) ) //if we wait until the rule is overdue, then we'll never run more than once per hour.
                             {
                                 Description = CurrentRequestItem.Description.StaticText;
@@ -115,6 +115,7 @@ namespace ChemSW.Nbt.Sched
                                             NewRequestItem.Location.SelectedNodeId = CurrentRequestItem.Location.SelectedNodeId;
                                             NewRequestItem.Location.CachedPath = CurrentRequestItem.Location.CachedPath;
                                             NewRequestItem.Comments.CommentsJson = CurrentRequestItem.Comments.CommentsJson;
+                                            NewRequestItem.Type.Value = CurrentRequestItem.Type.Value;
 
                                             if( CurrentRequestItem.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk )
                                             {

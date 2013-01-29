@@ -119,9 +119,9 @@
             cswPrivate.makeActionColumns = function (delay) {
                 if (cswPrivate.showActionColumn) {
                     delay = delay || 100;
-                    Csw.defer(Csw.method(function() {
+                    Csw.defer(Csw.method(function () {
 
-                        cswPrivate.actionTableIds.forEach(function(tblObj) {
+                        cswPrivate.actionTableIds.forEach(function (tblObj) {
                             if (Csw.isElementInDom(tblObj.cellId)) {
                                 var div = Csw.domNode({
                                     ID: tblObj.cellId,
@@ -153,9 +153,9 @@
                                 }
 
                                 if (doHover) {
-                                    table.$.hover(function(event) {
+                                    table.$.hover(function (event) {
                                         Csw.tryExec(cswPrivate.onMouseEnter, event, tblObj);
-                                    }, function(event) {
+                                    }, function (event) {
                                         Csw.tryExec(cswPrivate.onMouseExit, event, tblObj);
                                     });
                                 }
@@ -181,7 +181,7 @@
                     };
                     if (false === Csw.isNullOrEmpty(clickFunc)) {
                         iconopts.isButton = true;
-                        iconopts.onClick = function() {
+                        iconopts.onClick = function () {
                             Csw.tryExec(clickFunc, [cellData]);
                         };
                     }
@@ -225,7 +225,7 @@
 
                 return store;
             }); // makeStore()
-            
+
             cswPrivate.makeListeners = function () {
                 //Case 28555: ExtJS documentation is awful, 
                 //so we frequently need to blindly test their events to discover when they fire and why.
@@ -369,8 +369,8 @@
                 }
 
                 //Grouping and Group Summary
-           if (cswPrivate.groupField &&
-                    cswPrivate.groupField.length > 0) {
+                if (cswPrivate.groupField &&
+                         cswPrivate.groupField.length > 0) {
                     cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
 
 
@@ -414,7 +414,7 @@
                             pressed: true,
                             handler: function () {
                                 showSummary = !showSummary;
-                                Csw.each(cswPrivate.grid.view.features, function(feature) {
+                                Csw.each(cswPrivate.grid.view.features, function (feature) {
                                     if (feature.ftype === 'groupingsummary') {
                                         feature.toggleSummaryRow(showSummary);
                                         cswPrivate.grid.view.refresh();
@@ -478,7 +478,7 @@
                     },
                     {
                         id: 'group',
-                        ftype: 'grouping'+ (cswPrivate.summaryEnabled ? 'summary' : ''),
+                        ftype: 'grouping' + (cswPrivate.summaryEnabled ? 'summary' : ''),
                         groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
                         enableGroupingMenu: false,
@@ -500,10 +500,10 @@
                         resizable: false,
                         xtype: 'actioncolumn',
                         listeners: {
-                            move: function() {
+                            move: function () {
                                 cswPrivate.makeActionColumns(0);
                             }
-                            
+
                         },
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //Terrible choice in words, "renderer" means the event that will run sometime after this based on the HTML string you define.

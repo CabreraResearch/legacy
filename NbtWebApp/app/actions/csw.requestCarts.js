@@ -265,18 +265,26 @@
                 return ret;
             };
 
-            cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
-                var tgtTxt = null;
-                if (el) {
-                    tgtTxt = el.target.innerText;
+            cswPrivate.onTabSelect = function(tabName, el, eventObj, callBack) {
+                var tgtTxt = null, evtTxt;
+                if (tabName.lastIndexOf('<') === 0 &&
+                    tabName.lastIndexOf('>') === tabName.length - 1) {
+                    if (el) {
+                        tgtTxt = el.target.innerText;
+                    }
+
+                    if (eventObj) {
+                        evtTxt = eventObj.innerText;
+                    }
+                } else {
+                    if (tabName.length > 20) {
+                        // yuck. Clicking anywhere inside the tab fires this event. That includes clicking a grid row whose nodename is "Recurring event".
+                        tabName = '';
+                    }
                 }
-                var evtTxt = null;
-                if (eventObj) {
-                    evtTxt = eventObj.innerText;
-                }
-                var tab = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
-                if (tab.length > 0) {
-                    cswPrivate.currentTab = tab;
+                var newTabName = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
+                if (newTabName.length > 0) {
+                    cswPrivate.currentTab = newTabName;
                     cswPrivate.destroyOtherTabs(cswPrivate.currentTab);
                     switch (cswPrivate.currentTab) {
                         case 'Pending':
@@ -401,7 +409,9 @@
                         });
                     }, // onDelete
                     onSelectChange: function (rowCount) {
-                        Csw.tryExec(opts.onSelectChange, rowCount);
+                        if (opts.showCheckboxes) {
+                            Csw.tryExec(opts.onSelectChange, rowCount);
+                        }
                     }
                 });
             };
