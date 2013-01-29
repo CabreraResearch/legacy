@@ -124,6 +124,7 @@ namespace ChemSW.Nbt.WebServices
             PropsToHide.Add( "CasNo" );
             PropsToHide.Add( "Description" );
             PropsToHide.Add( "Formula" );
+            PropsToHide.Add( "Synonyms" );
 
             if( C3SearchResultsObj != null )
             {
