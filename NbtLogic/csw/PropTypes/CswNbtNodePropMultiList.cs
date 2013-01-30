@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.PropTypes
                 _Value = value;
                 string ValString = value.ToString();
                 _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, ValString );
-                _setGestalt();
+                SyncGestalt();
             }
         }
 
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.PropTypes
             //}
         } // Options
 
-        private void _setGestalt()
+        public override void SyncGestalt()
         {
             CswCommaDelimitedString NewGestalt = new CswCommaDelimitedString();
             foreach( string Key in this.Value )

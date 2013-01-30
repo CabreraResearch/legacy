@@ -517,6 +517,11 @@ namespace ChemSW.Nbt.PropTypes
             return _CswNbtMetaDataNodeTypeProp.IsUserRelationship();
         }
 
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = CachedNodeName;
+        }
+
     }//CswNbtNodePropRelationship
 
 }//namespace ChemSW.Nbt.PropTypes
