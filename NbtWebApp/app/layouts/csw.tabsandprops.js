@@ -106,7 +106,8 @@
                     cswPrivate.identityWrapDiv = cswParent.div();
 
                     cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
-                    cswPrivate.identityDiv = cswPrivate.tabsTable.cell(1, 1); //.div();
+
+                    cswPrivate.identityForm = cswPrivate.tabsTable.cell(1, 1).form();
 
                     cswPrivate.outerTabDiv = cswPrivate.tabsTable
                         .cell(3, 1)
@@ -147,7 +148,7 @@
 
             cswPrivate.clearTabs = function () {
                 cswPrivate.titleDiv.empty();
-                cswPrivate.identityDiv.empty();
+                cswPrivate.identityForm.empty();
                 cswPrivate.outerTabDiv.empty();
             };
 
@@ -225,9 +226,15 @@
                         }
                         if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                             cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
-                            cswPrivate.identityDiv.empty();
-                            cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
-                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
+
+                            cswPrivate.identityForm.empty();
+                            var identityFormTbl = cswPrivate.identityForm.table({
+                                name: cswPrivate.name + '_formtbl_' + cswPrivate.IdentityTabId,
+                                width: '100%'
+                            }).css({ padding: '10px' });
+
+                            cswPrivate.identityLayoutTable = identityFormTbl.cell(1, 1).layoutTable(layoutOpts);
+                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityForm, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
                         }
                     }
                 }
@@ -368,7 +375,7 @@
             };
 
             cswPublic.isFormValid = function () {
-                return cswPrivate.form.$.valid();
+                return cswPrivate.form.$.valid() && cswPrivate.identityForm.$.valid();
             };
 
             //#endregion Validator

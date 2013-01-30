@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return DateTimeValue.ToShortDateString();
                 //else
                 //    return String.Empty;
-                _setGestalt();
+                SyncGestalt();
                 return _CswNbtNodePropData.Gestalt;
             }//
 
@@ -72,12 +72,12 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _CswNbtNodePropData.SetPropRowValue( _DateValueSubField.Column, DateTime.MinValue );
                 }
-                _setGestalt();
+                SyncGestalt();
             }
 
         }//DateTime
 
-        private void _setGestalt()
+        public override void SyncGestalt()
         {
             DateTime Value = DateTimeValue;
             if( Value != DateTime.MinValue )

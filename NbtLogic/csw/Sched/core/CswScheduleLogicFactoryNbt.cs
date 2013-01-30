@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );
+            ReturnVal.Add( new CswScheduleLogicNbtCAFImport() );
 
             return ( ReturnVal );
         }

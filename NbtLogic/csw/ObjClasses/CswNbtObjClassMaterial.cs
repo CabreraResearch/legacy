@@ -112,9 +112,9 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != FireClassExemptAmountNT )
                 {
                     CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
-                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId,CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
+                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
                     ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
-                }                
+                }
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );

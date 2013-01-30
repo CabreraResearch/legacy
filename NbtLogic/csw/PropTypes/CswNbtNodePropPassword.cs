@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 if( _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
                 {
-                    _CswNbtNodePropData.Gestalt = value;
+                    SyncGestalt();
                     ChangedDate = DateTime.Now;
                 }
             }
@@ -210,6 +210,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Password = NewPassword;
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = EncryptedPassword;
         }
     }//CswNbtNodePropPassword
 

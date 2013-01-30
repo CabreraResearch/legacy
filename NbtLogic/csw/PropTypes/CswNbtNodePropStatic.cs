@@ -117,6 +117,11 @@ namespace ChemSW.Nbt.PropTypes
                 StaticText = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = StaticText;
+        }
     }//CswNbtNodePropStatic
 
 }//namespace ChemSW.Nbt.PropTypes

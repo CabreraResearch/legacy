@@ -100,11 +100,11 @@ namespace ChemSW.Nbt.PropTypes
         public void Save()
         {
             _CswNbtNodePropData.ClobData = LogicalSetXmlDoc.InnerXml.ToString();
-            RefreshStringValue();
+            SyncGestalt();
             //PendingUpdate = true;
         }
 
-        public void RefreshStringValue()
+        public void RefreshStringValue( bool SetPendingUpdate = true )
         {
             string CheckedNames = string.Empty;
             DataTable Data = GetDataAsTable( "Name", "Key" );
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }
             _CswNbtNodePropData.Gestalt = CheckedNames;
-            PendingUpdate = false;
+            PendingUpdate = SetPendingUpdate;
         }
 
         public DataTable GetDataAsTable( string NameColumn, string KeyColumn )
@@ -330,7 +330,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ElemName_LogicalSetJson] = new JObject();
-            
+
             CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
 
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
                 Option.Key = Row[_KeyColumn].ToString();
                 Option.Label = Row[_NameColumn].ToString();
-                for(Int32 i = 0; i < CBAOptions.Columns.Count; i++)
+                for( Int32 i = 0; i < CBAOptions.Columns.Count; i++ )
                 {
                     Option.Values.Add( CswConvert.ToBoolean( Row[CBAOptions.Columns[i]].ToString() ) );
                 }
@@ -367,7 +367,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             foreach( CswCheckBoxArrayOptions.Option Option in CBAOptions.Options )
             {
-                for(Int32 i = 0; i < Option.Values.Count; i++ )
+                for( Int32 i = 0; i < Option.Values.Count; i++ )
                 {
                     SetValue( CBAOptions.Columns[i], Option.Label, Option.Values[i] );
                 }
@@ -409,6 +409,12 @@ namespace ChemSW.Nbt.PropTypes
             }
             Save();
         } // ReadDataRow()
+
+        public override void SyncGestalt()
+        {
+            RefreshStringValue( false );
+        }
+
     } // class CswNbtNodePropLogicalSet
 } // namespace ChemSW.Nbt.PropTypes
 

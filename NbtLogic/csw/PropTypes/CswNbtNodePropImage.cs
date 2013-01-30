@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropImage: CswNbtNodeProp
+    public class CswNbtNodePropImage : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropImage( CswNbtNodePropWrapper PropWrapper )
         {
@@ -155,6 +155,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 FileName = JObject[_FileNameSubField.ToXmlNodeName( true )].ToString();
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, FileName );
         }
     }
 

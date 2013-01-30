@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
                     _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
                     IsCompliant = TestIsCompliant();
 
-                    _synchGestalt( AnswerVal );
+                    SyncGestalt();
                 }
             }
         }
@@ -212,9 +212,9 @@ namespace ChemSW.Nbt.PropTypes
         //    }
         //}
 
-        private void _synchGestalt( String GestaltValue )
+        public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, GestaltValue );
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Answer );
         }
 
         //Begin NTP attributes

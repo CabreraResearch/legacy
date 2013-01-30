@@ -310,7 +310,7 @@ window.initMain = window.initMain || function (undefined) {
                                 }
                             };
                         }
-                        onSuccess();
+                        Csw.tryExec(onSuccess);
 
                     } // onAuthenticate
                 }); // CswLogin

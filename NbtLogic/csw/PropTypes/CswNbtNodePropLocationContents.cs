@@ -60,6 +60,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             // Nothing to restore
         }
+
+        public override void SyncGestalt()
+        {
+
+        }
     }
 
 }//namespace 
