@@ -180,7 +180,7 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         /// </summary>
         [DataMember( IsRequired = true )]
         [Description( "label count for this job" )]
-        public string LabelCount = string.Empty;
+        public int LabelCount = 0;
 
         /// <summary>
         /// NBT label name

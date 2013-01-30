@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string EndedDate = "Ended Date";
             public const string RequestedBy = "Requested By";
             public const string Label = "Label";
+            public const string LabelCount = "Label Count";
             public const string LabelData = "Label Data";
             public const string JobState = "Job State";
             public const string ErrorInfo = "Error Info";
@@ -110,6 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime EndedDate { get { return _CswNbtNode.Properties[PropertyName.EndedDate]; } }
         public CswNbtNodePropRelationship RequestedBy { get { return _CswNbtNode.Properties[PropertyName.RequestedBy]; } }
         public CswNbtNodePropRelationship Label { get { return _CswNbtNode.Properties[PropertyName.Label]; } }
+        public CswNbtNodePropNumber LabelCount { get { return _CswNbtNode.Properties[PropertyName.LabelCount]; } }
         public CswNbtNodePropMemo LabelData { get { return _CswNbtNode.Properties[PropertyName.LabelData]; } }
         public CswNbtNodePropList JobState { get { return _CswNbtNode.Properties[PropertyName.JobState]; } }
         public CswNbtNodePropMemo ErrorInfo { get { return _CswNbtNode.Properties[PropertyName.ErrorInfo]; } }

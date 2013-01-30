@@ -869,6 +869,12 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                         ServerManaged = true
                     } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.LabelCount,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                        ServerManaged = true
+                    } );
                 CswCommaDelimitedString StateOptions = new CswCommaDelimitedString
                     {
                         CswNbtObjClassPrintJob.StateOption.Pending, 
