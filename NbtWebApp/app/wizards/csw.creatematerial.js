@@ -349,6 +349,24 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    
+                    var renderProps = function() {
+                        cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                            globalState: {
+                                excludeOcProps: ['tradename', 'supplier', 'partno'],
+                                currentNodeId: cswPrivate.state.materialId,
+                                propertyData: cswPrivate.state.properties,
+                                ShowAsReport: false
+                            },
+                            tabState: {
+                                showSaveButton: false,
+                                nodetypeid: cswPrivate.state.materialType.val,
+                                EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
+                            },
+                            ReloadTabOnSave: false,
+                            async: false
+                        });
+                    };
 
                     if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
@@ -363,41 +381,13 @@
                         div = cswPrivate.divStep2.div();
                         if (false === cswPrivate.state.useExistingTempNode) {
                             Csw.subscribe('CreateMaterialSuccess', function() {
-                                cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                    globalState: {
-                                        excludeOcProps: ['tradename', 'supplier', 'partno'],
-                                        currentNodeId: cswPrivate.state.materialId,
-                                        propertyData: cswPrivate.state.properties,
-                                        ShowAsReport: false
-                                    },
-                                    tabState: {
-                                        showSaveButton: false,
-                                        nodetypeid: cswPrivate.state.materialType.val,
-                                        EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
-                                    },
-                                    ReloadTabOnSave: false,
-                                    async: false
-                                });
-
+                                renderProps();
                                 //cswPrivate.stepTwoComplete = true;
                             });
                         } else {
-                            cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                    globalState: {
-                                        excludeOcProps: ['tradename', 'supplier', 'partno'],
-                                        currentNodeId: cswPrivate.state.materialId,
-                                        propertyData: cswPrivate.state.properties,
-                                        ShowAsReport: false
-                                    },
-                                    tabState: {
-                                        showSaveButton: false,
-                                        nodetypeid: cswPrivate.state.materialType.val,
-                                        EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
-                                    },
-                                    ReloadTabOnSave: false,
-                                    async: false
-                            });
+                            renderProps();
                         }
+
                     } // if (false === cswPrivate.stepTwoComplete)
                 };
             }());
