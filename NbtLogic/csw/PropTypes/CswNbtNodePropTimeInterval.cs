@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropTimeInterval : CswNbtNodeProp
+    public class CswNbtNodePropTimeInterval: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropTimeInterval( CswNbtNodePropWrapper PropWrapper )
         {
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( null == RateInterval );
+                return ( string.IsNullOrEmpty( Gestalt ) );
             }
         }
 
@@ -135,6 +135,11 @@ namespace ChemSW.Nbt.PropTypes
             NewRateInterval.ReadJson( (JObject) JObject[_IntervalSubField.ToXmlNodeName()] );
             // Setting RateInterval triggers the change to the property value -- don't skip this step
             RateInterval = NewRateInterval;
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = RateInterval.ToString();
         }
 
     }//CswNbtNodeProp

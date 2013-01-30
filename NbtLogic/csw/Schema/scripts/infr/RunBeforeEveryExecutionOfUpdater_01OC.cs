@@ -605,6 +605,30 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 27436
 
+        #region Case 28122
+
+        private void _addLegacyIdToUnitsOfMeasure( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass unitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClassProp legacyIdOCP = unitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.LegacyId );
+
+            if( null == legacyIdOCP )
+            {
+                legacyIdOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( unitOfMeasureOC )
+                {
+                    PropName = CswNbtObjClassUnitOfMeasure.PropertyName.LegacyId,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                    ServerManaged = true
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
+
         #endregion Viola Methods
 
         #region WILLIAM Methods
@@ -658,6 +682,38 @@ namespace ChemSW.Nbt.Schema
                     Extended = CswNbtNodePropButton.ButtonMode.menu
                 } );
             }
+
+            _resetBlame();
+        }
+
+        private void _fixRecurringRequestProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            
+            
+            CswNbtMetaDataObjectClassProp RecurringOcp = RequestMaterialDispenseOc.getObjectClassProp( "Recurring" );
+            if( null != RecurringOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RecurringOcp, Tristate.False );
+            }
+
+            CswNbtMetaDataObjectClassProp NextReorderOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, DBNull.Value );
+            
+            CswNbtMetaDataObjectClassProp RecurringFreqOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, DBNull.Value );
 
             _resetBlame();
         }
@@ -877,6 +933,7 @@ namespace ChemSW.Nbt.Schema
             _correctSpellingOnStorageCompField( CswDeveloper.CM, 28145 );
             _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
             _addGhsOC( CswDeveloper.SS, 27436 );
+            _addLegacyIdToUnitsOfMeasure( CswDeveloper.MB, 28122 );
 
             #endregion VIOLA
 
@@ -886,6 +943,7 @@ namespace ChemSW.Nbt.Schema
             _addViewSDSProptoMaterial( CswDeveloper.MB, 28363 );
             _addPropsToMaterialSynonymOC( CswDeveloper.CM, 28246 );
             _addViewSDSToContainer( CswDeveloper.MB, 28560 );
+            _fixRecurringRequestProp( CswDeveloper.CF, 28340 );
             _makeLabelPrinterOCs( CswDeveloper.SS, 28534 );
 
             #endregion WILLIAM

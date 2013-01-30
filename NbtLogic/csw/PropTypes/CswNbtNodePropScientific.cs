@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        private void _setGestalt()
+        public override void SyncGestalt()
         {
             if( false == Double.IsNaN( Base ) )
             {
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     Exponent = 0;
                 }
-                _setGestalt();
+                SyncGestalt();
             } // set
         } // Base
 
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
                     ExpValue = 0;
                 }
                 _CswNbtNodePropData.SetPropRowValue( _ExponentSubField.Column, ExpValue );
-                _setGestalt();
+                SyncGestalt();
             }
         } // Exponent
 

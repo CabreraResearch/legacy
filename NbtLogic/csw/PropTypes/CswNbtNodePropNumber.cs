@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.PropTypes
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
 
                     _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, RoundedValue );
-                    _CswNbtNodePropData.Gestalt = RoundedValue.ToString();
+                    SyncGestalt();
                 }
             }
         }
@@ -153,6 +153,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Value = CswConvert.ToDouble( JObject[_ValueSubField.ToXmlNodeName( true )] );
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = Value.ToString();
         }
     }//CswNbtNodeProp
 

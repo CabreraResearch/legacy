@@ -10,6 +10,8 @@
             var cswPrivate = {
                 name: '',
                 text: '',
+                cssclasstext: '',
+                cssclasslink: '',
                 onClick: null
             };
             var cswPublic = {};
@@ -43,6 +45,7 @@
                 cswPrivate.div.a({
                     name: cswPrivate.name + '_' + nodeid,
                     text: nodename,
+                    cssclass: cswPrivate.cssclasslink,
                     onClick: function () {
                         Csw.tryExec(cswPrivate.onClick);
                         $.CswDialog('EditNodeDialog', {
@@ -55,7 +58,7 @@
 
             (function () {
                 if (options) Csw.extend(cswPrivate, options);
-                cswPrivate.div = cswParent.div();
+                cswPrivate.div = cswParent.div({ cssclass: cswPrivate.cssclasstext });
                 cswPublic = Csw.dom({}, cswPrivate.div);
                 cswPrivate.findNodeRef();
 
