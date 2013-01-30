@@ -1,4 +1,4 @@
-
+/*global Csw:true*/
 (function () {
 
     Csw.actions.requestCarts = Csw.actions.requestCarts ||

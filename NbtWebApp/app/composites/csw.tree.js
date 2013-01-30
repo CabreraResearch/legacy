@@ -1,3 +1,4 @@
+/*global Csw:true,Ext:true*/
 (function () {
     'use strict';
 
