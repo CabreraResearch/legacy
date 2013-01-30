@@ -184,6 +184,7 @@
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: function () {
+                        cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                         var val = cswPrivate.select.selectedVal();
                         var name = cswPrivate.select.selectedText();
                         var link = cswPrivate.select.selectedData('link');
@@ -203,8 +204,7 @@
                     }
                 });
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
-                    // case 25820 - guarantee selected option appears
-                    cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName }).data({ link: cswPrivate.selectedNodeLink });
+                    cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, selected: true }).data({ link: cswPrivate.selectedNodeLink });
                 }
 
                 cswPrivate.bindSelectMethods();
@@ -336,26 +336,23 @@
                             RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId)
                         },
                         success: function (data) {
-                            if (data.Nodes.length > 0) {
-                                var found = false;
-                                
-                                //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
-                                data.Nodes.forEach(function (obj) {
-                                    if (obj.NodeId === nodeid) {
-                                        found = true;
-                                        cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
-                                        cswPrivate.select.option({ value: obj.NodeId, display: obj.NodeName, selected: true }).data({ link: obj.NodeLink });
-                                        cswPrivate.select.val(obj.NodeId);
-                                        cswPrivate.selectedNodeId = obj.NodeId;
-                                    }
-                                });
-                                if (false === found) {
-                                    cswPrivate.select.val(cswPrivate.selectedNodeId);
-                                    //TODO: provide the NodeLink in the QuickTip
-                                    cswPrivate.table.cell(1, cswPrivate.tipCellCol).quickTip({ html: nodename + ' has been added.  However, it is not an available option for ' + cswPrivate.name + '.' });
+                            var found = false;
+                            //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
+                            data.Nodes.forEach(function (obj) {
+                                if (obj.NodeId === nodeid) {
+                                    found = true;
+                                    cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
+                                    cswPrivate.select.option({ value: obj.NodeId, display: obj.NodeName, selected: true }).data({ link: obj.NodeLink });
+                                    cswPrivate.select.val(obj.NodeId);
+                                    cswPrivate.selectedNodeId = obj.NodeId;
                                 }
-                            } else {
-                                cswPrivate.select.option({ value: nodeid, display: nodename });
+                            });
+                            if (false === found) {
+                                cswPrivate.select.val(cswPrivate.selectedNodeId);
+                                cswPrivate.table.cell(1, cswPrivate.tipCellCol).nodeLink({
+                                    cssclasstext: 'CswErrorMessage_ValidatorError',
+                                    text: '&nbsp;' + nodelink + ' has been added. However,<br/>&nbsp;it is not an available option for ' + cswPrivate.name + '.'
+                                });
                             }
                             Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                         }
@@ -387,6 +384,7 @@
                             enabledText: 'New',
                             tooltip: { title: 'Add New ' + cswPrivate.name },
                             onClick: function() {
+                                cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                                 if (Csw.number(cswPrivate.nodeTypeId) > 0) {
                                     cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
                                 } else {
