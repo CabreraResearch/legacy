@@ -168,6 +168,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
             ReturnVal.Add( new CswScheduleLogicNbtGenRequests() ); 
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );
+            ReturnVal.Add( new CswScheduleLogicNbtCAFImport() );
 
             return ( ReturnVal );
 

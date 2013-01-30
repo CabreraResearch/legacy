@@ -101,13 +101,14 @@ namespace ChemSW.Nbt
             // case 21211
             if( AuthenticationStatus == AuthenticationStatus.Authenticated )
             {
-                // case 21036
-                if( _AuthenticationRequest.IsMobile &&
-                    false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
-                {
-                    AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
-                    _CswSessionManager.clearSession();
-                }
+                // Removed for case 28617.  See case 28621.
+                //// case 21036
+                //if( _AuthenticationRequest.IsMobile && 
+                //    false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                //{
+                //    AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
+                //    _CswSessionManager.clearSession();
+                //}
                 CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
                 //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
 

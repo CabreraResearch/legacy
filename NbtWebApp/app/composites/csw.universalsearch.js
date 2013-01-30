@@ -505,7 +505,7 @@
                                 Category: category
                             },
                             success: function (data) {
-                                cswPrivate.handleResults(data);
+                                cswPublic.handleResults(data);
                             } // success
                         }); // ajax  
 
@@ -520,7 +520,7 @@
                         SearchId: searchid
                     },
                     success: function (data) {
-                        cswPrivate.handleResults(data);
+                        cswPublic.handleResults(data);
                     } // success
                 }); // ajax  
             }; // save()
