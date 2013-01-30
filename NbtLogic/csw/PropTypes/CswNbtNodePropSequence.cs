@@ -158,6 +158,11 @@ namespace ChemSW.Nbt.PropTypes
                 setSequenceValueOverride( ProspectiveSequence, false );
             }
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = SequenceNumber;
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

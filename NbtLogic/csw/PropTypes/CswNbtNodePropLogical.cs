@@ -108,6 +108,11 @@ namespace ChemSW.Nbt.PropTypes
                 Checked = CswConvert.ToTristate( JObject[_CheckedSubField.ToXmlNodeName( true )].ToString() );
             }
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = toLogicalGestalt( Checked );
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

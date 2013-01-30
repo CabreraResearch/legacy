@@ -124,6 +124,11 @@ namespace ChemSW.Nbt.PropTypes
             //nothing        
         }
 
+        public override void SyncGestalt()
+        {
+
+        }
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

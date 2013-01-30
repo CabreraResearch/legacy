@@ -23,8 +23,11 @@ namespace ChemSW.Nbt.Schema
         {
             // Hide 'Document Class' on equipment documents
             CswNbtMetaDataNodeType EquipmentDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Document" );
-            CswNbtMetaDataNodeTypeProp DocClassNTP = EquipmentDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
-            DocClassNTP.removeFromAllLayouts();
+            if( null != EquipmentDocumentNT )
+            {
+                CswNbtMetaDataNodeTypeProp DocClassNTP = EquipmentDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+                DocClassNTP.removeFromAllLayouts();
+            }
         } //update()
 
     }//class CswUpdateSchema_01V_Case28526

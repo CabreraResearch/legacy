@@ -180,6 +180,11 @@ namespace ChemSW.Nbt.PropTypes
                 setBarcodeValueOverride( ProspectiveBarcode, false );
             }
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = Barcode;
+        }
     }//CswNbtNodePropQuantity
 
 }//namespace 
