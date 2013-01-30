@@ -157,21 +157,21 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         /// <summary>
         /// NBT label printer job
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label print JobNo" )]
         public string JobNo = string.Empty;
 
         /// <summary>
         /// NBT label printer job
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label print Job key" )]
         public string JobKey = string.Empty;
 
         /// <summary>
         /// NBT label printer
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label print Owner" )]
         public string JobOwner = string.Empty;
 
@@ -185,17 +185,24 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         /// <summary>
         /// NBT label name
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label template name " )]
         public string LabelName = string.Empty;
 
         /// <summary>
         /// NBT label printer data
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label printer data " )]
         public string LabelData = string.Empty;
 
+        /// <summary>
+        /// Remaining job count
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "Remaining job count" )]
+        public int RemainingJobCount = 0;
+         
     }
 
     /// <summary>

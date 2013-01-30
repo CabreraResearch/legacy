@@ -361,12 +361,14 @@ namespace ChemSW.Nbt.WebServices
                         Return.LabelCount = "1";
                         Return.LabelData = Job.LabelData.Text;
                         Return.LabelName = Job.Label.CachedNodeName;
+                        Return.RemainingJobCount = QueueTree.getChildNodeCount() - 1;
                     }
                     else
                     {
                         //success may have zero labels (and no labeldata)
                         Return.Status.Success = true; 
                         Return.LabelCount = "0";
+                        Return.RemainingJobCount = 0;
                     }
                 } // if( null != PrinterOC && null != PrintJobOC )
                 else
@@ -398,7 +400,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Closed;
+                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Error;
                         Job.ErrorInfo.Text = Request.ErrorMessage;
                     }
                     Job.EndedDate.DateTimeValue = DateTime.Now;

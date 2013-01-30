@@ -42,6 +42,7 @@ namespace ChemSW.Nbt.Schema
                         NodeTypeName = "Printer",
                         Category = "System"
                     } );
+                PrinterNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassPrinter.PropertyName.Name ) );
 
                 // Add a job grid
                 CswNbtMetaDataNodeTypeTab JobGridTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( PrinterNT, "Jobs", 2 );
@@ -78,6 +79,7 @@ namespace ChemSW.Nbt.Schema
                         NodeTypeName = "Print Job",
                         Category = "System"
                     } );
+                JobNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassPrintJob.PropertyName.JobNo ) );
                 CswNbtMetaDataNodeTypeProp JobJobNoNTP = JobNT.getNodeTypePropByObjectClassProp( CswNbtObjClassPrintJob.PropertyName.JobNo );
                 JobJobNoNTP.ReadOnly = true;
             }

@@ -62,7 +62,7 @@ namespace CswPrintClient1
                         }
                         else
                         {
-                            e.Message = "Printer " + lblPrn.LpcName + " registration failed. ";
+                            e.Message = "Printer \"" + lblPrn.LpcName + "\" registration failed. ";
                             e.PrinterKey = string.Empty;
                             if( Ret.Status.Errors.Length > 0 )
                             {

@@ -424,6 +424,7 @@ Global
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x64.ActiveCfg = Debug|x86
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x64.Build.0 = Debug|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x86.ActiveCfg = Debug|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x86.Build.0 = Debug|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
