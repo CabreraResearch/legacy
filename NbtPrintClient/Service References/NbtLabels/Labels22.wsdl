@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="NbtWebApp" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="NbtWebApp" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="NbtWebApp/Imports">
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd0" namespace="NbtWebApp" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Labels2.svc?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/System" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="Labels2_list_InputMessage">
+    <wsdl:part name="parameters" element="tns:list" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_list_OutputMessage">
+    <wsdl:part name="parameters" element="tns:listResponse" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_list_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q1:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_getLabel_InputMessage">
+    <wsdl:part name="parameters" element="tns:getLabel" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_getLabel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getLabelResponse" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_getLabel_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q2:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_registerLpc_InputMessage">
+    <wsdl:part name="parameters" element="tns:registerLpc" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_registerLpc_OutputMessage">
+    <wsdl:part name="parameters" element="tns:registerLpcResponse" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_registerLpc_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q3:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_getNextLpcJob_InputMessage">
+    <wsdl:part name="parameters" element="tns:getNextLpcJob" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_getNextLpcJob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getNextLpcJobResponse" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_getNextLpcJob_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q4:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_updateLpcJob_InputMessage">
+    <wsdl:part name="parameters" element="tns:updateLpcJob" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_updateLpcJob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:updateLpcJobResponse" />
+  </wsdl:message>
+  <wsdl:message name="Labels2_updateLpcJob_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q5:FaultException" />
+  </wsdl:message>
+  <wsdl:portType name="Labels2">
+    <wsdl:operation name="list">
+      <wsdl:input wsaw:Action="NbtWebApp/Labels2/list" message="tns:Labels2_list_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/Labels2/listResponse" message="tns:Labels2_list_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/Labels2/listFaultExceptionFault" name="FaultExceptionFault" message="tns:Labels2_list_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getLabel">
+      <wsdl:input wsaw:Action="NbtWebApp/Labels2/getLabel" message="tns:Labels2_getLabel_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/Labels2/getLabelResponse" message="tns:Labels2_getLabel_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/Labels2/getLabelFaultExceptionFault" name="FaultExceptionFault" message="tns:Labels2_getLabel_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="registerLpc">
+      <wsdl:input wsaw:Action="NbtWebApp/Labels2/registerLpc" message="tns:Labels2_registerLpc_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/Labels2/registerLpcResponse" message="tns:Labels2_registerLpc_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/Labels2/registerLpcFaultExceptionFault" name="FaultExceptionFault" message="tns:Labels2_registerLpc_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getNextLpcJob">
+      <wsdl:input wsaw:Action="NbtWebApp/Labels2/getNextLpcJob" message="tns:Labels2_getNextLpcJob_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/Labels2/getNextLpcJobResponse" message="tns:Labels2_getNextLpcJob_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/Labels2/getNextLpcJobFaultExceptionFault" name="FaultExceptionFault" message="tns:Labels2_getNextLpcJob_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="updateLpcJob">
+      <wsdl:input wsaw:Action="NbtWebApp/Labels2/updateLpcJob" message="tns:Labels2_updateLpcJob_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/Labels2/updateLpcJobResponse" message="tns:Labels2_updateLpcJob_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/Labels2/updateLpcJobFaultExceptionFault" name="FaultExceptionFault" message="tns:Labels2_updateLpcJob_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>
