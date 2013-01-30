@@ -72,14 +72,14 @@ namespace ChemSW.Nbt.ImportExport
         }//stopImport()
 
 
-        public void reset()
-        {
+        //public void reset()
+        //{
 
-            ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.DbTableBased, _CswNbtResources, null, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
-            CswImporter.reset();
-            _CswNbtResources.finalize();
+        //    ICswImporter CswImporter = CswImporterFactory.make( ImportAlgorithm.DbTableBased, _CswNbtResources, null, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
+        //    CswImporter.reset();
+        //    _CswNbtResources.finalize();
 
-        }//reset()
+        //}//reset()
 
         /// <summary>
         /// Imports data from an Xml String
@@ -89,8 +89,9 @@ namespace ChemSW.Nbt.ImportExport
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML String record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode, CswNbtImportExportFrame CswNbtImportExportFrame, ref string ViewXml, ref string ResultXml, ref string ErrorLog )
+        public void ImportXml( ImportMode IMode, ImportTablePopulationMode ImportTablePopulationMode, CswNbtImportExportFrame CswNbtImportExportFrame, ref string ViewXml, ref string ResultXml, ref string ErrorLog )
         {
+
             _StatusUpdate( "Starting Import" );
 
             ErrorLog = string.Empty;
@@ -101,7 +102,7 @@ namespace ChemSW.Nbt.ImportExport
             _StatusUpdate( "Initializing Import Data" );
 
 
-            _CswImporter = CswImporterFactory.make( ImportAlgorithm.DbTableBased, _CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
+            _CswImporter = CswImporterFactory.make( ImportTablePopulationMode, _CswNbtResources, CswNbtImportExportFrame, OnStatusUpdate, OnImportPhaseChange, _CswNbtImportStatus );
 
             _CswImporter.ImportXml( IMode, ref ViewXml, ref ResultXml, ref ErrorLog );
 

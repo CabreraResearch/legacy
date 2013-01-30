@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Windows.Forms;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ImportExport;
 using Microsoft.VisualBasic.FileIO;
 
@@ -82,7 +83,7 @@ namespace ChemSW.Nbt.Schema
                     ImportButton.Text = ImportButtonState.Stop.ToString();
                     ImportButton.Enabled = false;
                 }
-                else if( ImportProcessPhase.Completed == _CswNbtImportStatus.CompletedProcessPhase ) 
+                else if( ImportProcessPhase.Completed == _CswNbtImportStatus.CompletedProcessPhase )
                 {
                     ImportButton.Text = ImportButtonState.Start.ToString();
                     ImportButton.Enabled = true;
@@ -97,29 +98,29 @@ namespace ChemSW.Nbt.Schema
 
 
 
-                /*
-                if( _CswNbtImportStatus.CompletedProcessPhase < ImportProcessPhase.PostProcessingNbtNodes )
+            /*
+            if( _CswNbtImportStatus.CompletedProcessPhase < ImportProcessPhase.PostProcessingNbtNodes )
+            {
+                ImportButton.Text = ImportButtonState.Stop.ToString();
+                ImportButton.Enabled = false;
+
+            }
+            else
+            {
+
+                if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.Completed )
                 {
                     ImportButton.Text = ImportButtonState.Stop.ToString();
-                    ImportButton.Enabled = false;
+                    ImportButton.Enabled = true;
 
                 }
                 else
                 {
-
-                    if( _CswNbtImportStatus.CompletedProcessPhase != ImportProcessPhase.Completed )
-                    {
-                        ImportButton.Text = ImportButtonState.Stop.ToString();
-                        ImportButton.Enabled = true;
-
-                    }
-                    else
-                    {
-                        ImportButton.Text = ImportButtonState.Resume.ToString();
-                        ImportButton.Enabled = false;
-                    }
+                    ImportButton.Text = ImportButtonState.Resume.ToString();
+                    ImportButton.Enabled = false;
                 }
-                 */
+            }
+             */
 
         }//_refreshStatus() 
 
@@ -243,8 +244,26 @@ namespace ChemSW.Nbt.Schema
                         ImportButton.Text = ImportButtonState.Stop.ToString();
                         ImportMode Mode = (ImportMode) Enum.Parse( typeof( ImportMode ), ModeComboBox.SelectedItem.ToString() );
 
+                        ImportTablePopulationMode ImportTablePopulationMode = ImportTablePopulationMode.Unknown;
+
+                        //Post-Ripper style XML
+                        //Rapid-Loader Style XLS
+                        if( "Rapid-Loader Style XLS" == FileTypeSelectBox.SelectedItem.ToString() )
+                        {
+                            ImportTablePopulationMode = ImportTablePopulationMode.FromRapidLoaderXls;
+                        }
+                        else if( "Post-Ripper style XML" == FileTypeSelectBox.SelectedItem.ToString() )
+                        {
+
+                            ImportTablePopulationMode = ImportTablePopulationMode.FromXml;
+                        }
+                        else
+                        {
+                            throw ( new CswDniException( "Unknown file type: " + FileTypeSelectBox.SelectedItem.ToString() ) );
+                        }
+
                         WorkerThread.ImportHandler ImportHandler = new WorkerThread.ImportHandler( _WorkerThread.DoImport );
-                        ImportHandler.BeginInvoke( _DataFilePath, Mode, false, new AsyncCallback( ImportButton_Callback ), null );
+                        ImportHandler.BeginInvoke( _DataFilePath, Mode, ImportTablePopulationMode, new AsyncCallback( ImportButton_Callback ), null );
                     }
                     else
                     {
@@ -260,7 +279,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 else
                 {
-                    _WorkerThread.stopImport(); 
+                    _WorkerThread.stopImport();
                 }
             }//if-else-if on importbutton state
 
@@ -316,32 +335,38 @@ namespace ChemSW.Nbt.Schema
         private void _initModeComboBox()
         {
             ModeComboBox.Items.Clear();
-            switch( FileTypeSelectBox.SelectedItem.ToString() )
-            {
-                case "IMCS Desktop Export XML File":
-                    ModeComboBox.Items.Add( ImportMode.Duplicate.ToString() );
-                    ModeComboBox.Items.Add( ImportMode.Overwrite.ToString() );
-                    ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
-                    break;
 
-                default:
-                    ModeComboBox.Items.Add( ImportMode.Duplicate.ToString() );
-                    ModeComboBox.Items.Add( ImportMode.Overwrite.ToString() );
-                    ModeComboBox.Items.Add( ImportMode.Update.ToString() );
-                    ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
-                    break;
-            }
+            //All methods should support these options now
+            ModeComboBox.Items.Add( ImportMode.Duplicate.ToString() );
+            ModeComboBox.Items.Add( ImportMode.Overwrite.ToString() );
+            ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
+
+            //switch( FileTypeSelectBox.SelectedItem.ToString() )
+            //{
+            //    case "IMCS Desktop Export XML File":
+            //        ModeComboBox.Items.Add( ImportMode.Duplicate.ToString() );
+            //        ModeComboBox.Items.Add( ImportMode.Overwrite.ToString() );
+            //        ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
+            //        break;
+
+            //    default:
+            //        ModeComboBox.Items.Add( ImportMode.Duplicate.ToString() );
+            //        ModeComboBox.Items.Add( ImportMode.Overwrite.ToString() );
+            //        ModeComboBox.Items.Add( ImportMode.Update.ToString() );
+            //        ModeComboBox.SelectedItem = ImportMode.Duplicate.ToString();
+            //        break;
+            //}
         }
 
-        private void btn_ResetSchema_Click( object sender, EventArgs e )
-        {
-            if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + InitSchemaSelectBox.Text + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
-            {
-                _WorkerThread.reset();
-                _refreshStatus();
-            }
+        //private void btn_ResetSchema_Click( object sender, EventArgs e )
+        //{
+        //    if( MessageBox.Show( "Remove temporary import tables and reset the import status on schema " + InitSchemaSelectBox.Text + "; Proceed? ", "Reset", MessageBoxButtons.YesNo ) == DialogResult.Yes )
+        //    {
+        //        _WorkerThread.reset();
+        //        _refreshStatus();
+        //    }
 
-        }
+        //}
 
         private void btn_Types_Click( object sender, EventArgs e )
         {
