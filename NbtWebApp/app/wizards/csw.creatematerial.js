@@ -358,15 +358,14 @@
                             text: "Provide additional data for this material.",
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.divStep2.br({ number: 2 }); //reduced # based on case 28655
+                        cswPrivate.divStep2.br({ number: 2 }); //Changed from 4 to 2: See Case 28655
 
                         div = cswPrivate.divStep2.div();
                         if (false === cswPrivate.state.useExistingTempNode) {
                             Csw.subscribe('CreateMaterialSuccess', function() {
                                 cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
                                     globalState: {
-                                        excludeOcProps: ['tradename', 'supplier', 'partno', 'approved', 'is tier ii', 'un code'], //todo: 'approved' should be removed after case 28606 is completed
-                                        excludeNtProps: ['storage and handling', 'isotope'],
+                                        excludeOcProps: ['tradename', 'supplier', 'partno'],
                                         currentNodeId: cswPrivate.state.materialId,
                                         propertyData: cswPrivate.state.properties,
                                         ShowAsReport: false
@@ -385,8 +384,7 @@
                         } else {
                             cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
                                     globalState: {
-                                        excludeOcProps: ['tradename', 'supplier', 'partno', 'approved', 'is tier ii', 'un code'],  //todo: 'approved' should be removed after case 28606 is completed
-                                        excludeNtProps: ['storage and handling', 'isotope'],
+                                        excludeOcProps: ['tradename', 'supplier', 'partno'],
                                         currentNodeId: cswPrivate.state.materialId,
                                         propertyData: cswPrivate.state.properties,
                                         ShowAsReport: false

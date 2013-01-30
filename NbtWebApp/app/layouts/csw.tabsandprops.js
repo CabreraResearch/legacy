@@ -31,7 +31,6 @@
                     title: '',
                     date: '',
                     excludeOcProps: [],
-                    excludeNtProps: [],
                     ShowAsReport: true,
                     viewid: '',
                     checkBoxes: {}
@@ -906,9 +905,7 @@
                 /*And either no filter is set or the filter is set to this property */
                 ret = ret && (cswPrivate.globalState.filterToPropId === '' || cswPrivate.globalState.filterToPropId === propData.id);
                 /* We're not excluding any OC Props or this prop has not been excluded */
-                ret = ret && ((Csw.isNullOrEmpty(cswPrivate.globalState.excludeOcProps) || cswPrivate.globalState.excludeOcProps.length === 0) || false === Csw.contains(cswPrivate.globalState.excludeOcProps, Csw.string(propData.ocpname).toLowerCase()));
-                /* We're not excluding any NT Props */
-                ret = ret && ((Csw.isNullOrEmpty(cswPrivate.globalState.excludeNtProps) || cswPrivate.globalState.excludeNtProps.length === 0) || false === Csw.contains(cswPrivate.globalState.excludeNtProps, Csw.string(propData.name).toLowerCase()));
+                ret = ret && ((Csw.isNullOrEmpty(cswPrivate.globalState.excludeOcProps) || cswPrivate.globalState.excludeOcProps.length === 0) || false === Csw.contains(cswPrivate.globalState.excludeOcProps, Csw.string(propData.ocpname).toLowerCase())zz);
                 return ret;
             };
 
