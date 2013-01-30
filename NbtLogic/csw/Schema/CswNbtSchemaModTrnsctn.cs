@@ -645,6 +645,7 @@ namespace ChemSW.Nbt.Schema
             return RetActionId;
         }
 
+        #region Create Junctions
         /// <summary>
         /// Convenience function for making new jct_module_actions records
         /// </summary>
@@ -682,120 +683,6 @@ namespace ChemSW.Nbt.Schema
             JctRow["moduleid"] = ModuleId.ToString();
             JctModulesADataTable.Rows.Add( JctRow );
             JctModulesATable.update( JctModulesADataTable );
-        }
-
-        private void _changeJunctionModuleId( Int32 ChangeModuleId, Int32 ToModuleId, string TableName, string Fk )
-        {
-            CswCommaDelimitedString FksAlreadyOnToModuleId = new CswCommaDelimitedString();
-            CswTableSelect JctModSelect = makeCswTableSelect( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_select", TableName );
-            DataTable JctModSelectTable = JctModSelect.getTable( "moduleid", ToModuleId );
-            foreach( DataRow JctRow in JctModSelectTable.Rows )
-            {
-                FksAlreadyOnToModuleId.Add( CswConvert.ToString( JctRow[Fk] ) );
-            }
-
-            CswTableUpdate JctModUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_update", TableName );
-            DataTable JctModUpdateTable = JctModUpdate.getTable( "moduleid", ChangeModuleId );
-            foreach( DataRow JctRow in JctModUpdateTable.Rows )
-            {
-                string FkId = CswConvert.ToString( JctRow[Fk] );
-                if( false == FksAlreadyOnToModuleId.Contains( FkId ) )
-                {
-                    JctRow["moduleid"] = CswConvert.ToDbVal( ToModuleId );
-                }
-                else
-                {
-                    JctRow.Delete();
-                }
-            }
-            JctModUpdate.update( JctModUpdateTable );
-        }
-
-        /// <summary>
-        /// Dereferences a moduleid from the appropriate jct tables and replaces with a new moduleid when necessary.
-        /// </summary>
-        public void changeJunctionModuleId( Int32 OldModuleId, Int32 NewModuleId )
-        {
-            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_actions", "actionid" );
-            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_nodetypes", "nodetypeid" );
-            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_objectclass", "objectclassid" );
-        }
-
-        public Int32 getModuleId( CswNbtModuleName Module )
-        {
-            return getModuleId( Module.ToString() );
-        }
-
-        public Int32 getModuleId( string ModuleName )
-        {
-            Int32 RetModuleId = Int32.MinValue;
-            CswTableSelect ModulesTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
-            string WhereClause = " where lower(name)='" + ModuleName.ToLower() + "'";
-            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
-            if( ModulesDataTable.Rows.Count == 1 )
-            {
-                DataRow ModuleRow = ModulesDataTable.Rows[0];
-                RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
-            }
-            return RetModuleId;
-        }
-
-        /// <summary>
-        /// Convenience function for making new Module
-        /// </summary>
-        public Int32 createModule( string Description, string Name, bool Enabled )
-        {
-            CswTableUpdate ModulesTable = makeCswTableUpdate( "SchemaModTrnsctn_ModuleUpdate", "modules" );
-            DataTable ModulesDataTable = ModulesTable.getEmptyTable();
-            DataRow ModuleRow = ModulesDataTable.NewRow();
-            ModuleRow["deleted"] = CswConvert.ToDbVal( false );
-            ModuleRow["description"] = Description;
-            ModuleRow["name"] = Name;
-            ModuleRow["enabled"] = CswConvert.ToDbVal( Enabled ); //Probably needs to be off by default.  Leaving on for development.
-            ModulesDataTable.Rows.Add( ModuleRow );
-            Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
-            ModulesTable.update( ModulesDataTable );
-            _CswNbtResources.Modules.ClearModulesCache();
-            return NewModuleId;
-        }
-
-        /// <summary>
-        /// For manipulating modules
-        /// </summary>
-        public CswNbtModuleManager Modules
-        {
-            get
-            {
-                return _CswNbtResources.Modules;
-            }
-        }
-
-        /// <summary>
-        /// Convenience function for making new Scheduled Rule
-        /// </summary>
-        public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, Recurrence Recurrence, Int32 Interval )
-        {
-            Int32 RetRuleId = Int32.MinValue;
-            if( Recurrence != Recurrence.Unknown &&
-                CswNbtResources.UnknownEnum != RuleName )
-            {
-                //TODO - Come back some day and make this dundant-proof
-                //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
-                CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
-                DataTable RuleTable = RulesUpdate.getEmptyTable();
-                DataRow NewRuleRow = RuleTable.NewRow();
-                NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
-                NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
-                NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
-                NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
-                NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
-                NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
-                RuleTable.Rows.Add( NewRuleRow );
-
-                RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
-                RulesUpdate.update( RuleTable );
-            }
-            return RetRuleId;
         }
 
         /// <summary>
@@ -845,92 +732,153 @@ namespace ChemSW.Nbt.Schema
             JctModulesNTTable.update( JctModulesNTDataTable );
         }
 
-        public void deleteModule( string ModuleName )
+        #endregion Create Junctions
+
+        #region Change Junctions
+
+
+        private void _changeJunctionModuleId( Int32 ChangeModuleId, Int32 ToModuleId, string TableName, string Fk )
         {
-            Int32 ModuleId = getModuleId( ModuleName );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId: Int32.MinValue );
-            deleteAllModuleObjectClassJunctions( ModuleId );
-
-            CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
-            DataTable ModulesDT = ModulesTU.getTable( "where moduleid = " + ModuleId );
-
-            if( 1 == ModulesDT.Rows.Count ) //There can only be one Module/id
+            CswCommaDelimitedString FksAlreadyOnToModuleId = new CswCommaDelimitedString();
+            CswTableSelect JctModSelect = makeCswTableSelect( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_select", TableName );
+            DataTable JctModSelectTable = JctModSelect.getTable( "moduleid", ToModuleId );
+            foreach( DataRow JctRow in JctModSelectTable.Rows )
             {
-                ModulesDT.Rows[0].Delete();
+                FksAlreadyOnToModuleId.Add( CswConvert.ToString( JctRow[Fk] ) );
             }
-            ModulesTU.update( ModulesDT );
-        }
 
-        public void deleteModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
-        {
-            Int32 ModuleId = getModuleId( Module );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId );
-        }
-
-        /// <summary>
-        /// Delete all Module junctions on either this ModuleId, this NodeTypeId or both
-        /// </summary>
-        public void deleteModuleNodeTypeJunction( Int32 ModuleId, Int32 NodeTypeId )
-        {
-            if( Int32.MinValue != ModuleId && Int32.MinValue != NodeTypeId )
+            CswTableUpdate JctModUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ModuleJunctionUpdate_" + TableName + "_update", TableName );
+            DataTable JctModUpdateTable = JctModUpdate.getTable( "moduleid", ChangeModuleId );
+            foreach( DataRow JctRow in JctModUpdateTable.Rows )
             {
-                CswTableUpdate jct_modules_nodetypesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "jct_modules_nodetypes" );
-                string WhereSql = "";
-                if( Int32.MinValue != ModuleId )
+                string FkId = CswConvert.ToString( JctRow[Fk] );
+                if( false == FksAlreadyOnToModuleId.Contains( FkId ) )
                 {
-                    WhereSql = " moduleid = " + ModuleId;
+                    JctRow["moduleid"] = CswConvert.ToDbVal( ToModuleId );
                 }
-                if( WhereSql.Length > 0 )
+                else
                 {
-                    WhereSql += " and ";
+                    JctRow.Delete();
                 }
-                if( Int32.MinValue != NodeTypeId )
-                {
-                    WhereSql += " nodetypeid = " + NodeTypeId;
-                }
-                DataTable jct_modules_nodetypesDT = jct_modules_nodetypesTU.getTable( "where " + WhereSql );
-                Int32 RowCount = jct_modules_nodetypesDT.Rows.Count;
-                for( Int32 R = 0; R < RowCount; R += 1 )
-                {
-                    jct_modules_nodetypesDT.Rows[R].Delete();
-                }
-                jct_modules_nodetypesTU.update( jct_modules_nodetypesDT );
             }
+            JctModUpdate.update( JctModUpdateTable );
         }
 
         /// <summary>
-        /// Delete all Modules tied to this Object Class or any of its Node Types
+        /// Dereferences a moduleid from the appropriate jct tables and replaces with a new moduleid when necessary.
         /// </summary>
-        public void deleteAllModuleObjectClassJunctions( CswNbtMetaDataObjectClass ObjectClass )
+        public void changeJunctionModuleId( Int32 OldModuleId, Int32 NewModuleId )
         {
-            foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
-            {
-                deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
-            }
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_actions", "actionid" );
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_nodetypes", "nodetypeid" );
+            _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_objectclass", "objectclassid" );
+        }
+        
+        #endregion  Change Junctions
+        
+        #region Getters
 
-            CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );
-            DataTable jct_modules_objectclassDT = jct_modules_objectclassTU.getTable( "where objectclassid = " + ObjectClass.ObjectClassId );
-            Int32 RowCount = jct_modules_objectclassDT.Rows.Count;
-            for( Int32 R = 0; R < RowCount; R += 1 )
+        public Int32 getModuleId( CswNbtModuleName Module )
+        {
+            return getModuleId( Module.ToString() );
+        }
+
+        public Int32 getModuleId( string ModuleName )
+        {
+            Int32 RetModuleId = Int32.MinValue;
+            CswTableSelect ModulesTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where lower(name)='" + ModuleName.ToLower() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
             {
-                jct_modules_objectclassDT.Rows[R].Delete();
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             }
-            jct_modules_objectclassTU.update( jct_modules_objectclassDT );
+            return RetModuleId;
         }
 
         /// <summary>
-        /// Delete all junctions tied to this ModuleId
+        /// For manipulating modules
         /// </summary>
-        public void deleteAllModuleObjectClassJunctions( Int32 ModuleId )
+        public CswNbtModuleManager Modules
         {
-            CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );
-            DataTable jct_modules_objectclassDT = jct_modules_objectclassTU.getTable( "where moduleid = " + ModuleId );
-            Int32 RowCount = jct_modules_objectclassDT.Rows.Count;
-            for( Int32 R = 0; R < RowCount; R += 1 )
+            get
             {
-                jct_modules_objectclassDT.Rows[R].Delete();
+                return _CswNbtResources.Modules;
             }
-            jct_modules_objectclassTU.update( jct_modules_objectclassDT );
+        }
+        
+        /// <summary>
+        /// Convenience function for getting Object Class ID by name (usually for the purpose of deleting because the Enum has been removed)
+        /// </summary>
+        public Int32 getObjectClassId( string ObjectClassName )
+        {
+            Int32 Ret = Int32.MinValue;
+            string OcName = ObjectClassName.ToLower();
+            if( false == OcName.EndsWith( "class" ) )
+            {
+                OcName += "class";
+            }
+
+            CswTableSelect ObjectClassTableSelect = makeCswTableSelect( "SchemaModTrnsctn_ObjectClassUpdate", "object_class" );
+            DataTable ObjectClassTable = ObjectClassTableSelect.getTable( "where lower(objectclass)='" + OcName + "'", true );
+            if( ObjectClassTable.Rows.Count == 1 )
+            {
+                Ret = CswConvert.ToInt32( ObjectClassTable.Rows[0]["objectclassid"] );
+            }
+
+            return Ret;
+        }
+
+        #endregion Getters
+
+        #region Create Schema/Meta Data
+        
+        /// <summary>
+        /// Convenience function for making new Module
+        /// </summary>
+        public Int32 createModule( string Description, string Name, bool Enabled )
+        {
+            CswTableUpdate ModulesTable = makeCswTableUpdate( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            DataTable ModulesDataTable = ModulesTable.getEmptyTable();
+            DataRow ModuleRow = ModulesDataTable.NewRow();
+            ModuleRow["deleted"] = CswConvert.ToDbVal( false );
+            ModuleRow["description"] = Description;
+            ModuleRow["name"] = Name;
+            ModuleRow["enabled"] = CswConvert.ToDbVal( Enabled ); //Probably needs to be off by default.  Leaving on for development.
+            ModulesDataTable.Rows.Add( ModuleRow );
+            Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
+            ModulesTable.update( ModulesDataTable );
+            _CswNbtResources.Modules.ClearModulesCache();
+            return NewModuleId;
+        }
+
+        /// <summary>
+        /// Convenience function for making new Scheduled Rule
+        /// </summary>
+        public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, Recurrence Recurrence, Int32 Interval )
+        {
+            Int32 RetRuleId = Int32.MinValue;
+            if( Recurrence != Recurrence.Unknown &&
+                CswNbtResources.UnknownEnum != RuleName )
+            {
+                //TODO - Come back some day and make this dundant-proof
+                //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful
+                CswTableUpdate RulesUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ScheduledRuleUpdate", "scheduledrules" );
+                DataTable RuleTable = RulesUpdate.getEmptyTable();
+                DataRow NewRuleRow = RuleTable.NewRow();
+                NewRuleRow["recurrence"] = CswConvert.ToDbVal( Recurrence.ToString() );
+                NewRuleRow["interval"] = CswConvert.ToDbVal( Interval );
+                NewRuleRow["maxruntimems"] = CswConvert.ToDbVal( 300000 );
+                NewRuleRow["reprobatethreshold"] = CswConvert.ToDbVal( 3 );
+                NewRuleRow["disabled"] = CswConvert.ToDbVal( false );
+                NewRuleRow["rulename"] = CswConvert.ToDbVal( RuleName.ToString() );
+                RuleTable.Rows.Add( NewRuleRow );
+
+                RetRuleId = CswConvert.ToInt32( NewRuleRow["scheduledruleid"] );
+                RulesUpdate.update( RuleTable );
+            }
+            return RetRuleId;
         }
 
         /// <summary>
@@ -958,28 +906,6 @@ namespace ChemSW.Nbt.Schema
                 NewObjectClass = _CswNbtResources.MetaData.getObjectClass( NewObjectClassId );
             }
             return NewObjectClass;
-        }
-
-        /// <summary>
-        /// Convenience function for getting Object Class ID by name (usually for the purpose of deleting because the Enum has been removed)
-        /// </summary>
-        public Int32 getObjectClassId( string ObjectClassName )
-        {
-            Int32 Ret = Int32.MinValue;
-            string OcName = ObjectClassName.ToLower();
-            if( false == OcName.EndsWith( "class" ) )
-            {
-                OcName += "class";
-            }
-
-            CswTableSelect ObjectClassTableSelect = makeCswTableSelect( "SchemaModTrnsctn_ObjectClassUpdate", "object_class" );
-            DataTable ObjectClassTable = ObjectClassTableSelect.getTable( "where lower(objectclass)='" + OcName + "'", true );
-            if( ObjectClassTable.Rows.Count == 1 )
-            {
-                Ret = CswConvert.ToInt32( ObjectClassTable.Rows[0]["objectclassid"] );
-            }
-
-            return Ret;
         }
 
         /// <summary>
@@ -1105,6 +1031,146 @@ namespace ChemSW.Nbt.Schema
             return RetProp;
         }
 
+        #endregion Create Schema/Meta Data
+
+        #region Delete Schema/Meta Data
+        
+        public void deleteModule( string ModuleName )
+        {
+            Int32 ModuleId = getModuleId( ModuleName );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId : Int32.MinValue );
+            deleteAllModuleObjectClassJunctions( ModuleId );
+
+            CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
+            DataTable ModulesDT = ModulesTU.getTable( "where moduleid = " + ModuleId );
+
+            if( 1 == ModulesDT.Rows.Count ) //There can only be one Module/id
+            {
+                ModulesDT.Rows[0].Delete();
+            }
+            ModulesTU.update( ModulesDT );
+        }
+
+        #endregion Delete Schema/Meta Data
+
+        #region Delete Junctions
+
+        /// <summary>
+        /// Delete all Module junctions on either this Module, this ActionName or both
+        /// </summary>
+        public void deleteModuleActionJunction( CswNbtModuleName Module, CswNbtActionName Action )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            Int32 ActionId = getActionId( Action );
+            deleteModuleActionJunction( ModuleId, ActionId );
+        }
+
+        /// <summary>
+        /// Delete all Module junctions on either this ModuleId, this ActionId or both
+        /// </summary>
+        public void deleteModuleActionJunction( Int32 ModuleId, Int32 ActionId )
+        {
+            if( Int32.MinValue != ModuleId && Int32.MinValue != ActionId )
+            {
+                CswTableUpdate jct_modules_actionTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleActionJunction", "jct_modules_actions" );
+                string WhereSql = "";
+                if( Int32.MinValue != ModuleId )
+                {
+                    WhereSql = " moduleid = " + ModuleId;
+                }
+                if( WhereSql.Length > 0 )
+                {
+                    WhereSql += " and ";
+                }
+                if( Int32.MinValue != ActionId )
+                {
+                    WhereSql += " actionid = " + ActionId;
+                }
+                DataTable jct_modules_actionDT = jct_modules_actionTU.getTable( "where " + WhereSql );
+                Int32 RowCount = jct_modules_actionDT.Rows.Count;
+                for( Int32 R = 0; R < RowCount; R += 1 )
+                {
+                    jct_modules_actionDT.Rows[R].Delete();
+                }
+                jct_modules_actionTU.update( jct_modules_actionDT );
+            }
+        }
+
+        public void deleteModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId );
+        }
+
+        /// <summary>
+        /// Delete all Module junctions on either this ModuleId, this NodeTypeId or both
+        /// </summary>
+        public void deleteModuleNodeTypeJunction( Int32 ModuleId, Int32 NodeTypeId )
+        {
+            if( Int32.MinValue != ModuleId && Int32.MinValue != NodeTypeId )
+            {
+                CswTableUpdate jct_modules_nodetypesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "jct_modules_nodetypes" );
+                string WhereSql = "";
+                if( Int32.MinValue != ModuleId )
+                {
+                    WhereSql = " moduleid = " + ModuleId;
+                }
+                if( WhereSql.Length > 0 )
+                {
+                    WhereSql += " and ";
+                }
+                if( Int32.MinValue != NodeTypeId )
+                {
+                    WhereSql += " nodetypeid = " + NodeTypeId;
+                }
+                DataTable jct_modules_nodetypesDT = jct_modules_nodetypesTU.getTable( "where " + WhereSql );
+                Int32 RowCount = jct_modules_nodetypesDT.Rows.Count;
+                for( Int32 R = 0; R < RowCount; R += 1 )
+                {
+                    jct_modules_nodetypesDT.Rows[R].Delete();
+                }
+                jct_modules_nodetypesTU.update( jct_modules_nodetypesDT );
+            }
+        }
+
+        /// <summary>
+        /// Delete all Modules tied to this Object Class or any of its Node Types
+        /// </summary>
+        public void deleteAllModuleObjectClassJunctions( CswNbtMetaDataObjectClass ObjectClass )
+        {
+            foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
+            {
+                deleteModuleNodeTypeJunction( ModuleId : Int32.MinValue, NodeTypeId : NodeTypeId );
+            }
+
+            CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );
+            DataTable jct_modules_objectclassDT = jct_modules_objectclassTU.getTable( "where objectclassid = " + ObjectClass.ObjectClassId );
+            Int32 RowCount = jct_modules_objectclassDT.Rows.Count;
+            for( Int32 R = 0; R < RowCount; R += 1 )
+            {
+                jct_modules_objectclassDT.Rows[R].Delete();
+            }
+            jct_modules_objectclassTU.update( jct_modules_objectclassDT );
+        }
+
+        /// <summary>
+        /// Delete all junctions tied to this ModuleId
+        /// </summary>
+        public void deleteAllModuleObjectClassJunctions( Int32 ModuleId )
+        {
+            CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );
+            DataTable jct_modules_objectclassDT = jct_modules_objectclassTU.getTable( "where moduleid = " + ModuleId );
+            Int32 RowCount = jct_modules_objectclassDT.Rows.Count;
+            for( Int32 R = 0; R < RowCount; R += 1 )
+            {
+                jct_modules_objectclassDT.Rows[R].Delete();
+            }
+            jct_modules_objectclassTU.update( jct_modules_objectclassDT );
+        }
+        
+        #endregion Delete Junctions
+
+        #region DML
         /// <summary>
         /// (Deprecated) Convenience function for making new Object Class Props
         /// </summary>
@@ -1298,6 +1364,10 @@ namespace ChemSW.Nbt.Schema
             ObjectClassPropsTable.Rows.Add( OCPRow );
         }
 
+        #endregion DML
+        
+        #region DDL
+
         /// <summary>
         /// Convenience function for adding a new boolean column to the database schema
         /// </summary>
@@ -1394,7 +1464,9 @@ namespace ChemSW.Nbt.Schema
             addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
                        false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Clob, false,
                        required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
-        }
+        } 
+        
+        #endregion DDL
 
         #endregion
 
