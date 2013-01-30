@@ -39,12 +39,12 @@ namespace ChemSW.Nbt.ImportExport
         public const string _ColName_Infra_Nodes_LegacyNodeId = "Nodes_Id";
 
 
-        public const string ColName_ImportNodesTablePk = "tmpimportnodesid";
+        public const string ColName_ImportNodesTablePk = "importnodespk";
+        public const string ColName_ImportPropsTablePk = "importpropspk";
         public const string Colname_NbtNodeId = "nbtnodeid";
 
 
 
-        public const string ColName_ImportPropsTablePk = "tmpimportpropsid";
         public const string ColName_ImportPropsRealPropId = "nbtnodepropid";
 
         private Collection<string> _AdditonalColumns = new Collection<string>();
@@ -73,10 +73,10 @@ namespace ChemSW.Nbt.ImportExport
             _PropTableInfrastructureColumns.Add( _ColName_Infra_Nodes_NodeTypePropName );
             _PropTableInfrastructureColumns.Add( ColName_ImportPropsRealPropId );
             _PropTableInfrastructureColumns.Add( _ColName_Props_ImportTargetNodeIdUnique );
+            _PropTableInfrastructureColumns.Add( ColName_ImportNodesTablePk ); //for fk references
 
 
             //*************** columns for both import_nodes and import_props
-            _BothTablesInfrastructureColumns.Add( ColName_ImportNodesTablePk );
             _BothTablesInfrastructureColumns.Add( _ColName_ProcessStatus );
             _BothTablesInfrastructureColumns.Add( _ColName_StatusMessage );
             _BothTablesInfrastructureColumns.Add( _ColName_Source );
@@ -176,25 +176,33 @@ namespace ChemSW.Nbt.ImportExport
 
             //_CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportNodes, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
 
-            List<string> PropColumns = new List<string>();
+            List<string> AllPropColumns = new List<string>();
 
             foreach( string CurrentColName in _BothTablesInfrastructureColumns )
             {
-                PropColumns.Add( CurrentColName );
+                AllPropColumns.Add( CurrentColName );
             }
 
             foreach( string CurrentColName in _PropTableInfrastructureColumns )
             {
-                PropColumns.Add( CurrentColName );
+                AllPropColumns.Add( CurrentColName );
             }
 
-            _makeImportTable( TblName_ImportNodes, ColName_ImportNodesTablePk, PropColumns, 512, _IndexColumns );
+
+            foreach( string CurrentColName in NodePropColumnNames )
+            {
+
+                if( false == AllPropColumns.Contains( CurrentColName ) )
+                {
+                    AllPropColumns.Add( CurrentColName );
+                }
+            }//add node prop columns
+
+            _makeImportTable( TblName_ImportProps, ColName_ImportPropsTablePk, AllPropColumns, 512, _IndexColumns );
 
 
-            _makeImportTable( TblName_ImportProps, ColName_ImportPropsTablePk, NodePropColumnNames, 512, _IndexColumns );
             //_CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportProps, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
             //_CswNbtSchemaModTrnsctn.addLongColumn( TblName_ImportProps, ColName_ImportPropsRealPropId, "to be filled in when the node is actually created", false, false );
-
 
 
             _CswNbtSchemaModTrnsctn.commitTransaction();
@@ -220,23 +228,6 @@ namespace ChemSW.Nbt.ImportExport
             }
 
         }//_makeImportTable() 
-
-
-        private Int32 _doesNodeNameAlreadyExist( string NodeName )
-        {
-            Int32 ReturnVal = Int32.MinValue;
-
-            CswTableSelect CswTableSelectNodes = _CswNbtResources.makeCswTableSelect( "uniquenodesquery", "nodes" );
-            DataTable NodesTable = CswTableSelectNodes.getTable( " where lower(nodename) = '" + NodeName.ToLower() + "'" );
-
-            if( NodesTable.Rows.Count > 0 )
-            {
-                ReturnVal = CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] );
-            }
-
-            return ( ReturnVal );
-
-        }//_doesNodeNameAlreadyExist() 
 
     } // class CswImporterExperimental
 
