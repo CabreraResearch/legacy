@@ -229,6 +229,23 @@ namespace ChemSW.Nbt.ImportExport
 
         }//_makeImportTable() 
 
+
+        public void commitAndRelease()
+        {
+            string AccessId = _CswNbtResources.AccessId;
+
+            _CswNbtResources.finalize();
+            _CswNbtResources.clearUpdates();
+            _CswNbtResources.releaseDbResources();
+
+            _CswNbtResources.AccessId = AccessId; //force re-init of resources
+            _CswNbtResources.refreshDataDictionary();
+
+            System.GC.Collect();
+
+        }//_commitAndRelease()
+
+
     } // class CswImporterExperimental
 
 } // namespace ChemSW.Nbt

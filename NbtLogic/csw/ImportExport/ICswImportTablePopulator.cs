@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.ImportExport
     {
 
         bool loadImportTables( ref string Msg );
+        bool Stop { set; get; }
 
     } // ICswImportTablePopulator
 

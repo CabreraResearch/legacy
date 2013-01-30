@@ -20,8 +20,10 @@ namespace ChemSW.Nbt.ImportExport
                     break;
 
                 case ImportAlgorithm.DbTableBased:
+                    CswImportExportStatusReporter CswImportExportStatusReporter = new CswImportExportStatusReporter(OnStatusUpdate, OnImportPhaseChange, CswNbtResources, CswNbtImportStatus);
+                    CswImportTablePopulatorFromXml CswImportTablePopulatorFromXml = new CswImportTablePopulatorFromXml( CswNbtResources, CswNbtImportExportFrame, CswImportExportStatusReporter, CswNbtImportStatus );
                     //CswNbtImportStatus CswNbtImportStatus = new CswNbtImportStatus( CswNbtResources );
-                    ReturnVal = new CswImporterNodeLoader( CswNbtResources, CswNbtImportExportFrame, new CswImportExportStatusReporter( OnStatusUpdate, OnImportPhaseChange, CswNbtResources, CswNbtImportStatus ), CswNbtImportStatus );
+                    ReturnVal = new CswImporterNodeLoader( CswNbtResources, CswNbtImportExportFrame, CswImportExportStatusReporter, CswNbtImportStatus, CswImportTablePopulatorFromXml );
                     break;
 
                 default:
