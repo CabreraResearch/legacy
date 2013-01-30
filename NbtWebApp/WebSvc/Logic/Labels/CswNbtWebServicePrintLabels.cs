@@ -270,30 +270,152 @@ namespace ChemSW.Nbt.WebServices
         public static void registerLpc( ICswResources CswResources, CswNbtLabelPrinterReg Return, LabelPrinter Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            //replace this with the real  failure because oif trying to register a duplicate lpcname
-            if( Request.LpcName == "*TEST.DUPLICATE*" )
+            Return.Status.Success = false;
+
+            CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
+            if( null != PrinterOC )
             {
-                Return.Status.Success = false;
-                Return.addException( new CswDniException( ErrorType.Error, "That printer is already registered.", "registerLpc()" ) );
-            }
+                CswNbtMetaDataNodeType PrinterNT = PrinterOC.FirstNodeType;
+                if( null != PrinterNT )
+                {
+                    CswNbtMetaDataObjectClassProp PrinterNameOCP = PrinterOC.getObjectClassProp( CswNbtObjClassPrinter.PropertyName.Name );
+
+                    CswNbtView ExistingPrintersView = new CswNbtView( NbtResources );
+                    ExistingPrintersView.ViewName = "Existing Printers";
+                    CswNbtViewRelationship PrinterRel = ExistingPrintersView.AddViewRelationship( PrinterOC, false );
+                    ExistingPrintersView.AddViewPropertyAndFilter( PrinterRel, PrinterNameOCP,
+                                                                   Value: Request.LpcName,
+                                                                   FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    ICswNbtTree ExistingPrintersTree = NbtResources.Trees.getTreeFromView( ExistingPrintersView, false, true, true );
+                    if( ExistingPrintersTree.getChildNodeCount() == 0 )
+                    {
+                        CswNbtObjClassPrinter NewPrinter = NbtResources.Nodes.makeNodeFromNodeTypeId( PrinterNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                        NewPrinter.Name.Text = Request.LpcName;
+                        NewPrinter.Description.Text = Request.Description;
+                        NewPrinter.postChanges( false );
+
+                        Return.Status.Success = true;
+                        Return.PrinterKey = NewPrinter.NodeId.ToString();
+                    } // if( ExistingPrintersTree.getChildNodeCount() == 0 )
+                    else
+                    {
+                        Return.addException( new CswDniException( ErrorType.Error, "That printer is already registered.", "registerLpc() found a printer with the same name: " + Request.LpcName ) );
+                    }
+                } // if( null != PrinterNT )
+                else
+                {
+                    Return.addException( new CswDniException( ErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer NodeType" ) );
+                }
+            } // if( null != PrinterOC )
             else
             {
-                //return the real printer nodeid of this newly registered lpcname (printer)
-                Return.Status.Success = true;
-                Return.PrinterKey = "nodeid_9bogus1";
+                Return.addException( new CswDniException( ErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer Object Class" ) );
             }
-        }
+        } // registerLpc()
 
         public static void nextLabelJob( ICswResources CswResources, CswNbtLabelJobResponse Return, CswNbtLabelJobRequest Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            //need to fetch next label job and set the various parts of Return object here
-            //success may have zero labels (and no labeldata)
-            //failure is reserved for problems with the printerkey
-
             Return.Status.Success = false;
-            Return.addException( new CswDniException( ErrorType.Error, "Web service not implemented yet.", "nextLabelJob()" ) );
-        }
+
+            CswPrimaryKey PrinterNodeId = new CswPrimaryKey();
+            PrinterNodeId.FromString( Request.PrinterKey );
+            if( CswTools.IsPrimaryKey( PrinterNodeId ) )
+            {
+                CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
+                CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+                if( null != PrinterOC && null != PrintJobOC )
+                {
+                    CswNbtMetaDataObjectClassProp JobPrinterOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.Printer );
+                    CswNbtMetaDataObjectClassProp JobCreatedDateOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.CreatedDate );
+
+                    CswNbtView JobQueueView = new CswNbtView( NbtResources );
+                    JobQueueView.ViewName = "Printer Job Queue";
+                    // Print jobs...
+                    CswNbtViewRelationship JobRel = JobQueueView.AddViewRelationship( PrintJobOC, false );
+                    // ... assigned to this printer ...
+                    JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
+                                                           SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                           Value: PrinterNodeId.PrimaryKey.ToString(),
+                                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    // ... order by Created Date
+                    CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
+                    JobQueueView.setSortProperty( CreatedDateVP, NbtViewPropertySortMethod.Ascending );
+
+                    ICswNbtTree QueueTree = NbtResources.Trees.getTreeFromView( JobQueueView, false, true, true );
+                    
+                    if( QueueTree.getChildNodeCount() >= 1 )
+                    {
+                        QueueTree.goToNthChild( 1 );
+                        CswNbtObjClassPrintJob Job = QueueTree.getNodeForCurrentPosition();
+
+                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Processing;
+                        Job.ProcessedDate.DateTimeValue = DateTime.Now;
+                        CswNbtObjClassPrinter Printer = NbtResources.Nodes[Job.Printer.RelatedNodeId];
+                        Printer.LastJobRequest.DateTimeValue = DateTime.Now;
+
+                        Return.Status.Success = true;
+                        Return.JobKey = Job.NodeId.ToString();
+                        Return.JobNo = Job.JobNo.Sequence;
+                        Return.JobOwner = Job.RequestedBy.CachedNodeName;
+                        Return.LabelCount = "1";
+                        Return.LabelData = Job.LabelData.Text;
+                        Return.LabelName = Job.Label.CachedNodeName;
+                    }
+                    else
+                    {
+                        //success may have zero labels (and no labeldata)
+                        Return.Status.Success = true; 
+                        Return.LabelCount = "0";
+                    }
+                } // if( null != PrinterOC && null != PrintJobOC )
+                else
+                {
+                    Return.addException( new CswDniException( ErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
+                }
+            } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
+            else
+            {
+                Return.addException( new CswDniException( ErrorType.Error, "Invalid Printer.", "nextLabelJob() got an invalid printer key:" + Request.PrinterKey ) );
+            }
+        } // nextLabelJob()
+
+        public static void updateLabelJob( ICswResources CswResources, CswNbtLabelJobUpdateResponse Return, CswNbtLabelJobUpdateRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Return.Status.Success = false;
+
+            CswPrimaryKey JobNodeId = new CswPrimaryKey();
+            JobNodeId.FromString( Request.JobKey );
+            if( CswTools.IsPrimaryKey( JobNodeId ) )
+            {
+                CswNbtObjClassPrintJob Job = NbtResources.Nodes[JobNodeId];
+                if( null != Job )
+                {
+                    if( Request.Succeeded )
+                    {
+                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Closed;
+                    }
+                    else
+                    {
+                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Closed;
+                        Job.ErrorInfo.Text = Request.ErrorMessage;
+                    }
+                    Job.EndedDate.DateTimeValue = DateTime.Now;
+                    Job.postChanges( false );
+
+                    Return.Status.Success = true;
+                }
+                else
+                {
+                    Return.addException( new CswDniException( ErrorType.Error, "Invalid Job.", "updateLabelJob() job key (" + Request.JobKey + ") did not match a node" ) );
+                }
+            } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
+            else
+            {
+                Return.addException( new CswDniException( ErrorType.Error, "Invalid Job.", "updateLabelJob() got an invalid job key:" + Request.JobKey ) );
+            }
+        } // updateLabelJob()
 
     } // class CswNbtWebServiceTabsAndProps
 

@@ -110,6 +110,44 @@ namespace NbtWebApp.WebSvc.Logic.Labels
     }
 
     /// <summary>
+    /// Request for updating a label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label print job" )]
+    public class CswNbtLabelJobUpdateRequest
+    {
+        /// <summary>
+        /// Nodekey of defined NBT print job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Nodekey of defined NBT Label Print Job" )]
+        public string JobKey = string.Empty;
+
+        /// <summary>
+        /// Nodekey of defined NBT print job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Whether the job finished successfully" )]
+        public bool Succeeded = false;
+
+        /// <summary>
+        /// Error message
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "If an error occurred, this is the message to log" )]
+        public string ErrorMessage = string.Empty;
+    }
+
+    /// <summary>
+    /// Response for updating a label printer job    
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label print job" )]
+    public class CswNbtLabelJobUpdateResponse : CswWebSvcReturn
+    {
+    }
+
+    /// <summary>
     /// Request for next label printer job
     /// </summary>
     [DataContract]
@@ -122,6 +160,13 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         [DataMember( IsRequired = true )]
         [Description( "label print JobNo" )]
         public string JobNo = string.Empty;
+
+        /// <summary>
+        /// NBT label printer job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label print Job key" )]
+        public string JobKey = string.Empty;
 
         /// <summary>
         /// NBT label printer

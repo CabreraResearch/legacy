@@ -84,10 +84,10 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-
+        
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
-        [Description( "attempt to register a label printer" )]
+        [Description( "retrieve the next job for a label printer" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtLabelJobResponse getNextLpcJob( CswNbtLabelJobRequest Request )
         {
@@ -104,6 +104,23 @@ namespace NbtWebApp
             return ( Ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "update the state of a label printing job" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtLabelJobUpdateResponse updateLpcJob( CswNbtLabelJobUpdateRequest Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtLabelJobUpdateResponse Ret = new CswNbtLabelJobUpdateResponse();
+            var SvcDriver = new CswWebSvcDriver<CswNbtLabelJobUpdateResponse, CswNbtLabelJobUpdateRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServicePrintLabels.updateLabelJob,
+                ParamObj: Request
+                );
 
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }
