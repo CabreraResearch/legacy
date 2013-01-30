@@ -271,6 +271,16 @@ namespace CswPrintClient1
 
         private void btnClearReg_Click( object sender, EventArgs e )
         {
+            ConfirmDialog confirm = new ConfirmDialog();
+            confirm.Text = "Are you sure you want to clear the printer?\r\nThis will permanently and irrevocably disconnect this printer from the existing print queue!";
+            confirm.StartPosition = FormStartPosition.CenterParent;
+            confirm.ShowDialog();
+
+            confirm.onOk += clearReg;
+        }
+
+        private void clearReg()
+        {
             _printerKey = string.Empty;
             setBtnRegisterState( "" );
             SaveSettings();
