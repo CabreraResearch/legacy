@@ -92,6 +92,7 @@ namespace ChemSW.Nbt.Sched
         public const string ContainerReconciliationActions  = "ContainerReconciliationActions";
         public const string Reconciliation                  = "Reconciliation";
         public const string TierII                          = "TierII";
+        public const string CAFImport                       = "CAFImport";
 
         #endregion Enum members
 
