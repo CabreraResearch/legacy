@@ -48,11 +48,8 @@
   </MetadataSources>
   <Metadata>
     <MetadataFile FileName="CswSchedSvcAdminEndPoint.wsdl" MetadataType="Wsdl" ID="75943289-fb9f-4e4f-8cc5-c74809365c48" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?wsdl" />
-    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="8bfb4672-7535-4e61-8b43-477bbb251942" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?xsd=xsd6" />
     <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="e28bbc02-081b-4340-9ea5-311be836ab42" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?xsd=xsd5" />
     <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="435e72ae-9f6e-48ae-8572-e1465fd9fa22" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?xsd=xsd3" />
-    <MetadataFile FileName="item7.xsd" MetadataType="Schema" ID="d0fdab92-e4c3-4015-a448-aaabc987c1f5" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?xsd=xsd7" />
-    <MetadataFile FileName="item8.xsd" MetadataType="Schema" ID="cf7b8343-d6ec-4407-bf19-41244400fdc9" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?xsd=xsd8" />
     <MetadataFile FileName="item.disco" MetadataType="Disco" ID="23fdcc38-0e62-4bd3-84fe-632a8b068c9d" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?disco" />
     <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="121bbd66-03c6-417c-84c1-320be4baefc1" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?xsd=xsd1" />
     <MetadataFile FileName="item4.xsd" MetadataType="Schema" ID="28c868db-0d00-4fe6-96b3-f08eaf0162af" SourceId="1" SourceUrl="http://localhost:8010/SchedService/?xsd=xsd0" />

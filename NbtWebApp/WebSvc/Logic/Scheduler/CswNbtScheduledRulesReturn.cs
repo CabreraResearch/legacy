@@ -1,30 +1,21 @@
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using ChemSW.Grid.ExtJs;
+using ChemSW.MtSched.Core;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
 {
-    /// <summary>
-    /// Label List Return Object
-    /// </summary>
     [DataContract]
-    public class GridContainer
-    {
-        [DataMember]
-        public CswExtJsGrid grid = null;
-
-    }
-
-    [DataContract]
-    public class CswNbtScheduledRulesReturn : CswWebSvcReturn
+    public class CswNbtScheduledRulesReturn: CswWebSvcReturn
     {
         /// <summary> ctor </summary>
         public CswNbtScheduledRulesReturn()
         {
+            Data = new Collection<CswScheduleLogicDetail>();
         }//ctor
 
         [DataMember]
-        public GridContainer Data = new GridContainer();
+        public Collection<CswScheduleLogicDetail> Data;
         /// <summary> data </summary>
 
     }//CswNbtScheduledRulesReturn

@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _AllowAllAccessIds = false;
             }
-            else if( _Action == CswNbtActionName.View_Scheduled_Rules && _NbtManagerResources.Permit.can(_Action, _NbtManagerResources.CurrentNbtUser )  )
+            else if( _Action == CswNbtActionName.View_Scheduled_Rules && _NbtManagerResources.Permit.can( _Action, _NbtManagerResources.CurrentNbtUser ) )
             {
                 _AllowAllAccessIds = false;
             }
@@ -128,13 +128,20 @@ namespace ChemSW.Nbt.WebServices
 
         public static void getScheduledRulesGrid( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string PlaceHolder )
         {
-            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
-            // GOTO CswSchedSvcAdminEndPoint for actual implementation
-            CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
-            Return.Data.grid = svcReturn.ExtJsGrid;
+            try
+            {
+                CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+                // GOTO CswSchedSvcAdminEndPoint for actual implementation
+                CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
+                //Return.Data.grid = svcReturn.Data;
+            }
+            catch( Exception Exception )
+            {
+                throw new CswDniException( "Could not communicate with the Schedule Servuce", Exception );
+            }
         }//getScheduledRulesGrid()
 
-        
+
         public bool updateScheduledRule( HttpContext Context )
         {
             bool RetSuccess = false;

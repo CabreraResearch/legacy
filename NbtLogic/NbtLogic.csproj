@@ -986,12 +986,6 @@
       <SubType>Component</SubType>
     </Compile>
     <None Include="Properties\DataSources\ChemSW.MtSched.Core.CswSchedSvcReturn.datasource" />
-    <None Include="Service References\NbtSchedSvcRef\item7.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSchedSvcRef\item8.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -1005,7 +999,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSchedSvcRef\CswSchedSvcAdminEndPoint.wsdl" />
-    <None Include="Service References\NbtSchedSvcRef\item.xsd" />
     <None Include="Service References\ChemCatCentral\Search.wsdl" />
     <None Include="Service References\ChemCatCentral\Search.xsd">
       <SubType>Designer</SubType>

@@ -248,55 +248,14 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsp:Policy wsu:Id="TestService_wsHttpBinding_putServiceVersion_Input_policy">
-    <wsp:ExactlyOne>
-      <wsp:All>
-        <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
-          <sp:Body />
-          <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
-        </sp:SignedParts>
-        <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
-          <sp:Body />
-        </sp:EncryptedParts>
-      </wsp:All>
-    </wsp:ExactlyOne>
-  </wsp:Policy>
-  <wsp:Policy wsu:Id="TestService_wsHttpBinding_putServiceVersion_output_policy">
-    <wsp:ExactlyOne>
-      <wsp:All>
-        <sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
-          <sp:Body />
-          <sp:Header Name="To" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="From" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="ReplyTo" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="MessageID" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="RelatesTo" Namespace="http://www.w3.org/2005/08/addressing" />
-          <sp:Header Name="Action" Namespace="http://www.w3.org/2005/08/addressing" />
-        </sp:SignedParts>
-        <sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
-          <sp:Body />
-        </sp:EncryptedParts>
-      </wsp:All>
-    </wsp:ExactlyOne>
-  </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
       <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel" />
+      <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel" />
       <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ChemSW.MtSched.Core" />
       <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
-      <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Grid.ExtJs" />
-      <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-      <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Exceptions" />
-      <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/System" />
+      <xsd:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/System" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="CswSchedSvcAdminEndPoint_getRules_InputMessage">
@@ -323,12 +282,6 @@
   <wsdl:message name="CswSchedSvcAdminEndPoint_getServiceVersion_OutputMessage">
     <wsdl:part name="parameters" element="tns:getServiceVersionResponse" />
   </wsdl:message>
-  <wsdl:message name="CswSchedSvcAdminEndPoint_putServiceVersion_InputMessage">
-    <wsdl:part name="parameters" element="tns:putServiceVersion" />
-  </wsdl:message>
-  <wsdl:message name="CswSchedSvcAdminEndPoint_putServiceVersion_OutputMessage">
-    <wsdl:part name="parameters" element="tns:putServiceVersionResponse" />
-  </wsdl:message>
   <wsdl:portType name="CswSchedSvcAdminEndPoint">
     <wsdl:operation name="getRules">
       <wsdl:input wsaw:Action="http://tempuri.org/CswSchedSvcAdminEndPoint/getRules" message="tns:CswSchedSvcAdminEndPoint_getRules_InputMessage" />
@@ -343,10 +296,6 @@
     <wsdl:operation name="getServiceVersion">
       <wsdl:input wsaw:Action="http://tempuri.org/CswSchedSvcAdminEndPoint/getServiceVersion" message="tns:CswSchedSvcAdminEndPoint_getServiceVersion_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/CswSchedSvcAdminEndPoint/getServiceVersionResponse" message="tns:CswSchedSvcAdminEndPoint_getServiceVersion_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="putServiceVersion">
-      <wsdl:input wsaw:Action="http://tempuri.org/CswSchedSvcAdminEndPoint/putServiceVersion" message="tns:CswSchedSvcAdminEndPoint_putServiceVersion_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/CswSchedSvcAdminEndPoint/putServiceVersionResponse" message="tns:CswSchedSvcAdminEndPoint_putServiceVersion_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="TestService_wsHttpBinding" type="tns:CswSchedSvcAdminEndPoint">
@@ -390,17 +339,6 @@
       </wsdl:input>
       <wsdl:output>
         <wsp:PolicyReference URI="#TestService_wsHttpBinding_getServiceVersion_output_policy" />
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="putServiceVersion">
-      <soap12:operation soapAction="http://tempuri.org/CswSchedSvcAdminEndPoint/putServiceVersion" style="document" />
-      <wsdl:input>
-        <wsp:PolicyReference URI="#TestService_wsHttpBinding_putServiceVersion_Input_policy" />
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <wsp:PolicyReference URI="#TestService_wsHttpBinding_putServiceVersion_output_policy" />
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
