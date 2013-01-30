@@ -35,6 +35,15 @@ namespace CswPrintClient1
 
         #endregion
 
+        private ServiceThread.NbtAuth _getAuth()
+        {
+            return new ServiceThread.NbtAuth()
+            {
+                AccessId = tbAccessId.Text,
+                UserId = tbUsername.Text,
+                Password = tbPassword.Text
+            };
+        }
 
         private delegate void InitRegisterHandler( ServiceThread.RegisterEventArgs e );
         private void _InitRegisterUI( ServiceThread.RegisterEventArgs e )
@@ -65,51 +74,24 @@ namespace CswPrintClient1
         {
             if( e.Succeeded )
             {
-                if( e.PrinterData != string.Empty )
-                {
-                    if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, e.PrinterData ) == true )
-                    {
+                _printLabel( e.Job.LabelData, "Labels printed." );
 
-                        lblStatus.Text += "\nPrinting Done!";
-                        Log( "Labels printed." );
-                    }
-                    else
-                    {
-                        lblStatus.Text = "Error printing!";
-                    }
-
-                }
+                ServiceThread.UpdateJobInvoker lblInvoke = new ServiceThread.UpdateJobInvoker( _svcThread.updateJob );
+                lblInvoke.BeginInvoke( _getAuth(), e.Job.JobKey, null, null );
             }
             else
             {
                 Log( e.Message );
             }
             timer1.Enabled = true;
-        }
+        } // _InitNextJobUI()
 
         private delegate void InitLabelByIdHandler( ServiceThread.LabelByIdEventArgs e );
         private void _InitLabelByIdUI( ServiceThread.LabelByIdEventArgs e )
         {
             if( e.Succeeded )
             {
-                if( e.LabelData != string.Empty )
-                {
-                    if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, e.LabelData ) == true )
-                    {
-
-                        lblStatus.Text += "\nPrinting Done!";
-                        Log( "Test label printed." );
-                    }
-                    else
-                    {
-                        lblStatus.Text = "Error printing!";
-                    }
-
-                }
-                else
-                {
-                    lblStatus.Text = "No label returned.";
-                }
+                _printLabel( e.LabelData, "Test label printed." );
             }
             else
             {
@@ -117,8 +99,28 @@ namespace CswPrintClient1
                 Log( e.Message );
             }
             btnTestPrintSvc.Enabled = true;
-        }
+        } // _InitNextJobUI()
 
+        private void _printLabel( string LabelData, string LogOnSuccess )
+        {
+            if( LabelData != string.Empty )
+            {
+                if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, LabelData ) )
+                {
+                    lblStatus.Text += "\nPrinting Done!";
+                    Log( LogOnSuccess );
+                }
+                else
+                {
+                    lblStatus.Text = "Error printing!";
+                }
+
+            }
+            else
+            {
+                lblStatus.Text = "No label returned.";
+            }
+        } // _printLabel()
 
         private void btnPrintEPL_Click( object sender, EventArgs e )
         {
@@ -150,7 +152,7 @@ namespace CswPrintClient1
             btnTestPrintSvc.Enabled = false;
             lblStatus.Text = "Contacting server for label data...";
             ServiceThread.LabelByIdInvoker lblInvoke = new ServiceThread.LabelByIdInvoker( _svcThread.LabelById );
-            lblInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, tbPrintLabelId.Text, tbTargetId.Text, null, null );
+            lblInvoke.BeginInvoke( _getAuth(), tbPrintLabelId.Text, tbTargetId.Text, null, null );
         }
 
 
@@ -188,7 +190,7 @@ namespace CswPrintClient1
             btnTestPrintSvc.Enabled = false;
             lblRegisterStatus.Text = "Contacting server...";
             ServiceThread.RegisterInvoker regInvoke = new ServiceThread.RegisterInvoker( _svcThread.Register );
-            regInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, tbLPCname.Text, tbDescript.Text, null, null );
+            regInvoke.BeginInvoke( _getAuth(), tbLPCname.Text, tbDescript.Text, null, null );
         }
 
         private void Form1_Load( object sender, EventArgs e )
@@ -238,7 +240,7 @@ namespace CswPrintClient1
             //            Status( "Waiting for print job..." );
 
             ServiceThread.NextJobInvoker jobInvoke = new ServiceThread.NextJobInvoker( _svcThread.NextJob );
-            jobInvoke.BeginInvoke( tbAccessId.Text, tbUsername.Text, tbPassword.Text, _printerKey, null, null );
+            jobInvoke.BeginInvoke( _getAuth(), _printerKey, null, null );
 
         }
 

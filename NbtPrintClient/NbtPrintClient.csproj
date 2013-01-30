@@ -142,6 +142,9 @@
     <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelJobResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelList.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -181,9 +184,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\NbtSession\Session.wsdl" />
-    <None Include="Service References\NbtSession\Session.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSession\Session1.wsdl" />
     <None Include="Service References\NbtSession\Session1.xsd">
       <SubType>Designer</SubType>
