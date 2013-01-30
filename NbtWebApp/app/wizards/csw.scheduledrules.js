@@ -94,8 +94,15 @@
                             urlMethod: 'getActiveAccessIds',
                             success: function (data) {
                                 var values = data.customerids;
-                                customerIdSelect.setOptions(values);
-                                cswPrivate.selectedCustomerId = customerIdSelect.find(':selected').val();
+                                if (values.length > 1) {
+                                    customerIdSelect.setOptions(values);
+                                    cswPrivate.selectedCustomerId = customerIdSelect.find(':selected').val();
+                                } else {
+                                    customerIdSelect.empty();
+                                    customerIdSelect.option({ value: values[0], display: values[0], isSelected: true });
+                                    cswPrivate.selectedCustomerId = values[0];
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
+                                }
                             }
                         });
 
