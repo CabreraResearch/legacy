@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.NbtSchedSvcRef;
 using ChemSW.Nbt.ObjClasses;
@@ -24,17 +25,21 @@ namespace ChemSW.Nbt.WebServices
 
         private readonly CswNbtResources _OtherResources;
         private readonly CswNbtResources _NbtManagerResources = null;
+        private bool _AllowAllAccessIds = false;
+        private CswNbtActionName _Action = CswNbtActionName.Unknown;
 
-        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId, bool AllowAnyAdmin = false )
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId, CswNbtActionName ActionName, bool AllowAnyAdmin = false )
         {
             _NbtManagerResources = NbtManagerResources;
+            _Action = ActionName;
             _checkNbtManagerPermission( AllowAnyAdmin );
             _OtherResources = makeOtherResources( AccessId );
         } //ctor
 
-        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, bool AllowAnyAdmin = false )
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, CswNbtActionName ActionName, bool AllowAnyAdmin = false )
         {
             _NbtManagerResources = NbtManagerResources;
+            _Action = ActionName;
             _checkNbtManagerPermission( AllowAnyAdmin );
         } //ctor
         #endregion ctor
@@ -43,11 +48,20 @@ namespace ChemSW.Nbt.WebServices
 
         private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
-            if( false == _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) )
+            if( _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
+                _AllowAllAccessIds = true;
             }
-            if( false == _NbtManagerResources.CurrentNbtUser.IsAdministrator() && ( false == AllowAnyAdmin || _NbtManagerResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername ) )
+            else if( ( _NbtManagerResources.CurrentNbtUser.IsAdministrator() && AllowAnyAdmin ) ||
+                     _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+            {
+                _AllowAllAccessIds = false;
+            }
+            else if( _Action == CswNbtActionName.View_Scheduled_Rules && _NbtManagerResources.Permit.can(_Action, _NbtManagerResources.CurrentNbtUser )  )
+            {
+                _AllowAllAccessIds = false;
+            }
+            else
             {
                 throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Attempted to authenticate as " + _NbtManagerResources.CurrentNbtUser.Username + " on a privileged method." );
             }
@@ -92,14 +106,21 @@ namespace ChemSW.Nbt.WebServices
             JArray CustomerIds = new JArray();
             RetObj["customerids"] = CustomerIds;
 
-            foreach( string AccessId in from string _AccessId in _NbtManagerResources.CswDbCfgInfo.AccessIds
-                                        orderby _AccessId
-                                        select _AccessId )
+            if( _AllowAllAccessIds )
             {
-                if( _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
+                foreach( string AccessId in from string _AccessId in _NbtManagerResources.CswDbCfgInfo.AccessIds
+                                            orderby _AccessId
+                                            select _AccessId )
                 {
-                    CustomerIds.Add( AccessId );
+                    if( _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
+                    {
+                        CustomerIds.Add( AccessId );
+                    }
                 }
+            }
+            else
+            {
+                CustomerIds.Add( _NbtManagerResources.AccessId );
             }
             return RetObj;
         }
