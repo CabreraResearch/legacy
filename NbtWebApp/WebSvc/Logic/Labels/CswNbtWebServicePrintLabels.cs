@@ -322,58 +322,66 @@ namespace ChemSW.Nbt.WebServices
             PrinterNodeId.FromString( Request.PrinterKey );
             if( CswTools.IsPrimaryKey( PrinterNodeId ) )
             {
-                CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
-                CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
-                if( null != PrinterOC && null != PrintJobOC )
+                CswNbtObjClassPrinter Printer = NbtResources.Nodes[PrinterNodeId];
+                if( null != Printer )
                 {
-                    CswNbtMetaDataObjectClassProp JobPrinterOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.Printer );
-                    CswNbtMetaDataObjectClassProp JobCreatedDateOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.CreatedDate );
-
-                    CswNbtView JobQueueView = new CswNbtView( NbtResources );
-                    JobQueueView.ViewName = "Printer Job Queue";
-                    // Print jobs...
-                    CswNbtViewRelationship JobRel = JobQueueView.AddViewRelationship( PrintJobOC, false );
-                    // ... assigned to this printer ...
-                    JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
-                                                           SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                                                           Value: PrinterNodeId.PrimaryKey.ToString(),
-                                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                    // ... order by Created Date
-                    CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
-                    JobQueueView.setSortProperty( CreatedDateVP, NbtViewPropertySortMethod.Ascending );
-
-                    ICswNbtTree QueueTree = NbtResources.Trees.getTreeFromView( JobQueueView, false, true, true );
-                    
-                    if( QueueTree.getChildNodeCount() >= 1 )
+                    CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
+                    CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+                    if( null != PrinterOC && null != PrintJobOC )
                     {
-                        QueueTree.goToNthChild( 1 );
-                        CswNbtObjClassPrintJob Job = QueueTree.getNodeForCurrentPosition();
+                        CswNbtMetaDataObjectClassProp JobPrinterOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.Printer );
+                        CswNbtMetaDataObjectClassProp JobCreatedDateOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.CreatedDate );
 
-                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Processing;
-                        Job.ProcessedDate.DateTimeValue = DateTime.Now;
-                        CswNbtObjClassPrinter Printer = NbtResources.Nodes[Job.Printer.RelatedNodeId];
-                        Printer.LastJobRequest.DateTimeValue = DateTime.Now;
+                        CswNbtView JobQueueView = new CswNbtView( NbtResources );
+                        JobQueueView.ViewName = "Printer Job Queue";
+                        // Print jobs...
+                        CswNbtViewRelationship JobRel = JobQueueView.AddViewRelationship( PrintJobOC, false );
+                        // ... assigned to this printer ...
+                        JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
+                                                               SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                               Value: PrinterNodeId.PrimaryKey.ToString(),
+                                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        // ... order by Created Date
+                        CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
+                        JobQueueView.setSortProperty( CreatedDateVP, NbtViewPropertySortMethod.Ascending );
 
-                        Return.Status.Success = true;
-                        Return.JobKey = Job.NodeId.ToString();
-                        Return.JobNo = Job.JobNo.Sequence;
-                        Return.JobOwner = Job.RequestedBy.CachedNodeName;
-                        Return.LabelCount = CswConvert.ToInt32( Job.LabelCount.Value );
-                        Return.LabelData = Job.LabelData.Text;
-                        Return.LabelName = Job.Label.CachedNodeName;
-                        Return.RemainingJobCount = QueueTree.getChildNodeCount() - 1;
-                    }
+                        ICswNbtTree QueueTree = NbtResources.Trees.getTreeFromView( JobQueueView, false, true, true );
+
+                        if( QueueTree.getChildNodeCount() >= 1 )
+                        {
+                            QueueTree.goToNthChild( 1 );
+                            CswNbtObjClassPrintJob Job = QueueTree.getNodeForCurrentPosition();
+
+                            Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Processing;
+                            Job.ProcessedDate.DateTimeValue = DateTime.Now;
+
+                            Printer.LastJobRequest.DateTimeValue = DateTime.Now;
+
+                            Return.Status.Success = true;
+                            Return.JobKey = Job.NodeId.ToString();
+                            Return.JobNo = Job.JobNo.Sequence;
+                            Return.JobOwner = Job.RequestedBy.CachedNodeName;
+                            Return.LabelCount = CswConvert.ToInt32( Job.LabelCount.Value );
+                            Return.LabelData = Job.LabelData.Text;
+                            Return.LabelName = Job.Label.CachedNodeName;
+                            Return.RemainingJobCount = QueueTree.getChildNodeCount() - 1;
+                        }
+                        else
+                        {
+                            //success may have zero labels (and no labeldata)
+                            Return.Status.Success = true;
+                            Return.LabelCount = 0;
+                            Return.RemainingJobCount = 0;
+                        }
+                    } // if( null != PrinterOC && null != PrintJobOC )
                     else
                     {
-                        //success may have zero labels (and no labeldata)
-                        Return.Status.Success = true; 
-                        Return.LabelCount = 0;
-                        Return.RemainingJobCount = 0;
+                        Return.addException( new CswDniException( ErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
                     }
-                } // if( null != PrinterOC && null != PrintJobOC )
+                } // if( null != Printer )
                 else
                 {
-                    Return.addException( new CswDniException( ErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
+                    Return.addException( new CswDniException( ErrorType.Error, "Invalid Printer.", "nextLabelJob() printer key (" + Request.PrinterKey + ") did not match a node" ) );
                 }
             } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
             else

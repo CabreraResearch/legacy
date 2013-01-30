@@ -18,8 +18,8 @@ namespace CswPrintClient1
 
         public delegate void ConfirmEvent();
 
-        public event ConfirmEvent onOk = null;
-        public event ConfirmEvent onCancel = null;
+        public ConfirmEvent onOk = null;
+        public ConfirmEvent onCancel = null;
 
         public string Text
         {

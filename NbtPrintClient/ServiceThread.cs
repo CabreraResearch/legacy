@@ -7,15 +7,7 @@ namespace CswPrintClient1
 {
     class ServiceThread
     {
-        private Labels2Client labelClient = new NbtLabels.Labels2Client();
-        private SessionClient sessionClient = new SessionClient();
         private CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
-
-        public ServiceThread()
-        {
-            labelClient.Endpoint.Behaviors.Add( cookieBehavior );
-            sessionClient.Endpoint.Behaviors.Add( cookieBehavior );
-        }
 
         public abstract class ServiceThreadEventArgs
         {
@@ -24,6 +16,13 @@ namespace CswPrintClient1
         }
 
         #region Authentication and Session
+
+        private Labels2Client _getlabelClient()
+        {
+            Labels2Client ret = new NbtLabels.Labels2Client();
+            ret.Endpoint.Behaviors.Add( cookieBehavior );
+            return ret;
+        }
 
         public class NbtAuth
         {
@@ -35,8 +34,11 @@ namespace CswPrintClient1
         public delegate void AuthSuccessHandler();
         public delegate void AuthFailureHandler(string ErrorMessage);
 
-        private void _Authenticate( NbtAuth auth, AuthSuccessHandler success, AuthFailureHandler failure )
+        private void _Authenticate( NbtAuth auth, ServiceThreadEventArgs e, AuthSuccessHandler success )
         {
+            SessionClient sessionClient = new SessionClient();
+            sessionClient.Endpoint.Behaviors.Add( cookieBehavior );
+
             NbtSession.CswWebSvcReturn ret = sessionClient.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
             {
                 CustomerId = auth.AccessId,
@@ -62,18 +64,12 @@ namespace CswPrintClient1
                 }
                 else
                 {
-                    if( null != failure )
-                    {
-                        failure("Authentication error: " + ret.Authentication.AuthenticationStatus);
-                    }
+                    e.Message += "Authentication error: " + ret.Authentication.AuthenticationStatus;
                 }
             }
             catch( Exception ex )
             {
-                if( null != failure )
-                {
-                    failure( "Authentication error: " + ex.Message );
-                }
+                e.Message += "Authentication error: " + ex.Message;
             }
             finally
             {
@@ -100,13 +96,14 @@ namespace CswPrintClient1
         {
             RegisterEventArgs e = new RegisterEventArgs();
 
-            _Authenticate( auth,
+            _Authenticate( auth, e,
                            delegate() // Success
                                {
                                    LabelPrinter lblPrn = new LabelPrinter();
                                    lblPrn.LpcName = lpcname;
                                    lblPrn.Description = descript;
-                                   
+
+                                   Labels2Client labelClient = _getlabelClient();
                                    CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg Ret = labelClient.registerLpc( lblPrn );
                                    labelClient.Close();
 
@@ -125,10 +122,6 @@ namespace CswPrintClient1
                                            e.Message += Ret.Status.Errors[0].Message;
                                        }
                                    }
-                               },
-                           delegate( string msg ) // Failure
-                               {
-                                   e.Message = msg;
                                }
                         );
 
@@ -154,14 +147,15 @@ namespace CswPrintClient1
         public void LabelById( NbtAuth auth, string labelid, string targetid )
         {
             LabelByIdEventArgs e = new LabelByIdEventArgs();
-            
-            _Authenticate( auth,
+
+            _Authenticate( auth, e,
                            delegate() // Success
                                {
                                    NbtPrintLabelRequestGet nbtLabelget = new NbtPrintLabelRequestGet();
                                    nbtLabelget.LabelId = labelid;
                                    nbtLabelget.TargetId = targetid;
 
+                                   Labels2Client labelClient = _getlabelClient();
                                    CswNbtLabelEpl epl = labelClient.getLabel( nbtLabelget );
                                    labelClient.Close();
 
@@ -184,10 +178,6 @@ namespace CswPrintClient1
                                    {
                                        e.Message += epl.Status.Errors[0].Message;
                                    }
-                               },
-                           delegate( string msg ) // Failure
-                               {
-                                   e.Message = msg;
                                }
                         );
 
@@ -214,12 +204,13 @@ namespace CswPrintClient1
         {
             NextJobEventArgs e = new NextJobEventArgs();
 
-            _Authenticate( auth,
+            _Authenticate( auth, e,
                            delegate() // Success
                                {
                                    CswNbtLabelJobRequest labelReq = new CswNbtLabelJobRequest();
                                    labelReq.PrinterKey = printerkey;
 
+                                   Labels2Client labelClient = _getlabelClient();
                                    CswNbtLabelJobResponse Ret = labelClient.getNextLpcJob( labelReq );
                                    labelClient.Close();
 
@@ -236,10 +227,6 @@ namespace CswPrintClient1
                                            e.Message += Ret.Status.Errors[0].Message;
                                        }
                                    }
-                               },
-                           delegate( string msg ) // Failure
-                               {
-                                   e.Message = msg;
                                }
                         );
 
@@ -262,35 +249,35 @@ namespace CswPrintClient1
 
         //these must match
         public delegate void UpdateJobInvoker( NbtAuth Auth, string jobKey );
+
         public void updateJob( NbtAuth auth, string jobKey )
         {
             UpdateJobEventArgs e = new UpdateJobEventArgs();
 
-            _Authenticate( auth,
-                delegate() // Success
-                    {
-                        CswNbtLabelJobUpdateRequest Request = new CswNbtLabelJobUpdateRequest();
-                        Request.JobKey = jobKey;
+            _Authenticate( auth, e,
+                           delegate() // Success
+                               {
+                                   CswNbtLabelJobUpdateRequest Request = new CswNbtLabelJobUpdateRequest();
+                                   Request.JobKey = jobKey;
 
-                        CswNbtLabelJobUpdateResponse Ret = labelClient.updateLpcJob( Request );
+                                   Labels2Client labelClient = _getlabelClient();
+                                   CswNbtLabelJobUpdateResponse Ret = labelClient.updateLpcJob( Request );
+                                   labelClient.Close();
 
-                        if( Ret.Status.Success )
-                        {
-                            e.Succeeded = true;
-                        }
-                        else
-                        {
-                            e.Message = "Error updating job: ";
-                            if( Ret.Status.Errors.Length > 0 )
-                            {
-                                e.Message += Ret.Status.Errors[0].Message;
-                            }
-                        }
-                    },
-                delegate( string msg ) // Failure
-                    {
-                    }
-            );
+                                   if( Ret.Status.Success )
+                                   {
+                                       e.Succeeded = true;
+                                   }
+                                   else
+                                   {
+                                       e.Message = "Error updating job: ";
+                                       if( Ret.Status.Errors.Length > 0 )
+                                       {
+                                           e.Message += Ret.Status.Errors[0].Message;
+                                       }
+                                   }
+                               }
+                );
 
             if( OnUpdateJob != null )
             {
@@ -300,6 +287,6 @@ namespace CswPrintClient1
 
         #endregion updateJob
 
-    }
+    } // class ServiceThread
 
-}
+} // namespace CswPrintClient1
