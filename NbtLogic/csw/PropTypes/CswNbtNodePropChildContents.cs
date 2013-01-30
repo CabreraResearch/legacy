@@ -52,6 +52,11 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
+        public override void SyncGestalt()
+        {
+
+        }
+
         #endregion Generic Properties
 
         #region Relationship Properties and Functions

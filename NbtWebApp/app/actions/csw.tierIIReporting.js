@@ -109,13 +109,10 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
         
         //#region Grid Control
         cswPrivate.loadGrid = function (tierIIRequestData) {
-            cswPrivate.gridTbl.cell(2, 1).span({ text: 'Loading Grid...' }).addClass('propertylabel');
             Csw.ajaxWcf.post({
                 urlMethod: 'RegulatoryReporting/getTierIIData',
                 data: tierIIRequestData,
                 success: function (ajaxdata) {
-                    cswPrivate.gridTbl.cell(2, 1).empty();
-
                     //Grid Data
                     cswPrivate.Materials = [{
                         MaterialId: '',

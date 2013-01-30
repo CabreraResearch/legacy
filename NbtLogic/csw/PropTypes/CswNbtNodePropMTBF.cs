@@ -23,8 +23,8 @@ namespace ChemSW.Nbt.PropTypes
             _StartDateTimeSubField = _FieldTypeRule.StartDateTimeSubField;
             _UnitsSubField = _FieldTypeRule.UnitsSubField;
             _ValueSubField = _FieldTypeRule.ValueSubField;
-            
-            if(string.IsNullOrEmpty(Units))
+
+            if( string.IsNullOrEmpty( Units ) )
             {
                 Units = "days";
             }
@@ -238,6 +238,12 @@ namespace ChemSW.Nbt.PropTypes
             //PendingUpdate = true;
             RefreshCachedValue();
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.Gestalt = CachedValue.ToString() + " " + Units.ToString();
+        }
+
     }//CswNbtNodePropMTBF
 
 }//namespace ChemSW.Nbt.PropTypes
