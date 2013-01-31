@@ -284,6 +284,26 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [Description( "Optional params to apply to EPL text on label" )]
                 public string Params = string.Empty;
             }
+
+            /// <summary>
+            /// Print Job Request Object
+            /// </summary>
+            [DataContract]
+            public class printJob
+            {
+                [DataMember]
+                [Description( "Print Label to print" )]
+                public string LabelId;
+
+                [DataMember]
+                [Description( "Printer to print on" )]
+                public string PrinterId;
+
+                [DataMember]
+                [Description( "Nodes whose labels to print" )]
+                public string TargetIds;
+            }
+
         }
 
         /// <summary>
@@ -356,6 +376,27 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [Description( "Status string of this request" )]
                 public string status = string.Empty;
 
+            }
+
+
+            /// <summary>
+            /// Returns a print job
+            /// </summary>
+            [DataContract]
+            [Description( "Returns a print job" )]
+            public class printJob
+            {
+                [DataMember]
+                [Description( "Job No for Job" )]
+                public string JobNo;
+
+                [DataMember]
+                [Description( "Primary key for Job" )]
+                public string JobId;
+
+                [DataMember]
+                [Description( "Node Link for Job" )]
+                public string JobLink;
             }
 
         }
