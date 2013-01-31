@@ -93,6 +93,9 @@
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -123,6 +126,8 @@
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
+    <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetColReader.cs" />
+    <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetCol.cs" />
     <Compile Include="csw\ImportExport\CswImporterNodeLoader.cs" />
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromRapidLoader.cs" />
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromXml.cs" />
