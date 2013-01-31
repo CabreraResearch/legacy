@@ -1,6 +1,5 @@
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using ChemSW.MtSched.Core;
+using ChemSW.Grid.ExtJs;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
@@ -11,11 +10,11 @@ namespace ChemSW.Nbt.WebServices
         /// <summary> ctor </summary>
         public CswNbtScheduledRulesReturn()
         {
-            Data = new Collection<CswScheduleLogicDetail>();
+            Data = new CswExtJsGrid( "ScheduledRules" );
         }//ctor
 
         [DataMember]
-        public Collection<CswScheduleLogicDetail> Data;
+        public CswExtJsGrid Data;
         /// <summary> data </summary>
 
     }//CswNbtScheduledRulesReturn

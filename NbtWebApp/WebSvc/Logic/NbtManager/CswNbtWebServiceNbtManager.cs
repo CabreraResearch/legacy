@@ -1,12 +1,15 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Grid.ExtJs;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.NbtSchedSvcRef;
 using ChemSW.Nbt.ObjClasses;
@@ -125,15 +128,65 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
+        private static CswExtJsGrid _getScheduledRulesGrid( CswNbtResources NbtResources, Collection<CswScheduleLogicDetail> LogicDetails )
+        {
+            CswExtJsGrid Ret = new CswExtJsGrid( "ScheduledRules" );
+            if( LogicDetails.Count > 0 )
+            {
+                Type TypeInt32 = Type.GetType( "System.Int32" );
+                Type TypeString = Type.GetType( "System.String" );
+                Type TypeBool = Type.GetType( "System.Boolean" );
+                Type TypeDateTime = Type.GetType( "System.DateTime" );
+
+                DataTable GridTable = new DataTable( "scheduledrulestable" );
+                GridTable.Columns.Add( "canEdit" );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RuleName, TypeString );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Recurrance, TypeInt32 );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Interval, TypeInt32 );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ReprobateThreshold, TypeInt32 );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs, TypeInt32 );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Reprobate, TypeBool );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunStartTime, TypeDateTime );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunEndTime, TypeDateTime );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.TotalRogueCount, TypeInt32 );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, TypeInt32 );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, TypeInt32 );
+
+                foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
+                {
+                    DataRow Row = GridTable.NewRow();
+
+                    Row[CswScheduleLogicDetail.ColumnNames.RuleName] = LogicDetail.RuleName;
+                    Row[CswScheduleLogicDetail.ColumnNames.Recurrance] = LogicDetail.Recurrence;
+                    Row[CswScheduleLogicDetail.ColumnNames.Interval] = LogicDetail.Interval;
+                    Row[CswScheduleLogicDetail.ColumnNames.ReprobateThreshold] = LogicDetail.ReprobateThreshold;
+                    Row[CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs] = LogicDetail.MaxRunTimeMs;
+                    Row[CswScheduleLogicDetail.ColumnNames.Reprobate] = LogicDetail.Reprobate;
+                    Row[CswScheduleLogicDetail.ColumnNames.RunStartTime] = LogicDetail.RunStartTime;
+                    Row[CswScheduleLogicDetail.ColumnNames.RunEndTime] = LogicDetail.RunEndTime;
+                    Row[CswScheduleLogicDetail.ColumnNames.TotalRogueCount] = LogicDetail.TotalRogueCount;
+                    Row[CswScheduleLogicDetail.ColumnNames.FailedCount] = LogicDetail.FailedCount;
+                    Row[CswScheduleLogicDetail.ColumnNames.ThreadId] = LogicDetail.ThreadId;
+                    Row[CswScheduleLogicDetail.ColumnNames.StatusMessage] = LogicDetail.StatusMessage;
+                    
+                    GridTable.Rows.Add( Row );
+                }
+                CswNbtGrid gd = new CswNbtGrid( NbtResources );
+                Ret = gd.DataTableToGrid( GridTable );
+            }
+            return Ret;
+        }
 
         public static void getScheduledRulesGrid( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string PlaceHolder )
         {
             try
             {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                
                 CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
                 // GOTO CswSchedSvcAdminEndPoint for actual implementation
                 CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
-                //Return.Data.grid = svcReturn.Data;
+                Return.Data = _getScheduledRulesGrid( NbtResources, svcReturn.Data );
             }
             catch( Exception Exception )
             {
