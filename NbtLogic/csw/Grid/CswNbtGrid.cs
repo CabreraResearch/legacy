@@ -306,20 +306,24 @@ namespace ChemSW.Nbt.Grid
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
                 if( Column.DataType == typeof( string ) )
                 {
+                    fld.name = Column.ColumnName;
                     fld.type = "string";
                 }
                 else if( Column.DataType == typeof( bool ) )
                 {
+                    fld.name = Column.ColumnName;
                     fld.type = "boolean";
                     gridcol.xtype = extJsXType.booleancolumn;
                 }
                 else if( Column.DataType == typeof( Int32 ) )
                 {
+                    fld.name = Column.ColumnName;
                     fld.type = "number";
                     gridcol.xtype = extJsXType.numbercolumn;
                 }
                 else if( Column.DataType == typeof( DateTime ) )
                 {
+                    fld.name = Column.ColumnName;
                     fld.type = "date";
                     gridcol.xtype = extJsXType.datecolumn;
                 }

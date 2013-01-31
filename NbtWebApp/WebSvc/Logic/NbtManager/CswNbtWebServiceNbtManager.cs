@@ -139,7 +139,6 @@ namespace ChemSW.Nbt.WebServices
                 Type TypeDateTime = Type.GetType( "System.DateTime" );
 
                 DataTable GridTable = new DataTable( "scheduledrulestable" );
-                GridTable.Columns.Add( "canEdit" );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RuleName, TypeString );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Recurrance, TypeInt32 );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Interval, TypeInt32 );
@@ -151,6 +150,7 @@ namespace ChemSW.Nbt.WebServices
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.TotalRogueCount, TypeInt32 );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, TypeInt32 );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, TypeInt32 );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.StatusMessage, TypeString );
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
                 {

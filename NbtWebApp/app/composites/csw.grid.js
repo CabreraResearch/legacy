@@ -95,21 +95,7 @@
                             } // if(false === Csw.isNullOrEmpty(data.griddata)) {
                         } // success
                     });
-                } else if (cswPrivate.ajaxwcf.urlMethod !== '') {
-
-                    cswPublic.ajaxwcf = Csw.ajaxWcf.post({
-                        urlMethod: cswPrivate.ajaxwcf.urlMethod,
-                        data: cswPrivate.ajaxwcf.data,
-                        success: function (result) {
-                            //ExJsGrid 
-                            //var CswNbtScheduledRulesReturn = Csw.deserialize(result);
-                            Csw.tryExec(onSuccess, result);
-                            //                                var temp = cswPrivate.store.data;
-                            //var temp = result.grid.getAllGridRows();
-                        } // success
-                    });
-                }
-                // ajax.post()
+                } // ajax.post()
             };
 
             //#endregion AJAX
@@ -196,7 +182,7 @@
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
-                    data: cswPrivate.data,
+                    data: cswPrivate.rows,
                     autoLoad: true,
                     proxy: {
                         type: 'memory',
@@ -531,11 +517,11 @@
 
                 //Render buttons in a callback
                 if (false === cswPrivate.showCheckboxes &&
-                    cswPrivate.data.buttons &&
-                    cswPrivate.data.buttons.length > 0) {
+                    cswPrivate.rows.buttons &&
+                    cswPrivate.rows.buttons.length > 0) {
 
                     var colNames = Csw.delimitedString('', { spaceToDelimiter: false });
-                    Csw.each(cswPrivate.data.buttons, function (val, key) {
+                    Csw.each(cswPrivate.rows.buttons, function (val, key) {
                         //Get the column names, delimitedString will handle dupes for us automatically
                         colNames.add(val.selectedtext);
                     });
@@ -549,7 +535,7 @@
                             //NOTE: this can now be moved to the viewrender event. See action column logic.
                             i += 1;
                             var id = cswPrivate.ID + 'nodebutton' + i;
-                            var thisBtn = cswPrivate.data.buttons.filter(function (btn) {
+                            var thisBtn = cswPrivate.rows.buttons.filter(function (btn) {
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
@@ -607,7 +593,7 @@
                         doRefresh: cswPublic.reload
                     });
 
-                    var rows = cswPrivate.data.items.length;
+                    var rows = cswPrivate.rows.items.length;
                     if (false === Csw.isNumber(cswPrivate.height) || cswPrivate.height <= 0 || Csw.isNullOrEmpty(cswPrivate.height)) {
                         if (rows === 0) {
                             gridopts.height = cswPrivate.calculateHeight(1);
@@ -735,27 +721,34 @@
                 }
             });
 
+            cswPrivate.setInternalGridState = function(data) {
+                if (data) {
+                    cswPrivate.pageSize = Csw.number(data.pageSize);
+                    if (false === Csw.isNullOrEmpty(data.truncated)) {
+                        cswPrivate.truncated = data.truncated;
+                    }
+                    if (cswPrivate.title.length === 0 && data.title && data.title.length > 0) {
+                        cswPrivate.title = data.title;
+                    }
+                    cswPrivate.fields = data.fields;
+                    cswPrivate.columns = data.columns;
+                    cswPrivate.rows = data.data;
+                    cswPrivate.groupField = data.groupfield;
+                }
+            };
+
             cswPrivate.reInit = function (forceRefresh) {
                 if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
-                            cswPrivate.pageSize = Csw.number(result.grid.pageSize);
-                            if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
-                                cswPrivate.truncated = result.grid.truncated;
-                            }
-                            if (cswPrivate.title.length === 0 && result.grid.title && result.grid.title.length > 0) {
-                                cswPrivate.title = result.grid.title;
-                            }
-                            cswPrivate.fields = result.grid.fields;
-                            cswPrivate.columns = result.grid.columns;
-                            cswPrivate.data = result.grid.data;
-                            cswPrivate.ajaxResult = result;
-                            cswPrivate.groupField = result.grid.groupfield;
+                            
                             cswPrivate.init();
-
+                            cswPrivate.ajaxResult = result;
+                            cswPrivate.setInternalGridState(result.grid);
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
                     });
                 } else {
+                    cswPrivate.setInternalGridState(cswPrivate.data);
                     cswPrivate.init();
                 }
             };
@@ -770,7 +763,7 @@
                         cswPrivate.actionTableIds = [];
                         cswPrivate.actionTableKeys = [];
 
-                        cswPrivate.data = result.grid.data;
+                        cswPrivate.rows = result.grid.data;
                         cswPrivate.store.destroy();
                         cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                         cswPrivate.grid.reconfigure(cswPrivate.store);

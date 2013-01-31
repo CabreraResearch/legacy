@@ -1,5 +1,5 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
+/*global Csw:true,Ext:true */
 
 (function () {
 
@@ -82,7 +82,7 @@
                             .select({
                                 name: 'customerIdSelect',
                                 selected: '',
-                                values: [{ value: '[ None ]', display: '[ None ]'}],
+                                values: [{ value: '[ None ]', display: '[ None ]' }],
                                 onChange: function () {
                                     var selected = customerIdSelect.find(':selected');
                                     cswPrivate.selectedCustomerId = selected.val();
@@ -93,14 +93,14 @@
                         Csw.ajax.post({
                             urlMethod: 'getActiveAccessIds',
                             success: function (data) {
-                                var values = data.customerids;
-                                if (values.length > 1) {
-                                    customerIdSelect.setOptions(values);
+                                cswPrivate.customerIds = data.customerids;
+                                if (cswPrivate.customerIds.length > 1) {
+                                    customerIdSelect.setOptions(cswPrivate.customerIds);
                                     cswPrivate.selectedCustomerId = customerIdSelect.find(':selected').val();
                                 } else {
                                     customerIdSelect.empty();
-                                    customerIdSelect.option({ value: values[0], display: values[0], isSelected: true });
-                                    cswPrivate.selectedCustomerId = values[0];
+                                    customerIdSelect.option({ value: cswPrivate.customerIds[0], display: cswPrivate.customerIds[0], isSelected: true });
+                                    cswPrivate.selectedCustomerId = cswPrivate.customerIds[0];
                                     cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
                                 }
                             }
@@ -110,7 +110,7 @@
                     }
                     stepOneComplete = true;
                 };
-            } ());
+            }());
 
             //Step 2: Review Scheduled Rules
             cswPrivate.makeStepTwo = function () {
@@ -123,39 +123,58 @@
 
                     var gridId = 'rulesGrid';
 
-                    cswPrivate.scheduledRulesGrid = rulesGridDiv.grid({
-                        name: gridId,
-                        storeId: gridId,
-                        title: 'Scheduled Rules',
-                        stateId: gridId,
-                        usePaging: false,
-                        showActionColumn: false,
-                        canSelectRow: false,
-//                        ajax: {
-//                            urlMethod: 'getScheduledRulesGrid',
-//                            data: cswPrivate.selectedCustomerId 
-//                        },
-//                        
-                        ajaxwcf: {
-                            urlMethod: 'Scheduler/getScheduledRulesGrid',
-                            data: cswPrivate.selectedCustomerId 
-                        },
-                        plugins: [
-                        Ext.create('Ext.grid.plugin.CellEditing', {
-                            clicksToEdit: 1
-                        })
-                        ]
+                    cswPrivate.gridAjax = Csw.ajaxWcf.post({
+                        urlMethod: 'Scheduler/getScheduledRulesGrid',
+                        data: cswPrivate.selectedCustomerId,
+                        success: function (result) {
+
+                            var parsedRows = [];
+                            if (result && result.data && result.data.items) {
+                                result.data.items.forEach(function(row) {
+                                    var parsedRow = {
+                                        RowNo: row.RowNo,
+                                        canDelete: false,
+                                        canEdit: false,
+                                        canView: false,
+                                        isDisabled: false,
+                                        isLocked: false
+                                    };
+                                    if (row && row.Row) {
+                                        Object.keys(row.Row).forEach(function(key) {
+                                            parsedRow[key] = row.Row[key]; 
+                                        });
+                                    }
+                                    parsedRows.push(parsedRow);
+                                });
+                                result.data.items = parsedRows;
+                            }
+
+                            cswPrivate.scheduledRulesGrid = rulesGridDiv.grid({
+                                name: gridId,
+                                storeId: gridId,
+                                data: result,
+                                title: 'Scheduled Rules',
+                                stateId: gridId,
+                                usePaging: false,
+                                showActionColumn: false,
+                                canSelectRow: false,
+                                plugins: [
+                                    Ext.create('Ext.grid.plugin.CellEditing', {
+                                        clicksToEdit: 1
+                                    })
+                                ]
+                            });
+
+                        } // success
                     });
-
-                }; // makeRulesGrid()
-
+                };
                 cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step);
                 cswPrivate.divStep2.empty();
 
                 cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                cswPrivate.toggleButton(cswPrivate.buttons.prev, true); //cswPrivate.customerIds.length > 1 
 
                 headerTable = cswPrivate.divStep2.table({
                     name: 'headerTable'
@@ -218,4 +237,4 @@
 
             return cswPublic;
         });
-} ());
+}());
