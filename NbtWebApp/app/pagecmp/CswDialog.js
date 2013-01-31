@@ -459,10 +459,9 @@
                 cswDlgPrivate.tabState.Config = true;
                 cswDlgPrivate.onTabSelect = function (tabid) {
                     if (cswDlgPrivate.tabState.tabid !== tabid) {
+                        cswDlgPrivate.tabState.tabid = tabid;
                         _resetLayout();
                     }
-                    cswDlgPrivate.tabState.tabid = tabid;
-                    
                 };
                 cswDlgPrivate.onPropertyRemove = function () {
                     _configAddOptions();
