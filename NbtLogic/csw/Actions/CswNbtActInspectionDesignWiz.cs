@@ -944,13 +944,13 @@ namespace ChemSW.Nbt.Actions
             return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
         }
 
-        public JObject createInspectionDesignTabsAndProps( DataTable TheQuestions, string InspectionDesignName, string InspectionTargetName, string Category )
-        {
+        //public JObject createInspectionDesignTabsAndProps( DataTable TheQuestions, string InspectionDesignName, string InspectionTargetName, string Category )
+        //{
 
-            JObject GridObj = CswConvert.DataTableToJSON( prepareDataTable( TheQuestions ) );
-            JArray GridArray = (JArray) GridObj["data"];
-            return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
-        }
+        //    JObject GridObj = CswConvert.DataTableToJSON( prepareDataTable( TheQuestions ) );
+        //    JArray GridArray = (JArray) GridObj["data"];
+        //    return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
+        //}
 
         private JObject _createInspectionDesignTabsAndProps( JArray GridArray, string InspectionDesignName, string InspectionTargetName, string Category )
         {

@@ -605,6 +605,30 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 27436
 
+        #region Case 28122
+
+        private void _addLegacyIdToUnitsOfMeasure( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass unitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClassProp legacyIdOCP = unitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.LegacyId );
+
+            if( null == legacyIdOCP )
+            {
+                legacyIdOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( unitOfMeasureOC )
+                {
+                    PropName = CswNbtObjClassUnitOfMeasure.PropertyName.LegacyId,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                    ServerManaged = true
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
+
         #endregion Viola Methods
 
         #region WILLIAM Methods
@@ -777,6 +801,7 @@ namespace ChemSW.Nbt.Schema
             _correctSpellingOnStorageCompField( CswDeveloper.CM, 28145 );
             _fixContainerLabelFormatView( CswDeveloper.CF, 28424 );
             _addGhsOC( CswDeveloper.SS, 27436 );
+            _addLegacyIdToUnitsOfMeasure( CswDeveloper.MB, 28122 );
 
             #endregion VIOLA
 
