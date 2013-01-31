@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Sched
                                                 CurrentGenerator.postChanges( false );
                                             }
 
-                                            GeneratorDescriptions += CurrentGenerator.Description + "; ";
+                                            GeneratorDescriptions += CurrentGenerator.Description.Text + "; ";
                                             TotalGeneratorsProcessed++;
                                         } // if-else( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
                                     } // if due
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.Sched
 
                             catch( Exception Exception )
                             {
-                                string Message = "Unable to process generator " + CurrentGenerator.Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
+                                string Message = "Unable to process generator " + CurrentGenerator.Description.Text + ", which will now be disabled, due to the following exception: " + Exception.Message;
                                 GeneratorDescriptions += Message;
                                 CurrentGenerator.Enabled.Checked = Tristate.False;
                                 CurrentGenerator.RunStatus.AddComment( "Disabled due do exception: " + Exception.Message );

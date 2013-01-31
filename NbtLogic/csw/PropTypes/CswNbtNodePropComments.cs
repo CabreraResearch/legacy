@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropComments : CswNbtNodeProp
+    public class CswNbtNodePropComments: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropComments( CswNbtNodePropWrapper PropWrapper )
         {
@@ -63,7 +63,11 @@ namespace ChemSW.Nbt.PropTypes
                 JArray obj = new JArray();
                 try
                 {
-                    obj = CswConvert.ToJArray( _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column ) );
+                    string Json = _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column );
+                    if( false == string.IsNullOrEmpty( Json ) )
+                    {
+                        obj = CswConvert.ToJArray( Json );
+                    }
                 }
                 catch( Exception e )
                 {
@@ -175,12 +179,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            JToken lastComment = CommentsJson[CommentsJson.Count];
-            string commenter = lastComment["commenter"].ToString();
-            string dateSubmitted = lastComment["datetime"].ToString();
-            string message = lastComment["message"].ToString();
+            if( CommentsJson.Count > 0 )
+            {
+                JToken lastComment = CommentsJson[CommentsJson.Count-1];
+                string commenter = lastComment["commenter"].ToString();
+                string dateSubmitted = lastComment["datetime"].ToString();
+                string message = lastComment["message"].ToString();
 
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+            }
         }
 
     }//CswNbtNodePropComments
