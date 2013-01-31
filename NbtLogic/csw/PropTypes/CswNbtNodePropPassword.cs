@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = EncryptedPassword;
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, EncryptedPassword );
         }
     }//CswNbtNodePropPassword
 

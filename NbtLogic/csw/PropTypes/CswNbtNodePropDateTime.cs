@@ -85,13 +85,13 @@ namespace ChemSW.Nbt.PropTypes
                 switch( DisplayMode )
                 {
                     case DateDisplayMode.Date:
-                        _CswNbtNodePropData.Gestalt = Value.ToShortDateString();
+                        _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value.ToShortDateString() );
                         break;
                     case DateDisplayMode.Time:
-                        _CswNbtNodePropData.Gestalt = Value.ToLongTimeString();
+                        _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value.ToLongTimeString() );
                         break;
                     case DateDisplayMode.DateTime:
-                        _CswNbtNodePropData.Gestalt = Value.ToShortDateString() + " " + Value.ToLongTimeString();
+                        _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
                         break;
                 }
             }

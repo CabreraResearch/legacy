@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
                     NewGestalt.Add( Options[Key] );
                 }
             }
-            _CswNbtNodePropData.Gestalt = NewGestalt.ToString();
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, NewGestalt.ToString() );
         } // _setGestalt()
 
         public static string OptionTextField = "Text";
