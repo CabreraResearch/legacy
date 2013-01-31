@@ -44,6 +44,24 @@ namespace ChemSW.Nbt.WebServices
     }
 
     /// <summary>
+    /// Print Job Return Object
+    /// </summary>
+    [DataContract]
+    public class CswNbtPrintJobReturn : CswWebSvcReturn
+    {
+        /// <summary> ctor </summary>
+        public CswNbtPrintJobReturn()
+        {
+            Data = new NbtPrintLabel.Response.printJob();
+        }
+
+        /// <summary> data </summary>
+        [DataMember]
+        public NbtPrintLabel.Response.printJob Data;
+
+    }
+
+    /// <summary>
     /// Label EPL Return Object
     /// </summary>
     [DataContract]
@@ -149,6 +167,81 @@ namespace ChemSW.Nbt.WebServices
             }
             return LabelFormatId;
         }
+
+        public static void newPrintJob( ICswResources CswResources, CswNbtPrintJobReturn Return, NbtPrintLabel.Request.printJob Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+            if( null == PrintJobOC )
+            {
+                throw new CswDniException( ErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job Object Class" );
+            }
+
+            CswNbtMetaDataNodeType PrintJobNT = PrintJobOC.FirstNodeType;
+            if( null == PrintJobNT )
+            {
+                throw new CswDniException( ErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job NodeType" );
+            }
+
+            CswPrimaryKey LabelPk = new CswPrimaryKey();
+            LabelPk.FromString( Request.LabelId );
+            if( false == CswTools.IsPrimaryKey( LabelPk ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid print label key", "newPrintJob() Print Label Key is not a valid CswPrimaryKey: " + Request.PrinterId );
+            }
+
+            CswNbtObjClassPrintLabel PrintLabel = NbtResources.Nodes[LabelPk];
+            if( null == PrintLabel )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid print label", "newPrintJob() Print Label Key did not match a node." );
+            }
+
+            CswPrimaryKey PrinterPk = new CswPrimaryKey();
+            PrinterPk.FromString( Request.PrinterId );
+            if( false == CswTools.IsPrimaryKey( PrinterPk ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid printer key", "newPrintJob() Printer Key is not a valid CswPrimaryKey: " + Request.PrinterId );
+            }
+
+            CswNbtObjClassPrinter Printer = NbtResources.Nodes[PrinterPk];
+            if( null == Printer )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid printer", "newPrintJob() Printer Key did not match a node." );
+            }
+
+            string JobData = string.Empty;
+            Int32 JobCount = 0;
+
+            CswCommaDelimitedString RealTargetIds = new CswCommaDelimitedString();
+            RealTargetIds.FromString( Request.TargetIds );
+            foreach( string TargetId in RealTargetIds )
+            {
+                CswNbtNode TargetNode = NbtResources.Nodes[TargetId];
+                if( null != TargetNode )
+                {
+                    string EPLText = PrintLabel.EplText.Text;
+                    string Params = PrintLabel.Params.Text;
+                    PrintLabel Label = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode );
+                    JobData += Label.EplText;
+                    JobCount += 1;
+                }
+            } // foreach( string TargetId in RealTargetIds )
+
+            CswNbtObjClassPrintJob NewJob = NbtResources.Nodes.makeNodeFromNodeTypeId( PrintJobNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, false );
+            NewJob.Label.RelatedNodeId = PrintLabel.NodeId;
+            NewJob.LabelCount.Value = JobCount;
+            NewJob.LabelData.Text = JobData;
+            NewJob.Printer.RelatedNodeId = Printer.NodeId;
+            NewJob.RequestedBy.RelatedNodeId = NbtResources.CurrentNbtUser.UserId;
+            NewJob.CreatedDate.DateTimeValue = DateTime.Now;
+            NewJob.postChanges( false );
+
+            Return.Data.JobId = NewJob.NodeId.ToString();
+            Return.Data.JobNo = NewJob.JobNo.Sequence;
+            Return.Data.JobLink = CswNbtNode.getNodeLink( NewJob.NodeId, NewJob.NodeName );
+
+        } // newPrintJob()
 
         public static void getEPLText( ICswResources CswResources, CswNbtLabelEpl Return, NbtPrintLabel.Request.Get Request )
         {
