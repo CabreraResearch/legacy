@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            JToken lastComment = CommentsJson[CommentsJson.Count];
+            JToken lastComment = CommentsJson[CommentsJson.Count-1];
             string commenter = lastComment["commenter"].ToString();
             string dateSubmitted = lastComment["datetime"].ToString();
             string message = lastComment["message"].ToString();
