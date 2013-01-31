@@ -226,12 +226,8 @@ namespace ChemSW.Nbt.Schema
 
                     if( File.Exists( _FilePath ) )
                     {
-                        Stream FileStream = File.OpenRead( _FilePath );
-                        StreamReader FileSR = new StreamReader( FileStream );
-                        FileContents = FileSR.ReadToEnd();
-                        FileStream.Close();
 
-                        CswNbtImportExportFrame = new CswNbtImportExportFrame( _CswNbtResources, FileContents );
+                        CswNbtImportExportFrame = new CswNbtImportExportFrame( _CswNbtResources, _FilePath );
 
                         _CswNbtImportExport.ImportXml( _CswNbtImportStatus.Mode, ImportTablePopulationMode, CswNbtImportExportFrame, ref ViewXml, ref ResultXml, ref ErrorLog );
 
