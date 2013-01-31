@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropComments : CswNbtNodeProp
+    public class CswNbtNodePropComments: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropComments( CswNbtNodePropWrapper PropWrapper )
         {
@@ -63,7 +63,11 @@ namespace ChemSW.Nbt.PropTypes
                 JArray obj = new JArray();
                 try
                 {
-                    obj = CswConvert.ToJArray( _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column ) );
+                    string Json = _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column );
+                    if( false == string.IsNullOrEmpty( Json ) )
+                    {
+                        obj = CswConvert.ToJArray( Json );
+                    }
                 }
                 catch( Exception e )
                 {
