@@ -229,8 +229,8 @@ namespace ChemSW.Nbt.Actions
                 where locationid = {6} 
                   and istierii = 1
                   and casno is not null
-                  and dateadded >= to_date('{7}', 'mm/dd/yyyy')
-                  and dateadded < to_date('{8}', 'mm/dd/yyyy') + 1
+                  and dateadded >= {7}
+                  and dateadded < {8} + 1
                   group by t.materialid, t.casno, t.unitid, 
                     p.tradename, p.materialtype, p.physicalstate, p.specialflags, p.hazardcategories, p.istierII";
 
@@ -254,8 +254,8 @@ namespace ChemSW.Nbt.Actions
                     null != HazardCategoriesProp ? HazardCategoriesProp.PropId : 0,
                     IsTierIIProp.PropId,
                     CswConvert.ToPrimaryKey( Request.LocationId ).PrimaryKey,
-                    CswConvert.ToDbVal( DateTime.Parse( Request.StartDate ).ToShortDateString() ),
-                    CswConvert.ToDbVal( DateTime.Parse( Request.EndDate ).ToShortDateString() )
+                    _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
+                    _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) )
                 );
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Material Select", SelectText );
                 TargetTable = CswArbitrarySelect.getTable();
@@ -310,8 +310,8 @@ namespace ChemSW.Nbt.Actions
                         where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
                         on jnpa.nodeid = u.nodeid and jnpa.audittransactionid = u.audittransactionid
                     where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
-                        and jnpa.recordcreated >= to_date('" + CswConvert.ToDbVal( DateTime.Parse( Request.StartDate ).ToShortDateString() ) + @"', 'mm/dd/yyyy')
-                        and jnpa.recordcreated < to_date('" + CswConvert.ToDbVal( DateTime.Parse( Request.EndDate ).ToShortDateString() ) + @"', 'mm/dd/yyyy') + 1
+                        and jnpa.recordcreated >= " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ) + @"
+                        and jnpa.recordcreated < " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) + @" + 1
                 ) codes
                     where codes.pressure is not null and codes.temperature is not null and codes.usetype is not null";
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Props Select", SelectText );
@@ -345,8 +345,8 @@ namespace ChemSW.Nbt.Actions
                     where jnp.nodetypepropid = " + LocationProp.PropId + @"
                         and jnp.field1_fk is not null
                         and exists (select nodeid from containerids where nodeid = jnp.nodeid)
-                        and jnp.recordcreated >= to_date('" + CswConvert.ToDbVal(DateTime.Parse(Request.StartDate).ToShortDateString()) + @"', 'mm/dd/yyyy')
-                        and jnp.recordcreated < to_date('" + CswConvert.ToDbVal(DateTime.Parse(Request.EndDate).ToShortDateString()) + @"', 'mm/dd/yyyy') + 1
+                        and jnp.recordcreated >= " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ) + @"
+                        and jnp.recordcreated < " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) + @" + 1
                 )";
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Locations Select", SelectText );
                 TargetTable = CswArbitrarySelect.getTable();
