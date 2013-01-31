@@ -304,6 +304,25 @@ namespace ChemSW.Nbt.Grid
                 fld.dataIndex = dataIndex;
                 grid.fields.Add( fld );
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
+                if( Column.DataType == typeof( string ) )
+                {
+                    fld.type = "string";
+                }
+                else if( Column.DataType == typeof( bool ) )
+                {
+                    fld.type = "boolean";
+                    gridcol.xtype = extJsXType.booleancolumn;
+                }
+                else if( Column.DataType == typeof( Int32 ) )
+                {
+                    fld.type = "number";
+                    gridcol.xtype = extJsXType.numbercolumn;
+                }
+                else if( Column.DataType == typeof( DateTime ) )
+                {
+                    fld.type = "date";
+                    gridcol.xtype = extJsXType.datecolumn;
+                }
                 gridcol.header = Column.ColumnName;
                 gridcol.dataIndex = dataIndex;
                 grid.columns.Add( gridcol );
