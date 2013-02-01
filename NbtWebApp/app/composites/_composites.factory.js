@@ -135,6 +135,14 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'thinGrid');
                     return Csw.composites.thinGrid(cswParent, opts);
                 };
+                
+                cswParent.tree = function (opts) {
+                    /// <summary> Creates a Csw.tree on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the tree.</param>
+                    /// <returns type="Csw.composites.tree">A Csw.composites.tree</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'tree');
+                    return Csw.composites.tree(cswParent, opts);
+                };
 
                 cswParent.universalSearch = function (opts) {
                     /// <summary> Creates a Csw.universalSearch on this element</summary>

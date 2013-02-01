@@ -72,6 +72,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//SequenceNumber
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         /// <summary>
         /// Sets Barcode to the next sequence value
         /// </summary>

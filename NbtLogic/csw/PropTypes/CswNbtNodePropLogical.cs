@@ -64,6 +64,21 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get
+            {
+                // For Logicals, return the property name
+                string ret = string.Empty;
+                if( Checked == Tristate.True )
+                {
+                    ret = PropName;
+                }
+                return ret;
+            }
+        } // ValueForNameTemplate
+
+
         public static string toLogicalGestalt( Tristate Tristate )
         {
             object val = CswConvert.ToDbVal( Tristate );

@@ -207,6 +207,11 @@ namespace ChemSW.Nbt.PropTypes
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         override public void onNodePropRowFilled()
         {
         }

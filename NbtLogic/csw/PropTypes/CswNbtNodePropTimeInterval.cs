@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropTimeInterval : CswNbtNodeProp
+    public class CswNbtNodePropTimeInterval: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropTimeInterval( CswNbtNodePropWrapper PropWrapper )
         {
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( null == RateInterval );
+                return ( string.IsNullOrEmpty( Gestalt ) );
             }
         }
 
@@ -93,6 +93,11 @@ namespace ChemSW.Nbt.PropTypes
         public Int32 getMaximumWarningDays()
         {
             return _RateInterval.getMaximumWarningDays();
+        }
+
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
         }
 
 

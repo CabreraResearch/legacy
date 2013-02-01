@@ -1,7 +1,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function () {
+(function () {  
 
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
@@ -99,7 +99,7 @@
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.init = function () {
-                    Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                    Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                     Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                     //We don't have node name yet. Init the div in the right place and polyfill later.
                     cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
@@ -138,7 +138,7 @@
             };
 
             cswPublic.tearDown = function () {
-                Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                 cswPrivate.onTearDown();
             };
 
@@ -164,7 +164,7 @@
 
                 var handle = function () {
                     tabParent.empty();
-                    Csw.unsubscribe(Csw.enums.events.CswNodeDelete, handle);
+                    Csw.unsubscribe(Csw.enums.events.CswNodeDelete, null, handle);
                     return false;
                 };
 
@@ -429,7 +429,7 @@
 
             cswPrivate.setSelectedNodes = function () {
                 if (false === Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
-                    var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
+                    var nodeData = cswPrivate.nodeTreeCheck.getChecked();
                     //It's easier to nuke the collection than to remap it
                     cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
                     cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();

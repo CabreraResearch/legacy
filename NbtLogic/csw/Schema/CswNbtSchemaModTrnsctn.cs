@@ -777,7 +777,7 @@ namespace ChemSW.Nbt.Schema
         {
             Int32 RetRuleId = Int32.MinValue;
             if( Recurrence != Recurrence.Unknown &&
-                NbtScheduleRuleNames.Unknown != RuleName )
+                CswNbtResources.UnknownEnum != RuleName )
             {
                 //TODO - Come back some day and make this dundant-proof
                 //if we ever have to shift scripts around to accomodate DDL, these helper methods will not be so helpful

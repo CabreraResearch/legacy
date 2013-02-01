@@ -11,6 +11,8 @@ namespace ChemSW.Nbt.ObjClasses
         public sealed class PropertyName
         {
             public const string Name = "Name";
+            public const string Language = "Language";
+            public const string Format = "Format";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -82,6 +84,8 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+        public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
+        public CswNbtNodePropList Format { get { return _CswNbtNode.Properties[PropertyName.Format]; } }
 
         #endregion
 

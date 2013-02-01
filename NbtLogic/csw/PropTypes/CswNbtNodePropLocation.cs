@@ -262,6 +262,12 @@ namespace ChemSW.Nbt.PropTypes
             get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId ) ); } // get
         } // View
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty;

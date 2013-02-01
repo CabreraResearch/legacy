@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterPopulateProps();
         public abstract bool onButtonClick( NbtButtonData ButtonData );
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
-        public virtual CswNbtNode CopyNode( )
+        public virtual CswNbtNode CopyNode()
         {
             CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CopiedNode.copyPropertyValues( Node );
@@ -126,6 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly NbtButtonAction landingpage = new NbtButtonAction( "landingpage" );
             public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadview" );
             public static readonly NbtButtonAction nothing = new NbtButtonAction( "nothing" );
+            public static readonly NbtButtonAction griddialog = new NbtButtonAction( "griddialog" );
         }
 
         // For validating object class casting

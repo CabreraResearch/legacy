@@ -318,6 +318,13 @@ namespace ChemSW.Nbt.PropTypes
                 } // ValidateValues() 
         */
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
+
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
         private string _ElemName_LogicalSetJson = "logicalsetjson";
 

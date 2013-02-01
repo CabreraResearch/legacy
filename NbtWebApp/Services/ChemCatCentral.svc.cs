@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -103,6 +104,28 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceC3Search.RunChemCatCentralSearch,
                 ParamObj: CswC3SearchParams
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "importProduct" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn importC3Product( Int32 ProductId )
+        {
+            CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, Int32>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.importC3Product,
+                ParamObj: ProductId
                 );
 
             SvcDriver.run();

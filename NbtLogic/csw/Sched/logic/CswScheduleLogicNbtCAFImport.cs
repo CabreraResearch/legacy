@@ -41,23 +41,24 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-
-        private CswNbtResources _CswNbtResources = null;
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
-
         }
 
-        public void threadCallBack()
+        public bool hasLoad( ICswResources CswResources )
+        {
+            //Dummy for now
+            return true;
+        }
+
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
-
+                CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
                     int NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
@@ -112,11 +113,6 @@ namespace ChemSW.Nbt.Sched
         public void reset()
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
-        }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
         }
 
     }//CswScheduleLogicNbtCAFImpot

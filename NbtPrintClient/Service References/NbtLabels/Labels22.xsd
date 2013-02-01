@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="NbtWebApp" elementFormDefault="qualified" targetNamespace="NbtWebApp" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" />
+  <xs:import schemaLocation="https://nbtdaily.chemswlive.com/DevNbt/Services/Labels2.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" />
+  <xs:element name="list">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" minOccurs="0" name="Request" nillable="true" type="q1:NbtPrintLabel.Request.List" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="listResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" minOccurs="0" name="listResult" nillable="true" type="q2:CswNbtLabelList" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="getLabel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" minOccurs="0" name="Request" nillable="true" type="q3:NbtPrintLabel.Request.Get" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="getLabelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" minOccurs="0" name="getLabelResult" nillable="true" type="q4:CswNbtLabelEpl" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

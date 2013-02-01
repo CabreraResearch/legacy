@@ -234,6 +234,13 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
+
         #endregion
 
         #region Relationship-esque Helper Functions

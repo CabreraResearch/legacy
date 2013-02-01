@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -9,7 +10,6 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using System.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt
 
         public override void load( bool RequireViewPermissions )
         {
-            _CswNbtTree.makeRootNode( "", false, NbtViewAddChildrenSetting.None );
+            _CswNbtTree.makeRootNode( "", false );
 
             _CswNbtTree.goToRoot();
 
@@ -200,7 +200,7 @@ namespace ChemSW.Nbt
             string Select = @"select n.nodeid,
                                      n.nodename, 
                                      n.locked,
-                                     t.iconfilename,
+                                     nvl(n.iconfilename, t.iconfilename) iconfilename, 
                                      t.nodetypename,
                                      t.nametemplate,
                                      t.nodetypeid,

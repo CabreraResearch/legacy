@@ -166,6 +166,10 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         replacementVal = UserNode.Node.Properties[userNTP].Gestalt;
                     }
+                    else if( paramName == "nodeid" || paramName == "userid" )
+                    {
+                        replacementVal = UserNode.Node.NodeId.PrimaryKey.ToString();
+                    }
                 }
                 if( false == reportParams.ContainsKey( paramName ) )
                 {

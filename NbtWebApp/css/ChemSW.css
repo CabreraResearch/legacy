@@ -109,6 +109,7 @@ ul li div {
 .PageTable_RightCell
 {
     vertical-align: top;
+    width: 2000px;
 }
 
 .PageTable_RightColumn
@@ -1413,4 +1414,11 @@ ul li div {
 }
 .searchResultDeemph {
     color: #808080;
+}
+
+/* extJs overrides */
+
+.x-grid-row-summary .x-grid-cell-inner {
+    font-weight: bold;
+    font-size: 12px;
 }

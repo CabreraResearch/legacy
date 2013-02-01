@@ -432,7 +432,7 @@
                             moreDiv.shownDiv.br();
                             thisdiv = moreDiv.shownDiv;
                         }
-                        if (filterCount === cswPrivate.filterHideThreshold) {
+                        if (Csw.bool(thisFilter.usemorelink) && filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }

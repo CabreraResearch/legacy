@@ -484,6 +484,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string SupplierNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string[] SynonymsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.Nbt.ChemCatCentral.CswC3Product.TemplateSlctdExtData[] TemplateSelectedExtensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -716,6 +719,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.SupplierNameField, value) != true)) {
                     this.SupplierNameField = value;
                     this.RaisePropertyChanged("SupplierName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string[] Synonyms {
+            get {
+                return this.SynonymsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SynonymsField, value) != true)) {
+                    this.SynonymsField = value;
+                    this.RaisePropertyChanged("Synonyms");
                 }
             }
         }

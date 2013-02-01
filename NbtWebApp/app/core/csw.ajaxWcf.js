@@ -42,7 +42,7 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
         Csw.extend(response, data, true);
         
-        if (false === response.Status.Success &&
+        if (false === response.Status.Success ||
             response.Status.Errors.length > 0) {
             var lastErr = response.Status.Errors.length - 1;
             if (false === o.overrideError) {
@@ -158,7 +158,12 @@
                 cswPrivate.onJsonSuccess(cswInternal, data, document.location + '/' + cswInternal.urlMethod);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus, param1) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, param1, { data: cswInternal.data, urlMethod: document.location + '/' + cswInternal.urlMethod });
+                cswPrivate.onJsonError(xmlHttpRequest, textStatus, param1, { 
+                    data: cswInternal.data, 
+                    watchGlobal: cswInternal.watchGlobal, 
+                    urlMethod: document.location + '/' + cswInternal.urlMethod 
+                    }
+                 );
             },
             complete: function(xmlHttpRequest, textStatus) {
                 Csw.tryExec(cswInternal.complete, xmlHttpRequest, textStatus);

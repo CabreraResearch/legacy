@@ -492,13 +492,18 @@
             cswPublic.remove = function () {
                 /// <summary>Remove the element and delete the object.</summary>
                 /// <returns type="null"></returns> 
-                if (cswPrivate.isControlStillValid()) {
+                //if (cswPrivate.isControlStillValid()) {
+                //if the control isn't valid, we don't need to throw on removing it.
+                if(cswPublic && cswPublic.$) {
                     cswPublic.$.remove();
                     //Nice try, but this doesn't nuke outstanding references--only the assignment of the reference to the property on this object.
                     //Csw.each(cswPublic, function (name) {
                     //cswPublic[name] = null;
                     //delete cswPublic[name];
                     //});
+
+                    //This is a value assignment, it doesn't affect the reference that brought you here
+                    //However, it's useful inside the closure that defines cswPublic to know we removed this element from the DOM.
                     cswPublic = null;
                 }
                 return null;

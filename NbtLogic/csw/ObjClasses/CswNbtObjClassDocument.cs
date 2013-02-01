@@ -305,6 +305,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
 
         #endregion
+
+        #region Custom Logic
+
+        #endregion
+
     }//CswNbtObjClassDocument
 
 }//namespace ChemSW.Nbt.ObjClasses

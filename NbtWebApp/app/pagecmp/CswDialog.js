@@ -25,7 +25,7 @@
                 }
             };
         };
-    } ());
+    }());
     var cswPrivate = cswPrivateInit();
     cswPrivate.div = Csw.literals.div();
 
@@ -532,7 +532,7 @@
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
-                            var propOpts = [{ value: '', display: 'Select...'}];
+                            var propOpts = [{ value: '', display: 'Select...' }];
                             Csw.each(data.add, function (p) {
                                 var display = p.propname;
                                 if (Csw.bool(p.hidden)) {
@@ -871,34 +871,34 @@
 
             openDialog(div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
-        ImportC3RecordDialog: function (options) {
-            var cswDlgPrivate = {
-                nodes: {},
-                nodenames: [],
-                nodeids: [],
-                cswnbtnodekeys: [],
-                onDeleteNode: null, //function (nodeid, nodekey) { },
-                Multi: false,
-                nodeTreeCheck: null,
-                publishDeleteEvent: true
-            };
+//        ImportC3RecordDialog: function (options) {
+//            var cswDlgPrivate = {
+//                nodes: {},
+//                nodenames: [],
+//                nodeids: [],
+//                cswnbtnodekeys: [],
+//                onDeleteNode: null, //function (nodeid, nodekey) { },
+//                Multi: false,
+//                nodeTreeCheck: null,
+//                publishDeleteEvent: true
+//            };
 
-            if (Csw.isNullOrEmpty(options)) {
-                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
-            }
-            Csw.extend(cswDlgPrivate, options);
-            var cswPublic = {
-                div: Csw.literals.div(),
-                close: function () {
-                    cswPublic.div.$.dialog('close');
-                }
-            };
+//            if (Csw.isNullOrEmpty(options)) {
+//                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+//            }
+//            Csw.extend(cswDlgPrivate, options);
+//            var cswPublic = {
+//                div: Csw.literals.div(),
+//                close: function () {
+//                    cswPublic.div.$.dialog('close');
+//                }
+//            };
 
-            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
+//            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
 
-            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
+//            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
 
-        }, // ImportC3RecordDialog
+//        }, // ImportC3RecordDialog
         C3DetailsDialog: function (options) {
 
             var cswPrivate = {
@@ -977,8 +977,8 @@
                             title: 'Sizes',
                             height: 100,
                             width: 300,
-                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string'}],
-                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty'}],
+                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string' }],
+                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty' }],
                             data: {
                                 items: data.ProductDetails.ProductSize,
                                 buttons: []
@@ -1780,6 +1780,7 @@
 
 
     function openDialog(div, width, height, onClose, title, onOpen) {
+
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
@@ -1795,15 +1796,16 @@
             height: height,
             title: title,
             position: [posX, posY],
+            beforeClose: function () {
+                return Csw.clientChanges.manuallyCheckChanges();
+            },
             close: function () {
                 posX -= incrPosBy;
                 posY -= incrPosBy;
                 dialogsCount--;
-                if (Csw.isFunction(onClose)) {
-                    Csw.tryExec(onClose);
-                }
+                Csw.tryExec(onClose);
 
-                Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                unbindEvents();
                 if (dialogsCount === 0) {
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
@@ -1822,15 +1824,26 @@
         });
         posX += incrPosBy;
         posY += incrPosBy;
-        function closeMe(eventObj, action) {
+
+        var doClose = function () {
+            if (Csw.clientChanges.manuallyCheckChanges()) {
+                Csw.tryExec(onClose);
+                div.$.dialog('close');
+                unbindEvents();
+            }
+        };
+        var closeMe = function (eventObj, action) {
             afterObjectClassButtonClick(action, {
                 close: function () {
-                    div.$.dialog('close');
-                    Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                    doClose();
                 }
             });
-        }
-        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        };
+        var unbindEvents = function () {
+            Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            Csw.subscribe('initGlobalEventTeardown', doClose);
+        };
+
     }
 
     // Method calling logic

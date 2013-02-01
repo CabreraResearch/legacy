@@ -607,6 +607,147 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Viola Methods
 
+        #region WILLIAM Methods
+
+        #region Case 28363
+
+        private void _addPropsToJuridictionOC( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass jurisdictionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass );
+
+            CswNbtMetaDataObjectClassProp formatOCP = jurisdictionOC.getObjectClassProp( CswNbtObjClassJurisdiction.PropertyName.Format );
+            if( null == formatOCP )
+            {
+                formatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( jurisdictionOC )
+                {
+                    PropName = CswNbtObjClassJurisdiction.PropertyName.Format,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ListOptions = CswNbtObjClassDocument.Formats.Options.ToString()
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp languageOCP = jurisdictionOC.getObjectClassProp( CswNbtObjClassJurisdiction.PropertyName.Language );
+            if( null == languageOCP )
+            {
+                languageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( jurisdictionOC )
+                {
+                    PropName = CswNbtObjClassJurisdiction.PropertyName.Language,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ListOptions = "en,fr,es,de"
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        private void _addViewSDSProptoMaterial( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp viewSDS_OC = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.ViewSDS );
+            if( null == viewSDS_OC )
+            {
+                viewSDS_OC = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+                {
+                    PropName = CswNbtObjClassMaterial.PropertyName.ViewSDS,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    StaticText = CswNbtObjClassMaterial.PropertyName.ViewSDS,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        private void _fixRecurringRequestProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            
+            
+            CswNbtMetaDataObjectClassProp RecurringOcp = RequestMaterialDispenseOc.getObjectClassProp( "Recurring" );
+            if( null != RecurringOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RecurringOcp, Tristate.False );
+            }
+
+            CswNbtMetaDataObjectClassProp NextReorderOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, DBNull.Value );
+            
+            CswNbtMetaDataObjectClassProp RecurringFreqOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, DBNull.Value );
+
+            _resetBlame();
+        }
+
+        #endregion
+
+        #region Case 28246
+
+        private void _addPropsToMaterialSynonymOC( CswDeveloper Dev, Int32 CaseNo )
+        {
+
+            CswNbtMetaDataObjectClass MaterialSynonymOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialSynonymClass );
+
+            /* Create the new properties Type and Language */
+            CswNbtMetaDataObjectClassProp TypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialSynonymOC )
+            {
+                PropName = "Type",
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                IsRequired = false
+            } );
+
+            CswNbtMetaDataObjectClassProp LanguageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialSynonymOC )
+            {
+                PropName = "Language",
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                IsRequired = false
+            } );
+
+        }
+
+        #endregion Case 28246
+
+        #region Case 28560
+
+        private void _addViewSDSToContainer( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp viewSDS_OCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ViewSDS );
+
+            if( null == viewSDS_OCP )
+            {
+                viewSDS_OCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
+                {
+                    PropName = CswNbtObjClassContainer.PropertyName.ViewSDS,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
+
+        #endregion WILLIAM Methods
+
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -630,6 +771,15 @@ namespace ChemSW.Nbt.Schema
 
             #endregion VIOLA
 
+            #region WILLIAM
+
+            _addPropsToJuridictionOC( CswDeveloper.MB, 28363 );
+            _addViewSDSProptoMaterial( CswDeveloper.MB, 28363 );
+            _addPropsToMaterialSynonymOC( CswDeveloper.CM, 28246 );
+            _addViewSDSToContainer( CswDeveloper.MB, 28560 );
+            _fixRecurringRequestProp( CswDeveloper.CF, 28340 );
+
+            #endregion WILLIAM
 
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();

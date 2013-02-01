@@ -85,6 +85,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\actions\csw.tierIIReporting.js" />
+    <Content Include="app\actions\csw.hmisReporting.js" />
+    <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\_template.js" />
     <Content Include="app\composites\csw.fileupload.js" />
     <Content Include="app\controls\csw.casnotextbox.js" />
@@ -98,6 +101,8 @@
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\literals\_template.js" />
+    <Content Include="app\proptypes\csw.propTypeChildContents.js" />
+    <Content Include="app\nodes\csw.node.treeExt.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
@@ -141,11 +146,12 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\wizards\csw.legacymobile.js" />
     <Content Include="app\wizards\csw.reconciliation.js" />
     <Content Include="app\types\csw.casno.js" />
     <Content Include="app\wizards\_template.js" />
     <Content Include="ConnectTest.html" />
-    <None Include="css\csw.label.less" />
+    <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
     <Content Include="PrintTest.html" />
     <Content Include="etc\far.exe" />

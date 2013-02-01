@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             [DataMember( IsRequired = false )]
             public Int32 NodeTypeId = Int32.MinValue;
-            
+
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
 
@@ -477,8 +477,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         View.AddViewRelationship( MetaDataNodeType, IncludeDefaultFilters: true );
 
                         Ret.NodeTypeId = MetaDataNodeType.NodeTypeId;
-                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create,
-                                                                          MetaDataNodeType );
+                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
                     }
                 }
                 else

@@ -246,7 +246,7 @@ namespace ChemSW.Nbt
             string WithJnp = @" jnp as (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid, op.objectclasspropid, jnp.field1, p.firstpropversionid
                                        from jct_nodes_props jnp
                                        join nodetype_props p on jnp.nodetypepropid = p.nodetypepropid
-		                               join object_class_props op on p.objectclasspropid = op.objectclasspropid) ";
+                                       join object_class_props op on p.objectclasspropid = op.objectclasspropid) ";
             Int32 GrpCount = 0;
             string WithGrp = null;
 
@@ -254,7 +254,7 @@ namespace ChemSW.Nbt
             string WithSrt = @" jsort as (select jnp.nodeid, p.nodetypepropid, op.objectclasspropid, jnp.field1, jnp.field1_numeric, jnp.field1_date, jnp.field2_numeric, jnp.field2_date
                                        from jct_nodes_props jnp
                                        join nodetype_props p on jnp.nodetypepropid = p.nodetypepropid
-		                               join object_class_props op on p.objectclasspropid = op.objectclasspropid) ";
+                                       join object_class_props op on p.objectclasspropid = op.objectclasspropid) ";
 
             string Select = "select n.nodeid ";
             if( false == IsParentQuery )

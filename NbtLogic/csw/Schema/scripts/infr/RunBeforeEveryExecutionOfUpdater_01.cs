@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
@@ -47,13 +47,13 @@ namespace ChemSW.Nbt.Schema
             #region VIOLA
 
             // case 26827
-            if ( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", "searchdeferpropid" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", "searchdeferpropid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", "searchdeferpropid",
                                                       "Defer to the target of this property in search results", false,
                                                       false );
             }
-            if ( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "searchdeferpropid" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "searchdeferpropid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "searchdeferpropid",
                                                       "Defer to the target of this property in search results", false,
@@ -62,17 +62,17 @@ namespace ChemSW.Nbt.Schema
 
             _createTierIITable( CswDeveloper.BV, 28247 );
 
-            
+
             // case 25495
             _acceptBlame( CswDeveloper.SS, 25495 );
             string SearchTableName = "search";
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( SearchTableName ) )
             {
-                _CswNbtSchemaModTrnsctn.addTable( SearchTableName , "searchid" );
+                _CswNbtSchemaModTrnsctn.addTable( SearchTableName, "searchid" );
                 _CswNbtSchemaModTrnsctn.addStringColumn( SearchTableName, "category", "category for view selector", false, false, 40 );
                 _CswNbtSchemaModTrnsctn.addStringColumn( SearchTableName, "name", "name of search", false, false, 80 );
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( SearchTableName , "userid", "owner of search", false, false, "nodes", "nodeid" );
-                _CswNbtSchemaModTrnsctn.addClobColumn( SearchTableName , "searchdata", "data for building this search", false, false );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( SearchTableName, "userid", "owner of search", false, false, "nodes", "nodeid" );
+                _CswNbtSchemaModTrnsctn.addClobColumn( SearchTableName, "searchdata", "data for building this search", false, false );
             }
             _resetBlame();
 
@@ -86,6 +86,26 @@ namespace ChemSW.Nbt.Schema
 
             #endregion VIOLA
 
+            #region WILLIAM
+
+            _acceptBlame( CswDeveloper.CF, 27882 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "node_views", "groupbysiblings" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "node_views", "groupbysiblings", "Group by Siblings in Tree", true, false );
+            }
+            _resetBlame();
+
+
+            _acceptBlame( CswDeveloper.SS, 28508 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "iconfilename" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "iconfilename", "Overrides the icon from the nodetype", false, false, 50 );
+            }
+            _resetBlame();
+
+                        
+            #endregion WILLIAM
+
         }//Update()
 
 
@@ -96,7 +116,7 @@ namespace ChemSW.Nbt.Schema
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
             {
                 _CswNbtSchemaModTrnsctn.addTable( "tier2", "tier2id" );
-                _CswNbtSchemaModTrnsctn.getNewPrimeKey("tier2");
+                _CswNbtSchemaModTrnsctn.getNewPrimeKey( "tier2" );
             }
             if( _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
             {

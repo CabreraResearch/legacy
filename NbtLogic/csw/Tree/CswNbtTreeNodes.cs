@@ -7,138 +7,226 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeNodes
+    public class CswNbtTreeNodes : ICswNbtTree
     {
-        private CswNbtColumnNames _CswNbtColumnNames = new CswNbtColumnNames();
-        private CswNbtResources _CswNbtResources = null;
+        #region Events
 
-        private JObject _CurrentNode = null;
-        private JObject _TreeNode = null;
-        private JObject _RootNode = null;
-        private CswNbtNodeKey _TreeNodeKey = null;
-        private CswNbtNodeKey _RootNodeKey = null;
+        /// <summary>
+        ///     Represents a Tree Modification Event
+        /// </summary>
+        /// <param name="CswNbtTreeDomProxy">Tree being modified</param>
+        /// <param name="CswNbtTreeModEventArgs">Modification event arguments</param>
+        public delegate void CswNbtTreeModificationHandler(
+            object CswNbtTreeDomProxy, CswNbtTreeModEventArgs CswNbtTreeModEventArgs );
 
-        private CswNbtTreeKey _CswNbtTreeKey = null;
-        private CswNbtNodeCollection _CswNbtNodeCollection = null;
+        /// <summary>
+        ///     Event occurs after changing the parent of a node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onAfterChangeParent;
 
-        private Dictionary<CswNbtNodeKey, CswNbtNodeKey> NodesAndParents = null;
-        private Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>> NodesById = null;
+        /// <summary>
+        ///     Event occurs after deleting a node from the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onAfterDeleteNode;
 
-        /*
-         * The tree is structured in such a way that the elements
-         * all correspond to a NodeSpecies. All other data pertaining
-         * to a node MUST be stored as attributes of said elements. 
-         * Adhereing to this structure means that the navigational 
-         * methods of DOM will correspond to our understanding of an 
-         * NBT tree. This will result in an ugly tree because the NbtNode
-         * element will have an un-Godly number of attributes, one of which
-         * will be a CSV representing the allowed child node types. But at 
-         * this point this approach saves us a lot of effort: otherwise, 
-         * we would have to proxy the DOM navigation in such a way as to 
-         * make it look like NBT-tree navigation. This way clients of this 
-         * class end up proxying directly to DOM on a one-to-one basis.
-         */
+        /// <summary>
+        ///     Event occurs after inserting a new node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onAfterInsertNode;
 
-        // All
-        private const string _AttrName_ElemType = "name";
-        public const string _AttrName_ChildNodes = "childnodes";
-        public const string _AttrName_ChildProps = "childprops";
+        /// <summary>
+        ///     Event occurs before changing the parent of a node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onBeforeChangeParent;
 
-        // NbtTree element
-        public const string _ElemName_Tree = "NbtTree";
-        public const string _AttrName_TreeName = "treename";
+        /// <summary>
+        ///     Event occurs before deleting a node from the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onBeforeDeleteNode;
 
-        // NbtNode element
-        public const string _ElemName_Node = "NbtNode";
-        public const string _AttrName_NodeId = "nodeid";
-        public const string _AttrName_Key = "key";
-        public const string _AttrName_IconFileName = "iconfilename";
-        public const string _AttrName_NodeName = "nodename";
-        public const string _AttrName_NodeTypeId = "nodetypeid";
-        public const string _AttrName_ObjectClassId = "objectclassid";
-        public const string _AttrName_Selectable = "selectable";
-        public const string _AttrName_ShowInTree = "showintree";
-        public const string _AttrName_ExpandMode = "expandmode";
-        public const string _AttrName_Truncated = "truncated";
-        public const string _AttrName_Locked = "locked";
-        public const string _AttrName_Included = "included";
+        /// <summary>
+        ///     Event occurs before inserting a new node in the tree
+        /// </summary>
+        public CswNbtTreeModificationHandler onBeforeInsertNode;
 
-        // NbtNodeProp element
-        public const string _ElemName_NodeProp = "NbtNodeProp";
-        public const string _AttrName_NodePropId = "nodetypepropid";
-        public const string _AttrName_JctNodePropId = "jctnodepropid";
-        public const string _AttrName_NodePropName = "propname";
-        public const string _AttrName_NodePropGestalt = "gestalt";
-        public const string _AttrName_NodePropField1 = "field1";
-        public const string _AttrName_NodePropField2 = "field2";
-        public const string _AttrName_NodePropField1_Fk = "field1_fk";
-        public const string _AttrName_NodePropField1_Numeric = "field1_numeric";
-        public const string _AttrName_NodePropFieldType = "fieldtype";
-        public const string _AttrName_NodePropHidden = "hidden";
+        #endregion Events
 
-        // NbtNodeGroup element
-        public const string _ElemName_NodeGroup = "NbtNodeGroup";
+        #region Constructor
 
-        #region JSON
+        private readonly Dictionary<CswNbtNodeKey, CswNbtNodeKey> NodesAndParents;
+        private readonly Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>> NodesById;
+        private readonly CswNbtColumnNames _CswNbtColumnNames = new CswNbtColumnNames();
+        private readonly CswNbtNodeCollection _CswNbtNodeCollection;
+        private readonly CswNbtResources _CswNbtResources;
+        private readonly CswNbtTreeKey _CswNbtTreeKey;
 
-        private void _makeNodeJObject( JObject ParentObj,
-                                                string ElemName,
-                                                CswPrimaryKey NodeId,
-                                                string NodeName,
-                                                Int32 NodeTypeId,
-                                                Int32 ObjectClassId,
-                                                string Icon,
-                                                bool Selectable,
-                                                CswNbtViewNode ViewNode,
-                                                NodeSpecies Species,
-                                                bool ShowInTree,
-                                                bool Locked,
-                                                bool Included,
-                                                out JObject NewNode,
-                                                out CswNbtNodeKey NewNodeKey )
+        private readonly CswNbtTreeNode _TreeNode;
+
+        private readonly CswNbtNodeKey _TreeNodeKey;
+        private CswNbtTreeNode _CurrentNode;
+        private CswNbtTreeNode _RootNode;
+        private CswNbtNodeKey _RootNodeKey;
+
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        /// <param name="View">Tree View</param>
+        /// <param name="CswNbtResources">The CswNbtResources object</param>
+        /// <param name="CswNbtNodeWriter">A CswNbtNodeWriter object</param>
+        /// <param name="CswNbtNodeCollection">A reference to the CswNbtNodeCollection</param>
+        /// <param name="IsFullyPopulated"></param>
+        public CswNbtTreeNodes( string TreeName, CswNbtView View, CswNbtResources CswNbtResources,
+                                CswNbtNodeCollection CswNbtNodeCollection, bool IsFullyPopulated )
+        {
+            _CswNbtResources = CswNbtResources;
+            _CswNbtNodeCollection = CswNbtNodeCollection;
+            _CswNbtTreeKey = new CswNbtTreeKey( _View );
+            _View = View;
+            _IsFullyPopulated = IsFullyPopulated;
+
+
+            NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
+            NodesById = new Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>>();
+
+            // Make Tree Node
+            _makeNbtTreeNode( null,
+                              Elements.Tree,
+                              null,
+                              string.Empty,
+                              Int32.MinValue,
+                              Int32.MinValue,
+                              string.Empty,
+                              false,
+                              null,
+                              NodeSpecies.Plain,
+                              true,
+                              false,
+                              true,
+                              out _TreeNode,
+                              out _TreeNodeKey );
+
+            _TreeNode.TreeName = TreeName;
+        }
+
+        public sealed class Elements
+        {
+            public const string Tree = "NbtTree";
+            public const string Prop = "NbtNodeProp";
+            public const string Node = "NbtNode";
+            public const string Group = "NbtNodeGroup";
+        }
+
+        #endregion Constructor
+
+        #region Properties
+
+        private readonly bool _IsFullyPopulated;
+        private readonly CswNbtTreeKey _Key = null;
+        private string _SourceViewXml = "";
+        private CswNbtView _View;
+
+        /// <summary>
+        ///     View which was used to build this tree
+        /// </summary>
+        public CswNbtView View
+        {
+            get { return _View; }
+            set { _View = value; }
+        }
+
+        /// <summary>
+        ///     View XML that was used to create this tree
+        /// </summary>
+        public string SourceViewXml
+        {
+            set { _SourceViewXml = value; }
+            get { return _SourceViewXml; }
+        }
+
+        /// <summary>
+        ///     Name of view that created this tree.  Also name of root node of tree.
+        /// </summary>
+        public string ViewName
+        {
+            get
+            {
+                //return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
+                string ret = string.Empty;
+                if( View != null )
+                {
+                    ret = View.ViewName;
+                }
+                return ret;
+            }
+        }
+
+        public bool IsFullyPopulated
+        {
+            get { return _IsFullyPopulated; }
+        }
+
+        /// <summary>
+        ///     TreeKey which is used to index this tree.
+        /// </summary>
+        public CswNbtTreeKey Key
+        {
+            get { return ( _Key ); }
+        }
+
+        #endregion Properties
+
+        #region TreeNode
+
+        private void _makeNbtTreeNode( CswNbtTreeNode ParentNode,
+                                       string ElemName,
+                                       CswPrimaryKey NodeId,
+                                       string NodeName,
+                                       Int32 NodeTypeId,
+                                       Int32 ObjectClassId,
+                                       string Icon,
+                                       bool Selectable,
+                                       CswNbtViewNode ViewNode,
+                                       NodeSpecies Species,
+                                       bool ShowInTree,
+                                       bool Locked,
+                                       bool Included,
+                                       out CswNbtTreeNode NewNode,
+                                       out CswNbtNodeKey NewNodeKey )
         {
             // Make the object
-            NewNode = new JObject();
-            NewNode[_AttrName_ElemType] = ElemName.ToString();
-            if( NodeId != null )
-            {
-                NewNode[_AttrName_NodeId] = NodeId.PrimaryKey.ToString();
-            }
-            else
-            {
-                NewNode[_AttrName_NodeId] = "0";
-            }
-            NewNode[_AttrName_NodeName] = NodeName;
-            NewNode[_AttrName_NodeTypeId] = NodeTypeId.ToString();
-            NewNode[_AttrName_ObjectClassId] = ObjectClassId.ToString();
-            NewNode[_AttrName_IconFileName] = Icon;
-            NewNode[_AttrName_Selectable] = Selectable.ToString().ToLower();
-            NewNode[_AttrName_ShowInTree] = ShowInTree.ToString().ToLower();
-            NewNode[_AttrName_Locked] = Locked.ToString().ToLower();
-            NewNode[_AttrName_Included] = Included.ToString().ToLower();
-            NewNode[_AttrName_ChildNodes] = new JArray();
-            NewNode[_AttrName_ChildProps] = new JArray();
+            NewNode = new CswNbtTreeNode( NodeId, NodeName, NodeTypeId, ObjectClassId )
+                {
+                    ElementName = ElemName,
+                    IconFileName = Icon,
+                    Selectable = Selectable,
+                    ShowInTree = ShowInTree,
+                    Locked = Locked,
+                    Included = Included,
+                    ChildNodes = new Collection<CswNbtTreeNode>(),
+                    ChildProps = new Collection<CswNbtTreeNodeProp>()
+                };
 
             CswNbtNodeKey ParentNodeKey = null;
             CswDelimitedString NodeCountPath = new CswDelimitedString( CswNbtNodeKey.NodeCountDelimiter );
-            if( ParentObj != null )
+            if( ParentNode != null )
             {
-                ParentNodeKey = _getKey( ParentObj );
-                NodeCountPath = ParentNodeKey.NodeCountPath;
-                NodeCountPath.Add( ( ( _getChildNodes( ParentObj ).Count() ) + 1 ).ToString() );
-                ( (JArray) ParentObj[_AttrName_ChildNodes] ).Add( NewNode );
+                ParentNodeKey = _getKey( ParentNode );
+                string ParentNodeCountPath = ParentNodeKey.NodeCountPath.ToString();
+                NodeCountPath.FromString( ParentNodeCountPath );
+                NodeCountPath.Add( ( ( ParentNode.ChildNodes.Count() ) + 1 ).ToString() );
+                ParentNode.ChildNodes.Add( NewNode );
+                NewNode.ParentNode = ParentNode;
             }
 
             // Make the key
-            NewNodeKey = new CswNbtNodeKey( _CswNbtResources );
+            NewNodeKey = new CswNbtNodeKey();
             NewNodeKey.TreeKey = _CswNbtTreeKey;
             NewNodeKey.NodeSpecies = Species;
             NewNodeKey.NodeCountPath = NodeCountPath;
-            if( ElemName == _ElemName_Node )
+            if( NewNode.ElementName == Elements.Node )
             {
                 NewNodeKey.NodeId = NodeId;
                 NewNodeKey.NodeTypeId = NodeTypeId;
@@ -148,17 +236,17 @@ namespace ChemSW.Nbt
                     NewNodeKey.ViewNodeUniqueId = ViewNode.UniqueId;
                 }
             }
-            else if( ElemName == _ElemName_Tree || ElemName == _ElemName_NodeGroup )
+            else if( NewNode.ElementName == Elements.Tree || NewNode.ElementName == Elements.Group )
             {
                 // Nothing
             }
-            else if( ElemName == _ElemName_NodeProp )
+            else if( NewNode.ElementName == Elements.Prop )
             {
-                throw ( new CswDniException( "_makeNodeJObject called on an NbtNodeProp element" ) );
+                throw ( new CswDniException( "_makeNbtTreeNode called on an NbtNodeProp element" ) );
             }
             else
             {
-                throw ( new CswDniException( "Unknown element: " + ElemName ) );
+                throw ( new CswDniException( "Unknown element: " + NewNode.ElementName ) );
             }
 
             // Dictionaries
@@ -175,199 +263,112 @@ namespace ChemSW.Nbt
                 NodesAndParents.Add( NewNodeKey, ParentNodeKey );
             }
 
-            NewNode[_AttrName_Key] = NewNodeKey.ToString();
-        } // _makeNodeJObject()
-
-        public void _makePropJObject( JObject NodeObj,
-                                      Int32 NodeTypePropId,
-                                      Int32 JctNodePropId,
-                                      string PropName,
-                                      string Gestalt,
-                                      CswNbtMetaDataFieldType.NbtFieldType FieldType,
-                                      string Field1,
-                                      string Field2,
-                                      Int32 Field1_Fk,
-                                      double Field1_Numeric,
-                                      bool Hidden )
-        {
-            // BZ 7135 - write dates in XML format
-            string PropValue = Gestalt;
-            JObject NewProp = new JObject();
-
-            NewProp[_AttrName_ElemType] = "NbtNodeProp";
-            NewProp[_AttrName_NodePropId] = NodeTypePropId.ToString();
-            NewProp[_AttrName_JctNodePropId] = JctNodePropId.ToString();
-            NewProp[_AttrName_NodePropName] = PropName;
-            NewProp[_AttrName_NodePropGestalt] = PropValue;
-            NewProp[_AttrName_NodePropField1] = Field1;
-            NewProp[_AttrName_NodePropField2] = Field2;
-            NewProp[_AttrName_NodePropField1_Fk] = Field1_Fk;
-            NewProp[_AttrName_NodePropField1_Numeric] = Field1_Numeric;
-            NewProp[_AttrName_NodePropFieldType] = FieldType.ToString();
-            NewProp[_AttrName_NodePropHidden] = Hidden;
-            ( (JArray) NodeObj[_AttrName_ChildProps] ).Add( NewProp );
-
-        }//_makePropJObject()
-
-
-
-
-        private string _getElemName()
-        {
-            return _getElemName( _CurrentNode );
+            NewNode.NodeKey = NewNodeKey;
         }
 
-        private string _getElemName( JObject NodeObj )
+        // _makeNbtTreeNode()
+
+        public void _makeTreeNodeProp( CswNbtTreeNode TreeNode,
+                                       Int32 NodeTypePropId,
+                                       Int32 JctNodePropId,
+                                       string PropName,
+                                       string Gestalt,
+                                       CswNbtMetaDataFieldType.NbtFieldType FieldType,
+                                       string Field1,
+                                       string Field2,
+                                       Int32 Field1_Fk,
+                                       double Field1_Numeric,
+                                       bool Hidden )
         {
-            return NodeObj[_AttrName_ElemType].ToString();
+            CswNbtTreeNodeProp TreeNodeProp = new CswNbtTreeNodeProp( FieldType, PropName, NodeTypePropId, JctNodePropId,
+                                                                      TreeNode )
+                {
+                    ElementName = "NbtNodeProp",
+                    Gestalt = Gestalt,
+                    Field1 = Field1,
+                    Field2 = Field2,
+                    Field1_Fk = Field1_Fk,
+                    Field1_Numeric = Field1_Numeric,
+                    Hidden = Hidden
+                };
+
+            TreeNode.ChildProps.Add( TreeNodeProp );
         }
 
-        private JArray _getChildNodes()
+//_makeTreeNodeProp()
+
+        private Collection<CswNbtTreeNode> _getChildNodes()
         {
             return _getChildNodes( _CurrentNode );
         }
 
-        private JArray _getChildNodes( JObject NodeObj )
+        private Collection<CswNbtTreeNode> _getChildNodes( CswNbtTreeNode TreeNode )
         {
-            return (JArray) NodeObj[_AttrName_ChildNodes];
+            return TreeNode.ChildNodes;
         }
 
-        private JObject _getParentNode()
+        private CswNbtTreeNode _getParentNode()
         {
             return _getParentNode( _CurrentNode );
         }
 
-        private JObject _getParentNode( JObject NodeObj )
+        private CswNbtTreeNode _getParentNode( CswNbtTreeNode TreeNode )
         {
-            JObject ret = null;
-            if( NodeObj.Parent != null &&               // JArray
-                NodeObj.Parent.Parent != null &&        // JProperty
-                NodeObj.Parent.Parent.Parent != null )  // JObject
-            {
-                ret = (JObject) NodeObj.Parent.Parent.Parent;
-            }
-            return ret;
+            return TreeNode.ParentNode;
         }
 
-        private JArray _getChildProps()
+        private Collection<CswNbtTreeNodeProp> _getChildProps()
         {
             return _getChildProps( _CurrentNode );
         }
 
-        private JArray _getChildProps( JObject NodeObj )
+        private Collection<CswNbtTreeNodeProp> _getChildProps( CswNbtTreeNode TreeNode )
         {
-            return (JArray) NodeObj[_AttrName_ChildProps];
+            return TreeNode.ChildProps;
         }
 
-
-        private CswPrimaryKey _getNodeId( JObject NodeObj )
+        private CswNbtNodeKey _getKey( CswNbtTreeNode TreeNode )
         {
-            return new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeObj[_AttrName_NodeId].ToString() ) );
+            TreeNode.NodeKey.TreeKey = _CswNbtTreeKey;
+            return TreeNode.NodeKey;
         }
 
-        private CswNbtNodeKey _getKey( JObject NodeObj )
+        private CswNbtTreeNode _getMatchingGroup( CswNbtTreeNode ParentTreeNode, string ThisGroupName )
         {
-            return _getKey( NodeObj[_AttrName_Key].ToString() );
-        }
-        private CswNbtNodeKey _getKey( string KeyAsString )
-        {
-            CswNbtNodeKey ret = new CswNbtNodeKey( _CswNbtResources, KeyAsString );
-            ret.TreeKey = _CswNbtTreeKey;
-            return ret;
-        }
-
-        private string _getAttr( string AttrName )
-        {
-            return _getAttr( _CurrentNode, AttrName );
-        }
-        private string _getAttr( JObject NodeObj, string AttrName )
-        {
-            string ret = string.Empty;
-            if( NodeObj[AttrName] != null )
+            CswNbtTreeNode ret = null;
+            foreach( CswNbtTreeNode PotentialGroupNode in ParentTreeNode.ChildNodes )
             {
-                ret = NodeObj[AttrName].ToString();
-            }
-            return ret;
-        }
-
-        private void _setAttr( string AttrName, string Value )
-        {
-            _setAttr( _CurrentNode, AttrName, Value );
-        }
-        private void _setAttr( JObject NodeObj, string AttrName, string Value )
-        {
-            NodeObj[AttrName] = Value;
-        }
-
-        private void _setAttr( string AttrName, bool Value )
-        {
-            _setAttr( _CurrentNode, AttrName, Value );
-        }
-        private void _setAttr( JObject NodeObj, string AttrName, bool Value )
-        {
-            _setAttr( NodeObj, AttrName, Value.ToString().ToLower() );
-        }
-
-        private JObject _getMatchingGroup( JObject ParentNode, string ThisGroupName )
-        {
-            JObject ret = null;
-            JArray PotentialGroupNodes = _getChildNodes( ParentNode );
-            foreach( JObject PotentialGroupNode in PotentialGroupNodes )
-            {
-                if( _getElemName( PotentialGroupNode ) == _ElemName_NodeGroup &&
-                    _getAttr( PotentialGroupNode, _AttrName_NodeName ) == ThisGroupName )
+                if( PotentialGroupNode.ElementName == Elements.Group &&
+                    PotentialGroupNode.NodeName == ThisGroupName )
                 {
                     ret = PotentialGroupNode;
                 }
             }
             return ret;
-        } // _getMatchingGroup()
+        }
 
-        #endregion JSON
+        // _getMatchingGroup()
 
-        public CswNbtTreeNodes( CswNbtTreeKey CswNbtTreeKey, string XslFilePath, string TreeName, CswNbtResources CswNbtResources, CswNbtNodeCollection CswNbtNodeCollection )
-        {
-            _CswNbtResources = CswNbtResources;
-            _CswNbtNodeCollection = CswNbtNodeCollection;
-            _CswNbtTreeKey = CswNbtTreeKey;
+        #endregion TreeNode
 
-            NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
-            NodesById = new Dictionary<CswPrimaryKey, Collection<CswNbtNodeKey>>();
+        #region Make Nodes
 
-            // Make Tree Node
-            _makeNodeJObject( null,
-                              _ElemName_Tree,
-                              null,
-                              string.Empty,
-                              Int32.MinValue,
-                              Int32.MinValue,
-                              string.Empty,
-                              false,
-                              null,
-                              NodeSpecies.Plain,
-                              true,
-                              false,
-                              true,
-                              out _TreeNode,
-                              out _TreeNodeKey );
-
-            _TreeNode[_AttrName_TreeName] = TreeName;
-        }//ctor
-
-        public void makeRootNode( string ViewName, string IconFileName, bool Selectable )
+        public void makeRootNode( string IconFileName, bool Selectable )
         {
             _makeRootNode( ViewName, null, IconFileName, Selectable );
         }
-        public void makeRootNode( string ViewName, CswNbtViewRoot ViewRoot )
+
+        public void makeRootNode( CswNbtViewRoot ViewRoot )
         {
-            _makeRootNode( ViewName, ViewRoot, ViewRoot.IconFileName, ViewRoot.Selectable );
+            _makeRootNode( ViewRoot.ViewName, ViewRoot, ViewRoot.IconFileName, ViewRoot.Selectable );
         }
+
         private void _makeRootNode( string ViewName, CswNbtViewRoot ViewRoot, string IconFileName, bool Selectable )
         {
             if( _RootNode == null )
             {
-                _makeNodeJObject( _TreeNode,
-                                  _ElemName_Node,
+                _makeNbtTreeNode( _TreeNode,
+                                  Elements.Node,
                                   null,
                                   ViewName,
                                   0,
@@ -378,9 +379,10 @@ namespace ChemSW.Nbt
                                   NodeSpecies.Root,
                                   true,
                                   false,
-                                  ( ViewRoot != null ) ? ViewRoot.Included : false,
+                                  ( ViewRoot != null ) && ViewRoot.Included,
                                   out _RootNode,
                                   out _RootNodeKey );
+                _CurrentNode = _RootNode;
             }
             else
             {
@@ -388,53 +390,74 @@ namespace ChemSW.Nbt
             }
         }
 
-        public JObject getRawJSON()
+        #endregion Make Nodes
+
+        #region Get Nodes
+
+        //public JObject getRawJSON()
+        //{
+        //    return _TreeNode;
+        //}
+
+        public CswNbtNode getNode( CswNbtNodeKey NodeKey )
         {
-            return _TreeNode;
+            return ( _getNbtNodeObjFromTreeNode( _getTreeNodeFromKey( NodeKey ) ) );
+        }
+
+//getNode()
+
+//getParentNodeOf()
+
+        /// <summary>
+        ///     Returns the root node of the tree
+        /// </summary>
+        public CswNbtTreeNode getRootNode()
+        {
+           return _RootNode;
+        }
+
+//getRootNode()
+
+        public Collection<CswNbtTreeNodeProp> getChildNodePropsOfNode()
+        {
+            return getChildPropNodesOfCurrentNode();
         }
 
         /// <summary>
-        /// Repairs the NodesAndParents hashtable
+        ///     Returns the NodeKey for the currently indexed node
         /// </summary>
-        private void _resetNodesAndParents()
+        public CswNbtNodeKey getNodeKeyForCurrentPosition()
         {
-            NodesAndParents = new Dictionary<CswNbtNodeKey, CswNbtNodeKey>();
-            goToRoot();
-            _resetNodesAndParentsRecursive();
-        }
-        private void _resetNodesAndParentsRecursive()
-        {
-            CswNbtNodeKey CurrentKey = getKeyForCurrentNode();
-            for( Int32 c = 0; c < getChildNodeCount(); c++ )
-            {
-                goToNthChild( c );
-                CswNbtNodeKey ChildKey = getKeyForCurrentNode();
-                if( !NodesAndParents.ContainsKey( ChildKey ) )
-                {
-                    NodesAndParents.Add( ChildKey, CurrentKey );
-                }
-                _resetNodesAndParentsRecursive();
-                goToParentNode();
-            }
+            CswNbtNodeKey ReturnVal = getKeyForCurrentNode();
+            //ReturnVal.TreeKey = Key;
+            return ( ReturnVal );
         }
 
+//getNodeKeyForCurrentPosition()
+
+        /// <summary>
+        ///     Returns the currently indexed node
+        /// </summary>
+        public CswNbtNode getNodeForCurrentPosition()
+        {
+            return getNode( getNodeKeyForCurrentPosition() );
+        }
 
         public bool isNodeDefined( CswNbtNodeKey NodeKey )
         {
-            return ( null != _getJSONNodeFromKey( NodeKey ) );
+            return ( null != _getTreeNodeFromKey( NodeKey ) );
         }
 
-        private JObject _getJSONNodeFromKey( CswNbtNodeKey NodeKey )
+        private CswNbtTreeNode _getTreeNodeFromKey( CswNbtNodeKey NodeKey )
         {
-            JObject ThisNode = _TreeNode;
+            CswNbtTreeNode ThisNode = _TreeNode;
             foreach( Int32 ThisCount in NodeKey.NodeCountPath.ToIntCollection() )
             {
                 if( ThisNode != null )
                 {
-                    JArray ChildNodes = _getChildNodes( ThisNode );
-                    if( ChildNodes.Count >= ThisCount )
+                    if( ThisNode.ChildNodes.Count >= ThisCount )
                     {
-                        ThisNode = (JObject) ChildNodes[ThisCount - 1];
+                        ThisNode = ThisNode.ChildNodes[ThisCount - 1];
                     }
                     else
                     {
@@ -443,101 +466,108 @@ namespace ChemSW.Nbt
                 } // if( ThisNode == null )
             }
             return ThisNode;
-        } // _getJSONNodeFromKey()
+        }
 
-        private JObject _getJSONNodeFromId( CswPrimaryKey NodeId )
+        // _getTreeNodeFromKey()
+
+        private CswNbtTreeNode _getTreeNodeFromId( CswPrimaryKey NodeId )
         {
-            JObject ret = null;
+            CswNbtTreeNode ret = null;
             if( NodesById.Keys.Contains( NodeId ) && NodesById[NodeId].Count > 0 )
             {
                 CswNbtNodeKey ThisNodeKey = NodesById[NodeId].First();
-                ret = _getJSONNodeFromKey( ThisNodeKey );
+                ret = _getTreeNodeFromKey( ThisNodeKey );
             }
             return ret;
-        } // _getJSONNodeFromId()
+        }
 
-        private CswNbtNode _getNbtNodeObjFromJSONNode( JObject NodeObj )
+        // _getTreeNodeFromId()
+
+        private CswNbtNode _getNbtNodeObjFromTreeNode( CswNbtTreeNode TreeNode )
         {
-            string Elem = _getElemName( NodeObj );
-            if( Elem != _ElemName_Node )
+            if( TreeNode.ElementName != Elements.Node )
             {
-                throw ( new CswDniException( "The current node is a " + Elem.ToString() + ", not an NbtNode" ) );
+                throw ( new CswDniException( "The current node is a " + TreeNode.ElementName + ", not an NbtNode" ) );
             }
 
-            CswNbtNodeKey NodeKey = _getKey( NodeObj );
-            CswNbtNode ReturnVal = _CswNbtNodeCollection.GetNode( _getNodeId( NodeObj ) );
+            CswNbtNodeKey NodeKey = _getKey( TreeNode );
+            CswNbtNode ReturnVal = _CswNbtNodeCollection[TreeNode.CswNodeId];
 
             if( NodeSpecies.Plain == NodeKey.NodeSpecies )
             {
                 string IconName = default( string );
-                string PotentialIconSuffix = _getAttr( NodeObj, _AttrName_IconFileName );
+                string PotentialIconSuffix = TreeNode.IconFileName;
                 if( false == string.IsNullOrEmpty( PotentialIconSuffix ) )
                 {
                     IconName = CswNbtMetaDataObjectClass.IconPrefix16 + PotentialIconSuffix;
                 }
                 ReturnVal.IconFileName = IconName;
-                ReturnVal.NodeName = _getAttr( NodeObj, _AttrName_NodeName );
-                ReturnVal.NodeTypeId = CswConvert.ToInt32( _getAttr( NodeObj, _AttrName_NodeTypeId ) );
+                ReturnVal.NodeName = TreeNode.NodeName;
+                ReturnVal.NodeTypeId = TreeNode.NodeTypeId;
             }
-            ReturnVal.Selectable = CswConvert.ToBoolean( _getAttr( NodeObj, _AttrName_Selectable ) );
-            ReturnVal.ShowInTree = CswConvert.ToBoolean( _getAttr( NodeObj, _AttrName_ShowInTree ) );
+            ReturnVal.Selectable = TreeNode.Selectable;
+            ReturnVal.ShowInTree = TreeNode.ShowInTree;
 
             return ReturnVal;
         }
-
-        public CswNbtNode getNode( CswNbtNodeKey NodeKey )
-        {
-
-            return ( _getNbtNodeObjFromJSONNode( _getJSONNodeFromKey( NodeKey ) ) );
-
-        }//getNode()
 
         public CswNbtNode getParentNodeOf( CswNbtNodeKey NodeKey )
         {
             CswNbtNode ReturnVal = null;
 
-            JObject CurrentNodeSave = _CurrentNode;
+            CswNbtTreeNode CurrentNodeSave = _CurrentNode;
 
             makeNodeCurrent( NodeKey );
 
-            if( !isCurrentPositionRoot() )
+            if( false == isCurrentPositionRoot() )
             {
-                ReturnVal = _getNbtNodeObjFromJSONNode( _getJSONNodeFromKey( getNodeKeyForParentOfCurrentPosition() ) );
+                ReturnVal = _getNbtNodeObjFromTreeNode( _getTreeNodeFromKey( getNodeKeyForParentOfCurrentPosition() ) );
             }
 
             _CurrentNode = CurrentNodeSave;
 
             return ( ReturnVal );
+        }
 
-        }//getParentNodeOf()
+//getNodeForCurrentPosition() 
 
+        #endregion Get Nodes
 
-        //Navigation and interrogation methods*****************************************
         #region Navigation and interrogation methods
 
+        private Collection<CswPrimaryKey> _NodesOfClass;
+        private Collection<CswPrimaryKey> _NodesOfNodeType;
 
         public void goToRoot()
         {
             _CurrentNode = _RootNode;
-        }//goToRoot()
+        }
+
+//goToRoot()
 
         /// <summary>
-        /// Move the current position to the Nth child of the current node
+        ///     Move the current position to the Nth child of the current node
         /// </summary>
         /// <param name="ChildN">0-based Index of Child</param>
         public void goToNthChild( int ChildN )
         {
-            JArray CurrentChildren = _getChildNodes();
+            Collection<CswNbtTreeNode> CurrentChildren = _getChildNodes();
             Int32 CurrentChildCount = CurrentChildren.Count();
             if( 0 == CurrentChildCount )
+            {
                 throw ( new CswDniException( "The current node has no children" ) );
+            }
 
             if( CurrentChildCount <= ChildN )
-                throw ( new CswDniException( "Requested child node " + ChildN + " does not exist; current node contains " + CurrentChildCount + " children" ) );
+            {
+                throw ( new CswDniException( "Requested child node " + ChildN +
+                                             " does not exist; current node contains " + CurrentChildCount + " children" ) );
+            }
 
-            _CurrentNode = (JObject) CurrentChildren[ChildN];
+            _CurrentNode = CurrentChildren[ChildN];
+        }
 
-        }//goToNthChild() 
+//goToNthChild() 
 
 
         public bool isCurrentNodeChildOfRoot()
@@ -553,7 +583,9 @@ namespace ChemSW.Nbt
         public void goToParentNode()
         {
             if( isCurrentPositionRoot() )
+            {
                 throw ( new CswDniException( "Already at root!" ) );
+            }
             _CurrentNode = _getParentNode();
         }
 
@@ -561,7 +593,7 @@ namespace ChemSW.Nbt
         {
             if( NodeKey.TreeKey == this._CswNbtTreeKey )
             {
-                _CurrentNode = _getJSONNodeFromKey( NodeKey );
+                _CurrentNode = _getTreeNodeFromKey( NodeKey );
             }
             else
             {
@@ -571,12 +603,7 @@ namespace ChemSW.Nbt
 
         public void makeNodeCurrent( CswPrimaryKey NodeId )
         {
-            _CurrentNode = _getJSONNodeFromId( NodeId );
-        }
-
-        public CswNbtNode getCurrentNode()
-        {
-            return _getNbtNodeObjFromJSONNode( _CurrentNode );
+            _CurrentNode = _getTreeNodeFromId( NodeId );
         }
 
         public bool isCurrentNodeDefined()
@@ -589,65 +616,352 @@ namespace ChemSW.Nbt
             return _getChildNodes().Count();
         }
 
-
         public CswNbtNodeKey getNodeKeyForParentOfCurrentPosition()
         {
             if( isCurrentPositionRoot() )
+            {
                 throw ( new CswDniException( "Current position is root" ) );
+            }
             return _getKey( _getParentNode() );
         }
 
+        /// <summary>
+        ///     Returns all node keys of nodes of a given Object Class
+        /// </summary>
+        /// <param name="ObjectClassId">Primary key of Object Class</param>
+        public Collection<CswPrimaryKey> getNodeKeysOfClass( Int32 ObjectClassId )
+        {
+            _NodesOfClass = new Collection<CswPrimaryKey>();
 
-        #endregion //NavigationAndInterrogation******************************
+            OnIterateNode = _collectNodesOfClass;
+            NodeVisitEventArgs = new NodeVisitEventArgs();
+            NodeVisitEventArgs.ObjectClassIdToFilter = ObjectClassId;
+
+            iterateTree();
+
+            return ( _NodesOfClass );
+        }
+
+//getNodeKeysOfClass()
 
 
-        //Modification methods*****************************************
+        /// <summary>
+        ///     Returns all node keys of nodes of a given NodeType
+        /// </summary>
+        /// <param name="NodeTypeId">Primary key of Node Type</param>
+        public Collection<CswPrimaryKey> getNodeKeysOfNodeType( Int32 NodeTypeId )
+        {
+            _NodesOfNodeType = new Collection<CswPrimaryKey>();
+
+            OnIterateNode = _collectNodesOfNodeType;
+            NodeVisitEventArgs = new NodeVisitEventArgs();
+            NodeVisitEventArgs.NodeTypeIdToFilter = NodeTypeId;
+
+            iterateTree();
+
+            return ( _NodesOfNodeType );
+        }
+
+//getNodeKeysOfNodeType()
+
+
+        /// <summary>
+        ///     Calls the OnIterateNode event on every node in the tree
+        /// </summary>
+        public void iterateTree()
+        {
+            if( null == OnIterateNode )
+            {
+                throw ( new CswDniException( "OnIterateNode must be set before calling iterateTree()" ) );
+            }
+
+            //cache current position
+            CswNbtNodeKey CurrentPosition = getNodeKeyForCurrentPosition();
+
+            goToRoot();
+            _iterateNodes();
+
+            //restore current position
+            makeNodeCurrent( CurrentPosition );
+        }
+
+//iterateTree()
+
+        /// <summary>
+        ///     Sets the Event arguments to use when iterating nodes
+        /// </summary>
+        public NodeVisitEventArgs NodeVisitEventArgs { set; get; }
+
+//NodeVisitEventArgs
+
+        /// <summary>
+        ///     Event to call when iterating nodes.  See <see cref="iterateTree" />.
+        /// </summary>
+        public CswNbtNodeVisitHandler OnIterateNode { get; //
+            set; //
+        }
+
+        public CswNbtNode getCurrentNode()
+        {
+            return _getNbtNodeObjFromTreeNode( _CurrentNode );
+        }
+
+        private void _collectNodesOfClass( object VisitedNodeKey, NodeVisitEventArgs NodeVisitEventArgs )
+        {
+            CswNbtNodeKey CswNbtNodeKey = (CswNbtNodeKey) VisitedNodeKey;
+            if( CswNbtNodeKey.ObjectClassId == NodeVisitEventArgs.ObjectClassIdToFilter )
+            {
+                _NodesOfClass.Add( CswNbtNodeKey.NodeId );
+            } //
+        }
+
+        private void _collectNodesOfNodeType( object VisitedNodeKey, NodeVisitEventArgs NodeVisitEventArgs )
+        {
+            CswNbtNodeKey CswNbtNodeKey = (CswNbtNodeKey) VisitedNodeKey;
+            if( CswNbtNodeKey.NodeTypeId == NodeVisitEventArgs.NodeTypeIdToFilter )
+            {
+                _NodesOfNodeType.Add( CswNbtNodeKey.NodeId );
+            } //
+        }
+
+//
+
+        private void _iterateNodes()
+        {
+            OnIterateNode( getNodeKeyForCurrentPosition(), NodeVisitEventArgs );
+            int TotalChilren = getChildNodeCount();
+            if( TotalChilren > 0 )
+            {
+                for( int ChildIdx = 0; ChildIdx < TotalChilren; ChildIdx++ )
+                {
+                    goToNthChild( ChildIdx );
+                    _iterateNodes();
+                    goToParentNode();
+                } //go through all children
+            }
+        }
+
+//_iterateChildren()
+
+        #endregion Navigation And Interrogation
+
         #region Modification Methods
 
-        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true )
+        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd,
+                                                                 bool UseGrouping, string GroupName,
+                                                                 CswNbtViewRelationship Relationship, Int32 RowCount,
+                                                                 bool Included = true )
         {
-            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, Relationship.Selectable, Relationship.ShowInTree, Relationship.AddChildren, RowCount, Included );
+            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship,
+                                            Relationship.Selectable, Relationship.ShowInTree, Relationship.AddChildren,
+                                            RowCount, Included );
         }
 
-        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true )
+        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd,
+                                                                 bool UseGrouping, string GroupName, bool Selectable,
+                                                                 bool ShowInTree, NbtViewAddChildrenSetting AddChildren,
+                                                                 Int32 RowCount, bool Included = true )
         {
-            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, null, Selectable, ShowInTree, AddChildren, RowCount, Included );
+            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, null, Selectable,
+                                            ShowInTree, AddChildren, RowCount, Included );
         }
 
-        private Collection<CswNbtNodeKey> _loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true )
+        public void setCurrentNodeExpandMode( string ExpandMode )
         {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
+            _checkCurrentNode();
+            _CurrentNode.ExpandMode = ExpandMode;
+        }
+
+        public void setCurrentNodeChildrenTruncated( bool Truncated )
+        {
+            _checkCurrentNode();
+            _CurrentNode.Truncated = Truncated;
+        }
+
+        public bool getCurrentNodeChildrenTruncated()
+        {
+            _checkCurrentNode();
+            return _CurrentNode.Truncated;
+        }
+
+//getKeyForCurrentNode()
+
+        public CswPrimaryKey getNodeIdForCurrentPosition()
+        {
+            _checkCurrentNode();
+
+            if( _CurrentNode.ElementName != Elements.Node )
+            {
+                throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );
+            }
+
+            return _CurrentNode.CswNodeId;
+        }
+
+//getNodeIdForCurrentPosition()
+
+        public string getNodeNameForCurrentPosition()
+        {
+            _checkCurrentNode();
+            return _CurrentNode.NodeName;
+        }
+
+//getNodeNameForCurrentPosition()
+
+        public bool getNodeLockedForCurrentPosition()
+        {
+            _checkCurrentNode();
+            return _CurrentNode.Locked;
+        }
+
+//getNodeLockedForCurrentPosition()
+
+        public bool getNodeIncludedForCurrentPosition()
+        {
+            _checkCurrentNode();
+            return _CurrentNode.Included;
+        } //getNodeIncludedForCurrentPosition()
+
+        public bool getNodeSelectableForCurrentPosition()
+        {
+            _checkCurrentNode();
+
+            if( _CurrentNode.ElementName != Elements.Node )
+            {
+                throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );
+            }
+
+            return _CurrentNode.Selectable;
+        } //getNodeSelectableForCurrentPosition()
+
+        public bool getNodeShowInTreeForCurrentPosition()
+        {
+            _checkCurrentNode();
+            if( _CurrentNode.ElementName != Elements.Node )
+            {
+                throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );
+            }
+
+            return _CurrentNode.ShowInTree;
+        } //getNodeShowInTreeForCurrentPosition()
+
+        public string getNodeIconForCurrentPosition()
+        {
+            _checkCurrentNode();
+            if( _CurrentNode.ElementName != Elements.Node )
+            {
+                throw ( new CswDniException( "The current node (" + _CurrentNode.ElementName + ") is not a CswNbtNode" ) );
+            }
+
+            return _CurrentNode.IconFileName;
+        } // getNodeIconForCurrentPosition
+
+
+        public Int32 getNodeCountForCurrentLevel()
+        {
+            return _getChildNodes( _getParentNode() ).Count();
+        }
+
+        /// <summary>
+        ///     Return a node key for the first matching node in the tree
+        /// </summary>
+        /// <remarks>
+        ///     Candidate to refactor to CswNbtNodes
+        /// </remarks>
+        /// <param name="NodeId">Primary key of node</param>
+        public CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId )
+        {
+            CswNbtNodeKey ReturnVal = null;
+            Collection<CswNbtNodeKey> KeyList = getKeysForNodeId( NodeId );
+            if( null != KeyList && KeyList.Count > 0 )
+            {
+                ReturnVal = KeyList[0];
+            }
+            return ( ReturnVal );
+        }
+
+//getNodeKeyByNodeId()
+
+        public Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
+        {
+            Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
+            if( NodesById.ContainsKey( NodeId ) )
+            {
+                foreach( CswNbtNodeKey NodeKey in NodesById[NodeId] )
+                {
+                    if( NodeKey.ViewNodeUniqueId == ViewNode.UniqueId )
+                    {
+                        ret.Add( NodeKey );
+                    }
+                }
+            }
+            return ret;
+        }
+
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt,
+                                 CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2,
+                                 Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
+        {
+            _checkCurrentNode();
+            _makeTreeNodeProp( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2,
+                               Field1_Fk, Field1_Numeric, Hidden );
+        }
+
+//addProperty()
+
+
+        public void removeCurrentNode()
+        {
+            _getChildNodes( _getParentNode() ).Remove( _CurrentNode );
+            _CurrentNode = _RootNode;
+        }
+
+        private Collection<CswNbtNodeKey> _loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd,
+                                                                   bool UseGrouping, string GroupName,
+                                                                   CswNbtViewRelationship Relationship, bool Selectable,
+                                                                   bool ShowInTree,
+                                                                   NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                                                   bool Included = true )
+        {
+            CswNbtMetaDataNodeType NodeType =
+                _CswNbtResources.MetaData.getNodeType(
+                    CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
             string TableName = NodeType.TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
 
-            return _loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship, Selectable, ShowInTree, AddChildren, RowCount, Included,
+            return _loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship, Selectable, ShowInTree,
+                                     AddChildren, RowCount, Included,
                                      DataRowToAdd[_CswNbtColumnNames.IconFileName.ToLower()].ToString(),
                                      DataRowToAdd[_CswNbtColumnNames.NameTemplate.ToLower()].ToString(),
                                      new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeName.ToLower()].ToString(),
-                                     CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),
+                                     CswConvert.ToInt32(
+                                         DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeTypeName.ToLower()].ToString(),
-                                     CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
+                                     CswConvert.ToInt32(
+                                         DataRowToAdd[_CswNbtColumnNames.ObjectClassId.ToLower()].ToString() ),
                                      DataRowToAdd[_CswNbtColumnNames.ObjectClassName.ToLower()].ToString(),
                                      CswConvert.ToBoolean( DataRowToAdd[_CswNbtColumnNames.Locked.ToLower()] )
-                                   );
+                );
         }
 
-        public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
-                                               bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included,
-                                               string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
-                                               string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
+        public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping,
+                                                           string GroupName, CswNbtViewRelationship Relationship,
+                                                           bool Selectable, bool ShowInTree,
+                                                           NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                                           bool Included,
+                                                           string IconFileName, string NameTemplate,
+                                                           CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
+                                                           string NodeTypeName, Int32 ObjectClassId,
+                                                           string ObjectClassName, bool Locked )
         {
             Collection<CswNbtNodeKey> ReturnKeyColl = new Collection<CswNbtNodeKey>();
 
-            JObject ParentNode = null;
-            if( _CurrentNode != null )
-                ParentNode = _CurrentNode;
-            else
-                ParentNode = _TreeNode;
+            CswNbtTreeNode ParentNode = null;
+            ParentNode = _CurrentNode ?? _TreeNode;
 
-            Collection<JObject> ParentNodes = new Collection<JObject>();
-            if( !UseGrouping )
+            Collection<CswNbtTreeNode> ParentNodes = new Collection<CswNbtTreeNode>();
+            if( false == UseGrouping )
             {
                 ParentNodes.Add( ParentNode );
             }
@@ -669,12 +983,12 @@ namespace ChemSW.Nbt
                         GroupNameForLoop = string.Empty;
                     }
 
-                    JObject MatchingGroup = _getMatchingGroup( ParentNode, ThisGroupName );
+                    CswNbtTreeNode MatchingGroup = _getMatchingGroup( ParentNode, ThisGroupName );
                     if( MatchingGroup == null )
                     {
                         CswNbtNodeKey MatchingGroupKey = null;
-                        _makeNodeJObject( ParentNode,
-                                          _ElemName_NodeGroup,
+                        _makeNbtTreeNode( ParentNode,
+                                          Elements.Group,
                                           null,
                                           ThisGroupName,
                                           Int32.MinValue,
@@ -699,12 +1013,12 @@ namespace ChemSW.Nbt
             } // if-else( !UseGrouping )
 
 
-            foreach( JObject ThisParentNode in ParentNodes )
+            foreach( CswNbtTreeNode ThisParentNode in ParentNodes )
             {
                 CswNbtNodeKey ThisKey = null;
-                JObject ThisNode = null;
-                _makeNodeJObject( ThisParentNode,
-                                  _ElemName_Node,
+                CswNbtTreeNode ThisNode = null;
+                _makeNbtTreeNode( ThisParentNode,
+                                  Elements.Node,
                                   NodeId,
                                   NodeName,
                                   NodeTypeId,
@@ -722,8 +1036,9 @@ namespace ChemSW.Nbt
             }
 
             return ( ReturnKeyColl );
+        }
 
-        }//loadNodeAsChild()
+//loadNodeAsChild()
 
         private void _checkCurrentNode()
         {
@@ -731,100 +1046,13 @@ namespace ChemSW.Nbt
                 throw ( new CswDniException( "There is no current node" ) );
         }
 
-        public void setCurrentNodeExpandMode( string ExpandMode )
-        {
-            _checkCurrentNode();
-            _setAttr( _CurrentNode, _AttrName_ExpandMode, ExpandMode );
-        }
-
-        public void setCurrentNodeChildrenTruncated( bool Truncated )
-        {
-            _checkCurrentNode();
-            _setAttr( _AttrName_Truncated, Truncated );
-        }
-
-        public bool getCurrentNodeChildrenTruncated()
-        {
-            _checkCurrentNode();
-            return CswConvert.ToBoolean( _getAttr( _AttrName_Truncated ) );
-        }
-
         public CswNbtNodeKey getKeyForCurrentNode()
         {
             _checkCurrentNode();
             return _getKey( _CurrentNode );
-        }//getKeyForCurrentNode()
-
-        public CswPrimaryKey getIdForCurrentNode()
-        {
-            _checkCurrentNode();
-            string Elem = _getElemName();
-            if( Elem != _ElemName_Node )
-                throw ( new CswDniException( "The current node (" + Elem.ToString() + ") is not a CswNbtNode" ) );
-
-            return new CswPrimaryKey( "nodes", CswConvert.ToInt32( _getAttr( _AttrName_NodeId ) ) );
-
-        }//getIdForCurrentNode()
-
-        public string getNameForCurrentNode()
-        {
-            _checkCurrentNode();
-            return _getAttr( _AttrName_NodeName );
-        }//getNameForCurrentNode()
-
-        public bool getLockedForCurrentNode()
-        {
-            _checkCurrentNode();
-            return CswConvert.ToBoolean( _getAttr( _AttrName_Locked ) );
-        }//getLockedForCurrentNode()
-
-        public bool getIncludedForCurrentNode()
-        {
-            _checkCurrentNode();
-            return CswConvert.ToBoolean( _getAttr( _AttrName_Included ) );
-        }//getIncludedForCurrentNode()
-
-        public bool getSelectableForCurrentNode()
-        {
-            _checkCurrentNode();
-            string Elem = _getElemName();
-            if( Elem != _ElemName_Node )
-                throw ( new CswDniException( "The current node (" + Elem.ToString() + ") is not a CswNbtNode" ) );
-
-            return CswConvert.ToBoolean( _getAttr( _AttrName_Selectable ) );
-        }//getSelectableForCurrentNode()
-
-        public bool getNodeShowInTreeForCurrentNode()
-        {
-            _checkCurrentNode();
-            string Elem = _getElemName();
-            if( Elem != _ElemName_Node )
-                throw ( new CswDniException( "The current node (" + Elem.ToString() + ") is not a CswNbtNode" ) );
-
-            return CswConvert.ToBoolean( _getAttr( _AttrName_ShowInTree ) );
-        }//getNodeShowInTreeForCurrentNode()
-
-
-        public Int32 getNodeCountForCurrentLevel()
-        {
-            return _getChildNodes( _getParentNode() ).Count();
         }
 
-        public Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
-        {
-            Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
-            if( NodesById.ContainsKey( NodeId ) )
-            {
-                foreach( CswNbtNodeKey NodeKey in NodesById[NodeId] )
-                {
-                    if( NodeKey.ViewNodeUniqueId == ViewNode.UniqueId )
-                    {
-                        ret.Add( NodeKey );
-                    }
-                }
-            }
-            return ret;
-        } // getNodeKeysByNodeIdAndViewNode()
+        // getNodeKeysByNodeIdAndViewNode()
 
         public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )
         {
@@ -841,27 +1069,15 @@ namespace ChemSW.Nbt
             return NodesAndParents[ChildKey];
         }
 
-        public JArray getChildPropNodesOfCurrentNode()
+        public Collection<CswNbtTreeNodeProp> getChildPropNodesOfCurrentNode()
         {
             return _getChildProps();
         }
 
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
-        {
-            _checkCurrentNode();
-            _makePropJObject( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2, Field1_Fk, Field1_Numeric, Hidden );
+        #endregion Modification Methods
+    }
 
-        }//addProperty()
+//class CswNbtTreeNodes
+}
 
-
-        public void removeCurrentNode()
-        {
-            _getChildNodes( _getParentNode() ).Remove( _CurrentNode );
-            _CurrentNode = _RootNode;
-        }
-
-        #endregion //Modification******************************
-
-    }//class CswNbtTreeNodes
-
-}//namespace ChemSW.Nbt
+//namespace ChemSW.Nbt

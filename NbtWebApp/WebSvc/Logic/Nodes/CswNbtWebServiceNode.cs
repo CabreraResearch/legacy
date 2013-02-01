@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 foreach( string NodeKey in NodeKeys )
                 {
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( NodeKey );
                     if( null != NbtNodeKey &&
                         null != NbtNodeKey.NodeId &&
                         CswTools.IsPrimaryKey( NbtNodeKey.NodeId ) &&

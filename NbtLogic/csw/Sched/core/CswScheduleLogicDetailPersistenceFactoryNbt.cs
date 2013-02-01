@@ -5,7 +5,7 @@ namespace ChemSW.Nbt.Sched
     public class CswScheduleLogicDetailPersistenceFactoryNbt : ICswScheduleLogicDetailPersistenceFactory
     {
 
-        public ICswScheduleLogicDetailPersistence make() { return ( new CswScheduleLogicDetailPersistenceNbt() ); }
+        public ICswScheduleLogicDetailPersistence make() { return ( new CswScheduleLogicDetailPersistenceDefault() ); }
 
     }//CswScheduleLogicDetailPersistenceFactoryCis
 

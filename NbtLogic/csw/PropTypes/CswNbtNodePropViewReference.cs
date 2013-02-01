@@ -116,6 +116,12 @@ namespace ChemSW.Nbt.PropTypes
             this.PendingUpdate = false;
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );

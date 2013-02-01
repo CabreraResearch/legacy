@@ -157,6 +157,13 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
+
         public const string NameColumn = "label";
         public const string KeyColumn = "key";
         public const string ValueColumn = "value";

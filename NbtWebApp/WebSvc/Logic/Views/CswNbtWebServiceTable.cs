@@ -124,6 +124,7 @@ namespace ChemSW.Nbt.WebServices
             PropsToHide.Add( "CasNo" );
             PropsToHide.Add( "Description" );
             PropsToHide.Add( "Formula" );
+            PropsToHide.Add( "Synonyms" );
 
             if( C3SearchResultsObj != null )
             {
@@ -151,7 +152,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // makeTableFromTree()
 
-        private string _getThumbnailUrl( CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId )
+        private string _getThumbnailUrl( string defaultIconFileName, CswPrimaryKey NodeId )
         {
             string ret = "";
 
@@ -165,9 +166,9 @@ namespace ChemSW.Nbt.WebServices
                 ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
             }
             // default image, overridden below
-            else if( NodeType.IconFileName != string.Empty )
+            else if( defaultIconFileName != string.Empty )
             {
-                ret = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
+                ret = CswNbtMetaDataObjectClass.IconPrefix100 + defaultIconFileName;
             }
             else
             {
@@ -193,6 +194,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["results"] = results;
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = null;
+                ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
                 ret["searchtype"] = "chemcatcentral";
             }
@@ -323,7 +325,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
-                        thisNode.ThumbnailUrl = _getThumbnailUrl( thisNode.NodeType, thisNode.NodeId );
+                        thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition(), thisNode.NodeId );
 
                         thisNode.AllowView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
                         thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
@@ -332,19 +334,19 @@ namespace ChemSW.Nbt.WebServices
                         // Properties
                         SortedSet<CswNbtSearchPropOrder.SearchOrder> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey, _View );
 
-                        foreach( JObject PropElm in Tree.getChildNodePropsOfNode() )
+                        foreach( CswNbtTreeNodeProp PropElm in Tree.getChildNodePropsOfNode() )
                         {
                             TableProp thisProp = new TableProp();
-                            if( false == CswConvert.ToBoolean( PropElm["hidden"] ) )
+                            if( false == PropElm.Hidden )
                             {
-                                thisProp.NodeTypePropId = CswConvert.ToInt32( PropElm["nodetypepropid"].ToString() );
+                                thisProp.NodeTypePropId = PropElm.NodeTypePropId;
                                 if( PropsToHide == null || false == PropsToHide.Contains( thisProp.NodeTypePropId ) )
                                 {
                                     thisProp.PropId = new CswPropIdAttr( thisNode.NodeId, thisProp.NodeTypePropId );
-                                    thisProp.FieldType = PropElm["fieldtype"].ToString();
-                                    thisProp.PropName = PropElm["propname"].ToString();
-                                    thisProp.Gestalt = _Truncate( PropElm["gestalt"].ToString() );
-                                    thisProp.JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
+                                    thisProp.FieldType = PropElm.FieldType;
+                                    thisProp.PropName = PropElm.PropName;
+                                    thisProp.Gestalt = _Truncate( PropElm.Gestalt );
+                                    thisProp.JctNodePropId = PropElm.JctNodePropId;
 
                                     // Special case: Image becomes thumbnail
                                     if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
@@ -373,7 +375,7 @@ namespace ChemSW.Nbt.WebServices
                                             thisProp.PropData = (JObject) JpPropData.Value;
 
                                             JObject PropValues = new JObject();
-                                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, CswConvert.ToString( PropElm["field2"] ), CswConvert.ToString( PropElm["field1"] ) );
+                                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, PropElm.Field2, PropElm.Field1 );
                                             thisProp.PropData["values"] = PropValues;
                                         }
                                         thisNode.Props.Add( thisOrder.Order, thisProp );

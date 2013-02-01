@@ -225,11 +225,11 @@ namespace ChemSW.Nbt.WebServices
                     Tree.goToNthChild( C );
 
                     DataRow Row = DT.NewRow();
-                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                     {
-                        if( DT.Columns.Contains( Prop["propname"].ToString() ) )
+                        if( DT.Columns.Contains( Prop.PropName ) )
                         {
-                            Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
+                            Row[Prop.PropName] = Prop.Gestalt;
                         }
                     }
 
@@ -261,11 +261,11 @@ namespace ChemSW.Nbt.WebServices
                 for( int i = 0; i < childNodeCount; i++ )
                 {
                     Tree.goToNthChild( i );
-                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                     {
-                        if( DT.Columns.Contains( Prop["propname"].ToString() ) )
+                        if( DT.Columns.Contains( Prop.PropName ) )
                         {
-                            Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
+                            Row[Prop.PropName] = Prop.Gestalt;
                         }
                     }
                     _recurse( Tree, DT, ref Row );
@@ -311,13 +311,13 @@ namespace ChemSW.Nbt.WebServices
 
                         JArray ThisRow = new JArray();
                         RetRows.Add( ThisRow );
-                        foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                        foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                         {
-                            Int32 ColumnIdx = HeaderCols.IndexOf( Prop["propname"].ToString() );
+                            Int32 ColumnIdx = HeaderCols.IndexOf( Prop.PropName );
                             if( ColumnIdx >= 0 )
                             {
                                 _ensureIndex( ThisRow, ColumnIdx );
-                                ThisRow[ColumnIdx] = Prop["gestalt"];
+                                ThisRow[ColumnIdx] = Prop.Gestalt;
                             }
                         }
 

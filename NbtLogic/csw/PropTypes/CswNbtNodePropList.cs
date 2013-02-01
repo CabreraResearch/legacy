@@ -61,6 +61,12 @@ namespace ChemSW.Nbt.PropTypes
                 _CswNbtNodePropData.Gestalt = value;
             }
         }
+        
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
 
         private CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = null;
         public CswNbtNodeTypePropListOptions Options
