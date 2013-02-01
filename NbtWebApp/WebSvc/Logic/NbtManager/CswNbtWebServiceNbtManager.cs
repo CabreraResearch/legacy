@@ -6,7 +6,6 @@ using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Grid.ExtJs;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
@@ -128,34 +127,29 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        private static CswExtJsGrid _getScheduledRulesGrid( CswNbtResources NbtResources, Collection<CswScheduleLogicDetail> LogicDetails )
+        private static void _addScheduledRulesGrid( CswNbtResources NbtResources, Collection<CswScheduleLogicDetail> LogicDetails, CswNbtScheduledRulesReturn Ret )
         {
-            CswExtJsGrid Ret = new CswExtJsGrid( "ScheduledRules" );
-            if( LogicDetails.Count > 0 )
+            if( LogicDetails.Count > 0 && 
+                null != Ret && 
+                null != Ret.Data )
             {
-                Type TypeInt32 = Type.GetType( "System.Int32" );
-                Type TypeString = Type.GetType( "System.String" );
-                Type TypeBool = Type.GetType( "System.Boolean" );
-                Type TypeDateTime = Type.GetType( "System.DateTime" );
-
                 DataTable GridTable = new DataTable( "scheduledrulestable" );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RuleName, TypeString );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Recurrance, TypeInt32 );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Interval, TypeInt32 );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ReprobateThreshold, TypeInt32 );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs, TypeInt32 );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Reprobate, TypeBool );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunStartTime, TypeDateTime );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunEndTime, TypeDateTime );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.TotalRogueCount, TypeInt32 );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, TypeInt32 );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, TypeInt32 );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.StatusMessage, TypeString );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RuleName, typeof(string) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Recurrance, typeof( string ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Interval, typeof( Int32 ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ReprobateThreshold, typeof( Int32 ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs, typeof( Int32 ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Reprobate, typeof(bool) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunStartTime, typeof(DateTime) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunEndTime, typeof( DateTime ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.TotalRogueCount, typeof( Int32 ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, typeof( Int32 ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, typeof( Int32 ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.StatusMessage, typeof( string ) );
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
                 {
                     DataRow Row = GridTable.NewRow();
-
                     Row[CswScheduleLogicDetail.ColumnNames.RuleName] = LogicDetail.RuleName;
                     Row[CswScheduleLogicDetail.ColumnNames.Recurrance] = LogicDetail.Recurrence;
                     Row[CswScheduleLogicDetail.ColumnNames.Interval] = LogicDetail.Interval;
@@ -172,26 +166,34 @@ namespace ChemSW.Nbt.WebServices
                     GridTable.Rows.Add( Row );
                 }
                 CswNbtGrid gd = new CswNbtGrid( NbtResources );
-                Ret = gd.DataTableToGrid( GridTable );
+                Ret.Data.Grid = gd.DataTableToGrid( GridTable );
             }
-            return Ret;
         }
 
         public static void getScheduledRulesGrid( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string PlaceHolder )
         {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
             try
             {
-                CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                
-                CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
                 // GOTO CswSchedSvcAdminEndPoint for actual implementation
-                CswSchedSvcReturn svcReturn = SchedSvcRef.getRules();
-                Return.Data = _getScheduledRulesGrid( NbtResources, svcReturn.Data );
+                CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+                svcReturn = SchedSvcRef.getRules();
             }
             catch( Exception Exception )
             {
-                throw new CswDniException( "Could not communicate with the Schedule Servuce", Exception );
+                throw new CswDniException( "Could not communicate with the Schedule Service", Exception );
             }
+
+            try
+            {
+                _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
+            }
+            catch( Exception Exception )
+            {
+                throw new CswDniException( "Could not generate a grid of the Schedule Service's current rules.", Exception );
+            }
+
         }//getScheduledRulesGrid()
 
 
@@ -204,9 +206,7 @@ namespace ChemSW.Nbt.WebServices
             bool Reprobate = CswConvert.ToBoolean( Context.Request["REPROBATE"] );
             bool Disabled = CswConvert.ToBoolean( Context.Request["DISABLED"] );
 
-            string RecurrenceString = CswConvert.ToString( Context.Request["RECURRENCE"] );
-            Recurrence Recurrence;
-            Enum.TryParse( RecurrenceString, true, out Recurrence );
+            Recurrence Recurrence = CswConvert.ToString( Context.Request["RECURRENCE"] );
 
             Int32 Interval = CswConvert.ToInt32( Context.Request["INTERVAL"] );
             Int32 ReprobateThreshold = CswConvert.ToInt32( Context.Request["REPROBATETHRESHOLD"] );
@@ -229,7 +229,8 @@ namespace ChemSW.Nbt.WebServices
                 ThisRule["REPROBATE"] = CswConvert.ToDbVal( Reprobate );
                 ThisRule["DISABLED"] = CswConvert.ToDbVal( Disabled );
 
-                if( Recurrence != Recurrence.Unknown )
+                if( null != Recurrence &&
+                    Recurrence != CswNbtResources.UnknownEnum )
                 {
                     ThisRule["RECURRENCE"] = CswConvert.ToDbVal( Recurrence.ToString() );
                 }

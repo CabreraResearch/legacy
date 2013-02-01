@@ -301,35 +301,37 @@ namespace ChemSW.Nbt.Grid
             {
                 CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
                 CswExtJsGridField fld = new CswExtJsGridField();
-                fld.dataIndex = dataIndex;
                 grid.fields.Add( fld );
+                
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
+                grid.columns.Add( gridcol );
+                
+                fld.dataIndex = dataIndex;
+                gridcol.header = Column.ColumnName;
+                gridcol.dataIndex = dataIndex;
+                
                 if( Column.DataType == typeof( string ) )
                 {
-                    fld.name = Column.ColumnName;
                     fld.type = "string";
                 }
                 else if( Column.DataType == typeof( bool ) )
                 {
-                    fld.name = Column.ColumnName;
-                    fld.type = "boolean";
+                    fld.type = "bool";
                     gridcol.xtype = extJsXType.booleancolumn;
                 }
                 else if( Column.DataType == typeof( Int32 ) )
                 {
-                    fld.name = Column.ColumnName;
                     fld.type = "number";
                     gridcol.xtype = extJsXType.numbercolumn;
+                    gridcol.Format = "0";
                 }
                 else if( Column.DataType == typeof( DateTime ) )
                 {
-                    fld.name = Column.ColumnName;
                     fld.type = "date";
                     gridcol.xtype = extJsXType.datecolumn;
+                    gridcol.Format = "m/d/y H:i:s";
                 }
-                gridcol.header = Column.ColumnName;
-                gridcol.dataIndex = dataIndex;
-                grid.columns.Add( gridcol );
+                
             }
 
             Int32 RowNo = 0;
@@ -338,7 +340,7 @@ namespace ChemSW.Nbt.Grid
                 CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo );
                 foreach( DataColumn Column in DT.Columns )
                 {
-                    gridrow.data[new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName )] = Row[Column].ToString();
+                    gridrow.data[new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName )] = CswConvert.ToString( Row[Column] );
                 }
                 grid.rowData.rows.Add( gridrow );
                 RowNo += 1;

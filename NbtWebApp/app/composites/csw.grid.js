@@ -560,28 +560,31 @@
 
                 }
 
-                // Selection mode
-                if (cswPrivate.showCheckboxes) {
-                    gridopts.selType = 'checkboxmodel';
-                    gridopts.selModel = { mode: 'Simple' };
-                    gridopts.listeners.selectionchange = function (t, selected, eOpts) {
-                        if (cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
-                            if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
-                                cswPrivate.editAllButton.disable();
-                                cswPrivate.deleteAllButton.disable();
-                            } else {
-                                cswPrivate.editAllButton.enable();
-                                cswPrivate.deleteAllButton.enable();
+                if (!cswPrivate.selModel || !cswPrivate.selModel.selType) {
+                    // Selection mode
+                    if (cswPrivate.showCheckboxes) {
+                        gridopts.selType = 'checkboxmodel';
+                        gridopts.selModel = { mode: 'Simple' };
+                        gridopts.listeners.selectionchange = function(t, selected, eOpts) {
+                            if (cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
+                                if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
+                                    cswPrivate.editAllButton.disable();
+                                    cswPrivate.deleteAllButton.disable();
+                                } else {
+                                    cswPrivate.editAllButton.enable();
+                                    cswPrivate.deleteAllButton.enable();
+                                }
                             }
-                        }
-                    };
-                } else {
-                    gridopts.selType = 'rowmodel';
-                    gridopts.listeners.beforeselect = function () {
-                        return Csw.bool(cswPrivate.canSelectRow);
-                    };
+                        };
+                    } else {
+                        gridopts.selType = 'rowmodel';
+                        gridopts.listeners.beforeselect = function() {
+                            return Csw.bool(cswPrivate.canSelectRow);
+                        };
+                    }
+                } else if(cswPrivate.selModel) {
+                    gridopts.selType = cswPrivate.selModel.selType;
                 }
-
                 // Paging
                 if (Csw.bool(cswPrivate.usePaging)) {
                     gridopts.dockedItems.push({
@@ -730,10 +733,20 @@
                     if (cswPrivate.title.length === 0 && data.title && data.title.length > 0) {
                         cswPrivate.title = data.title;
                     }
-                    cswPrivate.fields = data.fields;
-                    cswPrivate.columns = data.columns;
-                    cswPrivate.rows = data.data;
-                    cswPrivate.groupField = data.groupfield;
+                    if (data.fields) {
+                        cswPrivate.fields = data.fields;
+                    }
+                    if (data.columns) {
+                        cswPrivate.columns = data.columns;
+                    }
+                    if (data.data) {
+                        cswPrivate.rows = data.data;
+                    } else {
+                        cswPrivate.rows = data;
+                    }
+                    if (data.groupfield) {
+                        cswPrivate.groupField = data.groupfield;
+                    }
                 }
             };
 
@@ -741,10 +754,9 @@
                 if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
-                            
-                            cswPrivate.init();
+                            cswPrivate.setInternalGridState(result.grid);                            
                             cswPrivate.ajaxResult = result;
-                            cswPrivate.setInternalGridState(result.grid);
+                            cswPrivate.init();
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
                     });
                 } else {

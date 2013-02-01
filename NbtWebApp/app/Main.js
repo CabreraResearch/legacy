@@ -1462,7 +1462,7 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                     case 'view scheduled rules':
                         var rulesOpt = {
-                            exitFunc: function() {
+                            onCancel: function() {
                                 clear({ 'all': true });
                                 Csw.clientState.setCurrent(Csw.clientState.getLast());
                                 refreshSelected();
@@ -1470,7 +1470,7 @@ window.initMain = window.initMain || function (undefined) {
                             menuRefresh: refreshSelected
                         };
 
-                        Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
+                        Csw.actions.scheduledRules(Csw.main.centerTopDiv, rulesOpt);
                         break;
                     case 'upload legacy mobile data':
                         Csw.nbt.legacyMobileWizard(Csw.main.centerTopDiv, {

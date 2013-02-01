@@ -859,7 +859,8 @@ namespace ChemSW.Nbt.Schema
         public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, Recurrence Recurrence, Int32 Interval )
         {
             Int32 RetRuleId = Int32.MinValue;
-            if( Recurrence != Recurrence.Unknown &&
+            if( null != Recurrence &&
+                Recurrence != CswNbtResources.UnknownEnum &&
                 CswNbtResources.UnknownEnum != RuleName )
             {
                 //TODO - Come back some day and make this dundant-proof
