@@ -114,7 +114,7 @@
         var regex;
         if (precision > 0) {
             /* Allow any valid number -- we'll round later */
-            regex = /^\-?\d*\.?\d*$/g;
+            regex = /^\-?\d*(\.\d+)?$/g; //Case 28696 - changed regex to NOT accept a '.'
         } else {
             /* Integers Only */
             regex = /^\-?\d*$/g;
