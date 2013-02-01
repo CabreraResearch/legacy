@@ -27,15 +27,15 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Initiate a new session" )]
-        public CswWebSvcReturn Init( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
+        public CswNbtWebServiceSession.CswNbtAuthReturn Init( CswWebSvcSessionAuthenticateData.Authentication.Request Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            CswWebSvcReturn Ret = new CswWebSvcReturn();
-            var InitDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswWebSvcSessionAuthenticateData.Authentication.Request>(
+            CswNbtWebServiceSession.CswNbtAuthReturn Ret = new CswNbtWebServiceSession.CswNbtAuthReturn();
+            var InitDriverType = new CswWebSvcDriver<CswNbtWebServiceSession.CswNbtAuthReturn, CswWebSvcSessionAuthenticateData.Authentication.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, Request ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceSession.doNothing,
-                ParamObj: null
+                WebSvcMethodPtr: CswNbtWebServiceSession.getDefaults,
+                ParamObj: Request
                 );
 
             InitDriverType.run();
