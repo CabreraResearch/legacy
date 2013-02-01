@@ -890,7 +890,8 @@ namespace ChemSW.Nbt.Schema
                         PropName = CswNbtObjClassPrintJob.PropertyName.JobState,
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                         ListOptions = StateOptions.ToString(),
-                        ReadOnly = true
+                        ReadOnly = true,
+                        IsRequired = true
                     } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( JobStateOCP, CswNbtObjClassPrintJob.StateOption.Pending );
 
