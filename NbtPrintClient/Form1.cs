@@ -77,10 +77,22 @@ namespace CswPrintClient1
             if( e.Succeeded )
             {
                 string errMsg = string.Empty;
-                bool success = _printLabel( e.Job.LabelData, "Labels printed.", ref errMsg );
+                string statusInfo = "Job#" + e.Job.JobNo + " for " + e.Job.JobOwner + " " + e.Job.LabelCount.ToString() + " of " + e.Job.LabelName;
+                bool success = _printLabel( e.Job.LabelData, statusInfo, "Labels printed: " + statusInfo, ref errMsg );
 
-                ServiceThread.UpdateJobInvoker lblInvoke = new ServiceThread.UpdateJobInvoker( _svcThread.updateJob );
-                lblInvoke.BeginInvoke( _getAuth(), e.Job.JobKey, success, errMsg, null, null );
+                if( e.Job.LabelCount > 0 )
+                {
+                    ServiceThread.UpdateJobInvoker lblInvoke = new ServiceThread.UpdateJobInvoker( _svcThread.updateJob );
+                    lblInvoke.BeginInvoke( _getAuth(), e.Job.JobKey, success, errMsg, null, null );
+                }
+                if( e.Job.RemainingJobCount > 0 )
+                {
+                    timer1.Interval = 500; //more jobs, fire soon
+                }
+                else
+                {
+                    timer1.Interval = 10000; //no jobs, use std polling interval of 10 sec
+                }
             }
             else
             {
@@ -95,7 +107,7 @@ namespace CswPrintClient1
             if( e.Succeeded )
             {
                 string errMsg = string.Empty;
-                if( !_printLabel( e.LabelData, "Test label printed.", ref errMsg ) )
+                if( !_printLabel( e.LabelData, "Test Label Printed OK.", "Test label printed.", ref errMsg ) )
                 {
                     Log( errMsg );
                     lblStatus.Text = errMsg;
@@ -109,7 +121,7 @@ namespace CswPrintClient1
             btnTestPrintSvc.Enabled = true;
         } // _InitNextJobUI()
 
-        private bool _printLabel( string LabelData, string LogOnSuccess, ref string errMsg )
+        private bool _printLabel( string LabelData, string statusInfo, string LogOnSuccess, ref string errMsg )
         {
             bool Ret = true;
             errMsg = string.Empty;
@@ -118,20 +130,20 @@ namespace CswPrintClient1
             {
                 if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, LabelData ) )
                 {
-                    lblStatus.Text += "\nPrinting Done!";
+                    lblStatus.Text = "Printed " + statusInfo;
                     Log( LogOnSuccess );
                 }
                 else
                 {
                     Ret = false;
                     errMsg = "Label printing error on client.";
-                    lblStatus.Text = "Error printing!";
+                    lblStatus.Text = "Error printing " + statusInfo;
                 }
 
             }
             else
             {
-                lblStatus.Text = "No label returned.";
+                lblStatus.Text = "No label jobs to print at " + DateTime.Now.ToString();
             }
 
             return Ret;
@@ -272,8 +284,10 @@ namespace CswPrintClient1
         {
             //we are polling the service
             timer1.Enabled = false;
-            CheckForPrintJob();
-            //            timer1.Enabled = true;
+            if( cbEnabled.Checked )
+            {
+                CheckForPrintJob();
+            }
         }
 
         private void cbEnabled_Click( object sender, EventArgs e )
@@ -281,7 +295,7 @@ namespace CswPrintClient1
             if( cbEnabled.Checked == true )
             {
                 Status( "Waiting for print job." );
-
+                CheckForPrintJob();
             }
             else
             {

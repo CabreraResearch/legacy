@@ -424,6 +424,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtMetaDataObjectClassProp JobPrinterOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.Printer );
                         CswNbtMetaDataObjectClassProp JobCreatedDateOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.CreatedDate );
+                        CswNbtMetaDataObjectClassProp JobStateOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.JobState );
 
                         CswNbtView JobQueueView = new CswNbtView( NbtResources );
                         JobQueueView.ViewName = "Printer Job Queue";
@@ -434,6 +435,11 @@ namespace ChemSW.Nbt.WebServices
                                                                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
                                                                Value: PrinterNodeId.PrimaryKey.ToString(),
                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        //with state==pending
+                        JobQueueView.AddViewPropertyAndFilter( JobRel, JobStateOCP,
+                                                               SubFieldName: CswNbtSubField.SubFieldName.Value,
+                                                               Value: CswNbtObjClassPrintJob.StateOption.Pending,
+                                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                         // ... order by Created Date
                         CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
                         JobQueueView.setSortProperty( CreatedDateVP, NbtViewPropertySortMethod.Ascending );
@@ -442,7 +448,7 @@ namespace ChemSW.Nbt.WebServices
 
                         if( QueueTree.getChildNodeCount() >= 1 )
                         {
-                            QueueTree.goToNthChild( 1 );
+                            QueueTree.goToNthChild( 0 );
                             CswNbtObjClassPrintJob Job = QueueTree.getNodeForCurrentPosition();
 
                             Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Processing;
@@ -457,6 +463,7 @@ namespace ChemSW.Nbt.WebServices
                             Return.LabelCount = CswConvert.ToInt32( Job.LabelCount.Value );
                             Return.LabelData = Job.LabelData.Text;
                             Return.LabelName = Job.Label.CachedNodeName;
+                            QueueTree.goToParentNode();
                             Return.RemainingJobCount = QueueTree.getChildNodeCount() - 1;
                         }
                         else
