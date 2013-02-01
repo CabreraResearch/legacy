@@ -41,7 +41,9 @@ namespace CswPrintClient1
             {
                 AccessId = tbAccessId.Text,
                 UserId = tbUsername.Text,
-                Password = tbPassword.Text
+                Password = tbPassword.Text,
+                baseURL = tbURL.Text,
+                useSSL = ( tbURL.Text.ToLower().IndexOf( "https:" ) > -1 )
             };
         }
 
@@ -74,10 +76,23 @@ namespace CswPrintClient1
         {
             if( e.Succeeded )
             {
-                _printLabel( e.Job.LabelData, "Labels printed." );
+                string errMsg = string.Empty;
+                string statusInfo = "Job#" + e.Job.JobNo + " for " + e.Job.JobOwner + " " + e.Job.LabelCount.ToString() + " of " + e.Job.LabelName;
+                bool success = _printLabel( e.Job.LabelData, statusInfo, "Labels printed: " + statusInfo, ref errMsg );
 
-                ServiceThread.UpdateJobInvoker lblInvoke = new ServiceThread.UpdateJobInvoker( _svcThread.updateJob );
-                lblInvoke.BeginInvoke( _getAuth(), e.Job.JobKey, null, null );
+                if( e.Job.LabelCount > 0 )
+                {
+                    ServiceThread.UpdateJobInvoker lblInvoke = new ServiceThread.UpdateJobInvoker( _svcThread.updateJob );
+                    lblInvoke.BeginInvoke( _getAuth(), e.Job.JobKey, success, errMsg, null, null );
+                }
+                if( e.Job.RemainingJobCount > 0 )
+                {
+                    timer1.Interval = 500; //more jobs, fire soon
+                }
+                else
+                {
+                    timer1.Interval = 10000; //no jobs, use std polling interval of 10 sec
+                }
             }
             else
             {
@@ -91,7 +106,12 @@ namespace CswPrintClient1
         {
             if( e.Succeeded )
             {
-                _printLabel( e.LabelData, "Test label printed." );
+                string errMsg = string.Empty;
+                if( !_printLabel( e.LabelData, "Test Label Printed OK.", "Test label printed.", ref errMsg ) )
+                {
+                    Log( errMsg );
+                    lblStatus.Text = errMsg;
+                }
             }
             else
             {
@@ -101,25 +121,32 @@ namespace CswPrintClient1
             btnTestPrintSvc.Enabled = true;
         } // _InitNextJobUI()
 
-        private void _printLabel( string LabelData, string LogOnSuccess )
+        private bool _printLabel( string LabelData, string statusInfo, string LogOnSuccess, ref string errMsg )
         {
+            bool Ret = true;
+            errMsg = string.Empty;
+
             if( LabelData != string.Empty )
             {
                 if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, LabelData ) )
                 {
-                    lblStatus.Text += "\nPrinting Done!";
+                    lblStatus.Text = "Printed " + statusInfo;
                     Log( LogOnSuccess );
                 }
                 else
                 {
-                    lblStatus.Text = "Error printing!";
+                    Ret = false;
+                    errMsg = "Label printing error on client.";
+                    lblStatus.Text = "Error printing " + statusInfo;
                 }
 
             }
             else
             {
-                lblStatus.Text = "No label returned.";
+                lblStatus.Text = "No label jobs to print at " + DateTime.Now.ToString();
             }
+
+            return Ret;
         } // _printLabel()
 
         private void btnPrintEPL_Click( object sender, EventArgs e )
@@ -139,10 +166,9 @@ namespace CswPrintClient1
         {
             if( tbLog.Lines.Length > 100 )
             {
-                tbLog.Text = tbLog.Text.Substring( 0, tbLog.Text.LastIndexOf( "\r\n" ) ); // Skip( tbLog.Lines.Length - 100 ).ToArray();
+                tbLog.Text = tbLog.Text.Substring( 0, tbLog.Text.LastIndexOf( "\r\n" ) );
             }
             tbLog.Text = DateTime.Now.ToString() + " " + msg + "\r\n" + tbLog.Text;
-            //tbLog.AppendText( DateTime.Now.ToString() + " " + msg + "\n" );
         }
 
 
@@ -211,6 +237,11 @@ namespace CswPrintClient1
             Application.CommonAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
             Application.CommonAppDataRegistry.SetValue( "logon", tbUsername.Text );
             Application.CommonAppDataRegistry.SetValue( "code", tbPassword.Text );
+            if( tbURL.Modified && tbURL.Text == string.Empty )
+            {
+                tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
+            }
+            Application.CommonAppDataRegistry.SetValue( "serverurl", tbURL.Text );
         }
 
         private void LoadSettings()
@@ -223,6 +254,11 @@ namespace CswPrintClient1
             tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
             tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
             tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();
+            tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
+            if( tbURL.Text == string.Empty )
+            {
+                tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
+            }
 
             Log( "Loaded settings." );
             setBtnRegisterState( "" );
@@ -248,8 +284,10 @@ namespace CswPrintClient1
         {
             //we are polling the service
             timer1.Enabled = false;
-            CheckForPrintJob();
-            //            timer1.Enabled = true;
+            if( cbEnabled.Checked )
+            {
+                CheckForPrintJob();
+            }
         }
 
         private void cbEnabled_Click( object sender, EventArgs e )
@@ -257,7 +295,7 @@ namespace CswPrintClient1
             if( cbEnabled.Checked == true )
             {
                 Status( "Waiting for print job." );
-
+                CheckForPrintJob();
             }
             else
             {
