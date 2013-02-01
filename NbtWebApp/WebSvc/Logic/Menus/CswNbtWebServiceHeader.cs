@@ -187,8 +187,6 @@ namespace ChemSW.Nbt.WebServices
             Ret["Help"]["Help"]["popup"] = "help/index.htm";
             Ret["Help"]["Clear Cache"] = new JObject();
             Ret["Help"]["Clear Cache"]["action"] = "Clear Cache";
-            Ret["Help"]["About"] = new JObject();
-            Ret["Help"]["About"]["action"] = "About";
             CswNbtMetaDataObjectClass feedbackOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass );
             IEnumerable<CswNbtMetaDataNodeType> feedbackNodeTypes = feedbackOC.getNodeTypes();
             if( feedbackNodeTypes.Any() )
@@ -202,6 +200,10 @@ namespace ChemSW.Nbt.WebServices
                     Ret["Help"]["Give Feedback"]["nodetypeid"] = feedbackNodeType.NodeTypeId;
                 }
             }
+            Ret["Help"]["Printing Labels"] = new JObject();
+            Ret["Help"]["Printing Labels"]["popup"] = "PrintingLabels.html";
+            Ret["Help"]["About"] = new JObject();
+            Ret["Help"]["About"]["action"] = "About";
 
             Ret["Logout"] = new JObject( new JProperty( "action", "Logout" ) );
 
