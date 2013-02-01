@@ -30,17 +30,24 @@ namespace ChemSW.Nbt.Actions
             private CswNbtMetaDataNodeType _MaterialNt;
             private CswNbtObjClassVendor _Supplier;
             private string _NodeTypeName;
+            private CswPrimaryKey _MaterialId;
 
             /// <summary>
             /// Standard constructor for validating required properties
             /// </summary>
-            public NewMaterial( CswNbtResources CswNbtResources, Int32 NodeTypeId, string TradeName, CswPrimaryKey SupplierId, string PartNo = "" )
+            public NewMaterial( CswNbtResources CswNbtResources, Int32 NodeTypeId, string TradeName, CswPrimaryKey SupplierId, string PartNo = "", string NodeId = "" )
             {
                 _NbtResources = CswNbtResources;
                 this.NodeTypeId = NodeTypeId;
                 this.TradeName = TradeName;
                 this.SupplierId = SupplierId;
                 this.PartNo = PartNo;
+                //If we are providing an existing material
+                this._MaterialId = CswConvert.ToPrimaryKey( NodeId );
+                if( CswTools.IsPrimaryKey( _MaterialId ) )
+                {
+                    Node = _NbtResources.Nodes[_MaterialId];
+                }
             }
 
             /// <summary>
@@ -126,14 +133,21 @@ namespace ChemSW.Nbt.Actions
 
             public bool existsInDb( bool ForceRecalc = false )
             {
-                return null != existingMaterial( ForceRecalc );
+                CswNbtObjClassMaterial ExistingMaterial = existingMaterial( ForceRecalc );
+                return ( ExistingMaterial != null && false == ExistingMaterial.IsTemp );
             }
 
             public CswNbtObjClassMaterial existingMaterial( bool ForceRecalc = false )
             {
                 if( ForceRecalc || null == _ExistingNode )
                 {
-                    _ExistingNode = CswNbtObjClassMaterial.getExistingMaterial( _NbtResources, NodeTypeId, SupplierId, TradeName, PartNo );
+                    // If a preexisting material was provided, Node will not be null
+                    // because it was set in the constructor
+                    _ExistingNode = Node;
+                    if( null == _ExistingNode )
+                    {
+                        _ExistingNode = CswNbtObjClassMaterial.getExistingMaterial( _NbtResources, NodeTypeId, SupplierId, TradeName, PartNo );
+                    }
                 }
                 return _ExistingNode;
             }
@@ -207,16 +221,20 @@ namespace ChemSW.Nbt.Actions
 
         #endregion ctor
 
-        private JObject _tryCreateMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo )
+        private JObject _tryCreateMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
 
-            NewMaterial PotentialMaterial = new NewMaterial( _CswNbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo );
+            NewMaterial PotentialMaterial = new NewMaterial( _CswNbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo, NodeId );
 
             Ret["materialexists"] = PotentialMaterial.existsInDb();
             if( false == PotentialMaterial.existsInDb() )
             {
-                CswNbtObjClassMaterial NodeAsMaterial = PotentialMaterial.commit();
+                CswNbtObjClassMaterial NodeAsMaterial = PotentialMaterial.Node;
+                if( null == NodeAsMaterial )
+                {
+                    NodeAsMaterial = PotentialMaterial.commit();
+                }
                 if( null != NodeAsMaterial )
                 {
                     Ret["materialid"] = NodeAsMaterial.NodeId.ToString();
@@ -245,9 +263,9 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Creates a new material, if one does not already exist, and returns the material nodeid
         /// </summary>
-        public JObject createMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo )
+        public JObject createMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
         {
-            return _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo );
+            return _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
         }
 
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
@@ -386,8 +404,6 @@ namespace ChemSW.Nbt.Actions
             }
             return Ret;
         }
-
-
 
         /// <summary>
         /// Finalize the new Material
