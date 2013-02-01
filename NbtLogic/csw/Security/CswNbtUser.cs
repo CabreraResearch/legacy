@@ -190,6 +190,19 @@ namespace ChemSW.Nbt.Security
             }
         }
 
+        public CswPrimaryKey DefaultPrinterId
+        {
+            get
+            {
+                CswPrimaryKey ret = null;
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.DefaultPrinter + _FkSuffix ) )
+                {
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.DefaultPrinter + _FkSuffix] ) );
+                }
+                return ret;
+            }
+        }
+
         public CswPrimaryKey WorkUnitId
         {
             get
@@ -198,6 +211,19 @@ namespace ChemSW.Nbt.Security
                 if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.WorkUnit + _FkSuffix ) )
                 {
                     ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.WorkUnit + _FkSuffix] ) );
+                }
+                return ret;
+            }
+        }
+
+        public CswPrimaryKey JurisdictionId
+        {
+            get
+            {
+                CswPrimaryKey ret = null;
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.Jurisdiction + _FkSuffix ) )
+                {
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.Jurisdiction + _FkSuffix] ) );
                 }
                 return ret;
             }

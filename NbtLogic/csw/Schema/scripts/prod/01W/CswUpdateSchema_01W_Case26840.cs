@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.Schema
                     MailReportNode.OutputFormat.Value = "link";
                     MailReportNode.Type.Value = CswNbtObjClassMailReport.TypeOptionReport;
                     MailReportNode.Report.RelatedNodeId = ReportNode.NodeId;
-                    MailReportNode.Message.Text = "The following levels are above maximum inventory or below mnimum inventory:";
+                    MailReportNode.Message.Text = "The following levels are above maximum inventory or below minimum inventory:";
                     MailReportNode.Enabled.Checked = Tristate.True;
 
                     CswRateInterval DailyRate = _CswNbtSchemaModTrnsctn.makeRateInterval();

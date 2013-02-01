@@ -746,6 +746,157 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        #region Case 28534
+
+        private void _makeLabelPrinterOCs( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass PrintLabelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+
+            CswNbtMetaDataObjectClass PrinterOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
+            if( null == PrinterOC )
+            {
+                PrinterOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.PrinterClass, "print.png", false );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrinterOC )
+                    {
+                        PropName = CswNbtObjClassPrinter.PropertyName.Name,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        IsUnique = true,
+                        IsRequired = true
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrinterOC )
+                    {
+                        PropName = CswNbtObjClassPrinter.PropertyName.Description,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo
+                    } );
+                CswNbtMetaDataObjectClassProp EnabledOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrinterOC )
+                    {
+                        PropName = CswNbtObjClassPrinter.PropertyName.Enabled,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                        IsRequired = true
+                    } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, Tristate.True.ToString() );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrinterOC )
+                    {
+                        PropName = CswNbtObjClassPrinter.PropertyName.LastJobRequest,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                        ServerManaged = true
+                    } );
+            } // if( null == PrinterOC )
+
+            CswNbtMetaDataObjectClass PrintJobOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+            if( null == PrintJobOC )
+            {
+                PrintJobOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.PrintJobClass, "print.png", false );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.JobNo,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Sequence
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.Printer,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = PrinterOC.ObjectClassId
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.CreatedDate,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                        ServerManaged = true,
+                        Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString()
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.ProcessedDate,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                        ServerManaged = true,
+                        Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString()
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.EndedDate,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                        ServerManaged = true,
+                        Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString()
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.RequestedBy,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = UserOC.ObjectClassId
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.Label,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = PrintLabelOC.ObjectClassId
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.LabelData,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                        ServerManaged = true
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.LabelCount,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                        ServerManaged = true
+                    } );
+                CswCommaDelimitedString StateOptions = new CswCommaDelimitedString
+                    {
+                        CswNbtObjClassPrintJob.StateOption.Pending, 
+                        CswNbtObjClassPrintJob.StateOption.Processing, 
+                        CswNbtObjClassPrintJob.StateOption.Closed, 
+                        CswNbtObjClassPrintJob.StateOption.Error
+                    };
+                CswNbtMetaDataObjectClassProp JobStateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.JobState,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                        ListOptions = StateOptions.ToString(),
+                        ReadOnly = true,
+                        IsRequired = true
+                    } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( JobStateOCP, CswNbtObjClassPrintJob.StateOption.Pending );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
+                    {
+                        PropName = CswNbtObjClassPrintJob.PropertyName.ErrorInfo,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                        ServerManaged = true
+                    } );
+            } // if( null == PrintJobOC )
+
+
+            CswNbtMetaDataObjectClassProp UserDefaultPrinterOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.DefaultPrinter );
+            if( null == UserDefaultPrinterOCP )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
+                    {
+                        PropName = CswNbtObjClassUser.PropertyName.DefaultPrinter,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = PrinterOC.ObjectClassId
+                    } );
+            }
+            _resetBlame();
+        } // _makeLabelPrinterOCs()
+
+        #endregion
+
         #endregion WILLIAM Methods
 
         /// <summary>
@@ -773,6 +924,7 @@ namespace ChemSW.Nbt.Schema
             _addPropsToMaterialSynonymOC(CswDeveloper.CM, 28246);
             _addViewSDSToContainer(CswDeveloper.MB, 28560);
             _fixRecurringRequestProp(CswDeveloper.CF, 28340);
+            _makeLabelPrinterOCs( CswDeveloper.SS, 28534 );
 
             #endregion WILLIAM
 
