@@ -46,10 +46,13 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeProp StorageTemperatureNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp(ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StorageTemperature);
                 StorageTemperatureNTP.AuditLevel = AuditLevel.PlainAudit;
+                StorageTemperatureNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
                 CswNbtMetaDataNodeTypeProp StoragePressureNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp(ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StoragePressure);
                 StoragePressureNTP.AuditLevel = AuditLevel.PlainAudit;
+                StoragePressureNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
                 CswNbtMetaDataNodeTypeProp UseTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp(ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.UseType);
                 UseTypeNTP.AuditLevel = AuditLevel.PlainAudit;
+                UseTypeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
             }
         }//Update()
 
