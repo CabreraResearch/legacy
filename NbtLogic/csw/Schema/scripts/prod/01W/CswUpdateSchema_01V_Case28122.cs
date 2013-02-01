@@ -37,19 +37,6 @@ namespace ChemSW.Nbt.Schema
             }
             tu.update( scheduledRulesDT );
 
-            //Hide the Legacy ID on Units of Measure
-            CswNbtMetaDataObjectClass unitsOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
-            foreach( CswNbtMetaDataNodeType unitsNT in unitsOC.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeProp legacyIdNTP = unitsNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.LegacyId );
-                legacyIdNTP.removeFromAllLayouts();
-
-                foreach( CswNbtObjClassUnitOfMeasure unitNode in unitsNT.getNodes( false, false ) )
-                {
-                    unitNode.LegacyId.setHidden( true, true );
-                }
-            }
-
         } //Update()
 
     }//class CswUpdateSchema_01V_Case28122

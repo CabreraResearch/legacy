@@ -441,7 +441,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = CachedPath;
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedPath );
         }
 
     }//CswNbtNodePropLocation

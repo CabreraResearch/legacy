@@ -53,11 +53,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Exponent != Int32.MinValue && Exponent != 0 )
                 {
-                    _CswNbtNodePropData.Gestalt = Base.ToString() + "E" + Exponent.ToString();
+                    _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
                 }
                 else
                 {
-                    _CswNbtNodePropData.Gestalt = Base.ToString();
+                    _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Base.ToString() );
                 }
             }
         }

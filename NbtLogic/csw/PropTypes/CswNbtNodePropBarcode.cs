@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = Barcode;
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Barcode );
         }
     }//CswNbtNodePropQuantity
 

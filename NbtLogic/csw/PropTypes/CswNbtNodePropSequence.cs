@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = SequenceNumber;
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, SequenceNumber );
         }
     }//CswNbtNodeProp
 
