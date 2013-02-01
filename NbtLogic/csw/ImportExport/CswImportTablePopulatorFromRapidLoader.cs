@@ -107,12 +107,12 @@ namespace ChemSW.Nbt.ImportExport
                 {
                         
                     string ErrorMessage = string.Empty;
-                    string NodeTypeNameCandidate = CurrentDataColumn.ColumnName;
+                    string NodeTypeNameCandidate = CurrentDataColumn.ColumnName.ToLower();
 
                     if( false == NodeTypeNameCandidate.ToLower().Contains( "garbage" ) )
                     {
 
-                        string NodeTypePropNameCandidate = RapidLoaderDataTable.Rows[NodeTypePropRowIdx][CurrentDataColumn].ToString();
+                        string NodeTypePropNameCandidate = RapidLoaderDataTable.Rows[NodeTypePropRowIdx][CurrentDataColumn].ToString().ToLower();
 
 
                         NodeTypeNameCandidate = Regex.Replace( NodeTypeNameCandidate, @"[\d-]", string.Empty );

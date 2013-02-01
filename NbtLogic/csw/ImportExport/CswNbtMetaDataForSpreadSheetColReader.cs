@@ -17,10 +17,10 @@ namespace ChemSW.Nbt.ImportExport
             _CswNbtResources = CswNbtResources;
 
             //Add nodetype name mappings to _NodeTypeNameMapper
-
+            _NodeTypeNameMapper.Add( "material", "Chemical" );
 
             //Add nodetype propname mappings to _NodeTypePropNameMapper
-
+            _NodeTypePropNameMapper.Add( "materialname", "tradename" );
 
         }//ctor
 
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.ImportExport
             if( null != ReturnVal.CswNbtMetaDataNodeType )
             {
 
-                
+
                 if( null == ( ReturnVal.CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( ReturnVal.CswNbtMetaDataNodeType.NodeTypeId, PropTypeNameColVal ) ) )
                 {
                     if( _NodeTypePropNameMapper.ContainsKey( PropTypeNameColVal ) )
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
                     else
                     {
-                        Message = "The spreadsheet column nodetypeprop name " + PropTypeNameColVal + " does not correspond to a known node type and has no mapping";
+                        Message = "The prop column " + PropTypeNameColVal + " for node type " + ReturnVal.CswNbtMetaDataNodeType.NodeTypeName + " does not correspond to a known node type and has no mapping";
                     }
 
                 }//if the spreadsheet prop name did not get a prop
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.ImportExport
             }//if we have a nodetype
 
             //If we don't have both, reset return to null client will know to get the error message
-            if(null == ReturnVal.CswNbtMetaDataNodeType || null == ReturnVal.CswNbtMetaDataNodeTypeProp )
+            if( null == ReturnVal.CswNbtMetaDataNodeType || null == ReturnVal.CswNbtMetaDataNodeTypeProp )
             {
                 ReturnVal = null;
             }
