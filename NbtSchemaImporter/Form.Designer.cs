@@ -64,13 +64,13 @@
             // 
             this.FileTypeSelectBox.FormattingEnabled = true;
             this.FileTypeSelectBox.Items.AddRange(new object[] {
-            "Post-Ripper style XML",
-            "Rapid-Loader Style XLS"});
+            "Rapid-Loader Style XLS",
+            "Post-Ripper style XML"});
             this.FileTypeSelectBox.Location = new System.Drawing.Point(96, 25);
             this.FileTypeSelectBox.Name = "FileTypeSelectBox";
             this.FileTypeSelectBox.Size = new System.Drawing.Size(183, 21);
             this.FileTypeSelectBox.TabIndex = 21;
-            this.FileTypeSelectBox.Text = "Post-Ripper style XML";
+            this.FileTypeSelectBox.Text = "Rapid-Loader Style XLS";
             this.FileTypeSelectBox.SelectedIndexChanged += new System.EventHandler(this.FileTypeSelectBox_SelectedIndexChanged);
             // 
             // label2

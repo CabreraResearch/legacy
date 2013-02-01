@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Text.RegularExpressions;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Schema;
@@ -67,7 +68,7 @@ namespace ChemSW.Nbt.ImportExport
             ////**************************************************************************
             ////Begin: Set up datatable of excel sheet 
             /// 
-   
+
             string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + _CswNbtImportExportFrame.FilePath + ";Extended Properties=Excel 8.0;";
             OleDbConnection ExcelConn = new OleDbConnection( ConnStr );
             ExcelConn.Open();
@@ -98,6 +99,40 @@ namespace ChemSW.Nbt.ImportExport
 
 
             List<string> PropColumnNames = new List<string>();
+            int NodeTypePropRowIdx = 1;
+            foreach( DataColumn CurrentDataColumn in RapidLoaderDataTable.Columns )
+            {
+
+                if(RapidLoaderDataTable.Columns.IndexOf( CurrentDataColumn ) > 0 )
+                {
+                        
+                    string ErrorMessage = string.Empty;
+                    string NodeTypeNameCandidate = CurrentDataColumn.ColumnName;
+
+                    if( false == NodeTypeNameCandidate.ToLower().Contains( "garbage" ) )
+                    {
+
+                        string NodeTypePropNameCandidate = RapidLoaderDataTable.Rows[NodeTypePropRowIdx][CurrentDataColumn].ToString();
+
+
+                        NodeTypeNameCandidate = Regex.Replace( NodeTypeNameCandidate, @"[\d-]", string.Empty );
+
+                        CswNbtMetaDataForSpreadSheetCol CswNbtMetaDataForSpreadSheetCol = null;
+                        Int32 ColumnIndex = RapidLoaderDataTable.Columns.IndexOf(CurrentDataColumn);
+                        if (null != (CswNbtMetaDataForSpreadSheetCol = _CswNbtMetaDataForSpreadSheetColReader.read(NodeTypeNameCandidate, NodeTypePropNameCandidate, ref ErrorMessage)))
+                        {
+
+                            _metaDataForSpreadSheet.Add(ColumnIndex, CswNbtMetaDataForSpreadSheetCol);
+                        }
+                        else
+                        {
+                            _CswImportExportStatusReporter.reportError("Unable to map nodetype and proptype at column " + ColumnIndex.ToString() + ": " + ErrorMessage);
+                        }
+
+                    }//if the column is meant to be interpreted
+
+                }//if we're not at the first column
+            }//iterate meta data columns
 
 
             //End: Set up NBT field-types per-prop mapping
