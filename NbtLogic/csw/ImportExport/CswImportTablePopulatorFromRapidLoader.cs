@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.OleDb;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Schema;
 
-using Microsoft.Office.Interop.Excel;
+//using Microsoft.Office.Interop.Excel;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -24,6 +27,10 @@ namespace ChemSW.Nbt.ImportExport
         private CswImporterDbTables _CswImporterDbTables = null;
 
 
+        private CswNbtMetaDataForSpreadSheetColReader _CswNbtMetaDataForSpreadSheetColReader = null;
+
+        private Dictionary<Int32, CswNbtMetaDataForSpreadSheetCol> _MetaDataByColumnIndex = new Dictionary<int, CswNbtMetaDataForSpreadSheetCol>();
+
         public CswImportTablePopulatorFromRapidLoader( CswNbtResources CswNbtResources, CswNbtImportExportFrame CswNbtImportExportFrame, CswImportExportStatusReporter CswImportExportStatusReporter, CswNbtImportStatus CswNbtImportStatus )
         {
             _CswNbtImportStatus = CswNbtImportStatus;
@@ -39,7 +46,7 @@ namespace ChemSW.Nbt.ImportExport
 
             _CswImporterDbTables = new CswImporterDbTables( CswNbtResources, _CswNbtImportOptions );
 
-
+            _CswNbtMetaDataForSpreadSheetColReader = new CswNbtMetaDataForSpreadSheetColReader( _CswNbtResources );
         }
 
         private bool _Stop = false;
@@ -52,50 +59,45 @@ namespace ChemSW.Nbt.ImportExport
         private ImportProcessPhase _LastCompletedProcessPhase = ImportProcessPhase.NothingDoneYet;
 
 
-        private Dictionary<Int32,CswNbtMetaDataForSpreadSheetCol> _metaDataForSpreadSheet = new Dictionary<int, CswNbtMetaDataForSpreadSheetCol>();
+        private Dictionary<Int32, CswNbtMetaDataForSpreadSheetCol> _metaDataForSpreadSheet = new Dictionary<int, CswNbtMetaDataForSpreadSheetCol>();
         public bool loadImportTables( ref string Msg )
         {
             bool ReturnVal = true;
 
-            //********************************************************************************************************************
-            //Begin: Set up the excel paraphanelia
-            Microsoft.Office.Interop.Excel.Application excell_Application = null;
-            Microsoft.Office.Interop.Excel.Workbooks excell_Workbooks = null;
-            Microsoft.Office.Interop.Excel._Workbook excell_OneWorkBook = null;
-            Microsoft.Office.Interop.Excel.Sheets excell_Worksheets = null;
-            Microsoft.Office.Interop.Excel._Worksheet excell_OneWorksheet = null;
-            Microsoft.Office.Interop.Excel.Range excell_Range = null;
-            object MissingExcellValue = System.Reflection.Missing.Value;
+            ////**************************************************************************
+            ////Begin: Set up datatable of excel sheet 
+            /// 
+   
+            string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + _CswNbtImportExportFrame.FilePath + ";Extended Properties=Excel 8.0;";
+            OleDbConnection ExcelConn = new OleDbConnection( ConnStr );
+            ExcelConn.Open();
+
+            DataTable RapidLoaderMetaDataTable = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
+            if( null == RapidLoaderMetaDataTable )
+            {
+                throw new CswDniException( ErrorType.Error, "Could not process the uploaded file: " + _CswNbtImportExportFrame.FilePath, "GetOleDbSchemaTable failed to parse a valid XLS file." );
+            }
+
+            string FirstSheetName = RapidLoaderMetaDataTable.Rows[0]["TABLE_NAME"].ToString();
+
+            OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
+            OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "]", ExcelConn );
+            DataAdapter.SelectCommand = SelectCommand;
+
+            DataTable RapidLoaderDataTable = new DataTable();
+
+            DataAdapter.Fill( RapidLoaderDataTable );
 
 
-            excell_Application = new Microsoft.Office.Interop.Excel.Application();
-            excell_OneWorkBook = excell_Workbooks.Open( _CswNbtImportExportFrame.FilePath, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, true, "XLNormalLoad" );
-            excell_Worksheets = excell_OneWorkBook.Worksheets;
-
-            excell_OneWorksheet = (Microsoft.Office.Interop.Excel.Worksheet) excell_Worksheets.get_Item( 1 );
-            //End: Set up the excel paraphanelia
-            //********************************************************************************************************************
+            ////End: Set up datatable of excel sheet 
+            ////**************************************************************************
 
 
             //********************************************************************************************************************
             //Begin: Set up NBT field-types per-prop mapping
-            excell_Range = excell_OneWorksheet.UsedRange;
+
 
             List<string> PropColumnNames = new List<string>();
-
-
-            int NodeTypeNameRow = 1;
-            int NodeTypePropNameRow = 3;
-
-            for( Int32 ColIdx = 2; ColIdx <= excell_Range.Columns.Count; ColIdx++)
-            {
-                string CandidateNodeTypeName = excell_Range.Cells[NodeTypeNameRow, ColIdx];
-                string CandidateNodeTypePropName = excell_Range.Cells[NodeTypePropNameRow, ColIdx];
-
-
-
-            }//iterate meta data rows of spreadsheet
-
 
 
             //End: Set up NBT field-types per-prop mapping
@@ -113,10 +115,16 @@ namespace ChemSW.Nbt.ImportExport
                     _CswNbtSchemaModTrnsctn.beginTransaction();
 
 
-
-                    foreach( DataColumn CurrentColumn in TableOfPropsFromXml.Columns )
+                    foreach( CswNbtMetaDataForSpreadSheetCol CurrentColMetaData in _MetaDataByColumnIndex.Values )
                     {
-                        PropColumnNames.Add( CurrentColumn.ColumnName );
+                        List<string> FieldTypeColNames = new List<string>( CurrentColMetaData.FieldTypeColNames );
+                        foreach( string CurrentFieldTypeColName in FieldTypeColNames )
+                        {
+                            if( false == PropColumnNames.Contains( CurrentFieldTypeColName ) )
+                            {
+                                PropColumnNames.Add( CurrentFieldTypeColName );
+                            }
+                        }
                     }
 
 

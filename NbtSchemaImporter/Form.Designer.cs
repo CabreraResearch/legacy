@@ -71,6 +71,7 @@
             this.FileTypeSelectBox.Size = new System.Drawing.Size(183, 21);
             this.FileTypeSelectBox.TabIndex = 21;
             this.FileTypeSelectBox.Text = "Post-Ripper style XML";
+            this.FileTypeSelectBox.SelectedIndexChanged += new System.EventHandler(this.FileTypeSelectBox_SelectedIndexChanged);
             // 
             // label2
             // 

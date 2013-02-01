@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.ImportExport
 
         }//ctor
 
-        public CswNbtMetaDataForSpreadSheetCol read( string NodeTypeNameColVal, string PropNameColVal, ref string Message )
+        public CswNbtMetaDataForSpreadSheetCol read( string NodeTypeNameColVal, string PropTypeNameColVal, ref string Message )
         {
             CswNbtMetaDataForSpreadSheetCol ReturnVal = new CswNbtMetaDataForSpreadSheetCol();
 
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ImportExport
             else
             {
 
-                if( null != ( ReturnVal.CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeType( NodeTypeNameColVal ) ) )
+                if( null != ( ReturnVal.CswNbtMetaDataNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeNameColVal ) ) )
                 {
                     _NodeTypesPerSpreadsheetRowCols.Add( NodeTypeNameColVal, ReturnVal.CswNbtMetaDataNodeType );
 
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( _NodeTypeNameMapper.ContainsKey( NodeTypeNameColVal ) )
                     {
                         OfficialNodeTypeName = _NodeTypeNameMapper[NodeTypeNameColVal];
-                        if( null != ( ReturnVal.CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeType( OfficialNodeTypeName ) ) )
+                        if( null != ( ReturnVal.CswNbtMetaDataNodeType = _CswNbtResources.MetaData.getNodeType( OfficialNodeTypeName ) ) )
                         {
                             _NodeTypesPerSpreadsheetRowCols.Add( NodeTypeNameColVal, ReturnVal.CswNbtMetaDataNodeType );
                         }
@@ -70,23 +70,33 @@ namespace ChemSW.Nbt.ImportExport
             if( null != ReturnVal.CswNbtMetaDataNodeType )
             {
 
-                if( null == ( ReturnVal.CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropNameColVal ) ) )
+                
+                if( null == ( ReturnVal.CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( ReturnVal.CswNbtMetaDataNodeType.NodeTypeId, PropTypeNameColVal ) ) )
                 {
-                    if( _NodeTypePropNameMapper.ContainsKey( PropNameColVal ) )
+                    if( _NodeTypePropNameMapper.ContainsKey( PropTypeNameColVal ) )
                     {
 
-                        string OfficialPropName = _NodeTypePropNameMapper[PropNameColVal];
-                        if( null == ( ReturnVal.CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( OfficialPropName ) ) )
+                        string OfficialPropName = _NodeTypePropNameMapper[PropTypeNameColVal];
+                        if( null == ( ReturnVal.CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( ReturnVal.CswNbtMetaDataNodeType.NodeTypeId, OfficialPropName ) ) )
                         {
+                            Message = "The officially mapped node type name ( " + OfficialPropName + ") for the spreadsheet column nodetypeprop name " + PropTypeNameColVal + " does not correspond to a known node type prop";
 
                         }
 
                     }
                     else
                     {
-
+                        Message = "The spreadsheet column nodetypeprop name " + PropTypeNameColVal + " does not correspond to a known node type and has no mapping";
                     }
+
                 }//if the spreadsheet prop name did not get a prop
+
+            }//if we have a nodetype
+
+            //If we don't have both, reset return to null client will know to get the error message
+            if(null == ReturnVal.CswNbtMetaDataNodeType || null == ReturnVal.CswNbtMetaDataNodeTypeProp )
+            {
+                ReturnVal = null;
             }
 
             return ( ReturnVal );

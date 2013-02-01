@@ -371,6 +371,11 @@ namespace ChemSW.Nbt.Schema
         private void btn_Types_Click( object sender, EventArgs e )
         {
             _WorkerThread.writeNodeTypesAsXml();
+        }
+
+        private void FileTypeSelectBox_SelectedIndexChanged( object sender, EventArgs e )
+        {
+//            if(FileTypeSelectBox.SelectedText == ) 
         } // FileTypeSelectBox_OnChange
 
 
