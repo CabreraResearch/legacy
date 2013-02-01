@@ -17,14 +17,15 @@ namespace NbtWebApp
         protected void Application_Start( object sender, EventArgs e )
         {
             WebServiceHostFactory Factory = new WebServiceHostFactory();
-            RouteTable.Routes.Add( new ServiceRoute( "Services/Labels", Factory, typeof( Labels ) ) );
-            RouteTable.Routes.Add( new ServiceRoute( "Services/Labels2", Factory, typeof( Labels2 ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Containers", Factory, typeof( Containers ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/ChemCatCentral", Factory, typeof( ChemCatCentral ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Labels", Factory, typeof( Labels ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Labels2", Factory, typeof( Labels2 ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/LandingPages", Factory, typeof( LandingPages ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Materials", Factory, typeof( Materials ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Menus", Factory, typeof( Menus ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Mol", Factory, typeof( Mol ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/NbtPublic", Factory, typeof( NbtPublic ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Nodes", Factory, typeof( Nodes ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/RegulatoryReporting", Factory, typeof( RegulatoryReporting ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Reports", Factory, typeof( Reports ) ) );

@@ -113,6 +113,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\NbtPublic.svc.cs">
+      <DependentUpon>NbtPublic.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Scheduler.svc.cs">
       <DependentUpon>Scheduler.svc</DependentUpon>
     </Compile>
@@ -598,6 +601,7 @@
     <Content Include="Images\newicons\KioskMode\Transfer_code39.png" />
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\NbtPublic.svc" />
     <Content Include="Services\Scheduler.svc" />
     <Content Include="Services\KioskMode.svc" />
     <Content Include="Services\Trees.svc" />
