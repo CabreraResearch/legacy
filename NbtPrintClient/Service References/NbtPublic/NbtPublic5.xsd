@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
-  <xs:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
+  <xs:import schemaLocation="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
+  <xs:import schemaLocation="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
+  <xs:import schemaLocation="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" />
   <xs:complexType name="CswNbtWebServiceSession.CswNbtAuthReturn">
     <xs:complexContent mixed="false">
       <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" base="q1:CswWebSvcReturn">
@@ -27,14 +28,24 @@
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="CswNbtWebServiceSession.CswNbtUserDefaultsData" nillable="true" type="tns:CswNbtWebServiceSession.CswNbtUserDefaultsData" />
-  <xs:complexType name="CswNbtWebServiceSession.CswNbtSessionReturn">
+  <xs:complexType name="CswNbtLabelPrinterReg">
     <xs:complexContent mixed="false">
       <xs:extension xmlns:q3="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" base="q3:CswWebSvcReturn">
         <xs:sequence>
-          <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Data" nillable="true" type="q4:CswWebSvcReturnBase.Data" />
+          <xs:element minOccurs="0" name="PrinterKey" nillable="true" type="xs:string" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element name="CswNbtWebServiceSession.CswNbtSessionReturn" nillable="true" type="tns:CswNbtWebServiceSession.CswNbtSessionReturn" />
+  <xs:element name="CswNbtLabelPrinterReg" nillable="true" type="tns:CswNbtLabelPrinterReg" />
+  <xs:complexType name="CswNbtLabelEpl">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q4="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" base="q4:CswWebSvcReturn">
+        <xs:sequence>
+          <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" minOccurs="0" name="Data" nillable="true" type="q5:NbtPrintLabel.Response.Epl" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CswNbtLabelEpl" nillable="true" type="tns:CswNbtLabelEpl" />
 </xs:schema>
