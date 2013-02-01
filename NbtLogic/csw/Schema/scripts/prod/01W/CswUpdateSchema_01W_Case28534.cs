@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 
@@ -80,7 +81,10 @@ namespace ChemSW.Nbt.Schema
                         Category = "System"
                     } );
                 JobNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassPrintJob.PropertyName.JobNo ) );
+
                 CswNbtMetaDataNodeTypeProp JobJobNoNTP = JobNT.getNodeTypePropByObjectClassProp( CswNbtObjClassPrintJob.PropertyName.JobNo );
+                Int32 SequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "printjob" ), "PJ", "", 4, 1 );
+                JobJobNoNTP.setSequence( SequenceId );
                 JobJobNoNTP.ReadOnly = true;
             }
 

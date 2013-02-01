@@ -833,19 +833,22 @@ namespace ChemSW.Nbt.Schema
                     {
                         PropName = CswNbtObjClassPrintJob.PropertyName.CreatedDate,
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
-                        ServerManaged = true
+                        ServerManaged = true,
+                        Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString()
                     } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
                     {
                         PropName = CswNbtObjClassPrintJob.PropertyName.ProcessedDate,
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
-                        ServerManaged = true
+                        ServerManaged = true,
+                        Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString()
                     } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
                     {
                         PropName = CswNbtObjClassPrintJob.PropertyName.EndedDate,
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
-                        ServerManaged = true
+                        ServerManaged = true,
+                        Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString()
                     } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintJobOC )
                     {
