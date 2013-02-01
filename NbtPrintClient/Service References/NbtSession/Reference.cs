@@ -610,9 +610,6 @@ namespace CswPrintClient1.NbtSession {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool DisplayErrorsField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private CswPrintClient1.NbtSession.CswWebSvcReturnBaseErrorMessage[] ErrorsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -625,19 +622,6 @@ namespace CswPrintClient1.NbtSession {
             }
             set {
                 this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool DisplayErrors {
-            get {
-                return this.DisplayErrorsField;
-            }
-            set {
-                if ((this.DisplayErrorsField.Equals(value) != true)) {
-                    this.DisplayErrorsField = value;
-                    this.RaisePropertyChanged("DisplayErrors");
-                }
             }
         }
         
@@ -719,7 +703,7 @@ namespace CswPrintClient1.NbtSession {
         private bool ShowErrorField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private CswPrintClient1.NbtSession.ErrorType TypeField;
+        private string TypeField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -771,7 +755,7 @@ namespace CswPrintClient1.NbtSession {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public CswPrintClient1.NbtSession.ErrorType Type {
+        public string Type {
             get {
                 return this.TypeField;
             }
@@ -779,51 +763,6 @@ namespace CswPrintClient1.NbtSession {
                 if ((object.ReferenceEquals(this.TypeField, value) != true)) {
                     this.TypeField = value;
                     this.RaisePropertyChanged("Type");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ErrorType", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Exceptions")]
-    [System.SerializableAttribute()]
-    public partial class ErrorType : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ValueField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Value {
-            get {
-                return this.ValueField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ValueField, value) != true)) {
-                    this.ValueField = value;
-                    this.RaisePropertyChanged("Value");
                 }
             }
         }

@@ -21,7 +21,6 @@
     <MetadataSource Address="http://localhost/NbtDev/Services/Session.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Session.xsd" MetadataType="Schema" ID="9e23fb86-d7c5-42a3-a47f-7f0b59e2ab0b" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Session.svc?xsd=xsd7" />
     <MetadataFile FileName="Session1.xsd" MetadataType="Schema" ID="ff22d35a-719b-45b9-8de4-b2a0bc1b20aa" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Session.svc?xsd=xsd1" />
     <MetadataFile FileName="Session.disco" MetadataType="Disco" ID="817f1f12-22cd-4332-8c31-839c47f6a75a" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Session.svc?disco" />
     <MetadataFile FileName="Session2.xsd" MetadataType="Schema" ID="117d5755-44c3-4153-8152-750fbbb65dea" SourceId="1" SourceUrl="http://localhost/NbtDev/Services/Session.svc?xsd=xsd2" />

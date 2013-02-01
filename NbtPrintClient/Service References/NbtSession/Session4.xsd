@@ -2,7 +2,7 @@
 <xs:schema xmlns:tns="NbtWebApp" elementFormDefault="qualified" targetNamespace="NbtWebApp" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
   <xs:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
-  <xs:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" />
+  <xs:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" />
   <xs:element name="Init">
     <xs:complexType>
       <xs:sequence>

@@ -36,6 +36,9 @@
             this.tbLog = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tbDescript = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.btnClearReg = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.cbEnabled = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -67,9 +70,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.btnClearReg = new System.Windows.Forms.Button();
-            this.label13 = new System.Windows.Forms.Label();
-            this.tbDescript = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -153,6 +153,33 @@
             this.tabPage2.Text = "Setup";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // tbDescript
+            // 
+            this.tbDescript.Location = new System.Drawing.Point(130, 102);
+            this.tbDescript.Multiline = true;
+            this.tbDescript.Name = "tbDescript";
+            this.tbDescript.Size = new System.Drawing.Size(219, 54);
+            this.tbDescript.TabIndex = 55;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(34, 105);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(93, 13);
+            this.label13.TabIndex = 54;
+            this.label13.Text = "Printer Description";
+            // 
+            // btnClearReg
+            // 
+            this.btnClearReg.Location = new System.Drawing.Point(354, 75);
+            this.btnClearReg.Name = "btnClearReg";
+            this.btnClearReg.Size = new System.Drawing.Size(60, 23);
+            this.btnClearReg.TabIndex = 53;
+            this.btnClearReg.Text = "Clear";
+            this.btnClearReg.UseVisualStyleBackColor = true;
+            this.btnClearReg.Click += new System.EventHandler(this.btnClearReg_Click);
+            // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(287, 344);
@@ -196,9 +223,9 @@
             // 
             // lblRegisterStatus
             // 
-            this.lblRegisterStatus.Location = new System.Drawing.Point(127, 13);
+            this.lblRegisterStatus.Location = new System.Drawing.Point(127, 3);
             this.lblRegisterStatus.Name = "lblRegisterStatus";
-            this.lblRegisterStatus.Size = new System.Drawing.Size(268, 24);
+            this.lblRegisterStatus.Size = new System.Drawing.Size(268, 41);
             this.lblRegisterStatus.TabIndex = 48;
             // 
             // tbURL
@@ -437,33 +464,6 @@
             // 
             this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // btnClearReg
-            // 
-            this.btnClearReg.Location = new System.Drawing.Point(354, 75);
-            this.btnClearReg.Name = "btnClearReg";
-            this.btnClearReg.Size = new System.Drawing.Size(60, 23);
-            this.btnClearReg.TabIndex = 53;
-            this.btnClearReg.Text = "Clear";
-            this.btnClearReg.UseVisualStyleBackColor = true;
-            this.btnClearReg.Click += new System.EventHandler(this.btnClearReg_Click);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(34, 105);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(93, 13);
-            this.label13.TabIndex = 54;
-            this.label13.Text = "Printer Description";
-            // 
-            // tbDescript
-            // 
-            this.tbDescript.Location = new System.Drawing.Point(130, 102);
-            this.tbDescript.Multiline = true;
-            this.tbDescript.Name = "tbDescript";
-            this.tbDescript.Size = new System.Drawing.Size(219, 54);
-            this.tbDescript.TabIndex = 55;
             // 
             // Form1
             // 

@@ -79,6 +79,7 @@ namespace CswPrintClient1.NbtLabels {
     [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturn", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns")]
     [System.SerializableAttribute()]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelJobResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateResponse))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelEpl))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtLabels.CswNbtLabelList))]
@@ -641,17 +642,40 @@ namespace CswPrintClient1.NbtLabels {
     [System.SerializableAttribute()]
     public partial class CswNbtLabelJobResponse : CswPrintClient1.NbtLabels.CswWebSvcReturn {
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string JobKeyField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string JobNoField;
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string JobOwnerField;
         
-        private string LabelCountField;
+        private int LabelCountField;
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string LabelDataField;
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string LabelNameField;
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int RemainingJobCountField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string JobKey {
+            get {
+                return this.JobKeyField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.JobKeyField, value) != true)) {
+                    this.JobKeyField = value;
+                    this.RaisePropertyChanged("JobKey");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string JobNo {
             get {
                 return this.JobNoField;
@@ -664,7 +688,7 @@ namespace CswPrintClient1.NbtLabels {
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string JobOwner {
             get {
                 return this.JobOwnerField;
@@ -678,19 +702,19 @@ namespace CswPrintClient1.NbtLabels {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string LabelCount {
+        public int LabelCount {
             get {
                 return this.LabelCountField;
             }
             set {
-                if ((object.ReferenceEquals(this.LabelCountField, value) != true)) {
+                if ((this.LabelCountField.Equals(value) != true)) {
                     this.LabelCountField = value;
                     this.RaisePropertyChanged("LabelCount");
                 }
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string LabelData {
             get {
                 return this.LabelDataField;
@@ -703,7 +727,7 @@ namespace CswPrintClient1.NbtLabels {
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string LabelName {
             get {
                 return this.LabelNameField;
@@ -715,6 +739,26 @@ namespace CswPrintClient1.NbtLabels {
                 }
             }
         }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int RemainingJobCount {
+            get {
+                return this.RemainingJobCountField;
+            }
+            set {
+                if ((this.RemainingJobCountField.Equals(value) != true)) {
+                    this.RemainingJobCountField = value;
+                    this.RaisePropertyChanged("RemainingJobCount");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelJobUpdateResponse", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtLabelJobUpdateResponse : CswPrintClient1.NbtLabels.CswWebSvcReturn {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -1379,6 +1423,81 @@ namespace CswPrintClient1.NbtLabels {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelJobUpdateRequest", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtLabelJobUpdateRequest : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ErrorMessageField;
+        
+        private string JobKeyField;
+        
+        private bool SucceededField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorMessage {
+            get {
+                return this.ErrorMessageField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ErrorMessageField, value) != true)) {
+                    this.ErrorMessageField = value;
+                    this.RaisePropertyChanged("ErrorMessage");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string JobKey {
+            get {
+                return this.JobKeyField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.JobKeyField, value) != true)) {
+                    this.JobKeyField = value;
+                    this.RaisePropertyChanged("JobKey");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public bool Succeeded {
+            get {
+                return this.SucceededField;
+            }
+            set {
+                if ((this.SucceededField.Equals(value) != true)) {
+                    this.SucceededField = value;
+                    this.RaisePropertyChanged("Succeeded");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="NbtWebApp", ConfigurationName="NbtLabels.Labels2")]
     public interface Labels2 {
@@ -1398,6 +1517,10 @@ namespace CswPrintClient1.NbtLabels {
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/Labels2/getNextLpcJob", ReplyAction="NbtWebApp/Labels2/getNextLpcJobResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/Labels2/getNextLpcJobFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
         CswPrintClient1.NbtLabels.CswNbtLabelJobResponse getNextLpcJob(CswPrintClient1.NbtLabels.CswNbtLabelJobRequest Request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/Labels2/updateLpcJob", ReplyAction="NbtWebApp/Labels2/updateLpcJobResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/Labels2/updateLpcJobFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
+        CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateResponse updateLpcJob(CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateRequest Request);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -1441,6 +1564,10 @@ namespace CswPrintClient1.NbtLabels {
         
         public CswPrintClient1.NbtLabels.CswNbtLabelJobResponse getNextLpcJob(CswPrintClient1.NbtLabels.CswNbtLabelJobRequest Request) {
             return base.Channel.getNextLpcJob(Request);
+        }
+        
+        public CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateResponse updateLpcJob(CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateRequest Request) {
+            return base.Channel.updateLpcJob(Request);
         }
     }
 }

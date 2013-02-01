@@ -81,6 +81,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfirmDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfirmDialog.Designer.cs">
+      <DependentUpon>ConfirmDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="CookieManagerMessageInspector.cs" />
     <Compile Include="CookieManagerBehavior.cs" />
     <Compile Include="Form1.cs">
@@ -103,6 +109,9 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="ServiceThread.cs" />
+    <EmbeddedResource Include="ConfirmDialog.resx">
+      <DependentUpon>ConfirmDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -131,6 +140,9 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelJobResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelList.datasource">
@@ -172,9 +184,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\NbtSession\Session.wsdl" />
-    <None Include="Service References\NbtSession\Session.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSession\Session1.wsdl" />
     <None Include="Service References\NbtSession\Session1.xsd">
       <SubType>Designer</SubType>
