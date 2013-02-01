@@ -128,9 +128,6 @@
     <Compile Include="Services\KioskMode.svc.cs">
       <DependentUpon>KioskMode.svc</DependentUpon>
     </Compile>
-    <Compile Include="Services\Labels2.svc.cs">
-      <DependentUpon>Labels2.svc</DependentUpon>
-    </Compile>
     <Compile Include="Services\ChemCatCentral.svc.cs">
       <DependentUpon>ChemCatCentral.svc</DependentUpon>
     </Compile>
@@ -607,7 +604,6 @@
     <Content Include="Services\Trees.svc" />
     <Content Include="Services\ChemCatCentral.svc" />
     <Content Include="Services\LegacyMobile.svc" />
-    <Content Include="Services\Labels2.svc" />
     <Content Include="Services\CISProNbtMobile.svc" />
     <Content Include="Services\Menus.svc" />
     <Content Include="Services\Mol.svc" />
