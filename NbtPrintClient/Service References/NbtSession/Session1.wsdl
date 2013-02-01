@@ -3,12 +3,12 @@
   <wsdl:types>
     <xsd:schema targetNamespace="NbtWebApp/Imports">
       <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd0" namespace="NbtWebApp" />
-      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel" />
       <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
-      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
-      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/System" />
-      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
+      <xsd:import schemaLocation="http://localhost/NbtDev/Services/Session.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/System" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="Session_Init_InputMessage">

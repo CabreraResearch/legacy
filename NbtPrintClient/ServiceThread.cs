@@ -39,7 +39,7 @@ namespace CswPrintClient1
             SessionClient sessionClient = new SessionClient();
             sessionClient.Endpoint.Behaviors.Add( cookieBehavior );
 
-            NbtSession.CswWebSvcReturn ret = sessionClient.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+            CswNbtWebServiceSessionCswNbtAuthReturn ret = sessionClient.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
             {
                 CustomerId = auth.AccessId,
                 UserName = auth.UserId,

@@ -177,10 +177,10 @@
     <None Include="Service References\NbtLabels\Labels29.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtSession\CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtSessionReturn.datasource">
+    <None Include="Service References\NbtSession\CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtAuthReturn.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtSession\CswPrintClient1.NbtSession.CswWebSvcReturn.datasource">
+    <None Include="Service References\NbtSession\CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtSessionReturn.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\NbtSession\Session.wsdl" />

@@ -108,6 +108,7 @@ namespace CswPrintClient1.NbtSession {
     [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturn", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns")]
     [System.SerializableAttribute()]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtSessionReturn))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtAuthReturn))]
     public partial class CswWebSvcReturn : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
@@ -686,6 +687,132 @@ namespace CswPrintClient1.NbtSession {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtWebServiceSession.CswNbtAuthReturn", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtWebServiceSessionCswNbtAuthReturn : CswPrintClient1.NbtSession.CswWebSvcReturn {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtUserDefaultsData DataField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtUserDefaultsData Data {
+            get {
+                return this.DataField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataField, value) != true)) {
+                    this.DataField = value;
+                    this.RaisePropertyChanged("Data");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtWebServiceSession.CswNbtUserDefaultsData", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtWebServiceSessionCswNbtUserDefaultsData : CswPrintClient1.NbtSession.CswWebSvcReturnBaseData {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DateFormatField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DefaultLocationIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DefaultPrinterIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string JurisdictionIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string TimeFormatField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string WorkUnitIdField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DateFormat {
+            get {
+                return this.DateFormatField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DateFormatField, value) != true)) {
+                    this.DateFormatField = value;
+                    this.RaisePropertyChanged("DateFormat");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DefaultLocationId {
+            get {
+                return this.DefaultLocationIdField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DefaultLocationIdField, value) != true)) {
+                    this.DefaultLocationIdField = value;
+                    this.RaisePropertyChanged("DefaultLocationId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DefaultPrinterId {
+            get {
+                return this.DefaultPrinterIdField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DefaultPrinterIdField, value) != true)) {
+                    this.DefaultPrinterIdField = value;
+                    this.RaisePropertyChanged("DefaultPrinterId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string JurisdictionId {
+            get {
+                return this.JurisdictionIdField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.JurisdictionIdField, value) != true)) {
+                    this.JurisdictionIdField = value;
+                    this.RaisePropertyChanged("JurisdictionId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string TimeFormat {
+            get {
+                return this.TimeFormatField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TimeFormatField, value) != true)) {
+                    this.TimeFormatField = value;
+                    this.RaisePropertyChanged("TimeFormat");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string WorkUnitId {
+            get {
+                return this.WorkUnitIdField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.WorkUnitIdField, value) != true)) {
+                    this.WorkUnitIdField = value;
+                    this.RaisePropertyChanged("WorkUnitId");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturnBase.ErrorMessage", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
     [System.SerializableAttribute()]
     public partial class CswWebSvcReturnBaseErrorMessage : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -781,6 +908,7 @@ namespace CswPrintClient1.NbtSession {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturnBase.Data", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
     [System.SerializableAttribute()]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtUserDefaultsData))]
     public partial class CswWebSvcReturnBaseData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
@@ -828,7 +956,7 @@ namespace CswPrintClient1.NbtSession {
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/Session/Init", ReplyAction="NbtWebApp/Session/InitResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/Session/InitFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        CswPrintClient1.NbtSession.CswWebSvcReturn Init(CswPrintClient1.NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request);
+        CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtAuthReturn Init(CswPrintClient1.NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request);
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/Session/End", ReplyAction="NbtWebApp/Session/EndResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/Session/EndFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
@@ -866,7 +994,7 @@ namespace CswPrintClient1.NbtSession {
                 base(binding, remoteAddress) {
         }
         
-        public CswPrintClient1.NbtSession.CswWebSvcReturn Init(CswPrintClient1.NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request) {
+        public CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtAuthReturn Init(CswPrintClient1.NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request) {
             return base.Channel.Init(Request);
         }
         
