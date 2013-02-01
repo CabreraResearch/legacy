@@ -48,7 +48,7 @@ namespace ChemSW.Nbt
 
             // Nodes and Properties
             DataTable NodesTable = new DataTable();
-            string Sql = _makeNodeSql( Relationship, false );
+            string Sql = _makeNodeSql( Relationship );
 
             Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit;
             if( Relationship.Properties.Count > 0 )
@@ -251,10 +251,11 @@ namespace ChemSW.Nbt
         } // loadRelationshipRecursive()
 
 
-        private string _makeNodeSql( CswNbtViewRelationship Relationship, bool IsParentQuery )
+        private string _makeNodeSql( CswNbtViewRelationship Relationship, Int32 ParentCount=0 )
         {
+            string With = string.Empty;
             string Select = "select n.nodeid ";
-            if( false == IsParentQuery )
+            if( ParentCount == 0 )
             {
                 Select += @", n.nodename, 
                               n.locked,
@@ -270,6 +271,7 @@ namespace ChemSW.Nbt
                             join object_class o on (t.objectclassid = o.objectclassid) ";
             string Where = string.Empty;
             string OrderBy = string.Empty;
+            string End = string.Empty;
 
             // case 26029
             Where += "where t.enabled = '1' ";
@@ -280,15 +282,29 @@ namespace ChemSW.Nbt
             else
                 Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
 
-            // Parent Node
-            if( Relationship.PropId != Int32.MinValue )
+            if( Relationship.PropId == Int32.MinValue )
             {
-                if( false == IsParentQuery )
+                if( ParentCount > 0 )
+                {
+                    With += "with parent" + ParentCount +" as (";
+                    End += ")";
+                }
+            }
+            else
+            {
+                // Parent Node
+
+                With += _makeNodeSql( (CswNbtViewRelationship) Relationship.Parent, ParentCount + 1 );
+                
+                if( ParentCount == 0 )
                 {
                     Select += ",parent.parentnodeid ";
                 }
-
-                Where += " and parent.parentnodeid in (" + _makeNodeSql( (CswNbtViewRelationship) Relationship.Parent, true ) + ")";
+                else
+                {
+                    With += ",parent" + ParentCount + " as (";
+                    End += ")";
+                }
 
                 if( Relationship.PropOwner == NbtViewPropOwnerType.First )
                 {
@@ -322,10 +338,11 @@ namespace ChemSW.Nbt
                     }
                     From += @"        ) parent on (parent.thisnodeid = n.nodeid)";
                 }
+                From += " join parent" + ( ParentCount + 1 ) + " on (parent.parentnodeid = parent" + ( ParentCount + 1 ) + ".nodeid) ";
             } // if( Relationship.PropId != Int32.MinValue )
 
             // Grouping
-            if( false == IsParentQuery )
+            if( ParentCount == 0 )
             {
                 if( Relationship.GroupByPropId != Int32.MinValue )
                 {
@@ -492,7 +509,7 @@ namespace ChemSW.Nbt
 
                     } // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
                 } // if(Relationship.Properties.Count > 0)
-            } // if( false == IsParentQuery )
+            } // if( ParentCount == 0 )
 
             // Property Filters
             Int32 FilterCount = 0;
@@ -558,7 +575,7 @@ namespace ChemSW.Nbt
 
 
                                 From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled && false == IsParentQuery )
+                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled && ParentCount == 0 )
                                 {
                                     Select += ",f" + FilterCount.ToString() + ".included as included" + Filter.Conjunction.ToString() + FilterCount.ToString();
                                 }
@@ -628,11 +645,13 @@ namespace ChemSW.Nbt
                 Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
-            string ret = Select + " " + From + " " + Where;
-            if( false == IsParentQuery )
+            string ret = With + " " + Select + " " + From + " " + Where;
+            if( ParentCount == 0 )
             {
                 ret += " " + OrderBy;
             }
+            ret += End;
+
             return ret;
         } //_makeNodeSql()
 
