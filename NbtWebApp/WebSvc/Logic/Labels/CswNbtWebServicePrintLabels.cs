@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.WebServices
 
         // case 28716
         // Special case: Spool GHS data from this container's Material's GHS in the user's Jurisdiction and language
-        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node )
+        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node, bool ShowCodes, bool ShowPhrases )
         {
             string ret = string.Empty;
 
@@ -356,8 +356,24 @@ namespace ChemSW.Nbt.WebServices
 
                                 foreach( string Code in Phrases.Keys )
                                 {
-                                    ret += Code + ": " + Phrases[Code] + "\n";
-                                }
+                                    if( ShowCodes )
+                                    {
+                                        if( false == ShowPhrases && ret != string.Empty )
+                                        {
+                                            ret += ",";
+                                        }
+                                        ret += Code;
+                                    }
+                                    if( ShowPhrases )
+                                    {
+                                        if( ShowCodes )
+                                        {
+                                            ret += ": ";
+                                        }
+                                        ret += Phrases[Code] + "\n";
+                                    }
+                                } // foreach( string Code in Phrases.Keys )
+
                             } // if( GHSTree.getChildNodeCount() > 0 ) ghs
                         } // if( GHSTree.getChildNodeCount() > 0 )     material
                     } // if( GHSTree.getChildNodeCount() > 0 )         container
@@ -402,11 +418,22 @@ namespace ChemSW.Nbt.WebServices
                     {
                         // Fetch template value
                         string TemplateValue = string.Empty;
-                        if( TemplateName.StartsWith( "NBTGHS" ) ) // Ignore NBTGHS_2, will fill in below
+                        if( TemplateName.StartsWith( "NBTGHS" ) )   // Ignore NBTGHS_2, will fill in below
                         {
-                            if( TemplateName.Equals( "NBTGHS" ) )
+                            if( TemplateName.Equals( "NBTGHS" ) || TemplateName.Equals( "NBTGHSA" ) )
                             {
-                                TemplateValue = _getGhsValueForLabel( NbtResources, Node );
+                                // A - phrases only
+                                TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: false , ShowPhrases: true );
+                            }
+                            if( TemplateName.Equals( "NBTGHSB" ) )
+                            {
+                                // B - codes only
+                                TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: true, ShowPhrases: false );
+                            }
+                            if( TemplateName.Equals( "NBTGHSC" ) )
+                            {
+                                // C - phrases and codes
+                                TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: true, ShowPhrases: true );
                             }
                         }
                         else
