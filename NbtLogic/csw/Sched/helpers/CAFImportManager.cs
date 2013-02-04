@@ -105,25 +105,19 @@ namespace ChemSW.Nbt
 
             if( unitIds.Count == 0 ) //if we didn't import UoMs
             {
-                string sql = @"with vandp as (
-                                  select distinct 
-                                      v.vendorname, v.city, v.state, v.street1, v.street2, v.zip, v.accountno, v.fax, v.phone, v.contactname, 
-                                      p.productno, p.materialid 
-                                  from packages p
-                                      left join vendors v on v.vendorid = p.supplierid and v.deleted = '0'
-                                  where p.deleted = '0')
-                           
-                           select 
-                             m.nbtuptodate, m.materialid, m.materialname, m.casno, m.specific_gravity, m.expireinterval, m.expireintervalunits, m.formula, m.struct_pict,
-                             m.physical_state, m.melting_point, m.aqueous_solubility, m.boiling_point, m.vapor_density, m.vapor_pressure, m.molecular_weight, m.flash_point, m.ph,
-                             m.physical_description,
-                             mc.classname,
-                             vp.*
-                           from materials m 
-                                left join materials_subclass ms on m.materialsubclassid = ms.materialsubclassid and ms.deleted = '0'
-                                left join materials_class mc on ms.materialclassid = mc.materialclassid and mc.deleted = '0'
-                                left join vandp vp on vp.materialid = m.materialid
-                           where mc.classname = 'CHEMICAL' and m.deleted = '0' and nbtuptodate = '0' and rownum <= " + _NumberToProcess + " order by m.materialid ";
+                string sql = @"select 
+                                      m.materialname, v.vendorname, p.productno, m.materialid,
+                                      m.nbtuptodate as material_uptodate, v.nbtuptodate as vendor_uptodate, p.nbtuptodate as package_uptodate,
+                                      m.casno, m.specific_gravity, m.expireinterval, m.expireintervalunits, m.formula, m.struct_pict,
+                                      m.physical_state, m.melting_point, m.aqueous_solubility, m.boiling_point, m.vapor_density, m.vapor_pressure, m.molecular_weight, m.flash_point, m.ph,
+                                      m.physical_description,
+                                      v.vendorname, v.city, v.state, v.street1, v.street2, v.zip, v.accountno, v.fax, v.phone, v.contactname 
+                               from materials m
+                                    left join packages p on p.materialid = m.materialid
+                                    left join vendors v on v.vendorid = p.supplierid
+                                    left join materials_subclass ms on m.materialsubclassid = ms.materialsubclassid and ms.deleted = '0'
+                                    left join materials_class mc on ms.materialclassid = mc.materialclassid and mc.deleted = '0' and mc.classname = 'CHEMICAL'
+                               where m.deleted = '0' and m.nbtuptodate = '0' and v.nbtuptodate = '0' and p.nbtuptodate = '0' and rownum <= " + _NumberToProcess;
 
                 //SelectTimer.Start();
                 CswArbitrarySelect cswArbSelect = _CAFResources.makeCswArbitrarySelect( "cafimport_selectmaterials", sql );
@@ -696,17 +690,12 @@ namespace ChemSW.Nbt
                                 }
                                 break;
                             default:
-                                string gestalt = "";
                                 foreach( CAFSubfieldMapping subfield in mapping.Subfields )
                                 {
                                     string nbtValue = _CafTranslator.Translate( mapping.MappingDictionaryName, Row[subfield.CAFColName].ToString() );
                                     if( subfield.ExpectedObjClassId != Int32.MinValue ) //indicates we're looking for an FK
                                     {
                                         nbtValue = _getNodeIdFromLegacyId( nbtValue, subfield.ExpectedObjClassId ).ToString();
-                                    }
-                                    else
-                                    {
-                                        gestalt += " " + nbtValue;
                                     }
                                     Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, nbtValue );
                                 }
@@ -764,7 +753,6 @@ namespace ChemSW.Nbt
                         }
                         else
                         {
-                            var x = 10;
                             //My test set only has Weight, Each and Volume - there's still TIME, and RADIATION
                             //We also might have to handle new Unit of Measure types if there are any
                         }
@@ -944,7 +932,7 @@ namespace ChemSW.Nbt
 
             if( null != materialSynNT )
             {
-                string sql = @"select synonymname, materialsynonymid from materials_synonyms where deleted = '0' and nbtuptodate = '0' and materialid = " + MaterialId;
+                string sql = @"select synonymname, materialsynonymid from materials_synonyms where deleted = '0' and materialid = " + MaterialId;
                 //SelectTimer.Start();
                 CswArbitrarySelect arbSel = _CAFResources.makeCswArbitrarySelect( "cafselect_materialsyn", sql );
                 DataTable tbl = arbSel.getTable();
@@ -981,7 +969,7 @@ namespace ChemSW.Nbt
                 string sql = @"select pd.capacity, pd.catalogno, uom.unitofmeasurename, uom.unitofmeasureid, uom.unittype, pd.packdetailid from packages p
                                    left join packdetail pd on p.packageid = pd.packageid
                                    left join units_of_measure uom on pd.unitofmeasureid = uom.unitofmeasureid
-                               where pd.deleted = '0' and (pd.nbtuptodate = 0 or pd.nbtuptodate is null) and p.materialid = " + MaterialId;
+                               where pd.deleted = '0' and p.materialid = " + MaterialId;
                 //SelectTimer.Start();
                 CswArbitrarySelect arbSel = _CAFResources.makeCswArbitrarySelect( "cafselect_materialsize", sql );
                 DataTable tbl = arbSel.getTable();
