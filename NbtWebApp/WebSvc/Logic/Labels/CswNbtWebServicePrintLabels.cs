@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -222,8 +226,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     string EPLText = PrintLabel.EplText.Text;
                     string Params = PrintLabel.Params.Text;
-                    PrintLabel Label = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode );
-                    JobData += Label.EplText;
+                    JobData += GenerateEPLScript( NbtResources, EPLText, Params, TargetNode );
                     JobCount += 1;
                 }
             } // foreach( string TargetId in RealTargetIds )
@@ -261,8 +264,12 @@ namespace ChemSW.Nbt.WebServices
                         // BZ 6118 - this prevents " from being turned into &quot;
                         // BUT SEE BZ 7881!
                         //string EplText = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode ) + "\n";
-                        PrintLabel Label = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode );
-                        Return.Data.Labels.Add( Label );
+                        Return.Data.Labels.Add( new PrintLabel
+                            {
+                                TargetId = TargetNode.NodeId.ToString(),
+                                TargetName = TargetNode.NodeName,
+                                EplText = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode )
+                            } );
                     }
                 }
             }
@@ -272,92 +279,192 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getEPLText()
 
-        private static PrintLabel GenerateEPLScript( CswNbtResources NbtResources, string EPLText, string Params, CswNbtNode Node )
+
+        // case 28716
+        // Special case: Spool GHS data from this container's Material's GHS in the user's Jurisdiction and language
+        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node )
         {
-            PrintLabel Ret = new PrintLabel();
-            string EPLScript = string.Empty;
-            if( false == string.IsNullOrEmpty( EPLText ) )
+            string ret = string.Empty;
+
+            CswNbtMetaDataNodeType ContainerNT = Node.NodeType;
+            if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
             {
-                EPLScript = EPLText;
-                while( EPLScript.Contains( "{" ) )
+                CswNbtMetaDataNodeTypeProp ContainerMaterialNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+
+                CswNbtMetaDataObjectClass GhsOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.GHSClass );
+                if( null != GhsOC )
                 {
-                    Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
-                    Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
+                    CswNbtMetaDataObjectClassProp GhsMaterialOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
+                    CswNbtMetaDataObjectClassProp GhsJurisdictionOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Jurisdiction );
 
-                    string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
-                    string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
-                    // Find the property
-                    if( null != Node )
+                    CswNbtView GHSView = new CswNbtView( NbtResources );
+                    GHSView.ViewName = "GHS for Container";
+
+                    CswNbtViewRelationship ContainerRel = GHSView.AddViewRelationship( Node.NodeType, false );
+                    CswNbtViewRelationship MaterialRel = GHSView.AddViewRelationship( ContainerRel, NbtViewPropOwnerType.First, ContainerMaterialNTP, false );
+                    CswNbtViewRelationship GHSRel = GHSView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, GhsMaterialOCP, false );
+
+                    ContainerRel.NodeIdsToFilterIn.Add( Node.NodeId );
+                    CswPrimaryKey JurisdictionId = NbtResources.CurrentNbtUser.JurisdictionId;
+                    if( CswTools.IsPrimaryKey( JurisdictionId ) )
                     {
-                        Ret.TargetId = Node.NodeId.ToString();
-                        Ret.TargetName = Node.NodeName;
+                        GHSView.AddViewPropertyAndFilter( GHSRel, GhsJurisdictionOCP,
+                                                          Value: NbtResources.CurrentNbtUser.JurisdictionId.PrimaryKey.ToString(),
+                                                          SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                          FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    }
 
-                        CswNbtMetaDataNodeType MetaDataNodeType = NbtResources.MetaData.getNodeType( Node.NodeTypeId );
-                        if( null != MetaDataNodeType )
+                    ICswNbtTree GHSTree = NbtResources.Trees.getTreeFromView( GHSView, false, false, false );
+                    if( GHSTree.getChildNodeCount() > 0 )
+                    {
+                        GHSTree.goToNthChild( 0 ); // Container
+                        if( GHSTree.getChildNodeCount() > 0 )
                         {
-                            CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
-                            if( null != MetaDataProp )
+                            GHSTree.goToNthChild( 0 ); // Material
+                            if( GHSTree.getChildNodeCount() > 0 )
                             {
-                                string PropertyValue = Node.Properties[MetaDataProp].Gestalt;
-                                if( MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
-                                {
-                                    PropertyValue = Node.Properties[MetaDataProp].AsImage.FileName;
-                                    Ret.Pictos.Add( new PrintLabel.Picto
-                                        {
-                                            FileName = PropertyValue,
-                                            FileURL = Node.Properties[MetaDataProp].AsImage.ImageUrl
-                                        } );
-                                }
+                                GHSTree.goToNthChild( 0 ); // GHS
+                                CswNbtObjClassGHS GHSNode = GHSTree.getNodeForCurrentPosition();
 
-                                bool FoundMatch = false;
-                                if( false == string.IsNullOrEmpty( Params ) )
+                                // Run the Label Codes View
+                                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( GHSNode.LabelCodesGrid.View, false, false, false );
+                                SortedList<string, string> Phrases = new SortedList<string, string>();
+                                for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
                                 {
-                                    string[] ParamsArray = Params.Split( '\n' );
-                                    foreach( string ParamNVP in ParamsArray )
+                                    LabelCodesTree.goToNthChild( p );
+
+                                    Collection<CswNbtTreeNodeProp> Props = LabelCodesTree.getChildNodePropsOfNode();
+
+                                    string Code = string.Empty;
+                                    string Phrase = string.Empty;
+                                    foreach( CswNbtTreeNodeProp Prop in Props )
                                     {
-                                        string[] ParamSplit = ParamNVP.Split( '=' );
-                                        if( ParamSplit.Length > 1 &&
-                                            ParamSplit[0] == PropertyParamName &&
-                                            CswTools.IsInteger( ParamSplit[1] ) )
+                                        CswNbtMetaDataNodeTypeProp Ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
+                                        if( null != Ntp && null != Ntp.getObjectClassProp() && Ntp.getObjectClassProp().PropName == CswNbtObjClassGHSPhrase.PropertyName.Code )
                                         {
-                                            FoundMatch = true;
-                                            Int32 MaxLength = CswConvert.ToInt32( ParamSplit[1] );
-                                            Int32 CurrentIteration = 1;
-                                            while( ParamStartIndex >= 0 )
-                                            {
-                                                if( PropertyValue.Length > MaxLength )
-                                                {
-                                                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue.Substring( 0, MaxLength ) + EPLScript.Substring( ParamEndIndex + 1 );
-                                                    PropertyValue = PropertyValue.Substring( MaxLength + 1 );
-                                                }
-                                                else
-                                                {
-                                                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
-                                                    PropertyValue = "";
-                                                }
-                                                CurrentIteration += 1;
-                                                ParamStartIndex = EPLScript.IndexOf( "{" + PropertyParamName + "_" + CurrentIteration + "}" );
-                                                ParamEndIndex = ParamStartIndex + ( "{" + PropertyParamName + "_" + CurrentIteration + "}" ).Length - 1;
-                                            }
+                                            Code = Prop.Gestalt;
+                                        }
+                                        else
+                                        {
+                                            Phrase = Prop.Gestalt;
                                         }
                                     }
-                                }
-                                if( false == FoundMatch )
+                                    Phrases.Add( Code, Phrase );
+
+                                    LabelCodesTree.goToParentNode();
+                                } // for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
+
+                                foreach( string Code in Phrases.Keys )
                                 {
-                                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
+                                    ret += Code + ": " + Phrases[Code] + "\n";
+                                }
+                            } // if( GHSTree.getChildNodeCount() > 0 ) ghs
+                        } // if( GHSTree.getChildNodeCount() > 0 )     material
+                    } // if( GHSTree.getChildNodeCount() > 0 )         container
+                } // if(null != GhsOC)
+            } // if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
+            
+            return ret;
+        } // _getGhsValueForLabel()
+
+
+        private static string GenerateEPLScript( CswNbtResources NbtResources, string EPLText, string Params, CswNbtNode Node )
+        {
+            string EPLScript = string.Empty;
+            if( false == string.IsNullOrEmpty( EPLText ) && null != Node )
+            {
+                EPLScript = EPLText;
+                
+                // Extract sizes from Params array
+                Dictionary<string,Int32> ParamSizes = new Dictionary<string, Int32>();
+                if( false == string.IsNullOrEmpty( Params ) )
+                {
+                    string[] ParamsArray = Params.Split( '\n' );
+                    foreach( string ParamNVP in ParamsArray )
+                    {
+                        string[] ParamSplit = ParamNVP.Split( '=' );
+                        if( ParamSplit.Length > 1 && CswTools.IsInteger( ParamSplit[1] ) )
+                        {
+                            ParamSizes[ParamSplit[0]] = CswConvert.ToInt32( ParamSplit[1] );
+                        } // if( ParamSplit.Length > 1 && CswTools.IsInteger( ParamSplit[1] ) )
+                    } // foreach( string ParamNVP in ParamsArray )
+                } // if( false == string.IsNullOrEmpty( Params ) )
+
+
+                // Find template names in the EPLText
+                Dictionary<string, string> TemplateValues = new Dictionary<string, string>();
+                MatchCollection TemplateMatches = Regex.Matches( EPLText, @"{.+}" );
+                foreach( Match TemplateMatch in TemplateMatches )
+                {
+                    string TemplateName = TemplateMatch.Value.Substring( 1, TemplateMatch.Value.Length - 2 );
+
+                    if( false == TemplateValues.ContainsKey( TemplateName ) )
+                    {
+                        // Fetch template value
+                        string TemplateValue = string.Empty;
+                        if( TemplateName.StartsWith( "NBTGHS" ) ) // Ignore NBTGHS_2, will fill in below
+                        {
+                            if( TemplateName.Equals( "NBTGHS" ) )
+                            {
+                                TemplateValue = _getGhsValueForLabel( NbtResources, Node );
+                            }
+                        }
+                        else
+                        {
+                            CswNbtMetaDataNodeType MetaDataNodeType = NbtResources.MetaData.getNodeType( Node.NodeTypeId );
+                            if( null != MetaDataNodeType )
+                            {
+                                CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( TemplateName );
+                                if( null != MetaDataProp )
+                                {
+                                    TemplateValue = Node.Properties[MetaDataProp].Gestalt;
                                 }
                             }
                         }
-                    }
+
+                        // Handle splitting template value over lines
+                        IEnumerable<string> ValueChunks = null;
+                        if( ParamSizes.ContainsKey( TemplateName ) )
+                        {
+                            ValueChunks = CswTools.Chunk( TemplateValue, ParamSizes[TemplateName] );
+                        }
+                        else if( TemplateValue.Contains( "\n" ) )
+                        {
+                            ValueChunks = TemplateValue.Replace( "\r", "" ).Split( '\n' );
+                        }
+
+                        if( null != ValueChunks )
+                        {
+                            Int32 CurrentIteration = 1;
+                            string CurrentTemplateName = TemplateName;
+                            foreach( string Chunk in ValueChunks )
+                            {
+                                TemplateValues[CurrentTemplateName] = Chunk;
+                                CurrentIteration++;
+                                CurrentTemplateName = TemplateName + "_" + CurrentIteration;
+                            }
+                        } // if( null != ValueChunks )
+                        else
+                        {
+                            TemplateValues[TemplateName] = TemplateValue;
+                        }
+                    } // if( false == TemplateValues.ContainsKey( TemplateName ) )
+                } // foreach( Match TemplateMatch in TemplateMatches )
+
+
+                // Apply template values to EPLScript
+                foreach( string TemplateName in TemplateValues.Keys )
+                {
+                    EPLScript = EPLScript.Replace( "{" + TemplateName + "}", TemplateValues[TemplateName] );
                 }
-            }
-            //}
+
+            } // false == string.IsNullOrEmpty( EPLText ) && null != Node )
+
             if( string.IsNullOrEmpty( EPLScript ) )
             {
                 throw new CswDniException( ErrorType.Error, "Could not generate an EPL script from the provided parameters.", "EPL Text='" + EPLText + "', Params='" + Params + "'" );
             }
-            Ret.EplText = EPLScript + "\n";
-            return Ret;
+            return EPLScript + "\n";
         } // GenerateEPLScript()
 
         public static void registerLpc( ICswResources CswResources, CswNbtLabelPrinterReg Return, LabelPrinter Request )
