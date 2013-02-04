@@ -27,9 +27,13 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
 
-            if( GeneratorNode.TargetType.SelectMode == PropertySelectMode.Single )
+            if( String.IsNullOrEmpty( GeneratorNode.TargetType.SelectedNodeTypeIds.ToString() ) )
             {
-                Int32 NodeTypeId = CswConvert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds.ToString() );
+                throw new CswDniException( ErrorType.Error, "Invalid generator configuration", "_getTargetNodeForGenerator got a null SelectedNodeTypeIds on nodeid " + GeneratorNode.NodeId );
+            }
+            else
+            {
+                Int32 NodeTypeId = CswConvert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds[0] ); // case 28612 - just check the first one
                 if( Int32.MinValue != NodeTypeId )
                 {
                     CswNbtMetaDataNodeType ThisCreatedNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
@@ -77,12 +81,6 @@ namespace ChemSW.Nbt.Actions
 
                     }
                 }
-                //else
-                //{
-                //    Collection<Int32> NodeTypeIds = new Collection<Int32>();
-                //    NodeTypeIds = GeneratorNode.TargetType.SelectedNodeTypeIds.ToIntCollection();
-                //    foreach( Int32 NodeTypeId in NodeTypeIds ) 
-                //}
             }
             return ( ReturnVal );
 

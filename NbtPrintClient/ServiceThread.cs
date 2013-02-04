@@ -1,14 +1,13 @@
 ﻿using System;
 using System.ServiceModel;
-using ChemSW;
-using CswPrintClient1.NbtLabels;
-using CswPrintClient1.NbtSession;
+//using ChemSW;
+using CswPrintClient1.NbtPublic;
 
 namespace CswPrintClient1
 {
     class ServiceThread
     {
-        private CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
+        //private CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
 
         public abstract class ServiceThreadEventArgs
         {
@@ -18,19 +17,25 @@ namespace CswPrintClient1
 
         #region Authentication and Session
 
-        private Labels2Client _getlabelClient( NbtAuth auth )
+        private NbtPublicClient _getClient( NbtAuth auth )
         {
-            Labels2Client ret = new NbtLabels.Labels2Client();
-            ret.Endpoint.Address = new EndpointAddress( auth.baseURL + "labels2.svc" );
+            NbtPublicClient ret = new NbtPublicClient();
+            string Url = auth.baseURL;
+            if( false == Url.EndsWith( "NbtPublic.svc" ) )
+            {
+                Url += "NbtPublic.svc";
+            }
+            ret.Endpoint.Address = new EndpointAddress( Url );
             ret.Endpoint.Binding = new WebHttpBinding()
             {
+                AllowCookies = true,
                 Security = new WebHttpSecurity()
                 {
                     Mode = auth.useSSL ? WebHttpSecurityMode.Transport : WebHttpSecurityMode.None
                 }
             };
 
-            ret.Endpoint.Behaviors.Add( cookieBehavior );
+            //ret.Endpoint.Behaviors.Add( cookieBehavior );
             return ret;
         }
 
@@ -43,29 +48,19 @@ namespace CswPrintClient1
             public string baseURL;
         }
 
-        public delegate void AuthSuccessHandler();
-        public delegate void AuthFailureHandler( string ErrorMessage );
+        public delegate void AuthSuccessHandler(NbtPublicClient Client);
 
         private void _Authenticate( NbtAuth auth, ServiceThreadEventArgs e, AuthSuccessHandler success )
         {
-            SessionClient sessionClient = new SessionClient();
-            sessionClient.Endpoint.Address = new EndpointAddress( auth.baseURL + "session.svc" );
-            sessionClient.Endpoint.Binding = new WebHttpBinding()
-            {
-                Security = new WebHttpSecurity()
-                {
-                    Mode = auth.useSSL ? WebHttpSecurityMode.Transport : WebHttpSecurityMode.None
-                }
-            };
-            sessionClient.Endpoint.Behaviors.Add( cookieBehavior );
+            NbtPublicClient NbtClient = _getClient( auth );
 
-            NbtSession.CswWebSvcReturn ret = sessionClient.Init( new NbtSession.CswWebSvcSessionAuthenticateDataAuthenticationRequest()
-            {
-                CustomerId = auth.AccessId,
-                UserName = auth.UserId,
-                Password = auth.Password,
-                IsMobile = false
-            } );
+            CswNbtWebServiceSessionCswNbtAuthReturn ret = NbtClient.SessionInit( new CswWebSvcSessionAuthenticateDataAuthenticationRequest()
+                {
+                    CustomerId = auth.AccessId,
+                    UserName = auth.UserId,
+                    Password = auth.Password,
+                    IsMobile = false
+                } );
             try
             {
                 if( ret.Authentication.AuthenticationStatus == "Authenticated" )
@@ -74,11 +69,11 @@ namespace CswPrintClient1
                     {
                         try
                         {
-                            success();
+                            success( NbtClient );
                         }
                         finally
                         {
-                            sessionClient.End();
+                            NbtClient.SessionEnd();
                         }
                     }
                 }
@@ -93,7 +88,7 @@ namespace CswPrintClient1
             }
             finally
             {
-                sessionClient.Close();
+                NbtClient.Close();
             }
         } // _Authenticate
 
@@ -117,16 +112,13 @@ namespace CswPrintClient1
             RegisterEventArgs e = new RegisterEventArgs();
 
             _Authenticate( auth, e,
-                           delegate() // Success
+                           delegate( NbtPublicClient NbtClient ) // Success
                            {
                                LabelPrinter lblPrn = new LabelPrinter();
                                lblPrn.LpcName = lpcname;
                                lblPrn.Description = descript;
 
-                               Labels2Client labelClient = _getlabelClient( auth );
-
-                               CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg Ret = labelClient.registerLpc( lblPrn );
-                               labelClient.Close();
+                               CswNbtLabelPrinterReg Ret = NbtClient.LpcRegister( lblPrn );
 
                                if( Ret.Status.Success )
                                {
@@ -170,15 +162,13 @@ namespace CswPrintClient1
             LabelByIdEventArgs e = new LabelByIdEventArgs();
 
             _Authenticate( auth, e,
-                           delegate() // Success
+                           delegate( NbtPublicClient NbtClient ) // Success
                            {
                                NbtPrintLabelRequestGet nbtLabelget = new NbtPrintLabelRequestGet();
                                nbtLabelget.LabelId = labelid;
                                nbtLabelget.TargetId = targetid;
 
-                               Labels2Client labelClient = _getlabelClient( auth );
-                               CswNbtLabelEpl epl = labelClient.getLabel( nbtLabelget );
-                               labelClient.Close();
+                               CswNbtLabelEpl epl = NbtClient.LpcGetLabel( nbtLabelget );
 
                                if( epl.Status.Success )
                                {
@@ -226,14 +216,12 @@ namespace CswPrintClient1
             NextJobEventArgs e = new NextJobEventArgs();
 
             _Authenticate( auth, e,
-                           delegate() // Success
+                           delegate( NbtPublicClient NbtClient ) // Success
                            {
                                CswNbtLabelJobRequest labelReq = new CswNbtLabelJobRequest();
                                labelReq.PrinterKey = printerkey;
 
-                               Labels2Client labelClient = _getlabelClient( auth );
-                               CswNbtLabelJobResponse Ret = labelClient.getNextLpcJob( labelReq );
-                               labelClient.Close();
+                               CswNbtLabelJobResponse Ret = NbtClient.LpcGetNextJob( labelReq );
 
                                if( Ret.Status.Success )
                                {
@@ -276,19 +264,14 @@ namespace CswPrintClient1
             UpdateJobEventArgs e = new UpdateJobEventArgs();
 
             _Authenticate( auth, e,
-                           delegate() // Success
+                           delegate( NbtPublicClient NbtClient ) // Success
                            {
                                CswNbtLabelJobUpdateRequest Request = new CswNbtLabelJobUpdateRequest();
                                Request.JobKey = jobKey;
                                Request.Succeeded = success;
                                Request.ErrorMessage = errorMsg;
 
-                               Labels2Client labelClient = _getlabelClient( auth );
-                               //DCH need to have these pased in
-                               //Request.Succeeded = //set to results of printlabel
-                               //Request.ErrorMessage = //set to any error form printlabel
-                               CswNbtLabelJobUpdateResponse Ret = labelClient.updateLpcJob( Request );
-                               labelClient.Close();
+                               CswNbtLabelJobUpdateResponse Ret = NbtClient.LpcUpdateJob( Request );
 
                                if( Ret.Status.Success )
                                {

@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = RateInterval.ToString();
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, RateInterval.ToString() );
         }
 
     }//CswNbtNodeProp

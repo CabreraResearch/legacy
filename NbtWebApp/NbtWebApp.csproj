@@ -113,6 +113,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\NbtPublic.svc.cs">
+      <DependentUpon>NbtPublic.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Scheduler.svc.cs">
       <DependentUpon>Scheduler.svc</DependentUpon>
     </Compile>
@@ -124,9 +127,6 @@
     </Compile>
     <Compile Include="Services\KioskMode.svc.cs">
       <DependentUpon>KioskMode.svc</DependentUpon>
-    </Compile>
-    <Compile Include="Services\Labels2.svc.cs">
-      <DependentUpon>Labels2.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\ChemCatCentral.svc.cs">
       <DependentUpon>ChemCatCentral.svc</DependentUpon>
@@ -598,12 +598,12 @@
     <Content Include="Images\newicons\KioskMode\Transfer_code39.png" />
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\NbtPublic.svc" />
     <Content Include="Services\Scheduler.svc" />
     <Content Include="Services\KioskMode.svc" />
     <Content Include="Services\Trees.svc" />
     <Content Include="Services\ChemCatCentral.svc" />
     <Content Include="Services\LegacyMobile.svc" />
-    <Content Include="Services\Labels2.svc" />
     <Content Include="Services\CISProNbtMobile.svc" />
     <Content Include="Services\Menus.svc" />
     <Content Include="Services\Mol.svc" />

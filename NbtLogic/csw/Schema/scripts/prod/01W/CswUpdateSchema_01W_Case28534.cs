@@ -1,4 +1,6 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System;
+using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 
@@ -80,8 +82,53 @@ namespace ChemSW.Nbt.Schema
                         Category = "System"
                     } );
                 JobNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassPrintJob.PropertyName.JobNo ) );
+
                 CswNbtMetaDataNodeTypeProp JobJobNoNTP = JobNT.getNodeTypePropByObjectClassProp( CswNbtObjClassPrintJob.PropertyName.JobNo );
+                Int32 SequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "printjob" ), "PJ", "", 4, 1 );
+                JobJobNoNTP.setSequence( SequenceId );
                 JobJobNoNTP.ReadOnly = true;
+
+
+                // Notification: My print job failed
+                {
+                    CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MailReportClass );
+                    CswNbtMetaDataNodeType MailReportNT = MailReportOC.FirstNodeType;
+                    if( null != MailReportNT )
+                    {
+                        CswNbtMetaDataNodeTypeProp NameNTP = MailReportNT.getNodeTypeProp( "Name" );
+
+                        CswNbtObjClassMailReport PrintJobNotif = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MailReportNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                        if( null != NameNTP )
+                        {
+                            PrintJobNotif.Node.Properties[NameNTP].AsText.Text = "My Print Job Failures";
+                        }
+                        PrintJobNotif.Type.Value = CswNbtObjClassMailReport.TypeOptionView;
+                        PrintJobNotif.Enabled.Checked = Tristate.True;
+                        PrintJobNotif.Event.Value = CswNbtObjClassMailReport.EventOption.Edit.ToString();
+                        PrintJobNotif.Message.Text = "One of your print jobs has failed.";
+                        PrintJobNotif.OutputFormat.Value = MailRptFormatOptions.Link.ToString();
+                        PrintJobNotif.TargetType.SelectedNodeTypeIds.Add( JobNT.NodeTypeId.ToString() );
+
+                        CswRateInterval Rate = _CswNbtSchemaModTrnsctn.makeRateInterval();
+                        Rate.setHourly( 1, DateTime.Now );
+                        PrintJobNotif.DueDateInterval.RateInterval = Rate;
+
+                        PrintJobNotif.postChanges( false );
+
+                        CswNbtView NotifView = _CswNbtSchemaModTrnsctn.restoreView( PrintJobNotif.ReportView.ViewId );
+                        // Print jobs...
+                        CswNbtViewRelationship JobRel = NotifView.AddViewRelationship( JobOC, false );
+                        // ...where the state is error...
+                        NotifView.AddViewPropertyAndFilter( JobRel, JobJobStateOCP,
+                                                            Value: CswNbtObjClassPrintJob.StateOption.Error,
+                                                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        // ...and the requestor was me...
+                        NotifView.AddViewPropertyAndFilter( JobRel, JobRequestedByOCP,
+                                                            Value: "me",
+                                                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        NotifView.save();
+                    }
+                }
             }
 
             // Printers View
@@ -128,7 +175,6 @@ namespace ChemSW.Nbt.Schema
 
                 ErrorsView.save();
             }
-
         } //Update()
 
     }//class CswUpdateSchema_01V_Case28534

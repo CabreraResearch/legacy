@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = CachedValue.ToString() + " " + Units.ToString();
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
         }
 
     }//CswNbtNodePropMTBF

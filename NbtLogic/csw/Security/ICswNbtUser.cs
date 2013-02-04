@@ -20,7 +20,9 @@ namespace ChemSW.Nbt.Security
         //CswNbtNodePropLocation DefaultLocationProperty { get; }
         //CswNbtNodePropRelationship WorkUnitProperty { get; }
         CswPrimaryKey DefaultLocationId { get; }
+        CswPrimaryKey DefaultPrinterId { get; }
         CswPrimaryKey WorkUnitId { get; }
+        CswPrimaryKey JurisdictionId { get; }
         Int32 UserNodeTypeId { get; }
         Int32 UserObjectClassId { get; }
         Int32 RoleNodeTypeId { get; }

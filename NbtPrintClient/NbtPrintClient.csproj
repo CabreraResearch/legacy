@@ -103,12 +103,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawPrintClass.cs" />
-    <Compile Include="Service References\NbtLabels\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\NbtSession\Reference.cs">
+    <Compile Include="Service References\NbtPublic\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -142,74 +137,45 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelEpl.datasource">
+    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelEpl.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelJobResponse.datasource">
+    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelJobResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelJobUpdateResponse.datasource">
+    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelJobUpdateResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelList.datasource">
+    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelPrinterReg.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtLabels\CswPrintClient1.NbtLabels.CswNbtLabelPrinterReg.datasource">
+    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtLabels\Labels210.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic.wsdl" />
+    <None Include="Service References\NbtPublic\NbtPublic.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtLabels\Labels211.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic1.wsdl" />
+    <None Include="Service References\NbtPublic\NbtPublic1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtLabels\Labels212.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtLabels\Labels213.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtLabels\Labels214.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtLabels\Labels215.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic5.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtLabels\Labels216.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic6.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\NbtLabels\Labels22.wsdl" />
-    <None Include="Service References\NbtLabels\Labels221.wsdl" />
-    <None Include="Service References\NbtLabels\Labels29.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSession\CswPrintClient1.NbtSession.CswNbtWebServiceSessionCswNbtSessionReturn.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\NbtSession\CswPrintClient1.NbtSession.CswWebSvcReturn.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\NbtSession\Session.wsdl" />
-    <None Include="Service References\NbtSession\Session1.wsdl" />
-    <None Include="Service References\NbtSession\Session1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSession\Session2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSession\Session3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSession\Session4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSession\Session5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSession\Session6.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSession\Session7.xsd">
+    <None Include="Service References\NbtPublic\NbtPublic7.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -217,38 +183,22 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\NbtLabels\" />
-    <WCFMetadataStorage Include="Service References\NbtSession\" />
+    <WCFMetadataStorage Include="Service References\NbtPublic\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\NbtLabels\configuration91.svcinfo" />
+    <None Include="Service References\NbtPublic\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\NbtLabels\configuration.svcinfo" />
+    <None Include="Service References\NbtPublic\configuration.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\NbtLabels\Reference.svcmap">
+    <None Include="Service References\NbtPublic\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\NbtSession\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtSession\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtSession\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtSession\Session.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtLabels\Labels211.disco" />
+    <None Include="Service References\NbtPublic\NbtPublic.disco" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="print.ico" />
