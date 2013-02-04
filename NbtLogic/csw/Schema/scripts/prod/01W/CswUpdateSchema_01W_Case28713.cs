@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp SynonymsNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( MaterialNT.NodeTypeId, "Synonyms" );
                 if( null != SynonymsNTP )
                 {
-                    //TODO - Case 28715
+                    SynonymsNTP.Attribute1 = CswConvert.ToDbVal( false ).ToString();
                 }
             }
 
