@@ -8,9 +8,13 @@
         Csw.enums.register('cookieNames',
             {
                 SessionId: 'CswSessionId',
+                CustomerId: 'csw_customerid',
                 Username: 'csw_username',
                 OriginalUsername: 'csw_orig_username',
                 LogoutPath: 'csw_logoutpath',
+
+                UserDefaults: 'csw_userdefaults',
+
                 CurrentNodeId: 'csw_currentnodeid',
                 CurrentNodeKey: 'csw_currentnodekey',
                 CurrentTabId: 'csw_currenttabid',
@@ -20,7 +24,7 @@
                 CurrentViewMode: 'csw_currentviewmode',
                 //CurrentReportId: 'csw_currentreportid',
                 CurrentSearchId: 'csw_currentsearchid',
-                CustomerId: 'csw_customerid',
+
                 LastActionName: 'csw_lastactionname',
                 LastActionUrl: 'csw_lastactionurl',
                 LastViewId: 'csw_lastviewid',

@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.Actions
         public CswNbtView getControlZonesView()
         {
             CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeType( "Control Zone" );
+            CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Control Zone" );
             if( null != ControlZoneNT )
             {
                 ControlZonesView.AddViewRelationship(ControlZoneNT, IncludeDefaultFilters: true);

@@ -60,6 +60,7 @@
                         size: 'small',
                         tooltip: { title: 'Add Row' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                        disableOnClick: false, //added for Case 28686
                         onClick: function () {
                             Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
                             Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);

@@ -65,6 +65,7 @@
       <xs:element minOccurs="0" name="SourceName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SourceRowId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SupplierName" nillable="true" type="xs:string" />
+      <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Synonyms" nillable="true" type="q6:ArrayOfstring" />
       <xs:element minOccurs="0" name="TemplateSelectedExtensionData" nillable="true" type="tns:ArrayOfCswC3Product.TemplateSlctdExtData" />
       <xs:element minOccurs="0" name="TradeName" nillable="true" type="xs:string" />
     </xs:sequence>

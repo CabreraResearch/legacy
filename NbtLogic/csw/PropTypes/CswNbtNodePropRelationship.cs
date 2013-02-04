@@ -519,7 +519,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = CachedNodeName;
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedNodeName );
         }
 
     }//CswNbtNodePropRelationship
