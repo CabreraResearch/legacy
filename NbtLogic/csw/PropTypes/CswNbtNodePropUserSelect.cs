@@ -332,7 +332,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.Gestalt = SelectedUserNames().ToString();
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, SelectedUserNames().ToString() );
         }
 
     }//CswNbtNodePropUserSelect

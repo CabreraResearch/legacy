@@ -110,6 +110,44 @@ namespace NbtWebApp.WebSvc.Logic.Labels
     }
 
     /// <summary>
+    /// Request for updating a label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label print job" )]
+    public class CswNbtLabelJobUpdateRequest
+    {
+        /// <summary>
+        /// Nodekey of defined NBT print job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Nodekey of defined NBT Label Print Job" )]
+        public string JobKey = string.Empty;
+
+        /// <summary>
+        /// Nodekey of defined NBT print job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Whether the job finished successfully" )]
+        public bool Succeeded = false;
+
+        /// <summary>
+        /// Error message
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "If an error occurred, this is the message to log" )]
+        public string ErrorMessage = string.Empty;
+    }
+
+    /// <summary>
+    /// Response for updating a label printer job    
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label print job" )]
+    public class CswNbtLabelJobUpdateResponse : CswWebSvcReturn
+    {
+    }
+
+    /// <summary>
     /// Request for next label printer job
     /// </summary>
     [DataContract]
@@ -119,14 +157,21 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         /// <summary>
         /// NBT label printer job
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label print JobNo" )]
         public string JobNo = string.Empty;
 
         /// <summary>
+        /// NBT label printer job
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "label print Job key" )]
+        public string JobKey = string.Empty;
+
+        /// <summary>
         /// NBT label printer
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label print Owner" )]
         public string JobOwner = string.Empty;
 
@@ -135,22 +180,29 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         /// </summary>
         [DataMember( IsRequired = true )]
         [Description( "label count for this job" )]
-        public string LabelCount = string.Empty;
+        public int LabelCount = 0;
 
         /// <summary>
         /// NBT label name
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label template name " )]
         public string LabelName = string.Empty;
 
         /// <summary>
         /// NBT label printer data
         /// </summary>
-        [DataMember( IsRequired = true )]
+        [DataMember( IsRequired = false )]
         [Description( "label printer data " )]
         public string LabelData = string.Empty;
 
+        /// <summary>
+        /// Remaining job count
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "Remaining job count" )]
+        public int RemainingJobCount = 0;
+         
     }
 
     /// <summary>
@@ -232,6 +284,26 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [Description( "Optional params to apply to EPL text on label" )]
                 public string Params = string.Empty;
             }
+
+            /// <summary>
+            /// Print Job Request Object
+            /// </summary>
+            [DataContract]
+            public class printJob
+            {
+                [DataMember]
+                [Description( "Print Label to print" )]
+                public string LabelId;
+
+                [DataMember]
+                [Description( "Printer to print on" )]
+                public string PrinterId;
+
+                [DataMember]
+                [Description( "Nodes whose labels to print" )]
+                public string TargetIds;
+            }
+
         }
 
         /// <summary>
@@ -304,6 +376,27 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [Description( "Status string of this request" )]
                 public string status = string.Empty;
 
+            }
+
+
+            /// <summary>
+            /// Returns a print job
+            /// </summary>
+            [DataContract]
+            [Description( "Returns a print job" )]
+            public class printJob
+            {
+                [DataMember]
+                [Description( "Job No for Job" )]
+                public string JobNo;
+
+                [DataMember]
+                [Description( "Primary key for Job" )]
+                public string JobId;
+
+                [DataMember]
+                [Description( "Node Link for Job" )]
+                public string JobLink;
             }
 
         }

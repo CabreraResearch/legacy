@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: Modules";
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame(CswDeveloper BlameMe, Int32 BlameCaseNo)
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -40,13 +40,9 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding Modules, 
             // which often become required by other business logic and can cause prior scripts to fail.
-            
-            #region VIOLA
-            
-
-            #endregion VIOLA
 
             #region WILLIAM
+
 
             #endregion WILLIAM
         }

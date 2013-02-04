@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.PropTypes
                 newGestalt += ", Special: " + White;
             }
 
-            _CswNbtNodePropData.Gestalt = newGestalt;
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, newGestalt );
         }
 
         public override string ValueForNameTemplate

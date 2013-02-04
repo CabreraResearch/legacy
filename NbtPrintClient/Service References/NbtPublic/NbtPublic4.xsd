@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost/NbtDev/Services/NbtPublic.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
+  <xs:complexType name="LabelPrinter">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element name="LpcName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LabelPrinter" nillable="true" type="tns:LabelPrinter" />
+  <xs:complexType name="CswNbtLabelJobRequest">
+    <xs:sequence>
+      <xs:element name="PrinterKey" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswNbtLabelJobRequest" nillable="true" type="tns:CswNbtLabelJobRequest" />
+  <xs:complexType name="CswNbtLabelJobResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" base="q1:CswWebSvcReturn">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="JobKey" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="JobNo" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="JobOwner" nillable="true" type="xs:string" />
+          <xs:element name="LabelCount" type="xs:int" />
+          <xs:element minOccurs="0" name="LabelData" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="LabelName" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="RemainingJobCount" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CswNbtLabelJobResponse" nillable="true" type="tns:CswNbtLabelJobResponse" />
+  <xs:complexType name="NbtPrintLabel.Request.Get">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LabelId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Params" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TargetId" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="NbtPrintLabel.Request.Get" nillable="true" type="tns:NbtPrintLabel.Request.Get" />
+  <xs:complexType name="NbtPrintLabel.Response.Epl">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Labels" nillable="true" type="tns:ArrayOfPrintLabel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="NbtPrintLabel.Response.Epl" nillable="true" type="tns:NbtPrintLabel.Response.Epl" />
+  <xs:complexType name="ArrayOfPrintLabel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PrintLabel" nillable="true" type="tns:PrintLabel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPrintLabel" nillable="true" type="tns:ArrayOfPrintLabel" />
+  <xs:complexType name="PrintLabel">
+    <xs:sequence>
+      <xs:element name="EplText" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Pictos" nillable="true" type="tns:ArrayOfPrintLabel.Picto" />
+      <xs:element minOccurs="0" name="TargetId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TargetName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PrintLabel" nillable="true" type="tns:PrintLabel" />
+  <xs:complexType name="ArrayOfPrintLabel.Picto">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PrintLabel.Picto" nillable="true" type="tns:PrintLabel.Picto" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPrintLabel.Picto" nillable="true" type="tns:ArrayOfPrintLabel.Picto" />
+  <xs:complexType name="PrintLabel.Picto">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FileName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FileURL" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PrintLabel.Picto" nillable="true" type="tns:PrintLabel.Picto" />
+  <xs:complexType name="CswNbtLabelJobUpdateRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string" />
+      <xs:element name="JobKey" nillable="true" type="xs:string" />
+      <xs:element name="Succeeded" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswNbtLabelJobUpdateRequest" nillable="true" type="tns:CswNbtLabelJobUpdateRequest" />
+  <xs:complexType name="CswNbtLabelJobUpdateResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q2="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" base="q2:CswWebSvcReturn">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CswNbtLabelJobUpdateResponse" nillable="true" type="tns:CswNbtLabelJobUpdateResponse" />
+</xs:schema>

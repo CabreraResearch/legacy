@@ -176,6 +176,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassParameter( CswNbtResources, Node );
                     break;
 
+                case NbtObjectClass.PrinterClass:
+                    ReturnVal = new CswNbtObjClassPrinter( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.PrintJobClass:
+                    ReturnVal = new CswNbtObjClassPrintJob( CswNbtResources, Node );
+                    break;
+
                 case NbtObjectClass.PrintLabelClass:
                     ReturnVal = new CswNbtObjClassPrintLabel( CswNbtResources, Node );
                     break;

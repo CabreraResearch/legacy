@@ -124,6 +124,7 @@ namespace ChemSW.Nbt.WebServices
             PropsToHide.Add( "CasNo" );
             PropsToHide.Add( "Description" );
             PropsToHide.Add( "Formula" );
+            PropsToHide.Add( "Synonyms" );
 
             if( C3SearchResultsObj != null )
             {
@@ -193,6 +194,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["results"] = results;
                 ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = null;
+                ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
                 ret["searchtype"] = "chemcatcentral";
             }

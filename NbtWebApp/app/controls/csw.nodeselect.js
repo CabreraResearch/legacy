@@ -203,7 +203,7 @@
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.nodelink });
                     }
                 });
-                if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
+                if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                     cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, selected: true }).data({ link: cswPrivate.selectedNodeLink });
                 }
 
