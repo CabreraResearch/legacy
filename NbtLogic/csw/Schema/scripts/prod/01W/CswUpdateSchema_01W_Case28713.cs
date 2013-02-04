@@ -30,7 +30,6 @@ namespace ChemSW.Nbt.Schema
                 //Part 5
                 CswNbtMetaDataNodeTypeProp ReceiveNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( MaterialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Receive );
                 ReceiveNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true );
-
                 //Part 7
                 CswNbtMetaDataNodeTypeProp SynonymsNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( MaterialNT.NodeTypeId, "Synonyms" );
                 if( null != SynonymsNTP )
@@ -38,7 +37,6 @@ namespace ChemSW.Nbt.Schema
                     SynonymsNTP.Attribute1 = CswConvert.ToDbVal( false ).ToString();
                 }
             }
-
             CswNbtMetaDataNodeType ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
             if( null != ChemicalNT )
             {
@@ -60,6 +58,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 //Part 3
                 CswNbtMetaDataNodeTypeProp UNCodeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.UNCode );
+                UNCodeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
                 UNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId );
                 //Part 4
                 CswNbtMetaDataNodeTypeProp ChemicalMaterialTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp(ChemicalNT.NodeTypeId, "Material Type" );

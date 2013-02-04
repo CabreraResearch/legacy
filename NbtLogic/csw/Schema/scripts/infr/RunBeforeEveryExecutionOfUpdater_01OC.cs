@@ -922,6 +922,12 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( IsTierIIOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, false );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsTierIIOCP, Tristate.Null, CswNbtSubField.SubFieldName.Checked );
             }
+            //Manufacturing Sites
+            CswNbtMetaDataObjectClassProp ManufacturingSitesOCP = MaterialOC.getObjectClassProp( "Manufacturing Sites" );
+            if( null != ManufacturingSitesOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ManufacturingSitesOCP, true );
+            }
             _resetBlame();
         }
 

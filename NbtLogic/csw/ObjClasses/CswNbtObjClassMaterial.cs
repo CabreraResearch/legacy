@@ -40,7 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Receive = "Receive";
             public const string MaterialId = "Material Id";
             public const string ApprovedAtReceipt = "Approved at Receipt";
-            public const string ManufacturingSites = "Manufacturing Sites";
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
@@ -592,7 +591,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
         public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
         public CswNbtNodePropLogical ApprovedAtReceipt { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedAtReceipt] ); } }
-        public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
         public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
