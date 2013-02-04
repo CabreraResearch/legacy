@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.WebServices
 
         [DataMember]
         public Ret Data;
-        
+
         [DataContract]
         public class Ret
         {
@@ -27,6 +27,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 Grid = new CswExtJsGrid( GridPrefix );
             }
+
+            [DataMember]
+            public string CustomerId = "";
 
             [DataMember]
             public const string GridPrefix = "ScheduledRules";
@@ -52,13 +55,13 @@ namespace ChemSW.Nbt.WebServices
                 }
                 set { var disposable = value; }
             }
-            
+
             [DataMember]
-            public CswDictionary<string,string> ColumnIds
+            public CswDictionary<string, string> ColumnIds
             {
                 get
                 {
-                    CswDictionary<string,string> Ret = new CswDictionary<string, string>();
+                    CswDictionary<string, string> Ret = new CswDictionary<string, string>();
 
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName ).ToString(), CswScheduleLogicDetail.ColumnNames.RuleName );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance ).ToString(), CswScheduleLogicDetail.ColumnNames.Recurrance );
@@ -72,7 +75,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount ).ToString(), CswScheduleLogicDetail.ColumnNames.FailedCount );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId ).ToString(), CswScheduleLogicDetail.ColumnNames.ThreadId );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage ).ToString(), CswScheduleLogicDetail.ColumnNames.StatusMessage );
-                    
+
                     return Ret;
                 }
                 set { var disposable = value; }
