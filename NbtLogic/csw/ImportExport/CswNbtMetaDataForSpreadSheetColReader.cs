@@ -11,6 +11,8 @@ namespace ChemSW.Nbt.ImportExport
         private Dictionary<string, string> _NodeTypePropNameMapper = new Dictionary<string, string>();
         private Dictionary<string, CswNbtMetaDataNodeType> _NodeTypesPerSpreadsheetRowCols = new Dictionary<string, CswNbtMetaDataNodeType>();
 
+        
+
         private CswNbtResources _CswNbtResources = null;
         public CswNbtMetaDataForSpreadSheetColReader( CswNbtResources CswNbtResources )
         {
@@ -21,6 +23,24 @@ namespace ChemSW.Nbt.ImportExport
 
             //Add nodetype propname mappings to _NodeTypePropNameMapper
             _NodeTypePropNameMapper.Add( "materialname", "tradename" );
+            _NodeTypePropNameMapper.Add( "casno", "cas no" );
+            _NodeTypePropNameMapper.Add( "nfpacode", "NFPA" );
+            _NodeTypePropNameMapper.Add( "hazards", "Hazard Categories" );
+            _NodeTypePropNameMapper.Add( "physical_state", "Physical State" );
+            _NodeTypePropNameMapper.Add( "boiling_point", "Boiling Point" );
+            _NodeTypePropNameMapper.Add( "melting_point", "Melting Point" );
+            _NodeTypePropNameMapper.Add( "flash_point", "Flash Point" );
+            _NodeTypePropNameMapper.Add( "vapor_density", "Vapor Density" );
+            _NodeTypePropNameMapper.Add( "vapor_pressure", "Vapor Pressure" );
+            _NodeTypePropNameMapper.Add( "istier2", "Is Tier II" );
+            _NodeTypePropNameMapper.Add( "productno", "Part Number" );
+            _NodeTypePropNameMapper.Add( "un_no", "UN Code" );
+            _NodeTypePropNameMapper.Add( "storage_conditions", "Storage and Handling" );
+            _NodeTypePropNameMapper.Add( "", "" );
+            //_NodeTypePropNameMapper.Add( "", "" );
+
+
+            
 
         }//ctor
 
