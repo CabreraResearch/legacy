@@ -432,7 +432,7 @@ namespace ChemSW.Nbt.ObjClasses
             docView.AddViewProperty( parent, fileTypeOCP );
 
             CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
-            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.Jurisdiction.RelatedNodeId];
+            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
 
             if( ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) )
             {

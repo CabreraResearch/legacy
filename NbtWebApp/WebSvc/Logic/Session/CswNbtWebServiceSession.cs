@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
 using ChemSW.WebSvc;
@@ -23,6 +24,57 @@ namespace ChemSW.Nbt.WebServices
             public CswWebSvcReturnBase.Data Data;
         }
 
+        [DataContract]
+        public class CswNbtAuthReturn : CswWebSvcReturn
+        {
+            public CswNbtAuthReturn()
+            {
+                Data = new CswNbtUserDefaultsData();
+            }
+            [DataMember]
+            public CswNbtUserDefaultsData Data;
+        }
+
+        [DataContract]
+        public class CswNbtUserDefaultsData : CswWebSvcReturnBase.Data
+        {
+            [DataMember]
+            public string DefaultLocationId;
+            [DataMember]
+            public string DefaultPrinterId;
+            [DataMember]
+            public string JurisdictionId;
+            [DataMember]
+            public string WorkUnitId;
+            [DataMember]
+            public string DateFormat;
+            [DataMember]
+            public string TimeFormat;
+        }
+
+
+        public static void getDefaults( ICswResources CswResources, CswNbtAuthReturn Ret, CswWebSvcSessionAuthenticateData.Authentication.Request Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.DefaultLocationId ) )
+            {
+                Ret.Data.DefaultLocationId = NbtResources.CurrentNbtUser.DefaultLocationId.ToString();
+            }
+            if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.DefaultPrinterId ) )
+            {
+                Ret.Data.DefaultPrinterId = NbtResources.CurrentNbtUser.DefaultPrinterId.ToString();
+            }
+            if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.JurisdictionId ) )
+            {
+                Ret.Data.JurisdictionId = NbtResources.CurrentNbtUser.JurisdictionId.ToString();
+            }
+            if( CswTools.IsPrimaryKey( NbtResources.CurrentNbtUser.WorkUnitId ) )
+            {
+                Ret.Data.WorkUnitId = NbtResources.CurrentNbtUser.WorkUnitId.ToString();
+            }
+            Ret.Data.DateFormat = NbtResources.CurrentNbtUser.DateFormat;
+            Ret.Data.TimeFormat = NbtResources.CurrentNbtUser.TimeFormat;
+        }
 
         public static void doNothing( ICswResources CswResources, object Ret, object Req )
         {
