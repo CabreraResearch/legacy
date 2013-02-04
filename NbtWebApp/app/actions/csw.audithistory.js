@@ -34,6 +34,10 @@
                 title: 'History',
                 stateId: '',
                 width: cswPrivate.width,
+                sorters: [{
+                    property: 'changedate',
+                    direction: 'DESC'
+                }],
 
                 showActionColumn: cswPrivate.allowEditRow,
                 showView: false,
@@ -57,6 +61,7 @@
                         var rowid = grid.getRowIdForVal('changedate', cswPrivate.selectedDate.toString());
                         grid.setSelection(rowid);
                         cswPrivate.preventSelectTrigger = false;
+
                     }
                 },
                 onSelect: function (row) {

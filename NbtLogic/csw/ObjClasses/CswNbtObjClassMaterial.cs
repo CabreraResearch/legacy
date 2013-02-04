@@ -279,15 +279,30 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateRegulatoryLists()
         {
-            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
-            foreach( CswNbtObjClassRegulatoryList nodeAsRegList in regListOC.getNodes( false, false ) )
+            RegulatoryLists.StaticText = "";
+
+            if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
             {
-                CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
-                CASNos.FromString( nodeAsRegList.CASNumbers.Text );
-                if( CASNos.Contains( CasNo.Text ) )
+                CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
+                CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
+
+                CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
+                matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
+                    Value: CasNo.Text,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+                ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
+                int childCount = tree.getChildNodeCount();
+
+                CswCommaDelimitedString regLists = new CswCommaDelimitedString();
+                for( int i = 0; i < childCount; i++ )
                 {
-                    RegulatoryLists.StaticText += "," + nodeAsRegList.Name.Text;
+                    tree.goToNthChild( i );
+                    regLists.Add( tree.getNodeNameForCurrentPosition() );
+                    tree.goToParentNode();
                 }
+                RegulatoryLists.StaticText = regLists.ToString();
             }
         }
 
