@@ -59,6 +59,7 @@ namespace ChemSW.Nbt.Security
         public CswPrimaryKey DefaultPrinterId { get { return null; } }
         public CswPrimaryKey WorkUnitId { get { return null; } }
         public CswPrimaryKey JurisdictionId { get { return null; } }
+        public string Language { get { return string.Empty; } }
 
         public Int32 RoleTimeout { get { return Int32.MinValue; } }
 

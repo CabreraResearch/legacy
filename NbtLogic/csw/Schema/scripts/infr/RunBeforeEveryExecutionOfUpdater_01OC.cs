@@ -611,36 +611,44 @@ namespace ChemSW.Nbt.Schema
 
         #region Case 28363
 
-        private void _addPropsToJuridictionOC(CswDeveloper Dev, Int32 CaseNo)
+        private void _addPropsToJuridictionOC( CswDeveloper Dev, Int32 CaseNo )
         {
-            _acceptBlame(Dev, CaseNo);
+            _acceptBlame( Dev, CaseNo );
 
-            CswNbtMetaDataObjectClass jurisdictionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(NbtObjectClass.JurisdictionClass);
+            CswNbtMetaDataObjectClass jurisdictionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass );
 
-            CswNbtMetaDataObjectClassProp formatOCP = jurisdictionOC.getObjectClassProp(CswNbtObjClassJurisdiction.PropertyName.Format);
-            if (null == formatOCP)
+            CswNbtMetaDataObjectClassProp formatOCP = jurisdictionOC.getObjectClassProp( CswNbtObjClassJurisdiction.PropertyName.Format );
+            if( null == formatOCP )
             {
-                formatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(new CswNbtWcfMetaDataModel.ObjectClassProp(jurisdictionOC)
-                {
-                    PropName = CswNbtObjClassJurisdiction.PropertyName.Format,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ListOptions = CswNbtObjClassDocument.Formats.Options.ToString()
-                });
+                formatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( jurisdictionOC )
+                    {
+                        PropName = CswNbtObjClassJurisdiction.PropertyName.Format,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                        ListOptions = CswNbtObjClassDocument.Formats.Options.ToString()
+                    } );
             }
 
-            CswNbtMetaDataObjectClassProp languageOCP = jurisdictionOC.getObjectClassProp(CswNbtObjClassJurisdiction.PropertyName.Language);
-            if (null == languageOCP)
+            // case 28717 - move 'Language' to User
+            CswNbtMetaDataObjectClassProp wrongLanguageOCP = jurisdictionOC.getObjectClassProp( "Language" );
+            if( null != wrongLanguageOCP )
             {
-                languageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(new CswNbtWcfMetaDataModel.ObjectClassProp(jurisdictionOC)
-                {
-                    PropName = CswNbtObjClassJurisdiction.PropertyName.Language,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ListOptions = "en,fr,es,de"
-                });
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( wrongLanguageOCP, true );
+            }
+
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp languageOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Language );
+            if( null == languageOCP )
+            {
+                languageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
+                    {
+                        PropName = CswNbtObjClassUser.PropertyName.Language,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.List
+                        //ListOptions = "en,fr,es,de"
+                    } );
             }
 
             _resetBlame();
-        }
+        } // _addPropsToJurisdictionOC()
 
         private void _addViewSDSProptoMaterial(CswDeveloper Dev, Int32 CaseNo)
         {
