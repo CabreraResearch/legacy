@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void getScheduledRulesGrid( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string PlaceHolder )
+        public static void getScheduledRulesGrid( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string AccessId )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.WebServices
             ClearAllReprobates
         }
 
-        public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string PlaceHolder )
+        public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn.Ret Return, CswNbtScheduledRulesReturn.Ret Request )
         {
             //bool RetSuccess = false;
 

@@ -1706,7 +1706,7 @@
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTree.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtSdTrees.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceView.cs" />
-    <Compile Include="WebSvc\Logic\Menus\LandingPages\CswNbtWebServiceLandingPageItems.cs" />
+    <Compile Include="WebSvc\Logic\LandingPages\CswNbtWebServiceLandingPageItems.cs" />
     <Compile Include="WebSvc\Logic\Tools\TimingModule.cs" />
     <Compile Include="WebSvc\Logic\Tools\wsTools.cs" />
     <Compile Include="Base.master.cs">

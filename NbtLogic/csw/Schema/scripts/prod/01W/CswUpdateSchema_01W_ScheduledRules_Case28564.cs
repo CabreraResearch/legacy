@@ -34,15 +34,15 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RoleOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RoleClass );
             Int32 ActionId = _CswNbtSchemaModTrnsctn.getActionId( CswNbtActionName.View_Scheduled_Rules );
 
-            foreach( CswNbtNode RoleNode in RoleOc.getNodes(includeSystemNodes: false, forceReInit: true) )
+            foreach( CswNbtObjClassRole RoleNode in RoleOc.getNodes(includeSystemNodes: false, forceReInit: true) )
             {
                 if( _CswNbtSchemaModTrnsctn.Permit.can( CswNbtActionName.View_Scheduled_Rules, RoleNode ) )
                 {
                     CswNbtLandingPageTable Lp = _CswNbtSchemaModTrnsctn.getLandingPageTable();
                     Lp.addLandingPageItem(new LandingPageData.Request
                         {
+                            //LandingPageId = 
                             RoleId = RoleNode.NodeId.ToString(),
-                            ActionId = ActionId.ToString(),
                             Text = "View Scheduled Rules",
                             Type = CswNbtLandingPageItemType.Link,
                             ViewType = "Action",

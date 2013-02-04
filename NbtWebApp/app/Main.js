@@ -1461,6 +1461,7 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
+					case 'view scheduled_rules':
                     case 'view scheduled rules':
                         var rulesOpt = {
                             onCancel: function() {

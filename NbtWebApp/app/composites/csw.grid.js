@@ -863,10 +863,67 @@
             });
 
             cswPublic.getAllGridRows = function () {
+                /// <summary>
+                /// Returns the raw store data in its current state
+                /// </summary>
                 var return_val = null;
 
                 if (cswPrivate.store) {
                     return_val = cswPrivate.store.data;
+                }
+
+                return return_val;
+            };
+
+            cswPrivate.extractRows = function(rawRows) {
+                var ret = [];
+                if (rawRows && rawRows.length > 0) {
+                    rawRows.forEach(function (item) {
+                        if (item && item.data) {
+                            ret.push(item.data);
+                        }
+                    });
+                }
+                return ret;
+            };
+
+            cswPublic.getGridItems = function () {
+                /// <summary>
+                /// Returns the data store as an Array that conforms to the array used to construct the grid
+                /// </summary>
+                /// <returns type="Array"></returns>
+                var return_val = [];
+
+                if (cswPrivate.store && cswPrivate.store.data) {
+                    return_val = cswPrivate.extractRows(cswPrivate.store.data);
+                }
+
+                return return_val;
+            };
+
+            cswPublic.getUpdatedGridItems = function () {
+                /// <summary>
+                /// Returns the updated items in the data store as an Array that conforms to the array used to construct the grid
+                /// </summary>
+                /// <returns type="Array"></returns>
+                var return_val = [];
+
+                if (cswPrivate.store && cswPrivate.store.getUpdatedRecords) {
+                    return_val = cswPrivate.extractRows( cswPrivate.store.getUpdatedRecords() );
+                }
+
+                return return_val;
+            };
+
+            cswPublic.getModifiedGridItems = function () {
+                /// <summary>
+                /// Returns the modified items in the data store as an Array that conforms to the array used to construct the grid
+                /// </summary>
+                /// <returns type="Array"></returns>
+                var return_val = [];
+
+                if (cswPrivate.store && cswPrivate.store.getModifiedRecords) {
+                    return_val = cswPrivate.extractRows(cswPrivate.store.getModifiedRecords());
                 }
 
                 return return_val;

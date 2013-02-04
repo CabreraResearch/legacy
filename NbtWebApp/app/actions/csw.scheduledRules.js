@@ -25,7 +25,7 @@
                 cswParent.empty();
             }());
 
-            
+
             //#endregion _preCtor
 
             //#region AJAX methods
@@ -43,7 +43,7 @@
                     cswPrivate.onTabSelect(tabName);
                 }
             };
-            
+
             cswPrivate.tabNames = ['Rules'];
 
             cswPrivate.tryParseTabName = function (tabName, elTarget, eventObjText) {
@@ -106,7 +106,7 @@
                 return ol;
             };
 
-            cswPrivate.makeRulesTab = function() {
+            cswPrivate.makeRulesTab = function () {
                 var ol = cswPrivate.prepTab(cswPrivate.rulesTab, 'Rules', 'Select a Customer to review and make any necessary edits to the Scheduled Rules for their schema.');
 
                 cswPrivate.makeCustomerIdSelect(ol.li());
@@ -136,10 +136,11 @@
                     .select({
                         name: 'customerIdSelect',
                         selected: '',
-                        values: [{ value: '[ None ]', display: '[ None ]' }],
+                        //values: [{ value: '[ None ]', display: '[ None ]' }],
                         onChange: function () {
                             var selected = customerIdSelect.find(':selected');
-                            cswPrivate.selectedCustomerId = selected.val();
+                            cswPrivate.selectedCustomerId = customerIdSelect.val();
+                            cswPrivate.makeScheduledRulesGrid();
                         }
                     });
 
@@ -158,17 +159,24 @@
                     }
                 });
 
-                cswPrivate.selectedCustomerId = customerIdSelect.find(':selected').val();
+                //cswPrivate.selectedCustomerId = customerIdSelect.find(':selected').val();
 
                 customerIdTable.cell(1, 3).buttonExt({
                     name: 'updateRules',
-                    enabledText: 'Update Rules',
-                    disabledText: 'Updating . . . ',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                    enabledText: 'Save Changes',
+                    disabledText: 'Saving . . . ',
                     onClick: function () {
-                        var temp = cswPrivate.scheduledRulesGrid.getAllGridRows();
-                        Csw.ajax.post({
-                            urlMethod: 'updateAllScheduledRules',
-                            data: { AccessId: cswPrivate.selectedCustomerId, Action: 'ClearAllReprobates' },
+                        var req = Csw.extend({}, cswPrivate.schedulerRequest, true);
+                        req.Grid.columns.forEach(function (col) {
+                            delete col.editable;
+                            delete col.editor;
+                        });
+                        req.Grid.data.items = cswPrivate.scheduledRulesGrid.getUpdatedGridItems();
+
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Scheduler/save',
+                            data: req,
                             success: cswPrivate.makeStepTwo
                         });
                     }
@@ -178,12 +186,14 @@
 
             cswPrivate.makeScheduledRulesGrid = function (cswNode) {
                 var gridId = 'rulesGrid';
+                cswPrivate.gridNode = cswPrivate.gridNode || cswNode;
+                cswPrivate.gridNode.empty();
 
                 cswPrivate.gridAjax = Csw.ajaxWcf.post({
-                    urlMethod: 'Scheduler/getScheduledRulesGrid',
+                    urlMethod: 'Scheduler/get',
                     data: cswPrivate.selectedCustomerId,
                     success: function (result) {
-
+                        cswPrivate.schedulerRequest = result;
                         var parsedRows = [];
                         if (result && result.Grid.data && result.Grid.data.items) {
                             result.Grid.data.items.forEach(function (row) {
@@ -215,65 +225,100 @@
                             switch (col.header) {
                                 case result.ColumnIds.failed_cnt:
                                     col.editable = true;
-                                    col.editor = {
-                                        xtype: 'numberfield',
-                                        allowBlank: false,
-                                        minValue: 0,
-                                        maxValue: 10
-                                    };
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'numberfield',
+                                            allowBlank: false,
+                                            minValue: 0,
+                                            maxValue: 10
+                                        }
+                                    });
                                     break;
                                 case result.ColumnIds.freq:
                                     col.editable = true;
-                                    col.editor = {
-                                        xtype: 'numberfield',
-                                        allowBlank: false,
-                                        minValue: 1,
-                                        maxValue: 100
-                                    };
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'numberfield',
+                                            allowBlank: false,
+                                            minValue: 1,
+                                            maxValue: 100
+                                        }
+                                    });
                                     break;
                                 case result.ColumnIds.type:
                                     col.editable = true;
-                                    col.editor = new Ext.form.field.ComboBox({
-                                        typeAhead: true,
-                                        triggerAction: 'all',
-                                        selectOnTab: true,
-                                        store: [
-                                            [result.RecurrenceOptions[0], result.RecurrenceOptions[0]],
-                                            [result.RecurrenceOptions[1], result.RecurrenceOptions[1]],
-                                            [result.RecurrenceOptions[2], result.RecurrenceOptions[2]],
-                                            [result.RecurrenceOptions[3], result.RecurrenceOptions[3]],
-                                            [result.RecurrenceOptions[4], result.RecurrenceOptions[4]],
-                                            [result.RecurrenceOptions[5], result.RecurrenceOptions[5]],
-                                            [result.RecurrenceOptions[6], result.RecurrenceOptions[6]],
-                                            [result.RecurrenceOptions[7], result.RecurrenceOptions[7]]
-                                        ],
-                                        lazyRender: true,
-                                        listClass: 'x-combo-list-small'
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: new Ext.form.field.ComboBox({
+                                            typeAhead: true,
+                                            typeAheadDelay: 0,
+                                            triggerAction: 'all',
+                                            selectOnTab: true,
+                                            allowBlank: false,
+                                            valueNotFoundText: 'Could not find that value',
+                                            validator: function(val) {
+                                                return result.RecurrenceOptions.indexOf(val) !== -1;
+                                            },
+                                            store: [
+                                                [result.RecurrenceOptions[0], result.RecurrenceOptions[0]],
+                                                [result.RecurrenceOptions[1], result.RecurrenceOptions[1]],
+                                                [result.RecurrenceOptions[2], result.RecurrenceOptions[2]],
+                                                [result.RecurrenceOptions[3], result.RecurrenceOptions[3]],
+                                                [result.RecurrenceOptions[4], result.RecurrenceOptions[4]],
+                                                [result.RecurrenceOptions[5], result.RecurrenceOptions[5]],
+                                                [result.RecurrenceOptions[6], result.RecurrenceOptions[6]],
+                                                [result.RecurrenceOptions[7], result.RecurrenceOptions[7]]
+                                            ],
+                                            lazyRender: true
+                                        })
                                     });
                                     break;
                                 case result.ColumnIds.max_fail:
                                     col.editable = true;
-                                    col.editor = {
-                                        xtype: 'numberfield',
-                                        allowBlank: false,
-                                        minValue: 0,
-                                        maxValue: 100
-                                    };
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'numberfield',
+                                            allowBlank: false,
+                                            minValue: 0,
+                                            maxValue: 100
+                                        }
+                                    });
                                     break;
                                 case result.ColumnIds.max_ms:
                                     col.editable = true;
-                                    col.editor = {
-                                        xtype: 'numberfield',
-                                        allowBlank: false,
-                                        minValue: 1000,
-                                        maxValue: 10000000
-                                    };
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'numberfield',
+                                            allowBlank: false,
+                                            minValue: 1000,
+                                            maxValue: 10000000
+                                        }
+                                    });
                                     break;
                                 case result.ColumnIds.reprobate:
                                     col.editable = true;
                                     col.xtype = 'checkcolumn';
-                                    col.editor = new Ext.form.field.Checkbox({
-                                        
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: new Ext.form.field.Checkbox({
+
+                                        })
                                     });
                                     //col.width = 60;
                                     //col.stopSelection = false;
@@ -284,23 +329,35 @@
                                     break;
                                 case result.ColumnIds.rogue_cnt:
                                     col.editable = true;
-                                    col.editor = {
-                                        xtype: 'numberfield',
-                                        minValue: 0,
-                                        maxValue: 10
-                                    };
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'numberfield',
+                                            minValue: 0,
+                                            maxValue: 10
+                                        }
+                                    });
                                     break;
                                 case result.ColumnIds.status_message:
                                     col.editable = true;
-                                    col.editor = {
-                                        allowBlank: true
-                                    };
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            allowBlank: true
+                                        }
+                                    });
                                     break;
                             }
                         });
 
-
-                        cswPrivate.scheduledRulesGrid = cswNode.grid({
+                        if (cswPrivate.scheduledRulesGrid && cswPrivate.scheduledRulesGrid.destroy) {
+                            cswPrivate.scheduledRulesGrid.destroy();
+                        }
+                        cswPrivate.scheduledRulesGrid = cswPrivate.gridNode.grid({
                             name: gridId,
                             storeId: gridId,
                             data: result.Grid,
@@ -326,7 +383,7 @@
 
             cswPrivate.addBtnGroup = function (el) {
                 var tbl = el.table({ width: '99%', cellpadding: '5px' });
-                
+
                 tbl.cell(1, 2).css({ 'text-align': 'right' }).buttonExt({
                     enabledText: 'Close',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cancel),
