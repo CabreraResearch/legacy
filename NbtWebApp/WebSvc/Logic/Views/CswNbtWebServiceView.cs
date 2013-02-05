@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
                         ViewsTable.Columns.Remove( "rolename" );
                 }
 
-                ChemSW.Grid.ExtJs.CswGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
+                CswExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
                 grid.getColumn( "nodeviewid" ).hidden = true;
                 grid.getColumn( "viewid" ).hidden = true;
 

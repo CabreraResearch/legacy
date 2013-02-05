@@ -1,4 +1,4 @@
-
+/*global Csw:true*/
 (function () {
 
     Csw.actions.requestCarts = Csw.actions.requestCarts ||
@@ -267,7 +267,7 @@
 
             cswPrivate.onTabSelect = function(tabName, el, eventObj, callBack) {
                 var tgtTxt = null, evtTxt;
-                if (tabName.lastIndexOf('<') === 0 &&
+                if (tabName.indexOf('<') === 0 &&
                     tabName.lastIndexOf('>') === tabName.length - 1) {
                     if (el) {
                         tgtTxt = el.target.innerText;

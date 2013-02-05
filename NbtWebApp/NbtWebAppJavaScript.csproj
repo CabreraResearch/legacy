@@ -85,6 +85,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\actions\csw.scheduledRules.js" />
     <Content Include="app\actions\csw.tierIIReporting.js" />
     <Content Include="app\actions\csw.hmisReporting.js" />
     <Content Include="app\actions\csw.kioskmode.js" />
@@ -765,7 +766,6 @@
     <Content Include="app\controls\csw.morediv.js" />
     <Content Include="app\nodes\csw.node.tree.js" />
     <Content Include="app\Main.js" />
-    <Content Include="app\wizards\csw.scheduledrules.js" />
     <Content Include="app\wizards\csw.createinspection.js" />
     <Content Include="app\_first-vsdoc.js" />
     <Content Include="app\_last-vsdoc.js" />

@@ -30,6 +30,13 @@ namespace ChemSW.Nbt.Schema
                 RecurringNtp.removeFromAllLayouts(); 
             }
 
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClassProp IsRecurringReqOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring );
+            foreach( CswNbtMetaDataNodeTypeProp RecurringNtp in IsRecurringReqOcp.getNodeTypeProps() )
+            {
+                RecurringNtp.removeFromAllLayouts();
+            }
+
             _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.GenRequest, Recurrence.NSeconds, 5 );
 
         } //Update()

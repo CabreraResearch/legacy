@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Request = "Request";
             public const string Receive = "Receive";
             public const string MaterialId = "Material Id";
-            public const string ApprovedAtReceipt = "Approved at Receipt";
+            public const string ApprovedForReceiving = "Approved for Receiving";
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
@@ -85,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
 
-            if( ApprovedAtReceipt.WasModified )
+            if( ApprovedForReceiving.WasModified )
             {
-                Receive.setHidden( value: ApprovedAtReceipt.Checked != Tristate.True, SaveToDb: true );
+                Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
             }
 
             if( CasNo.WasModified )
@@ -516,7 +516,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedNodeId = nodeId;
                                 lvlMatched = 1;
                             }
-                            if( lvlMatched < 2 && language.Equals( userJurisdictionNode.Language.Value ) )
+                            if( lvlMatched < 2 && language.Equals( currentUserNode.Language ) )
                             {
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
@@ -524,7 +524,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedNodeId = nodeId;
                                 lvlMatched = 2;
                             }
-                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( userJurisdictionNode.Language.Value ) )
+                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( currentUserNode.Language ) )
                             {
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
@@ -605,7 +605,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
         public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
-        public CswNbtNodePropLogical ApprovedAtReceipt { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedAtReceipt] ); } }
+        public CswNbtNodePropLogical ApprovedForReceiving { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedForReceiving] ); } }
         public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
