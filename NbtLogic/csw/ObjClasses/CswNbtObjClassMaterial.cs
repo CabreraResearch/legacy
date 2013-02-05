@@ -198,6 +198,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
                             CswNbtObjClassContainer Container = Act.makeContainer();
                             Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
