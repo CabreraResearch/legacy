@@ -106,6 +106,9 @@ namespace ChemSW.Nbt.WebServices
                 public string DefaultSelect;
                 [DataMember( EmitDefaultValue = false, IsRequired = false )]
                 public string AccessedByObjClassId = "";
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                public bool UseCheckboxes = false;
+
             }
 
             public class Response : CswWebSvcReturn
@@ -202,25 +205,25 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Recursively iterate the tree and add child nodes according to parent hierarchy
         /// </summary>
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode, bool useCheckboxes )
         {
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
             {
                 Tree.goToNthChild( c );
 
-                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode );
+                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode, useCheckboxes );
                 TreeNodes.Add( TreeNode );
 
                 if( null != TreeNode.Children )
                 {
-                    _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode );
+                    _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, useCheckboxes );
                 }
                 Tree.goToParentNode();
                 // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
 
                 if( Tree.getCurrentNodeChildrenTruncated() )
                 {
-                    CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, TreeNode );
+                    CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, TreeNode, false );
                     TruncatedTreeNode.Name = "Results Truncated";
                     TruncatedTreeNode.IsLeaf = true;
                     TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
@@ -233,9 +236,17 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Generate a JObject for the tree's current node
         /// </summary>
-        private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree, CswExtTree.TreeNode Parent )
+        private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree, CswExtTree.TreeNode Parent, bool useCheckboxes )
         {
-            CswExtTree.TreeNode Ret = new CswExtTree.TreeNode();
+            CswExtTree.TreeNode Ret;
+            if( useCheckboxes )
+            {
+                Ret = new CswExtTree.TreeNodeWithCheckbox();
+            }
+            else
+            {
+                Ret = new CswExtTree.TreeNode();
+            }
 
             CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
@@ -503,7 +514,7 @@ namespace ChemSW.Nbt.WebServices
                 if( HasResults )
                 {
                     Tree.goToRoot();
-                    _runTreeNodesRecursive( Tree, RootNode.Children, RootNode );
+                    _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request.UseCheckboxes );
                 }
                 else
                 {

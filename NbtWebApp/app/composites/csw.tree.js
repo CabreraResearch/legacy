@@ -7,26 +7,26 @@
             //#region Variables
 
             var cswPublic = {
-                is: (function () {
-                    var isMulti = false;
-                    return {
-                        get multi() {
-                            return isMulti;
-                        },
-                        set multi(val) {
-                            if (val === true) {
-                                isMulti = true;
-                            } else {
-                                isMulti = false;
-                            }
-                            return isMulti;
-                        },
-                        toggleMulti: function () {
-                            isMulti = !isMulti;
-                            return isMulti;
-                        }
-                    };
-                }())
+//                is: (function () {
+//                    var isMulti = false;
+//                    return {
+//                        get multi() {
+//                            return isMulti;
+//                        },
+//                        set multi(val) {
+//                            if (val === true) {
+//                                isMulti = true;
+//                            } else {
+//                                isMulti = false;
+//                            }
+//                            return isMulti;
+//                        },
+//                        toggleMulti: function () {
+//                            isMulti = !isMulti;
+//                            return isMulti;
+//                        }
+//                    };
+//                }())
             };
 
             //#endregion Variables
@@ -58,7 +58,7 @@
                 }];
 
                 //State
-                cswPublic.is.multi = cswPrivate.isMulti;
+                //cswPublic.is.multi = cswPrivate.isMulti;
                 cswPrivate.allowMultiSelection = cswPrivate.allowMultiSelection || function () { };
 
 
@@ -68,6 +68,7 @@
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;
+                cswPrivate.useCheckboxes = cswPrivate.useCheckboxes;
 
                 //Events
                 cswPrivate.onClick = cswPrivate.onClick || function () { };
@@ -120,7 +121,7 @@
                     },
                     afterlayout: function () {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
-                        cswPublic.toggleCheckboxes();
+                        //cswPublic.toggleCheckboxes();
                         $('.x-grid-cell-treecolumn').css({
                             background: 'transparent',
                             border: '0px'
@@ -136,10 +137,10 @@
                             });
                         });
                     },
-                    afterrender: function () {
+                    afterrender: function() {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
                         //It _will_ in the next nano-second, so we have to defer.
-                        cswPublic.toggleCheckboxes();
+                        //cswPublic.toggleCheckboxes();
                     },
                     viewready: function () {
                         //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
@@ -166,19 +167,19 @@
                                     cswPublic.selectNode(null, lastSelectedPath);
                                 }
                             });
-                            cswPublic.toggleMultiEdit(cswPublic.is.multi);
+                            //cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
 
                     },
                     afteritemcollapse: function () {
-                        cswPublic.toggleCheckboxes();
+                        //cswPublic.toggleCheckboxes();
                     },
                     beforedeselect: function (rowModel, record, index, eOpts) {
-                        return (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1 );
+                        return (cswPublic.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
                     },
                     beforeselect: function (rowModel, record, index, eOpts) {
-                        var ret = (cswPublic.is.multi !== true || cswPrivate.selectedNodeCount <= 1);
-                        if (false !== ret && cswPublic.is.multi !== true) {
+                        var ret = (cswPublic.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
+                        if (false !== ret && cswPublic.useCheckboxes !== true) {
                             ret = Csw.tryExec(cswPrivate.beforeSelect);
                         }
                         return ret;
@@ -194,7 +195,7 @@
                             Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
                             Csw.tryExec(cswPrivate.onSelect, record.raw);
 
-                            if (cswPublic.is.multi) {
+                            if (cswPublic.useCheckboxes) {
                                 // also check this node
                                 cswPrivate.check(record, true);
                             }
@@ -211,7 +212,7 @@
                 //Ext doesn't update the raw data, which is the only thing we have to manage state.
                 //Manually keep it up to date.
                 var inc = (checked) ? 1 : -1;
-                if (cswPublic.is.multi) {
+                if (cswPublic.useCheckboxes) {
                     if (false === (null === cswPublic.selectedTreeNode ||
                         //cswPublic.selectedTreeNode.raw.checked === false || 
                                    Csw.tryExec(cswPrivate.allowMultiSelection, cswPublic.selectedTreeNode, record))) {
@@ -277,50 +278,51 @@
 
             //#region Tree Mutators
 
-            cswPrivate.showCheckboxes = function () {
-                /// <summary>
-                /// For Multii-Edit, uses jQuery selector to show all checkboxes.
-                /// </summary>
-                $('.x-tree-checkbox').show();
-                // Automatically check the selected node
-                cswPrivate.check(cswPublic.selectedTreeNode, true);
-                return true;
-            };
+//            cswPrivate.showCheckboxes = function () {
+//                /// <summary>
+//                /// For Multi-Edit, uses jQuery selector to show all checkboxes.
+//                /// </summary>
+//                $('.x-tree-checkbox').show();
+//                // Automatically check the selected node
+//                cswPrivate.check(cswPublic.selectedTreeNode, true);
+//                return true;
+//            };
 
-            cswPrivate.hideCheckboxes = function () {
-                /// <summary>
-                /// For Multii-Edit, uses jQuery selector to hide all checkboxes.
-                /// </summary>
-                $('.x-tree-checkbox').hide();
-                return true;
-            };
+//            cswPrivate.hideCheckboxes = function () {
+//                /// <summary>
+//                /// For Multi-Edit, uses jQuery selector to hide all checkboxes.
+//                /// </summary>
+//                debugger;
+//                $('.x-tree-checkbox').hide();
+//                return true;
+//            };
 
-            cswPublic.toggleMultiEdit = function () {
+            cswPublic.toggleUseCheckboxes = function () {
                 /// <summary>
                 /// Toggles Multi-Edit state on this instance.
                 /// </summary>
-                var selModel = cswPublic.tree.getSelectionModel();
-                if (cswPublic.is.multi) {
-                    selModel.setSelectionMode('MULTI');
-                } else {
-                    selModel.setSelectionMode('SINGLE');
-                }
-                cswPublic.toggleCheckboxes();
-                return true;
+//                var selModel = cswPublic.tree.getSelectionModel();
+//                if (cswPublic.is.multi) {
+//                    selModel.setSelectionMode('MULTI');
+//                } else {
+//                    selModel.setSelectionMode('SINGLE');
+//                }
+//                cswPublic.toggleCheckboxes();
+//                return true;
             };
 
-            cswPublic.toggleCheckboxes = function () {
-                /// <summary>
-                /// Shows or hides all checkboxes according to Multi-Edit state.
-                /// </summary>
-                /// <returns type="Csw.composites.tree">This tree</returns>
-                if (true === cswPublic.is.multi) {
-                    cswPrivate.showCheckboxes();
-                } else {
-                    cswPrivate.hideCheckboxes();
-                }
-                return cswPublic;
-            };
+//            cswPublic.toggleCheckboxes = function () {
+//                /// <summary>
+//                /// Shows or hides all checkboxes according to Multi-Edit state.
+//                /// </summary>
+//                /// <returns type="Csw.composites.tree">This tree</returns>
+//                if (true === cswPublic.is.multi) {
+//                    cswPrivate.showCheckboxes();
+//                } else {
+//                    cswPrivate.hideCheckboxes();
+//                }
+//                return cswPublic;
+//            };
 
             cswPublic.collapseAll = function (button, toolbar) {
                 /// <summary>
