@@ -24,6 +24,8 @@ namespace ChemSW.Nbt
 
         private Collection<CswNbtObjClassMaterial> _createdMaterials = new Collection<CswNbtObjClassMaterial>();
         private Collection<CswNbtObjClassSize> _createdSizes = new Collection<CswNbtObjClassSize>();
+        private Collection<string> vendorIds = new Collection<string>();
+        private Collection<string> packageIds = new Collection<string>();
 
         private Stopwatch RowTimer = new Stopwatch();
         private Stopwatch SelectTimer = new Stopwatch();
@@ -111,7 +113,8 @@ namespace ChemSW.Nbt
                                       m.casno, m.specific_gravity, m.expireinterval, m.expireintervalunits, m.formula, m.struct_pict,
                                       m.physical_state, m.melting_point, m.aqueous_solubility, m.boiling_point, m.vapor_density, m.vapor_pressure, m.molecular_weight, m.flash_point, m.ph,
                                       m.physical_description,
-                                      v.vendorname, v.city, v.state, v.street1, v.street2, v.zip, v.accountno, v.fax, v.phone, v.contactname 
+                                      v.vendorname, v.city, v.state, v.street1, v.street2, v.zip, v.accountno, v.fax, v.phone, v.contactname,
+                                      p.packageid, v.vendorid
                                from materials m
                                     left join packages p on p.materialid = m.materialid
                                     left join vendors v on v.vendorid = p.supplierid
@@ -157,6 +160,14 @@ namespace ChemSW.Nbt
             if( unitIds.Count > 0 )
             {
                 _updateCAFTable( unitIds, "units_of_measure", "unitofmeasureid" );
+            }
+            if( vendorIds.Count > 0 )
+            {
+                _updateCAFTable( vendorIds, "vendors", "vendorid" );
+            }
+            if( packageIds.Count > 0 )
+            {
+                _updateCAFTable( packageIds, "packages", "packageid" );
             }
             //UpdateTimer.Stop();
 
@@ -826,6 +837,7 @@ namespace ChemSW.Nbt
                 vendorNode.postChanges( true );
                 //PostChangesTimer.Stop();
                 vendorCount++;
+                vendorIds.Add( Row["vendorid"].ToString() );
             }
             VendorTimer.Stop();
             return vendorNode;
@@ -874,6 +886,7 @@ namespace ChemSW.Nbt
                 materialNode.postChanges( true );
                 //PostChangesTimer.Stop();
                 _createdMaterials.Add( materialNode );
+                packageIds.Add( Row["packageid"].ToString() );
             }
             MaterialTimer.Stop();
             return materialNode;
@@ -1050,7 +1063,7 @@ namespace ChemSW.Nbt
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             sizesView.AddViewPropertyAndFilter( parent, quantNTP,
-                Value: PotentialSizeNode.InitialQuantity.Quantity.ToString(),
+                Value: CswConvert.ToString( PotentialSizeNode.InitialQuantity.Quantity ),
                 SubFieldName: CswNbtSubField.SubFieldName.Value,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
