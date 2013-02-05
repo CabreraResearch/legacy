@@ -319,6 +319,10 @@ namespace ChemSW.Nbt.PropTypes
                     RequireViewPermissions: false,
                     IncludeHiddenNodes: false );
                 _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
+                if( RelationshipProp.IsRequired && Options.Count == 2 )
+                {
+                    Options.Remove(new CswPrimaryKey());
+                }
             }
             return Options;
         }
