@@ -69,7 +69,8 @@
                         return grid;
                     },
                     onPrintSuccess: function () { },
-                    dockedItems: []
+                    dockedItems: [],
+                    sorters: []
                 };
 
                 Csw.extend(cswPrivate, options);
@@ -205,7 +206,8 @@
                             root: 'items'
                         }
                     },
-                    groupField: cswPrivate.groupField
+                    groupField: cswPrivate.groupField,
+                    sorters: cswPrivate.sorters
                 };
                 if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                     var newfld = { name: cswPrivate.actionDataIndex };

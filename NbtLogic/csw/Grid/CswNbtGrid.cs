@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.Grid
         } // _TreeNodeToGrid()
 
 
-        public CswGridExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "" )
+        public CswGridExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", extJsXType GroupByColType = null )
         {
             string gridUniquePrefix = DT.TableName;
 
@@ -302,8 +302,23 @@ namespace ChemSW.Nbt.Grid
                 CswGridExtJsDataIndex dataIndex = new CswGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName );
                 CswGridExtJsField fld = new CswGridExtJsField();
                 fld.dataIndex = dataIndex;
-                grid.fields.Add( fld );
                 CswGridExtJsColumn gridcol = new CswGridExtJsColumn();
+                if( Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) )
+                {
+                    gridcol.xtype = GroupByColType;
+                    if( GroupByColType.Equals( extJsXType.datecolumn ) )
+                    {
+                        string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
+                        string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
+                        gridcol.dateformat = CswTools.DateFormatToExtJsDateFormat( userDateFormat ) + " " + CswTools.DateFormatToExtJsDateFormat( userTimeFormat );
+                        fld.type = "date";
+                    }
+                    else if( GroupByColType.Equals( extJsXType.numbercolumn ) )
+                    {
+                        fld.type = "number";
+                    }
+                }
+                grid.fields.Add( fld );
                 gridcol.header = Column.ColumnName;
                 gridcol.dataIndex = dataIndex;
                 grid.columns.Add( gridcol );
@@ -324,9 +339,9 @@ namespace ChemSW.Nbt.Grid
             return grid;
         } // DataTableToGrid()
 
-        public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "" )
+        public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "", extJsXType GroupByColType = null )
         {
-            CswGridExtJsGrid grid = DataTableToGrid( DT, Editable, GroupByCol );
+            CswGridExtJsGrid grid = DataTableToGrid( DT, Editable, GroupByCol, GroupByColType );
             return grid.ToJson();
         } // DataTableToJSON()
 
