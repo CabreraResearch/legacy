@@ -927,10 +927,10 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ApprovalStatusOCP, true );
             }
-            CswNbtMetaDataObjectClassProp ApprovedOCP = MaterialOC.getObjectClassProp( "Approved" );
+            CswNbtMetaDataObjectClassProp ApprovedOCP = MaterialOC.getObjectClassProp( "Approved" ) ?? MaterialOC.getObjectClassProp( "Approved at Receipt" );
             if( null != ApprovedOCP )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(ApprovedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Approved at Receipt");
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ApprovedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
             }
             //TierII
             CswNbtMetaDataObjectClassProp IsTierIIOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.IsTierII );

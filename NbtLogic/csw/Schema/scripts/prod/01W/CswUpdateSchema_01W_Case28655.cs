@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
                     }
 
                     // Property: Approved
-                    if( NodeTypeProp == MaterialNTs.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ApprovedAtReceipt ) )
+                    if( NodeTypeProp == MaterialNTs.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving ) )
                     {
                         NodeTypeProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                     }
