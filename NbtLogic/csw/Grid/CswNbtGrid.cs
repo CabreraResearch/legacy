@@ -301,26 +301,11 @@ namespace ChemSW.Nbt.Grid
             {
                 CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
                 CswExtJsGridField fld = new CswExtJsGridField();
+                grid.fields.Add( fld );
+                fld.dataIndex = dataIndex;
 
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
                 grid.columns.Add( gridcol );
-
-                if( Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) )
-                {
-                    gridcol.xtype = GroupByColType;
-                    if( GroupByColType.Equals( extJsXType.datecolumn ) )
-                    {
-                        string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
-                        string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
-                        gridcol.dateformat = CswTools.DateFormatToExtJsDateFormat( userDateFormat ) + " " + CswTools.DateFormatToExtJsDateFormat( userTimeFormat );
-                        fld.type = "date";
-                    }
-                    else if( GroupByColType.Equals( extJsXType.numbercolumn ) )
-                    {
-                        fld.type = "number";
-                    }
-                }
-                grid.fields.Add( fld );
                 gridcol.header = Column.ColumnName;
                 gridcol.dataIndex = dataIndex;
                 
@@ -333,14 +318,24 @@ namespace ChemSW.Nbt.Grid
                     fld.type = "bool";
                     gridcol.xtype = extJsXType.booleancolumn;
                 }
-                else if( Column.DataType == typeof( Int32 ) )
+                else if( Column.DataType == typeof( Int32 ) || 
+                    ( GroupByColType != null &&
+                      Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
+                      GroupByColType.Equals( extJsXType.numbercolumn ) ) )
                 {
                     fld.type = "number";
                     gridcol.xtype = extJsXType.numbercolumn;
                     gridcol.Format = "0";
                 }
-                else if( Column.DataType == typeof( DateTime ) )
+                else if( Column.DataType == typeof( DateTime ) ||
+                    ( GroupByColType != null &&
+                      Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
+                      GroupByColType.Equals( extJsXType.datecolumn ) ) )
                 {
+                    string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
+                    string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
+                    gridcol.dateformat = CswTools.DateFormatToExtJsDateFormat( userDateFormat ) + " " + CswTools.DateFormatToExtJsDateFormat( userTimeFormat );
+                    
                     fld.type = "date";
                     gridcol.xtype = extJsXType.datecolumn;
                     gridcol.Format = "m/d/y H:i:s";
