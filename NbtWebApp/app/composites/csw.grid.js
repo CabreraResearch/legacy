@@ -193,6 +193,7 @@
                     },
                     groupField: cswPrivate.groupField
                 };
+                
                 if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                     var newfld = { name: cswPrivate.actionDataIndex };
                     storeopts.fields.splice(0, 0, newfld);

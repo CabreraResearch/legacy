@@ -57,11 +57,11 @@ namespace ChemSW.Nbt.WebServices
             }
 
             [DataMember]
-            public CswDictionary<string, string> ColumnIds
+            public CswDictionary ColumnIds
             {
                 get
                 {
-                    CswDictionary<string, string> Ret = new CswDictionary<string, string>();
+                    CswDictionary Ret = new CswDictionary();
 
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName ).ToString(), CswScheduleLogicDetail.ColumnNames.RuleName );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance ).ToString(), CswScheduleLogicDetail.ColumnNames.Recurrance );

@@ -174,6 +174,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
+            //TODO: switch Resources to alternate AccessId, if different than our current AccessId
             try
             {
                 // GOTO CswSchedSvcAdminEndPoint for actual implementation
@@ -188,6 +189,7 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
+                Return.Data.CustomerId = AccessId;
             }
             catch( Exception Exception )
             {
@@ -263,7 +265,7 @@ namespace ChemSW.Nbt.WebServices
             ClearAllReprobates
         }
 
-        public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn.Ret Return, CswNbtScheduledRulesReturn.Ret Request )
+        public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, CswNbtScheduledRulesReturn.Ret Request )
         {
             //bool RetSuccess = false;
 
@@ -294,6 +296,8 @@ namespace ChemSW.Nbt.WebServices
             //}
             //_finalize( _OtherResources );
             //return RetSuccess;
+
+            //TODO: return the new Grid based on the update
         }
 
         public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )

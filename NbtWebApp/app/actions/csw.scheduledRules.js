@@ -135,10 +135,7 @@
                 customerIdSelect = customerIdTable.cell(1, 2)
                     .select({
                         name: 'customerIdSelect',
-                        selected: '',
-                        //values: [{ value: '[ None ]', display: '[ None ]' }],
                         onChange: function () {
-                            var selected = customerIdSelect.find(':selected');
                             cswPrivate.selectedCustomerId = customerIdSelect.val();
                             cswPrivate.makeScheduledRulesGrid();
                         }
@@ -159,8 +156,6 @@
                     }
                 });
 
-                //cswPrivate.selectedCustomerId = customerIdSelect.find(':selected').val();
-
                 customerIdTable.cell(1, 3).buttonExt({
                     name: 'updateRules',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
@@ -172,7 +167,6 @@
                             delete col.editable;
                             delete col.editor;
                         });
-                        req.Grid.data.items = cswPrivate.scheduledRulesGrid.getUpdatedGridItems();
 
                         Csw.ajaxWcf.post({
                             urlMethod: 'Scheduler/save',
@@ -208,13 +202,13 @@
                                 if (row && row.Row) {
                                     Object.keys(row.Row).forEach(function (key) {
                                         if (key === 'reprobate') {
-
                                             parsedRow[key] = Csw.bool(row.Row[key]);
                                         } else {
                                             parsedRow[key] = row.Row[key];
                                         }
                                     });
                                 }
+                                parsedRow.Row = row.Row;
                                 parsedRows.push(parsedRow);
                             });
                             result.Grid.data.items = parsedRows;
@@ -371,7 +365,10 @@
                             },
                             plugins: [
                                 Ext.create('Ext.grid.plugin.CellEditing', {
-                                    clicksToEdit: 1
+                                    clicksToEdit: 1,
+                                    listeners: {
+                                        edit: cswPrivate.onGridEdit
+                                    }
                                 })
                             ]
                         });
@@ -380,6 +377,11 @@
                 });
             };
 
+            cswPrivate.onGridEdit = function(grid, row, opts) {
+                cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][row.field] = row.value;
+                cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[row.field] = row.value;
+                debugger;
+            };
 
             cswPrivate.addBtnGroup = function (el) {
                 var tbl = el.table({ width: '99%', cellpadding: '5px' });

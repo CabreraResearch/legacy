@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.Grid
                 // Nodes in the Tree determine Rows
                 for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
                 {
-                    CswExtJsGridRow gridrow = new CswExtJsGridRow( c );
+                    CswExtJsGridRow gridrow = new CswExtJsGridRow( c, gridUniquePrefix );
                     Tree.goToNthChild( c );
 
                     gridrow.data.Add( nodeIdDataIndex, Tree.getNodeIdForCurrentPosition().ToString() );
@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.Grid
             Int32 RowNo = 0;
             foreach( DataRow Row in DT.Rows )
             {
-                CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo );
+                CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo, gridUniquePrefix );
                 foreach( DataColumn Column in DT.Columns )
                 {
                     gridrow.data[new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName )] = CswConvert.ToString( Row[Column] );
