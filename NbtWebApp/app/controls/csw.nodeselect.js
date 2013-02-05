@@ -108,7 +108,8 @@
                             cswPrivate.options.push({ id: '', value: '' });
                         }
                         data.Nodes.forEach(function (obj) {
-                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
+                            var isSelected = obj.NodeId === cswPrivate.selectedNodeId;
+                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: isSelected, nodelink: obj.NodeLink });
                         });
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
