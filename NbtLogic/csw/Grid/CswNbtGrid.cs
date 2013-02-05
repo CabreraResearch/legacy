@@ -301,7 +301,10 @@ namespace ChemSW.Nbt.Grid
             {
                 CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
                 CswExtJsGridField fld = new CswExtJsGridField();
-                
+
+                CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
+                grid.columns.Add( gridcol );
+
                 if( Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) )
                 {
                     gridcol.xtype = GroupByColType;
