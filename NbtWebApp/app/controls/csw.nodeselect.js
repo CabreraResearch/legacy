@@ -108,8 +108,7 @@
                             cswPrivate.options.push({ id: '', value: '' });
                         }
                         data.Nodes.forEach(function (obj) {
-                            var isSelected = obj.NodeId === cswPrivate.selectedNodeId;
-                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: isSelected, nodelink: obj.NodeLink });
+                            cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                         });
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
@@ -197,7 +196,7 @@
                 cswPrivate.foundSelected = false;
 
                 Csw.each(cswPrivate.options, function (relatedObj) {
-                    if (false === cswPrivate.isMulti && relatedObj.id === cswPrivate.selectedNodeId) {
+                    if (false === Csw.bool(cswPrivate.isMulti) && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.nodelink });
                     } else {
