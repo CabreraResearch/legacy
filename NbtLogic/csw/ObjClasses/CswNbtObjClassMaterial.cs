@@ -516,7 +516,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedNodeId = nodeId;
                                 lvlMatched = 1;
                             }
-                            if( lvlMatched < 2 && language.Equals( userJurisdictionNode.Language.Value ) )
+                            if( lvlMatched < 2 && language.Equals( currentUserNode.Language ) )
                             {
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
@@ -524,7 +524,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedNodeId = nodeId;
                                 lvlMatched = 2;
                             }
-                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( userJurisdictionNode.Language.Value ) )
+                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( currentUserNode.Language ) )
                             {
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
