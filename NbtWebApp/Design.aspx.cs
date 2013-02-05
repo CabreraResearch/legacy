@@ -1912,6 +1912,14 @@ namespace ChemSW.Nbt.WebPages
                                     MaxRows.Text = SelectedNodeTypeProp.MaxValue.ToString();
                                 }
                                 MaxRowCount.Cells[1].Controls.Add( MaxRows );
+
+                                TableRow HasHeaderRow = makeEditPropTableRow( EditPropPlaceHolder );
+                                ( (Literal) HasHeaderRow.Cells[0].Controls[0] ).Text = "";
+                                CheckBox HasHeaderValue = new CheckBox();
+                                HasHeaderValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                                HasHeaderValue.Text = "Show Column Headers";
+                                HasHeaderValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.Attribute1 );
+                                HasHeaderRow.Cells[1].Controls.Add( HasHeaderValue );
                             }
 
                             CswViewStructureTree GridViewTree = new CswViewStructureTree( Master.CswNbtResources );
