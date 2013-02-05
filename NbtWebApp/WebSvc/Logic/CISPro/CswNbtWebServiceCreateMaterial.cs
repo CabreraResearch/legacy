@@ -4,6 +4,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
+using NbtWebApp.Services;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -34,9 +35,9 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Creates a new material, if one does not already exist, and returns the material nodeid
         /// </summary>
-        public JObject createMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo )
+        public JObject createMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
         {
-            return _CswNbtActCreateMaterial.createMaterial( NodeTypeId, SupplierId, Tradename, PartNo );
+            return _CswNbtActCreateMaterial.createMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
         }
 
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
@@ -57,6 +58,20 @@ namespace ChemSW.Nbt.WebServices
         public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
         {
             return CswNbtActCreateMaterial.getMaterialSizes( CswNbtResources, MaterialId );
+        }
+
+        public static void getCreateMaterialViews( ICswResources CswResources, MaterialResponse Response, object Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswNbtActCreateMaterial act = new CswNbtActCreateMaterial(NbtResources);
+                CswNbtView SupplierView = act.getMaterialSuppliersView();
+                if( null != SupplierView )
+                {
+                    Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
+                }
+            }
         }
 
         /// <summary>

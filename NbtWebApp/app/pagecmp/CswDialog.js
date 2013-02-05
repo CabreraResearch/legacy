@@ -259,10 +259,10 @@
                         EditMode: Csw.enums.editMode.Add
                     },
                     ReloadTabOnSave: false,
-                    onSave: function (nodeid, nodekey, tabcount, nodename) {
+                    onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
                         cswPublic.close();
                         cswPublic.div.$.dialog('close');
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
+                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
                     },
                     onInitFinish: function () {
@@ -458,8 +458,10 @@
                 cswDlgPrivate.ShowAsReport = false;
                 cswDlgPrivate.tabState.Config = true;
                 cswDlgPrivate.onTabSelect = function (tabid) {
-                    cswDlgPrivate.tabState.tabid = tabid;
-                    // _configAddOptions();
+                    if (cswDlgPrivate.tabState.tabid !== tabid) {
+                        cswDlgPrivate.tabState.tabid = tabid;
+                        _resetLayout();
+                    }
                 };
                 cswDlgPrivate.onPropertyRemove = function () {
                     _configAddOptions();
@@ -585,7 +587,7 @@
                 div: Csw.literals.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
-
+                    Csw.tryExec(cswDlgPrivate.onClose);
                 }
             };
 
@@ -650,7 +652,7 @@
 
                 // _setupTabs()
             };
-            openDialog(cswPublic.div, 900, 600, cswDlgPrivate.onClose, title, cswDlgPrivate.onOpen);
+            openDialog(cswPublic.div, 900, 600, cswPublic.close, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
@@ -849,21 +851,10 @@
 
             var div = Csw.literals.div();
 
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-
-            uploadBtn.$.fileupload({
-                dataType: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.urlMethod + '?' + $.param(o.params),
-                done: function (e, jqXHR) {
-                    var data = {};
-                    if (jqXHR.result && jqXHR.result.data) {
-                        data = jqXHR.result.data;
-                    } else if (jqXHR.data) {
-                        data = jqXHR.data;
-                    }
+            div.fileUpload({
+                uploadUrl: o.urlMethod,
+                params: o.params,
+                onSuccess: function (data) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onSuccess, data);
                 }
@@ -879,7 +870,252 @@
             });
 
             openDialog(div, 400, 300, null, 'Upload');
-        },
+        }, // FileUploadDialog
+        //        ImportC3RecordDialog: function (options) {
+        //            var cswDlgPrivate = {
+        //                nodes: {},
+        //                nodenames: [],
+        //                nodeids: [],
+        //                cswnbtnodekeys: [],
+        //                onDeleteNode: null, //function (nodeid, nodekey) { },
+        //                Multi: false,
+        //                nodeTreeCheck: null,
+        //                publishDeleteEvent: true
+        //            };
+
+        //            if (Csw.isNullOrEmpty(options)) {
+        //                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+        //            }
+        //            Csw.extend(cswDlgPrivate, options);
+        //            var cswPublic = {
+        //                div: Csw.literals.div(),
+        //                close: function () {
+        //                    cswPublic.div.$.dialog('close');
+        //                }
+        //            };
+
+        //            cswPublic.div.span({ text: 'To do: Dummy dialog for the time being.' }).br();
+
+        //            openDialog(cswPublic.div, 400, 200, null, 'Import Record');
+
+        //        }, // ImportC3RecordDialog
+        C3DetailsDialog: function (options) {
+
+            var cswPrivate = {
+                title: "Product Details",
+                node: options.nodeObj,
+                searchresults: null
+            };
+
+            if (Csw.isNullOrEmpty(options)) {
+                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+            }
+            Csw.extend(cswPrivate, options);
+            var cswPublic = {
+                div: Csw.literals.div(),
+                close: function () {
+                    cswPublic.div.$.dialog('close');
+                }
+            };
+
+            //is this necessary or can i use the declaration above?
+            var div = Csw.literals.div(),
+                newNode;
+
+            var getProductDetails = function () {
+
+                var CswC3SearchParams = {
+                    Field: 'ProductId',
+                    Query: cswPrivate.node.c3productid,
+                    SearchOperator: '',
+                    SourceName: '',
+                    MaxRows: 10
+                };
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ChemCatCentral/GetProductDetails',
+                    data: CswC3SearchParams,
+                    success: function (data) {
+
+                        //Create the table
+                        var table1 = div.table({ cellspacing: '5px', align: 'left', width: '100%' });
+
+                        table1.cell(1, 1).div({
+                            text: cswPrivate.node.nodename
+                        }).css({ 'font-size': '18px', 'font-weight': 'bold' });
+
+                        table1.cell(2, 1).div({
+                            text: 'Supplier: ' + data.ProductDetails.SupplierName
+                        });
+
+                        table1.cell(3, 1).div({
+                            text: 'Catalog#: ' + data.ProductDetails.CatalogNo
+                        });
+
+                        var cell4_hidden = 'hidden';
+                        var producturl = data.ProductDetails.ProductUrl;
+                        if (null != producturl) {
+                            cell4_hidden = 'visible';
+                        }
+                        table1.cell(4, 1).div({
+                            text: '<a href=' + producturl + ' target="_blank">Product Website</a>',
+                            styles: { 'visibility': cell4_hidden }
+                        });
+
+                        var cell5_hidden = 'hidden';
+                        var msdsurl = data.ProductDetails.MsdsUrl;
+                        if (null != msdsurl) {
+                            cell5_hidden = 'visible';
+                        }
+                        table1.cell(5, 1).div({
+                            text: '<a href=' + msdsurl + ' target="_blank">MSDS</a>',
+                            styles: { 'visibility': cell5_hidden }
+                        });
+
+                        table1.cell(6, 1).grid({
+                            name: 'c3detailsgrid_size',
+                            title: 'Sizes',
+                            height: 100,
+                            width: 300,
+                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string'}],
+                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty'}],
+                            data: {
+                                items: data.ProductDetails.ProductSize,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                        table1.cell(7, 1).grid({
+                            name: 'c3detailsgrid_extradata',
+                            title: 'Extra Attributes',
+                            height: 150,
+                            width: 300,
+                            fields: [{ name: 'attribute', type: 'string' }, { name: 'value', type: 'string'}],
+                            columns: [{ header: 'Attribute', dataIndex: 'attribute' }, { header: 'Value', dataIndex: 'value'}],
+                            data: {
+                                items: data.ProductDetails.TemplateSelectedExtensionData,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                    }
+                });
+            };
+
+            var onOpen = function () {
+                getProductDetails();
+            };
+
+            openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
+
+        }, // C3DetailsDialog
+        C3SearchDialog: function (options) {
+
+            var cswPrivate = {
+                title: "ChemCatCentral Search",
+                c3searchterm: options.c3searchterm,
+                c3handleresults: options.c3handleresults,
+                clearview: options.clearview,
+                loadView: null //function () { }
+            };
+
+            if (options) {
+                Csw.extend(cswPrivate, options);
+            }
+
+            var div = Csw.literals.div(),
+                newNode;
+
+            var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
+
+            tableOuter.cell(1, 1).p({ text: '' });
+
+            var tableInner = div.table({ cellpadding: '2px' });
+
+            //DataSources Picklist
+            var sourceSelect = tableInner.cell(1, 1).select({
+                name: 'C3Search_sourceSelect',
+                selected: 'All Sources'
+            });
+
+            function getAvailableDataSources() {
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
+                    success: function (data) {
+                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
+                    }
+                });
+            };
+
+            getAvailableDataSources(); //call function
+
+            //SearchTypes Picklist
+            var searchTypeSelect = tableInner.cell(1, 2).select({
+                name: 'C3Search_searchTypeSelect'
+            });
+
+            function getSearchTypes() {
+
+                Csw.ajaxWcf.post({
+                    async: false,
+                    urlMethod: 'ChemCatCentral/GetSearchTypes',
+                    success: function (data) {
+                        searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchTypes));
+                    }
+                });
+            }
+
+            getSearchTypes(); //call function
+
+            var searchOperatorSelect = tableInner.cell(1, 3).select({
+                name: 'C3Search_searchOperatorSelect'
+            });
+            searchOperatorSelect.option({ display: 'Begins', value: 'begins' });
+            searchOperatorSelect.option({ display: 'Contains', value: 'contains' });
+            searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
+
+            var searchTermField = tableInner.cell(1, 4).input({
+                value: cswPrivate.c3searchterm
+            });
+
+            tableInner.cell(1, 5).button({
+                name: 'c3SearchBtn',
+                enabledText: 'Search',
+                disabledText: "Searching...",
+                onClick: function () {
+
+                    var CswC3SearchParams = {
+                        Field: searchTypeSelect.selectedVal(),
+                        Query: searchTermField.val(),
+                        SearchOperator: searchOperatorSelect.selectedVal(),
+                        SourceName: sourceSelect.selectedVal()
+                    };
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ChemCatCentral/Search',
+                        data: CswC3SearchParams,
+                        success: function (data) {
+                            //Convert to object from string
+                            var obj = JSON.parse(data.SearchResults);
+                            Csw.tryExec(cswPrivate.clearview);
+                            Csw.tryExec(cswPrivate.c3handleresults(obj));
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+
+
+            tableOuter.cell(2, 1).div(tableInner);
+
+            openDialog(div, 750, 300, null, cswPrivate.title);
+        }, // C3SearchDialog
         StructureSearchDialog: function (options) {
             var cswPrivate = {
                 title: "Structure Search",
@@ -918,17 +1154,17 @@
                     },
                     success: function (data) {
                         table.cell(4, 2).empty();
-                        if (data.MolImgDataCollection.length > 0) {
-                            molText.val(data.MolImgDataCollection[0].molString);
+                        if (data.molImgAsBase64String) {
+                            molText.val(data.molString);
                             table.cell(4, 2).img({
                                 labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + data.MolImgDataCollection[0].molImgAsBase64String
+                                src: "data:image/jpeg;base64," + data.molImgAsBase64String
                             });
                         }
                     }
                 });
                 return ret;
-            }
+            };
 
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
             getMolImgFromText('', currentNodeId);
@@ -940,14 +1176,14 @@
             }).css('float', 'left');
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + 'getMolImgFromFile',
+                url: 'Services/Mol/getImgFromFile',
                 paramName: 'filename',
                 done: function (e, data) {
-                    molText.val(JSON.parse(data.result).molstring);
+                    molText.val(data.result.Data.molString);
                     table.cell(4, 2).empty();
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + JSON.parse(data.result).bin
+                        src: "data:image/jpeg;base64," + data.result.Data.molImgAsBase64String
                     });
                 }
             });
@@ -972,12 +1208,10 @@
                             exact: exactSearchChkBox.checked()
                         },
                         success: function (data) {
-                            if (data.StructureSearchViewDataCollection.length > 0) {
-                                var viewId = data.StructureSearchViewDataCollection[0].viewId;
-                                var viewMode = data.StructureSearchViewDataCollection[0].viewMode;
-                                Csw.tryExec(cswPrivate.loadView, viewId, viewMode);
-                                div.$.dialog('close');
-                            }
+                            var viewId = data.viewId;
+                            var viewMode = data.viewMode;
+                            Csw.tryExec(cswPrivate.loadView, viewId, viewMode);
+                            div.$.dialog('close');
                         }
                     });
                 }
@@ -1014,14 +1248,13 @@
                 name: 'fileupload',
                 type: Csw.enums.inputTypes.file
             });
-
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.FileUrl + '?' + $.param({ PropId: o.PropId }),
+                url: 'Services/Mol/saveMolPropFile?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
                     div.$.dialog('close');
-                    o.onSuccess(data.result);
+                    o.onSuccess(data.result.Data);
                 }
             });
 
@@ -1044,11 +1277,11 @@
                 enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
-                    Csw.ajax.post({
-                        urlMethod: o.TextUrl,
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Mol/saveMolPropText',
                         data: {
-                            molData: molTxtArea.val(),
-                            PropId: o.PropId
+                            molString: molTxtArea.val(),
+                            propId: o.PropId
                         },
                         success: function (data) {
                             div.$.dialog('close');
@@ -1125,7 +1358,6 @@
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswDlgPrivate = {
                 name: 'print_label',
-                GetPrintLabelsUrl: 'Labels/list',
                 nodes: {},
                 nodeids: [],
                 nodetypeid: ''
@@ -1134,7 +1366,6 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
             }
             Csw.extend(cswDlgPrivate, options);
-
 
 
             var cswPublic = {
@@ -1150,29 +1381,30 @@
                 cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
             });
 
-            var getEplContext = function () {
-                Csw.openPopup('Print.html?TargetId=' + cswDlgPrivate.nodeids.join(',') + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
-                    width: 500,
-                    height: 250,
-                    location: 'no',
-                    toolbar: 'no',
-                    status: 'no',
-                    menubar: 'no',
-                    chrome: 'yes',
-                    centerscreen: 'yes'
-                });
-                cswPublic.close();
-            };
+            var handlePrint = function () {
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Labels/newPrintJob',
+                    data: {
+                        LabelId: labelSel.val(),
+                        PrinterId: printerSel.selectedNodeId(),
+                        TargetIds: cswDlgPrivate.nodeids.join(',')
+                    },
+                    success: function (data) {
+                        cswPublic.div.empty();
+                        cswPublic.div.nodeLink({ text: 'Label(s) will be printed in Job: ' + data.JobLink });
+                    } // success
+                }); // ajax
+            }; // handlePrint()
 
             cswPublic.div.br();
-            cswPublic.div.div({ text: 'Select a label to Print' });
+            cswPublic.div.div({ text: 'Select a label to Print:' });
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
                 name: cswDlgPrivate.name + '_labelsel'
             });
 
             Csw.ajaxWcf.post({
-                urlMethod: cswDlgPrivate.GetPrintLabelsUrl,
+                urlMethod: 'Labels/list',
                 data: {
                     TargetTypeId: cswDlgPrivate.nodetypeid,
                     TargetId: cswDlgPrivate.nodeids[0]
@@ -1190,6 +1422,22 @@
                 } // success
             }); // ajax
 
+            labelSelDiv.br();
+            labelSelDiv.br();
+            labelSelDiv.div({ text: 'Select a Printer:' });
+
+            var userDefaults = JSON.parse(Csw.cookie.get(Csw.cookie.cookieNames.UserDefaults));
+
+            var printerSel = labelSelDiv.nodeSelect({
+                name: cswDlgPrivate.name + '_printersel',
+                objectClassName: 'PrinterClass',
+                allowAdd: false,
+                isRequired: true,
+                showSelectOnLoad: true,
+                isMulti: false,
+                selectedNodeId: userDefaults.DefaultPrinterId
+            });
+
             cswPublic.div.button({
                 name: 'print_label_close',
                 enabledText: 'Close',
@@ -1204,7 +1452,7 @@
                 enabledText: 'Print',
                 //disabledText: 'Printing...', 
                 disableOnClick: false,
-                onClick: getEplContext
+                onClick: handlePrint //getEplContext
             });
             //printBtn.hide();
 
@@ -1288,7 +1536,7 @@
                 onAfterNewSearch: function (searchid) { },
                 onAddView: function (viewid, viewmode) { },
                 onLoadView: function (viewid, viewmode) { },
-                showSaveAsView: false,
+                showSave: false,
                 allowEdit: false,
                 allowDelete: false,
                 compactResults: true,
@@ -1302,6 +1550,48 @@
             return cswPublic;
         }, // SearchDialog
 
+        SaveSearchDialog: function (options) {
+            var o = {
+                div: Csw.literals.div(),
+                title: 'Save Search',
+                onOk: null,
+                onClose: null,
+                height: 400,
+                width: 600,
+                name: '',
+                category: ''
+            };
+            Csw.extend(o, options);
+
+            var nameInput = o.div.input({
+                labelText: 'Name:&nbsp;',
+                value: o.name
+            });
+            o.div.br();
+
+            var categoryInput = o.div.input({
+                labelText: 'Category:&nbsp;',
+                value: o.category
+            });
+            o.div.br();
+
+            o.div.button({
+                enabledText: 'Save',
+                onClick: function () {
+                    Csw.tryExec(o.onOk, nameInput.val(), categoryInput.val());
+                    o.div.$.dialog('close');
+                }
+            });
+
+            o.div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    o.div.$.dialog('close');
+                }
+            });
+
+            openDialog(o.div, o.width, o.height, o.onClose, o.title);
+        }, // SearchDialog
         GenericDialog: function (options) {
             var o = {
                 div: Csw.literals.div(),
@@ -1505,6 +1795,7 @@
 
 
     function openDialog(div, width, height, onClose, title, onOpen) {
+
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
@@ -1520,15 +1811,16 @@
             height: height,
             title: title,
             position: [posX, posY],
+            beforeClose: function () {
+                return Csw.clientChanges.manuallyCheckChanges();
+            },
             close: function () {
                 posX -= incrPosBy;
                 posY -= incrPosBy;
                 dialogsCount--;
-                if (Csw.isFunction(onClose)) {
-                    Csw.tryExec(onClose);
-                }
+                Csw.tryExec(onClose);
 
-                Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                unbindEvents();
                 if (dialogsCount === 0) {
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
@@ -1547,15 +1839,26 @@
         });
         posX += incrPosBy;
         posY += incrPosBy;
-        function closeMe(eventObj, action) {
+
+        var doClose = function () {
+            if (Csw.clientChanges.manuallyCheckChanges()) {
+                Csw.tryExec(onClose);
+                div.$.dialog('close');
+                unbindEvents();
+            }
+        };
+        var closeMe = function (eventObj, action) {
             afterObjectClassButtonClick(action, {
                 close: function () {
-                    div.$.dialog('close');
-                    Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                    doClose();
                 }
             });
-        }
-        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        };
+        var unbindEvents = function () {
+            Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            Csw.subscribe('initGlobalEventTeardown', doClose);
+        };
+
     }
 
     // Method calling logic

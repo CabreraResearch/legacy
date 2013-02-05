@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return DateTimeValue.ToShortDateString();
                 //else
                 //    return String.Empty;
-                _setGestalt();
+                SyncGestalt();
                 return _CswNbtNodePropData.Gestalt;
             }//
 
@@ -72,12 +72,12 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _CswNbtNodePropData.SetPropRowValue( _DateValueSubField.Column, DateTime.MinValue );
                 }
-                _setGestalt();
+                SyncGestalt();
             }
 
         }//DateTime
 
-        private void _setGestalt()
+        public override void SyncGestalt()
         {
             DateTime Value = DateTimeValue;
             if( Value != DateTime.MinValue )
@@ -85,13 +85,13 @@ namespace ChemSW.Nbt.PropTypes
                 switch( DisplayMode )
                 {
                     case DateDisplayMode.Date:
-                        _CswNbtNodePropData.Gestalt = Value.ToShortDateString();
+                        _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value.ToShortDateString() );
                         break;
                     case DateDisplayMode.Time:
-                        _CswNbtNodePropData.Gestalt = Value.ToLongTimeString();
+                        _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value.ToLongTimeString() );
                         break;
                     case DateDisplayMode.DateTime:
-                        _CswNbtNodePropData.Gestalt = Value.ToShortDateString() + " " + Value.ToLongTimeString();
+                        _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
                         break;
                 }
             }
@@ -151,6 +151,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         } // DisplayMode
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         public override void ToJSON( JObject ParentObject )
         {
             //ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName( true ), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) ) );
@@ -161,8 +166,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["displaymode"] = DisplayMode.ToString();
 
         } // ToJSON()
-
-        // ReadXml()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

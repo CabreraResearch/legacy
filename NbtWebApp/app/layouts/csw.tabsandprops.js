@@ -1,7 +1,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function () {
+(function () {  
 
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
@@ -53,6 +53,7 @@
 
                 },
                 IdentityTab: null,
+                showTitle: true,
                 onNodeIdSet: null,
                 onSave: null,
                 ReloadTabOnSave: true,
@@ -98,14 +99,15 @@
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.init = function () {
-                    Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                    Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                     Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                     //We don't have node name yet. Init the div in the right place and polyfill later.
                     cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
                     cswPrivate.identityWrapDiv = cswParent.div();
 
                     cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
-                    cswPrivate.identityDiv = cswPrivate.tabsTable.cell(1, 1); //.div();
+
+                    cswPrivate.identityForm = cswPrivate.tabsTable.cell(1, 1).form();
 
                     cswPrivate.outerTabDiv = cswPrivate.tabsTable
                         .cell(3, 1)
@@ -113,7 +115,7 @@
                     cswPrivate.tabcnt = 0;
                 };
                 cswPrivate.init();
-            }());
+            } ());
 
             //#region Events
 
@@ -136,7 +138,7 @@
             };
 
             cswPublic.tearDown = function () {
-                Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                 cswPrivate.onTearDown();
             };
 
@@ -146,7 +148,7 @@
 
             cswPrivate.clearTabs = function () {
                 cswPrivate.titleDiv.empty();
-                cswPrivate.identityDiv.empty();
+                cswPrivate.identityForm.empty();
                 cswPrivate.outerTabDiv.empty();
             };
 
@@ -162,7 +164,7 @@
 
                 var handle = function () {
                     tabParent.empty();
-                    Csw.unsubscribe(Csw.enums.events.CswNodeDelete, handle);
+                    Csw.unsubscribe(Csw.enums.events.CswNodeDelete, null, handle);
                     return false;
                 };
 
@@ -218,14 +220,21 @@
                         delete cswPrivate.IdentityTab.tabid;
 
                         cswPrivate.titleDiv.empty();
-                        cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
-                        cswPrivate.titleDiv.show();
-
+                        if (cswPrivate.showTitle) {
+                            cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
+                            cswPrivate.titleDiv.show();
+                        }
                         if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                             cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
-                            cswPrivate.identityDiv.empty();
-                            cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
-                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
+
+                            cswPrivate.identityForm.empty();
+                            var identityFormTbl = cswPrivate.identityForm.table({
+                                name: cswPrivate.name + '_formtbl_' + cswPrivate.IdentityTabId,
+                                width: '100%'
+                            }).css({ padding: '10px' });
+
+                            cswPrivate.identityLayoutTable = identityFormTbl.cell(1, 1).layoutTable(layoutOpts);
+                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityForm, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
                         }
                     }
                 }
@@ -302,12 +311,13 @@
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.genTab = function () {
-                                    Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                    cswPrivate.form.empty();
-                                    cswPrivate.onTearDown();
-                                    makeTabs();
-                                    return false;
+                                    if (Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                        cswPrivate.form.empty();
+                                        cswPrivate.onTearDown();
+                                        makeTabs();
+                                        return false;
+                                    }
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {
@@ -365,7 +375,7 @@
             };
 
             cswPublic.isFormValid = function () {
-                return cswPrivate.form.$.valid();
+                return cswPrivate.form.$.valid() && cswPrivate.identityForm.$.valid();
             };
 
             //#endregion Validator
@@ -408,16 +418,18 @@
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = nodekey;
                         cswPrivate.globalState.currentNodeId = nodeid;
+                        cswPrivate.globalState.currentNodeLink = data.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
                     }
                     delete data.nodeid;
+                    delete data.nodelink;
                 }
                 return nodeid;
             };
 
             cswPrivate.setSelectedNodes = function () {
                 if (false === Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
-                    var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
+                    var nodeData = cswPrivate.nodeTreeCheck.getChecked();
                     //It's easier to nuke the collection than to remap it
                     cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
                     cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
@@ -709,7 +721,7 @@
                                 cswPrivate.globalState.filterToPropId === '' &&
                                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
                                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
-                            /* Case 24437 */
+                        /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
                             globalState: cswPrivate.globalState,
@@ -750,7 +762,7 @@
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
                     (Csw.isNullOrEmpty(cswPrivate.globalState.propertyData) ||
-                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add && 
+                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
                       cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp))) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
@@ -838,6 +850,7 @@
 
                         labelCell = cswPrivate.getLabelCell(cellSet);
 
+                        labelCell.addClass('propertylabelcell');
                         if (Csw.bool(propData.highlight)) {
                             labelCell.addClass('ui-state-highlight');
                         }
@@ -853,7 +866,7 @@
                             });
 
                         } else {
-                            labelCell.setLabelText(propName, propData.required, propData.readonly);
+                            labelCell.setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
                         }
 
                         cswPrivate.globalState.checkBoxes['check_' + propid] = labelCell.checkBox({
@@ -1142,7 +1155,7 @@
                             cswPrivate.enableSaveBtn();
                             var onSaveSuccess = function () {
                                 var onSaveRefresh = function () {
-                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename);
+                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename, successData.nodelink);
                                     Csw.tryExec(onSuccess);
                                 };
 
@@ -1166,7 +1179,7 @@
                 else {
                     cswPrivate.enableSaveBtn();
                 }
-            });// Save()
+            }); // Save()
 
             //#endregion commit
 
@@ -1213,9 +1226,9 @@
             (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
                 cswPrivate.refreshLinkDiv();
-            }());
+            } ());
 
             return cswPublic;
         });
-}());
+} ());
 

@@ -147,6 +147,8 @@ namespace ChemSW.Nbt
 
         } // getSessionView()
 
+        
+
         /// <summary>
         /// Save a view to the session view collection.  Sets the SessionViewId on the view.
         /// </summary>
@@ -218,8 +220,17 @@ namespace ChemSW.Nbt
         /// </summary>
         public DataTable getAllEnabledViews()
         {
-            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getAllViews_select", "getAllViewInfo" );
+            Dictionary<CswNbtViewId, CswNbtView> AllEnabledViews = new Dictionary<CswNbtViewId, CswNbtView>();
+            return getAllEnabledViews( out AllEnabledViews );
+        }
 
+        /// <summary>
+        /// Get a DataTable of all enabled views in the database
+        /// </summary>
+        public DataTable getAllEnabledViews(out Dictionary<CswNbtViewId, CswNbtView> AllEnabledViews )
+        {
+            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getAllViews_select", "getAllViewInfo" );
+            Dictionary<CswNbtViewId, CswNbtView> OutEnabledViews = new Dictionary<CswNbtViewId, CswNbtView>();
             CswNbtNode ChemSwAdminUser = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
             CswNbtNode ChemSwAdminRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             bool ExcludeCswAdmin = ( _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername ||
@@ -233,18 +244,23 @@ namespace ChemSW.Nbt
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 if( false == View.IsFullyEnabled() ||
                     ( ExcludeCswAdmin &&
-                    ( ( View.Visibility == NbtViewVisibility.Role &&
-                        View.VisibilityRoleId == ChemSwAdminRole.NodeId ) ||
-                    ( View.Visibility == NbtViewVisibility.User &&
-                        View.VisibilityUserId == ChemSwAdminUser.NodeId ) ) ) )
+                      ( ( View.Visibility == NbtViewVisibility.Role &&
+                          View.VisibilityRoleId == ChemSwAdminRole.NodeId ) ||
+                        ( View.Visibility == NbtViewVisibility.User &&
+                          View.VisibilityUserId == ChemSwAdminUser.NodeId ) ) ) )
                 {
                     DoomedRows.Add( Row );
+                }
+                else
+                {
+                    OutEnabledViews.Add( ViewId, View );
                 }
             }
             foreach( DataRow DoomedRow in DoomedRows )
             {
                 DoomedRow.Delete();
             }
+            AllEnabledViews = OutEnabledViews;
             AllViews.AcceptChanges();
             return AllViews;
         }
@@ -344,41 +360,6 @@ namespace ChemSW.Nbt
                     CswNbtView ThisView = new CswNbtView( _CswNbtResources );
                     ThisView.LoadXml( Row["viewxml"].ToString() );
 
-
-                    //if( ThisView.Root.ChildRelationships.Count > 0 )
-                    //{
-
-                    //    foreach( CswNbtViewRelationship CurrentRelationship in ThisView.Root.ChildRelationships )
-                    //    {
-                    //        CswNbtMetaDataNodeType ViewNodeType = _CswNbtResources.MetaData.getNodeType( CurrentRelationship.SecondId );
-                    //        bool CanThisNodeType = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ViewNodeType, User );
-                    //        bool CanAnyTab = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ViewNodeType, User );
-
-                    //        if(
-                    //            (
-                    //            ( CurrentRelationship.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                    //            CanThisNodeType ||
-                    //            CanAnyTab )
-                    //            ||
-                    //            IncludeEmptyViews
-                    //            )
-                    //            &&
-                    //            ThisView.IsFullyEnabled() &&
-                    //            ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
-                    //            ( !SearchableOnly || ThisView.IsSearchable() )
-                    //            )
-                    //        {
-                    //            Ret.Add( ThisView.ViewId, ThisView );
-                    //        }
-                    //        else
-                    //        {
-                    //            RowsToRemove.Add( Row );
-                    //        }
-                    //    }//iterate relationships
-
-                    //}//if there are relationships
-
-
                     if( isVisible( ThisView, User, IncludeEmptyViews, SearchableOnly ) )
                     {
                         Ret.Add( ThisView.ViewId, ThisView );
@@ -408,16 +389,15 @@ namespace ChemSW.Nbt
         {
             return ((View.Root.ChildRelationships.Count > 0 &&
                      (
-                         View.Root.ChildRelationships.Where(R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                                                                 _CswNbtResources.Permit.canNodeType(
-                                                                     CswNbtPermit.NodeTypePermission.View,
-                                                                     _CswNbtResources.MetaData.getNodeType(R.SecondId),
-                                                                     User) ||
-                                                                 _CswNbtResources.Permit.canAnyTab(
-                                                                     CswNbtPermit.NodeTypePermission.View,
-                                                                     _CswNbtResources.MetaData.getNodeType(R.SecondId),
-                                                                     User)
-                             ).Count() > 0)
+                         View.Root.ChildRelationships.Any(R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
+                                                               _CswNbtResources.Permit.canNodeType(
+                                                                   CswNbtPermit.NodeTypePermission.View,
+                                                                   _CswNbtResources.MetaData.getNodeType(R.SecondId),
+                                                                   User) ||
+                                                               _CswNbtResources.Permit.canAnyTab(
+                                                                   CswNbtPermit.NodeTypePermission.View,
+                                                                   _CswNbtResources.MetaData.getNodeType(R.SecondId),
+                                                                   User)))
                     ) || IncludeEmptyViews) &&
                    View.IsFullyEnabled() &&
                    (IncludeEmptyViews || View.ViewMode != NbtViewRenderingMode.Grid || null != View.findFirstProperty()) &&
@@ -429,9 +409,31 @@ namespace ChemSW.Nbt
         /// </summary>
         public DataTable getUserViews()
         {
+            Dictionary<CswNbtViewId, CswNbtView> AllEnabledViews = new Dictionary<CswNbtViewId, CswNbtView>();
+            return getUserViews( out AllEnabledViews );
+        }
+
+        /// <summary>
+        /// Get all views with visibility set to the current user
+        /// </summary>
+        public DataTable getUserViews( out Dictionary<CswNbtViewId, CswNbtView> AllEnabledViews )
+        {
+            DataTable Ret = null;
+            Dictionary<CswNbtViewId, CswNbtView> OutEnabledViews = new Dictionary<CswNbtViewId, CswNbtView>();
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getUserViews_select", "getUserViewInfo" );
             ViewsSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", _CswNbtResources.CurrentUser.UserId.PrimaryKey.ToString() ) );
-            return ViewsSelect.getTable();
+            Ret = ViewsSelect.getTable();
+
+            foreach( DataRow Row in Ret.Rows )
+            {
+                CswNbtView ThisView = new CswNbtView( _CswNbtResources );
+                ThisView.LoadXml( Row["viewxml"].ToString() );
+
+                OutEnabledViews.Add( ThisView.ViewId, ThisView );
+            }
+            AllEnabledViews = OutEnabledViews;
+
+            return Ret;
         }
     }
 }

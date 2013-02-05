@@ -206,6 +206,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns the first version of a particular nodetype
+        /// </summary>
+        public CswNbtMetaDataNodeType getNodeTypeFirstVersion( string NodeTypeName )
+        {
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeFirstVersion( NodeTypeName );
+        }
+
+        /// <summary>
         /// Returns the latest version of a particular nodetype
         /// </summary>
         public CswNbtMetaDataNodeType getNodeTypeLatestVersion( CswNbtMetaDataNodeType NodeType )
@@ -601,7 +609,9 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["islocked"] = CswConvert.ToDbVal( false );
             InsertedNodeTypesRow["tablename"] = "nodes";
             InsertedNodeTypesRow["enabled"] = CswConvert.ToDbVal( true );
+            InsertedNodeTypesRow["searchdeferpropid"] = CswConvert.ToDbVal( NtModel.SearchDeferNodeTypePropId );    // see below for inheritance from object classes
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
+
             Int32 NodeTypeId = CswConvert.ToInt32( InsertedNodeTypesRow["nodetypeid"] );
             InsertedNodeTypesRow["firstversionid"] = NodeTypeId.ToString();
             _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeTypesTable );
@@ -699,6 +709,19 @@ namespace ChemSW.Nbt.MetaData
                     }
                 }
             }//iterate object class props
+
+            // Handle search defer inheritance from object classes
+            if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
+            {
+                if( CswNbtMetaDataObjectClass.NotSearchableValue != NtModel.SearchDeferObjectClassPropId )
+                {
+                    NewNodeType.SearchDeferPropId = NewNodeType.getNodeTypePropByObjectClassProp( NtModel.SearchDeferObjectClassPropId ).PropId;
+                }
+                else
+                {
+                    NewNodeType.SearchDeferPropId = CswNbtMetaDataObjectClass.NotSearchableValue;
+                }
+            }
 
             if( OnMakeNewNodeType != null )
                 OnMakeNewNodeType( NewNodeType, false );

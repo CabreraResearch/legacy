@@ -1,8 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -10,6 +10,7 @@ using System.Web.UI.WebControls;
 using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.CswWebControls;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -727,6 +728,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         SelectedNodeType.IsLocked = LockedCheckbox.Checked;
                     }
+                    SelectedNodeType.SearchDeferPropId = CswConvert.ToInt32( SearchDeferSelect.SelectedValue );
                     SelectedNodeType.NodeTypeName = EditNodeTypeName.Text;
                     SelectedNodeType.Category = EditNodeTypeCategory.Text;
                     SelectedNodeType.IconFileName = IconSelect.SelectedValue;
@@ -811,7 +813,8 @@ namespace ChemSW.Nbt.WebPages
                     //bool NewIsFk = false;
                     string NewFKType = NbtViewRelatedIdType.Unknown.ToString();
                     Int32 NewFKValue = Int32.MinValue;
-                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship || PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
+                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
+                        PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
                     {
                         string TargetValue = getPropAttributeValue( "EditProp_TargetValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                         if( TargetValue != String.Empty )
@@ -827,6 +830,25 @@ namespace ChemSW.Nbt.WebPages
                             {
                                 NewFKType = NbtViewRelatedIdType.ObjectClassId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "oc_".Length ) );
+                            }
+                        }
+                    }
+                    else if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ChildContents )
+                    {
+                        string ChildRelationshipValue = getPropAttributeValue( "EditProp_FkValueValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+                        if( ChildRelationshipValue != String.Empty )
+                        {
+                            // Get settings from the form
+                            //NewIsFk = true;
+                            if( ChildRelationshipValue.Substring( 0, "nt_".Length ) == "nt_" )
+                            {
+                                NewFKType = NbtViewPropIdType.NodeTypePropId.ToString();
+                                NewFKValue = CswConvert.ToInt32( ChildRelationshipValue.Substring( "nt_".Length ) );
+                            }
+                            else
+                            {
+                                NewFKType = NbtViewPropIdType.ObjectClassPropId.ToString();
+                                NewFKValue = CswConvert.ToInt32( ChildRelationshipValue.Substring( "oc_".Length ) );
                             }
                         }
                     }
@@ -1080,6 +1102,8 @@ namespace ChemSW.Nbt.WebPages
         //private Literal Spacer4;
         private Literal CopiedNodeTypeNameLabel;
         private TextBox CopiedNodeTypeName;
+        private Literal SearchDeferSelectLabel;
+        private DropDownList SearchDeferSelect;
         private CheckBox LockedCheckbox;
         private TableRow _ViewXmlRow;
         private CswViewStructureTree _RelationshipViewTree;
@@ -1148,6 +1172,14 @@ namespace ChemSW.Nbt.WebPages
             LockedCheckbox.Text = "Locked";
             LockedCheckbox.EnableViewState = false;
 
+            SearchDeferSelectLabel = new Literal();
+            SearchDeferSelectLabel.Text = "Defer Search To:";
+
+            SearchDeferSelect = new DropDownList();
+            SearchDeferSelect.ID = "SearchDeferSelect_" + _SelectedValue;
+            SearchDeferSelect.CssClass = "selectinput";
+            SearchDeferSelect.AutoPostBack = false;
+
             if( _CanThisNodeTypeVersion )
             {
                 NodeTypeVersionLabel = new Label();
@@ -1214,15 +1246,17 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 4, 1, AddToNameTemplatePropSelect );
             TabTable.addControl( 5, 0, AuditLevelLabel );
             TabTable.addControl( 5, 1, AuditLevelDropDownList );
-            TabTable.addControl( 6, 1, LockedCheckbox );
+            TabTable.addControl( 6, 0, SearchDeferSelectLabel );
+            TabTable.addControl( 6, 1, SearchDeferSelect );
+            TabTable.addControl( 7, 1, LockedCheckbox );
             if( _CanThisNodeTypeVersion )
             {
-                TabTable.addControl( 7, 0, NodeTypeVersionLabel );
-                TabTable.addControl( 7, 1, NodeTypeVersionSelect );
+                TabTable.addControl( 8, 0, NodeTypeVersionLabel );
+                TabTable.addControl( 8, 1, NodeTypeVersionSelect );
             }
-            TabTable.addControl( 8, 1, _SaveButton );
-            TabTable.addControl( 9, 0, new CswLiteralNbsp() );
-            TableCell SpacerCell = TabTable.getCell( 9, 0 );
+            TabTable.addControl( 9, 1, _SaveButton );
+            TabTable.addControl( 10, 0, new CswLiteralNbsp() );
+            TableCell SpacerCell = TabTable.getCell( 10, 0 );
             SpacerCell.ColumnSpan = 2;
             SpacerCell.Controls.Add( Spacer2 );
             TabTable.addControl( 11, 0, CopiedNodeTypeNameLabel );
@@ -1336,14 +1370,25 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 LockedCheckbox.Checked = SelectedNodeType.IsLocked;
-            }
+
+                SearchDeferSelect.Items.Clear();
+                SearchDeferSelect.Items.Add( new ListItem( "", "" ) );
+                SearchDeferSelect.Items.Add( new ListItem( "Not Searchable", CswNbtMetaDataObjectClass.NotSearchableValue.ToString() ) );
+                foreach( CswNbtMetaDataNodeTypeProp Prop in SelectedNodeType.getNodeTypeProps()
+                            .Where( Prop => Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
+                                    Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location ) )
+                {
+                    SearchDeferSelect.Items.Add( new ListItem( Prop.PropName, Prop.PropId.ToString() ) );
+                }
+                SearchDeferSelect.SelectedValue = CswConvert.ToString( SelectedNodeType.SearchDeferPropId );
+            } // if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && CswConvert.ToInt32( _SelectedValue ) > 0 )
 
             if( _Mode == NbtDesignMode.Inspection )
             {
                 NodeTypeObjectClassLabel.Visible = false;
                 NodeTypeObjectClass.Visible = false;
             }
-        }
+        } // init_editNodeTypePage()
 
         private string _ReturnURLForQueryString()
         {
@@ -1645,6 +1690,76 @@ namespace ChemSW.Nbt.WebPages
 
                             break;
 
+                        case CswNbtMetaDataFieldType.NbtFieldType.ChildContents:
+                            TableRow CCRelationshipRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) CCRelationshipRow.Cells[0].Controls[0] ).Text = "Child Relationship:";
+
+                            if( false == DerivesFromObjectClassProp )
+                            {
+                                HiddenField CCIsFk = new HiddenField();
+                                CCIsFk.ID = "EditProp_IsFkValue" + SelectedNodeTypeProp.PropId.ToString();
+                                CCIsFk.Value = "true";
+                                EditPropPlaceHolder.Controls.Add( CCIsFk );
+
+                                DropDownList CCRelationshipValue = new DropDownList();
+                                CCRelationshipValue.CssClass = "selectinput";
+                                CCRelationshipValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
+                                CCRelationshipValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
+
+                                // All relationships that point to this nodetype
+                                CswStaticSelect RelationshipPropsSelect = Master.CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
+                                RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", new CswStaticParam( "getnodetypeid", SelectedNodeType.FirstVersionNodeTypeId ) );
+                                DataTable RelationshipPropsTable = RelationshipPropsSelect.getTable();
+
+                                foreach( DataRow PropRow in RelationshipPropsTable.Rows )
+                                {
+                                    // Ignore relationships that don't have a target
+                                    if( PropRow["fktype"].ToString() != String.Empty &&
+                                        PropRow["fkvalue"].ToString() != String.Empty )
+                                    {
+                                        if( ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                                              PropRow["fkvalue"].ToString() == SelectedNodeType.FirstVersionNodeTypeId.ToString() ) ||
+                                            ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                              PropRow["fkvalue"].ToString() == SelectedNodeType.ObjectClassId.ToString() ) )
+                                        {
+                                            CswNbtMetaDataNodeTypeProp ThisNTProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropRow["propid"] ) );
+                                            CswNbtMetaDataObjectClassProp ThisOCProp = ThisNTProp.getObjectClassProp();
+                                            CCRelationshipValue.Items.Add( new ListItem( ThisNTProp.getNodeType().NodeTypeName + " - " + ThisNTProp.PropName, "nt_" + ThisNTProp.FirstPropVersionId.ToString() ) );
+                                            CCRelationshipValue.Items.Add( new ListItem( ThisOCProp.getObjectClass().ObjectClass + " - " + ThisOCProp.PropName, "oc_" + ThisOCProp.PropId.ToString() ) );
+                                        }
+                                    }
+                                } // foreach( DataRow PropRow in RelationshipPropsTable.Rows )
+                                if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.NodeTypePropId.ToString() )
+                                {
+                                    CCRelationshipValue.SelectedValue = "nt_" + SelectedNodeTypeProp.FKValue.ToString();
+                                }
+                                else if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.ObjectClassPropId.ToString() )
+                                {
+                                    CCRelationshipValue.SelectedValue = "oc_" + SelectedNodeTypeProp.FKValue.ToString();
+                                }
+                                CCRelationshipValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
+                                CCRelationshipRow.Cells[1].Controls.Add( CCRelationshipValue );
+                            } // if( false == DerivesFromObjectClassProp )
+                            else
+                            {
+                                if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
+                                {
+                                    string CCValue = string.Empty;
+                                    if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.NodeTypePropId.ToString() )
+                                    {
+                                        CswNbtMetaDataNodeTypeProp RelatedProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FKValue );
+                                        CCValue = RelatedProp.getNodeType().NodeTypeName + " - " + RelatedProp.PropName;
+                                    }
+                                    else if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.ObjectClassPropId.ToString() )
+                                    {
+                                        CswNbtMetaDataObjectClassProp RelatedProp = Master.CswNbtResources.MetaData.getObjectClassProp( SelectedNodeTypeProp.FKValue );
+                                        CCValue = RelatedProp.getObjectClass().ObjectClass.ToString() + " - " + RelatedProp.PropName;
+                                    }
+                                    CCRelationshipRow.Cells[1].Controls.Add( new CswLiteralText( CCValue ) );
+                                } // if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
+                            } // if-else( false == DerivesFromObjectClassProp )
+                            break;
+
                         case CswNbtMetaDataFieldType.NbtFieldType.Comments:
                             TableRow RowsRowComm = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) RowsRowComm.Cells[0].Controls[0] ).Text = "Rows:";
@@ -1797,6 +1912,14 @@ namespace ChemSW.Nbt.WebPages
                                     MaxRows.Text = SelectedNodeTypeProp.MaxValue.ToString();
                                 }
                                 MaxRowCount.Cells[1].Controls.Add( MaxRows );
+
+                                TableRow HasHeaderRow = makeEditPropTableRow( EditPropPlaceHolder );
+                                ( (Literal) HasHeaderRow.Cells[0].Controls[0] ).Text = "";
+                                CheckBox HasHeaderValue = new CheckBox();
+                                HasHeaderValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                                HasHeaderValue.Text = "Show Column Headers";
+                                HasHeaderValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.Attribute1 );
+                                HasHeaderRow.Cells[1].Controls.Add( HasHeaderValue );
                             }
 
                             CswViewStructureTree GridViewTree = new CswViewStructureTree( Master.CswNbtResources );
@@ -1884,6 +2007,26 @@ namespace ChemSW.Nbt.WebPages
                             ILUrlOptionsValue.Rows = 5;
                             ILUrlOptionsValue.Columns = 100;
                             ILUrlOptionsRow.Cells[1].Controls.Add( ILUrlOptionsValue );
+                            break;
+
+                        case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                            TableRow PrefixRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) PrefixRow.Cells[0].Controls[0] ).Text = "Prefix:";
+                            TextBox PrefixValue = new TextBox();
+                            PrefixValue.CssClass = "textinput";
+                            PrefixValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.Attribute1 != null )
+                                PrefixValue.Text = SelectedNodeTypeProp.Attribute1.ToString();
+                            PrefixRow.Cells[1].Controls.Add( PrefixValue );
+
+                            TableRow SuffixRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) SuffixRow.Cells[0].Controls[0] ).Text = "Suffix:";
+                            TextBox SuffixValue = new TextBox();
+                            SuffixValue.CssClass = "textinput";
+                            SuffixValue.ID = "EditProp_Attribute2" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.Attribute2 != null )
+                                SuffixValue.Text = SelectedNodeTypeProp.Attribute2.ToString();
+                            SuffixRow.Cells[1].Controls.Add( SuffixValue );
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.List:
@@ -2230,8 +2373,7 @@ namespace ChemSW.Nbt.WebPages
                                     {
                                         NodeTypeCol = new Collection<CswNbtMetaDataNodeType>()
                                                           {
-                                                              Master.CswNbtResources.MetaData.getNodeType(
-                                                                  RelationshipProp.FKValue)
+                                                              Master.CswNbtResources.MetaData.getNodeType(RelationshipProp.FKValue)
                                                           };
                                     }
                                     else
@@ -2692,7 +2834,8 @@ namespace ChemSW.Nbt.WebPages
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.NFPA &&         // temporary until ported into new UI
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL &&          // temporary until ported into new UI
                         FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&       // temporary until ported into new UI
-                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList )     // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList &&     // temporary until ported into new UI
+                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ChildContents )
                     {
                         TableRow DefaultValueRow = makeEditPropTableRow( EditPropPlaceHolder );
                         ( (Literal) DefaultValueRow.Cells[0].Controls[0] ).Text = "Default Value:";

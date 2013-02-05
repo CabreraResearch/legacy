@@ -124,6 +124,12 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
@@ -155,6 +161,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 FileName = JObject[_FileNameSubField.ToXmlNodeName( true )].ToString();
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, FileName );
         }
     }
 

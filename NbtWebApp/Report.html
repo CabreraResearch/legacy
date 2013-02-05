@@ -17,65 +17,110 @@
             function stopSpinner() {
                 $('#spinner').hide();
             }
-
-            function showCrystal(reportid) {
-                Csw.ajax.post({
-                    url: 'wsNBT.asmx/doesReportSupportCrystal',
-                    data: { reportid: reportid },
-                    success: function (data) {
-                        if (Csw.bool(data.result)) {
-                            $('#btnCrystal').css('display', '');
-                        }
-                    }
-                });
-            }
-
             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
             var qs = Csw.queryString();
-            if (false == Csw.isNullOrEmpty(qs.reportid)) {
-                showCrystal(qs.reportid);
-                if (false == Csw.isNullOrEmpty(qs.rformat)) {
-                    runReport(qs.reportid, qs.rformat);
-                } else {
-                    $('#btnGrid').click(function () { 
-                        $('#btnGrid').attr('disabled','disabled'); 
-                        runReport(qs.reportid, 'grid'); 
+
+            Csw.ajaxWcf.post({
+                urlMethod: 'Reports/getReportInfo',
+                async: false,
+                data: { nodeId: qs.reportid },
+                success: function (data) {
+                    var params = [];
+                    if (data.doesSupportCrystal) {
+                        $('#btnCrystal').css('display', '');
+                    }
+
+                    var parent = Csw.domNode({ ID: 'paramsDiv' });
+                    var table = parent.table().css('margin', '5px');
+                    var i = 0;
+                    Csw.each(data.reportParams, function (param) {
+                        (function () {
+                            var paramName = param.name;
+                            var spanCell = table.cell(i + 1, 1).span({ text: paramName }).css('margin', '5px');
+                            params[paramName] = '';
+
+                            var OnChange = function (text) {
+                                params[paramName] = text;
+                            };
+
+                            var inputCell = table.cell(i + 1, 2).input({
+                                value: param.value,
+                                onChange: OnChange,
+                                isRequired: true
+                            }).css('margin', '5px');
+                            i++;
+                            params[paramName] = param.value;
+                        })();
                     });
-                    $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
-                    $('#btnCrystal').click(function () { Csw.window.location('report.aspx?reportid=' + qs.reportid); });
+
+                    if (false == Csw.isNullOrEmpty(qs.reportid)) {
+                        $('#btnGrid').click(function () {
+                            runReport(qs.reportid, 'grid', params);
+                        });
+                        $('#btnCsv').click(function () { runReport(qs.reportid, 'csv', params); });
+                        $('#btnCrystal').click(function () { runReport(qs.reportid, 'crystal', params) });
+                    }
                 }
-            }
+            });
         });
 
+        var postForm = function (reportid, params, action) {
 
+            var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+            var form = Csw.literals.factory($form);
 
-        function runReport(reportid, rformat) {
+            for (var param in params) {
+                form.input({
+                    name: param,
+                    value: params[param]
+                });
+            }
+
+            form.input({
+                name: 'reportid',
+                value: reportid
+            });
+            form.$.submit();
+            form.remove();
+        }
+
+        function runReport(reportid, rformat, params) {
 
             function startSpinner() {
                 $('#spinner').show();
             }
 
+            var reportParams = [];
+            for (var item in params) {
+                reportParams.push({ name: item, value: params[item] });
+            }
 
             if ('csv' == rformat.toLowerCase()) {
-                Csw.window.location('wsNBT.asmx/report?rformat=csv&reportid=' + reportid);
-            }
-            else {
+                postForm(reportid, params, 'Services/Reports/reportCSV');
+            } else if ('crystal' == rformat.toLowerCase()) {
+                postForm(reportid, params, 'report.aspx');
+            } else {
 
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
-                
-                var parent = Csw.domNode({ ID: 'rptDiv' });
-                
-                parent.grid({
-                    name: 'reportGrid',
-                    readonly: true,
-                    ajax: {
-                        urlMethod: 'report',
-                        data: { reportid: reportid, rformat: 'grid' },
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Reports/report',
+                    data: {
+                        reportFormat: rformat,
+                        nodeId: reportid,
+                        reportParams: reportParams
                     },
-                    showActionColumn: false,
-                    storeId: reportid,
-                    usePaging: false
+                    success: function (data) {
+                        var parent = Csw.domNode({ ID: 'rptDiv' });
+                        parent.empty();
+
+                        var gridData = JSON.parse(data.gridJSON);
+                        gridData.grid.showActionColumn = false;
+                        gridData.grid.storeid = reportid;
+                        gridData.grid.usePaging = false;
+                        parent.grid(gridData.grid).css('margin', '20px');
+                    }
                 });
             }
         }
@@ -84,6 +129,7 @@
     </script>
 </head>
 <body>
+    <div id="paramsDiv"></div>
     <div id="formatChooser">
         <input type="button" value="View As Grid" id="btnGrid" />
         <input type="button" value="Save As CSV" id="btnCsv" />
@@ -93,6 +139,7 @@
         <img src="images/ajax/progress.gif" /></div>
     <div id="rptDiv">
     </div>
-    <div id="DialogErrorDiv"></div>
+    <div id="DialogErrorDiv">
+    </div>
 </body>
 </html>

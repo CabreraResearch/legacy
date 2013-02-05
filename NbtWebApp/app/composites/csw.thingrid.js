@@ -45,11 +45,10 @@
             var cswPublic = {};
 
             (function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
-                var form = cswParent.form();
-                var table = form.table({
+                Csw.extend(cswPrivate, options);
+
+                cswPublic = cswParent.form();
+                var table = cswPublic.table({
                     cellpadding: 5,
                     TableCssClass: 'CswThinGridTable',
                     CellCssClass: 'CswThinGridCells'
@@ -61,6 +60,7 @@
                         size: 'small',
                         tooltip: { title: 'Add Row' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                        disableOnClick: false, //added for Case 28686
                         onClick: function () {
                             Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
                             Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
@@ -68,8 +68,6 @@
                         }
                     });
                 }
-                cswPublic = Csw.dom({}, form);
-                cswPublic.form = form;
             } ());
 
             cswPublic.hide = function () {
@@ -99,7 +97,7 @@
                 return (rowid === 1 && cswPrivate.hasHeader);
             };
 
-            cswPublic.addCell = Csw.method(function (cellData, row, col) {
+            cswPublic.addCell = Csw.method(function (cellValue, row, col) {
                 /// <summary>
                 /// Add a cell to the thin grid
                 /// </summary>
@@ -107,10 +105,19 @@
                 /// <param name="row" type="Number">Row number.</param>
                 /// <param name="col" type="Number">Column number.</param>
                 /// <returns type="Csw.table.cell">A Csw table cell.</returns>
-                var cssClass = '', thisCell;
+                var cssClass = '', thisCell, required;
+
+                //Case 28336/28548. Yuck. Sometimes this comes in as a string, sometimes as an object, 
+                //   when it comes in as an object we need 'value' and 'isRequired'
+                if (cellValue.isRequired) {
+                    required = cellValue.isRequired;
+                }
+                cellValue = cellValue || '';
+                cellValue = cellValue.value || cellValue;
+
                 if (cswPrivate.isHeaderRow(row)) {
-                    if (false === Csw.isNullOrEmpty(cellData)) {
-                        cswPrivate.header[col] = cellData.value;
+                    if (false === Csw.isNullOrEmpty(cellValue)) {
+                        cswPrivate.header[col] = cellValue;
                     }
                     cssClass = 'CswThinGridHeaderShow';
                 } else if (row === 1) {
@@ -118,9 +125,12 @@
                 }
 
                 thisCell = cswPrivate.table.cell(row, col);
-                if (false === Csw.isNullOrEmpty(cellData.value)) {
-                    //thisCell.append(Csw.string(value, '&nbsp;'));
-                    thisCell.label({ text: cellData.value, isRequired: cellData.isRequired, useWide: true }).css('text-align', 'left');
+                if (false === Csw.isNullOrEmpty(cellValue)) {
+                    if (required) {
+                        thisCell.span().setLabelText(Csw.string(cellValue), required, false);
+                    } else {
+                        thisCell.span({ text: Csw.string(cellValue) });
+                    }
                 }
                 thisCell.addClass(cssClass);
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {
@@ -147,6 +157,7 @@
                         cswPublic.deleteRow(row);
                     }
                 });
+                return cell;
             });
 
             cswPublic.addRows = Csw.method(function (dataRows, row, col) {

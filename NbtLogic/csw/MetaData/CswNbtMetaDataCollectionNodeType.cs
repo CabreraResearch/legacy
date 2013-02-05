@@ -108,6 +108,16 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataNodeType) _CollImpl.getWhereFirst( "where nodetypeid = (select firstversionid from nodetypes where nodetypeid = " + NodeTypeId.ToString() + ")" );
         }
 
+        /// <summary>
+        /// Get the first nodetype matching by name (which is guaranteed to have the same version history as any other nodetype matching by name).
+        /// </summary>
+        /// <param name="NodeTypeName">The name of the NodeType</param>
+        /// <returns></returns>
+        public CswNbtMetaDataNodeType getNodeTypeFirstVersion( string NodeTypeName )
+        {
+            return (CswNbtMetaDataNodeType) _CollImpl.getWhereFirst( @"where nodetypeid = (select firstversionid from nodetypes where lower(nodetypename) = '" + CswTools.SafeSqlParam( NodeTypeName.ToLower() ) + "')" );
+        }
+
         public CswNbtMetaDataNodeType getNodeTypeLatestVersion( string NodeTypeName )
         {
             // Get any nodetype matching by name 

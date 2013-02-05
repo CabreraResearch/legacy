@@ -122,6 +122,12 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
+
+        public Int32 SearchDeferPropId
+        {
+            get { return CswConvert.ToInt32( _NodeTypeRow["searchdeferpropid"] ); }
+            set { _NodeTypeRow["searchdeferpropid"] = CswConvert.ToDbVal( value ); }
+        }
         public Int32 Quota
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["quota"] ); }
@@ -495,6 +501,7 @@ namespace ChemSW.Nbt.MetaData
         public const string _Attribute_FirstNodeTypeId = "firstversionid";
         public const string _Attribute_NameTemplate = "nametemplate";
 
+        //TODO: ForMobile needs to go.
         public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
         {
             CswNbtMetaDataNodeType LatestVersionNT = getNodeTypeLatestVersion();

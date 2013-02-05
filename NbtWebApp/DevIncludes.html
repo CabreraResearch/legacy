@@ -3,6 +3,7 @@
 <link rel="stylesheet" type="text/css" href="css/_dev.ChemSW.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.action.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.combobox.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.dom.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.errormessage.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.fieldtypes.css" />
 <link rel="stylesheet" type="text/css" href="css/_dev.csw.label.css" />
@@ -48,12 +49,15 @@
 <!-- Actions -->
 <script type="text/javascript" src="app/actions/csw.audithistory.js"></script>
 <script type="text/javascript" src="app/actions/csw.containermove.js"></script>
+<script type="text/javascript" src="app/actions/csw.hmisReporting.js"></script>
 <script type="text/javascript" src="app/actions/csw.modules.js"></script>
 <script type="text/javascript" src="app/actions/csw.quotas.js"></script>
 <script type="text/javascript" src="app/actions/csw.quotaimage.js"></script>
 <script type="text/javascript" src="app/actions/csw.sessions.js"></script>
 <script type="text/javascript" src="app/actions/csw.requestCarts.js"></script>
 <script type="text/javascript" src="app/actions/csw.subscriptions.js"></script>
+<script type="text/javascript" src="app/actions/csw.tierIIReporting.js"></script>
+<script type="text/javascript" src="app/actions/csw.kioskmode.js"></script>
 
 <!-- Wizards -->
 <script type="text/javascript" src="app/wizards/csw.createinspection.js"></script>
@@ -67,6 +71,7 @@
 <script type="text/javascript" src="app/wizards/csw.wizard.nodetypeselect.js"></script>
 <script type="text/javascript" src="app/wizards/csw.wizard.addlayout.js"></script>
 <script type="text/javascript" src="app/wizards/csw.wizard.amountsgrid.js"></script>
+<script type="text/javascript" src="app/wizards/csw.legacymobile.js"></script>
 
 <!-- Layouts -->
 <script type="text/javascript" src="app/layouts/csw.action.js"></script>
@@ -118,6 +123,7 @@
 
 <!-- Composite Controls -->
 <script type="text/javascript" src="app/composites/_composites.factory.js"></script>
+<script type="text/javascript" src="app/composites/csw.fileupload.js"></script>
 <script type="text/javascript" src="app/composites/csw.grid.js"></script>
 <script type="text/javascript" src="app/composites/csw.jzebra.js"></script>
 <script type="text/javascript" src="app/composites/csw.menubutton.js"></script>
@@ -167,6 +173,7 @@
 <script type="text/javascript" src="app/controls/csw.node.link.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.preview.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.tree.js"></script>
+<script type="text/javascript" src="app/nodes/csw.node.treeExt.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.table.js"></script>
 <script type="text/javascript" src="app/nodes/csw.node.grid.js"></script>
 
@@ -182,8 +189,9 @@
 <script type="text/javascript" src="app/proptypes/csw.propertyOption.js"></script>
 <script type="text/javascript" src="app/proptypes/csw.propTypeAuditHistoryGrid.js"></script>
 <script type="text/javascript" src="app/proptypes/csw.propTypeBarcode.js"></script>
-<script type="text/javascript" src="app/proptypes/csw.propTypeCASNo.js"></script>
 <script type="text/javascript" src="app/proptypes/csw.propTypeButton.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeCASNo.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeChildContents.js"></script>
 <script type="text/javascript" src="app/proptypes/csw.propTypeComments.js"></script>
 <script type="text/javascript" src="app/proptypes/csw.propTypeComposite.js"></script>
 <script type="text/javascript" src="app/proptypes/csw.propTypeDateTime.js"></script>

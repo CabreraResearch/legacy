@@ -98,6 +98,12 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = StaticText;
@@ -116,6 +122,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 StaticText = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, StaticText );
         }
     }//CswNbtNodePropStatic
 

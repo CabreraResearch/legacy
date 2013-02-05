@@ -47,7 +47,7 @@ body a
 }
 .HeaderTable_LeftCell
 {
-	background-color: #ebebeb;
+	background-color: #d8e9fa;
 	border-bottom: 1px solid #e1e2e4;
 	padding: 0px 10px 0px 0px;
 	height: 32px;
@@ -67,7 +67,7 @@ body a
 */
 .HeaderTable_RightTopCell
 {
-	background-color: #ebebeb;
+	background-color: #d8e9fa;
 	height: 30px;
 	width: 100%;
 	border-bottom: 1px solid #e1e2e4;

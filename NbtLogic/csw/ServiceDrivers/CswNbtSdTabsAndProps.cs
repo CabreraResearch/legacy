@@ -162,6 +162,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                     NodeOp = NodeOp ?? CswNbtNodeCollection.MakeNodeOperation.MakeTemp;
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, NodeOp );
                 }
+                else
+                {
+                    throw new CswDniException(ErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
+                }
             }
             return Ret;
         }
@@ -175,7 +179,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != NodeType )
                 {
-                    if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                    if( false == _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
+                    }
+                    else
                     {
                         NodeOp = NodeOp ?? CswNbtNodeCollection.MakeNodeOperation.MakeTemp;
                         Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, NodeOp );
@@ -268,6 +276,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( CswTools.IsPrimaryKey( Node.NodeId ) )
                 {
                     Ret["nodeid"] = Node.NodeId.ToString();
+                    Ret["nodelink"] = Node.NodeLink;
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
@@ -325,7 +334,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
             }
             else
-            {
+            {   
                 RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
             }
             RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
@@ -622,10 +631,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             return _addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
         {
             JObject ret = new JObject();
-            JObject PropsObj = CswConvert.ToJObject( NewPropsJson );
             if( PropsObj.HasValues )
             {
                 CswNbtNodeKey RetNbtNodeKey = null;
@@ -730,6 +738,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["result"] = "Succeeded";
                     //If we're Adding, NodeName won't be valid until now.
                     ret["nodename"] = Node.NodeName;
+                    ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
                 }

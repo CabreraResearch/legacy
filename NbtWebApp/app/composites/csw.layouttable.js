@@ -61,6 +61,7 @@
                 cswPublic.table.data('configmode', mode);
             };
 
+
             cswPrivate.toggleRemove = function () {
                 if (cswPrivate.isRemoveMode(cswPublic.table)) {
                     cswPublic.table.data('removemode', 'false');
@@ -176,11 +177,14 @@
                     cellsetrow: cellsetrow,
                     cellsetcolumn: cellsetcolumn
                 });
-
+                
                 cell.bind('click', function (ev, dd) {
-                    cswPrivate.onClick(ev, dd, thisRow, thisCol);
+                    if(cswPublic.isConfig()) {
+                        cswPrivate.onClick(ev, dd, thisRow, thisCol);
+                    }
                 });
                 cswPrivate.enableDrop(cell);
+                
                 cell.div({ cssclass: 'CswLayoutTable_celldiv' });
             };
 

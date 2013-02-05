@@ -24,6 +24,7 @@
 
             cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
             cswPrivate.gridOpts = {};
+            cswPrivate.ajaxii = {};
 
             cswPrivate.currentTab = 'Pending';
 
@@ -76,27 +77,42 @@
             };
 
             cswPrivate.getCartCounts = function () {
-                Csw.ajaxWcf.get({
+                if (cswPrivate.ajaxii.getCartCounts) {
+                    cswPrivate.ajaxii.getCartCounts.ajax.abort();
+                }
+                cswPrivate.ajaxii.getCartCounts = Csw.ajaxWcf.get({
                     urlMethod: 'Requests/counts',
                     data: {
                         CartId: cswPrivate.state.pendingCartId
                     },
                     success: function (data) {
-                        Csw.publish(Csw.enums.events.main.refreshHeader);
-                        
+                        var oldPendingCnt = cswPrivate.state.cartCounts.PendingRequestItems;
+                        var oldSubmittedCnt = cswPrivate.state.cartCounts.SubmittedRequestItems;
+                        var oldRecurringCnt = cswPrivate.state.cartCounts.RecurringRequestItems;
+                        var oldFavoritesCnt = cswPrivate.state.cartCounts.FavoriteRequestItems;
+
                         cswPrivate.state.cartCounts = data.Counts;
                         cswPrivate.saveState();
-                        cswPrivate.pendingTab.ext.setTitle('Pending (' + cswPrivate.state.cartCounts.PendingRequestItems + ')');
-                        cswPrivate.submittedTab.ext.setTitle('Submitted (' + cswPrivate.state.cartCounts.SubmittedRequestItems + ')');
-                        cswPrivate.recurringTab.ext.setTitle('Recurring (' + cswPrivate.state.cartCounts.RecurringRequestItems + ')');
-                        cswPrivate.favoritesTab.ext.setTitle('Favorites (' + cswPrivate.state.cartCounts.FavoriteRequestItems + ')');
+                        if (oldPendingCnt !== cswPrivate.state.cartCounts.PendingRequestItems) {
+                            Csw.publish(Csw.enums.events.main.refreshHeader);
+                            cswPrivate.pendingTab.ext.setTitle('Pending (' + cswPrivate.state.cartCounts.PendingRequestItems + ')');
+                        }
+                        if (oldSubmittedCnt !== cswPrivate.state.cartCounts.SubmittedRequestItems) {
+                            cswPrivate.submittedTab.ext.setTitle('Submitted (' + cswPrivate.state.cartCounts.SubmittedRequestItems + ')');
+                        }
+                        if (oldRecurringCnt !== cswPrivate.state.cartCounts.RecurringRequestItems) {
+                            cswPrivate.recurringTab.ext.setTitle('Recurring (' + cswPrivate.state.cartCounts.RecurringRequestItems + ')');
+                        }
+                        if (oldFavoritesCnt !== cswPrivate.state.cartCounts.FavoriteRequestItems) {
+                            cswPrivate.favoritesTab.ext.setTitle('Favorites (' + cswPrivate.state.cartCounts.FavoriteRequestItems + ')');
+                        }
                         cswPrivate.tabs.resetWidth();
                     }
                 });
             };
 
             cswPrivate.makeRequestCreateMaterial = function (grid) {
-                Csw.ajaxWcf.get({
+                cswPrivate.ajaxii.makeRequestCreateMaterial = Csw.ajaxWcf.get({
                     urlMethod: 'Requests/findMaterialCreate',
                     success: function (data) {
                         if (data.NodeTypeId) {
@@ -122,7 +138,7 @@
                     },
                     success: function (json) {
                         if (json.Succeeded) {
-                            cswPrivate.tabs.setActiveTab(1);                            
+                            cswPrivate.tabs.setActiveTab(1);
                             cswPrivate.onTabSelect('Submitted');
                             Csw.tryExec(cswPrivate.onSubmit);
                         }
@@ -155,7 +171,7 @@
                 });
             };
 
-            cswPrivate.copyToRequest = function (copyToRequest, copyRequestItems, onSuccess) {
+            cswPrivate.copyFavorites = function (copyToRequest, copyRequestItems, onSuccess) {
                 if (copyToRequest && copyRequestItems) {
                     Csw.ajaxWcf.post({
                         urlMethod: 'Requests/Favorites/copy',
@@ -169,26 +185,56 @@
                         }
                     });
                 }
-            }; // copyRequest()  
+            }; // copyFavorites()  
+
+            cswPrivate.copyRecurring = function (copyRequestItems, onError) {
+                if (copyRequestItems) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Requests/Recurring/copy',
+                        data: {
+                            RequestItems: copyRequestItems,
+                            RequestId: cswPrivate.state.pendingCartId
+                        },
+                        success: function () {
+                            cswPrivate.openTab('Recurring');
+                        },
+                        error: function() {
+                            onError();
+                        }
+                    });
+                }
+            }; // copyRecurring()
 
             //#endregion AJAX methods
 
             //#region Tab construction
 
+            cswPrivate.openTab = function (tabName) {
+                var idx = cswPrivate.tabNames.indexOf(tabName);
+                if (idx !== -1) {
+                    cswPrivate.tabs.setActiveTab(idx);
+                    cswPrivate.onTabSelect(tabName);
+                }
+            };
+
             cswPrivate.destroyOtherTabs = function (preserveTabName) {
                 if (preserveTabName !== 'Favorites' && cswPublic.favoritesGrid) {
+                    cswPublic.favoritesGrid.ajax.ajax.abort();
                     cswPublic.favoritesGrid.destroy();
                     cswPrivate.favoritesTab.csw.empty();
                 }
                 if (preserveTabName !== 'Recurring' && cswPublic.recurringGrid) {
+                    cswPublic.recurringGrid.ajax.ajax.abort();
                     cswPublic.recurringGrid.destroy();
                     cswPrivate.recurringTab.csw.empty();
                 }
                 if (preserveTabName !== 'Submitted' && cswPublic.submittedGrid) {
+                    cswPublic.submittedGrid.ajax.ajax.abort();
                     cswPublic.submittedGrid.destroy();
                     cswPrivate.submittedTab.csw.empty();
                 }
                 if (preserveTabName !== 'Pending' && cswPublic.pendingGrid) {
+                    cswPublic.pendingGrid.ajax.ajax.abort();
                     cswPublic.pendingGrid.destroy();
                     cswPrivate.pendingTab.csw.empty();
                 }
@@ -219,18 +265,26 @@
                 return ret;
             };
 
-            cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
-                var tgtTxt = null;
-                if (el) {
-                    tgtTxt = el.target.innerText;
+            cswPrivate.onTabSelect = function(tabName, el, eventObj, callBack) {
+                var tgtTxt = null, evtTxt;
+                if (tabName.lastIndexOf('<') === 0 &&
+                    tabName.lastIndexOf('>') === tabName.length - 1) {
+                    if (el) {
+                        tgtTxt = el.target.innerText;
+                    }
+
+                    if (eventObj) {
+                        evtTxt = eventObj.innerText;
+                    }
+                } else {
+                    if (tabName.length > 20) {
+                        // yuck. Clicking anywhere inside the tab fires this event. That includes clicking a grid row whose nodename is "Recurring event".
+                        tabName = '';
+                    }
                 }
-                var evtTxt = null;
-                if (eventObj) {
-                    evtTxt = eventObj.innerText;
-                }
-                var tab = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
-                if (tab.length > 0) {
-                    cswPrivate.currentTab = tab;
+                var newTabName = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
+                if (newTabName.length > 0) {
+                    cswPrivate.currentTab = newTabName;
                     cswPrivate.destroyOtherTabs(cswPrivate.currentTab);
                     switch (cswPrivate.currentTab) {
                         case 'Pending':
@@ -248,6 +302,27 @@
                     }
                     cswPrivate.getCartCounts();
                 }
+            };
+
+            cswPrivate.makeCopyRecurringBtn = function (cswNode, cswGrid, onError) {
+                var ret = cswNode.buttonExt({
+                    enabledText: 'Copy to Recurring',
+                    disabledText: 'Copy to Recurring',
+                    disableOnClick: true,
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.docexport),
+                    onClick: function () {
+                        var nodes = [];
+                        cswGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
+                            nodes.push({ NodeId: nodeId });
+                        });
+                        cswPrivate.copyRecurring(nodes, function () {
+                            cswGrid.deselectAll();
+                            onError();
+                        });
+                        ret.disable();
+                    }
+                }).disable();
+                return ret;
             };
 
             cswPrivate.makeGridForTab = function (opts) {
@@ -271,6 +346,7 @@
                         }
                     },
                     showCheckboxes: opts.showCheckboxes,
+                    showMultiEditToolbar: false,
                     showActionColumn: true,
                     canSelectRow: false,
                     groupField: opts.groupField || '',
@@ -333,7 +409,9 @@
                         });
                     }, // onDelete
                     onSelectChange: function (rowCount) {
-                        Csw.tryExec(opts.onSelectChange, rowCount);
+                        if (opts.showCheckboxes) {
+                            Csw.tryExec(opts.onSelectChange, rowCount);
+                        }
                     }
                 });
             };
@@ -385,17 +463,22 @@
                 var hasOneRowSelected = false;
                 var favoriteSelect;
 
-                var toggleSaveBtn = function () {
+                var toggleCopyButtons = function () {
                     if (favoriteSelect) {
                         var nodeId = favoriteSelect.selectedNodeId();
                         if (nodeId) {
                             cswPrivate.selectedFavoriteId = nodeId;
                         }
                     }
-                    if (hasOneRowSelected && cswPrivate.selectedFavoriteId) {
-                        saveBtn.enable();
+                    if (hasOneRowSelected) {
+                        copyBtn.enable();
+                        if (cswPrivate.selectedFavoriteId) {
+                            saveBtn.enable();
+                        } else {
+                            saveBtn.disable();
+                        }
                     } else {
-                        saveBtn.disable();
+                        copyBtn.disable();
                     }
                 };
 
@@ -406,16 +489,16 @@
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_pendingGrid';
                 opts.showCheckboxes = true;
-                opts.title = 'Select any Pending items to save to a Favorite list';
+                opts.title = 'Select any Pending items to save to a Favorite list or to copy to a new Recurring request.';
                 opts.onSelectChange = function (rowCount) {
                     hasOneRowSelected = rowCount > 0;
-                    toggleSaveBtn();
+                    toggleCopyButtons();
                 };
                 opts.onEditNode = cswPrivate.makePendingTab;
 
                 cswPublic.pendingGrid = cswPrivate.makeGridForTab(opts);
-                
-                var btmTbl = ol.li().table({cellpadding: '2px'});
+
+                var btmTbl = ol.li().table({ cellpadding: '2px' });
                 var saveBtn = btmTbl.cell(1, 1).buttonExt({
                     enabledText: 'Save to Favorites',
                     disabledText: 'Save to Favorites',
@@ -426,9 +509,9 @@
                         cswPublic.pendingGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
-                        cswPrivate.copyToRequest(cswPrivate.selectedFavoriteId, nodes, function () {
+                        cswPrivate.copyFavorites(cswPrivate.selectedFavoriteId, nodes, function () {
                             cswPublic.pendingGrid.deselectAll();
-                            toggleSaveBtn();
+                            toggleCopyButtons();
                         });
                         saveBtn.disable();
                     }
@@ -443,11 +526,11 @@
                         showSelectOnLoad: true,
                         viewid: cswPrivate.state.favoritesListViewId,
                         allowAdd: false,
-                        onSelectNode: toggleSaveBtn,
-                        onSuccess: toggleSaveBtn
+                        onSelectNode: toggleCopyButtons,
+                        onSuccess: toggleCopyButtons
                     });
                 };
-                
+
                 makePicklist();
                 btmTbl.cell(1, 3).buttonExt({
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
@@ -455,6 +538,8 @@
                         Csw.tryExec(cswPrivate.addFavorite, makePicklist);
                     }
                 });
+
+                var copyBtn = cswPrivate.makeCopyRecurringBtn(btmTbl.cell(1, 4), cswPublic.pendingGrid, toggleCopyButtons);
 
                 ol.li().br({ number: 2 });
 
@@ -478,17 +563,33 @@
 
                 ol.br();
 
+                var hasOneRowSelected = false;
+                var toggleCopyBtn = function () {
+                    if (hasOneRowSelected) {
+                        copyBtn.enable();
+                    } else {
+                        copyBtn.disable();
+                    }
+                };
+
                 var opts = {
                     onSuccess: function () { }
                 };
-                opts.showCheckboxes = false;
+                opts.title = 'Select any Submitted items to copy to a new Recurring request.';
+                opts.showCheckboxes = true;
                 opts.sessionViewId = cswPrivate.state.submittedItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_submittedItemsGrid';
-
+                opts.onSelectChange = function (rowCount) {
+                    hasOneRowSelected = rowCount > 0;
+                    toggleCopyBtn();
+                };
                 opts.onEditNode = cswPrivate.makeSubmittedTab;
 
                 cswPublic.submittedGrid = cswPrivate.makeGridForTab(opts);
+
+                var btmTbl = ol.li().table({ cellpadding: '2px' });
+                var copyBtn = cswPrivate.makeCopyRecurringBtn(btmTbl.cell(1, 1), cswPublic.submittedGrid, toggleCopyBtn);
 
                 ol.li().br();
 
@@ -496,12 +597,24 @@
             };
 
             cswPrivate.makeRecurringTab = function () {
-                var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Items', 'View any recurring Request Items.');
+                var ol = cswPrivate.prepTab(cswPrivate.recurringTab, 'Recurring Request Items', 'View your recurring Request Items.');
+                Csw.nbt.viewFilters({
+                    name: 'recurring_viewfilters',
+                    isTreeView: false,
+                    parent: ol.li(),
+                    viewid: cswPrivate.state.recurringItemsViewId,
+                    onEditFilters: function (newviewid) {
+                        cswPrivate.state.recurringItemsViewId = newviewid;
+                        cswPrivate.makeRecurringTab();
+                    } // onEditFilters
+                }); // viewFilters
+
                 ol.br();
 
                 var opts = {
                     onSuccess: function () { }
                 };
+                opts.title = 'Set the Recurring Frequency of any recurring item to schedule automatic reordering.';
                 opts.showCheckboxes = false;
                 opts.sessionViewId = cswPrivate.state.recurringItemsViewId;
                 opts.parent = ol.li();
@@ -518,7 +631,7 @@
             };
 
             cswPrivate.makeFavoritesTab = function () {
-                var ol = cswPrivate.prepTab(cswPrivate.favoritesTab, 'Favorite Request Itens', 'View any favorite Request Items.');
+                var ol = cswPrivate.prepTab(cswPrivate.favoritesTab, 'Favorite Request Itens', 'View your favorite Request Items.');
                 Csw.nbt.viewFilters({
                     name: 'favorites_viewfilters',
                     isTreeView: false,
@@ -545,6 +658,7 @@
                 var opts = {
                     onSuccess: function () { }
                 };
+                opts.title = 'Select any Favorite request to copy to your Pending cart.';
                 opts.showCheckboxes = true;
                 opts.sessionViewId = cswPrivate.state.favoriteItemsViewId;
                 opts.parent = ol.li();
@@ -569,7 +683,7 @@
                         cswPublic.favoritesGrid.getSelectedRowsVals('nodeid').forEach(function (nodeId) {
                             nodes.push({ NodeId: nodeId });
                         });
-                        cswPrivate.copyToRequest(cswPrivate.state.pendingCartId, nodes, function () {
+                        cswPrivate.copyFavorites(cswPrivate.state.pendingCartId, nodes, function () {
                             cswPublic.favoritesGrid.deselectAll();
                             toggleCopyBtn();
                         });
@@ -637,7 +751,8 @@
                 });
 
                 cswPrivate.tabs.setActiveTab(0);
-
+                //cswPrivate.openTab('Pending');
+                
                 cswPrivate.getCart();
 
             }());

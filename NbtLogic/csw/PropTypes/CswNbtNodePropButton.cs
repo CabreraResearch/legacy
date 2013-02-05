@@ -93,6 +93,11 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         public override void ToJSON( JObject ParentObject )
         {
             //ParentObject.Add( new JProperty( "text", Text ) );
@@ -117,6 +122,11 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             //nothing        
+        }
+
+        public override void SyncGestalt()
+        {
+
         }
 
     }//CswNbtNodeProp

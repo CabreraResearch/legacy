@@ -35,6 +35,11 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData.Gestalt; }
         }//Gestalt
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
         public CswNbtView View
         {
             get
@@ -59,6 +64,11 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Nothing to restore
+        }
+
+        public override void SyncGestalt()
+        {
+
         }
     }
 

@@ -116,11 +116,15 @@ namespace ChemSW.Nbt.WebServices
             _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
 
-        public JObject runGrid( bool IncludeInQuickLaunch, bool GetAllRowsNow = false, bool IsPropertyGrid = false, string GroupByCol = "" )
+        public JObject runGrid( string Title, bool IncludeInQuickLaunch, bool GetAllRowsNow = false, bool IsPropertyGrid = false, string GroupByCol = "" )
         {
             _View.SaveToCache( IncludeInQuickLaunch );
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
-            return _CswNbtGrid.TreeToJson( _View, Tree, IsPropertyGrid: ( IsPropertyGrid || _View.Visibility == NbtViewVisibility.Property ), GroupByCol: GroupByCol );
+            if( String.IsNullOrEmpty( Title ) )
+            {
+                Title = _View.ViewName;
+            }
+            return _CswNbtGrid.TreeToJson( Title, _View, Tree, IsPropertyGrid: ( IsPropertyGrid || _View.Visibility == NbtViewVisibility.Property ), GroupByCol: GroupByCol );
         } // runGrid()
 
         private void _getGridProperties( IEnumerable<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
@@ -221,11 +225,11 @@ namespace ChemSW.Nbt.WebServices
                     Tree.goToNthChild( C );
 
                     DataRow Row = DT.NewRow();
-                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                     {
-                        if( DT.Columns.Contains( Prop["propname"].ToString() ) )
+                        if( DT.Columns.Contains( Prop.PropName ) )
                         {
-                            Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
+                            Row[Prop.PropName] = Prop.Gestalt;
                         }
                     }
 
@@ -257,11 +261,11 @@ namespace ChemSW.Nbt.WebServices
                 for( int i = 0; i < childNodeCount; i++ )
                 {
                     Tree.goToNthChild( i );
-                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                     {
-                        if( DT.Columns.Contains( Prop["propname"].ToString() ) )
+                        if( DT.Columns.Contains( Prop.PropName ) )
                         {
-                            Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
+                            Row[Prop.PropName] = Prop.Gestalt;
                         }
                     }
                     _recurse( Tree, DT, ref Row );
@@ -307,13 +311,13 @@ namespace ChemSW.Nbt.WebServices
 
                         JArray ThisRow = new JArray();
                         RetRows.Add( ThisRow );
-                        foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                        foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                         {
-                            Int32 ColumnIdx = HeaderCols.IndexOf( Prop["propname"].ToString() );
+                            Int32 ColumnIdx = HeaderCols.IndexOf( Prop.PropName );
                             if( ColumnIdx >= 0 )
                             {
                                 _ensureIndex( ThisRow, ColumnIdx );
-                                ThisRow[ColumnIdx] = Prop["gestalt"];
+                                ThisRow[ColumnIdx] = Prop.Gestalt;
                             }
                         }
 

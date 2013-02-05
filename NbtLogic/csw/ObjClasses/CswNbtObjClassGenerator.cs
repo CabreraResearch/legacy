@@ -20,7 +20,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string FinalDueDate = "Final Due Date";
             public static string NextDueDate = "Next Due Date";
             public static string WarningDays = "Warning Days";
-            //public static string GraceDaysPropertyName { get { return "Grace Days"; } }
             public static string Enabled = "Enabled";
             public static string RunStatus = "Run Status";
             public static string TargetType = "Target Type";
@@ -31,9 +30,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string ParentView = "Parent View";
         }
 
-
-
-        //ICswNbtPropertySetScheduler
         public string SchedulerFinalDueDatePropertyName { get { return PropertyName.FinalDueDate; } }
         public string SchedulerNextDueDatePropertyName { get { return PropertyName.NextDueDate; } }
         public string SchedulerRunStatusPropertyName { get { return PropertyName.RunStatus; } }
@@ -301,6 +297,15 @@ namespace ChemSW.Nbt.ObjClasses
             {
             }
             return true;
+        }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.Node.copyPropertyValues( Node );
+            CopiedIDNode.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
+            CopiedIDNode.postChanges( true );
+            return CopiedIDNode.Node;
         }
         #endregion
 

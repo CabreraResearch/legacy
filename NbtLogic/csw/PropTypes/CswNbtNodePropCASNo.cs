@@ -73,7 +73,10 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        //private string _ElemName_Value = "Value";
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
 
         public override void ToJSON( JObject ParentObject )
         {
@@ -92,6 +95,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Text );
         }
     }//CswNbtNodePropText
 

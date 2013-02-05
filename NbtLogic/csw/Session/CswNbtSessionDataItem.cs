@@ -109,7 +109,8 @@ namespace ChemSW.Nbt
                 CswNbtSearch ret = null;
                 if( DataType == SessionDataType.Search )
                 {
-                    ret = new CswNbtSearch( _CswNbtResources, _SessionDataRow );
+                    ret = new CswNbtSearch( _CswNbtResources );
+                    ret.FromSessionData( _SessionDataRow );
                 }
                 return ret;
             }

@@ -18,17 +18,18 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.GenEmailRpt.ToString() ); }
         }
 
-        public bool doesItemRunNow()
+        public bool hasLoad( ICswResources CswResources )
         {
 
-            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            return ( true );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
 
-        }//doesItemRunNow()
+        }//hasLoad()
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
         {
-            set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
 
@@ -39,43 +40,54 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        private CswNbtResources _CswNbtResources = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
 
-        public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
-            _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
-        }//init() 
+        }//initScheduleLogicDetail() 
 
-        public void threadCallBack()
+
+
+
+        public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
 
+                CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
                     string InnerErrorMessage = string.Empty;
+                    _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+                    CswResources.AuditContext = "Scheduler Task: " + RuleName;
+
+                    //Review K4566: limit iteration and always increment https://fogbugz.chemswlive.com/kiln/Review/K4566
+                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
+                    if( Int32.MinValue == MailReportLimit )
+                    {
+                        MailReportLimit = 1;
+                    }
+                    Int32 TotalMailReportsProcessed = 0; 
+
                     Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
                     Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
 
-                    for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < MailReports.Count && TotalMailReportsProcessed <= MailReportLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
-                        CswNbtObjClassMailReport CurrentMailReport = CurrentMailReport = MailReports[idx];
+                        CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
                         if( null != CurrentMailReport )
                         {
                             try
                             {
                                 if( CurrentMailReport.Enabled.Checked == Tristate.True &&
                                     CurrentMailReport.Recipients.SelectedUserIds.Count > 0 &&
-                                    ( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView ||                    // for notifications, 
-                                      CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() ||      // make sure at least one
-                                      false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) ) )                     // node has changed
+                                    ( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView || // for notifications, 
+                                      CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() || // make sure at least one
+                                      false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) ) ) // node has changed
                                 {
                                     if( false == CurrentMailReport.Type.Empty )
                                     {
@@ -88,13 +100,13 @@ namespace ChemSW.Nbt.Sched
                                         // BZ 7866
                                         if( DateTime.MinValue != ThisDueDateValue )
                                         {
-                                            if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType )  // Ignore runtime for hourly reports
+                                            if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly reports
                                             {
                                                 // Trim times
                                                 ThisDueDateValue = ThisDueDateValue.Date;
                                                 InitialDueDateValue = InitialDueDateValue.Date;
                                                 FinalDueDateValue = FinalDueDateValue.Date;
-                                                NowDateValue = NowDateValue.Date;
+                                                //NowDateValue = NowDateValue.Date;
                                                 MinDateValue = MinDateValue.Date;
 
                                                 // BZ 7124 - set runtime
@@ -130,15 +142,19 @@ namespace ChemSW.Nbt.Sched
                                         CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                         CurrentMailReport.postChanges( true );
                                     }
-                                }// if( CurrentMailReport.Enabled.Checked == Tristate.True )
+                                } // if( CurrentMailReport.Enabled.Checked == Tristate.True )
 
-                            }//try 
+                            } //try 
 
                             catch( Exception Exception )
                             {
                                 InnerErrorMessage += "An exception occurred: " + Exception.Message + "; ";
                                 CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                 CurrentMailReport.postChanges( true );
+                            }
+                            finally
+                            {
+                                TotalMailReportsProcessed += 1;
                             }
                         } // if( null != CurrentMailReport )
                     } // for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
@@ -150,7 +166,7 @@ namespace ChemSW.Nbt.Sched
 
                     if( MailReportIdsToRun.Count > 0 )
                     {
-                        CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( _CswNbtResources );
+                        CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( CswNbtResources );
                         BatchOp.makeBatchOp( MailReportIdsToRun );
                     }
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
@@ -161,7 +177,7 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "An exception occurred: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
@@ -178,12 +194,6 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
-
-        public void releaseResources()
-        {
-            _CswNbtResources.release();
-        }
-
     }//CswScheduleLogicNbtGenEmailRpt
 
 }//namespace ChemSW.Nbt.Sched

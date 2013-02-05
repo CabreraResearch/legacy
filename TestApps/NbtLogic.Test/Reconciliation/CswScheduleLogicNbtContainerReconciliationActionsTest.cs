@@ -43,7 +43,7 @@ namespace ChemSw.Nbt.Test
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            Sched.makeReconciliationActionBatchProcess();
+            Sched.makeReconciliationActionBatchProcess(TestData.CswNbtResources);
             CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
             {
@@ -63,7 +63,7 @@ namespace ChemSw.Nbt.Test
         {
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            Sched.makeReconciliationActionBatchProcess();
+            Sched.makeReconciliationActionBatchProcess( TestData.CswNbtResources );
             CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );
             bool BatchOpFound = false;
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
@@ -85,7 +85,7 @@ namespace ChemSw.Nbt.Test
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations();
+            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
             ICswNbtTree ContainerLocationsTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             Assert.AreEqual( 0, ContainerLocationsTree.getChildNodeCount(), "Unexpected results found in view." );
         }
@@ -99,7 +99,7 @@ namespace ChemSw.Nbt.Test
         {
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations();
+            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
             ICswNbtTree ContainerLocationsTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             Assert.IsTrue( ContainerLocationsTree.getChildNodeCount() > 0, "Expected results; view is empty." );
         }
@@ -114,7 +114,7 @@ namespace ChemSw.Nbt.Test
             TestData.setAllContainerLocationNodeActions( String.Empty );
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations();
+            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
             ICswNbtTree ContainerLocationsTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             Assert.AreEqual( 0, ContainerLocationsTree.getChildNodeCount(), "Unexpected results found in view." );
         }
@@ -128,8 +128,8 @@ namespace ChemSw.Nbt.Test
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations();
-            CswCommaDelimitedString ContainerLocationIds = Sched.getContainerLocationIds( ContainerLocationsView );
+            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
+            CswCommaDelimitedString ContainerLocationIds = Sched.getContainerLocationIds( TestData.CswNbtResources, ContainerLocationsView );
             Assert.AreEqual( 0, ContainerLocationIds.Count, "Unexpected results found in CommaDelimitedString." );
         }
 
@@ -142,8 +142,8 @@ namespace ChemSw.Nbt.Test
         {
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations();
-            CswCommaDelimitedString ContainerLocationIds = Sched.getContainerLocationIds( ContainerLocationsView );
+            CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
+            CswCommaDelimitedString ContainerLocationIds = Sched.getContainerLocationIds( TestData.CswNbtResources, ContainerLocationsView );
             Assert.IsTrue( ContainerLocationIds.Count > 0, "Expected results; CommaDelimitedString is empty." );
         }
 
@@ -151,7 +151,7 @@ namespace ChemSw.Nbt.Test
         {
             CswScheduleLogicNbtContainerReconciliationActions Sched = new CswScheduleLogicNbtContainerReconciliationActions();
             CswScheduleLogicDetail CswScheduleLogicDetail = new CswScheduleLogicDetail();
-            Sched.init( TestData.CswNbtResources, CswScheduleLogicDetail );
+            Sched.initScheduleLogicDetail(CswScheduleLogicDetail);
             return Sched;
         }
 

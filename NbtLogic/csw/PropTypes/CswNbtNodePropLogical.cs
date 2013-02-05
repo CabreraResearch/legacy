@@ -64,6 +64,21 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get
+            {
+                // For Logicals, return the property name
+                string ret = string.Empty;
+                if( Checked == Tristate.True )
+                {
+                    ret = PropName;
+                }
+                return ret;
+            }
+        } // ValueForNameTemplate
+
+
         public static string toLogicalGestalt( Tristate Tristate )
         {
             object val = CswConvert.ToDbVal( Tristate );
@@ -92,6 +107,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Checked = CswConvert.ToTristate( JObject[_CheckedSubField.ToXmlNodeName( true )].ToString() );
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, toLogicalGestalt( Checked ) );
         }
     }//CswNbtNodeProp
 

@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
-                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, SafeNodeKey );
+                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( SafeNodeKey );
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {
@@ -129,18 +129,24 @@ namespace ChemSW.Nbt.WebServices
                             if( string.IsNullOrEmpty( SafeNodeKey ) )
                             {
                                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
-                                Tree.goToNthChild( 0 );
-                                CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
-                                Node = _CswNbtResources.Nodes[NodeKey];
-                                if( null != Node )
+                                if( Tree.getChildNodeCount() > 0 )
                                 {
-                                    RelatedNodeId = Node.NodeId;
-                                    RelatedNodeName = Node.NodeName;
-                                    RelatedNodeTypeId = Node.NodeTypeId.ToString();
-                                    RelatedObjectClassId = Node.getObjectClassId().ToString();
+                                    Tree.goToNthChild( 0 );
+                                    CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
+                                    Node = _CswNbtResources.Nodes[NodeKey];
+                                    if( null != Node )
+                                    {
+                                        RelatedNodeId = Node.NodeId;
+                                        RelatedNodeName = Node.NodeName;
+                                        RelatedNodeTypeId = Node.NodeTypeId.ToString();
+                                        RelatedObjectClassId = Node.getObjectClassId().ToString();
+                                    }
                                 }
                             }
-                            ParentNode = View.Root.ChildRelationships[0];
+                            if( View.Root.ChildRelationships.Count > 0 )
+                            {
+                                ParentNode = View.Root.ChildRelationships[0];
+                            }
                         }
                         foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstLevelRelationships )
                             .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
@@ -157,11 +163,14 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     // COPY
-                    if( _MenuItems.Contains( "Copy" ) &&
+                    if(
+                        _MenuItems.Contains( "Copy" ) &&
                         false == ReadOnly &&
                         null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
                         View.ViewMode != NbtViewRenderingMode.Grid &&
-                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) )
+                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) &&
+                        Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
+                        )
                     {
                         string BadPropertyName = string.Empty;
                         if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
@@ -321,17 +330,28 @@ namespace ChemSW.Nbt.WebServices
                 Ret["nodetypeid"] = NodeType.NodeTypeId;
                 Ret["icon"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.IconFileName;
             }
-            Ret["relatednodeid"] = default( string );
-            if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
+            switch( NodeType.getObjectClass().ObjectClass )
             {
-                Ret["relatednodeid"] = RelatedNodeId.ToString();
+                //Not yet an elegant way to handle Receiving from Add menu
+                //case NbtObjectClass.ContainerClass:
+                //    Ret["action"] = CswNbtActionName.Receiving.ToString();
+                //    break;
+                case NbtObjectClass.MaterialClass:
+                    Ret["action"] = CswNbtActionName.Create_Material.ToString();
+                    break;
+                default:
+                    Ret["relatednodeid"] = default( string );
+                    if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
+                    {
+                        Ret["relatednodeid"] = RelatedNodeId.ToString();
+                    }
+
+                    Ret["relatednodename"] = RelatedNodeName;
+                    Ret["relatednodetypeid"] = RelatedNodeTypeId;
+                    Ret["relatedobjectclassid"] = RelatedObjectClassId;
+                    Ret["action"] = MenuActions.AddNode.ToString();
+                    break;
             }
-
-            Ret["relatednodename"] = RelatedNodeName;
-            Ret["relatednodetypeid"] = RelatedNodeTypeId;
-            Ret["relatedobjectclassid"] = RelatedObjectClassId;
-            Ret["action"] = MenuActions.AddNode.ToString();
-
             return Ret;
         } // makeAddMenuItem()
 

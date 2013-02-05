@@ -59,6 +59,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             return _CswNbtMetaDataNodeTypeProp.getCompositeTemplateText();
         }
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
 
 
         public string RecalculateCompositeValue()
@@ -83,6 +88,12 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             PendingUpdate = true;
+        }
+
+        public override void SyncGestalt()
+        {
+            string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, gestaltVal );
         }
     }//CswNbtNodePropComposite
 

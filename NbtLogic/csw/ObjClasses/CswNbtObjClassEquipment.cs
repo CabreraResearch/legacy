@@ -104,6 +104,41 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedEquipmentNode.copyPropertyValues( Node );
+            CopiedEquipmentNode.postChanges( true, true );
+
+            // Copy all Generators
+            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship GeneratorRelationship = GeneratorView.AddViewRelationship( GeneratorObjectClass, false );
+            CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
+            CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter( 
+                OwnerProperty, 
+                CswNbtSubField.SubFieldName.NodeID, 
+                CswNbtPropFilterSql.PropertyFilterMode.Equals, 
+                NodeId.PrimaryKey.ToString());
+
+            ICswNbtTree GeneratorTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, GeneratorView, true, false, false );
+            GeneratorTree.goToRoot();
+            Int32 c = 0;
+            while( c < GeneratorTree.getChildNodeCount() )
+            {
+                GeneratorTree.goToNthChild( c );
+                CswNbtNode OriginalGeneratorNode = GeneratorTree.getNodeForCurrentPosition();
+                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CopiedGeneratorNode.copyPropertyValues( OriginalGeneratorNode );
+                ( (CswNbtObjClassGenerator) CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
+                CopiedGeneratorNode.postChanges( true, true );
+                GeneratorTree.goToParentNode();
+                c++;
+            }
+
+            return CopiedEquipmentNode;
+        }
+
         #endregion
 
         #region Object class specific properties

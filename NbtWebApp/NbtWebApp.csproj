@@ -113,6 +113,30 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\NbtPublic.svc.cs">
+      <DependentUpon>NbtPublic.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Scheduler.svc.cs">
+      <DependentUpon>Scheduler.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\LegacyMobile.svc.cs">
+      <DependentUpon>LegacyMobile.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Trees.svc.cs">
+      <DependentUpon>Trees.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\KioskMode.svc.cs">
+      <DependentUpon>KioskMode.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ChemCatCentral.svc.cs">
+      <DependentUpon>ChemCatCentral.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\CISProNbtMobile.svc.cs">
+      <DependentUpon>CISProNbtMobile.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Menus.svc.cs">
+      <DependentUpon>Menus.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Mol.svc.cs">
       <DependentUpon>Mol.svc</DependentUpon>
     </Compile>
@@ -128,11 +152,17 @@
     <Compile Include="Services\Labels.svc.cs">
       <DependentUpon>Labels.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\RegulatoryReporting.svc.cs">
+      <DependentUpon>RegulatoryReporting.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Reports.svc.cs">
       <DependentUpon>Reports.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\Requests.svc.cs">
       <DependentUpon>Requests.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Materials.svc.cs">
+      <DependentUpon>Materials.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\Session.svc.cs">
       <DependentUpon>Session.svc</DependentUpon>
@@ -141,29 +171,441 @@
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRegulatoryReporting.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceKioskMode.cs" />
     <Compile Include="WebSvc\Logic\CISPro\MolDataContract.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceMols.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceSearchMenu.cs" />
+    <Compile Include="WebSvc\Logic\Mobile\CISProNbt\CswNbtWebServiceCISProNbtMobile.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
+    <Compile Include="WebSvc\Logic\Mobile\Legacy\CswNbtWebServiceLegacyMobile.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
+    <Compile Include="WebSvc\Logic\Scheduler\CswNbtScheduledRulesReturn.cs" />
+    <Compile Include="WebSvc\Logic\Search\CswNbtWebServiceC3Search.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
-    <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="WebSvc\Logic\NbtManager\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceQuotas.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbSdView.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTable.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="Images\blank.png" />
+    <Content Include="Images\c3\cat100.png" />
+    <Content Include="Images\c3\cat16.png" />
+    <Content Include="Images\c3\cat18.png" />
+    <Content Include="Images\c3\cat24.png" />
+    <Content Include="Images\c3\cat400.png" />
+    <Content Include="Images\chemswlive_logo_highrez.png" />
+    <Content Include="Images\chemsw_logo_highrez.png" />
+    <Content Include="Images\cispro\0w.gif" />
+    <Content Include="Images\cispro\1-1.gif" />
+    <Content Include="Images\cispro\1-2.gif" />
+    <Content Include="Images\cispro\1-3.gif" />
+    <Content Include="Images\cispro\1-4.gif" />
+    <Content Include="Images\cispro\1-5.gif" />
+    <Content Include="Images\cispro\1-6.gif" />
+    <Content Include="Images\cispro\1o.gif" />
+    <Content Include="Images\cispro\2y.gif" />
+    <Content Include="Images\cispro\3g.gif" />
+    <Content Include="Images\cispro\4b.gif" />
+    <Content Include="Images\cispro\5-2red.gif" />
+    <Content Include="Images\cispro\5l.gif" />
+    <Content Include="Images\cispro\6p.gif" />
+    <Content Include="Images\cispro\7r.gif" />
+    <Content Include="Images\cispro\acide2.gif" />
+    <Content Include="Images\cispro\blan-red.gif" />
+    <Content Include="Images\cispro\bleu4.gif" />
+    <Content Include="Images\cispro\bleu4_noir.gif" />
+    <Content Include="Images\cispro\c.gif" />
+    <Content Include="Images\cispro\CONTGRP.S" />
+    <Content Include="Images\cispro\DISPOSE.S" />
+    <Content Include="Images\cispro\e.gif" />
+    <Content Include="Images\cispro\entdisp.s" />
+    <Content Include="Images\cispro\entmove.s" />
+    <Content Include="Images\cispro\f.gif" />
+    <Content Include="Images\cispro\f_plus.gif" />
+    <Content Include="Images\cispro\ghs\acid.jpg" />
+    <Content Include="Images\cispro\ghs\bottle.jpg" />
+    <Content Include="Images\cispro\ghs\exclam.jpg" />
+    <Content Include="Images\cispro\ghs\explos.jpg" />
+    <Content Include="Images\cispro\ghs\flamme.jpg" />
+    <Content Include="Images\cispro\ghs\pollut.jpg" />
+    <Content Include="Images\cispro\ghs\rondflam.jpg" />
+    <Content Include="Images\cispro\ghs\silhouet.jpg" />
+    <Content Include="Images\cispro\ghs\skull.jpg" />
+    <Content Include="Images\cispro\ghs_blank.gif" />
+    <Content Include="Images\cispro\HMIS.S" />
+    <Content Include="Images\cispro\jaune5-1.gif" />
+    <Content Include="Images\cispro\MULTI1.S" />
+    <Content Include="Images\cispro\MULTI1D.S" />
+    <Content Include="Images\cispro\MULTI1P.S" />
+    <Content Include="Images\cispro\MULTI1PD.S" />
+    <Content Include="Images\cispro\n.gif" />
+    <Content Include="Images\cispro\none.gif" />
+    <Content Include="Images\cispro\o.gif" />
+    <Content Include="Images\cispro\OWNERT.S" />
+    <Content Include="Images\cispro\oxid.gif" />
+    <Content Include="Images\cispro\RECONC.S" />
+    <Content Include="Images\cispro\RELOCATE.S" />
+    <Content Include="Images\cispro\rouge2.gif" />
+    <Content Include="Images\cispro\rouge2_noir.gif" />
+    <Content Include="Images\cispro\rouge3.gif" />
+    <Content Include="Images\cispro\rouge3_noir.gif" />
+    <Content Include="Images\cispro\SDELIVER.S" />
+    <Content Include="Images\cispro\skull6.gif" />
+    <Content Include="Images\cispro\skull_2.gif" />
+    <Content Include="Images\cispro\stripes.gif" />
+    <Content Include="Images\cispro\t.gif" />
+    <Content Include="Images\cispro\t_plus.gif" />
+    <Content Include="Images\cispro\vert.gif" />
+    <Content Include="Images\cispro\xi.gif" />
+    <Content Include="Images\cispro\xn.gif" />
+    <Content Include="Images\info.png" />
+    <Content Include="Images\newicons\100\about.png" />
+    <Content Include="Images\newicons\100\add.png" />
+    <Content Include="Images\newicons\100\atom.png" />
+    <Content Include="Images\newicons\100\atomadd.png" />
+    <Content Include="Images\newicons\100\back.png" />
+    <Content Include="Images\newicons\100\barchart.png" />
+    <Content Include="Images\newicons\100\barcode.png" />
+    <Content Include="Images\newicons\100\bell.png" />
+    <Content Include="Images\newicons\100\bottle.png" />
+    <Content Include="Images\newicons\100\bottlecalendar.png" />
+    <Content Include="Images\newicons\100\box.png" />
+    <Content Include="Images\newicons\100\browseropen.png" />
+    <Content Include="Images\newicons\100\cabinet.png" />
+    <Content Include="Images\newicons\100\calculator.png" />
+    <Content Include="Images\newicons\100\calendar.png" />
+    <Content Include="Images\newicons\100\calendarstack.png" />
+    <Content Include="Images\newicons\100\camera.png" />
+    <Content Include="Images\newicons\100\cancel.png" />
+    <Content Include="Images\newicons\100\cart.png" />
+    <Content Include="Images\newicons\100\cartplus.png" />
+    <Content Include="Images\newicons\100\cat.png" />
+    <Content Include="Images\newicons\100\cd.png" />
+    <Content Include="Images\newicons\100\check.png" />
+    <Content Include="Images\newicons\100\clipboardcheck.png" />
+    <Content Include="Images\newicons\100\clipboardgear.png" />
+    <Content Include="Images\newicons\100\clock.png" />
+    <Content Include="Images\newicons\100\compass.png" />
+    <Content Include="Images\newicons\100\contact.png" />
+    <Content Include="Images\newicons\100\copy.png" />
+    <Content Include="Images\newicons\100\DNA.png" />
+    <Content Include="Images\newicons\100\doc.png" />
+    <Content Include="Images\newicons\100\docexport.png" />
+    <Content Include="Images\newicons\100\docrefresh.png" />
+    <Content Include="Images\newicons\100\door.png" />
+    <Content Include="Images\newicons\100\down.png" />
+    <Content Include="Images\newicons\100\envelope.png" />
+    <Content Include="Images\newicons\100\envelopes.png" />
+    <Content Include="Images\newicons\100\explode.png" />
+    <Content Include="Images\newicons\100\fastforward.png" />
+    <Content Include="Images\newicons\100\fax.png" />
+    <Content Include="Images\newicons\100\flag.png" />
+    <Content Include="Images\newicons\100\flask.png" />
+    <Content Include="Images\newicons\100\folder.png" />
+    <Content Include="Images\newicons\100\folder2.png" />
+    <Content Include="Images\newicons\100\folder2open.png" />
+    <Content Include="Images\newicons\100\foldergear.png" />
+    <Content Include="Images\newicons\100\games.png" />
+    <Content Include="Images\newicons\100\gear.png" />
+    <Content Include="Images\newicons\100\gearset.png" />
+    <Content Include="Images\newicons\100\harddrive.png" />
+    <Content Include="Images\newicons\100\house.png" />
+    <Content Include="Images\newicons\100\image.png" />
+    <Content Include="Images\newicons\100\import.png" />
+    <Content Include="Images\newicons\100\info.png" />
+    <Content Include="Images\newicons\100\largeicons.png" />
+    <Content Include="Images\newicons\100\lock.png" />
+    <Content Include="Images\newicons\100\magglass.png" />
+    <Content Include="Images\newicons\100\magminus.png" />
+    <Content Include="Images\newicons\100\magplus.png" />
+    <Content Include="Images\newicons\100\minus.png" />
+    <Content Include="Images\newicons\100\music.png" />
+    <Content Include="Images\newicons\100\network.png" />
+    <Content Include="Images\newicons\100\notepad.png" />
+    <Content Include="Images\newicons\100\options.png" />
+    <Content Include="Images\newicons\100\paint.png" />
+    <Content Include="Images\newicons\100\paste.png" />
+    <Content Include="Images\newicons\100\pause.png" />
+    <Content Include="Images\newicons\100\pencil.png" />
+    <Content Include="Images\newicons\100\people.png" />
+    <Content Include="Images\newicons\100\person.png" />
+    <Content Include="Images\newicons\100\personclock.png" />
+    <Content Include="Images\newicons\100\phone.png" />
+    <Content Include="Images\newicons\100\play.png" />
+    <Content Include="Images\newicons\100\plus.png" />
+    <Content Include="Images\newicons\100\print.png" />
+    <Content Include="Images\newicons\100\printpreview.png" />
+    <Content Include="Images\newicons\100\questionmark.png" />
+    <Content Include="Images\newicons\100\receive.png" />
+    <Content Include="Images\newicons\100\redo.png" />
+    <Content Include="Images\newicons\100\refresh.png" />
+    <Content Include="Images\newicons\100\rewind.png" />
+    <Content Include="Images\newicons\100\right.png" />
+    <Content Include="Images\newicons\100\rightbutton.png" />
+    <Content Include="Images\newicons\100\save.png" />
+    <Content Include="Images\newicons\100\saveas.png" />
+    <Content Include="Images\newicons\100\scissors.png" />
+    <Content Include="Images\newicons\100\search.png" />
+    <Content Include="Images\newicons\100\skipback.png" />
+    <Content Include="Images\newicons\100\skipforward.png" />
+    <Content Include="Images\newicons\100\smallicons.png" />
+    <Content Include="Images\newicons\100\square.png" />
+    <Content Include="Images\newicons\100\star.png" />
+    <Content Include="Images\newicons\100\staradd.png" />
+    <Content Include="Images\newicons\100\stop.png" />
+    <Content Include="Images\newicons\100\structuresearch.png" />
+    <Content Include="Images\newicons\100\target.png" />
+    <Content Include="Images\newicons\100\targetgroup.png" />
+    <Content Include="Images\newicons\100\toolbox.png" />
+    <Content Include="Images\newicons\100\trash.png" />
+    <Content Include="Images\newicons\100\trianglegear.png" />
+    <Content Include="Images\newicons\100\undo.png" />
+    <Content Include="Images\newicons\100\unlock.png" />
+    <Content Include="Images\newicons\100\up.png" />
+    <Content Include="Images\newicons\100\warning.png" />
+    <Content Include="Images\newicons\100\wizard.png" />
+    <Content Include="Images\newicons\100\world.png" />
+    <Content Include="Images\newicons\100\wrench.png" />
+    <Content Include="Images\newicons\100\x.png" />
+    <Content Include="Images\newicons\100\xbutton.png" />
+    <Content Include="Images\newicons\16\about.png" />
+    <Content Include="Images\newicons\16\add.png" />
+    <Content Include="Images\newicons\16\atom.png" />
+    <Content Include="Images\newicons\16\back.png" />
+    <Content Include="Images\newicons\16\barchart.png" />
+    <Content Include="Images\newicons\16\barcode.png" />
+    <Content Include="Images\newicons\16\bell.png" />
+    <Content Include="Images\newicons\16\box.png" />
+    <Content Include="Images\newicons\16\browseropen.png" />
+    <Content Include="Images\newicons\16\cabinet.png" />
+    <Content Include="Images\newicons\16\calculator.png" />
+    <Content Include="Images\newicons\16\calendar.png" />
+    <Content Include="Images\newicons\16\camera.png" />
+    <Content Include="Images\newicons\16\cancel.png" />
+    <Content Include="Images\newicons\16\cart.png" />
+    <Content Include="Images\newicons\16\cat.png" />
+    <Content Include="Images\newicons\16\cd.png" />
+    <Content Include="Images\newicons\16\check.png" />
+    <Content Include="Images\newicons\16\clipboardcheck.png" />
+    <Content Include="Images\newicons\16\clipboardgear.png" />
+    <Content Include="Images\newicons\16\clock.png" />
+    <Content Include="Images\newicons\16\compass.png" />
+    <Content Include="Images\newicons\16\contact.png" />
+    <Content Include="Images\newicons\16\copy.png" />
+    <Content Include="Images\newicons\16\DNA.png" />
+    <Content Include="Images\newicons\16\doc.png" />
+    <Content Include="Images\newicons\16\docexport.png" />
+    <Content Include="Images\newicons\16\docrefresh.png" />
+    <Content Include="Images\newicons\16\door.png" />
+    <Content Include="Images\newicons\16\down.png" />
+    <Content Include="Images\newicons\16\envelope.png" />
+    <Content Include="Images\newicons\16\explode.png" />
+    <Content Include="Images\newicons\16\fastforward.png" />
+    <Content Include="Images\newicons\16\fax.png" />
+    <Content Include="Images\newicons\16\flag.png" />
+    <Content Include="Images\newicons\16\flask.png" />
+    <Content Include="Images\newicons\16\folder.png" />
+    <Content Include="Images\newicons\16\folder2.png" />
+    <Content Include="Images\newicons\16\folder2open.png" />
+    <Content Include="Images\newicons\16\foldergear.png" />
+    <Content Include="Images\newicons\16\games.png" />
+    <Content Include="Images\newicons\16\gear.png" />
+    <Content Include="Images\newicons\16\gearset.png" />
+    <Content Include="Images\newicons\16\harddrive.png" />
+    <Content Include="Images\newicons\16\house.png" />
+    <Content Include="Images\newicons\16\image.png" />
+    <Content Include="Images\newicons\16\import.png" />
+    <Content Include="Images\newicons\16\info.png" />
+    <Content Include="Images\newicons\16\largeicons.png" />
+    <Content Include="Images\newicons\16\lock.png" />
+    <Content Include="Images\newicons\16\magglass.png" />
+    <Content Include="Images\newicons\16\magminus.png" />
+    <Content Include="Images\newicons\16\magplus.png" />
+    <Content Include="Images\newicons\16\minus.png" />
+    <Content Include="Images\newicons\16\music.png" />
+    <Content Include="Images\newicons\16\network.png" />
+    <Content Include="Images\newicons\16\notepad.png" />
+    <Content Include="Images\newicons\16\options.png" />
+    <Content Include="Images\newicons\16\paint.png" />
+    <Content Include="Images\newicons\16\paste.png" />
+    <Content Include="Images\newicons\16\pause.png" />
+    <Content Include="Images\newicons\16\pencil.png" />
+    <Content Include="Images\newicons\16\people.png" />
+    <Content Include="Images\newicons\16\person.png" />
+    <Content Include="Images\newicons\16\phone.png" />
+    <Content Include="Images\newicons\16\play.png" />
+    <Content Include="Images\newicons\16\plus.png" />
+    <Content Include="Images\newicons\16\print.png" />
+    <Content Include="Images\newicons\16\printpreview.png" />
+    <Content Include="Images\newicons\16\questionmark.png" />
+    <Content Include="Images\newicons\16\redo.png" />
+    <Content Include="Images\newicons\16\refresh.png" />
+    <Content Include="Images\newicons\16\rewind.png" />
+    <Content Include="Images\newicons\16\right.png" />
+    <Content Include="Images\newicons\16\rightbutton.png" />
+    <Content Include="Images\newicons\16\save.png" />
+    <Content Include="Images\newicons\16\saveas.png" />
+    <Content Include="Images\newicons\16\scissors.png" />
+    <Content Include="Images\newicons\16\search.png" />
+    <Content Include="Images\newicons\16\skipback.png" />
+    <Content Include="Images\newicons\16\skipforward.png" />
+    <Content Include="Images\newicons\16\smallicons.png" />
+    <Content Include="Images\newicons\16\square.png" />
+    <Content Include="Images\newicons\16\star.png" />
+    <Content Include="Images\newicons\16\staradd.png" />
+    <Content Include="Images\newicons\16\stop.png" />
+    <Content Include="Images\newicons\16\structuresearch.png" />
+    <Content Include="Images\newicons\16\target.png" />
+    <Content Include="Images\newicons\16\targetgroup.png" />
+    <Content Include="Images\newicons\16\toolbox.png" />
+    <Content Include="Images\newicons\16\trash.png" />
+    <Content Include="Images\newicons\16\trianglegear.png" />
+    <Content Include="Images\newicons\16\undo.png" />
+    <Content Include="Images\newicons\16\unlock.png" />
+    <Content Include="Images\newicons\16\up.png" />
+    <Content Include="Images\newicons\16\warning.png" />
+    <Content Include="Images\newicons\16\wizard.png" />
+    <Content Include="Images\newicons\16\world.png" />
+    <Content Include="Images\newicons\16\wrench.png" />
+    <Content Include="Images\newicons\16\x.png" />
+    <Content Include="Images\newicons\16\xbutton.png" />
+    <Content Include="Images\newicons\18\about.png" />
+    <Content Include="Images\newicons\18\add.png" />
+    <Content Include="Images\newicons\18\atom.png" />
+    <Content Include="Images\newicons\18\back.png" />
+    <Content Include="Images\newicons\18\barchart.png" />
+    <Content Include="Images\newicons\18\barcode.png" />
+    <Content Include="Images\newicons\18\bell.png" />
+    <Content Include="Images\newicons\18\box.png" />
+    <Content Include="Images\newicons\18\browseropen.png" />
+    <Content Include="Images\newicons\18\cabinet.png" />
+    <Content Include="Images\newicons\18\calculator.png" />
+    <Content Include="Images\newicons\18\calendar.png" />
+    <Content Include="Images\newicons\18\camera.png" />
+    <Content Include="Images\newicons\18\cancel.png" />
+    <Content Include="Images\newicons\18\cart.png" />
+    <Content Include="Images\newicons\18\cat.png" />
+    <Content Include="Images\newicons\18\cd.png" />
+    <Content Include="Images\newicons\18\check.png" />
+    <Content Include="Images\newicons\18\clipboardcheck.png" />
+    <Content Include="Images\newicons\18\clipboardgear.png" />
+    <Content Include="Images\newicons\18\clock.png" />
+    <Content Include="Images\newicons\18\compass.png" />
+    <Content Include="Images\newicons\18\contact.png" />
+    <Content Include="Images\newicons\18\copy.png" />
+    <Content Include="Images\newicons\18\DNA.png" />
+    <Content Include="Images\newicons\18\doc.png" />
+    <Content Include="Images\newicons\18\docexport.png" />
+    <Content Include="Images\newicons\18\docrefresh.png" />
+    <Content Include="Images\newicons\18\door.png" />
+    <Content Include="Images\newicons\18\down.png" />
+    <Content Include="Images\newicons\18\envelope.png" />
+    <Content Include="Images\newicons\18\explode.png" />
+    <Content Include="Images\newicons\18\fastforward.png" />
+    <Content Include="Images\newicons\18\fax.png" />
+    <Content Include="Images\newicons\18\flag.png" />
+    <Content Include="Images\newicons\18\flask.png" />
+    <Content Include="Images\newicons\18\folder.png" />
+    <Content Include="Images\newicons\18\folder2.png" />
+    <Content Include="Images\newicons\18\folder2open.png" />
+    <Content Include="Images\newicons\18\foldergear.png" />
+    <Content Include="Images\newicons\18\games.png" />
+    <Content Include="Images\newicons\18\gear.png" />
+    <Content Include="Images\newicons\18\gearset.png" />
+    <Content Include="Images\newicons\18\harddrive.png" />
+    <Content Include="Images\newicons\18\house.png" />
+    <Content Include="Images\newicons\18\image.png" />
+    <Content Include="Images\newicons\18\import.png" />
+    <Content Include="Images\newicons\18\info.png" />
+    <Content Include="Images\newicons\18\largeicons.png" />
+    <Content Include="Images\newicons\18\lock.png" />
+    <Content Include="Images\newicons\18\magglass.png" />
+    <Content Include="Images\newicons\18\magminus.png" />
+    <Content Include="Images\newicons\18\magplus.png" />
+    <Content Include="Images\newicons\18\minus.png" />
+    <Content Include="Images\newicons\18\music.png" />
+    <Content Include="Images\newicons\18\network.png" />
+    <Content Include="Images\newicons\18\notepad.png" />
+    <Content Include="Images\newicons\18\options.png" />
+    <Content Include="Images\newicons\18\paint.png" />
+    <Content Include="Images\newicons\18\paste.png" />
+    <Content Include="Images\newicons\18\pause.png" />
+    <Content Include="Images\newicons\18\pencil.png" />
+    <Content Include="Images\newicons\18\people.png" />
+    <Content Include="Images\newicons\18\person.png" />
+    <Content Include="Images\newicons\18\phone.png" />
+    <Content Include="Images\newicons\18\play.png" />
+    <Content Include="Images\newicons\18\plus.png" />
+    <Content Include="Images\newicons\18\print.png" />
+    <Content Include="Images\newicons\18\printpreview.png" />
+    <Content Include="Images\newicons\18\questionmark.png" />
+    <Content Include="Images\newicons\18\redo.png" />
+    <Content Include="Images\newicons\18\refresh.png" />
+    <Content Include="Images\newicons\18\rewind.png" />
+    <Content Include="Images\newicons\18\right.png" />
+    <Content Include="Images\newicons\18\rightbutton.png" />
+    <Content Include="Images\newicons\18\save.png" />
+    <Content Include="Images\newicons\18\saveas.png" />
+    <Content Include="Images\newicons\18\scissors.png" />
+    <Content Include="Images\newicons\18\search.png" />
+    <Content Include="Images\newicons\18\skipback.png" />
+    <Content Include="Images\newicons\18\skipforward.png" />
+    <Content Include="Images\newicons\18\smallicons.png" />
+    <Content Include="Images\newicons\18\square.png" />
+    <Content Include="Images\newicons\18\star.png" />
+    <Content Include="Images\newicons\18\staradd.png" />
+    <Content Include="Images\newicons\18\stop.png" />
+    <Content Include="Images\newicons\18\structuresearch.png" />
+    <Content Include="Images\newicons\18\target.png" />
+    <Content Include="Images\newicons\18\targetgroup.png" />
+    <Content Include="Images\newicons\18\toolbox.png" />
+    <Content Include="Images\newicons\18\trash.png" />
+    <Content Include="Images\newicons\18\trianglegear.png" />
+    <Content Include="Images\newicons\18\undo.png" />
+    <Content Include="Images\newicons\18\unlock.png" />
+    <Content Include="Images\newicons\18\up.png" />
+    <Content Include="Images\newicons\18\warning.png" />
+    <Content Include="Images\newicons\18\wizard.png" />
+    <Content Include="Images\newicons\18\world.png" />
+    <Content Include="Images\newicons\18\wrench.png" />
+    <Content Include="Images\newicons\18\x.png" />
+    <Content Include="Images\newicons\18\xbutton.png" />
+    <Content Include="Images\newicons\clipcheck_mobile1024.png" />
+    <Content Include="Images\newicons\clipcheck_mobile114.png" />
+    <Content Include="Images\newicons\clipcheck_mobile144.png" />
+    <Content Include="Images\newicons\clipcheck_mobile512.png" />
+    <Content Include="Images\newicons\clipcheck_mobile57.png" />
+    <Content Include="Images\newicons\clipcheck_mobile72.png" />
+    <Content Include="Images\newicons\icons100.png" />
+    <Content Include="Images\newicons\icons16.png" />
+    <Content Include="Images\newicons\icons18.png" />
+    <Content Include="Images\newicons\KioskMode\Dispense_code39.png" />
+    <Content Include="Images\newicons\KioskMode\Dispose_code39.png" />
+    <Content Include="Images\newicons\KioskMode\Move_code39.png" />
+    <Content Include="Images\newicons\KioskMode\Owner_code39.png" />
+    <Content Include="Images\newicons\KioskMode\Reset_code39.png" />
+    <Content Include="Images\newicons\KioskMode\Transfer_code39.png" />
+    <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="Services\NbtPublic.svc" />
+    <Content Include="Services\Scheduler.svc" />
+    <Content Include="Services\KioskMode.svc" />
+    <Content Include="Services\Trees.svc" />
+    <Content Include="Services\ChemCatCentral.svc" />
+    <Content Include="Services\LegacyMobile.svc" />
+    <Content Include="Services\CISProNbtMobile.svc" />
+    <Content Include="Services\Menus.svc" />
     <Content Include="Services\Mol.svc" />
     <Content Include="Services\Nodes.svc" />
     <Content Include="Services\LandingPages.svc" />
@@ -756,6 +1198,7 @@
     <Content Include="Services\Labels.svc" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
+    <Content Include="Services\RegulatoryReporting.svc" />
     <Content Include="Services\Reports.svc" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
@@ -1008,7 +1451,6 @@
     <Content Include="Images\menu\sub.gif" />
     <Content Include="Images\pagelayout\blank.gif" />
     <Content Include="Images\pagelayout\dash.gif" />
-    <Content Include="Images\pagelayout\header_logo.gif" />
     <Content Include="Images\pagelayout\header_logo32.gif" />
     <Content Include="Images\pagelayout\pagelayoutcorners.gif" />
     <Content Include="Images\pagelayout\pagelayoutx.gif" />
@@ -1057,6 +1499,7 @@
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
     <Content Include="Services\Requests.svc" />
+    <Content Include="Services\Materials.svc" />
     <Content Include="Services\Session.svc" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
@@ -1210,7 +1653,6 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
     <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
@@ -1262,6 +1704,7 @@
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceSearch.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceTabsAndProps.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTree.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtSdTrees.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceView.cs" />
     <Compile Include="WebSvc\Logic\Menus\LandingPages\CswNbtWebServiceLandingPageItems.cs" />
     <Compile Include="WebSvc\Logic\Tools\TimingModule.cs" />
@@ -1357,12 +1800,6 @@
     <Compile Include="Statistics.aspx.designer.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Subscriptions.aspx.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Subscriptions.aspx.designer.cs">
-      <DependentUpon>Subscriptions.aspx</DependentUpon>
-    </Compile>
     <Compile Include="TermsOfUse.aspx.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1402,6 +1839,47 @@
     <None Include="Images\buttons\Buttons.pspimage" />
     <None Include="Images\buttons\Buttons18.pspimage" />
     <Content Include="packages.config" />
+    <None Include="Images\cispro\0w.pcx" />
+    <None Include="Images\cispro\1o.pcx" />
+    <None Include="Images\cispro\2y.pcx" />
+    <None Include="Images\cispro\3g.pcx" />
+    <None Include="Images\cispro\4b.pcx" />
+    <None Include="Images\cispro\5l.pcx" />
+    <None Include="Images\cispro\6p.pcx" />
+    <None Include="Images\cispro\7r.pcx" />
+    <None Include="Images\cispro\acide.pcx" />
+    <None Include="Images\cispro\acide2.pcx" />
+    <None Include="Images\cispro\bleu4.pcx" />
+    <None Include="Images\cispro\bleu4_noir.pcx" />
+    <None Include="Images\cispro\bottle.pcx" />
+    <None Include="Images\cispro\c.pcx" />
+    <None Include="Images\cispro\e.pcx" />
+    <None Include="Images\cispro\exclam.pcx" />
+    <None Include="Images\cispro\explos.pcx" />
+    <None Include="Images\cispro\f.pcx" />
+    <None Include="Images\cispro\flamme.pcx" />
+    <None Include="Images\cispro\f_plus.pcx" />
+    <None Include="Images\cispro\ghs_blank.pcx" />
+    <None Include="Images\cispro\jaune5-1.pcx" />
+    <None Include="Images\cispro\n.pcx" />
+    <None Include="Images\cispro\o.pcx" />
+    <None Include="Images\cispro\pollu.pcx" />
+    <None Include="Images\cispro\rondflam.pcx" />
+    <None Include="Images\cispro\rouge2.pcx" />
+    <None Include="Images\cispro\rouge2_noir.pcx" />
+    <None Include="Images\cispro\rouge3.pcx" />
+    <None Include="Images\cispro\rouge3_noir.pcx" />
+    <None Include="Images\cispro\silouete.pcx" />
+    <None Include="Images\cispro\skull.pcx" />
+    <None Include="Images\cispro\skull6.pcx" />
+    <None Include="Images\cispro\skull_2.pcx" />
+    <None Include="Images\cispro\stripes.pcx" />
+    <None Include="Images\cispro\t.pcx" />
+    <None Include="Images\cispro\t_plus.pcx" />
+    <None Include="Images\cispro\xi.pcx" />
+    <None Include="Images\cispro\xn.pcx" />
+    <None Include="Images\newicons\clipcheck_mobile.pspimage" />
+    <None Include="Images\newicons\icons.pspimage" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
     <None Include="SkinPrint\Grid\Thumbs.db" />
@@ -1454,6 +1932,9 @@
       <Project>{987AE13B-8118-48E7-9A2A-7D52AB5C1ED3}</Project>
       <Name>NbtWebControls</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

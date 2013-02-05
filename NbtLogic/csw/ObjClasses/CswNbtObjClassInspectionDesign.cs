@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             private static string _Parse( string Val )
             {
                 string ret = CswResources.UnknownEnum;
-                if ( _Enums.ContainsKey( Val ) )
+                if( _Enums.ContainsKey( Val ) )
                 {
                     ret = _Enums[Val];
                 }
@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public override bool Equals( object obj )
             {
-                if ( !( obj is InspectionStatus ) )
+                if( !( obj is InspectionStatus ) )
                 {
                     return false;
                 }
@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string TargetStatusAsString( TargetStatus Status )
         {
             string ret = string.Empty;
-            if ( Status != TargetStatus.Null )
+            if( Status != TargetStatus.Null )
                 ret = Status.ToString().Replace( '_', ' ' );
             return ret;
         }
@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static TargetStatus TargetStatusFromString( string Status )
         {
             TargetStatus ret;
-            if ( !Enum.TryParse<TargetStatus>( Status.Replace( ' ', '_' ), out ret ) )
+            if( !Enum.TryParse<TargetStatus>( Status.Replace( ' ', '_' ), out ret ) )
                 ret = TargetStatus.Null;
             return ret;
         }
@@ -278,16 +278,16 @@ namespace ChemSW.Nbt.ObjClasses
                 _Design = Design;
                 UnAnsweredQuestions = new CswCommaDelimitedString();
 
-                if ( null != _Design && null != _Design.Node )
+                if( null != _Design && null != _Design.Node )
                 {
                     CswNbtPropEnmrtrFiltered QuestionsFlt = _Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                    foreach ( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
+                    foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                     {
                         _Questions.Add( PropWrapper );
                     }
-                    foreach ( CswNbtNodePropQuestion Question in _Questions )
+                    foreach( CswNbtNodePropQuestion Question in _Questions )
                     {
-                        if ( string.IsNullOrEmpty( Question.Answer.Trim() ) )
+                        if( string.IsNullOrEmpty( Question.Answer.Trim() ) )
                         {
                             UnAnsweredQuestions.Add( Question.Question );
                         }
@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInspectionDesign( CswNbtNode Node )
         {
             CswNbtObjClassInspectionDesign ret = null;
-            if ( null != Node && _Validate( Node, NbtObjectClass.InspectionDesignClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.InspectionDesignClass ) )
             {
                 ret = (CswNbtObjClassInspectionDesign) Node.ObjClass;
             }
@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDefaultValues()
         {
-            if ( string.IsNullOrEmpty( Version.Text ) )
+            if( string.IsNullOrEmpty( Version.Text ) )
             {
                 // case 8179 - set value of Version property
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
@@ -372,20 +372,25 @@ namespace ChemSW.Nbt.ObjClasses
 
             _InspectionState = new InspectionState( this );
 
-            if ( false == _genFutureNodesHasRun ) //redundant--for readability
+            if( false == _genFutureNodesHasRun ) //redundant--for readability
             {
                 //this is written in such a way that it should only execute once per instance of this node
                 _genFutureNodes();
             }
 
-            foreach ( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
-                if ( QuestionProp.IsAnswerCompliant() )
+                if( QuestionProp.IsAnswerCompliant() )
                 {
                     QuestionProp.CorrectiveAction = string.Empty;
                 }
             }
+
+            // !!!
+            // Don't clear IsFuture here, like we do with Tasks.  See case 28317.
+            // !!!
+
         } // beforeWriteNode()
 
         /// <summary>
@@ -399,13 +404,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            if ( null != ParentNode )
+            if( null != ParentNode )
             {
                 ICswNbtPropertySetInspectionParent ParentAsParent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
                 //CswNbtObjClassInspectionTarget pnodeAsTarget = (CswNbtObjClassInspectionTarget) ParentNode;
                 bool _alreadyDeficient = ( ParentAsParent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
                 bool _Deficient = areMoreActionsRequired();
-                if ( _Deficient != _alreadyDeficient )
+                if( _Deficient != _alreadyDeficient )
                 {
                     ParentAsParent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
                     ParentNode.postChanges( false );
@@ -415,7 +420,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetPopulateProps()
         {
-            foreach ( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
                 QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired ); // case 25035
@@ -432,16 +437,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp Prop, NbtButtonData ButtonData )
         {
-            if ( null != ButtonData && null != ButtonData.NodeTypeProp )
+            if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
                 CswNbtMetaDataObjectClassProp ButtonOCP = ButtonData.NodeTypeProp.getObjectClassProp();
 
-                switch ( ButtonOCP.PropName )
+                switch( ButtonOCP.PropName )
                 {
                     case PropertyName.Finish:
-                        if ( _InspectionState.AllAnswered )
+                        if( _InspectionState.AllAnswered )
                         {
-                            if ( _InspectionState.Deficient )
+                            if( _InspectionState.Deficient )
                             {
                                 ButtonData.Message = "Inspection is deficient and requires further action.";
                                 this.Status.Value = InspectionStatus.ActionRequired;
@@ -451,6 +456,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 string StatusValue = _InspectionState.AllAnsweredInTime ? InspectionStatus.Completed : InspectionStatus.CompletedLate;
                                 ButtonData.Message = "Inspection marked " + StatusValue + ".";
                                 this.Status.Value = StatusValue;
+                                ButtonData.Action = NbtButtonAction.refresh;
                             }
                         } // if( _allAnswered )
                         else
@@ -464,23 +470,24 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Cancel:
                         ButtonData.Message = "Inspection has been cancelled.";
                         this.Status.Value = InspectionStatus.Cancelled;
+                        ButtonData.Action = NbtButtonAction.refresh;
                         break;
 
                     case PropertyName.SetPreferred:
                         CswNbtPropEnmrtrFiltered QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                        foreach ( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
+                        foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                         {
                             CswNbtNodePropQuestion QuestionProp = PropWrapper;  // don't refactor this into the foreach.  it doesn't work. case 28300.
-                            if ( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
+                            if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
                             {
                                 QuestionProp.Answer = QuestionProp.PreferredAnswer;
                             }
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
+                        ButtonData.Action = NbtButtonAction.nothing;
                         break;
                 }
-                ButtonData.Action = NbtButtonAction.refresh;
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;
@@ -516,6 +523,16 @@ namespace ChemSW.Nbt.ObjClasses
             return 0 < NumOfSiblings || Status.Value.Equals( InspectionStatus.ActionRequired );
         }
 
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassInspectionDesign CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.Node.copyPropertyValues( Node );
+            CopiedIDNode.Generator.RelatedNodeId = null;
+            CopiedIDNode.Generator.RefreshNodeName();
+            CopiedIDNode.postChanges( true );
+            return CopiedIDNode.Node;
+        }
+
         #endregion
 
         #region Object class specific properties
@@ -524,30 +541,32 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _genFutureNodes()
         {
-            if ( Tristate.True != this.IsFuture.Checked &&
+            if( Tristate.True != this.IsFuture.Checked &&
                 CswTools.IsPrimaryKey( this.Generator.RelatedNodeId ) &&
                 false == _genFutureNodesHasRun )
             {
                 String NodeStatus = String.Empty;
                 CswNbtMetaDataNodeType ThisInspectionNT = this.Node.getNodeTypeLatestVersion();
-                if ( null != ThisInspectionNT )
+                if( null != ThisInspectionNT )
                 {
                     _genFutureNodesHasRun = true;
                     //Limit collection to Inspections on the same Generator
                     IEnumerable<CswNbtNode> AllNodesOfThisNT = ThisInspectionNT.getNodes( true, true )
                         .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[PropertyName.Generator].AsRelationship.RelatedNodeId );
-                    foreach ( CswNbtNode InspectionNode in AllNodesOfThisNT )
+                    foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
                     {
                         CswNbtObjClassInspectionDesign PriorInspection = (CswNbtObjClassInspectionDesign) InspectionNode;
                         NodeStatus = PriorInspection.Status.Value;
 
-                        if ( //Inspection status is Pending, Overdue or not set
+                        if( //Inspection status is Pending, Overdue or not set
                             ( InspectionStatus.Overdue == NodeStatus ||
                               InspectionStatus.Pending == NodeStatus ||
                               String.Empty == NodeStatus ) &&
                             //Inspections have the same target, and we're comparing different Inspection nodes
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
-                              this.Node != InspectionNode ) )
+                              this.Node != InspectionNode ) &&
+                            // Other inspection isn't future (case 28317)
+                            Tristate.True != PriorInspection.IsFuture.Checked )
                         {
                             PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
                             // Case 20755
@@ -571,7 +590,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnIsFutureChange( CswNbtNodeProp NodeProp )
         {
-            if ( false == _genFutureNodesHasRun ) //redundant--for readability
+            if( false == _genFutureNodesHasRun ) //redundant--for readability
             {
                 //this is written in such a way that it should only execute once per instance of this node
                 _genFutureNodes();
@@ -580,7 +599,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnGeneratorChange( CswNbtNodeProp NodeProp )
         {
-            if ( false == _genFutureNodesHasRun ) //redundant--for readability
+            if( false == _genFutureNodesHasRun ) //redundant--for readability
             {
                 //this is written in such a way that it should only execute once per instance of this node
                 _genFutureNodes();
@@ -602,7 +621,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnStatusPropChange( CswNbtNodeProp NodeProp )
         {
-            if ( false == _CswNbtResources.IsSystemUser &&
+            if( false == _CswNbtResources.IsSystemUser &&
                  Status.GetOriginalPropRowValue() != Status.Value &&
                 ( Status.Value == InspectionStatus.Completed ||
                   Status.Value == InspectionStatus.CompletedLate ||
@@ -613,11 +632,11 @@ namespace ChemSW.Nbt.ObjClasses
                 Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
             }
 
-            switch ( Status.Value )
+            switch( Status.Value )
             {
                 case InspectionStatus.Completed:
                 case InspectionStatus.CompletedLate:
-                    if ( _InspectionState.Deficient )
+                    if( _InspectionState.Deficient )
                     {
                         Status.Value = InspectionStatus.ActionRequired;
                     }
@@ -651,7 +670,7 @@ namespace ChemSW.Nbt.ObjClasses
             } // switch( Status.Value )
 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            if ( ParentNode != null && false == IsTemp )
+            if( ParentNode != null && false == IsTemp )
             {
                 ICswNbtPropertySetInspectionParent ParentAsParent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
                 bool IsDeficient = areMoreActionsRequired();  //case 25041

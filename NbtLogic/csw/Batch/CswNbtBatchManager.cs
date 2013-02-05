@@ -138,9 +138,13 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
                 }
-                                else if( OpName == NbtBatchOpName.SyncLocation )
+                else if( OpName == NbtBatchOpName.SyncLocation )
                 {
                     op = new CswNbtBatchOpSyncLocation( CswNbtResources );
+                }
+                else if( OpName == NbtBatchOpName.MobileMultiOpUpdates )
+                {
+                    op = new CswNbtBatchOpMobileMultiOpUpdates( CswNbtResources );
                 }
 
                 // New batch ops go here

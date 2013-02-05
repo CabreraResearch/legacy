@@ -47,17 +47,17 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        private void _setGestalt()
+        public override void SyncGestalt()
         {
             if( false == Double.IsNaN( Base ) )
             {
                 if( Exponent != Int32.MinValue && Exponent != 0 )
                 {
-                    _CswNbtNodePropData.Gestalt = Base.ToString() + "E" + Exponent.ToString();
+                    _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Base.ToString() + "E" + Exponent.ToString() );
                 }
                 else
                 {
-                    _CswNbtNodePropData.Gestalt = Base.ToString();
+                    _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Base.ToString() );
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     Exponent = 0;
                 }
-                _setGestalt();
+                SyncGestalt();
             } // set
         } // Base
 
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
                     ExpValue = 0;
                 }
                 _CswNbtNodePropData.SetPropRowValue( _ExponentSubField.Column, ExpValue );
-                _setGestalt();
+                SyncGestalt();
             }
         } // Exponent
 
@@ -131,7 +131,10 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        // ToXml()
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
 
         public override void ToJSON( JObject ParentObject )
         {

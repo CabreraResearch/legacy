@@ -118,6 +118,13 @@
             stepcount: 2
         });
 
+    Csw.enums.wizardSteps_LegacyMobile = Csw.enums.wizardSteps_LegacyMobile ||
+        Csw.enums.register('wizardSteps_LegacyMobile', {
+            step1: { step: 1, description: 'Upload Data File' },
+            step2: { step: 2, description: 'Review' },
+            stepcount: 2
+        });
+
     Csw.enums.dialogButtons = Csw.enums.dialogButtons ||
         Csw.enums.register('dialogButtons', {
             1: 'ok',
@@ -138,7 +145,8 @@
             landingPage: 'landingpage',
             loadView: 'loadview',
             editprop: 'editprop',
-            nothing: 'nothing'
+            nothing: 'nothing',
+            griddialog: 'griddialog'
         });
 
     Csw.enums.inputTypes = Csw.enums.inputTypes ||
@@ -237,11 +245,13 @@
             infobox: 0,
             info: 1,
             plus: 2,
+            add: 2,
             minus: 3,
             up: 4,
             right: 5,
             down: 6,
             left: 7,
+            back: 7,
             play: 8,
             fastforward: 9,
             rewind: 10,
@@ -304,10 +314,11 @@
             door: 67,
             cabinet: 68,
             box: 69,
-            save: 70, //not actually in the img, but the file is present
-            back: 71, //called left above but the file is 'back.png'
-            add: 72, //called left above but the file is 'back.png'
-            search: 73 //called ?? above but the file is 'back.png'
+            warning: 70,
+            save: 71,   //not actually in the img, but the file is present
+            search: 72,  //not actually in the img, but the file is present
+            cat: 73, //not actually in the img, but the file is present 
+            structuresearch: 74 //not actually in the img, but the file is present
         });
 
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||
@@ -422,6 +433,7 @@
                     Text: Csw.enums.subFieldNames.Text
                 }
             },
+            ChildContents: { name: 'ChildContents', subfields: {} },
             Comments: { name: 'Comments', subfields: {} },
             Composite: { name: 'Composite', subfields: {} },
             DateTime: {

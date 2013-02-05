@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.PropTypes
                         RoundedValue = Math.Round( value, Precision, MidpointRounding.AwayFromZero );
 
                     _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, RoundedValue );
-                    _CswNbtNodePropData.Gestalt = RoundedValue.ToString();
+                    SyncGestalt();
                 }
             }
         }
@@ -122,6 +122,12 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty;
@@ -147,6 +153,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Value = CswConvert.ToDouble( JObject[_ValueSubField.ToXmlNodeName( true )] );
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value.ToString() );
         }
     }//CswNbtNodeProp
 

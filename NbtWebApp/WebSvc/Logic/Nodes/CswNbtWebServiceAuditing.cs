@@ -6,6 +6,7 @@ using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.Security;
 using ChemSW.Core;
+using ChemSW.Grid.ExtJs;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -29,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
                                   x.transactionusername as Username, 
                                   x.auditeventname as Context,
                                   np.propname as Propname,
-                                  ja.field1 as Value,
+                                  ja.gestaltsearch as Value,
                                   x.audittransactionid as AuditId,
                                   ft.fieldtype as FieldType";
                 }
@@ -74,7 +75,7 @@ namespace ChemSW.Nbt.WebServices
                 HistoryTable.Columns.Remove( "AuditId" );
 
                 CswNbtGrid g = new CswNbtGrid( _CswNbtResources );
-                ret = g.DataTableToJSON( HistoryTable, GroupByCol: "ChangeDate" );
+                ret = g.DataTableToJSON( HistoryTable, GroupByCol: "ChangeDate", GroupByColType: extJsXType.datecolumn );
             }
             return ret;
 

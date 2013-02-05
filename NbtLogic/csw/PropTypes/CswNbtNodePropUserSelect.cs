@@ -209,6 +209,12 @@ namespace ChemSW.Nbt.PropTypes
             return Data;
         } // UserOptions()
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public const string NameColumn = "label";
         public const string KeyColumn = "key";
         public const string StringKeyColumn = "UserIdString";
@@ -323,5 +329,11 @@ namespace ChemSW.Nbt.PropTypes
             }
             return Ret;
         } // SelectedUserNames()
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, SelectedUserNames().ToString() );
+        }
+
     }//CswNbtNodePropUserSelect
 }//namespace ChemSW.Nbt.PropTypes

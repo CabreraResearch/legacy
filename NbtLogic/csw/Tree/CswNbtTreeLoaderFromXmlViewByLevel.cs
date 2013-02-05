@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -35,19 +37,20 @@ namespace ChemSW.Nbt
             _CswNbtTree.goToRoot();
             foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
             {
-                loadRelationshipRecursive( Relationship, RequireViewPermissions );
+                bool GroupBySiblings = _View.GroupBySiblings && _View.Root.ChildRelationships.Count > 1;
+                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings );
             }
             _CswNbtTree.goToRoot();
 
         } // load()
 
-        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship, bool RequireViewPermissions )
+        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship, bool RequireViewPermissions, bool GroupBySiblings, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
         {
             CswNbtNodeKey PriorCurrentNodeKey = _CswNbtTree.getNodeKeyForCurrentPosition();
 
             // Nodes and Properties
             DataTable NodesTable = new DataTable();
-            string Sql = _makeNodeSql( Relationship, false );
+            string Sql = _makeNodeSql( Relationship, ParentNodeIds );
 
             Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit;
             if( Relationship.Properties.Count > 0 )
@@ -74,6 +77,7 @@ namespace ChemSW.Nbt
 
             Int32 PriorNodeId = Int32.MinValue;
             Int32 PriorParentNodeId = Int32.MinValue;
+            Collection<CswPrimaryKey> KeysThisLevel = new Collection<CswPrimaryKey>();
             Collection<CswNbtNodeKey> NewNodeKeys = new Collection<CswNbtNodeKey>();
             Collection<CswNbtNodeKey> ParentNodeKeys = null;
             foreach( DataRow NodesRow in NodesTable.Rows )
@@ -124,13 +128,20 @@ namespace ChemSW.Nbt
                                 }
                             }
                         }
-
+                        bool UseGroupBy = Relationship.GroupByPropId != Int32.MinValue;
                         string GroupName = string.Empty;
-                        if( Relationship.GroupByPropId != Int32.MinValue )
+                        if( UseGroupBy )
                         {
-                            GroupName = NodesRow["groupname"].ToString();
+                            GroupName = CswConvert.ToString( NodesRow["groupname"] );
                             if( GroupName == string.Empty )
+                            {
                                 GroupName = "[blank]";
+                            }
+                        }
+                        else if( GroupBySiblings )
+                        {
+                            UseGroupBy = true;
+                            GroupName = CswConvert.ToString( NodesRow["nodetypename"] );
                         }
 
                         if( NodesTable.Columns.Contains( "parentnodeid" ) )
@@ -152,10 +163,11 @@ namespace ChemSW.Nbt
                                 {
                                     _CswNbtTree.makeNodeCurrent( ParentNodeKey );
                                     Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1, Included );
+                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
                                     foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                                     {
                                         NewNodeKeys.Add( ThisNewNodeKey );
+                                        KeysThisLevel.Add( ThisNewNodeKey.NodeId );
                                     }
                                 } // foreach( CswNbtNodeKey ParentNodeKey in ParentNodeKeys )
                             }
@@ -164,10 +176,11 @@ namespace ChemSW.Nbt
                         else
                         {
                             Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1, Included );
+                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, UseGroupBy, GroupName, Relationship, ChildCount + 1, Included );
                             foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                             {
                                 NewNodeKeys.Add( ThisNewNodeKey );
+                                KeysThisLevel.Add( ThisNewNodeKey.NodeId );
                             }
                         } // if( AddChild )
                     } // if( ThisNodeId != PriorNodeId )
@@ -208,7 +221,8 @@ namespace ChemSW.Nbt
                 // Recurse
                 foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
                 {
-                    loadRelationshipRecursive( ChildRelationship, RequireViewPermissions );
+                    bool ContinueGroupingBySibling = ( _View.GroupBySiblings && Relationship.ChildRelationships.Count > 1 );
+                    loadRelationshipRecursive( ChildRelationship, RequireViewPermissions, ContinueGroupingBySibling, KeysThisLevel );
                 }
 
                 // case 24678 - Mark truncated results
@@ -242,20 +256,18 @@ namespace ChemSW.Nbt
         } // loadRelationshipRecursive()
 
 
-        private string _makeNodeSql( CswNbtViewRelationship Relationship, bool IsParentQuery )
+        private string _makeNodeSql( CswNbtViewRelationship Relationship, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
         {
-            string Select = "select n.nodeid ";
-            if( false == IsParentQuery )
-            {
-                Select += @", n.nodename, 
-                              n.locked,
-                              t.iconfilename,
-                              t.nodetypename,
-                              t.nametemplate,
-                              t.nodetypeid,
-                              o.objectclass,
-                              o.objectclassid ";
-            }
+            string With = string.Empty;
+            string Select = @"select n.nodeid,
+                                     n.nodename, 
+                                     n.locked,
+                                     nvl(n.iconfilename, t.iconfilename) iconfilename,
+                                     t.nodetypename,
+                                     t.nametemplate,
+                                     t.nodetypeid,
+                                     o.objectclass,
+                                     o.objectclassid ";
             string From = @"from nodes n
                             join nodetypes t on (n.nodetypeid = t.nodetypeid)
                             join object_class o on (t.objectclassid = o.objectclassid) ";
@@ -272,14 +284,25 @@ namespace ChemSW.Nbt
                 Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
 
             // Parent Node
-            if( Relationship.PropId != Int32.MinValue )
+            if( Relationship.PropId != Int32.MinValue && null != ParentNodeIds )
             {
-                if( false == IsParentQuery )
+                bool first = true;
+                With += "with parents as (";
+                foreach( Int32 ParentNodeId in ParentNodeIds.Select( key => key.PrimaryKey ) )
                 {
-                    Select += ",parent.parentnodeid ";
+                    if( first )
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        With += " union ";
+                    }
+                    With += "select " + ParentNodeId + " nodeid from dual ";
                 }
-
-                Where += " and parent.parentnodeid in (" + _makeNodeSql( (CswNbtViewRelationship) Relationship.Parent, true ) + ")";
+                With += ")";
+                
+                Select += ",parent.parentnodeid ";
 
                 if( Relationship.PropOwner == NbtViewPropOwnerType.First )
                 {
@@ -313,177 +336,175 @@ namespace ChemSW.Nbt
                     }
                     From += @"        ) parent on (parent.thisnodeid = n.nodeid)";
                 }
+                From += " join parents on (parent.parentnodeid = parents.nodeid) ";
             } // if( Relationship.PropId != Int32.MinValue )
 
             // Grouping
-            if( false == IsParentQuery )
+            if( Relationship.GroupByPropId != Int32.MinValue )
             {
-                if( Relationship.GroupByPropId != Int32.MinValue )
+                CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
+                Select += " ,g." + GroupBySubField.Column + " groupname";
+                if( Relationship.GroupByPropType == NbtViewPropIdType.ObjectClassPropId )
                 {
-                    CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
-                    Select += " ,g." + GroupBySubField.Column + " groupname";
-                    if( Relationship.GroupByPropType == NbtViewPropIdType.ObjectClassPropId )
-                    {
-                        From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
-                                                      from jct_nodes_props j 
-                                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid 
-                                                     where p.objectclasspropid = " + Relationship.GroupByPropId.ToString() + @") g
-                                   on (g.nodeid = n.nodeid)";
-                    }
-                    else
-                    {
-                        From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
-                                                      from jct_nodes_props j 
-                                                     where j.nodetypepropid = " + Relationship.GroupByPropId.ToString() + @") g 
-                                   on (g.nodeid = n.nodeid)";
-                    }
-                } // if( Relationship.GroupByPropId != Int32.MinValue )
-
-                // Handle sort order
-                Int32 sortAlias = 0;
-                CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
-                String OrderByString = String.Empty;
-                foreach( CswNbtViewProperty Prop in Relationship.Properties )
-                {
-                    if( Prop.SortBy )
-                    {
-                        // Case 10530
-                        sortAlias++;
-                        if( null != Prop.MetaDataProp )
-                        {
-                            CswNbtSubField.PropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
-                            if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-                                 SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
-                                 SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
-                                 SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
-                            {
-                                Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
-                            }
-                            else
-                            {
-                                Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
-                            }
-
-                            // Case 10533
-                            if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
-                                 SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
-                            {
-                                OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
-                            }
-                            else if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-                                      SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
-                                      SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
-                                      SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
-                            {
-                                OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
-                            }
-                            else
-                            {
-                                OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
-                            }
-
-                            if( Prop.SortMethod == NbtViewPropertySortMethod.Descending )
-                            {
-                                OrderByString += " desc";
-                            }
-
-                            From += " left outer join jct_nodes_props j" + sortAlias + " ";
-                            From += "   on (j" + sortAlias + ".nodeid = n.nodeid and ";
-                            if( Prop.Type == NbtViewPropType.NodeTypePropId )
-                            {
-                                From += " j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
-                            }
-                            else
-                            {
-                                From += " j" + sortAlias + ".nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + Prop.ObjectClassPropId + ")) ";
-                            }
-
-                            Int32 OrderByOrder = Prop.Order;
-                            if( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
-                            {
-                                if( OrderByProps.Count == 0 )
-                                {
-                                    OrderByOrder = 0;
-                                }
-                                else
-                                {
-                                    OrderByOrder = OrderByProps.Count - 1;
-                                }
-                            }
-
-                            OrderByProps.Insert( OrderByOrder, OrderByString );
-                        }
-                    } // if( Prop.SortBy )
-                } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
-
-                if( OrderByProps.Count == 0 )
-                {
-                    Select += ",lower(n.nodename) mssqlorder ";
-                    OrderBy = " order by lower(n.nodename)";
+                    From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
+                                                    from jct_nodes_props j 
+                                                    join nodetype_props p on j.nodetypepropid = p.nodetypepropid 
+                                                    where p.objectclasspropid = " + Relationship.GroupByPropId.ToString() + @") g
+                                on (g.nodeid = n.nodeid)";
                 }
                 else
                 {
-                    OrderBy = " order by " + OrderByProps.ToString() + " ";
+                    From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
+                                                    from jct_nodes_props j 
+                                                    where j.nodetypepropid = " + Relationship.GroupByPropId.ToString() + @") g 
+                                on (g.nodeid = n.nodeid)";
                 }
+            } // if( Relationship.GroupByPropId != Int32.MinValue )
 
-                OrderBy += ",n.nodeid "; // for property multiplexing
-
-
-                // Properties for Select
-                if( Relationship.Properties.Count > 0 )
+            // Handle sort order
+            Int32 sortAlias = 0;
+            CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
+            String OrderByString = String.Empty;
+            foreach( CswNbtViewProperty Prop in Relationship.Properties )
+            {
+                if( Prop.SortBy )
                 {
-                    CswCommaDelimitedString NTPropsInClause = new CswCommaDelimitedString( 0, "'" );
-                    CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, "'" );
-                    foreach( CswNbtViewProperty Prop in Relationship.Properties )
+                    // Case 10530
+                    sortAlias++;
+                    if( null != Prop.MetaDataProp )
                     {
-                        if( Prop.Type == NbtViewPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
+                        CswNbtSubField.PropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
+                        if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                                SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+                                SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
+                                SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
                         {
-                            NTPropsInClause.Add( Prop.NodeTypePropId.ToString() );
+                            Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
                         }
-                        else if( Prop.ObjectClassPropId != Int32.MinValue )
+                        else
                         {
-                            OCPropsInClause.Add( Prop.ObjectClassPropId.ToString() );
+                            Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
                         }
-                    }
 
-                    // This will multiplex the results by the number of properties!
-                    if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
-                    {
-                        // Properties
-                        // We match on propname because that's how the view editor works.
-                        Select += @" ,props.nodetypepropid, props.propname, props.fieldtype ";
-
-                        From += @"  left outer join ( ";
-                        if( NTPropsInClause.Count > 0 )
+                        // Case 10533
+                        if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
+                                SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
                         {
-                            From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, f.fieldtype
-                                  from nodetype_props p1
-                                  join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
-                                  join field_types f on f.fieldtypeid = p2.fieldtypeid
-                                 where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
-                            if( OCPropsInClause.Count > 0 )
+                            OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
+                        }
+                        else if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                                    SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+                                    SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
+                                    SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+                        {
+                            OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
+                        }
+                        else
+                        {
+                            OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
+                        }
+
+                        if( Prop.SortMethod == NbtViewPropertySortMethod.Descending )
+                        {
+                            OrderByString += " desc";
+                        }
+
+                        From += " left outer join jct_nodes_props j" + sortAlias + " ";
+                        From += "   on (j" + sortAlias + ".nodeid = n.nodeid and ";
+                        if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                        {
+                            From += " j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
+                        }
+                        else
+                        {
+                            From += " j" + sortAlias + ".nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + Prop.ObjectClassPropId + ")) ";
+                        }
+
+                        Int32 OrderByOrder = Prop.Order;
+                        if( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
+                        {
+                            if( OrderByProps.Count == 0 )
                             {
-                                From += @" UNION ALL ";
+                                OrderByOrder = 0;
+                            }
+                            else
+                            {
+                                OrderByOrder = OrderByProps.Count - 1;
                             }
                         }
+
+                        OrderByProps.Insert( OrderByOrder, OrderByString );
+                    }
+                } // if( Prop.SortBy )
+            } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
+
+            if( OrderByProps.Count == 0 )
+            {
+                Select += ",lower(n.nodename) mssqlorder ";
+                OrderBy = " order by lower(n.nodename)";
+            }
+            else
+            {
+                OrderBy = " order by " + OrderByProps.ToString() + " ";
+            }
+
+            OrderBy += ",n.nodeid "; // for property multiplexing
+
+
+            // Properties for Select
+            if( Relationship.Properties.Count > 0 )
+            {
+                CswCommaDelimitedString NTPropsInClause = new CswCommaDelimitedString( 0, "'" );
+                CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, "'" );
+                foreach( CswNbtViewProperty Prop in Relationship.Properties )
+                {
+                    if( Prop.Type == NbtViewPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
+                    {
+                        NTPropsInClause.Add( Prop.NodeTypePropId.ToString() );
+                    }
+                    else if( Prop.ObjectClassPropId != Int32.MinValue )
+                    {
+                        OCPropsInClause.Add( Prop.ObjectClassPropId.ToString() );
+                    }
+                }
+
+                // This will multiplex the results by the number of properties!
+                if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
+                {
+                    // Properties
+                    // We match on propname because that's how the view editor works.
+                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtype ";
+
+                    From += @"  left outer join ( ";
+                    if( NTPropsInClause.Count > 0 )
+                    {
+                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, f.fieldtype
+                                from nodetype_props p1
+                                join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
+                                join field_types f on f.fieldtypeid = p2.fieldtypeid
+                                where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
                         if( OCPropsInClause.Count > 0 )
                         {
-                            From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, f.fieldtype
-                                  from object_class_props op
-                                  join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
-                                  join field_types f on f.fieldtypeid = ntp.fieldtypeid
-                                 where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
+                            From += @" UNION ALL ";
                         }
-                        From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
+                    }
+                    if( OCPropsInClause.Count > 0 )
+                    {
+                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, f.fieldtype
+                                from object_class_props op
+                                join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
+                                join field_types f on f.fieldtypeid = ntp.fieldtypeid
+                                where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
+                    }
+                    From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
 
-                        // Property Values
-                        Select += @" ,propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric, propval.hidden ";
-                        From += @"  left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid) ";  // better performance from indexes if we do this first
-                        From += @"  left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
+                    // Property Values
+                    Select += @" ,propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric, propval.hidden ";
+                    From += @"  left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid) ";  // better performance from indexes if we do this first
+                    From += @"  left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 
-                    } // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
-                } // if(Relationship.Properties.Count > 0)
-            } // if( false == IsParentQuery )
+                } // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
+            } // if(Relationship.Properties.Count > 0)
 
             // Property Filters
             Int32 FilterCount = 0;
@@ -549,7 +570,7 @@ namespace ChemSW.Nbt
 
 
                                 From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled && false == IsParentQuery )
+                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled )
                                 {
                                     Select += ",f" + FilterCount.ToString() + ".included as included" + Filter.Conjunction.ToString() + FilterCount.ToString();
                                 }
@@ -619,11 +640,7 @@ namespace ChemSW.Nbt
                 Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
-            string ret = Select + " " + From + " " + Where;
-            if( false == IsParentQuery )
-            {
-                ret += " " + OrderBy;
-            }
+            string ret = With + " " + Select + " " + From + " " + Where + " " + OrderBy;
             return ret;
         } //_makeNodeSql()
 

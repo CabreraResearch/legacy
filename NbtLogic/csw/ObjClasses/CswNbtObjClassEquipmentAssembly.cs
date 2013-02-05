@@ -58,9 +58,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateEquipment()
         {
-            //CswNbtMetaDataObjectClass AssemblyObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass);
-            //CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass);
-
             // For each equipment related to this assembly, mark matching properties as pending update
             if( NodeModificationState.Modified == _CswNbtNode.ModificationState )
             {
@@ -87,72 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NodesUpdate.update( NodesTable );
                 }
             }
-
-            //string EquipmentAssemblyObjectClassPropName = "Assembly";
-
-            //// For each equipment related to this assembly, update matching properties
-
-            //CswNbtMetaDataObjectClassProp EquipmentAssemblyObjectClassProp = EquipmentObjectClass.getObjectClassProp(EquipmentAssemblyObjectClassPropName);
-
-            //// Make a view of equipment
-            //CswNbtView View = new CswNbtView( _CswNbtResources );
-            //View.ViewName = "_CswNbtNodeWriteEquipmentAssembly.handleAfterWriteNode()";
-
-            //CswNbtViewRelationship AssemblyRelationship = View.MakeEmptyViewRelationship();
-            //AssemblyRelationship.SecondType = RelatedIdType.ObjectClassId;
-            //AssemblyRelationship.SecondId = AssemblyObjectClass.ObjectClassId;
-            //AssemblyRelationship.SecondName = AssemblyObjectClass.ObjectClass.ToString();
-            //View.Root.addChildRelationship( AssemblyRelationship );
-
-            //CswNbtViewRelationship EquipmentRelationship = View.MakeEmptyViewRelationship();
-            //EquipmentRelationship.PropId = EquipmentAssemblyObjectClassProp.PropId;
-            //EquipmentRelationship.PropName = EquipmentAssemblyObjectClassPropName;
-            //EquipmentRelationship.PropType = PropIdType.ObjectClassPropId;
-            //EquipmentRelationship.PropOwner = PropOwnerType.Second;
-            //EquipmentRelationship.FirstType = RelatedIdType.ObjectClassId;
-            //EquipmentRelationship.FirstId = AssemblyObjectClass.ObjectClassId;
-            //EquipmentRelationship.FirstName = AssemblyObjectClass.ObjectClass.ToString();
-            //EquipmentRelationship.SecondType = RelatedIdType.ObjectClassId;
-            //EquipmentRelationship.SecondId = EquipmentObjectClass.ObjectClassId;
-            //EquipmentRelationship.SecondName = EquipmentObjectClass.ObjectClass.ToString();
-            //AssemblyRelationship.addChildRelationship( EquipmentRelationship );
-
-            //ICswNbtTree EquipTree = _CswNbtResources.Trees.getTreeFromView( View, _CswNbtNode.NodeId, false );
-
-            //EquipTree.goToRoot();
-            //if( EquipTree.getChildNodeCount() > 0 )  // should always be the case
-            //{
-            //    EquipTree.goToNthChild( 0 );
-            //    if( EquipTree.getChildNodeCount() > 0 )   // might not always be the case
-            //    {
-            //        for( int i = 0; i < EquipTree.getChildNodeCount(); i++ )
-            //        {
-            //            EquipTree.goToNthChild( i );
-
-            //            CswNbtNode EquipNode = EquipTree.getNodeForCurrentPosition();
-
-            //            // Synchronize prop values
-            //            foreach( CswNbtNodePropWrapper AssemblyProp in _CswNbtNode.Properties )
-            //            {
-            //                foreach( CswNbtNodePropWrapper EquipProp in EquipNode.Properties )
-            //                {
-            //                    if( AssemblyProp.PropName == EquipProp.PropName && AssemblyProp.FieldType == EquipProp.FieldType )
-            //                    {
-            //                        EquipProp.copy( AssemblyProp );
-            //                        EquipProp.ReadOnly = true;
-            //                    }
-            //                }//iterate equip props
-
-            //            }//iterate assemlby props
-
-            //            _CswNbtResources.Nodes.save( EquipNode.NodeKey );
-
-            //            EquipTree.goToParentNode();
-            //        }//iterate equip nodes
-            //    }
-            //}
-
-        }// _updateEquipment()
+        }
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
@@ -188,11 +120,43 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
+        }
+
+        public override CswNbtNode CopyNode()
+        {
+            // Copy this Assembly
+            CswNbtNode CopiedAssemblyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedAssemblyNode.copyPropertyValues( Node );
+            CopiedAssemblyNode.postChanges( true, true );
+
+            // Copy all Equipment
+            CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );
+            CswNbtViewProperty AssemblyProperty = EquipmentView.AddViewProperty( EquipmentRelationship, EquipmentObjectClass.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly ) );
+            CswNbtViewPropertyFilter AssemblyIsOriginalFilter = EquipmentView.AddViewPropertyFilter( 
+                AssemblyProperty, 
+                CswNbtSubField.SubFieldName.NodeID, 
+                CswNbtPropFilterSql.PropertyFilterMode.Equals, 
+                NodeId.PrimaryKey.ToString());
+
+            ICswNbtTree EquipmentTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, EquipmentView, true, false, false );
+            EquipmentTree.goToRoot();
+            Int32 c = 0;
+            while( c < EquipmentTree.getChildNodeCount() )
+            {
+                EquipmentTree.goToNthChild( c );
+                CswNbtObjClassEquipment OriginalEquipmentNode = EquipmentTree.getNodeForCurrentPosition();
+                CswNbtObjClassEquipment CopiedEquipmentNode = OriginalEquipmentNode.CopyNode();
+                CopiedEquipmentNode.Assembly.RelatedNodeId = CopiedAssemblyNode.NodeId;
+                CopiedEquipmentNode.postChanges( true );
+                EquipmentTree.goToParentNode();
+                c++;
+            }
+
+            return CopiedAssemblyNode;
         }
         #endregion
 

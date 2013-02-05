@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Labels;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
@@ -46,8 +47,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}" )]
-
+        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}", BodyStyle = WebMessageBodyStyle.Wrapped )]
         [Description( "Get a collection of EPL texts for the selected Targets" )]
         public CswNbtLabelEpl get( string PrintLabelId, string TargetId )
         {
@@ -58,6 +58,26 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServicePrintLabels.getEPLText,
                 ParamObj: new NbtPrintLabel.Request.Get { LabelId = PrintLabelId, TargetId = TargetId }
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Create a print job" )]
+        public CswNbtPrintJobReturn newPrintJob( NbtPrintLabel.Request.printJob Request )
+        {
+            CswNbtPrintJobReturn Ret = new CswNbtPrintJobReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtPrintJobReturn, NbtPrintLabel.Request.printJob>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServicePrintLabels.newPrintJob,
+                ParamObj: Request
                 );
 
             SvcDriver.run();

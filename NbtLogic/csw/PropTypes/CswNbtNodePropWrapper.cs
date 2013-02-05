@@ -74,6 +74,8 @@ namespace ChemSW.Nbt.PropTypes
         public string Gestalt { get { return ( _CswNbtNodeProp.Gestalt ); } }
         public string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } }
 
+        public string ValueForNameTemplate { get { return _CswNbtNodeProp.ValueForNameTemplate; } }
+
         public bool Empty { get { return ( _CswNbtNodeProp.Empty ); } }
 
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtNodeProp.getFieldType() ); }
@@ -346,7 +348,10 @@ namespace ChemSW.Nbt.PropTypes
 
         } // SetDefaultValue()
 
-
+        public void SyncGestalt()
+        {
+            _CswNbtNodeProp.SyncGestalt();
+        }
 
         public CswNbtNodePropBarcode AsBarcode
         {
@@ -386,7 +391,17 @@ namespace ChemSW.Nbt.PropTypes
                     throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropCASNo ) ) ) );
                 return ( (CswNbtNodePropCASNo) _CswNbtNodeProp );
             }
-        }//Blob
+        }//CASNo
+
+        public CswNbtNodePropChildContents AsChildContents
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropChildContents ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropChildContents ) ) ) );
+                return ( (CswNbtNodePropChildContents) _CswNbtNodeProp );
+            }
+        }//ChildContents
 
         public CswNbtNodePropComments AsComments
         {

@@ -6,7 +6,6 @@ using ChemSW.Mail;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -128,12 +127,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                             for( Int32 C = 0; C < ContainerNodeCount; C += 1 )
                             {
                                 Tree.goToNthChild( C );
-                                foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                                foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                                 {
-                                    CswNbtMetaDataFieldType.NbtFieldType FieldType = CswConvert.ToString( Prop["fieldtype"] );
+                                    CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.FieldType;
                                     if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
                                     {
-                                        Int32 UnitTypeId = CswConvert.ToInt32( Prop["field1_fk"] );
+                                        Int32 UnitTypeId = Prop.Field1_Fk;
                                         CswNbtUnitConversion Conversion;
                                         if( UnitConversions.ContainsKey( UnitTypeId ) )
                                         {
@@ -146,7 +145,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         }
                                         if( null != Conversion )
                                         {
-                                            double ContainerQuantity = CswConvert.ToDouble( Prop["field1_numeric"] );
+                                            double ContainerQuantity = Prop.Field1_Numeric;
                                             Ret += Conversion.convertUnit( ContainerQuantity );
                                         }
                                     }

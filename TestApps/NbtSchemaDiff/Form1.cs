@@ -145,7 +145,7 @@ namespace ChemSW.NbtSchemaDiff
             //CswNbtObjClassFactory _CswNbtObjClassFactoryLeft = new CswNbtObjClassFactory();
             _CswNbtResourcesLeft = new CswNbtResources( AppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryLeft, 
                                                        false, false, null );
-            _CswNbtResourcesLeft.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ), PooledConnectionState.Closed );
+            _CswNbtResourcesLeft.SetDbResources( PooledConnectionState.Closed );
             //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
             //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );
 
@@ -161,7 +161,7 @@ namespace ChemSW.NbtSchemaDiff
             //CswNbtObjClassFactory _CswNbtObjClassFactoryRight = new CswNbtObjClassFactory();
             _CswNbtResourcesRight = new CswNbtResources( AppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryRight, 
                                                          false, false, null );
-            _CswNbtResourcesRight.SetDbResources( new CswNbtTreeFactory( _ConfigurationPath ), PooledConnectionState.Closed );
+            _CswNbtResourcesRight.SetDbResources( PooledConnectionState.Closed );
             //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
             //_CswNbtResources.CswTableCaddyFactory = new CswTableCaddyFactoryNbt( _CswNbtResources );
 

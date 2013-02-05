@@ -249,6 +249,47 @@ namespace ChemSW.Nbt
         }
     }
 
+    [DataContract]
+    public class View
+    {
+        public CswNbtSessionDataId SessionViewId = null;
+        public CswNbtViewId ViewId = null;
+
+        [DataMember( IsRequired = true, EmitDefaultValue = true, Name = "ViewId" )]
+        public string NbtViewId
+        {
+            get
+            {
+                string Ret = string.Empty;
+                if( null != ViewId && ViewId.isSet() )
+                {
+                    Ret = ViewId.ToString();
+                    SessionViewId = null;
+                }
+                else if( null != SessionViewId && SessionViewId.isSet() )
+                {
+                    Ret = SessionViewId.ToString();
+                    ViewId = null;
+                }
+                return Ret;
+            }
+            set
+            {
+                string ViewIdString = value;
+                if( CswNbtViewId.isViewIdString( ViewIdString ) )
+                {
+                    ViewId = new CswNbtViewId( ViewIdString );
+                    SessionViewId = null;
+                }
+                else if( CswNbtSessionDataId.isSessionDataIdString( ViewIdString ) )
+                {
+                    SessionViewId = new CswNbtSessionDataId( ViewIdString );
+                    ViewId = null;
+                }
+            }
+        }
+    }
+
     #endregion Requests
 
 }

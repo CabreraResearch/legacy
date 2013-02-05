@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.PropTypes
                 _Value = value;
                 string ValString = value.ToString();
                 _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, ValString );
-                _setGestalt();
+                SyncGestalt();
             }
         }
 
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.PropTypes
             //}
         } // Options
 
-        private void _setGestalt()
+        public override void SyncGestalt()
         {
             CswCommaDelimitedString NewGestalt = new CswCommaDelimitedString();
             foreach( string Key in this.Value )
@@ -201,11 +201,16 @@ namespace ChemSW.Nbt.PropTypes
                     NewGestalt.Add( Options[Key] );
                 }
             }
-            _CswNbtNodePropData.Gestalt = NewGestalt.ToString();
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, NewGestalt.ToString() );
         } // _setGestalt()
 
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";
+
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
 
         override public void onNodePropRowFilled()
         {

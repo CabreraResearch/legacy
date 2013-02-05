@@ -1,9 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
@@ -12,7 +15,7 @@ namespace ChemSW.Nbt.Search
     /// <summary>
     /// Represents a Universal Search
     /// </summary>
-    [Serializable()]
+    [DataContract]
     public class CswNbtSearch : IEquatable<CswNbtSearch>
     {
         /// <summary>
@@ -23,63 +26,214 @@ namespace ChemSW.Nbt.Search
         private CswNbtSearchPropOrder _CswNbtSearchPropOrder;
 
         /// <summary>
-        /// Constructor - new search
+        /// Constructor
         /// </summary>
-        public CswNbtSearch( CswNbtResources CswNbtResources, string SearchTerm )
+        public CswNbtSearch( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
-
-            _SearchObj = new JObject();
-            _SearchObj["searchterm"] = SearchTerm;
-            _SearchObj["filters"] = new JArray();
+            if( null != CswNbtResources.CurrentNbtUser )
+            {
+                UserId = CswNbtResources.CurrentNbtUser.UserId;
+            }
         }
+
+        #region Search Data
 
         /// <summary>
-        /// Constructor - from session data
+        /// Primary key
         /// </summary>
-        public CswNbtSearch( CswNbtResources CswNbtResources, DataRow SessionDataRow )
-        {
-            _CswNbtResources = CswNbtResources;
-            _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
+        [DataMember]
+        public CswPrimaryKey SearchId;
+        
+        /// <summary>
+        /// Primary key of user who owns this search
+        /// </summary>
+        [DataMember]
+        public CswPrimaryKey UserId;
 
-            _SearchObj = JObject.Parse( SessionDataRow["viewxml"].ToString() );
-            SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionDataRow["sessiondataid"] ) );
-        }
+        /// <summary>
+        /// Category for view
+        /// </summary>
+        [DataMember]
+        public string Category;
 
-        private JObject _SearchObj;
+        /// <summary>
+        /// Query term for search
+        /// </summary>
+        [DataMember]
+        public string SearchTerm;
+        
+        /// <summary>
+        /// Set of filters applied to search
+        /// </summary>
+        [DataMember]
+        public Collection<CswNbtSearchFilter> FiltersApplied = new Collection<CswNbtSearchFilter>();
 
-        public JArray FiltersApplied { get { return (JArray) _SearchObj["filters"]; } }
-        public string SearchTerm { get { return _SearchObj["searchterm"].ToString(); } }
+        /// <summary>
+        /// Key for retrieving the view from the Session's data cache
+        /// </summary>
+        public CswNbtSessionDataId SessionDataId;
 
+        private string _Name;
         /// <summary>
         /// A display name for the search
         /// </summary>
+        [DataMember]
         public string Name
         {
             get
             {
-                return "Search for: " + SearchTerm;
+                if( string.IsNullOrEmpty( _Name ) )
+                {
+                    _Name = "Searched for: " + SearchTerm;
+                }
+                return _Name;
             }
+            set { _Name = value; }
         }
+
+        #endregion Search Data
+        
+        #region Serialization
+
+        public void FromJObject( JObject SearchObj )
+        {
+            SearchTerm = SearchObj["searchterm"].ToString();
+            if( null != SearchObj["name"] )
+            {
+                Name = SearchObj["name"].ToString();
+            }
+            if( null != SearchObj["category"] )
+            {
+                Category = SearchObj["category"].ToString();
+            }
+            if( null != SearchObj["searchid"] )
+            {
+                SearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchObj["searchid"] ) );
+            }
+            if( null != SearchObj["sessiondataid"] )
+            {
+                SessionDataId = new CswNbtSessionDataId( SearchObj["sessiondataid"].ToString() );
+            }
+            JArray FiltersArr = (JArray) SearchObj["filtersapplied"];
+            foreach(JObject FilterObj in FiltersArr)
+            {
+                addFilter( FilterObj );
+            }
+        } // FromJObject()
+
+        public JObject ToJObject()
+        {
+            JObject SearchObj = new JObject();
+            SearchObj["name"] = Name;
+            SearchObj["searchterm"] = SearchTerm;
+            SearchObj["category"] = Category;
+            if( null != SearchId )
+            {
+                SearchObj["searchid"] = SearchId.PrimaryKey;
+            }
+            if( null != SessionDataId )
+            {
+                SearchObj["sessiondataid"] = SessionDataId.ToString();
+            }
+            JArray FiltersArr =  new JArray();
+            foreach(CswNbtSearchFilter Filter in FiltersApplied)
+            {
+                FiltersArr.Add( Filter.ToJObject() );
+            }
+            SearchObj["filtersapplied"] = FiltersArr;
+
+            return SearchObj;
+        } // ToJObject()
+
+        /// <summary>
+        /// Restore search from row in 'sessiondata' table
+        /// </summary>
+        public void FromSessionData( DataRow SessionDataRow )
+        {
+            FromJObject( JObject.Parse( SessionDataRow["viewxml"].ToString() ) );
+            SessionDataId = new CswNbtSessionDataId( CswConvert.ToInt32( SessionDataRow["sessiondataid"] ) );
+        }
+
+        /// <summary>
+        /// Restore search from row in 'search' table
+        /// </summary>
+        public void FromSearchRow( DataRow SearchRow )
+        {
+            FromJObject( JObject.Parse( SearchRow["searchdata"].ToString() ) );
+            SearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchRow["searchid"] ) );
+        }
+
+        /// <summary>
+        /// Save search to row in 'search' table.  Returns searchid.
+        /// </summary>
+        public bool SaveToDb()
+        {
+            CswTableUpdate SearchUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtSearch_SaveToDb", CswNbtSearchManager.SearchTableName );
+            DataTable SearchTable = null;
+            DataRow SearchRow = null;
+            if( null != SearchId && Int32.MinValue != SearchId.PrimaryKey )
+            {
+                SearchTable = SearchUpdate.getTable( "where searchid = " + SearchId.PrimaryKey );
+                if( SearchTable.Rows.Count > 0 )
+                {
+                    SearchRow = SearchTable.Rows[0];
+                }
+            }
+            if( null == SearchRow )
+            {
+                SearchTable = SearchUpdate.getEmptyTable();
+                SearchRow = SearchTable.NewRow();
+                SearchTable.Rows.Add( SearchRow );
+                SearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchRow["searchid"] ) );
+            }
+
+            if( null != SearchRow )
+            {
+                //SearchRow["searchid"] = CswConvert.ToDbVal(SearchId);
+                SearchRow["name"] = Name;
+                SearchRow["category"] = Category;
+                SearchRow["searchdata"] = ToString();
+                if( null != UserId )
+                {
+                    SearchRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
+                }
+            }
+
+            SearchUpdate.update( SearchTable );
+            return true;
+        } // SaveToDb()
 
         public override string ToString()
         {
-            return _SearchObj.ToString();
+            return ToJObject().ToString();
         }
+
+        /// <summary>
+        /// Save this View to Session's data cache
+        /// </summary>
+        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
+        {
+            // don't cache twice
+            if( SessionDataId == null || ForceCache || IncludeInQuickLaunch )  // case 23999
+            {
+                SessionDataId = _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch, KeepInQuickLaunch );
+            }
+        } // SaveToCache()
+
+        public void clearSessionDataId()
+        {
+            SessionDataId = null;
+        }
+
+        #endregion JSON Serialization
+
+        #region Search Functions
 
         public bool IsSingleNodeType()
         {
-            bool ret = false;
-            foreach( JObject FilterObj in FiltersApplied )
-            {
-                CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                if( Filter.Type == CswNbtSearchFilterType.nodetype )
-                {
-                    ret = true;
-                }
-            }
-            return ret;
+            return ( FiltersApplied.Any( Filter => Filter.Type == CswNbtSearchFilterType.nodetype ) );
         } // IsSingleNodeType()
 
         private Collection<Int32> _FilteredPropIds = null;
@@ -88,43 +242,52 @@ namespace ChemSW.Nbt.Search
             if( _FilteredPropIds == null )
             {
                 _FilteredPropIds = new Collection<Int32>();
-                foreach( JObject FilterObj in FiltersApplied )
+                foreach( CswNbtSearchFilter Filter in FiltersApplied.Where( Filter => Filter.Type == CswNbtSearchFilterType.propval ) )
                 {
-                    CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                    if( Filter.Type == CswNbtSearchFilterType.propval )
-                    {
-                        _FilteredPropIds.Add( Filter.FirstPropVersionId );
-                    }
-                } // foreach(JObject FilterObj in FiltersApplied)
+                    _FilteredPropIds.Add( Filter.FirstPropVersionId );
+                }
             }
             return _FilteredPropIds;
         } // getFilteredPropIds()
 
-        #region Search Functions
-
-        public void addNodeTypeFilter( Int32 NodeTypeId )
+        public void addFilter( Int32 NodeTypeId, bool Removeable )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             if( null != NodeType )
             {
-                addFilter( makeFilter( NodeType, Int32.MinValue, true ) );
+                addFilter( NodeType, Removeable );
             }
         } // addNodeTypeFilter()
 
-        public void addFilter( CswNbtSearchFilterWrapper Filter )
+        public void addFilter( CswNbtSearchFilter Filter )
         {
-            addFilter( Filter.ToJObject() );
+            FiltersApplied.Add( Filter );
+            _FilteredPropIds = null;
         } // addFilter()
 
         public void addFilter( JObject FilterObj )
         {
-            FiltersApplied.Add( FilterObj );
-            _FilteredPropIds = null;
+            addFilter( new CswNbtSearchFilter( FilterObj ) );
         } // addFilter()
+
+        public void addFilter( CswNbtMetaDataNodeType NodeType, bool Removeable )
+        {
+            addFilter( makeFilter( NodeType, Int32.MinValue, Removeable, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+        } // addFilter()
+
+        public void addFilter( CswNbtMetaDataObjectClass ObjectClass, bool Removeable )
+        {
+            addFilter( makeFilter( ObjectClass, Int32.MinValue, Removeable, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+        } // addFilter()
+
 
         public void removeFilter( JObject FilterObj )
         {
-            CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
+            removeFilter( new CswNbtSearchFilter( FilterObj ) );
+        } // removeFilter()
+
+        public void removeFilter( CswNbtSearchFilter Filter )
+        {
             if( Filter.Type == CswNbtSearchFilterType.nodetype )
             {
                 // Clear all filters
@@ -132,18 +295,14 @@ namespace ChemSW.Nbt.Search
             }
             else
             {
-                Collection<JObject> FiltersToRemove = new Collection<JObject>();
-                foreach( JObject MatchingFilterObj in ( from JObject AppliedFilterObj in FiltersApplied
-                                                        select new CswNbtSearchFilterWrapper( AppliedFilterObj ) into AppliedFilter
-                                                        where AppliedFilter == Filter
-                                                        select AppliedFilter.ToJObject() ) )
+                Collection<CswNbtSearchFilter> FiltersToRemove = new Collection<CswNbtSearchFilter>();
+                foreach( CswNbtSearchFilter MatchingFilterObj in FiltersApplied.Where( AppliedFilter => AppliedFilter == Filter ) )
                 {
                     FiltersToRemove.Add( MatchingFilterObj );
                 }
-
-                foreach( JObject DoomedFilterObj in FiltersToRemove )
+                foreach( CswNbtSearchFilter DoomedFilter in FiltersToRemove )
                 {
-                    FiltersApplied.Remove( DoomedFilterObj );
+                    FiltersApplied.Remove( DoomedFilter );
                 }
             }
             _FilteredPropIds = null;
@@ -155,10 +314,8 @@ namespace ChemSW.Nbt.Search
             string WhereClause = string.Empty;
             //bool SingleNodeType = false;
             //Collection<Int32> FilteredPropIds = new Collection<Int32>();
-            foreach( JObject FilterObj in FiltersApplied )
+            foreach( CswNbtSearchFilter Filter in FiltersApplied )
             {
-                CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-
                 if( Filter.Type == CswNbtSearchFilterType.nodetype )
                 {
                     // NodeType filter
@@ -183,7 +340,7 @@ namespace ChemSW.Nbt.Search
                     // Someday we may need to do this in a view instead
                     Int32 NodeTypePropFirstVersionId = Filter.FirstPropVersionId;
                     string FilterStr = Filter.FilterValue;
-                    if( FilterStr == CswNbtSearchFilterWrapper.BlankValue )
+                    if( FilterStr == CswNbtSearchFilter.BlankValue )
                     {
                         FilterStr = " is null";
                     }
@@ -203,12 +360,22 @@ namespace ChemSW.Nbt.Search
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
                                                               and gestalt " + FilterStr + @") ";
                     }
-                }
-            } // foreach(JObject FilterObj in FiltersApplied)
+                } // else if( Filter.Type == CswNbtSearchFilterType.propval )
+            } // foreach( CswNbtSearchFilter Filter in FiltersApplied )
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, true, false, false );
             return Tree;
+        } // Results()
+
+
+        private class NodeTypeEntry
+        {
+            public CswNbtMetaDataNodeType NodeType;
+            public Int32 NodeTypeId;
+            public string LatestName;
+            public Int32 Count;
         }
+
 
         /// <summary>
         /// New Filters to offer, based on Results
@@ -221,7 +388,7 @@ namespace ChemSW.Nbt.Search
             if( false == SingleNodeType )
             {
                 // Filter on NodeTypes only
-                Dictionary<Int32, Int32> NodeTypeIds = new Dictionary<Int32, Int32>();
+                SortedList<string, NodeTypeEntry> NodeTypeOptions = new SortedList<string, NodeTypeEntry>();
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
@@ -229,24 +396,31 @@ namespace ChemSW.Nbt.Search
                     CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
                     if( NodeKey != null )
                     {
-                        if( false == NodeTypeIds.ContainsKey( NodeKey.NodeTypeId ) )
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId );
+                        string LatestName = NodeType.getNodeTypeLatestVersion().NodeTypeName;
+                        if( false == NodeTypeOptions.ContainsKey( LatestName ) )
                         {
-                            NodeTypeIds[NodeKey.NodeTypeId] = 0;
+                            NodeTypeOptions.Add( LatestName, new NodeTypeEntry
+                                {
+                                    NodeType = NodeType,
+                                    NodeTypeId = NodeType.NodeTypeId,
+                                    LatestName = LatestName,
+                                    Count = 0
+                                } );
                         }
-                        NodeTypeIds[NodeKey.NodeTypeId] += 1;
+                        NodeTypeOptions[LatestName].Count += 1;
                     }
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
-                if( NodeTypeIds.Keys.Count == 1 )
+                if( NodeTypeOptions.Keys.Count == 1 )
                 {
                     if( false == IsSingleNodeType() )
                     {
                         // If we have uniform results but no nodetype filter applied
                         // add the filter to the filters list for display
-                        Int32 NodeTypeId = NodeTypeIds.Keys.First();
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, NodeTypeIds[NodeTypeId], false );
+                        NodeTypeEntry entry = NodeTypeOptions.Values[0];
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         addFilter( NodeTypeFilter );
                     }
                     SingleNodeType = true;
@@ -256,17 +430,9 @@ namespace ChemSW.Nbt.Search
                     JArray FilterSet = new JArray();
                     FiltersArr.Add( FilterSet );
 
-                    // Sort by count descending, then (unfortunately) by nodetypeid
-                    Dictionary<Int32, Int32> sortedDict = ( from entry
-                                                              in NodeTypeIds
-                                                            orderby entry.Value descending, entry.Key ascending
-                                                            select entry
-                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
-                    foreach( Int32 NodeTypeId in sortedDict.Keys )
+                    foreach( NodeTypeEntry entry in NodeTypeOptions.Values )
                     {
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        Int32 Count = sortedDict[NodeTypeId];
-                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, Count, true );
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
                         FilterSet.Add( NodeTypeFilter.ToJObject() );
                     }
                 }
@@ -277,229 +443,133 @@ namespace ChemSW.Nbt.Search
                 // Filter on property values in the results
                 Collection<Int32> FilteredPropIds = getFilteredPropIds();
                 Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
-                Dictionary<Int32, Int32> PropOrder = null;
+                SortedSet<CswNbtSearchPropOrder.SearchOrder> PropOrder = new SortedSet<CswNbtSearchPropOrder.SearchOrder>();
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
                     Tree.goToNthChild( n );
 
-                    if( null == PropOrder )
+                    if( 0 == PropOrder.Count )
                     {
                         PropOrder = _CswNbtSearchPropOrder.getPropOrderDict( Tree.getNodeKeyForCurrentPosition() );
                     }
-                    JArray Props = Tree.getChildNodePropsOfNode();
-                    foreach( JObject Prop in Props )
+                    Collection<CswNbtTreeNodeProp> Props = Tree.getChildNodePropsOfNode();
+                    foreach( CswNbtTreeNodeProp Prop in Props )
                     {
-                        Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
-                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( CswConvert.ToString( Prop["fieldtype"] ) );
-                        if( false == FilteredPropIds.Contains( NodeTypePropId ) && FieldType.Searchable )
+                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( Prop.FieldType );
+                        if( false == FilteredPropIds.Contains( Prop.NodeTypePropId ) && FieldType.Searchable )
                         {
-                            string Gestalt = Prop["gestalt"].ToString();
+                            string Gestalt = Prop.Gestalt;
                             if( Gestalt.Length > 50 )
                             {
                                 Gestalt = Gestalt.Substring( 0, 50 );
                             }
 
-                            if( false == PropCounts.ContainsKey( NodeTypePropId ) )
+                            if( false == PropCounts.ContainsKey( Prop.NodeTypePropId ) )
                             {
-                                PropCounts[NodeTypePropId] = new Dictionary<string, Int32>();
+                                PropCounts[Prop.NodeTypePropId] = new Dictionary<string, Int32>();
                             }
-                            if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
+                            if( false == PropCounts[Prop.NodeTypePropId].ContainsKey( Gestalt ) )
                             {
-                                PropCounts[NodeTypePropId][Gestalt] = 0;
+                                PropCounts[Prop.NodeTypePropId][Gestalt] = 0;
                             }
-                            PropCounts[NodeTypePropId][Gestalt] += 1;
+                            PropCounts[Prop.NodeTypePropId][Gestalt] += 1;
                         }
                     }
 
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
-                foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder[NodeTypePropId] ) )
+                foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId ).Order ) )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
-
-                    JArray FilterSet = new JArray();
-                    FiltersArr.Add( FilterSet );
-
-                    // Sort by count descending, then alphabetically by gestalt
-                    Dictionary<string, Int32> sortedDict = ( from entry
-                                                               in PropCounts[NodeTypePropId]
-                                                             orderby entry.Value descending, entry.Key ascending
-                                                             select entry
-                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
-                    foreach( string Value in sortedDict.Keys )
+                    if( false == NodeTypeProp.IsUnique() )   // case 27649
                     {
-                        Int32 Count = sortedDict[Value];
-                        CswNbtSearchFilterWrapper Filter = makeFilter( NodeTypeProp, Value, Count, true );
-                        FilterSet.Add( Filter.ToJObject() );
-                    }
-                }
+                        CswNbtSearchPropOrder.SearchOrder order = PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId );
+
+                        JArray FilterSet = new JArray();
+                        FiltersArr.Add( FilterSet );
+
+                        // Sort by count descending, then alphabetically by gestalt
+                        Dictionary<string, Int32> sortedDict = ( from entry
+                                                                     in PropCounts[NodeTypePropId]
+                                                                 orderby entry.Value descending , entry.Key ascending
+                                                                 select entry
+                                                               ).ToDictionary( pair => pair.Key, pair => pair.Value );
+                        foreach( string Value in sortedDict.Keys )
+                        {
+                            Int32 Count = sortedDict[Value];
+                            CswNbtSearchFilter Filter = makeFilter( NodeTypeProp, Value, Count, true, order.Source );
+                            FilterSet.Add( Filter.ToJObject() );
+                        }
+                    } // if( false == NodeTypeProp.IsUnique() )
+                } // foreach( Int32 NodeTypePropId in PropCounts.Keys.OrderBy( NodeTypePropId => PropOrder.First( Order => Order.NodeTypePropId == NodeTypePropId ).Order ) )
             } // if( SingleNodeType )
 
             return FiltersArr;
         } // FilterOptions()
 
-
-        public bool saveSearchAsView( CswNbtView View )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
-            bool ret = false;
-            View.Root.ChildRelationships.Clear();
-
-            // NodeType filter becomes Relationship
-            CswNbtViewRelationship ViewRel = null;
-            foreach( JObject FilterObj in FiltersApplied )
-            {
-                CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                if( Filter.Type == CswNbtSearchFilterType.nodetype )
-                {
-                    if( ViewRel != null )
-                    {
-                        // nodetype should override object class
-                        View.Root.ChildRelationships.Clear();
-                    }
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Filter.FirstVersionId );
-                    ViewRel = View.AddViewRelationship( NodeType, false );
-                    break;
-                }
-                if( Filter.Type == CswNbtSearchFilterType.objectclass )
-                {
-                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Filter.ObjectClassId );
-                    ViewRel = View.AddViewRelationship( ObjectClass, false );
-                }
-            } // foreach( JObject FilterObj in FiltersApplied )
-
-            if( ViewRel != null )
-            {
-                // Add property filters
-                foreach( JObject FilterObj in FiltersApplied )
-                {
-                    CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
-                    if( Filter.Type == CswNbtSearchFilterType.propval )
-                    {
-                        CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Filter.FirstPropVersionId );
-                        CswNbtViewProperty ViewProp = View.AddViewProperty( ViewRel, NodeTypeProp );
-
-                        CswNbtSubField DefaultSubField = NodeTypeProp.getFieldTypeRule().SubFields.Default;
-                        if( Filter.FilterValue == CswNbtSearchFilterWrapper.BlankValue )
-                        {
-                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Null ) )
-                            {
-                                View.AddViewPropertyFilter( ViewProp,
-                                                            DefaultSubField.Name,
-                                                            CswNbtPropFilterSql.PropertyFilterMode.Null,
-                                                            string.Empty,
-                                                            false );
-                            }
-                        }
-                        else
-                        {
-                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Equals ) )
-                            {
-                                View.AddViewPropertyFilter( ViewProp,
-                                                            DefaultSubField.Name,
-                                                            CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                            Filter.FilterValue,
-                                                            false );
-                            }
-                        }
-                    }
-                } // foreach( JProperty FilterProp in Filters.Properties() )
-
-                View.save();
-                View.SaveToCache( true );
-                ret = true;
-
-            } // if(ViewRel != null)
-            return ret;
-        } // saveSearchAsView()
-
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable )
-        {
-            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
+            CswNbtSearchFilter ret = new CswNbtSearchFilter( "Filter To",
                                                   CswNbtSearchFilterType.nodetype,
                                                   "NT_" + NodeType.NodeTypeId.ToString(),
                                                   NodeType.NodeTypeName,
                                                   ResultCount,
                                                   NodeType.IconFileName,
-                                                  Removeable );
+                                                  Removeable,
+                                                  Source );
             ret.FirstVersionId = NodeType.FirstVersionNodeTypeId;
+            ret.UseMoreLink = false;
             return ret;
         }
 
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
-            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
+            CswNbtSearchFilter ret = new CswNbtSearchFilter( "Filter To",
                                                   CswNbtSearchFilterType.objectclass,
                                                   "OC_" + ObjectClass.ObjectClassId.ToString(),
                                                   "All " + ObjectClass.ObjectClass.ToString(),
                                                   ResultCount,
                                                   ObjectClass.IconFileName,
-                                                  Removeable );
+                                                  Removeable,
+                                                  Source );
             ret.ObjectClassId = ObjectClass.ObjectClassId;
+            ret.UseMoreLink = false;
             return ret;
         }
 
-        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
         {
-            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( NodeTypeProp.PropName,
+            CswNbtSearchFilter ret = new CswNbtSearchFilter( NodeTypeProp.PropName,
                                                   CswNbtSearchFilterType.propval,
                                                   NodeTypeProp.PropId.ToString() + "_" + Value,
                                                   Value,
                                                   ResultCount,
                                                   string.Empty,
-                                                  Removeable );
+                                                  Removeable,
+                                                  Source );
             ret.FirstPropVersionId = NodeTypeProp.FirstPropVersionId;
             return ret;
         }
 
-
         #endregion Search Functions
 
-
-        #region Session Cache functions
-
-        /// <summary>
-        /// Save this View to Session's data cache
-        /// </summary>
-        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
+        public void delete()
         {
-            // don't cache twice
-            if( SessionDataId == null || ForceCache || IncludeInQuickLaunch )  // case 23999
+            if( CswTools.IsPrimaryKey( SearchId ) )
             {
-                SessionDataId = _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch, KeepInQuickLaunch );
-            }
-        } // SaveToCache()
-
-        public void clearSessionDataId()
-        {
-            SessionDataId = null;
-        }
-
-        /// <summary>
-        /// Key for retrieving the view from the Session's data cache
-        /// </summary>
-        public CswNbtSessionDataId SessionDataId
-        {
-            get
-            {
-                CswNbtSessionDataId ret = null;
-                if( _SearchObj["sessiondataid"] != null )
+                CswTableUpdate SearchUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtSearchManager_deleteSearch", CswNbtSearchManager.SearchTableName );
+                DataTable SearchTable = SearchUpdate.getTable( "searchid", SearchId.PrimaryKey );
+                if( SearchTable.Rows.Count > 0 )
                 {
-                    ret = new CswNbtSessionDataId( _SearchObj["sessiondataid"].ToString() );
+                    SearchTable.Rows[0].Delete();
+                    SearchUpdate.update( SearchTable );
                 }
-                return ret;
+                SearchId = null;
+                Name = string.Empty;
             }
-            set
-            {
-                if( value != null )
-                {
-                    _SearchObj["sessiondataid"] = value.ToString();
-                }
-            }
-        }
-
-        #endregion Session Cache functions
+        } // delete()
 
 
         #region IEquatable

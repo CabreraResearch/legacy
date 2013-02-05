@@ -116,6 +116,12 @@ namespace ChemSW.Nbt.PropTypes
             this.PendingUpdate = false;
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
@@ -137,6 +143,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             //ViewId = new CswNbtViewId( CswConvert.ToInt32( JObject[_ViewIdSubField.ToXmlNodeName()] ) );
             //PendingUpdate = true;
+        }
+
+        public override void SyncGestalt()
+        {
+
         }
     }//CswNbtNodeProp
 

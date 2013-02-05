@@ -43,6 +43,43 @@ namespace ChemSW.Nbt.WebServices
         public NbtPrintLabel.Response.Epl Data;
     }
 
+    /// <summary>
+    /// Print Job Return Object
+    /// </summary>
+    [DataContract]
+    public class CswNbtPrintJobReturn : CswWebSvcReturn
+    {
+        /// <summary> ctor </summary>
+        public CswNbtPrintJobReturn()
+        {
+            Data = new NbtPrintLabel.Response.printJob();
+        }
+
+        /// <summary> data </summary>
+        [DataMember]
+        public NbtPrintLabel.Response.printJob Data;
+
+    }
+
+    /// <summary>
+    /// Label EPL Return Object
+    /// </summary>
+    [DataContract]
+    public class CswNbtLabelPrinterReg : CswWebSvcReturn
+    {
+        /// <summary> ctor </summary>
+        public CswNbtLabelPrinterReg()
+        {
+            PrinterKey = string.Empty;
+        }
+
+        /// <summary> data </summary>
+        [DataMember]
+        public string PrinterKey;
+
+    }
+
+
 
     public class CswNbtWebServicePrintLabels
     {
@@ -62,26 +99,29 @@ namespace ChemSW.Nbt.WebServices
                     PrintLabelView.ViewName = "getPrintLabelsForNodeType(" + Request.TargetTypeId.ToString() + ")";
                     CswNbtViewRelationship PrintLabelRelationship = PrintLabelView.AddViewRelationship( PrintLabelObjectClass, true );
                     CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty( PrintLabelRelationship, NodeTypesProperty );
-                    PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty, NodeTypesProperty.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Contains, Request.TargetTypeId.ToString() );
+                    PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty,
+                                                          NodeTypesProperty.getFieldTypeRule().SubFields.Default.Name,
+                                                          CswNbtPropFilterSql.PropertyFilterMode.Contains,
+                                                          Request.TargetTypeId.ToString() );
 
                     ICswNbtTree PrintLabelsTree = NbtResources.Trees.getTreeFromView( NbtResources.CurrentNbtUser, PrintLabelView, true, false, false );
                     Int32 PrintLabelCount = PrintLabelsTree.getChildNodeCount();
                     if( PrintLabelCount > 0 )
                     {
-                        String LabelFormatId = _getLabelFormatForTargetId( NbtResources, TargetNodeType, Request.TargetId );
+                        CswPrimaryKey LabelFormatId = _getLabelFormatForTargetId( NbtResources, TargetNodeType, Request.TargetId );
                         PrintLabelsTree.goToRoot();
                         for( int P = 0; P < PrintLabelCount; P += 1 )
                         {
                             PrintLabelsTree.goToNthChild( P );
-                            String PrintLabelId = PrintLabelsTree.getNodeIdForCurrentPosition().ToString();
+                            CswPrimaryKey PrintLabelId = PrintLabelsTree.getNodeIdForCurrentPosition();
                             Return.Data.Labels.Add( new Label
                             {
                                 Name = PrintLabelsTree.getNodeNameForCurrentPosition(),
-                                Id = PrintLabelId
+                                Id = PrintLabelId.ToString()
                             } );
                             if( PrintLabelId == LabelFormatId )
                             {
-                                Return.Data.SelectedLabelId = PrintLabelId;
+                                Return.Data.SelectedLabelId = PrintLabelId.ToString();
                             }
                             PrintLabelsTree.goToParentNode();
                         }
@@ -90,9 +130,9 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getLabels()
 
-        private static String _getLabelFormatForTargetId( CswNbtResources NbtResources, CswNbtMetaDataNodeType TargetNodeType, String TargetId )
+        private static CswPrimaryKey _getLabelFormatForTargetId( CswNbtResources NbtResources, CswNbtMetaDataNodeType TargetNodeType, String TargetId )
         {
-            String LabelFormatId = String.Empty;
+            CswPrimaryKey LabelFormatId = null;
             if( null != TargetId )
             {
                 CswNbtNode TargetNode = NbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( TargetId ) );
@@ -107,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             PropMatchesPrintLabel = true;
                         }
-                        else if ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                        else if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                         {
                             foreach( Int32 PrintLabelNTId in PrintLabelClass.getNodeTypeIds() )
                             {
@@ -119,7 +159,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         if( PropMatchesPrintLabel )
                         {
-                            LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId.ToString();
+                            LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId;
                             break;
                         }
                     }
@@ -127,6 +167,81 @@ namespace ChemSW.Nbt.WebServices
             }
             return LabelFormatId;
         }
+
+        public static void newPrintJob( ICswResources CswResources, CswNbtPrintJobReturn Return, NbtPrintLabel.Request.printJob Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+            if( null == PrintJobOC )
+            {
+                throw new CswDniException( ErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job Object Class" );
+            }
+
+            CswNbtMetaDataNodeType PrintJobNT = PrintJobOC.FirstNodeType;
+            if( null == PrintJobNT )
+            {
+                throw new CswDniException( ErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job NodeType" );
+            }
+
+            CswPrimaryKey LabelPk = new CswPrimaryKey();
+            LabelPk.FromString( Request.LabelId );
+            if( false == CswTools.IsPrimaryKey( LabelPk ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid print label key", "newPrintJob() Print Label Key is not a valid CswPrimaryKey: " + Request.PrinterId );
+            }
+
+            CswNbtObjClassPrintLabel PrintLabel = NbtResources.Nodes[LabelPk];
+            if( null == PrintLabel )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid print label", "newPrintJob() Print Label Key did not match a node." );
+            }
+
+            CswPrimaryKey PrinterPk = new CswPrimaryKey();
+            PrinterPk.FromString( Request.PrinterId );
+            if( false == CswTools.IsPrimaryKey( PrinterPk ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid printer key", "newPrintJob() Printer Key is not a valid CswPrimaryKey: " + Request.PrinterId );
+            }
+
+            CswNbtObjClassPrinter Printer = NbtResources.Nodes[PrinterPk];
+            if( null == Printer )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid printer", "newPrintJob() Printer Key did not match a node." );
+            }
+
+            string JobData = string.Empty;
+            Int32 JobCount = 0;
+
+            CswCommaDelimitedString RealTargetIds = new CswCommaDelimitedString();
+            RealTargetIds.FromString( Request.TargetIds );
+            foreach( string TargetId in RealTargetIds )
+            {
+                CswNbtNode TargetNode = NbtResources.Nodes[TargetId];
+                if( null != TargetNode )
+                {
+                    string EPLText = PrintLabel.EplText.Text;
+                    string Params = PrintLabel.Params.Text;
+                    PrintLabel Label = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode );
+                    JobData += Label.EplText;
+                    JobCount += 1;
+                }
+            } // foreach( string TargetId in RealTargetIds )
+
+            CswNbtObjClassPrintJob NewJob = NbtResources.Nodes.makeNodeFromNodeTypeId( PrintJobNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, false );
+            NewJob.Label.RelatedNodeId = PrintLabel.NodeId;
+            NewJob.LabelCount.Value = JobCount;
+            NewJob.LabelData.Text = JobData;
+            NewJob.Printer.RelatedNodeId = Printer.NodeId;
+            NewJob.RequestedBy.RelatedNodeId = NbtResources.CurrentNbtUser.UserId;
+            NewJob.CreatedDate.DateTimeValue = DateTime.Now;
+            NewJob.postChanges( false );
+
+            Return.Data.JobId = NewJob.NodeId.ToString();
+            Return.Data.JobNo = NewJob.JobNo.Sequence;
+            Return.Data.JobLink = CswNbtNode.getNodeLink( NewJob.NodeId, NewJob.NodeName );
+
+        } // newPrintJob()
 
         public static void getEPLText( ICswResources CswResources, CswNbtLabelEpl Return, NbtPrintLabel.Request.Get Request )
         {
@@ -145,13 +260,9 @@ namespace ChemSW.Nbt.WebServices
                     {
                         // BZ 6118 - this prevents " from being turned into &quot;
                         // BUT SEE BZ 7881!
-                        string EplText = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode ) + "\n";
-                        Return.Data.Labels.Add( new PrintLabel
-                        {
-                            TargetId = TargetNode.NodeId.ToString(),
-                            TargetName = TargetNode.NodeName,
-                            EplText = EplText
-                        } );
+                        //string EplText = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode ) + "\n";
+                        PrintLabel Label = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode );
+                        Return.Data.Labels.Add( Label );
                     }
                 }
             }
@@ -161,35 +272,47 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getEPLText()
 
-        private static string GenerateEPLScript( CswNbtResources NbtResources, string EPLText, string Params, CswNbtNode Node )
+        private static PrintLabel GenerateEPLScript( CswNbtResources NbtResources, string EPLText, string Params, CswNbtNode Node )
         {
+            PrintLabel Ret = new PrintLabel();
             string EPLScript = string.Empty;
             if( false == string.IsNullOrEmpty( EPLText ) )
             {
                 EPLScript = EPLText;
-                if( false == string.IsNullOrEmpty( Params ) )
+                while( EPLScript.Contains( "{" ) )
                 {
-                    string[] ParamsArray = Params.Split( '\n' );
+                    Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
+                    Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
 
-                    while( EPLScript.Contains( "{" ) )
+                    string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
+                    string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
+                    // Find the property
+                    if( null != Node )
                     {
-                        Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
-                        Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
+                        Ret.TargetId = Node.NodeId.ToString();
+                        Ret.TargetName = Node.NodeName;
 
-                        string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
-                        string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
-                        // Find the property
-                        if( null != Node )
+                        CswNbtMetaDataNodeType MetaDataNodeType = NbtResources.MetaData.getNodeType( Node.NodeTypeId );
+                        if( null != MetaDataNodeType )
                         {
-                            CswNbtMetaDataNodeType MetaDataNodeType = NbtResources.MetaData.getNodeType( Node.NodeTypeId );
-                            if( null != MetaDataNodeType )
+                            CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
+                            if( null != MetaDataProp )
                             {
-                                CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
-                                if( null != MetaDataProp )
+                                string PropertyValue = Node.Properties[MetaDataProp].Gestalt;
+                                if( MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
                                 {
-                                    string PropertyValue = Node.Properties[MetaDataProp].Gestalt;
+                                    PropertyValue = Node.Properties[MetaDataProp].AsImage.FileName;
+                                    Ret.Pictos.Add( new PrintLabel.Picto
+                                        {
+                                            FileName = PropertyValue,
+                                            FileURL = Node.Properties[MetaDataProp].AsImage.ImageUrl
+                                        } );
+                                }
 
-                                    bool FoundMatch = false;
+                                bool FoundMatch = false;
+                                if( false == string.IsNullOrEmpty( Params ) )
+                                {
+                                    string[] ParamsArray = Params.Split( '\n' );
                                     foreach( string ParamNVP in ParamsArray )
                                     {
                                         string[] ParamSplit = ParamNVP.Split( '=' );
@@ -218,24 +341,191 @@ namespace ChemSW.Nbt.WebServices
                                             }
                                         }
                                     }
-                                    if( false == FoundMatch )
-                                    {
-                                        EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
-                                    }
+                                }
+                                if( false == FoundMatch )
+                                {
+                                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
                                 }
                             }
                         }
                     }
                 }
             }
+            //}
             if( string.IsNullOrEmpty( EPLScript ) )
             {
                 throw new CswDniException( ErrorType.Error, "Could not generate an EPL script from the provided parameters.", "EPL Text='" + EPLText + "', Params='" + Params + "'" );
             }
-            return EPLScript;
+            Ret.EplText = EPLScript + "\n";
+            return Ret;
         } // GenerateEPLScript()
 
+        public static void registerLpc( ICswResources CswResources, CswNbtLabelPrinterReg Return, LabelPrinter Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Return.Status.Success = false;
 
+            CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
+            if( null != PrinterOC )
+            {
+                CswNbtMetaDataNodeType PrinterNT = PrinterOC.FirstNodeType;
+                if( null != PrinterNT )
+                {
+                    CswNbtMetaDataObjectClassProp PrinterNameOCP = PrinterOC.getObjectClassProp( CswNbtObjClassPrinter.PropertyName.Name );
+
+                    CswNbtView ExistingPrintersView = new CswNbtView( NbtResources );
+                    ExistingPrintersView.ViewName = "Existing Printers";
+                    CswNbtViewRelationship PrinterRel = ExistingPrintersView.AddViewRelationship( PrinterOC, false );
+                    ExistingPrintersView.AddViewPropertyAndFilter( PrinterRel, PrinterNameOCP,
+                                                                   Value: Request.LpcName,
+                                                                   FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    ICswNbtTree ExistingPrintersTree = NbtResources.Trees.getTreeFromView( ExistingPrintersView, false, true, true );
+                    if( ExistingPrintersTree.getChildNodeCount() == 0 )
+                    {
+                        CswNbtObjClassPrinter NewPrinter = NbtResources.Nodes.makeNodeFromNodeTypeId( PrinterNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                        NewPrinter.Name.Text = Request.LpcName;
+                        NewPrinter.Description.Text = Request.Description;
+                        NewPrinter.postChanges( false );
+
+                        Return.Status.Success = true;
+                        Return.PrinterKey = NewPrinter.NodeId.ToString();
+                    } // if( ExistingPrintersTree.getChildNodeCount() == 0 )
+                    else
+                    {
+                        Return.addException( new CswDniException( ErrorType.Error, "That printer is already registered.", "registerLpc() found a printer with the same name: " + Request.LpcName ) );
+                    }
+                } // if( null != PrinterNT )
+                else
+                {
+                    Return.addException( new CswDniException( ErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer NodeType" ) );
+                }
+            } // if( null != PrinterOC )
+            else
+            {
+                Return.addException( new CswDniException( ErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer Object Class" ) );
+            }
+        } // registerLpc()
+
+        public static void nextLabelJob( ICswResources CswResources, CswNbtLabelJobResponse Return, CswNbtLabelJobRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Return.Status.Success = false;
+
+            CswPrimaryKey PrinterNodeId = new CswPrimaryKey();
+            PrinterNodeId.FromString( Request.PrinterKey );
+            if( CswTools.IsPrimaryKey( PrinterNodeId ) )
+            {
+                CswNbtObjClassPrinter Printer = NbtResources.Nodes[PrinterNodeId];
+                if( null != Printer )
+                {
+                    CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
+                    CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+                    if( null != PrinterOC && null != PrintJobOC )
+                    {
+                        CswNbtMetaDataObjectClassProp JobPrinterOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.Printer );
+                        CswNbtMetaDataObjectClassProp JobCreatedDateOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.CreatedDate );
+                        CswNbtMetaDataObjectClassProp JobStateOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.JobState );
+
+                        CswNbtView JobQueueView = new CswNbtView( NbtResources );
+                        JobQueueView.ViewName = "Printer Job Queue";
+                        // Print jobs...
+                        CswNbtViewRelationship JobRel = JobQueueView.AddViewRelationship( PrintJobOC, false );
+                        // ... assigned to this printer ...
+                        JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
+                                                               SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                               Value: PrinterNodeId.PrimaryKey.ToString(),
+                                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        //with state==pending
+                        JobQueueView.AddViewPropertyAndFilter( JobRel, JobStateOCP,
+                                                               SubFieldName: CswNbtSubField.SubFieldName.Value,
+                                                               Value: CswNbtObjClassPrintJob.StateOption.Pending,
+                                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        // ... order by Created Date
+                        CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
+                        JobQueueView.setSortProperty( CreatedDateVP, NbtViewPropertySortMethod.Ascending );
+
+                        ICswNbtTree QueueTree = NbtResources.Trees.getTreeFromView( JobQueueView, false, true, true );
+
+                        if( QueueTree.getChildNodeCount() >= 1 )
+                        {
+                            QueueTree.goToNthChild( 0 );
+                            CswNbtObjClassPrintJob Job = QueueTree.getNodeForCurrentPosition();
+
+                            Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Processing;
+                            Job.ProcessedDate.DateTimeValue = DateTime.Now;
+
+                            Printer.LastJobRequest.DateTimeValue = DateTime.Now;
+
+                            Return.Status.Success = true;
+                            Return.JobKey = Job.NodeId.ToString();
+                            Return.JobNo = Job.JobNo.Sequence;
+                            Return.JobOwner = Job.RequestedBy.CachedNodeName;
+                            Return.LabelCount = CswConvert.ToInt32( Job.LabelCount.Value );
+                            Return.LabelData = Job.LabelData.Text;
+                            Return.LabelName = Job.Label.CachedNodeName;
+                            QueueTree.goToParentNode();
+                            Return.RemainingJobCount = QueueTree.getChildNodeCount() - 1;
+                        }
+                        else
+                        {
+                            //success may have zero labels (and no labeldata)
+                            Return.Status.Success = true;
+                            Return.LabelCount = 0;
+                            Return.RemainingJobCount = 0;
+                        }
+                    } // if( null != PrinterOC && null != PrintJobOC )
+                    else
+                    {
+                        Return.addException( new CswDniException( ErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
+                    }
+                } // if( null != Printer )
+                else
+                {
+                    Return.addException( new CswDniException( ErrorType.Error, "Invalid Printer.", "nextLabelJob() printer key (" + Request.PrinterKey + ") did not match a node" ) );
+                }
+            } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
+            else
+            {
+                Return.addException( new CswDniException( ErrorType.Error, "Invalid Printer.", "nextLabelJob() got an invalid printer key:" + Request.PrinterKey ) );
+            }
+        } // nextLabelJob()
+
+        public static void updateLabelJob( ICswResources CswResources, CswNbtLabelJobUpdateResponse Return, CswNbtLabelJobUpdateRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Return.Status.Success = false;
+
+            CswPrimaryKey JobNodeId = new CswPrimaryKey();
+            JobNodeId.FromString( Request.JobKey );
+            if( CswTools.IsPrimaryKey( JobNodeId ) )
+            {
+                CswNbtObjClassPrintJob Job = NbtResources.Nodes[JobNodeId];
+                if( null != Job )
+                {
+                    if( Request.Succeeded )
+                    {
+                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Closed;
+                    }
+                    else
+                    {
+                        Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Error;
+                        Job.ErrorInfo.Text = Request.ErrorMessage;
+                    }
+                    Job.EndedDate.DateTimeValue = DateTime.Now;
+                    Job.postChanges( false );
+
+                    Return.Status.Success = true;
+                }
+                else
+                {
+                    Return.addException( new CswDniException( ErrorType.Error, "Invalid Job.", "updateLabelJob() job key (" + Request.JobKey + ") did not match a node" ) );
+                }
+            } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
+            else
+            {
+                Return.addException( new CswDniException( ErrorType.Error, "Invalid Job.", "updateLabelJob() got an invalid job key:" + Request.JobKey ) );
+            }
+        } // updateLabelJob()
 
     } // class CswNbtWebServiceTabsAndProps
 

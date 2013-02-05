@@ -37,6 +37,15 @@
                 //    }
                 //});
 
+                cswParent.fileUpload = function (opts) {
+                    /// <summary> Creates a Csw.fileUpload on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the fileUpload.</param>
+                    /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'fileUpload');
+                    return Csw.composites.fileUpload(cswParent, opts);
+
+                };
+                
                 cswParent.grid = function (opts) {
                     /// <summary> Creates a Csw.grid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the grid.</param>
@@ -125,6 +134,14 @@
                     /// <returns type="Csw.composites.thinGrid">A Csw.composites.thinGrid</returns>
                     opts = cswPrivate.controlPreProcessing(opts, 'thinGrid');
                     return Csw.composites.thinGrid(cswParent, opts);
+                };
+                
+                cswParent.tree = function (opts) {
+                    /// <summary> Creates a Csw.tree on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the tree.</param>
+                    /// <returns type="Csw.composites.tree">A Csw.composites.tree</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'tree');
+                    return Csw.composites.tree(cswParent, opts);
                 };
 
                 cswParent.universalSearch = function (opts) {

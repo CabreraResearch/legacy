@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
             NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
             NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
             NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
@@ -66,7 +67,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 if( MetaDataProp != null && MetaDataProp.IsUserRelationship() )
                 {
-                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
+                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" && false == ( RunAsUser is CswNbtSystemUser ) )
                     {
                         CswNbtViewPropertyFilterIn.SubfieldName = NodeIDSubField.Name;
                         CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
@@ -129,7 +130,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 RetView.ViewId = MetaDataProp.ViewId;
                 RetView.Visibility = NbtViewVisibility.Property;
-                RetView.ViewMode = NbtViewRenderingMode.List;
+                RetView.ViewMode = NbtViewRenderingMode.Tree;
                 RetView.ViewName = MetaDataProp.PropName;
                 RetView.save();
             }

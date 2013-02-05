@@ -36,7 +36,11 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _PathSubField;
         private CswNbtSubField _BarcodeSubField;
 
-        public const string TopLevelName = "Top";
+        public static string GetTopLevelName( CswNbtResources NbtResources )
+        {
+            return NbtResources.ConfigVbls.getConfigVariableValue( "LocationViewRootName" );
+        }
+
         public bool CreateContainerLocation = true;
 
         override public bool Empty
@@ -102,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _PathSubField.Column, value, IsNonModifying: true );
-                _CswNbtNodePropData.Gestalt = value;
+                SyncGestalt();
             }
         }
 
@@ -176,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                CachedNodeName = CswNbtLocationTreeDeprecated.TopLevelName;
+                CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
                 CachedPath = CachedNodeName;
                 CachedBarcode = string.Empty;
             }
@@ -213,7 +217,7 @@ namespace ChemSW.Nbt.PropTypes
 
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
 
-            Ret.ViewName = TopLevelName;
+            Ret.ViewName = GetTopLevelName( CswNbtResources );
             Ret.Root.Included = IsLocationNode;
 
             CswNbtViewRelationship LocationLevel1 = Ret.AddViewRelationship( LocationOC, true );
@@ -257,6 +261,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId ) ); } // get
         } // View
+
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
 
         public override void ToJSON( JObject ParentObject )
         {
@@ -428,6 +438,11 @@ namespace ChemSW.Nbt.PropTypes
             } // if(!string.IsNullOrEmpty(LocationNodeIdStr))
             return LocationNodeId;
         } // _HandleReference()
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedPath );
+        }
 
     }//CswNbtNodePropLocation
 }//namespace ChemSW.Nbt.PropTypes

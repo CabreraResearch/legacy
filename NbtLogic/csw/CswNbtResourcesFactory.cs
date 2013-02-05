@@ -1,5 +1,4 @@
 using ChemSW.Config;
-using ChemSW.Core;
 using ChemSW.Log;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
@@ -39,11 +38,9 @@ namespace ChemSW.Nbt
 
             CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode );
             CswDbCfgInfoNbt ConfigInfo = new CswDbCfgInfoNbt( SetupMode, IsMobile: false );
-
-            string FilesPath = CswFilePath.getConfigurationFilePath( SetupMode );
-
+            
             CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
-            ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ), PooledConnectionState );
+            ReturnVal.SetDbResources( new CswNbtTreeFactory(), PooledConnectionState );
 
             //bz # 9896: This events must only be assigned when we first instance the class;
             //if we also assign them to cached resources, we get duplicate events occuring :-(

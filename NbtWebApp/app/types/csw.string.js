@@ -33,6 +33,12 @@
 
         });
 
+    Csw.hrefString = Csw.hrefString ||
+        Csw.register('hrefString', function (string) {
+            //Case 28186: FF and IE will cache binaries if URLs are not unique.
+            return Csw.string(string).trim() + '&uid=' + window.Ext.id();
+        });
+
     Csw.delimitedString = Csw.delimitedString ||
         Csw.register('delimitedString', function (string, opts) {
             /// <summary>
@@ -115,6 +121,9 @@
                         return ((isCaseSensitive && Csw.string(matStr).trim() === str) || Csw.string(matStr).trim().toLowerCase() === str);
                     });
                     return match.length > 0;
+                },
+                each: function(callBack) {
+                    return cswPublic.array.forEach(callBack);
                 }
             };
 
@@ -163,8 +172,7 @@
                             cswPublic.array.push(val);
                         }
                     });
-                }
-                else if (opts) {
+                } else if(string && string.length > 0) {
                     Csw.extend(cswPrivate, opts);
                     var delimitedString = cswPrivate.parse(string);
                     cswPrivate.initString = delimitedString;

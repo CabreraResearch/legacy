@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Value );
             ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
             ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( ValueSubField );

@@ -169,7 +169,7 @@
             urlMethod: o.ViewInfoUrl,
             data: { ViewId: o.viewid },
             success: function (data) {
-                var viewJson = data.TreeView;
+                var viewJson = data.view.TreeView;
 
                 var treecontent = viewJsonHtml(viewJson);
 

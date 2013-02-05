@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 if( _CswNbtNodePropData.SetPropRowValue( _EncryptedPasswordSubField.Column, value ) )
                 {
-                    _CswNbtNodePropData.Gestalt = value;
+                    SyncGestalt();
                     ChangedDate = DateTime.Now;
                 }
             }
@@ -168,6 +168,12 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
@@ -210,6 +216,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Password = NewPassword;
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, EncryptedPassword );
         }
     }//CswNbtNodePropPassword
 

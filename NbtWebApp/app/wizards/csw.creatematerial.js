@@ -9,6 +9,8 @@
         Csw.nbt.register('createMaterialWizard', function (cswParent, options) {
             'use strict';
 
+            //#region Properties
+
             var cswPrivate = {
                 name: 'cswCreateMaterialWizard',
                 exitFunc: null,
@@ -52,7 +54,7 @@
                     partNo: '',
                     properties: {},
                     documentProperties: {},
-                    useExistingMaterial: false,
+                    useExistingTempNode: false,
                     materialProperies: {}
                 }
             };
@@ -73,6 +75,10 @@
                 sizesForm: null,
                 sizeGrid: null
             };
+
+            //#endregion Properties
+
+            //#region State Functions
 
             cswPrivate.validateState = function () {
                 var state;
@@ -95,127 +101,20 @@
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
             };
 
+            //#endregion State Functions
+
+            //#region Wizard Functions
+
             cswPrivate.reinitSteps = function (startWithStep) {
-                cswPrivate.stepThreeComplete = false;
+                cswPrivate.stepFourComplete = false;
+                if (startWithStep <= 3) {
+                    cswPrivate.stepThreeComplete = false;
 
-                if (startWithStep <= 2) {
-                    cswPrivate.stepTwoComplete = false;
-
-                    if (startWithStep <= 1) {
-                        /* This is mostly for debugging, you probably never need to reset step 1 in practice */
-                        cswPrivate.stepOneComplete = false;
+                    if (startWithStep <= 2) {
+                        cswPrivate.stepTwoComplete = false;
                     }
                 }
             };
-
-            (function () {
-                Csw.extend(cswPrivate, options);
-
-                cswPrivate.validateState();
-                cswPrivate.wizardSteps = {
-                    1: 'Choose Type and Identity',
-                    2: 'Additional Properties',
-                    3: 'Size(s)',
-                    4: 'Attach MSDS'
-                };
-
-                cswPrivate.currentStepNo = cswPrivate.startingStep;
-
-                cswPrivate.handleStep = function (newStepNo) {
-                    cswPrivate.setState();
-                    if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
-                        cswPrivate.lastStepNo = cswPrivate.currentStepNo;
-                        cswPrivate.currentStepNo = newStepNo;
-                        cswPrivate['makeStep' + newStepNo]();
-
-                        if (cswPrivate.currentStepNo === 2) {
-                            if (cswPrivate.lastStepNo === 3) {
-                                cswPrivate.state.materialId = '';
-                                cswPrivate.state.documentId = '';
-                                cswPrivate.state.properties = {};
-                                cswPrivate.state.useExistingMaterial = false;
-                                cswPrivate.reinitSteps(2);
-                            }
-                            cswPrivate.createMaterial();
-                            if (cswPrivate.isDuplicateMaterial) {
-
-                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                            }
-                        }
-                        if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) &&
-                            cswPrivate.currentStepNo > 2) {
-
-                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
-                            if (cswPrivate.lastStepNo === 2) {
-                                cswPrivate.tabsAndProps.save({}, '', null, false);
-                            }
-                        }
-                        if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            cswPrivate.state.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
-                        }
-                    }
-                };
-
-                cswPrivate.finalize = function () {
-                    function getMaterialDefinition() {
-                        var createMaterialDef = {
-                            useexistingmaterial: cswPrivate.state.useExistingMaterial,
-                            sizes: cswPrivate.sizeNodes,
-                            sizeNodes: []
-                        };
-
-                        if (false === cswPrivate.state.useExistingMaterial) {
-                            createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
-                            createMaterialDef.materialId = cswPrivate.state.materialId;
-                            createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
-                            createMaterialDef.tradename = cswPrivate.state.tradeName;
-                            createMaterialDef.partno = cswPrivate.state.partNo;
-                            createMaterialDef.documentid = cswPrivate.state.documentId;
-                            createMaterialDef.supplierid = cswPrivate.state.supplier.val;
-                            createMaterialDef.suppliername = cswPrivate.state.supplier.name;
-                            Csw.each(cswPublic.rows, function (row) {
-                                createMaterialDef.sizeNodes.push(row.sizeValues);
-                            });
-                            createMaterialDef.properties = cswPrivate.state.properties;
-                            if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                                createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
-                            }
-                        } else {
-                            createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
-                        }
-                        return JSON.stringify(createMaterialDef);
-                    }
-
-                    Csw.ajax.post({
-                        urlMethod: 'commitMaterial',
-                        data: {
-                            MaterialDefinition: getMaterialDefinition()
-                        },
-                        success: function (data) {
-                            cswPrivate.clearState();
-                            Csw.tryExec(cswPrivate.onFinish, data.landingpagedata);
-                        }
-                    });
-                };
-
-                cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
-                    Title: 'Create Material',
-                    StepCount: 4,
-                    Steps: cswPrivate.wizardSteps,
-                    StartingStep: cswPrivate.startingStep,
-                    FinishText: 'Finish',
-                    onNext: cswPrivate.handleStep,
-                    onPrevious: cswPrivate.handleStep,
-                    onCancel: function () {
-                        cswPrivate.clearState();
-                        Csw.tryExec(cswPrivate.onCancel);
-                    },
-                    onFinish: cswPrivate.finalize,
-                    doNextOnInit: false
-                });
-
-            } ());
-
 
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
@@ -230,21 +129,56 @@
                 return false;
             };
 
-            //Step 1: 
+            cswPrivate.handleStep = function (newStepNo) {
+                cswPrivate.setState();
+                if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
+                    cswPrivate.lastStepNo = cswPrivate.currentStepNo;
+                    cswPrivate.currentStepNo = newStepNo;
+                    cswPrivate['makeStep' + newStepNo]();
+
+                    if (cswPrivate.currentStepNo === 2) {
+                        if (cswPrivate.lastStepNo === 3) {
+                            cswPrivate.state.materialId = '';
+                            cswPrivate.state.documentId = '';
+                            cswPrivate.state.properties = {};
+                                cswPrivate.state.useExistingTempNode = false;
+                            cswPrivate.reinitSteps(2);
+                        }
+                        cswPrivate.createMaterial();
+                        if (cswPrivate.isDuplicateMaterial) {
+
+                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+                        }
+                    }
+                    if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
+                        cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                        if (cswPrivate.lastStepNo === 2) {
+                            cswPrivate.tabsAndProps.save({}, '', null, false);
+                        }
+                    }
+                    if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                        cswPrivate.state.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                    }
+                }
+            };
+
+            //#endregion Wizard Functions
+
+            //#region Step 1: Choose Type and Identity
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
                     function changeMaterial() {
                         var hasChanged = false;
                         if (cswPrivate.materialTypeSelect &&
-                            cswPrivate.state.materialType.val !== cswPrivate.materialTypeSelect.val()) {
+                            Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
 
                             hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
-                            cswPrivate.makeSupplierCtrl(cswPrivate.state.materialType.val);
                         }
                         if (cswPrivate.supplierSelect &&
-                            cswPrivate.state.supplier.val !== cswPrivate.supplierSelect.val()) {
+                            cswPrivate.supplierSelect.selectedText &&
+                            Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
 
                             hasChanged = true;
                             cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
@@ -266,7 +200,7 @@
                             cswPrivate.state.materialId = '';
                             cswPrivate.state.documentId = '';
                             cswPrivate.state.properties = {};
-                            cswPrivate.state.useExistingMaterial = false;
+                            cswPrivate.state.useExistingTempNode = false;
                             cswPrivate.reinitSteps(2);
                         }
                     }
@@ -290,11 +224,9 @@
                             FirstCellRightAlign: true,
                         });
 
-                        
-
                         //Material
-                        tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true);
-                        cswPrivate.materialTypeSelect = tbl.cell(1,2).nodeTypeSelect({
+                        tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
+                        cswPrivate.materialTypeSelect = tbl.cell(1, 2).nodeTypeSelect({
                             name: 'nodeTypeSelect',
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
@@ -304,10 +236,10 @@
                             onSuccess: changeMaterial,
                             isRequired: true
                         });
-                        
+
                         // TRADENAME
-                        tbl.cell(2, 1).span().setLabelText('Tradename: ', true);
-                        cswPrivate.tradeNameInput = tbl.cell(2,2).input({
+                        tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);
+                        cswPrivate.tradeNameInput = tbl.cell(2, 2).input({
                             name: 'tradename',
                             cssclass: 'required',
                             value: cswPrivate.state.tradeName,
@@ -316,35 +248,41 @@
                             },
                             isRequired: true
                         });
-                        
+
 
                         // SUPPLIER
-                        cswPrivate.makeSupplierCtrl = function(NodeTypeId){
-                            tbl.cell(3,1).empty();
-                            tbl.cell(3,2).empty();
-                            tbl.cell(3, 1).span().setLabelText('Supplier: ', true);
-                            cswPrivate.supplierSelect = tbl.cell(3,2).nodeSelect({
-                                name: 'supplier',
+                        cswPrivate.makeSupplierCtrl = function (NodeTypeId) {
+                            tbl.cell(3, 1).empty();
+                            tbl.cell(3, 2).empty();
+                            tbl.cell(3, 1).span().setLabelText('Supplier: ', true, false);
+
+                            var ajaxData = {};
+                            if (cswPrivate.supplierViewId) {
+                                ajaxData.ViewId = cswPrivate.supplierViewId;
+                            } else {
+                                ajaxData.ObjectClass = 'VendorClass';
+                            }
+
+                            cswPrivate.supplierSelect = tbl.cell(3, 2).nodeSelect({
+                                name: 'Supplier',
                                 async: false,
                                 cssclass: 'required',
                                 width: '200px',
-                                nodesUrlMethod: 'Nodes/getRelationshipOpts',
-                                ajaxData:{
-                                    NodeTypeId: NodeTypeId,
-                                    PropName: 'Supplier',
-                                    TargetNodeTypeName: 'Vendor'
-                                },
+                                ajaxData: ajaxData,
                                 showSelectOnLoad: true,
+                                allowAdd: true,
                                 addNodeDialogTitle: 'Vendor',
                                 selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                                 onChange: changeMaterial,
                                 isRequired: true
                             });
                         };
+                        // Call the function to create the Supplier Picklist
+                        cswPrivate.makeSupplierCtrl();
 
                         // PARTNO
                         tbl.cell(4, 1).span().setLabelText('Part No:  ');
-                        cswPrivate.partNoInput = tbl.cell(4,2).input({
+                        cswPrivate.partNoInput = tbl.cell(4, 2).input({
                             name: 'partno',
                             value: cswPrivate.state.partNo,
                             onChange: function () {
@@ -369,7 +307,8 @@
                                     NodeTypeId: cswPrivate.state.materialType.val,
                                     Tradename: cswPrivate.state.tradeName,
                                     Supplier: cswPrivate.state.supplier.val,
-                                    PartNo: cswPrivate.state.partNo
+                                    PartNo: cswPrivate.state.partNo,
+                                    NodeId: cswPrivate.state.materialId
                                 },
                                 success: function (data) {
                                     removeFoundMaterialLabel();
@@ -396,8 +335,10 @@
                         cswPrivate.stepOneComplete = true;
                     }
                 };
-            } ());
+            }());
+            //#endregion Step 1: Choose Type and Identity
 
+            //#region Step 2: Additional Properties
             cswPrivate.makeStep2 = (function () {
                 cswPrivate.stepTwoComplete = false;
 
@@ -408,9 +349,26 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    
+                    var renderProps = function() {
+                        cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                            globalState: {
+                                excludeOcProps: ['tradename', 'supplier', 'partno'],
+                                currentNodeId: cswPrivate.state.materialId,
+                                propertyData: cswPrivate.state.properties,
+                                ShowAsReport: false
+                            },
+                            tabState: {
+                                showSaveButton: false,
+                                nodetypeid: cswPrivate.state.materialType.val,
+                                EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
+                            },
+                            ReloadTabOnSave: false,
+                            async: false
+                        });
+                    };
 
-                    if (false === cswPrivate.stepTwoComplete &&
-                        false === cswPrivate.state.useExistingMaterial) {
+                    if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
 
@@ -418,59 +376,29 @@
                             text: "Provide additional data for this material.",
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.divStep2.br({ number: 4 });
+                        cswPrivate.divStep2.br({ number: 2 }); //Changed from 4 to 2: See Case 28655
 
                         div = cswPrivate.divStep2.div();
-                        Csw.subscribe('CreateMaterialSuccess', function () {
-                            cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                globalState: {
-                                    excludeOcProps: ['tradename', 'supplier', 'partno'],
-                                    currentNodeId: cswPrivate.state.materialId,
-                                    propertyData: cswPrivate.state.properties,
-                                    ShowAsReport: false
-                                },
-                                tabState: {
-                                    showSaveButton: false,
-                                    nodetypeid: cswPrivate.state.materialType.val,
-                                    EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
-                                },
-                                ReloadTabOnSave: false,
-                                async: false
+                        if (false === cswPrivate.state.useExistingTempNode) {
+                            Csw.subscribe('CreateMaterialSuccess', function() {
+                                renderProps();
+                                //cswPrivate.stepTwoComplete = true;
                             });
+                        } else {
+                            renderProps();
+                        }
 
-                            //cswPrivate.stepTwoComplete = true;
-                        });
-                    }
+                    } // if (false === cswPrivate.stepTwoComplete)
                 };
+            }());
+            //#endregion Step 2: Additional Properties
 
-            } ());
-
+            //#region Step 3: Size(s)
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
 
                 return function () {
                     var div, selectDiv;
-
-                    function isSizeNew(size) {
-                        var ret = true;
-                        for (var i = 0; i < cswPublic.rows.length; i++) {
-                            if (cswPublic.rows[i].sizeValues["quantity"] === size["quantity"] &&
-                                cswPublic.rows[i].sizeValues["unit"] === size["unit"] &&
-                                cswPublic.rows[i].sizeValues["catalogNo"] === size["catalogNo"]
-                            ) {
-                                ret = false;
-                            }
-                        }
-                        return ret;
-                    }
-
-                    function sizeSelect(retObj, count) {
-                        cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
-                        if (count > 1) {
-                            selectDiv.show();
-                        }
-                    }
-
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
@@ -490,6 +418,10 @@
                         div.br({ number: 1 });
 
                         var makeGrid = function () {
+
+//                            cswPrivate.rows = [
+//                                [{ "value": 5 }, { "value": "9 kg" }, { "value": "AAAL135-09" }]
+//                            ];
 
                             //get Units of Measure for this Material
                             var unitsOfMeasure = [];
@@ -516,16 +448,16 @@
 
                             cswPrivate.header = [{ "value": cswPrivate.config.unitCountName, "isRequired": false },
                                 { "value": cswPrivate.config.quantityName, "isRequired": true },
-                                { "value": cswPrivate.config.numberName, "isRequired": false}];
+                                { "value": cswPrivate.config.numberName, "isRequired": false }];
                             if (cswPrivate.showQuantityEditable) {
-                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false}]);
+                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false }]);
                             }
                             if (cswPrivate.showDispensable) {
-                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false}]);
+                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
                             }
-                            if (cswPrivate.rows.length === 0) {
-                                cswPrivate.rows.push(cswPrivate.header);
-                            }
+                            //if (cswPrivate.rows.length === 0) {
+                                cswPrivate.rows.unshift(cswPrivate.header);
+                           //}
                             cswPublic.sizesForm = cswPrivate.divStep3.form();
                             cswPublic.sizeGrid = cswPublic.sizesForm.thinGrid({
                                 linkText: '',
@@ -629,8 +561,14 @@
                                 }
                             });
                         };
-
                         div.br();
+
+                        var sizeSelect = function (retObj, count) {
+                            cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
+                            if (count > 1) {
+                                selectDiv.show();
+                            }
+                        };
 
                         /* Size Select (hidden if only 1 NodeType present) - to get size node type */
                         selectDiv = div.div();
@@ -665,10 +603,10 @@
                         cswPrivate.stepThreeComplete = true;
                     }
                 };
+            }());
+            //#endregion Step 3: Size(s)
 
-            } ());
-
-            //MSDS upload
+            //#region Step 4: Attach SDS
             cswPrivate.makeStep4 = (function () {
                 cswPrivate.stepFourComplete = false;
 
@@ -720,11 +658,96 @@
                         cswPrivate.stepFourComplete = true;
                     }
                 };
+            }());
+            //#endregion Step 4: Attach SDS
 
-            } ());
+            //#region ctor
+
+            (function () {
+                Csw.extend(cswPrivate, options);
+                cswPrivate.validateState();
+                cswPrivate.wizardSteps = {
+                    1: 'Choose Type and Identity',
+                    2: 'Additional Properties',
+                    3: 'Size(s)',
+                    4: 'Attach SDS'
+                };
+                cswPrivate.currentStepNo = cswPrivate.startingStep;
+
+                cswPrivate.finalize = function () {
+                    function getMaterialDefinition() {
+                        var createMaterialDef = {
+                            useexistingmaterial: cswPrivate.state.useExistingTempNode,
+                            sizes: cswPrivate.sizeNodes,
+                            sizeNodes: []
+                        };
+
+                        //TODO: Come back to this logic with CF to make sure removing this if/else is ok.
+                        //if (false === cswPrivate.state.useExistingTempNode) {
+                            createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
+                            createMaterialDef.materialId = cswPrivate.state.materialId;
+                            createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
+                            createMaterialDef.tradename = cswPrivate.state.tradeName;
+                            createMaterialDef.partno = cswPrivate.state.partNo;
+                            createMaterialDef.documentid = cswPrivate.state.documentId;
+                            createMaterialDef.supplierid = cswPrivate.state.supplier.val;
+                            createMaterialDef.suppliername = cswPrivate.state.supplier.name;
+                            Csw.each(cswPublic.rows, function (row) {
+                                createMaterialDef.sizeNodes.push(row.sizeValues);
+                            });
+                            createMaterialDef.properties = cswPrivate.state.properties;
+                            if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                                createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                            }
+                        //} else {
+                            //createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
+                        //}
+                        return JSON.stringify(createMaterialDef);
+                    }
+
+                    Csw.ajax.post({
+                        urlMethod: 'commitMaterial',
+                        data: {
+                            MaterialDefinition: getMaterialDefinition()
+                        },
+                        success: function (data) {
+                            cswPrivate.clearState();
+                            Csw.tryExec(cswPrivate.onFinish, data.landingpagedata);
+                        }
+                    });
+                };
+
+                cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
+                    Title: 'Create Material',
+                    StepCount: 4,
+                    Steps: cswPrivate.wizardSteps,
+                    StartingStep: cswPrivate.startingStep,
+                    FinishText: 'Finish',
+                    onNext: cswPrivate.handleStep,
+                    onPrevious: cswPrivate.handleStep,
+                    onCancel: function () {
+                        cswPrivate.clearState();
+                        Csw.tryExec(cswPrivate.onCancel);
+                    },
+                    onFinish: cswPrivate.finalize,
+                    doNextOnInit: false
+                });
+
+                //Get the Suppliers View to drive the Supplier picklist
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Materials/views',
+                    async: false,
+                    success: function (data) {
+                        cswPrivate.supplierViewId = data.SuppliersView.ViewId;
+                    }
+                });
+
+            }());
+
+            //#endregion ctor
 
             cswPrivate.makeStep1();
 
             return cswPublic;
         });
-} ());
+}());

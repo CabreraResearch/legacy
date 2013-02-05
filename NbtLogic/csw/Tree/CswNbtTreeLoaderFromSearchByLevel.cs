@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -9,7 +10,6 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using System.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt
 
         public override void load( bool RequireViewPermissions )
         {
-            _CswNbtTree.makeRootNode( "", false, NbtViewAddChildrenSetting.None );
+            _CswNbtTree.makeRootNode( "", false );
 
             _CswNbtTree.goToRoot();
 
@@ -147,37 +147,14 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
             #region Container View Inventory Group Permission
-            CswNbtObjClassContainer ContainerNode = null;
             if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerClass )
             {
-                ContainerNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-            }
-            else if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerDispenseTransactionClass )
-            {
-                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != ContDispTransNode )
+
+                CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                if( null != CswNbtObjClassContainer )
                 {
-                    if( null != ContDispTransNode.SourceContainer.RelatedNodeId )
-                    {
-                        ContainerNode = _CswNbtResources.Nodes[ContDispTransNode.SourceContainer.RelatedNodeId];
-                    }
-                    else if( null != ContDispTransNode.DestinationContainer.RelatedNodeId )
-                    {
-                        ContainerNode = _CswNbtResources.Nodes[ContDispTransNode.DestinationContainer.RelatedNodeId];
-                    }
+                    canView = CswNbtObjClassContainer.canContainer( CswNbtPermit.NodeTypePermission.View, null );
                 }
-            }
-            else if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerLocationClass )
-            {
-                CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != ContainerLocationNode )
-                {
-                    ContainerNode = _CswNbtResources.Nodes[ContainerLocationNode.Container.RelatedNodeId];
-                }
-            }
-            if( null != ContainerNode )
-            {
-                canView = ContainerNode.canContainer( CswNbtPermit.NodeTypePermission.View );
             }
             #endregion
             return canView;
@@ -223,7 +200,7 @@ namespace ChemSW.Nbt
             string Select = @"select n.nodeid,
                                      n.nodename, 
                                      n.locked,
-                                     t.iconfilename,
+                                     nvl(n.iconfilename, t.iconfilename) iconfilename, 
                                      t.nodetypename,
                                      t.nametemplate,
                                      t.nodetypeid,
@@ -237,7 +214,7 @@ namespace ChemSW.Nbt
 
             // Filter out disabled nodetypes/object classes (see case 26029)
             Where += "where t.enabled = '1' ";
-
+            
             Select += ",lower(n.nodename) mssqlorder ";
             OrderBy = " order by lower(n.nodename)";
             OrderBy += ",n.nodeid,lower(props.propname) "; // for property multiplexing
@@ -272,12 +249,27 @@ namespace ChemSW.Nbt
                     Where += @" and ";
                 }
 
-                Where += @" n.nodeid in (select nodeid 
-                                                from jct_nodes_props jnp 
-                                                join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
-                                                join field_types f on (p.fieldtypeid = f.fieldtypeid) 
-                                               where f.searchable = '1' 
-                                                 and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" ))";
+                // case 26827 - search deferment
+                Where += @" n.nodeid in (select jnp.nodeid
+                                           from jct_nodes_props jnp
+                                           join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
+                                           join nodetypes t on (p.nodetypeid = t.nodetypeid)
+                                           join field_types f on (p.fieldtypeid = f.fieldtypeid)
+                                          where f.searchable = '1'
+                                            and t.searchdeferpropid is null
+                                            and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" )
+                                      UNION
+                                         select rn.nodeid
+                                           from nodes n
+                                           join jct_nodes_props jnp on jnp.nodeid = n.nodeid
+                                           join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
+                                           join field_types f on (p.fieldtypeid = f.fieldtypeid)
+                                           join nodetypes t on t.nodetypeid = p.nodetypeid
+                                           join nodetype_props r on t.searchdeferpropid = r.nodetypepropid
+                                           join jct_nodes_props rj on (r.nodetypepropid = rj.nodetypepropid and rj.nodeid = n.nodeid)
+                                           join nodes rn on rj.field1_fk = rn.nodeid
+                                          where f.searchable = '1'
+                                            and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" )) ";
             }
             From += @"                                                              ))
                                                            )
@@ -291,7 +283,7 @@ namespace ChemSW.Nbt
 
             if( CswTools.IsInteger( _SearchTerm ) )
             {
-                Where += " or n.nodeid = '" + _SearchTerm + "')";
+                Where += " or (n.nodeid = '" + _SearchTerm + "' and t.searchdeferpropid is null))";
             }
             else
             {

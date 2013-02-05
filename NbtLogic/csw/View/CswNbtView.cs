@@ -186,12 +186,18 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Use view in Mobile
+        /// Group by sibling nodetypes
         /// </summary>
-        public bool ForMobile
+        public bool GroupBySiblings
         {
-            get { return Root.ForMobile; }
-            set { Root.ForMobile = value; }
+            get { return Root.GroupBySiblings; }
+            set { Root.GroupBySiblings = value; }
+        }
+
+        public string GridGroupByCol
+        {
+            get { return Root.GridGroupByCol; }
+            set { Root.GridGroupByCol = value; }
         }
 
         /// <summary>
@@ -321,21 +327,9 @@ namespace ChemSW.Nbt
 
         /// <summary>
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
-        /// For a relationship below the root level, determined by a nodetype property
+        /// For a relationship below the root level, determined by a property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
-        {
-            CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
-            if( ParentViewRelationship != null )
-                ParentViewRelationship.addChildRelationship( NewRelationship );
-            return NewRelationship;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
-        /// For a relationship below the root level, determined by an object class property
-        /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, ICswNbtMetaDataProp Prop, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -726,7 +720,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["viewname"] = ViewName;
             ViewTable.Rows[0]["category"] = Category;
             ViewTable.Rows[0]["viewxml"] = this.ToString();
-            ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
+            ViewTable.Rows[0]["groupbysiblings"] = CswConvert.ToDbVal( GroupBySiblings );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
             ViewTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( IsDemo );
@@ -791,36 +785,55 @@ namespace ChemSW.Nbt
         public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
         {
             if( ViewName == string.Empty )
+            {
                 throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
+            }
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
+            {
                 throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
+            }
 
             // Before New View Events
             Collection<object> BeforeNewEvents = _CswNbtResources.CswEventLinker.Trigger( BeforeNewViewEventName );
             foreach( object Handler in BeforeNewEvents )
             {
                 if( Handler is BeforeNewViewEventHandler )
+                {
                     ( (BeforeNewViewEventHandler) Handler )();
+                }
             }
 
             // Insert a new view
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "ViewTableUpdate", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getEmptyTable();
 
+            NbtViewRenderingMode NewViewMode = this.ViewMode;
+            string NewViewCategory = Category;
+            if( null != CopyView )
+            {
+                NewViewMode = CopyView.ViewMode;
+                NewViewCategory = CopyView.Category;
+            }
+
             DataRow NewRow = ViewTable.NewRow();
             NewRow["viewname"] = ViewName;
-            NewRow["formobile"] = CswConvert.ToDbVal( ForMobile );
+            NewRow["groupbysiblings"] = CswConvert.ToDbVal( GroupBySiblings );
             NewRow["visibility"] = Visibility.ToString();
-            NewRow["viewmode"] = ViewMode.ToString();
+            NewRow["viewmode"] = NewViewMode.ToString();
+            NewRow["category"] = NewViewCategory;
             NewRow["userid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( UserId != null )
+            {
                 NewRow["userid"] = CswConvert.ToDbVal( UserId.PrimaryKey );
+            }
 
             NewRow["roleid"] = CswConvert.ToDbVal( Int32.MinValue );
             if( Visibility == NbtViewVisibility.Role && RoleId != null )
+            {
                 NewRow["roleid"] = CswConvert.ToDbVal( RoleId.PrimaryKey );
+            }
 
             ViewTable.Rows.Add( NewRow );
             ViewTableUpdate.update( ViewTable );
@@ -828,13 +841,17 @@ namespace ChemSW.Nbt
             // Reset this view info to the new one
             Clear();
             if( CopyView != null )
+            {
                 this.LoadXml( CopyView.ToXml() );
+            }
             this.ViewId = new CswNbtViewId( CswConvert.ToInt32( NewRow["nodeviewid"] ) );
             this.ViewName = ViewName;
+            this.ViewMode = NewViewMode;
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
             this.VisibilityUserId = UserId;
-            this.ForMobile = ForMobile;
+            this.Category = NewViewCategory;
+            this.GroupBySiblings = GroupBySiblings;
 
             // The XML includes the viewid and viewname, so it has to be updated before it can be saved
             NewRow["viewxml"] = this.ToString();
@@ -848,7 +865,9 @@ namespace ChemSW.Nbt
             foreach( object Handler in AfterNewEvents )
             {
                 if( Handler is AfterNewViewEventHandler )
+                {
                     ( (AfterNewViewEventHandler) Handler )( this );
+                }
             }
         }
 
@@ -985,7 +1004,7 @@ namespace ChemSW.Nbt
             }
         } // Delete()
 
-        public const Int32 ViewNameLength = 30;
+        public const Int32 ViewNameLength = 200;
 
         public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
@@ -1092,6 +1111,21 @@ namespace ChemSW.Nbt
             Root.ViewName = OldName;
             Root.ViewId = ViewId;
         }
+
+        public void CopyFromView( CswNbtView ViewToCopy )
+        {
+            if( null != ViewToCopy && ViewToCopy.Root.ChildRelationships.Count > 0 )
+            {
+                this.Root.ChildRelationships.Clear();
+                foreach( CswNbtViewRelationship Relationship in ViewToCopy.Root.ChildRelationships )
+                {
+                    this.Root.addChildRelationship( Relationship );
+                }
+                this.save();
+            }
+        }
+
+        
 
         #region Find ViewNode
 

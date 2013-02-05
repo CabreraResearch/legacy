@@ -774,7 +774,7 @@ namespace ChemSW.Nbt.Actions
             CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
             CompliantAnswers.FromString( CompliantAnswersString );
 
-            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive: false ) )
+            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive : false ) )
             {
                 PreferredAnswerString = "";
             }
@@ -872,7 +872,7 @@ namespace ChemSW.Nbt.Actions
                 foreach( DataRow Row in UploadDataTable.Rows )
                 {
                     string Question = _standardizeName( Row[_QuestionName] );
-                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive: false ) )
+                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive : false ) )
                     {
                         _UniqueQuestions.Add( Question );
                         if( false == string.IsNullOrEmpty( Question ) )
@@ -913,16 +913,28 @@ namespace ChemSW.Nbt.Actions
             return ( RetDataTable );
         }
 
-        public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
+        public JObject copyInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
         {
+            JObject RetObj = new JObject();
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignName );
+            if( null != InspectionDesignNt )
+            {
+                string CopyInspectionNameOrig = CswTools.makeUniqueCopyName( InspectionDesignName, MaxLength : 50 );
+                string CopyInspectionNameFinal = CopyInspectionNameOrig;
+                Int32 Iterator = 0;
+                while( null != _CswNbtResources.MetaData.getNodeType( CopyInspectionNameFinal ) )
+                {
+                    Iterator += 1;
+                    CopyInspectionNameFinal = CopyInspectionNameOrig + " " + Iterator;
+                }
+                CswNbtMetaDataNodeType CopiedInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( InspectionDesignNt, CopyInspectionNameFinal );
 
-            CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
-            _setInspectionDesignTabsAndProps( InspectionDesignNt, InspectionTargetNt );
-            _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
+                CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category );
+                _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );
+                _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
-            JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
-
+                RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt );
+            }
             return RetObj;
         }
 
@@ -932,13 +944,13 @@ namespace ChemSW.Nbt.Actions
             return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
         }
 
-        public JObject createInspectionDesignTabsAndProps( DataTable TheQuestions, string InspectionDesignName, string InspectionTargetName, string Category )
-        {
+        //public JObject createInspectionDesignTabsAndProps( DataTable TheQuestions, string InspectionDesignName, string InspectionTargetName, string Category )
+        //{
 
-            JObject GridObj = CswConvert.DataTableToJSON( prepareDataTable( TheQuestions ) );
-            JArray GridArray = (JArray) GridObj["data"];
-            return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
-        }
+        //    JObject GridObj = CswConvert.DataTableToJSON( prepareDataTable( TheQuestions ) );
+        //    JArray GridArray = (JArray) GridObj["data"];
+        //    return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
+        //}
 
         private JObject _createInspectionDesignTabsAndProps( JArray GridArray, string InspectionDesignName, string InspectionTargetName, string Category )
         {

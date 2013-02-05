@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void RefreshSelectedNodeTypeNames()
         {
-            _CswNbtNodePropData.Gestalt = SelectedNodeTypeNames().ToString();
+            SyncGestalt();
             PendingUpdate = false;
         }
 
@@ -156,6 +156,13 @@ namespace ChemSW.Nbt.PropTypes
                 return Data;
             }
         }
+
+        public override string ValueForNameTemplate
+        {
+            get { return Gestalt; }
+        }
+
+
 
         public const string NameColumn = "label";
         public const string KeyColumn = "key";
@@ -258,6 +265,11 @@ namespace ChemSW.Nbt.PropTypes
 
             return NodeTypeNames;
         } // SelectedNodeTypeNames()
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, SelectedNodeTypeNames().ToString() );
+        }
 
     }//CswNbtNodePropNodeTypeSelect
 }//namespace ChemSW.Nbt.PropTypes

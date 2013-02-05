@@ -49,7 +49,7 @@
                 function onClick() {
                     var doEnable = function () {
                         cswPublic.enable();
-                        Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
+                        Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, null, doEnable);
                     };
                     /* Case 25810 */
                     if (cswPrivate.isEnabled) {

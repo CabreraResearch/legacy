@@ -33,6 +33,10 @@
                 return cswPublic;
             };
 
+            cswPublic.selectedData = function (propName) {
+                return cswPublic.$.find('option:selected')[0].dataset[propName];
+            };
+
             cswPublic.selectedText = function () {
                 return cswPublic.$.find('option:selected').text();
             };
@@ -45,6 +49,8 @@
                 var ret, display, value;
                 if (Csw.contains(opt, 'value') && Csw.contains(opt, 'display')) {
                     ret = opt;
+                } else if (Csw.contains(opt, 'id') && Csw.contains(opt, 'value')) {
+                    ret = { value: opt.id, display: opt.value };
                 } else if (Csw.contains(opt, 'value')) {
                     value = Csw.string(opt.value);
                     ret = { value: value, display: value };
@@ -54,6 +60,7 @@
                 } else {
                     ret = { value: opt, display: opt };
                 }
+                ret.isSelected = opt.isSelected || opt.value === cswPrivate.selected;
                 return ret;
             };
 
@@ -86,7 +93,7 @@
                     }
                     Csw.each(values, function (thisOpt) {
                         var opt = cswPublic.makeOption(thisOpt);
-                        cswPublic.addOption(opt, (opt.value === cswPrivate.selected));
+                        cswPublic.addOption(opt, opt.isSelected);
                     });
                 }
                 Csw.tryExec(cswPrivate.onComplete, cswPublic.selectedVal());
@@ -171,7 +178,7 @@
                 }
 
                 if (Csw.isFunction(cswPrivate.onChange)) {
-                    cswPublic.change(cswPrivate.onChange);
+                    cswPublic.change(cswPrivate.onChange);  
                 }
 
                 var values = cswPublic.makeOptions(cswPrivate.values);
