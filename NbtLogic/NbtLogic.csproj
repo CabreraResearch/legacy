@@ -126,6 +126,7 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28557.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28725.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28724.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28395B.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassPrinter.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28534.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case27901.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_ScheduledRules_Case28564.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1001,12 +1003,6 @@
       <SubType>Component</SubType>
     </Compile>
     <None Include="Properties\DataSources\ChemSW.MtSched.Core.CswSchedSvcReturn.datasource" />
-    <None Include="Service References\NbtSchedSvcRef\item7.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSchedSvcRef\item8.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -1020,7 +1016,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSchedSvcRef\CswSchedSvcAdminEndPoint.wsdl" />
-    <None Include="Service References\NbtSchedSvcRef\item.xsd" />
     <None Include="Service References\ChemCatCentral\Search.wsdl" />
     <None Include="Service References\ChemCatCentral\Search.xsd">
       <SubType>Designer</SubType>
