@@ -229,6 +229,19 @@ namespace ChemSW.Nbt.Security
             }
         }
 
+        public string Language
+        {
+            get
+            {
+                string ret = string.Empty;
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.Language + _FkSuffix ) )
+                {
+                    ret = _UserPropDict[CswNbtObjClassUser.PropertyName.Language];
+                }
+                return ret;
+            }
+        }
+
         public Int32 PasswordPropertyId
         {
             get { return _PasswordPropertyId; }

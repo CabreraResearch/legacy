@@ -22,6 +22,7 @@
                     cswPrivate.gridMode = Csw.string(cswPrivate.propVals.gridmode);
                     cswPrivate.maxRows = Csw.string(cswPrivate.propVals.maxrows);
                     cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
+                    cswPrivate.hasHeader = Csw.bool(cswPrivate.propVals.hasHeader);
                     
                     cswPrivate.makeGridMenu = function (grid, gridParentDiv) {
                         //Case 21741
@@ -115,7 +116,7 @@
                             success: function (data) {
                                 cswPublic.control = cswPrivate.parent.thinGrid({
                                     rows: data.rows,
-                                    hasHeader: true,
+                                    hasHeader: cswPrivate.hasHeader,
                                     onLinkClick: function () {
                                         $.CswDialog('OpenEmptyDialog', {
                                             title: cswPublic.data.tabState.nodename + ' ' + cswPublic.data.propData.name,
