@@ -104,7 +104,6 @@
     <Content Include="app\literals\_template.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
-    <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
     <Content Include="app\core\csw.ajaxWcf.js" />
