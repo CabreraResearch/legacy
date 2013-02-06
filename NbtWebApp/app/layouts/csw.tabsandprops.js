@@ -310,24 +310,29 @@
 
                                 cswPrivate.tabcnt = tabno;
 
-                                cswPrivate.genTab = function () {
-                                    if (Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                cswPrivate.genTab = function (noChangesToPost) {
+                                    var ret = (true === noChangesToPost || Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid));
+                                    if (ret) {
                                         Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                         cswPrivate.form.empty();
                                         cswPrivate.onTearDown();
                                         makeTabs();
-                                        return false;
                                     }
+                                    return ret;
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
                                         selected: cswPrivate.tabState.tabNo,
                                         select: function (event, ui) {
-                                            var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
-                                            cswPrivate.tabState.tabNo = Csw.number(ui.index);
-                                            cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
-                                            return cswPrivate.genTab();
+                                            var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
+                                            if (ret) {
+                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
+                                                cswPrivate.tabState.tabNo = Csw.number(ui.index);
+                                                cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
+                                                cswPrivate.genTab();
+                                            }
+                                            return ret;
                                         } // select()
                                     }); // tabs
                                     var eachTabContentDiv;
@@ -834,7 +839,6 @@
 
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
-                Csw.debug.assert(Csw.isPlainObject(propData), 'handleProp was given an invalid object representing propertyData');
                 if (Csw.isPlainObject(propData)) {
                     var propid = propData.id,
                         cellSet,
