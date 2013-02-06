@@ -14,6 +14,7 @@
                 name: '',
                 options: [], // [{ name: '', href: '' }],
                 width: '180px',
+                height: '150px',
                 defaultText: 'Select...',
                 comboImgWidth: '32px',
                 comboImgHeight: '',
@@ -23,7 +24,9 @@
 
             cswPrivate.optsTblMaxRow = 1;
             cswPrivate.optionsTable = cswParent.table({
-                cellvalign: 'top'
+                cellvalign: 'top',
+                width: '100%',
+                height: cswPrivate.height
             });
             
             cswPrivate.imageSelectList = cswParent.comboBox({
@@ -31,6 +34,7 @@
                 topContent: cswPrivate.defaultText,
                 selectContent: cswPrivate.optionsTable,
                 width: cswPrivate.width,
+                height: cswPrivate.height,
 //                onClick: function () {
 //                    return true;
 //                },
@@ -43,12 +47,14 @@
 
             cswPublic.addOption = function (name, href) {
                 var imageCell = cswPrivate.optionsTable.cell(cswPrivate.optsTblMaxRow, 1);
-                imageCell.img({
-                    src: href,
-                    alt: name,
-                    width: cswPrivate.comboImgWidth,
-                    height: cswPrivate.comboImgHeight,
-                });
+                if (false === Csw.isNullOrEmpty(href)) {
+                    imageCell.img({
+                        src: href,
+                        alt: name,
+                        width: cswPrivate.comboImgWidth,
+                        height: cswPrivate.comboImgHeight,
+                    });
+                }
                 var nameCell = cswPrivate.optionsTable.cell(cswPrivate.optsTblMaxRow, 2);
                 nameCell.text(name);
 
