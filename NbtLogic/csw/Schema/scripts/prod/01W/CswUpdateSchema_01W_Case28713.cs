@@ -49,6 +49,15 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab ComponentsTab = ChemicalNT.getNodeTypeTab( "Components" ) 
                     ?? _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "Components", 2 );
                 CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" );
+                if(null == HazardsTab)
+                {
+                    foreach( CswNbtMetaDataNodeTypeTab Tab in ChemicalNT.getNodeTypeTabs() )
+                    {
+                        if( Tab.TabOrder >= 3 )
+                            Tab.TabOrder += 1;
+                    }
+                    HazardsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNT, "Hazards", 3 );
+                }
                 CswNbtMetaDataNodeTypeProp ComponentsTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp(ChemicalNT.NodeTypeId, "Components");
                 if( null != ComponentsTypeNTP )
                 {
@@ -58,7 +67,6 @@ namespace ChemSW.Nbt.Schema
                 }
                 //Part 3
                 CswNbtMetaDataNodeTypeProp UNCodeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.UNCode );
-                UNCodeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
                 UNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId );
                 //Part 4
                 CswNbtMetaDataNodeTypeProp ChemicalMaterialTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp(ChemicalNT.NodeTypeId, "Material Type" );
@@ -67,22 +75,18 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp(ChemicalNT.NodeTypeId, "Hazard Classes" );
                 if( null != ChemicalMaterialTypeNTP)
                 {
-                    ChemicalMaterialTypeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
                     ChemicalMaterialTypeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId, 4, 2, "Fire Reporting" );
                 }
                 if( null != ChemicalSpecialFlagsNTP )
                 {
-                    ChemicalSpecialFlagsNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
                     ChemicalSpecialFlagsNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId, 5, 2, "Fire Reporting" );
                 }
                 if( null != ChemicalHazardCategoriesNTP )
                 {
-                    ChemicalHazardCategoriesNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
                     ChemicalHazardCategoriesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId, 6, 2, "Fire Reporting" );
                 }
                 if( null != ChemicalHazardClassesNTP )
                 {
-                    ChemicalHazardClassesNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
                     ChemicalHazardClassesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId, 7, 2, "Fire Reporting" );
                 }
                 //Part 8

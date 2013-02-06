@@ -32,8 +32,11 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataObjectClass MaterialDocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
                     foreach (CswNbtMetaDataNodeType MaterialDocumentNT in MaterialDocumentOC.getNodeTypes())
                     {
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Create, MaterialDocumentNT, RoleNode, true );
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Edit, MaterialDocumentNT, RoleNode, true );
+                        if( MaterialDocumentNT.NodeTypeName == "Material Document" )
+                        {
+                            _CswNbtSchemaModTrnsctn.Permit.set(CswNbtPermit.NodeTypePermission.Create, MaterialDocumentNT, RoleNode, true);
+                            _CswNbtSchemaModTrnsctn.Permit.set(CswNbtPermit.NodeTypePermission.Edit, MaterialDocumentNT, RoleNode, true);
+                        }
                     }
 
                 }
