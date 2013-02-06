@@ -788,7 +788,6 @@
     <Content Include="app\controls\csw.visibilityselect.js" />
     <Content Include="app\core\csw.dom.js" />
     <Content Include="app\composites\csw.grid.js" />
-    <Content Include="app\composites\csw.table.js" />
     <Content Include="app\controls\csw.timeinterval.js" />
     <Content Include="app\controls\csw.checkboxarray.js" />
     <Content Include="app\controls\csw.combobox.js" />
