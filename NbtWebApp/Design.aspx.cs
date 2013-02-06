@@ -899,15 +899,22 @@ namespace ChemSW.Nbt.WebPages
                     string TabGroup = getPropAttributeValue( "EditProp_TabGroupValue" + OldSelectedNodeTypePropId.ToString(), typeof( string ), EditPropPlaceHolder );
                     bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
-                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow, DisplayColumn, TabGroup );
-                    if( SetValueOnAdd )
-                    {
-                        PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
-                    }
-                    else
-                    {
-                        PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                    }
+                    //We're not using Design mode to configure layouts anymore
+                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, 
+                        TabId: Tab.TabId, 
+                        DisplayRow: DisplayRow, 
+                        DisplayColumn: DisplayColumn, 
+                        TabGroup: TabGroup, 
+                        DoMove: false );
+                    
+                    //if( SetValueOnAdd )
+                    //{
+                    //    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, DisplayRow: DisplayRowAdd, DisplayColumn: DisplayColAdd, DoMove: false );
+                    //}
+                    //else
+                    //{
+                    //    PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    //}
                     PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     //PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaRows = CswConvert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
