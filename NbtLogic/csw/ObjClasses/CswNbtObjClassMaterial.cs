@@ -28,7 +28,6 @@ namespace ChemSW.Nbt.ObjClasses
         public sealed class PropertyName
         {
             public const string Supplier = "Supplier";
-            public const string ApprovalStatus = "Approval Status";
             public const string PartNumber = "Part Number";
             public const string SpecificGravity = "Specific Gravity";
             public const string PhysicalState = "Physical State";
@@ -40,8 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Request = "Request";
             public const string Receive = "Receive";
             public const string MaterialId = "Material Id";
-            public const string Approved = "Approved";
-            public const string ManufacturingSites = "Manufacturing Sites";
+            public const string ApprovedForReceiving = "Approved for Receiving";
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
@@ -87,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
 
-            if( ApprovalStatus.WasModified )
+            if( ApprovedForReceiving.WasModified )
             {
-                Receive.setHidden( value: ApprovalStatus.Checked != Tristate.True, SaveToDb: true );
+                Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
             }
 
             if( CasNo.WasModified )
@@ -282,15 +280,30 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateRegulatoryLists()
         {
-            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
-            foreach( CswNbtObjClassRegulatoryList nodeAsRegList in regListOC.getNodes( false, false ) )
+            RegulatoryLists.StaticText = "";
+
+            if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
             {
-                CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
-                CASNos.FromString( nodeAsRegList.CASNumbers.Text );
-                if( CASNos.Contains( CasNo.Text ) )
+                CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
+                CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
+
+                CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
+                matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
+                    Value: CasNo.Text,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+                ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
+                int childCount = tree.getChildNodeCount();
+
+                CswCommaDelimitedString regLists = new CswCommaDelimitedString();
+                for( int i = 0; i < childCount; i++ )
                 {
-                    RegulatoryLists.StaticText += "," + nodeAsRegList.Name.Text;
+                    tree.goToNthChild( i );
+                    regLists.Add( tree.getNodeNameForCurrentPosition() );
+                    tree.goToParentNode();
                 }
+                RegulatoryLists.StaticText = regLists.ToString();
             }
         }
 
@@ -504,7 +517,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedNodeId = nodeId;
                                 lvlMatched = 1;
                             }
-                            if( lvlMatched < 2 && language.Equals( userJurisdictionNode.Language.Value ) )
+                            if( lvlMatched < 2 && language.Equals( currentUserNode.Language ) )
                             {
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
@@ -512,7 +525,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 matchedNodeId = nodeId;
                                 lvlMatched = 2;
                             }
-                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( userJurisdictionNode.Language.Value ) )
+                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( currentUserNode.Language ) )
                             {
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
@@ -570,7 +583,6 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Supplier { get { return ( _CswNbtNode.Properties[PropertyName.Supplier] ); } }
-        public CswNbtNodePropLogical ApprovalStatus { get { return ( _CswNbtNode.Properties[PropertyName.ApprovalStatus] ); } }
         public CswNbtNodePropText PartNumber { get { return ( _CswNbtNode.Properties[PropertyName.PartNumber] ); } }
         public CswNbtNodePropNumber SpecificGravity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificGravity] ); } }
         public CswNbtNodePropList PhysicalState { get { return ( _CswNbtNode.Properties[PropertyName.PhysicalState] ); } }
@@ -594,8 +606,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
         public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
-        public CswNbtNodePropLogical Approved { get { return ( _CswNbtNode.Properties[PropertyName.Approved] ); } }
-        public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
+        public CswNbtNodePropLogical ApprovedForReceiving { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedForReceiving] ); } }
         public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }

@@ -35,6 +35,7 @@
     var dialogsCount = 0;
 
     var afterObjectClassButtonClick = function (action, dialog) {
+        'use strict';
         switch (Csw.string(action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.dispense:
                 Csw.tryExec(dialog.close);
@@ -64,6 +65,7 @@
         //#region Specialized
 
         ExpireDialog: function (options) {
+            'use strict';
             var o = {
                 onYes: null
             };
@@ -94,6 +96,7 @@
             openDialog(div, 300, 150, null, 'Expire Warning');
         }, // ExpireDialog
         AddLandingPageItemDialog: function (options) {
+            'use strict';
             var o = {
                 form: function () { },
                 onAdd: function () { }
@@ -112,6 +115,7 @@
             openDialog(div, 400, 400, null, 'New Landing Page Item'); //should this be page-specific?
         }, // AddLandingPageItemDialog
         AddViewDialog: function (options) {
+            'use strict';
             var o = {
                 name: 'addviewdialog',
                 onAddView: function () { },
@@ -210,6 +214,7 @@
             openDialog(div, 400, 200, null, 'New View');
         }, // AddViewDialog
         AddNodeDialog: function (options) {
+            'use strict';
             ///<summary>Creates an Add Node dialog and returns an object represent that dialog.</summary>
             var cswDlgPrivate = {
                 text: '',
@@ -274,6 +279,7 @@
             return cswPublic;
         },
         AddFeedbackDialog: function (options) {
+            'use strict';
             ///<summary>Creates an Add Feedback dialog and returns an object represent that dialog.</summary>
             var cswDlgPrivate = {
                 text: '',
@@ -354,6 +360,7 @@
             return cswPublic;
         }, // AddFeedbackDialog
         AddNodeClientSideDialog: function (options) {
+            'use strict';
             var o = {
                 name: '',
                 nodetypename: '',
@@ -382,6 +389,7 @@
             openDialog(div, 300, 200, null, o.title);
         }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
+            'use strict';
             var o = {
                 objectClassId: '',
                 nodetypename: '',
@@ -437,6 +445,7 @@
             openDialog(div, 400, 200, null, o.title);
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (options) {
+            'use strict';
             var cswDlgPrivate = {
                 name: 'editlayout',
                 globalState: {
@@ -561,6 +570,7 @@
             openDialog(div, 900, 600, _onclose, 'Configure Layouts', cswDlgPrivate.onOpen);
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
+            'use strict';
             var cswDlgPrivate = {
                 selectedNodeIds: Csw.delimitedString(),
                 selectedNodeKeys: Csw.delimitedString(),
@@ -656,6 +666,7 @@
             return cswPublic;
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
+            'use strict';
             var cswDlgPrivate = {
                 'nodename': '',
                 'nodeid': '',
@@ -735,6 +746,7 @@
             return cswPublic;
         }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
+            'use strict';
             var cswDlgPrivate = {
                 nodes: {},
                 nodenames: [],
@@ -800,7 +812,7 @@
             return cswPublic;
         }, // DeleteNodeDialog
         AboutDialog: function () {
-
+            'use strict';
             var div = Csw.literals.div();
             Csw.ajax.post({
                 urlMethod: 'getAbout',
@@ -840,6 +852,7 @@
             openDialog(div, 600, 400, null, 'About');
         }, // AboutDialog
         FileUploadDialog: function (options) {
+            'use strict';
             var o = {
                 urlMethod: 'fileForProp',
                 params: {},
@@ -900,7 +913,7 @@
 
         //        }, // ImportC3RecordDialog
         C3DetailsDialog: function (options) {
-
+            'use strict';
             var cswPrivate = {
                 title: "Product Details",
                 node: options.nodeObj,
@@ -1014,7 +1027,7 @@
 
         }, // C3DetailsDialog
         C3SearchDialog: function (options) {
-
+            'use strict';
             var cswPrivate = {
                 title: "ChemCatCentral Search",
                 c3searchterm: options.c3searchterm,
@@ -1118,6 +1131,7 @@
             openDialog(div, 750, 300, null, cswPrivate.title);
         }, // C3SearchDialog
         StructureSearchDialog: function (options) {
+            'use strict';
             var cswPrivate = {
                 title: "Structure Search",
                 loadView: null //function () { }
@@ -1225,6 +1239,7 @@
             openDialog(div, 750, 500, null, cswPrivate.title);
         },
         EditMolDialog: function (options) {
+            'use strict';
             var o = {
                 TextUrl: '',
                 FileUrl: '',
@@ -1305,6 +1320,7 @@
             openDialog(div, 400, 300, null, 'Change MOL Data');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
+            'use strict';
             var o = {
                 GetLicenseUrl: 'getLicense',
                 AcceptLicenseUrl: 'acceptLicense',
@@ -1356,6 +1372,7 @@
             openDialog(div, 800, 600, null, 'Terms and Conditions');
         }, // ShowLicenseDialog
         PrintLabelDialog: function (options) {
+            'use strict';
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswDlgPrivate = {
                 name: 'print_label',
@@ -1462,50 +1479,52 @@
         }, // PrintLabelDialog
 
         ImpersonateDialog: function (options) {
+            'use strict';
             var o = {
                 onImpersonate: null
             };
             if (options) Csw.extend(o, options);
+            
+            function onOpen(div) {
+                Csw.ajax.post({
+                    urlMethod: 'getUsers',
+                    success: function (data) {
+                        if (Csw.bool(data.result)) {
+                            var usersel = div.select({
+                                name: 'ImpersonateSelect',
+                                selected: ''
+                            });
 
-            var div = Csw.literals.div();
+                            Csw.each(data.users, function (thisUser) {
+                                usersel.addOption({ value: thisUser.userid, display: thisUser.username }, false);
+                            });
 
-            Csw.ajax.post({
-                urlMethod: 'getUsers',
-                success: function (data) {
-                    if (Csw.bool(data.result)) {
-                        var usersel = div.select({
-                            name: 'ImpersonateSelect',
-                            selected: ''
-                        });
+                            div.button({
+                                name: 'ImpersonateButton',
+                                enabledText: 'Impersonate',
+                                onClick: function () {
+                                    Csw.tryExec(o.onImpersonate, usersel.val(), usersel.selectedText());
+                                    div.$.dialog('close');
+                                }
+                            });
 
-                        Csw.each(data.users, function (thisUser) {
-                            usersel.addOption({ value: thisUser.userid, display: thisUser.username }, false);
-                        });
-
-                        div.button({
-                            name: 'ImpersonateButton',
-                            enabledText: 'Impersonate',
-                            onClick: function () {
-                                Csw.tryExec(o.onImpersonate, usersel.val(), usersel.selectedText());
-                                div.$.dialog('close');
-                            }
-                        });
-
-                        div.button({
-                            name: 'CancelButton',
-                            enabledText: 'Cancel',
-                            onClick: function () {
-                                div.$.dialog('close');
-                            }
-                        });
-                    } // if(Csw.bool(data.result))
-                } // success
-            }); // ajax
-
-            openDialog(div, 400, 300, null, 'Impersonate');
+                            div.button({
+                                name: 'CancelButton',
+                                enabledText: 'Cancel',
+                                onClick: function () {
+                                    div.$.dialog('close');
+                                }
+                            });
+                        } // if(Csw.bool(data.result))
+                    } // success
+                }); // ajax    
+            }
+            
+            openDialog(Csw.literals.div(), 400, 300, null, 'Impersonate', onOpen);
         }, // ImpersonateDialog
 
         SearchDialog: function (options) {
+            'use strict';
             var cswDlgPrivate = {
                 name: 'searchdialog',
                 propname: '',
@@ -1552,6 +1571,7 @@
         }, // SearchDialog
 
         SaveSearchDialog: function (options) {
+            'use strict';
             var o = {
                 div: Csw.literals.div(),
                 title: 'Save Search',
@@ -1594,6 +1614,7 @@
             openDialog(o.div, o.width, o.height, o.onClose, o.title);
         }, // SearchDialog
         GenericDialog: function (options) {
+            'use strict';
             var o = {
                 div: Csw.literals.div(),
                 title: '',
@@ -1629,6 +1650,7 @@
         }, // GenericDialog
 
         BatchOpDialog: function (options) {
+            'use strict';
             var o = {
                 opname: 'operation',
                 onClose: null,
@@ -1659,13 +1681,14 @@
         }, // BatchOpDialog
 
         ErrorDialog: function (error) {
+            'use strict';
             var div = Csw.literals.div();
             openDialog(div, 400, 300, null, 'Error');
             div.$.CswErrorMessage(error);
         },
 
         AlertDialog: function (message, title, onClose, height, width, onOpen) {
-
+            'use strict';
             var div = Csw.literals.div({
                 name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,
@@ -1689,7 +1712,7 @@
             openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
         },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
-
+            'use strict';
             var div = Csw.literals.div({
                 name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,
@@ -1717,6 +1740,7 @@
             openDialog(div, 400, 150, null, title);
         },
         NavigationSelectDialog: function (options) {
+            'use strict';
             var o = {
                 name: '',
                 title: 'Select from the following options',
@@ -1760,6 +1784,7 @@
         //							return popup;
         //						},
         OpenDialog: function (id, url) {
+            'use strict';
             var div = Csw.literals.div({ name: id });
             div.$.load(url,
                 function () {
@@ -1767,6 +1792,7 @@
                 });
         },
         OpenEmptyDialog: function (options) {
+            'use strict';
             var o = {
                 name: '',
                 title: '',
@@ -1783,6 +1809,7 @@
             Csw.tryExec(o.onOpen, div);
         },
         CloseDialog: function (id) {
+            'use strict';
             posX -= incrPosBy;
             posY -= incrPosBy;
             dialogsCount--;
@@ -1796,7 +1823,7 @@
 
 
     function openDialog(div, width, height, onClose, title, onOpen) {
-
+        'use strict';
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
@@ -1835,7 +1862,7 @@
             },
             open: function () {
                 dialogsCount++;
-                Csw.tryExec(onOpen);
+                Csw.tryExec(onOpen, div);
             }
         });
         posX += incrPosBy;
@@ -1859,7 +1886,8 @@
             Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
             Csw.subscribe('initGlobalEventTeardown', doClose);
         };
-
+        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        Csw.subscribe('initGlobalEventTeardown', doClose);
     }
 
     // Method calling logic

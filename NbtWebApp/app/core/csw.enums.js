@@ -104,13 +104,6 @@
             stepcount: 5
         });
 
-    Csw.enums.wizardSteps_ScheduleRulesGrid = Csw.enums.wizardSteps_ScheduleRulesGrid ||
-        Csw.enums.register('wizardSteps_ScheduleRulesGrid', {
-            step1: { step: 1, description: 'Select a Customer ID' },
-            step2: { step: 2, description: 'Review the Scheduled Rules' },
-            stepcount: 2
-        });
-
     Csw.enums.wizardSteps_FutureScheduling = Csw.enums.wizardSteps_FutureScheduling ||
         Csw.enums.register('wizardSteps_FutureScheduling', {
             step1: { step: 1, description: 'Specify Schedules' },

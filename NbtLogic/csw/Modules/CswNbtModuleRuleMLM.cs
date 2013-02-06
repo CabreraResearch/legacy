@@ -56,11 +56,10 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp manufacturingSitesNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ManufacturingSites );
-                manufacturingSitesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, materialNT.getFirstNodeTypeTab().TabId );
-
                 CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
-                uNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, materialNT.getFirstNodeTypeTab().TabId );
+                CswNbtMetaDataNodeTypeTab HazardsTab = materialNT.getNodeTypeTab( "Hazards" );
+                int TabId = HazardsTab != null ? HazardsTab.TabId : materialNT.getFirstNodeTypeTab().TabId;
+                uNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId );
             }
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
@@ -142,9 +141,6 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp manufacturingSitesNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ManufacturingSites );
-                manufacturingSitesNTP.removeFromAllLayouts();
-
                 CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
                 uNCodeNTP.removeFromAllLayouts();
             }

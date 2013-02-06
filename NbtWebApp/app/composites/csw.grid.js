@@ -1,7 +1,7 @@
 /// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
+/*global Csw:true*/
 (function () {
     'use strict';
     Csw.composites.grid = Csw.composites.grid ||
@@ -69,7 +69,8 @@
                         return grid;
                     },
                     onPrintSuccess: function () { },
-                    dockedItems: []
+                    dockedItems: [],
+                    sorters: []
                 };
 
                 Csw.extend(cswPrivate, options);
@@ -95,21 +96,7 @@
                             } // if(false === Csw.isNullOrEmpty(data.griddata)) {
                         } // success
                     });
-                } else if (cswPrivate.ajaxwcf.urlMethod !== '') {
-
-                    cswPublic.ajaxwcf = Csw.ajaxWcf.post({
-                        urlMethod: cswPrivate.ajaxwcf.urlMethod,
-                        data: cswPrivate.ajaxwcf.data,
-                        success: function (result) {
-                            //ExJsGrid 
-                            //var CswNbtScheduledRulesReturn = Csw.deserialize(result);
-                            Csw.tryExec(onSuccess, result);
-                            //                                var temp = cswPrivate.store.data;
-                            //var temp = result.grid.getAllGridRows();
-                        } // success
-                    });
-                }
-                // ajax.post()
+                } // ajax.post()
             };
 
             //#endregion AJAX
@@ -196,7 +183,7 @@
                 var storeopts = {
                     storeId: storeId,
                     fields: fields,
-                    data: cswPrivate.data,
+                    data: cswPrivate.rows,
                     autoLoad: true,
                     proxy: {
                         type: 'memory',
@@ -205,8 +192,10 @@
                             root: 'items'
                         }
                     },
-                    groupField: cswPrivate.groupField
+                    groupField: cswPrivate.groupField,
+                    sorters: cswPrivate.sorters
                 };
+                
                 if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                     var newfld = { name: cswPrivate.actionDataIndex };
                     storeopts.fields.splice(0, 0, newfld);
@@ -531,11 +520,11 @@
 
                 //Render buttons in a callback
                 if (false === cswPrivate.showCheckboxes &&
-                    cswPrivate.data.buttons &&
-                    cswPrivate.data.buttons.length > 0) {
+                    cswPrivate.rows.buttons &&
+                    cswPrivate.rows.buttons.length > 0) {
 
                     var colNames = Csw.delimitedString('', { spaceToDelimiter: false });
-                    Csw.each(cswPrivate.data.buttons, function (val, key) {
+                    Csw.each(cswPrivate.rows.buttons, function (val, key) {
                         //Get the column names, delimitedString will handle dupes for us automatically
                         colNames.add(val.selectedtext);
                     });
@@ -549,7 +538,7 @@
                             //NOTE: this can now be moved to the viewrender event. See action column logic.
                             i += 1;
                             var id = cswPrivate.ID + 'nodebutton' + i;
-                            var thisBtn = cswPrivate.data.buttons.filter(function (btn) {
+                            var thisBtn = cswPrivate.rows.buttons.filter(function (btn) {
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
@@ -574,28 +563,31 @@
 
                 }
 
-                // Selection mode
-                if (cswPrivate.showCheckboxes) {
-                    gridopts.selType = 'checkboxmodel';
-                    gridopts.selModel = { mode: 'Simple' };
-                    gridopts.listeners.selectionchange = function (t, selected, eOpts) {
-                        if (cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
-                            if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
-                                cswPrivate.editAllButton.disable();
-                                cswPrivate.deleteAllButton.disable();
-                            } else {
-                                cswPrivate.editAllButton.enable();
-                                cswPrivate.deleteAllButton.enable();
+                if (!cswPrivate.selModel || !cswPrivate.selModel.selType) {
+                    // Selection mode
+                    if (cswPrivate.showCheckboxes) {
+                        gridopts.selType = 'checkboxmodel';
+                        gridopts.selModel = { mode: 'Simple' };
+                        gridopts.listeners.selectionchange = function(t, selected, eOpts) {
+                            if (cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
+                                if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
+                                    cswPrivate.editAllButton.disable();
+                                    cswPrivate.deleteAllButton.disable();
+                                } else {
+                                    cswPrivate.editAllButton.enable();
+                                    cswPrivate.deleteAllButton.enable();
+                                }
                             }
-                        }
-                    };
-                } else {
-                    gridopts.selType = 'rowmodel';
-                    gridopts.listeners.beforeselect = function () {
-                        return Csw.bool(cswPrivate.canSelectRow);
-                    };
+                        };
+                    } else {
+                        gridopts.selType = 'rowmodel';
+                        gridopts.listeners.beforeselect = function() {
+                            return Csw.bool(cswPrivate.canSelectRow);
+                        };
+                    }
+                } else if(cswPrivate.selModel) {
+                    gridopts.selType = cswPrivate.selModel.selType;
                 }
-
                 // Paging
                 if (Csw.bool(cswPrivate.usePaging)) {
                     gridopts.dockedItems.push({
@@ -607,7 +599,7 @@
                         doRefresh: cswPublic.reload
                     });
 
-                    var rows = cswPrivate.data.items.length;
+                    var rows = cswPrivate.rows.items.length;
                     if (false === Csw.isNumber(cswPrivate.height) || cswPrivate.height <= 0 || Csw.isNullOrEmpty(cswPrivate.height)) {
                         if (rows === 0) {
                             gridopts.height = cswPrivate.calculateHeight(1);
@@ -735,27 +727,43 @@
                 }
             });
 
+            cswPrivate.setInternalGridState = function(data) {
+                if (data) {
+                    cswPrivate.pageSize = Csw.number(data.pageSize);
+                    if (false === Csw.isNullOrEmpty(data.truncated)) {
+                        cswPrivate.truncated = data.truncated;
+                    }
+                    if (cswPrivate.title.length === 0 && data.title && data.title.length > 0) {
+                        cswPrivate.title = data.title;
+                    }
+                    if (data.fields) {
+                        cswPrivate.fields = data.fields;
+                    }
+                    if (data.columns) {
+                        cswPrivate.columns = data.columns;
+                    }
+                    if (data.data) {
+                        cswPrivate.rows = data.data;
+                    } else {
+                        cswPrivate.rows = data;
+                    }
+                    if (data.groupfield) {
+                        cswPrivate.groupField = data.groupfield;
+                    }
+                }
+            };
+
             cswPrivate.reInit = function (forceRefresh) {
                 if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
-                            cswPrivate.pageSize = Csw.number(result.grid.pageSize);
-                            if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
-                                cswPrivate.truncated = result.grid.truncated;
-                            }
-                            if (cswPrivate.title.length === 0 && result.grid.title && result.grid.title.length > 0) {
-                                cswPrivate.title = result.grid.title;
-                            }
-                            cswPrivate.fields = result.grid.fields;
-                            cswPrivate.columns = result.grid.columns;
-                            cswPrivate.data = result.grid.data;
+                            cswPrivate.setInternalGridState(result.grid);                            
                             cswPrivate.ajaxResult = result;
-                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.init();
-
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
                     });
                 } else {
+                    cswPrivate.setInternalGridState(cswPrivate.data);
                     cswPrivate.init();
                 }
             };
@@ -770,7 +778,7 @@
                         cswPrivate.actionTableIds = [];
                         cswPrivate.actionTableKeys = [];
 
-                        cswPrivate.data = result.grid.data;
+                        cswPrivate.rows = result.grid.data;
                         cswPrivate.store.destroy();
                         cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                         cswPrivate.grid.reconfigure(cswPrivate.store);
@@ -858,10 +866,67 @@
             });
 
             cswPublic.getAllGridRows = function () {
+                /// <summary>
+                /// Returns the raw store data in its current state
+                /// </summary>
                 var return_val = null;
 
                 if (cswPrivate.store) {
                     return_val = cswPrivate.store.data;
+                }
+
+                return return_val;
+            };
+
+            cswPrivate.extractRows = function(rawRows) {
+                var ret = [];
+                if (rawRows && rawRows.length > 0) {
+                    rawRows.forEach(function (item) {
+                        if (item && item.data) {
+                            ret.push(item.data);
+                        }
+                    });
+                }
+                return ret;
+            };
+
+            cswPublic.getGridItems = function () {
+                /// <summary>
+                /// Returns the data store as an Array that conforms to the array used to construct the grid
+                /// </summary>
+                /// <returns type="Array"></returns>
+                var return_val = [];
+
+                if (cswPrivate.store && cswPrivate.store.data) {
+                    return_val = cswPrivate.extractRows(cswPrivate.store.data);
+                }
+
+                return return_val;
+            };
+
+            cswPublic.getUpdatedGridItems = function () {
+                /// <summary>
+                /// Returns the updated items in the data store as an Array that conforms to the array used to construct the grid
+                /// </summary>
+                /// <returns type="Array"></returns>
+                var return_val = [];
+
+                if (cswPrivate.store && cswPrivate.store.getUpdatedRecords) {
+                    return_val = cswPrivate.extractRows( cswPrivate.store.getUpdatedRecords() );
+                }
+
+                return return_val;
+            };
+
+            cswPublic.getModifiedGridItems = function () {
+                /// <summary>
+                /// Returns the modified items in the data store as an Array that conforms to the array used to construct the grid
+                /// </summary>
+                /// <returns type="Array"></returns>
+                var return_val = [];
+
+                if (cswPrivate.store && cswPrivate.store.getModifiedRecords) {
+                    return_val = cswPrivate.extractRows(cswPrivate.store.getModifiedRecords());
                 }
 
                 return return_val;

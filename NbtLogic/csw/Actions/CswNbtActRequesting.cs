@@ -162,6 +162,54 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
+        private CswNbtObjClassRequest _RecurringRequestNode;
+
+        public CswNbtObjClassRequest getRecurringRequestNode()
+        {
+            if( null == _RecurringRequestNode &&
+                false == ( _ThisUser is CswNbtSystemUser ) )
+            {
+                CswNbtView RequestView = getRequestViewBase( LimitToUnsubmitted : false, IncludeDefaultFilters : false );
+                CswNbtViewRelationship RootVr = RequestView.Root.ChildRelationships[0];
+
+                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring ), Value : Tristate.True.ToString() );
+                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName : CswNbtSubField.SubFieldName.NodeID, Value : _ThisUser.UserId.PrimaryKey.ToString() );
+
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestView, RequireViewPermissions : false, IncludeHiddenNodes : false, IncludeSystemNodes : false );
+                if( Tree.getChildNodeCount() > 0 )
+                {
+                    Tree.goToNthChild( 0 );
+                    _RecurringRequestNode = Tree.getNodeForCurrentPosition();
+                }
+
+                if( null == _RecurringRequestNode )
+                {
+                    CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
+                    if( null == RequestNt )
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                    "Cannot make a Request without a valid Request object.",
+                                                    "No Request NodeType could be found." );
+                    }
+                    _RecurringRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    _RecurringRequestNode.IsRecurring.Checked = Tristate.True;
+                    _RecurringRequestNode.postChanges( true );
+                }
+            }
+            return _RecurringRequestNode;
+        }
+        
+        public CswPrimaryKey getRecurringRequestNodeId()
+        {
+            CswPrimaryKey Ret = null;
+            CswNbtObjClassRequest RecurringRequest = getRecurringRequestNode();
+            if( null != RecurringRequest )
+            {
+                Ret = RecurringRequest.NodeId;
+            }
+            return Ret;
+        }
+
         private CswNbtObjClassRequest _CurrentRequestNode;
         public CswNbtObjClassRequest getCurrentRequestNode()
         {
@@ -399,7 +447,7 @@ namespace ChemSW.Nbt.Actions
                 MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ),
                 ShowInGrid : false,
                 SubFieldName : CswNbtSubField.SubFieldName.NodeID,
-                Value : getCurrentRequestNode().NodeId.PrimaryKey.ToString() );
+                Value : getRecurringRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }
 

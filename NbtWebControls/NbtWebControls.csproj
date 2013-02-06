@@ -90,7 +90,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="csw\CswBlobber.cs" />
     <Compile Include="csw\CswLayoutTable.cs" />
     <Compile Include="csw\CswMainMenu.cs" />
     <Compile Include="csw\CswNbtStatistics.cs" />

@@ -22,8 +22,8 @@ namespace NbtWebApp
         /// 
         /// </summary> 
         [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
-        [Description( "Get all scheduled rules" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "get" )]
+        [Description( "Get all scheduled rules as a Grid" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtScheduledRulesReturn getScheduledRulesGrid( string AccessId )
         {
@@ -43,18 +43,18 @@ namespace NbtWebApp
         }//getScheduledRulesGrid
 
         [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
-        [Description( "Get all scheduled rules" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "save" )]
+        [Description( "Save changes to scheduled rules" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtScheduledRulesReturn updateAllScheduledRules( string AccessId )
+        public CswNbtScheduledRulesReturn updateAllScheduledRules( CswNbtScheduledRulesReturn.Ret Request  )
         {
             //delegate has to be static because you can't creat e an instance yet: you don't have resources until the delegate is actually called
             CswNbtScheduledRulesReturn Ret = new CswNbtScheduledRulesReturn();
-            var SvcDriver = new CswWebSvcDriver<CswNbtScheduledRulesReturn, string>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtScheduledRulesReturn, CswNbtScheduledRulesReturn.Ret>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNbtManager.updateAllScheduledRules,
-                ParamObj: AccessId
+                ParamObj: Request
                 );
 
             SvcDriver.run();
@@ -62,6 +62,25 @@ namespace NbtWebApp
             return ( Ret );
 
         }//updateAllScheduledRules
+
+
+        //If you need to test CswDictionary, this'll help
+            //[OperationContract]
+            //[WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json)]
+            //[FaultContract( typeof( FaultException ) )]
+            //public CswDictionary dictionaryTest( CswDictionary Dict   )
+            //{
+            //    CswDictionary Ret = new CswDictionary();
+            //    foreach( KeyValuePair<string, dynamic> Pair in Dict )
+            //    {
+            //        Ret.Add(Pair.Key, Pair.Value);
+            //    }
+            //    Ret.Add("Success", "True");
+
+            //    return ( Ret );
+
+            //}
+        
 
     }//Scheduler 
 }
