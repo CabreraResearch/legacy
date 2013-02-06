@@ -109,7 +109,8 @@
 
                 (function _post() {
                     cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
-                    if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.menuOptions) && cswPrivate.menuOptions.length > 0 &&
+                        false === Csw.isNullOrEmpty(cswPrivate.menuOptions[0])) {
                         cswPrivate.mode = 'menu';
                     }
                     switch (cswPrivate.mode) {
