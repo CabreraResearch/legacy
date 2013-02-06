@@ -301,24 +301,35 @@
                                     cswPrivate.tabState.tabid = '';
                                 }
 
-                                var tabdivs = [];
                                 var tabno = 0;
-                                var tabDiv, tabUl;
+                                var jqTabs = [];
+                                var tabUls = [];
+                                var tabLis = [];
 
                                 var tabFunc = function (thisTab) {
+                                    var tabStrip, tabUl;
                                     var thisTabId = thisTab.id;
 
-                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
-                                        // For PrintReports, we're going to make a separate tabstrip for each tab
-                                        tabDiv = cswPrivate.outerTabDiv.tabDiv();
-                                        tabUl = tabDiv.ul();
-                                        tabdivs[tabdivs.length] = tabDiv;
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || jqTabs.length === 0) {
+                                        tabStrip = cswPrivate.outerTabDiv.tabDiv();
+                                        tabUl = tabStrip.ul();
+                                        jqTabs[jqTabs.length] = tabStrip;
+                                        tabUls[tabUls.length] = tabUl;
+                                    } else {
+                                        tabStrip = jqTabs[jqTabs.length - 1];
+                                        tabUl = tabUls[tabUls.length - 1];
                                     }
-                                    tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
 
-                                    tabUl = tabUl || tabDiv.ul();
-                                    tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name }).data('tabid', thisTabId);
-                                    cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
+                                    var tabLi = tabUl.li();
+                                    tabLis.push(tabLi);
+                                    tabLi.data({
+                                        tabid: thisTabId,
+                                        tabno: tabLis.length
+                                    });
+                                    tabLi.a({ href: '#' + thisTabId, text: thisTab.name });
+
+                                    cswPrivate.makeTabContentDiv(tabStrip, thisTabId, thisTab.canEditLayout);
+
                                     if (Csw.string(thisTabId) === Csw.string(cswPrivate.tabState.tabid)) {
                                         cswPrivate.tabState.tabNo = tabno;
                                     }
@@ -328,35 +339,27 @@
                                 Csw.eachRecursive(data, tabFunc, false);
 
                                 cswPrivate.tabcnt = tabno;
-
-                                cswPrivate.genTab = function (noChangesToPost) {
-                                    var ret = (true === noChangesToPost || Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid));
-                                    if (ret) {
-                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                        cswPrivate.form.empty();
-                                        cswPrivate.onTearDown();
-                                        makeTabs();
-                                    }
-                                    return ret;
-                                };
-
-                                Csw.each(tabdivs, function (thisTabDiv) {
+                                
+                                Csw.each(jqTabs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
-                                        selected: cswPrivate.tabState.tabNo,
-                                        select: function (event, ui) {
+                                        active: cswPrivate.tabState.tabNo,
+                                        beforeActivate: function (event, ui) {
                                             var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
                                             if (ret) {
-                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
-                                                cswPrivate.tabState.tabNo = Csw.number(ui.index);
+                                                cswPrivate.tabState.tabNo = Csw.number(ui.newTab.index());
+                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
                                                 cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
-                                                cswPrivate.genTab();
+                                                Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                                cswPrivate.form.empty();
+                                                cswPrivate.onTearDown();
+                                                makeTabs();
                                             }
                                             return ret;
-                                        } // select()
+                                        } 
                                     }); // tabs
                                     var eachTabContentDiv;
                                     if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
-                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
+                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'active')) + ')');
                                         if (eachTabContentDiv.isValid) {
                                             cswPrivate.tabState.tabid = eachTabContentDiv.data('tabid');
                                         }

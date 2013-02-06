@@ -1026,5 +1026,4 @@ $(ProjectDir)app\_pruneMaps.bat $(ProjectDir)
 call $(ProjectDir)css\_compressor.pl $(ProjectDir)
 </PreBuildEvent>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>
