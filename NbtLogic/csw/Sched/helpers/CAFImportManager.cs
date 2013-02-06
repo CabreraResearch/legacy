@@ -120,7 +120,7 @@ namespace ChemSW.Nbt
                                     left join vendors v on v.vendorid = p.supplierid
                                     left join materials_subclass ms on m.materialsubclassid = ms.materialsubclassid and ms.deleted = '0'
                                     left join materials_class mc on ms.materialclassid = mc.materialclassid and mc.deleted = '0' and mc.classname = 'CHEMICAL'
-                               where m.deleted = '0' and m.nbtuptodate = '0' and v.nbtuptodate = '0' and p.nbtuptodate = '0' and rownum <= " + _NumberToProcess;
+                               where m.deleted = '0' and (m.nbtuptodate = '0' or v.nbtuptodate = '0' or p.nbtuptodate = '0') and rownum <= " + _NumberToProcess;
 
                 //SelectTimer.Start();
                 CswArbitrarySelect cswArbSelect = _CAFResources.makeCswArbitrarySelect( "cafimport_selectmaterials", sql );
