@@ -9,6 +9,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 using System.Diagnostics;
+using System.IO;
 
 namespace ChemSW.Nbt
 {
@@ -26,6 +27,10 @@ namespace ChemSW.Nbt
         private Collection<CswNbtObjClassSize> _createdSizes = new Collection<CswNbtObjClassSize>();
         private Collection<string> vendorIds = new Collection<string>();
         private Collection<string> packageIds = new Collection<string>();
+        private Collection<string> matSynIds = new Collection<string>();
+        private Collection<string> unitIds = new Collection<string>();
+        private Collection<string> materialIds = new Collection<string>();
+        private Collection<string> sizeIds = new Collection<string>();
 
         private Stopwatch RowTimer = new Stopwatch();
         private Stopwatch SelectTimer = new Stopwatch();
@@ -100,10 +105,9 @@ namespace ChemSW.Nbt
             _CAFResources = CswNbtResourcesFactory.makeCswNbtResources( _NBTResources );
             _CAFResources.AccessId = "caf";
 
+            //_NBTResources.CswLogger.beginOp( "CAF Import 10:26" );
+
             Collection<string> unitIds = _importUnitsOfMeasure(); //always check to import UoMs first
-            Collection<string> materialIds = new Collection<string>();
-            Collection<string> matSynIds = new Collection<string>();
-            Collection<string> sizeIds = new Collection<string>();
 
             if( unitIds.Count == 0 ) //if we didn't import UoMs
             {
@@ -127,9 +131,9 @@ namespace ChemSW.Nbt
                 DataTable cafTbl = cswArbSelect.getTable();
                 //SelectTimer.Stop();
 
+                //RowTimer.Start();
                 foreach( DataRow row in cafTbl.Rows )
                 {
-                    //RowTimer.Start();
                     string materialId = row["materialid"].ToString();
                     CswNbtObjClassVendor vendorNode = _createVendorNode( vendorNT, row );
                     CswNbtObjClassMaterial materialNode = _createChemical( chemicalNT, row, vendorNode );
@@ -137,11 +141,11 @@ namespace ChemSW.Nbt
 
                     if( null != materialNode )
                     {
-                        matSynIds = _createMaterialSynonym( row["materialid"].ToString(), materialNode );
-                        sizeIds = _createSize( row["materialid"].ToString(), materialNode );
+                        _createMaterialSynonym( row["materialid"].ToString(), materialNode );
+                        _createSize( row["materialid"].ToString(), materialNode );
                     }
-                    //RowTimer.Stop();
                 }
+                //RowTimer.Stop();
             }
 
             //UpdateTimer.Start();
@@ -170,6 +174,8 @@ namespace ChemSW.Nbt
                 _updateCAFTable( packageIds, "packages", "packageid" );
             }
             //UpdateTimer.Stop();
+
+            //_NBTResources.CswLogger.endOp();
 
             //Important!!! Always manually release resources after use
             _CAFResources.finalize();
@@ -839,7 +845,7 @@ namespace ChemSW.Nbt
                 vendorCount++;
                 vendorIds.Add( Row["vendorid"].ToString() );
             }
-            VendorTimer.Stop();
+            //VendorTimer.Stop();
             return vendorNode;
         }
 
@@ -888,7 +894,7 @@ namespace ChemSW.Nbt
                 _createdMaterials.Add( materialNode );
                 packageIds.Add( Row["packageid"].ToString() );
             }
-            MaterialTimer.Stop();
+            //MaterialTimer.Stop();
             return materialNode;
         }
 
@@ -939,10 +945,8 @@ namespace ChemSW.Nbt
 
         #region Synonym Creation
 
-        private Collection<string> _createMaterialSynonym( string MaterialId, CswNbtObjClassMaterial ChemicalNode )
+        private void _createMaterialSynonym( string MaterialId, CswNbtObjClassMaterial ChemicalNode )
         {
-            Collection<string> materialSynIds = new Collection<string>();
-
             if( null != materialSynNT )
             {
                 string sql = @"select synonymname, materialsynonymid from materials_synonyms where deleted = '0' and materialid = " + MaterialId;
@@ -963,20 +967,17 @@ namespace ChemSW.Nbt
                     //PostChangesTimer.Start();
                     matSyn.postChanges( true );
                     //PostChangesTimer.Stop();
-                    materialSynIds.Add( row["materialsynonymid"].ToString() );
+                    matSynIds.Add( row["materialsynonymid"].ToString() );
                 }
             }
-            return materialSynIds;
         }
 
         #endregion
 
         #region Size Creation
 
-        private Collection<string> _createSize( string MaterialId, CswNbtObjClassMaterial ChemicalNode )
+        private void _createSize( string MaterialId, CswNbtObjClassMaterial ChemicalNode )
         {
-            Collection<string> sizeIds = new Collection<string>();
-
             if( null != sizeNT )
             {
                 string sql = @"select pd.capacity, pd.catalogno, uom.unitofmeasurename, uom.unitofmeasureid, uom.unittype, pd.packdetailid from packages p
@@ -1007,7 +1008,6 @@ namespace ChemSW.Nbt
                     sizeIds.Add( row["packdetailid"].ToString() );
                 }
             }
-            return sizeIds;
         }
 
         private int _getNodeIdFromLegacyId( string LegacyId, int ExpectedOCId )
