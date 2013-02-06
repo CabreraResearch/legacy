@@ -23,18 +23,13 @@
                 cswPrivate.width = Csw.string(cswPrivate.propVals.width);
                 cswPrivate.height = Csw.string(cswPrivate.propVals.height);
                 cswPrivate.allowMultiple = Csw.bool(cswPrivate.propVals.allowmultiple);
-                
-                cswPrivate.comboImgWidth = '32px';
-                cswPrivate.comboImgHeight = '';
-                
+
                 cswPublic.control = cswPrivate.parent.table({
                     cellvalign: 'top'
                 });
 
                 cswPrivate.imageTable = cswPublic.control.cell(1, 1).table();
                 cswPrivate.imgTblCol = 1;
-                cswPrivate.optionsTable = cswPublic.control.cell(1, 1).table();
-                cswPrivate.optsTblRow = 1;
                 cswPrivate.selectedValues = [];
 
                 cswPrivate.addImage = function (name, href, doAnimation) {
@@ -80,7 +75,7 @@
                                 imageCell.$.fadeOut('fast');
                                 cswPrivate.removeValue(href);
                                 if (cswPrivate.allowMultiple) {
-                                    cswPrivate.addOption(name, href);
+                                    cswPrivate.imageSelectList.addOption(name, href);
                                 }
                                 Csw.tryExec(cswPublic.data.onChange);
                             } // onClick
@@ -113,50 +108,21 @@
                     cswPrivate.saveProp();
                 };
 
-                cswPrivate.addOption = function (text, value) {
-                    var imageCell = cswPrivate.optionsTable.cell(cswPrivate.optsTblRow, 1);
-                    imageCell.img({
-                        src: value,
-                        alt: text,
-                        width: cswPrivate.comboImgWidth,
-                        height: cswPrivate.comboImgHeight,
-                    });
-                    var nameCell = cswPrivate.optionsTable.cell(cswPrivate.optsTblRow, 2);
-                    nameCell.text(text);
-
-                    var hoverIn = function() {
-                        imageCell.addClass('viewselectitemhover');
-                        nameCell.addClass('viewselectitemhover');
-                    };
-                    var hoverOut = function() {
-                        imageCell.removeClass('viewselectitemhover');
-                        nameCell.removeClass('viewselectitemhover');
-                    };
-
-                    var handleSelect = function() {
+                cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).imageSelect({
+                    onSelect: function (name, href, imageCell, nameCell) {
                         if (false === cswPrivate.allowMultiple) {
                             cswPrivate.imageTable.empty();
                             cswPrivate.selectedValues = [];
                         }
-                        cswPrivate.addValue(value);
+                        cswPrivate.addValue(href);
                         if (cswPrivate.allowMultiple) {
                             imageCell.hide();
                             nameCell.hide();
                         }
-                        cswPrivate.addImage(text, value, true);
+                        cswPrivate.addImage(name, href, true);
                         Csw.tryExec(cswPublic.data.onChange, cswPrivate.selectedValues);
-                    };
-
-                    imageCell.$.hover(hoverIn, hoverOut);
-                    nameCell.$.hover(hoverIn, hoverOut);
-
-                    imageCell.bind('click', handleSelect);
-                    nameCell.bind('click', handleSelect);
-
-                    cswPrivate.optsTblRow += 1;
-                }; // addOption()
-
-
+                    }
+                });
 
                 Csw.eachRecursive(cswPrivate.options, function (thisOpt) {
                     if (Csw.bool(thisOpt.selected)) {
@@ -164,23 +130,10 @@
                         cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
                     } else {
                         if (false === cswPublic.data.isReadOnly()) {
-                            cswPrivate.addOption(thisOpt.text, thisOpt.value);
+                            cswPrivate.imageSelectList.addOption(thisOpt.text, thisOpt.value);
                         }
                     }
                 }, false);
-
-                cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).comboBox({
-                    name: '',
-                    topContent: 'Select...',
-                    selectContent: cswPrivate.optionsTable,
-                    width: '180px',
-                    onClick: function () {
-                        return true;
-                    },
-                    topTable: {},
-                    hidedelay: 500,
-                    hideTo: null
-                });
 
                 if (cswPublic.data.isReadOnly()) {
                     cswPrivate.imageSelectList.hide();

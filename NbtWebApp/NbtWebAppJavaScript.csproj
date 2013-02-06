@@ -95,6 +95,7 @@
     <Content Include="app\actions\csw.containermove.js" />
     <Content Include="app\composites\_template.js" />
     <Content Include="app\composites\csw.tabstrip.js" />
+    <Content Include="app\controls\csw.imageSelect.js" />
     <Content Include="app\controls\csw.quickTip.js" />
     <Content Include="app\controls\csw.tabselect.js" />
     <Content Include="app\controls\_template.js" />
