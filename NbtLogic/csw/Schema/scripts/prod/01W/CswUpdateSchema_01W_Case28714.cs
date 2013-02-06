@@ -25,47 +25,24 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswNbtMetaDataNodeType RoleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Role" );
-            if( null != RoleNT )
+            CswNbtObjClassRole AdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            if( null != AdminRoleNode )
             {
-                CswNbtView AdminRoleView = _CswNbtSchemaModTrnsctn.makeView();
-                CswNbtMetaDataNodeTypeProp NameNTP = RoleNT.getNodeTypeProp( "Name" );
-                if( null != NameNTP )
+
+                bool CanCreateMaterial = _CswNbtSchemaModTrnsctn.Permit.can( CswNbtActionName.Create_Material, AdminRoleNode );
+                if( CanCreateMaterial )
                 {
-                    CswNbtViewRelationship Parent = AdminRoleView.AddViewRelationship( RoleNT, true );
-                    AdminRoleView.AddViewPropertyAndFilter( ParentViewRelationship: Parent,
-                                                           MetaDataProp: NameNTP,
-                                                           Value: "Administrator",
-                                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                           SubFieldName: CswNbtSubField.SubFieldName.Text );
-
-                    CswNbtObjClassRole AdminRoleNode = null;
-                    ICswNbtTree AdminRoleTree = _CswNbtSchemaModTrnsctn.getTreeFromView( AdminRoleView, true );
-                    if( AdminRoleTree.getChildNodeCount() > 0 )
+                    bool HasOneMaterialCreate = false;
+                    CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                    foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
                     {
-                        AdminRoleTree.goToNthChild( 0 );
-                        AdminRoleNode = AdminRoleTree.getNodeForCurrentPosition();
+                        string NodeTypePermission = _makeNodeTypePermissionValue( MaterialNt.FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission.Create );
+                        HasOneMaterialCreate = AdminRoleNode.NodeTypePermissions.CheckValue( NodeTypePermission );
+                    }
 
-                        if( null != AdminRoleNode )
-                        {
-
-                            bool CanCreateMaterial = _CswNbtSchemaModTrnsctn.Permit.can( CswNbtActionName.Create_Material, AdminRoleNode );
-                            if( CanCreateMaterial )
-                            {
-                                bool HasOneMaterialCreate = false;
-                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-                                foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
-                                {
-                                    string NodeTypePermission = _makeNodeTypePermissionValue( MaterialNt.FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission.Create );
-                                    HasOneMaterialCreate = AdminRoleNode.NodeTypePermissions.CheckValue( NodeTypePermission );
-                                }
-
-                                if( false == HasOneMaterialCreate )
-                                {
-                                    _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Create_Material, AdminRoleNode, false );
-                                }
-                            }
-                        }
+                    if( false == HasOneMaterialCreate )
+                    {
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Create_Material, AdminRoleNode, false );
                     }
                 }
             }
