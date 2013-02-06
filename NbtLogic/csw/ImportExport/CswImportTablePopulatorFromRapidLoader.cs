@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( true == NodeTypeNameCandidate.ToLower().Contains( "material" ) || true == NodeTypeNameCandidate.ToLower().Contains( "container" ) )//material includes vendor info
                     {
 
-                        string NodeTypePropNameCandidate = CurrentDataColumn.ColumnName;
+                        string NodeTypePropNameCandidate = CurrentDataColumn.ColumnName.ToLower();
 
                         if( false == _KnownOutageProperties.Contains( NodeTypePropNameCandidate ) )
                         {
