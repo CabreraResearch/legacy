@@ -110,7 +110,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject["text"] = NodeTypeProp.StaticText;
             ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
-            ParentObject["menuoptions"] = MenuOptions;
+            if( NodeTypeProp.Extended.ToLower() == ButtonMode.menu )
+            {
+                ParentObject["menuoptions"] = MenuOptions;
+            }
+            else
+            {
+                ParentObject["menuoptions"] = string.Empty;
+            }
+
             ParentObject["selectedText"] = SelectedText;
         }
 

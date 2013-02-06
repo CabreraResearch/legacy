@@ -104,7 +104,6 @@
     <Content Include="app\literals\_template.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
-    <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
     <Content Include="app\core\csw.ajaxWcf.js" />
@@ -155,10 +154,8 @@
     <Content Include="PrintingLabels.html" />
     <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
-    <Content Include="PrintTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.html" />
-    <Content Include="app\composites\csw.jzebra.js" />
     <Content Include="app\controls\csw.radiobutton.js" />
     <Content Include="app\controls\csw.buttonExt.js" />
     <Content Include="app\literals\csw.applet.js" />
@@ -188,7 +185,6 @@
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <Content Include="perf.html" />
-    <Content Include="Print.html" />
     <Content Include="Template.html" />
     <Content Include="TEST.html" />
     <Content Include="vendor\es5-shim.min.js" />
@@ -706,18 +702,6 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
-    <Content Include="vendor\jZebra\directPrint.js" />
-    <Content Include="vendor\jZebra\html2canvas.js" />
-    <Content Include="vendor\jZebra\jquery.plugin.html2canvas.js" />
-    <Content Include="vendor\jZebra\jzebra.jar" />
-    <Content Include="vendor\jZebra\jzebra.js" />
-    <Content Include="vendor\jZebra\jzebra_batch.js" />
-    <Content Include="vendor\jZebra\lib\pdf-renderer.jar" />
-    <Content Include="vendor\jZebra\loading.html" />
-    <Content Include="vendor\jZebra\loading_green.gif" />
-    <Content Include="vendor\jZebra\loading_red.gif" />
-    <Content Include="vendor\jZebra\loading_yellow.gif" />
-    <Content Include="vendor\jZebra\PluginDetect.js" />
     <Content Include="vendor\less-1.3.1.min.js" />
     <Content Include="vendor\loggly-0.1.0.js" />
     <Content Include="vendor\modernizr.custom.06564.js" />

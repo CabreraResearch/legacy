@@ -633,10 +633,15 @@ namespace ChemSW.Nbt.ObjClasses
             // No "else": like favorites, recurring items never transition out of this state--they can only be deleted.
             if( _IsRecurring )
             {
-                _hideFakeItemProps();                    
-                RecurringFrequency.setHidden( value : false, SaveToDb : true );
-                NextReorderDate.setHidden( value : false, SaveToDb : true );
-                Name.setHidden(value: true, SaveToDb: true );
+                _hideFakeItemProps();
+                RecurringFrequency.setHidden( value: false, SaveToDb: true );
+                NextReorderDate.setHidden( value: false, SaveToDb: true );
+                Name.setHidden( value: true, SaveToDb: true );
+            }
+            else
+            {
+                RecurringFrequency.setHidden( value : true, SaveToDb : true );
+                NextReorderDate.setHidden( value : true, SaveToDb : true );
             }
         }
         
