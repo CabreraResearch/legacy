@@ -1,6 +1,6 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
+/*global Csw:true*/
 (function csw_nbt_nodeTree() {
     "use strict";
 
@@ -139,13 +139,8 @@
             };
 
             cswPrivate.runTree = function () {
-                var url = 'Trees/run';
-                if (Csw.isNullOrEmpty(cswPrivate.state.viewId)) {
-                    url += '/' + cswPrivate.state.nodeId;
-                }
-
                 Csw.ajaxWcf.post({
-                    urlMethod: url,
+                    urlMethod: 'Trees/run',
                     data: {
                         AccessedByObjClassId: '',
                         DefaultSelect: cswPrivate.state.defaultSelect,

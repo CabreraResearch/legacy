@@ -260,7 +260,6 @@
                                 break;
                             case 'Impersonate':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
-                                    isWholePageNavigation = true;
                                     $.CswDialog('ImpersonateDialog', { onImpersonate: cswPrivate.onImpersonate });
                                 }
                                 break;
