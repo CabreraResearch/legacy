@@ -10,9 +10,11 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
+
+        #region Blame Logic
 
         private void _acceptBlame(CswDeveloper BlameMe, Int32 BlameCaseNo)
         {
@@ -33,13 +35,14 @@ namespace ChemSW.Nbt.Schema
             get { return _Author; }
         }
 
-        private Int32 _CaseNo = 0;
+        private Int32 _CaseNo;
 
         public override int CaseNo
         {
             get { return _CaseNo; }
         }
 
+        #endregion Blame Logic
 
         private CswNbtMetaDataNodeTypeProp _createNewProp(CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true)
         {
@@ -65,7 +68,7 @@ namespace ChemSW.Nbt.Schema
             return Prop;
         }
 
-        #region Viola Methods
+        #region WILLIAM Methods
 
         #region Case 28283
 
@@ -446,7 +449,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 if (string.IsNullOrEmpty(LocationNtp.FKType) || Int32.MinValue == LocationNtp.FKValue)
                 {
-                    LocationNtp.SetFK(inFKValue: FkValue, inFKType: NbtViewRelatedIdType.ObjectClassId.ToString());
+                    LocationNtp.SetFK( inFKValue : FkValue, inFKType : NbtViewRelatedIdType.ObjectClassId.ToString() );
                 }
 
             }
@@ -475,7 +478,6 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Case 28247
-
 
         #region Case 28145
 
@@ -520,8 +522,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtView View = _CswNbtSchemaModTrnsctn.restoreView(LfNtp.ViewId);
                 View.Root.ChildRelationships.Clear();
 
-                CswNbtViewRelationship LabelVr = View.AddViewRelationship(PrintLabelOc, IncludeDefaultFilters: false);
-                View.AddViewPropertyAndFilter(LabelVr, NodeTypeOcp, "Container", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains);
+                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters : false );
+                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
                 LabelViewXml = LabelViewXml ?? View.ToXml().ToString();
                 View.save();
             }
@@ -605,42 +607,48 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 27436
 
-        #endregion Viola Methods
-
-        #region WILLIAM Methods
+        //Everything above this point was previously VIOLA.
 
         #region Case 28363
 
-        private void _addPropsToJuridictionOC(CswDeveloper Dev, Int32 CaseNo)
+        private void _addPropsToJuridictionOC( CswDeveloper Dev, Int32 CaseNo )
         {
-            _acceptBlame(Dev, CaseNo);
+            _acceptBlame( Dev, CaseNo );
 
-            CswNbtMetaDataObjectClass jurisdictionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(NbtObjectClass.JurisdictionClass);
+            CswNbtMetaDataObjectClass jurisdictionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass );
 
-            CswNbtMetaDataObjectClassProp formatOCP = jurisdictionOC.getObjectClassProp(CswNbtObjClassJurisdiction.PropertyName.Format);
-            if (null == formatOCP)
+            CswNbtMetaDataObjectClassProp formatOCP = jurisdictionOC.getObjectClassProp( CswNbtObjClassJurisdiction.PropertyName.Format );
+            if( null == formatOCP )
             {
-                formatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(new CswNbtWcfMetaDataModel.ObjectClassProp(jurisdictionOC)
-                {
-                    PropName = CswNbtObjClassJurisdiction.PropertyName.Format,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ListOptions = CswNbtObjClassDocument.Formats.Options.ToString()
-                });
+                formatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( jurisdictionOC )
+                    {
+                        PropName = CswNbtObjClassJurisdiction.PropertyName.Format,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                        ListOptions = CswNbtObjClassDocument.Formats.Options.ToString()
+                    } );
             }
 
-            CswNbtMetaDataObjectClassProp languageOCP = jurisdictionOC.getObjectClassProp(CswNbtObjClassJurisdiction.PropertyName.Language);
-            if (null == languageOCP)
+            // case 28717 - move 'Language' to User
+            CswNbtMetaDataObjectClassProp wrongLanguageOCP = jurisdictionOC.getObjectClassProp( "Language" );
+            if( null != wrongLanguageOCP )
             {
-                languageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(new CswNbtWcfMetaDataModel.ObjectClassProp(jurisdictionOC)
-                {
-                    PropName = CswNbtObjClassJurisdiction.PropertyName.Language,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ListOptions = "en,fr,es,de"
-                });
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( wrongLanguageOCP, true );
+            }
+
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp languageOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Language );
+            if( null == languageOCP )
+            {
+                languageOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
+                    {
+                        PropName = CswNbtObjClassUser.PropertyName.Language,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.List
+                        //ListOptions = "en,fr,es,de"
+                    } );
             }
 
             _resetBlame();
-        }
+        } // _addPropsToJurisdictionOC()
 
         private void _addViewSDSProptoMaterial(CswDeveloper Dev, Int32 CaseNo)
         {
@@ -678,11 +686,11 @@ namespace ChemSW.Nbt.Schema
             }
 
             CswNbtMetaDataObjectClassProp NextReorderOcp = RequestMaterialDispenseOc.getObjectClassProp(CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate);
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, DBNull.Value);
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, DBNull.Value);
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, DBNull.Value);
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, DBNull.Value);
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, DBNull.Value);
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, DBNull.Value );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NextReorderOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, DBNull.Value );
 
             CswNbtMetaDataObjectClassProp RecurringFreqOcp = RequestMaterialDispenseOc.getObjectClassProp(CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency);
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, DBNull.Value);
@@ -690,6 +698,15 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, DBNull.Value);
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, DBNull.Value);
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(RecurringFreqOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, DBNull.Value);
+
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClassProp IsRecurringOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestOc )
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    ServerManaged = true,
+                    PropName = CswNbtObjClassRequest.PropertyName.IsRecurring,
+                } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsRecurringOcp, Tristate.False );
 
             _resetBlame();
         }
@@ -897,6 +914,42 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        #region Case 28713
+
+        private void _ChangeMaterialProps( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            //Approved at Receipt
+            CswNbtMetaDataObjectClassProp ApprovalStatusOCP = MaterialOC.getObjectClassProp( "Approval Status" );
+            if( null != ApprovalStatusOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ApprovalStatusOCP, true );
+            }
+            CswNbtMetaDataObjectClassProp ApprovedOCP = MaterialOC.getObjectClassProp( "Approved" ) ?? MaterialOC.getObjectClassProp( "Approved at Receipt" );
+            if( null != ApprovedOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ApprovedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
+            }
+            //TierII
+            CswNbtMetaDataObjectClassProp IsTierIIOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.IsTierII );
+            if( null != IsTierIIOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( IsTierIIOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, false );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsTierIIOCP, Tristate.Null, CswNbtSubField.SubFieldName.Checked );
+            }
+            //Manufacturing Sites
+            CswNbtMetaDataObjectClassProp ManufacturingSitesOCP = MaterialOC.getObjectClassProp( "Manufacturing Sites" );
+            if( null != ManufacturingSitesOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ManufacturingSitesOCP, true );
+            }
+            _resetBlame();
+        }
+
+        #endregion
+
         #endregion WILLIAM Methods
 
         /// <summary>
@@ -925,17 +978,20 @@ namespace ChemSW.Nbt.Schema
             _addViewSDSToContainer(CswDeveloper.MB, 28560);
             _fixRecurringRequestProp(CswDeveloper.CF, 28340);
             _makeLabelPrinterOCs( CswDeveloper.SS, 28534 );
+            _ChangeMaterialProps( CswDeveloper.BV, 28713 );
 
             #endregion WILLIAM
 
+            #region YORICK
+
+            //YORICK OC changes go here.
+
+            #endregion YORICK
+
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-        }
-
-        //Update()
-
+        } //Update()
     }//class RunBeforeEveryExecutionOfUpdater_01OC
-
 }//namespace ChemSW.Nbt.Schema
 
 

@@ -1858,7 +1858,8 @@
             Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
             Csw.subscribe('initGlobalEventTeardown', doClose);
         };
-
+        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        Csw.subscribe('initGlobalEventTeardown', doClose);
     }
 
     // Method calling logic

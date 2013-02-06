@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Password = "Password";
             public const string Username = "Username";
             public const string FirstName = "First Name";
+            public const string Language = "Language";
             public const string LastName = "Last Name";
             public const string LastLogin = "Last Login";
             public const string FavoriteViews = "Favorite Views";
@@ -489,7 +490,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship JurisdictionProperty { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
         public CswPrimaryKey JurisdictionId { get { return JurisdictionProperty.RelatedNodeId; } }
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
-
+        public CswNbtNodePropList LanguageProperty { get { return ( _CswNbtNode.Properties[PropertyName.Language] ); } }
+        public string Language { get { return ( LanguageProperty.Value ); } }
 
 
         private void OnUserNamePropChange( CswNbtNodeProp Prop )

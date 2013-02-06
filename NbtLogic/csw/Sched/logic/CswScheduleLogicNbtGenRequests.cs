@@ -94,10 +94,10 @@ namespace ChemSW.Nbt.Sched
                             {
                                 Description = CurrentRequestItem.Description.StaticText;
 
-                                CswNbtObjClassRequest CurrentRequest = _CswNbtResources.Nodes[CurrentRequestItem.Request.RelatedNodeId];
-                                if( null != CurrentRequest )
+                                CswNbtObjClassRequest RecurringRequest = _CswNbtResources.Nodes[CurrentRequestItem.Request.RelatedNodeId];
+                                if( null != RecurringRequest )
                                 {
-                                    CswNbtObjClassUser Requestor = _CswNbtResources.Nodes[CurrentRequest.Requestor.RelatedNodeId];
+                                    CswNbtObjClassUser Requestor = _CswNbtResources.Nodes[RecurringRequest.Requestor.RelatedNodeId];
                                     if( null != Requestor )
                                     {
                                         CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
@@ -107,34 +107,41 @@ namespace ChemSW.Nbt.Sched
                                             // We'd get all of this for free if we used copyNode, 
                                             // but then we'd have to manually do as much work in the other direction:
                                             // un-hiding properties, etc.
-                                            NewRequestItem.Request.RelatedNodeId = CurrentRequest.NodeId;
-                                            NewRequestItem.Requestor.RelatedNodeId = CurrentRequestItem.Requestor.RelatedNodeId;
-                                            NewRequestItem.Material.RelatedNodeId = CurrentRequestItem.Material.RelatedNodeId;
-                                            NewRequestItem.Material.CachedNodeName = CurrentRequestItem.Material.CachedNodeName;
-                                            NewRequestItem.InventoryGroup.RelatedNodeId = CurrentRequestItem.InventoryGroup.RelatedNodeId;
-                                            NewRequestItem.Location.SelectedNodeId = CurrentRequestItem.Location.SelectedNodeId;
-                                            NewRequestItem.Location.CachedPath = CurrentRequestItem.Location.CachedPath;
-                                            NewRequestItem.Comments.CommentsJson = CurrentRequestItem.Comments.CommentsJson;
-                                            NewRequestItem.Type.Value = CurrentRequestItem.Type.Value;
-
-                                            if( CurrentRequestItem.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk )
+                                            CswNbtActRequesting ThisUserAct = new CswNbtActRequesting( _CswNbtResources, Requestor );
+                                            CswNbtObjClassRequest UsersCartNode = ThisUserAct.getCurrentRequestNode();
+                                            if( null != UsersCartNode )
                                             {
-                                                NewRequestItem.Quantity.Quantity = CurrentRequestItem.Quantity.Quantity;
-                                                NewRequestItem.Quantity.CachedUnitName = CurrentRequestItem.Quantity.CachedUnitName;
-                                                NewRequestItem.Quantity.UnitId = CurrentRequestItem.Quantity.UnitId;
-                                            }
-                                            else
-                                            {
-                                                NewRequestItem.Size.RelatedNodeId = CurrentRequestItem.Size.RelatedNodeId;
-                                                NewRequestItem.Size.CachedNodeName = CurrentRequestItem.Size.CachedNodeName;
-                                                NewRequestItem.Count.Value = CurrentRequestItem.Count.Value;
-                                            }
-                                            NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
-                                            NewRequestItem.setRequestDescription();
-                                            NewRequestItem.postChanges( ForceUpdate: false );
+                                                // Most importantly, put the new request item in the current cart
+                                                NewRequestItem.Request.RelatedNodeId = UsersCartNode.NodeId;
+                                                
+                                                NewRequestItem.Requestor.RelatedNodeId = CurrentRequestItem.Requestor.RelatedNodeId;
+                                                NewRequestItem.Material.RelatedNodeId = CurrentRequestItem.Material.RelatedNodeId;
+                                                NewRequestItem.Material.CachedNodeName = CurrentRequestItem.Material.CachedNodeName;
+                                                NewRequestItem.InventoryGroup.RelatedNodeId = CurrentRequestItem.InventoryGroup.RelatedNodeId;
+                                                NewRequestItem.Location.SelectedNodeId = CurrentRequestItem.Location.SelectedNodeId;
+                                                NewRequestItem.Location.CachedPath = CurrentRequestItem.Location.CachedPath;
+                                                NewRequestItem.Comments.CommentsJson = CurrentRequestItem.Comments.CommentsJson;
+                                                NewRequestItem.Type.Value = CurrentRequestItem.Type.Value;
 
-                                            CurrentRequestItem.NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( CurrentRequestItem.Node, CurrentRequestItem.NextReorderDate, CurrentRequestItem.RecurringFrequency, ForceUpdate: true );
-                                            CurrentRequestItem.postChanges( ForceUpdate: false );
+                                                if( CurrentRequestItem.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Bulk )
+                                                {
+                                                    NewRequestItem.Quantity.Quantity = CurrentRequestItem.Quantity.Quantity;
+                                                    NewRequestItem.Quantity.CachedUnitName = CurrentRequestItem.Quantity.CachedUnitName;
+                                                    NewRequestItem.Quantity.UnitId = CurrentRequestItem.Quantity.UnitId;
+                                                }
+                                                else
+                                                {
+                                                    NewRequestItem.Size.RelatedNodeId = CurrentRequestItem.Size.RelatedNodeId;
+                                                    NewRequestItem.Size.CachedNodeName = CurrentRequestItem.Size.CachedNodeName;
+                                                    NewRequestItem.Count.Value = CurrentRequestItem.Count.Value;
+                                                }
+                                                NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
+                                                NewRequestItem.setRequestDescription();
+                                                NewRequestItem.postChanges( ForceUpdate: false );
+
+                                                CurrentRequestItem.NextReorderDate.DateTimeValue = CswNbtPropertySetSchedulerImpl.getNextDueDate( CurrentRequestItem.Node, CurrentRequestItem.NextReorderDate, CurrentRequestItem.RecurringFrequency, ForceUpdate: true );
+                                                CurrentRequestItem.postChanges( ForceUpdate: false );
+                                            }
                                         }
                                     }
                                     RequestDescriptions += CurrentRequestItem.Description + "; ";

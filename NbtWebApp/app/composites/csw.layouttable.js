@@ -61,6 +61,7 @@
                 cswPublic.table.data('configmode', mode);
             };
 
+
             cswPrivate.toggleRemove = function () {
                 if (cswPrivate.isRemoveMode(cswPublic.table)) {
                     cswPublic.table.data('removemode', 'false');
@@ -176,12 +177,14 @@
                     cellsetrow: cellsetrow,
                     cellsetcolumn: cellsetcolumn
                 });
-                if(cswPublic.isConfig()) {
-                    cell.bind('click', function (ev, dd) {
+                
+                cell.bind('click', function (ev, dd) {
+                    if(cswPublic.isConfig()) {
                         cswPrivate.onClick(ev, dd, thisRow, thisCol);
-                    });
-                    cswPrivate.enableDrop(cell);
-                }
+                    }
+                });
+                cswPrivate.enableDrop(cell);
+                
                 cell.div({ cssclass: 'CswLayoutTable_celldiv' });
             };
 

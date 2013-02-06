@@ -155,13 +155,13 @@ namespace ChemSW.Nbt.WebServices
                 if( null != RequestNode )
                 {
                     CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
-                    applyCopyLogic SetRequest = ( x ) => { x.Request.RelatedNodeId = RequestNode.NodeId; };
+                    applyCopyLogic SetRequest = ( Item ) => { Item.Request.RelatedNodeId = RequestNode.NodeId; };
                     Succeeded = ws.copyRequestItems( Request, SetRequest );
                 }
             }
             Ret.Data.Succeeded = Succeeded;
         }
-
+        
         /// <summary>
         /// WCF method to copy request items to recurring
         /// </summary>
@@ -169,19 +169,17 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = _validate( CswResources );
             bool Succeeded = false;
-            if( CswTools.IsPrimaryKey( Request.CswRequestId ) && Request.RequestItems.Any() )
+            if( Request.RequestItems.Any() )
             {
-                CswNbtObjClassRequest RequestNode = NbtResources.Nodes[Request.CswRequestId];
-                if( null != RequestNode )
-                {
-                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
-                    applyCopyLogic SetRequest = ( x ) =>
-                        {
-                            x.Request.RelatedNodeId = RequestNode.NodeId;
-                            x.IsRecurring.Checked = Tristate.True;
-                        };
-                    Succeeded = ws.copyRequestItems( Request, SetRequest );
-                }
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
+                CswNbtActRequesting act = new CswNbtActRequesting( NbtResources );
+                CswNbtObjClassRequest RequestNode = act.getRecurringRequestNode();
+                applyCopyLogic SetRequest = ( Item ) =>
+                    {
+                        Item.Request.RelatedNodeId = RequestNode.NodeId;
+                        Item.IsRecurring.Checked = Tristate.True;
+                    };
+                Succeeded = ws.copyRequestItems( Request, SetRequest );
             }
             Ret.Data.Succeeded = Succeeded;
         }
