@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.WebServices
 
             SearchMenuResponse.SearchType ss = new SearchMenuResponse.SearchType();
             ss.name = "Structure Search";
-            ss.iconfilename = "Images/newicons/16/structuresearch.png";
+            ss.iconfilename = "Images/newicons/16/atommag.png";
             searchTypes.Add(ss);
 
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 ) )
