@@ -23,28 +23,35 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            /* Owner property should be above Location property in the receive wizard */
+            /* Receive wizard property order: Owner, Location, Label Format, Expiration Date */
             CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container" );
             if( null != ContainerNT )
             {
                 CswNbtMetaDataNodeTypeProp LocationNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
                 CswNbtMetaDataNodeTypeProp OwnerNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Owner );
                 CswNbtMetaDataNodeTypeProp ExpirationDateNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
-
-                if( null != LocationNTP )
-                {
-                    LocationNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, 8, 1 );
-                }
+                CswNbtMetaDataNodeTypeProp LabelFormat = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
 
                 if( null != OwnerNTP )
                 {
                     OwnerNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, 7, 1 );
                 }
 
+                if( null != LocationNTP )
+                {
+                    LocationNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, 8, 1 );
+                }
+
+                if( null != LabelFormat )
+                {
+                    LabelFormat.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, 9, 1 );
+                }
+
                 if( null != ExpirationDateNTP )
                 {
-                    ExpirationDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, 9, 1 );
+                    ExpirationDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, 15, 1 );
                 }
+
             }
 
         } //Update()
