@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.ImportExport
     public class CswNbtMetaDataForSpreadSheetColReader
     {
         private Dictionary<string, string> _NodeTypeNameMapper = new Dictionary<string, string>();
-        private Dictionary<string, string> _NodeTypePropNameMapper = new Dictionary<string, string>();
+        public  Dictionary<string, string> _NodeTypePropNameMapper = new Dictionary<string, string>();
         private Dictionary<string, CswNbtMetaDataNodeType> _NodeTypesPerSpreadsheetRowCols = new Dictionary<string, CswNbtMetaDataNodeType>();
 
         
@@ -36,11 +36,11 @@ namespace ChemSW.Nbt.ImportExport
             _NodeTypePropNameMapper.Add( "productno", "Part Number" );
             _NodeTypePropNameMapper.Add( "un_no", "UN Code" );
             _NodeTypePropNameMapper.Add( "storage_conditions", "Storage and Handling" );
-            _NodeTypePropNameMapper.Add( "", "" );
+            _NodeTypePropNameMapper.Add( "barcodeid", "Barcode" );
+            _NodeTypePropNameMapper.Add( "containerstatus", "Status" );
             //_NodeTypePropNameMapper.Add( "", "" );
-
-
-            
+            //_NodeTypePropNameMapper.Add( "", "" );
+            //_NodeTypePropNameMapper.Add( "", "" );
 
         }//ctor
 
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
                     else
                     {
-                        Message = "The prop column " + PropTypeNameColVal + " for node type " + ReturnVal.CswNbtMetaDataNodeType.NodeTypeName + " does not correspond to a known node type and has no mapping";
+                        Message = "The prop column " + PropTypeNameColVal + " for node type " + ReturnVal.CswNbtMetaDataNodeType.NodeTypeName + " does not correspond to a known node type prop and has no mapping";
                     }
 
                 }//if the spreadsheet prop name did not get a prop

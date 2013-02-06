@@ -116,10 +116,11 @@ namespace ChemSW.Nbt.ImportExport
             if( true == _CswImportTablePopulator.loadImportTables( ref LoadErrorMessage ) )
             {
                 _LastCompletedProcessPhase = ImportProcessPhase.ImportTableIntegrityChecked;
-            } else
+            }
+            else
             {
-                throw ( new CswDniException( "Error loading import tables: " + LoadErrorMessage ) );
-                
+                _CswImportExportStatusReporter.reportException( new CswDniException( "Failed to load temporary tables: " + LoadErrorMessage ) );
+                _Stop = true;
             }
 
 
