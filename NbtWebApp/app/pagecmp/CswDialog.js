@@ -1070,7 +1070,8 @@
 
             //SearchTypes Picklist
             var searchTypeSelect = tableInner.cell(1, 2).select({
-                name: 'C3Search_searchTypeSelect'
+                name: 'C3Search_searchTypeSelect',
+                selected: 'Name'
             });
 
             function getSearchTypes() {

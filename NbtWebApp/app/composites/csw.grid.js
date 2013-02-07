@@ -133,10 +133,10 @@
                                     doHover = true;
                                 } else if (canedit) {
                                     doHover = true;
-                                    cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj.cellData);
+                                    cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
                                 } else if (canview) {
                                     doHover = true;
-                                    cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, tblObj.cellData);
+                                    cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, tblObj);
                                 }
 
                                 if (doHover) {
@@ -156,7 +156,7 @@
                 }
             };
 
-            cswPrivate.makeActionButton = function (tableCell, buttonName, iconType, clickFunc, cellData) {
+            cswPrivate.makeActionButton = function (tableCell, buttonName, iconType, clickFunc, cell) {
                 if (cswPrivate.showActionColumn) {
                     var iconopts = {
                         name: cswPrivate.name + buttonName,
@@ -169,7 +169,7 @@
                     if (false === Csw.isNullOrEmpty(clickFunc)) {
                         iconopts.isButton = true;
                         iconopts.onClick = function () {
-                            Csw.tryExec(clickFunc, [cellData]);
+                            Csw.tryExec(clickFunc, [cell.cellData], cell.raw);
                         };
                     }
                     tableCell.icon(iconopts);
