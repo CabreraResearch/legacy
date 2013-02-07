@@ -5,6 +5,24 @@ namespace ChemSW.Nbt.Schema
 {
     public abstract class CswUpdateSchemaTo
     {
+        public class UnitOfBlame
+        {
+            public UnitOfBlame()
+            {
+
+            }
+
+            public UnitOfBlame( CswDeveloper Dev, Int32 Case )
+            {
+                Developer = Dev;
+                CaseNumber = Case;
+            }
+
+            public CswDeveloper Developer;
+            public Int32 CaseNumber;
+        }
+
+
         protected CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn = null;
         public CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn
         {
@@ -27,6 +45,25 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public abstract void update();
 
+        private UnitOfBlame _Blame = null;
+        public virtual UnitOfBlame Blame
+        {
+            get
+            {
+                UnitOfBlame Ret;
+                if( null != _Blame )
+                {
+                    Ret = _Blame;
+                }
+                else
+                {
+                    Ret = new UnitOfBlame( Author, CaseNo );
+                }
+                return Ret;
+            }
+            set { _Blame = value; }
+        }
+
         /// <summary>
         /// The author of the script
         /// </summary>
@@ -46,11 +83,11 @@ namespace ChemSW.Nbt.Schema
             if( CaseNo > 0 )
             {
                 Ret = @"<a href=""https://fogbugz.chemswlive.com/default.asp?" + CaseNo + @""">Case " + CaseNo + "</a>";
-    }
+            }
             else
             {
                 Ret = "No case link for case " + CaseNo;
-}
+            }
             return Ret;
         }
     }

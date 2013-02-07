@@ -157,7 +157,7 @@ namespace NbtWebAppServices.Response
                                                 _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
                                                 CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode );
                                                 CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( ButtonNtp );
-                                                NbtObjClass.beforeOnButtonClick( ButtonData );
+                                                NbtObjClass.triggerOnButtonClick( ButtonData );
                                             }
                                         }
                                     }

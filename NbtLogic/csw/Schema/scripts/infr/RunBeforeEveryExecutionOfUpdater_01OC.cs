@@ -16,6 +16,12 @@ namespace ChemSW.Nbt.Schema
 
         #region Blame Logic
 
+        private void _acceptBlame( UnitOfBlame Blame )
+        {
+            _Author = Blame.Developer;
+            _CaseNo = Blame.CaseNumber;
+        }
+
         private void _acceptBlame(CswDeveloper BlameMe, Int32 BlameCaseNo)
         {
             _Author = BlameMe;
@@ -952,6 +958,36 @@ namespace ChemSW.Nbt.Schema
 
         #endregion WILLIAM Methods
 
+        #region YORICK Methods
+
+        #region Case 27923
+
+        private void _addSaveProperty( UnitOfBlame Blamne )
+        {
+            _acceptBlame( Blamne );
+
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtSchemaModTrnsctn.MetaData.getObjectClasses() )
+            {
+                CswNbtMetaDataObjectClassProp SaveOcp = ObjectClass.getObjectClassProp( CswNbtObjClass.PropertyName.Save );
+                if( null == SaveOcp )
+                {
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ObjectClass )
+                        {
+                            PropName = CswNbtObjClass.PropertyName.Save,
+                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                            ServerManaged = true, //Meaningless for buttons, but future-proof anyway
+                            ReadOnly = true //ditto
+                        } );
+                }
+            }
+            
+            _resetBlame();
+        }
+
+        #endregion Case 27923
+
+        #endregion
+
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -985,7 +1021,9 @@ namespace ChemSW.Nbt.Schema
             #region YORICK
 
             //YORICK OC changes go here.
-
+            
+            _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
+            
             #endregion YORICK
 
             //THIS GOES LAST!
