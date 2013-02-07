@@ -196,7 +196,7 @@
                 cswPrivate.foundSelected = false;
 
                 Csw.each(cswPrivate.options, function (relatedObj) {
-                    if (false === cswPrivate.isMulti && relatedObj.id === cswPrivate.selectedNodeId) {
+                    if (false === Csw.bool(cswPrivate.isMulti) && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.nodelink });
                     } else {

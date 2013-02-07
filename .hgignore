@@ -27,6 +27,7 @@ NbtWebApp/MainCswIncludes.html
 glob:TestResults/*
 *.js.map
 .*\.rej
+*.xsd
 syntax: regexp
 NbtLogic/csw/Batch/CswNbtBatchOpUpdateRegulatoryLists.cs.orig
 .*\.orig

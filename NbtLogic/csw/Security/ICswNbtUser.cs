@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.Security
         Int32 RoleObjectClassId { get; }
         Int32 PasswordPropertyId { get; }
         bool PasswordIsExpired { get; }
+        string Language { get; }
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt

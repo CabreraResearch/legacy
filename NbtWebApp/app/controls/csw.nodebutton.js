@@ -109,6 +109,9 @@
 
                 (function _post() {
                     cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
+                    if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
+                        cswPrivate.mode = 'menu';
+                    }
                     switch (cswPrivate.mode) {
                         case 'button':
                             cswPublic.button = cswPrivate.btnCell.buttonExt({

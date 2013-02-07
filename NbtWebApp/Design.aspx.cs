@@ -899,15 +899,22 @@ namespace ChemSW.Nbt.WebPages
                     string TabGroup = getPropAttributeValue( "EditProp_TabGroupValue" + OldSelectedNodeTypePropId.ToString(), typeof( string ), EditPropPlaceHolder );
                     bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
-                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow, DisplayColumn, TabGroup );
-                    if( SetValueOnAdd )
-                    {
-                        PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
-                    }
-                    else
-                    {
-                        PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                    }
+                    //We're not using Design mode to configure layouts anymore
+                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, 
+                        TabId: Tab.TabId, 
+                        DisplayRow: DisplayRow, 
+                        DisplayColumn: DisplayColumn, 
+                        TabGroup: TabGroup, 
+                        DoMove: false );
+                    
+                    //if( SetValueOnAdd )
+                    //{
+                    //    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, DisplayRow: DisplayRowAdd, DisplayColumn: DisplayColAdd, DoMove: false );
+                    //}
+                    //else
+                    //{
+                    //    PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    //}
                     PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     //PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaRows = CswConvert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
@@ -1912,6 +1919,14 @@ namespace ChemSW.Nbt.WebPages
                                     MaxRows.Text = SelectedNodeTypeProp.MaxValue.ToString();
                                 }
                                 MaxRowCount.Cells[1].Controls.Add( MaxRows );
+
+                                TableRow HasHeaderRow = makeEditPropTableRow( EditPropPlaceHolder );
+                                ( (Literal) HasHeaderRow.Cells[0].Controls[0] ).Text = "";
+                                CheckBox HasHeaderValue = new CheckBox();
+                                HasHeaderValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                                HasHeaderValue.Text = "Show Column Headers";
+                                HasHeaderValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.Attribute1 );
+                                HasHeaderRow.Cells[1].Controls.Add( HasHeaderValue );
                             }
 
                             CswViewStructureTree GridViewTree = new CswViewStructureTree( Master.CswNbtResources );
