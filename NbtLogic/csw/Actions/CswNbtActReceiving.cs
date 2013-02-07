@@ -205,8 +205,23 @@ namespace ChemSW.Nbt.Actions
                         Ret["viewid"] = NewContainersView.SessionViewId.ToString();
                     }
                 }
+
+                //Delete the temporary node used in the wizard
+                CswPrimaryKey TempNodePK = CswConvert.ToPrimaryKey( ReceiptObj["tempnodeid"].ToString() );
+                if( CswTools.IsPrimaryKey( TempNodePK ) )
+                {
+                    CswNbtNode TempNode = CswNbtResources.getNode( TempNodePK, DateTime.Now );
+                    if( null != TempNode )
+                    {
+                        TempNode.delete();
+                    }
+                }
+
             }
             Ret["containerscreated"] = ContainerIds.Count;
+
+
+
             return Ret;
         }
 

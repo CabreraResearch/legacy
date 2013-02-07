@@ -251,7 +251,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
-                if( _CswNbtResources.EditMode == NodeEditMode.Add )
+                bool isNode = CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) );
+                if( (_CswNbtResources.EditMode == NodeEditMode.Add) && false == isNode )
                 {
                     Node = getAddNode( NodeTypeId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }

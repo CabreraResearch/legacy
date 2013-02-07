@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return Ret;
         }
-        
+
         /// <summary>
         /// WCF wrapper around getNodes
         /// </summary>
@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                
+
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
@@ -466,6 +466,24 @@ namespace ChemSW.Nbt.WebServices
                         tree.goToParentNode();
                     }
 
+                }
+            }
+        }
+
+        public static void makeTemp( ICswResources CswResources, NodeResponse Response, string nodetype )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( nodetype );
+                if( null != NodeType )
+                {
+                    CswNbtNode NewResultNode = NbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    if( null != NewResultNode )
+                    {
+                        CswNbtNode.Node ReturnNode = new CswNbtNode.Node( NewResultNode );
+                        Response.Data.Nodes.Add( ReturnNode );
+                    }
                 }
             }
         }

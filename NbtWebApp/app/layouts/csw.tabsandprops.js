@@ -1,7 +1,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function () {  
+(function () {
 
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
@@ -53,6 +53,7 @@
 
                 },
                 IdentityTab: null,
+                tabContentDiv: null,
                 showTitle: true,
                 onNodeIdSet: null,
                 onSave: null,
@@ -60,6 +61,7 @@
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
                 onTabSelect: null,
+                onTabChange: null, // case 28514
                 onPropertyChange: null,
                 onPropertyRemove: null,
                 onInitFinish: null,
@@ -72,7 +74,7 @@
                 properties: [],
                 async: true
             };
-            var cswPublic = {};
+            var cswPublic = { };
 
             cswPrivate.onMultiEdit = function (eventObj, multiOpts) {
                 var isMulti = false;
@@ -115,6 +117,9 @@
                     cswPrivate.tabcnt = 0;
                 };
                 cswPrivate.init();
+
+
+
             } ());
 
             //#region Events
@@ -125,6 +130,7 @@
 
             cswPrivate.onTearDownProps = function () {
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
+
             };
 
             cswPrivate.onTearDown = function () {
@@ -173,7 +179,9 @@
                 }
                 tabContentDiv.data('canEditLayout', canEditLayout);
                 tabContentDiv.data('tabid', tabid);
+
                 return tabContentDiv;
+
             };
 
             cswPrivate.setPrivateProp = function (obj, propName) {
@@ -250,6 +258,7 @@
 
                     var tabid = cswPrivate.tabState.EditMode + "_tab";
                     tabContentDiv = cswPrivate.makeTabContentDiv(tabContentDiv, tabid, false);
+                    cswPrivate.tabContentDiv = tabContentDiv;
                     cswPrivate.getProps(tabContentDiv, tabid);
 
                 } else {
@@ -629,6 +638,7 @@
                 } else {
                     cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
                 }
+
             }; // getProps()
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
@@ -1168,7 +1178,12 @@
                             if (false === cswPrivate.isMultiEdit()) {
                                 if (cswPrivate.ReloadTabOnSave) {
                                     // reload tab
+                                    cswPrivate.globalState.propertyData = '';
                                     cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
+                                    //cswPrivate.tabState.EditMode = "Edit";
+                                    cswPublic.resetTabs(cswPublic.getNodeId(), cswPublic.getNodeKey());
+
+
                                 } else {
                                     onSaveSuccess();
                                 }
@@ -1230,6 +1245,20 @@
             (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
                 cswPrivate.refreshLinkDiv();
+
+                function onTabChangeMethod(obj, data, tabContentDiv) {
+                    cswPrivate.onTabChange(obj, data, tabContentDiv);
+                }
+
+                Csw.unsubscribe('onTabChange');
+                console.log("Unsubscribed (init)");
+                Csw.subscribe('onTabChange', function (eventObject, data) {
+                    onTabChangeMethod(eventObject, data, cswPrivate.tabContentDiv);
+                });
+                console.log("Subscribed (init)");
+
+
+
             } ());
 
             return cswPublic;

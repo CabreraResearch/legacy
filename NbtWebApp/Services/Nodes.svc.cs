@@ -4,6 +4,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.WebServices;
@@ -71,6 +72,24 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.getSizes,
                 ParamObj: Request
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "makeTemp" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "" )]
+        public NodeResponse makeTemp( string NodeTypeRequest )
+        {
+            NodeResponse Ret = new NodeResponse();
+            var GetViewDriverType = new CswWebSvcDriver<NodeResponse, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNode.makeTemp,
+                ParamObj: NodeTypeRequest
                 );
 
             GetViewDriverType.run();
