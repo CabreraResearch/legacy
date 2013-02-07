@@ -103,8 +103,6 @@ namespace ChemSW.Nbt
                 Node2.IsDemo = true;
                 Node2.postChanges( ForceUpdate: false );
             }
-
-            _CswNbtResources.Modules.ToggleView( false, "Containers", NbtViewVisibility.Global );
         }
 
         public override void OnDisable()
@@ -113,9 +111,6 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "None" );
             }
-
-            _CswNbtResources.Modules.ToggleView( true, "Containers", NbtViewVisibility.Global );
         }
-
     } // class CswNbtModuleRuleDev
 }// namespace ChemSW.Nbt
