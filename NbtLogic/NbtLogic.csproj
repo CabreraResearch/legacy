@@ -476,7 +476,6 @@
     <Compile Include="csw\MetaData\CswNbtMetaDataEvents.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataFieldType.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataForSchemaUpdater.cs" />
-    <Compile Include="csw\MetaData\CswNbtMetaDataIconName.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeType.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeProp.cs" />
