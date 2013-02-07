@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     if( null != NodeAsMaterial.Receive.NodeTypeProp )
                                     {
                                         NbtButtonData ReceiveData = new NbtButtonData( NodeAsMaterial.Receive.NodeTypeProp );
-                                        NodeAsMaterial.onButtonClick( ReceiveData );
+                                        NodeAsMaterial.triggerOnButtonClick( ReceiveData );
                                         ButtonData.clone( ReceiveData );
                                         Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
                                         if( Int32.MinValue != DocumentNodeTypeId )

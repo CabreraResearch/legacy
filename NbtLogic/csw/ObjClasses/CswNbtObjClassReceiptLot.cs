@@ -1,8 +1,4 @@
-using System;
-using ChemSW.Core;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 
@@ -10,7 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReceiptLot : CswNbtObjClass
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             //public const string ReceiptLotNo = "Receipt Lot No"; //waiting on 27877
             public const string Material = "Material";
@@ -84,7 +80,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
 
 

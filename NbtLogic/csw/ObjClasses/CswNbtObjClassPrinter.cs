@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Property names on the Printer class
         /// </summary>
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Name = "Name";
             public const string Description = "Description";
@@ -79,8 +79,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
-
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;

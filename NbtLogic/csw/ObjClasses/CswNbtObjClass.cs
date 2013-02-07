@@ -4,6 +4,8 @@ using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -38,7 +40,19 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
-        public abstract bool onButtonClick( NbtButtonData ButtonData );
+        
+        public bool triggerOnButtonClick( NbtButtonData ButtonData )
+        {
+            if( ButtonData.TabId > 0 && null != ButtonData.Props && ButtonData.Props.HasValues )
+            {
+                CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
+                Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.Props, this.NodeTypeId, null, false );
+            }
+            return onButtonClick( ButtonData );
+        }
+
+        protected abstract bool onButtonClick( NbtButtonData ButtonData );
+        
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         public virtual CswNbtNode CopyNode()
         {
@@ -47,6 +61,13 @@ namespace ChemSW.Nbt.ObjClasses
             CopiedNode.postChanges( true, true );
             return CopiedNode;
         }
+
+        public abstract class PropertyName
+        {
+            public const string Save = "Save";
+        }
+
+        public virtual CswNbtNodePropButton Save { get { return _CswNbtNode.Properties[PropertyName.Save]; } }
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
         public CswNbtMetaDataNodeType NodeType { get { return _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId ); } }
@@ -96,6 +117,8 @@ namespace ChemSW.Nbt.ObjClasses
             public string SelectedText;
             public CswNbtMetaDataNodeTypeProp NodeTypeProp;
             public JObject Data;
+            public JObject Props;
+            public Int32 TabId;
             public string Message;
 
         }

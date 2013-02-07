@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassCustomer : CswNbtObjClass
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string IPFilterRegex = "IP Filter Regex";
             public const string SubscriptionExpirationDate = "Subscription Expiration Date";
@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
 
 

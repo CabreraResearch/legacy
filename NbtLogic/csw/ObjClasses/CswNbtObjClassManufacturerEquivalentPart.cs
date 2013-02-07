@@ -1,8 +1,4 @@
-using System;
-using ChemSW.Core;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 
@@ -10,7 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassManufacturerEquivalentPart : CswNbtObjClass
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Material = "Material";
             public const string EnterprisePart = "Enterprise Part";
@@ -77,8 +73,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
-
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
 
 

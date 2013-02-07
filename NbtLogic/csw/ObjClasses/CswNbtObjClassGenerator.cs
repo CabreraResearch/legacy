@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public const string InspectionGeneratorNodeTypeName = "Inspection Schedule";
 
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public static string DueDateInterval = "Due Date Interval";
             public static string RunTime = "Run Time";
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
@@ -307,6 +307,7 @@ namespace ChemSW.Nbt.ObjClasses
             CopiedIDNode.postChanges( true );
             return CopiedIDNode.Node;
         }
+
         #endregion
 
         #region Object class specific properties

@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp ) { SelectedText = SelectedText };
 
-            bool Success = NbtObjClass.onButtonClick( ButtonData );
+            bool Success = NbtObjClass.triggerOnButtonClick( ButtonData );
 
             RetObj["action"] = ButtonData.Action.ToString();
             RetObj["actionData"] = ButtonData.Data;  //e.g. popup url

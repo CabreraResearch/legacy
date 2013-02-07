@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.ObjClasses
         //    }
         //}
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
 
 

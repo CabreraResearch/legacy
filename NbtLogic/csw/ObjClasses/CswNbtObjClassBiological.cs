@@ -1,5 +1,4 @@
 ﻿using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -7,6 +6,11 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassBiological : CswNbtObjClass
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
+
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        {
+            
+        }
 
         public CswNbtObjClassBiological( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
@@ -65,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             
             

@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassFeedback : CswNbtObjClass
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Author = "Author";
             public const string DateSubmitted = "Date Submitted";
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {

@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassMailReport : CswNbtObjClass, ICswNbtPropertySetScheduler
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string DueDateInterval = "Due Date Interval";
             public const string Enabled = "Enabled";
@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
