@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Schema
             }
             _resetBlame();
 
-_acceptBlame( CswDeveloper.BV, 28746 );
+            _acceptBlame( CswDeveloper.BV, 28746 );
             if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "extended" ) )
             {
                 _CswNbtSchemaModTrnsctn.changeColumnDataType( "nodetype_props", "extended", DataDictionaryPortableDataType.String, 100 );
