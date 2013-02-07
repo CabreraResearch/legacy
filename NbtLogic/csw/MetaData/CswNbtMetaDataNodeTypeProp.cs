@@ -576,7 +576,16 @@ namespace ChemSW.Nbt.MetaData
                            _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
                         )
                       );
-
+            if( ret && null != getObjectClassProp() && getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
+            {
+                //Don't show the Save prop if the properties on this tab aren't editable
+                if( false == _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId )  || 
+                    false == _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Tab ) ||
+                    false == _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType() ) )
+                {
+                    ret = false;
+                }
+            }
             //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }

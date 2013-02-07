@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -16,6 +17,41 @@ namespace ChemSW.Nbt.ObjClasses
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
 
+        private delegate void ifPermiited();
+        
+
+        private bool canSave(Int32 TabId)
+        {
+            bool Ret = false;
+            switch( _CswNbtResources.EditMode )
+            {
+                case NodeEditMode.Temp:
+                case NodeEditMode.Add:
+                    if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, this.NodeType ) )
+                    {
+                        Ret = true;
+                    }
+                    break;
+                case NodeEditMode.EditInPopup:
+                case NodeEditMode.Edit:
+                    if( TabId > 0 )
+                    {
+                        CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );
+                        if( null != Tab )
+                        {
+                            Ret = _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType, Tab );
+                        }
+                    }
+                    else
+                    {
+                        Ret = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType );
+                    }
+                    break;
+            }
+
+            return Ret;
+        }
+
         /// <summary>
         /// Constructor for when we have a node instance
         /// </summary>
@@ -23,6 +59,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtNode = CswNbtNode;
             _CswNbtResources = CswNbtResources;
+            //We don't have a context for which Tab is going to render, but we can eliminate the base conditions for displaying the Save button here.
+            if( false == canSave( TabId: Int32.MinValue ) )
+            {
+                Save.setHidden( value: true, SaveToDb: false );
+            }
         }//ctor()
 
         /// <summary>
@@ -45,8 +86,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( ButtonData.TabId > 0 && null != ButtonData.Props && ButtonData.Props.HasValues )
             {
-                CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.Props, this.NodeTypeId, null, false );
+                if( canSave( ButtonData.TabId ) )
+                {
+                    CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
+                    Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.Props, this.NodeTypeId, null, false );
+                }
             }
             return onButtonClick( ButtonData );
         }
