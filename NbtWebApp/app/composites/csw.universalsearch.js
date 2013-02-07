@@ -126,7 +126,7 @@
                         srchMenuItems.push({
                             text: 'Search',
                             icon: Csw.getIconUrlString(16, Csw.enums.iconType.magglass),
-                            handler: function () { srchOnClick(); }
+                            handler: srchOnClick
                         });
 
                         var selectedText = 'Search';
@@ -136,7 +136,7 @@
                                 srchMenuItems.push({
                                     text: st.name,
                                     icon: st.iconfilename,
-                                    handler: function () { srchOnClick(st.name); }
+                                    handler: function () { return srchOnClick(st.name); }
                                 });
                             }
                         });
@@ -156,12 +156,15 @@
                 }); // ajaxWcf
 
                 var srchOnClick = function (selectedOption) {
+                    var ret = Csw.clientChanges.manuallyCheckChanges();
+                    if (ret) {
                     switch (selectedOption) {
                         case 'Structure Search':
                             $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
                             break;
                         case 'ChemCatCentral Search':
-                            $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
+                            $.CswDialog('C3SearchDialog', {
+                                loadView: cswPrivate.onLoadView,
                                 c3searchterm: cswPrivate.searchinput.val(),
                                 c3handleresults: cswPublic.handleResults,
                                 clearview: cswPrivate.onBeforeSearch
@@ -172,6 +175,8 @@
                             cswPrivate.searchterm = cswPrivate.searchinput.val();
                             cswPrivate.newsearch();
                     }
+                    }
+                    return ret;
                 };
                 cswPrivate.searchinput = cswtable.cell(1, 2).input({
                     type: Csw.enums.inputTypes.search,

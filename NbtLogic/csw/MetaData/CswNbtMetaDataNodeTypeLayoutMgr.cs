@@ -17,11 +17,11 @@ namespace ChemSW.Nbt.MetaData
         public sealed class LayoutType : CswEnum<LayoutType>
         {
             private LayoutType( String Name ) : base( Name ) { }
-            public static IEnumerable<LayoutType> _All { get { return CswEnum<LayoutType>.All; } }
+            public static IEnumerable<LayoutType> _All { get { return All; } }
             public static implicit operator LayoutType( string str )
             {
                 LayoutType ret = Parse( str );
-                return ( ret != null ) ? ret : LayoutType.Unknown;
+                return ret ?? Unknown;
             }
             public static readonly LayoutType Unknown = new LayoutType( "Unknown" );
             public static readonly LayoutType Add = new LayoutType( "Add" );
@@ -29,21 +29,7 @@ namespace ChemSW.Nbt.MetaData
             public static readonly LayoutType Preview = new LayoutType( "Preview" );
             public static readonly LayoutType Table = new LayoutType( "Table" );
         }
-
-        //public enum LayoutType
-        //{
-        //    Unknown,
-        //    Add,
-        //    Edit,
-        //    Preview,
-        //    Table
-        //}
-
-        public LayoutType LayoutTypeForEditMode( string EditMode )
-        {
-            NodeEditMode RealEditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditMode );
-            return LayoutTypeForEditMode( RealEditMode );
-        }
+        
         public LayoutType LayoutTypeForEditMode( NodeEditMode EditMode )
         {
             LayoutType LType = LayoutType.Unknown;
@@ -284,22 +270,7 @@ namespace ChemSW.Nbt.MetaData
             }
             LayoutUpdate.update( LayoutTable );
         } // removePropFromAllLayouts()
-
-        /// <summary>
-        /// Clear all properties from a layout
-        /// </summary>
-        public void clearLayout( LayoutType LayoutType, Int32 NodeTypeId )
-        {
-            CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "clearLayout_Update", "nodetype_layout" );
-            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString();
-            DataTable LayoutTable = LayoutUpdate.getTable( WhereClause );
-            foreach( DataRow Row in LayoutTable.Rows )
-            {
-                Row.Delete();
-            }
-            LayoutUpdate.update( LayoutTable );
-        } // clearLayout()
-
+        
         public Int32 getCurrentMaxDisplayRow( Int32 NodeTypeId, Int32 TabId, LayoutType LayoutType )
         {
             Int32 MaxRow = 0;
