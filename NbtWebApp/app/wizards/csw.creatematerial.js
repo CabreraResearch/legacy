@@ -472,7 +472,6 @@
                                         case cswPrivate.config.unitCountName:
                                             cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
                                                 name: 'sizeUnitCount',
-                                                value: 1,
                                                 MinValue: 1,
                                                 Precision: 0,
                                                 onChange: function (value) {
@@ -544,7 +543,7 @@
                                         quantity: '',
                                         unit: '',
                                         unitid: '',
-                                        unitCount: 1,
+                                        unitCount: '',
                                         quantEditableChecked: 'true',
                                         dispensibleChecked: 'true',
                                         nodetypeid: cswPrivate.state.sizeNodeTypeId

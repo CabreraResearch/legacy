@@ -349,7 +349,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Ret["qtyReadonly"] = "true";
                     }
-                    Ret["unitCount"] = Size.UnitCount.Value.ToString();
+                    Ret["unitCount"] = CswTools.IsDouble( Size.UnitCount.Value ) ? Size.UnitCount.Value.ToString() : "";
                 }
                 else if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.dispense.ToString() )
                 {

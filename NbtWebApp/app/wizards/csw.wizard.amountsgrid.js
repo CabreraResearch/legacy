@@ -147,8 +147,8 @@
                                     cswPublic.rows[rowid].quantityValues.unitid = cswPublic.rows[rowid].qtyControl.selectedUnit();
                                 }
                                 if (changeContainerNo) {
-                                    cswPublic.rows[rowid].containerNoControl.val(Csw.number(cswPrivate.quantity.unitCount, 1));
-                                    cswPublic.rows[rowid].quantityValues.containerNo = Csw.number(cswPrivate.quantity.unitCount, 1);
+                                    cswPublic.rows[rowid].containerNoControl.val(cswPrivate.quantity.unitCount);
+                                    cswPublic.rows[rowid].quantityValues.containerNo = cswPrivate.quantity.unitCount;
                                     updateTotalContainerCount();
                                 }
                                 Csw.tryExec(cswPrivate.onChange, cswPublic.quantities());
@@ -168,7 +168,7 @@
                                 case cswPrivate.config.numberName:
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
                                         name: 'containerCount',
-                                        value: 1,
+                                        value: '',
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: cswPublic.containerlimit,
                                         width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
