@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Actions
 
         public Int32 ActionId;
         public string Url;
-        public string IconFileName;
+        public string IconFileName = "wizard.png";
         public CswNbtActionName Name;
         public bool ShowInList;
         public string Category;
@@ -54,7 +54,10 @@ namespace ChemSW.Nbt.Actions
             Name = ActionName;
             ShowInList = ActionShowInList;
             Category = ActionCategory;
-            IconFileName = ActionIconFileName;
+            if( false == string.IsNullOrEmpty( ActionIconFileName ) )
+            {
+                IconFileName = ActionIconFileName;
+            }
         }
 
         public static string ActionNameEnumToString( CswNbtActionName ActionName )
