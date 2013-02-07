@@ -374,7 +374,9 @@
                     href: 'Images/blank.gif',
                     id: ''
                 }];
-                Csw.each(Csw.enums.iconType, function (iconincrement, iconname) {
+                //Csw.each(Csw.enums.iconType, function (iconincrement, iconname) {
+                var iconsArr = Object.keys(Csw.enums.iconType).sort();
+                iconsArr.forEach(function(iconname) {
                     if (iconname != 'none' && iconname != 'iconType') {
                         iconOptions.push({
                             name: iconname,
