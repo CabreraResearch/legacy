@@ -397,18 +397,62 @@ namespace ChemSW.Nbt.MetaData
 
                 if( value )
                 {
-                    //clearFilter();
                     _NodeTypePropRow["filter"] = string.Empty;
                     _NodeTypePropRow["filterpropid"] = CswConvert.ToDbVal( Int32.MinValue );
-                    //SetValueOnAdd = true;
                     if( this.DefaultValue.Empty )
                     {
-                        //_NodeTypePropRow["setvalonadd"] = CswConvert.ToDbVal( true );
-                        updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                        //If the prop isn't on the Add layout, Add it.
+                        if( false == ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
+                        {
+                            updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
+                        }
                     }
                 }
             }
         }
+
+        private bool _ExistsInLayout( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout )
+        {
+            bool Ret = false;
+            if( null != Layout )
+            {
+                if( Int32.MinValue == Layout.PropId ||
+                    ( Layout.PropId == this.PropId ||
+                      Layout.PropId == this.FirstPropVersionId ||
+                      Layout.PropId == this.getNodeTypePropLatestVersion().PropId ) )
+                {
+                    Ret = true;
+                }
+            }
+            return Ret;
+        }
+
+        public bool ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Type )
+        {
+            bool Ret = false;
+            
+            if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+            {
+                Ret = _ExistsInLayout( getAddLayout() );
+            }
+            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            {
+                foreach( KeyValuePair<int, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> KeyValuePair in getEditLayouts() )
+                {
+                    Ret = Ret || _ExistsInLayout( KeyValuePair.Value );
+                }
+            }
+            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table )
+            {
+                Ret = _ExistsInLayout( getTableLayout() );
+            }
+            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview )
+            {
+                Ret = _ExistsInLayout( getPreviewLayout() );
+            }
+            return Ret;
+        }
+
         public bool IsRequiredEnabled()
         {
             return ( false == hasFilter() );

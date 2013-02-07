@@ -69,8 +69,8 @@
                         Csw.tryExec(cswPrivate.onSelectRow, row.changedate);
                     }
                 },
-                onEdit: function (rows) {
-                    Csw.tryExec(cswPrivate.onEditRow, rows[0].changedate);
+                onEdit: function (rows, raw) {
+                    Csw.tryExec(cswPrivate.onEditRow, raw.changedate);
                 }
             });
             // set selected row by date

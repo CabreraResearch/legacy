@@ -1133,6 +1133,7 @@ window.initMain = window.initMain || function (undefined) {
                         viewMode: o.viewmode,
                         nodeId: o.nodeid,
                         nodeKey: o.nodekey,
+                        includeInQuickLaunch: true,
                         includeNodeRequired: o.IncludeNodeRequired,
                         onViewChange: function (newviewid, newviewmode) {
                             Csw.clientState.setCurrentView(newviewid, newviewmode);
@@ -1461,7 +1462,7 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
-					case 'view scheduled_rules':
+                    case 'view scheduled_rules':
                     case 'view scheduled rules':
                         var rulesOpt = {
                             onCancel: function() {
