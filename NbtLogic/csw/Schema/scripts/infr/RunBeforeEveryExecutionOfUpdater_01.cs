@@ -1,5 +1,6 @@
 
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -96,6 +97,17 @@ namespace ChemSW.Nbt.Schema
             if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("nodes", "iconfilename"))
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn("nodes", "iconfilename", "Overrides the icon from the nodetype", false, false, 50);
+            }
+            _resetBlame();
+
+            _acceptBlame( CswDeveloper.BV, 28746 );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "extended" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "nodetype_props", "extended", DataDictionaryPortableDataType.String, 100 );
+            }
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "extended" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "object_class_props", "extended", DataDictionaryPortableDataType.String, 100 );
             }
             _resetBlame();
 
