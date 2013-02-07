@@ -109,7 +109,7 @@
                 };
 
                 cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).imageSelect({
-                    onSelect: function (name, href, imageCell, nameCell) {
+                    onSelect: function (name, href, id, imageCell, nameCell) {
                         if (false === cswPrivate.allowMultiple) {
                             cswPrivate.imageTable.empty();
                             cswPrivate.selectedValues = [];
@@ -121,6 +121,7 @@
                         }
                         cswPrivate.addImage(name, href, true);
                         Csw.tryExec(cswPublic.data.onChange, cswPrivate.selectedValues);
+                        return false;
                     }
                 });
 

@@ -12,13 +12,13 @@
             var cswPublic;
             var cswPrivate = {
                 name: '',
-                options: [], // [{ name: '', href: '' }],
+                options: [], // [{ name: '', href: '', id: '' }],
                 width: '180px',
                 height: '150px',
                 defaultText: 'Select...',
                 comboImgWidth: '32px',
                 comboImgHeight: '',
-                onSelect: null //function(name, href, row) {}
+                onSelect: function(name, href, id, imageCell, nameCell) { return true; }  // true to send the selected content to the top of the comboBox
             };
             Csw.extend(cswPrivate, params);
 
@@ -45,7 +45,7 @@
             
             cswPublic = Csw.dom({ }, cswPrivate.imageSelectList);
 
-            cswPublic.addOption = function (name, href) {
+            cswPublic.addOption = function (name, href, id) {
                 var imageCell = cswPrivate.optionsTable.cell(cswPrivate.optsTblMaxRow, 1);
                 if (false === Csw.isNullOrEmpty(href)) {
                     imageCell.img({
@@ -70,7 +70,9 @@
                 nameCell.$.hover(hoverIn, hoverOut);
 
                 var handleSelect = function() {
-                    Csw.tryExec(cswPrivate.onSelect, name, href, imageCell, nameCell);
+                    if (Csw.tryExec(cswPrivate.onSelect, name, href, id, imageCell, nameCell)) {
+                        cswPrivate.imageSelectList.topContent(name, id);
+                    }
                 };
                 imageCell.bind('click', handleSelect);
                 nameCell.bind('click', handleSelect);
@@ -79,7 +81,7 @@
             }; // addOption()
 
             Csw.each(cswPrivate.options, function(opt) {
-                cswPublic.addOption(opt.name, opt.href);
+                cswPublic.addOption(opt.name, opt.href, opt.id);
             });
 
             return cswPublic;

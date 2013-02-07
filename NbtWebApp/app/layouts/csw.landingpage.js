@@ -369,17 +369,20 @@
 
                 var iconOptions = [{
                     name: 'Default',
-                    href: ''
+                    href: 'Images/blank.gif',
+                    id: ''
                 }];
                 Csw.each(Csw.enums.iconType, function (iconincrement, iconname) {
                     if (iconname != 'none' && iconname != 'iconType') {
                         iconOptions.push({
                             name: iconname,
-                            href: 'Images/newicons/100/' + iconname + '.png'   // better if this used the sprites file
+                            href: 'Images/newicons/100/' + iconname + '.png',   // better if this used the sprites file
+                            id: iconname + '.png'
                         });
                     }
                 });
                 cswPrivate.addItemForm[cswPrivate.select.icon].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.icon, 2).imageSelect({
+                    defaultText: 'Default',
                     options: iconOptions
                 });
             };
@@ -436,6 +439,7 @@
                             pkvalue: pkvalue,
                             nodetypeid: cswPrivate.addItemForm[cswPrivate.select.nodetype].control.val(),
                             text: cswPrivate.addItemForm[cswPrivate.select.text].control.val(),
+                            buttonIcon: cswPrivate.addItemForm[cswPrivate.select.icon].control.val(),
                             onSuccess: addOptions.onAdd,
                             onError: function () { cswPrivate.addItemForm[cswPrivate.select.add].control.enable(); }
                         });
@@ -457,7 +461,8 @@
                     ViewType: addOptions.viewtype,
                     PkValue: addOptions.pkvalue,
                     NodeTypeId: addOptions.nodetypeid,
-                    Text: addOptions.text
+                    Text: addOptions.text,
+                    ButtonIcon: addOptions.buttonIcon
                 };
                 Csw.ajaxWcf.post({
                     urlMethod: 'LandingPages/addItem',
