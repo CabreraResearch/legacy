@@ -268,7 +268,7 @@ namespace ChemSW.Nbt.ImportExport
                         VendorNamePropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = VendorNameNodeTypeProp.PropName;
                         VendorNamePropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = VendorNameNodeTypeProp.PropId;
                         VendorNamePropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-                        //VendorNamePropRow[CurrentColMetaData.FieldTypeColNames[0]] = current_vendor; 
+                        VendorNamePropRow["TEXT"] = current_vendor; 
                     }
                     else
                     {
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ImportExport
                         if( current_material_compount_id != MaterialCompoundId.ToString() )
                         {
                             current_material_compount_id = MaterialCompoundId.ToString();
-                            _addRowOfNodeType( CurrentRlXlsRow, ChemicalNodeType, ImportNodesTable, ImportPropsTable, ref CurrentMaterialRow, CurrentVendorRow, "Vendor" );
+                            _addRowOfNodeType( CurrentRlXlsRow, ChemicalNodeType, ImportNodesTable, ImportPropsTable, ref CurrentMaterialRow, CurrentVendorRow, "Supplier" );
 
                         }//if we need to create a new material record
 
@@ -334,181 +334,8 @@ namespace ChemSW.Nbt.ImportExport
                 }
             }//iterate all rapid loader rows
 
-            //string xls_key_vendor = "SUPPLIER";
-            //string xls_key_tradename = "MATERIALNAME";
-            //string xls_key_productno = "PRODUCTNO";
 
-
-            //for( Int32 RlXlsRowIdx = 2; RlXlsRowIdx < RapidLoaderDataTable.Rows.Count; RlXlsRowIdx++ )
-            //{
-            //    DataRow CurrentRlXlsRow = RapidLoaderDataTable = RapidLoaderDataTable.Rows[RlXlsRowIdx];
-
-            //    CswTableSelect ImportNodesSelect = _CswNbtResources.makeCswTableSelect( "importer_select_" + CswImporterDbTables.TblName_ImportNodes, CswImporterDbTables.TblName_ImportNodes );
-
-            //    string PartNumberColName = string.Empty;
-            //    string TradenameColName = string.Empty;
-            //    string SupplierColName = string.Empty;
-
-            //    foreach( KeyValuePair<string, string> CurrentKvPair in _CswNbtMetaDataForSpreadSheetColReader._NodeTypePropNameMapper )
-            //    {
-            //        switch( CurrentKvPair.Value )
-            //        {
-            //            case "Part Number":
-            //                PartNumberColName = CurrentKvPair.Key;
-            //                break;
-
-            //            case "Tradename":
-            //                TradenameColName = CurrentKvPair.Key;
-            //                break;
-
-            //            case "Supplier":
-            //                SupplierColName = CurrentKvPair.Key;
-            //                break;
-
-            //            default:
-            //                break; //do nothing
-            //        }//switch on value
-
-            //    }//iterate kv pairs 
-
-            //    string CurrentRlXlsPartNumberVal = CurrentRlXlsRow[PartNumberColName];
-            //    string CurrentRlXlsTradeNameVal = CurrentRlXlsRow[TradenameColName];
-            //    string CurrentRlXlsSupplierVal = CurrentRlXlsRow[SupplierColName];
-
-            //    string WhereClause = @" where " + PartNumberColName + "='" + CurrentRlXlsRow[PartNumberColName] + "'" +
-            //                                     TradenameColName + "='" + CurrentRlXlsRow[TradenameColName];
-            //    DataTable ExistingMaterialRecord = ImportNodesSelect.getTable( WhereClause );
-
-            //}//iterate rapid loader table
-
-
-            /*
-            Dictionary<string, DataRow> CurrentNodeUpdateRowsByNodeTypeName = new Dictionary<string, DataRow>();
-            for( Int32 RlXlsRowIdx = 2; RlXlsRowIdx < RapidLoaderDataTable.Rows.Count; RlXlsRowIdx++ )
-            {
-
-                DataTable CurrentUpdateImportNodesTable = ImportNodesUpdater.getEmptyTable();
-                DataTable CurrentUpdateImportPropsTable = ImportPropsUpdater.getEmptyTable();
-
-
-                DataRow CurrentRlXlsRow = RapidLoaderDataTable.Rows[RlXlsRowIdx];
-
-                for( Int32 RlXlsColIdx = 2; RlXlsColIdx < RapidLoaderDataTable.Columns.Count; RlXlsColIdx++ )
-                {
-                    DataRow CurrentImportNodesUpdateRow = null;
-                    if( true == _MetaDataByColumnIndex.ContainsKey( RlXlsColIdx ) )
-                    {
-                        CswNbtMetaDataForSpreadSheetCol CurrentColMetaData = _MetaDataByColumnIndex[RlXlsColIdx];
-                        DataColumn CurrentRlxsCol = RapidLoaderDataTable.Columns[RlXlsColIdx];
-
-                        CurrentArbitraryImportId++;
-
-                        if( false == CurrentNodeUpdateRowsByNodeTypeName.ContainsKey( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName ) )
-                        {
-                            DataRow DataRow = CurrentUpdateImportNodesTable.NewRow();
-                            CurrentUpdateImportNodesTable.Rows.Add( DataRow );
-
-                            CurrentNodeUpdateRowsByNodeTypeName.Add( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName, DataRow );
-                            DataRow[CswImporterDbTables._ColName_ImportNodeId] = CurrentArbitraryImportId;
-                            //DataRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = CurrentArbitraryImportId;
-                            DataRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-                            DataRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypeName] = CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName;
-
-
-                            //Not sure where else to put this or if it's worth polymorphising it
-                            //(there will be other relationships)
-                            if( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName == "Container" )
-                            {
-                                DataRow RelationshipPropRow = CurrentUpdateImportPropsTable.NewRow();
-                                CurrentUpdateImportPropsTable.Rows.Add( RelationshipPropRow );
-                                RelationshipPropRow[CswImporterDbTables._ColName_ImportNodeId] = DataRow[CswImporterDbTables._ColName_ImportNodeId];
-                                RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = DataRow[CswImporterDbTables._ColName_ImportNodeId];
-                                RelationshipPropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = CswNbtObjClassContainer.PropertyName.Material;
-
-                                //not orny safe yet:
-                                RelationshipPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = _CswNbtResources.MetaData.getObjectClassProp( _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.ContainerClass ), "material" ).PropId;
-
-                                RelationshipPropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-
-                            }
-
-                            //CswImporterDbTables.
-                        }//if we don't have a CswImporterDbTables.TblName_ImportNodes table insert row for the current column's nodetype
-
-                        CurrentImportNodesUpdateRow = CurrentNodeUpdateRowsByNodeTypeName[CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName];
-
-                        DataRow CurrentImportPropsUpdateRow = CurrentUpdateImportPropsTable.NewRow();
-
-                        CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_ImportNodeId] = CurrentImportNodesUpdateRow[CswImporterDbTables._ColName_ImportNodeId];
-                        CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = CurrentImportNodesUpdateRow[CswImporterDbTables._ColName_ImportNodeId];
-
-                        CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName;
-                        CurrentImportPropsUpdateRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropId;
-                        CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-
-
-
-
-                        string CurrentRlXlsCellVal = CurrentRlXlsRow[CurrentRlxsCol].ToString();
-                        if( 1 == CurrentColMetaData.FieldTypeColNames.Count )
-                        {
-                            string FieldTypeName = CurrentColMetaData.FieldTypeColNames[0];
-                            if( true == CurrentUpdateImportPropsTable.Columns.Contains( FieldTypeName ) )
-                            {
-                                CurrentImportPropsUpdateRow[FieldTypeName] = CurrentRlXlsCellVal;
-                            }
-                            else
-                            {
-                                _CswImportExportStatusReporter.reportError( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName + ":" + CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName + ": the " + CswImporterDbTables.TblName_ImportProps + " table does not have a column for field type " + FieldTypeName );
-                            }//if-else we have a column for our prop's field type
-                        }
-                        else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "barcode" )
-                        {
-
-                            CurrentImportPropsUpdateRow["BARCODE"] = CurrentRlXlsCellVal.Replace( "'", "" );
-                        }
-                        else
-                        {
-                            _CswImportExportStatusReporter.reportError( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName + ":" + CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName + ": needs special handling" );
-                        }
-
-
-                        CurrentUpdateImportPropsTable.Rows.Add( CurrentImportPropsUpdateRow );
-                        ImportPropsUpdater.update( CurrentUpdateImportPropsTable );
-
-
-                    }//if we have meta data for this column
-
-
-
-                }//iterate rapid loader spreadsheet cols
-
-
-                ImportNodesUpdater.update( CurrentUpdateImportNodesTable );
-                _CswNbtResources.commitTransaction();
-
-                CurrentNodeUpdateRowsByNodeTypeName.Clear();
-                CurrentUpdateImportNodesTable = null;
-                CurrentUpdateImportPropsTable = null;
-
-                //make sure these have a value in the nodes rows 'ere we commit: 
-                // _ColName_Nodes_NodeName
-                // 
-
-
-                //For Testing purpsoes only
-                if( CurrentArbitraryImportId > 100 )
-                {
-
-                    ////Message = "Ended early for test purpsoes";
-                    //ReturnVal = false;
-
-                    break;
-                }//
-
-            }//iterate rapid loader spreadsheet rows
-             */
-            //Begin: Load import tables from spreadsheet
+            //End: Load import tables from spreadsheet
             //********************************************************************************************************************
 
 
@@ -574,6 +401,10 @@ namespace ChemSW.Nbt.ImportExport
 
                                 CurrentImportPropsUpdateRow["BARCODE"] = CurrentRlXlsCellVal.Replace( "'", "" );
                             }
+                            else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "supplier" )
+                            {
+                                CurrentImportPropsUpdateRow["NAME"] = CurrentRlXlsCellVal;
+                            }
                             else
                             {
                                 _CswImportExportStatusReporter.reportError( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName + ":" + CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName + ": needs special handling" );
@@ -610,7 +441,6 @@ namespace ChemSW.Nbt.ImportExport
                         ImportPropsTable.Rows.Add( RelationshipPropRow );
 
                         RelationshipPropRow[CswImporterDbTables._ColName_ImportNodeId] = ImportNodesRow[CswImporterDbTables._ColName_ImportNodeId];
-                        RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = ImportNodesRow[CswImporterDbTables._ColName_ImportNodeId];
 
                         RelationshipPropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = RelationshipProp.PropName;
                         RelationshipPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = RelationshipProp.PropId;
@@ -619,6 +449,10 @@ namespace ChemSW.Nbt.ImportExport
                         RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
                         RelationshipPropWasCreated = true;
 
+                    }
+                    else
+                    {
+                        _CswImportExportStatusReporter.reportError( NodeTypeToAdd.NodeTypeName + ": The specified relationship property(" + RelationshipProp + ") does not exist on this nodetype" );
                     }
 
                 }//if we haven't yet created the relationship prop
