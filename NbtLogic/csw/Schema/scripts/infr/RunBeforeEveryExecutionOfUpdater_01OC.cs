@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
                     CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add,
                     Nodetype.NodeTypeId,
-                    Prop.PropId,
+                    Prop,
                     true,
                     Nodetype.getFirstNodeTypeTab().TabId
                     );
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
                 Nodetype.NodeTypeId,
-                Prop.PropId,
+                Prop,
                 true,
                 Nodetype.getFirstNodeTypeTab().TabId
                 );

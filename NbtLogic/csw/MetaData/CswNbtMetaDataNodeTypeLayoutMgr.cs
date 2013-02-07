@@ -125,17 +125,16 @@ namespace ChemSW.Nbt.MetaData
             return Layout;
         }
 
-        public void updatePropLayout( LayoutType LayoutType, Int32 NodeTypeId, Int32 PropId, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
+        public void updatePropLayout( LayoutType LayoutType, Int32 NodeTypeId, CswNbtMetaDataNodeTypeProp NtProp, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
         {
-            if( LayoutType != LayoutType.Unknown && PropId != Int32.MinValue )
+            if( LayoutType != LayoutType.Unknown && null != NtProp )
             {
                 if( DoMove )
                 {
-                    CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( PropId );
-                    removePropFromLayout( LayoutType, Prop, Int32.MinValue );
+                    removePropFromLayout( LayoutType, NtProp, Int32.MinValue );
                 }
                 CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "updatePropLayout_Update", "nodetype_layout" );
-                string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString();
+                string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + NtProp.PropId.ToString();
                 if( TabId != Int32.MinValue && LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
                 {
                     WhereClause += " and nodetypetabsetid = " + TabId.ToString();
@@ -154,7 +153,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 Row["layouttype"] = LayoutType.ToString();
                 Row["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
-                Row["nodetypepropid"] = CswConvert.ToDbVal( PropId );
+                Row["nodetypepropid"] = CswConvert.ToDbVal( NtProp.PropId );
 
                 if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
                 {
@@ -219,7 +218,7 @@ namespace ChemSW.Nbt.MetaData
                         LayoutUpdate.update( LayoutTable );
 
                         // Add new prop to the layout
-                        updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, false, TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn, InsertAfterPropLayout.TabGroup );
+                        updatePropLayout( LayoutType, Prop.NodeTypeId, Prop, false, TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn, InsertAfterPropLayout.TabGroup );
                         Added = true;
                     } // foreach( Int32 TabId in InsertAfterPropLayouts.Keys )
                 } // if( InsertAfterPropLayouts.Values.Count > 0 )
@@ -228,7 +227,7 @@ namespace ChemSW.Nbt.MetaData
             if( false == Added )
             {
                 // Just add it somewhere
-                updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, false );
+                updatePropLayout( LayoutType, Prop.NodeTypeId, Prop, false );
             }
         } // updatePropLayout()
 
