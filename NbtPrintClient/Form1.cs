@@ -246,22 +246,29 @@ namespace CswPrintClient1
 
         private void LoadSettings()
         {
-            tbLPCname.Text = Application.CommonAppDataRegistry.GetValue( "LPCname" ).ToString();
-            cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
-            tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
-            _printerKey = Application.CommonAppDataRegistry.GetValue( "printerkey" ).ToString();
-            tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
-            tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
-            tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
-            tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();
-            tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
-            if( tbURL.Text == string.Empty )
+            try
             {
-                tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
-            }
+                tbLPCname.Text = Application.CommonAppDataRegistry.GetValue( "LPCname" ).ToString();
+                cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
+                tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
+                _printerKey = Application.CommonAppDataRegistry.GetValue( "printerkey" ).ToString();
+                tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
+                tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
+                tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
+                tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();
+                tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
+                if( tbURL.Text == string.Empty )
+                {
+                    tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
+                }
 
-            Log( "Loaded settings." );
-            setBtnRegisterState( "" );
+                Log( "Loaded settings." );
+                setBtnRegisterState( "" );
+            }
+            catch( Exception e )
+            {
+                Log( e.Message );
+            }
         }
 
         private void Form1_FormClosed( object sender, System.Windows.Forms.FormClosedEventArgs e )
