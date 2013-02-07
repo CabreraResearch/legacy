@@ -37,6 +37,7 @@
                     unitCountName: 'Unit Count'
                 },
                 rows: [],
+                sizeHeaderAdded: false,
                 tabsAndProps: null,
                 documentTabsAndProps: null,
                 showQuantityEditable: false,
@@ -45,13 +46,13 @@
                     request: {},
                     sizeNodeTypeId: '',
                     relatedNodeId: null,
-                    materialId: '',
+                    materialId: '', //keep
                     documentTypeId: '',
                     documentId: '',
                     materialType: { name: '', val: '' },
-                    tradeName: '',
-                    supplier: { name: '', val: '' },
-                    partNo: '',
+                    tradeName: '', //keep
+                    supplier: { name: '', val: '' }, //nodeid
+                    partNo: '', //keep
                     properties: {},
                     documentProperties: {},
                     useExistingTempNode: false,
@@ -138,10 +139,10 @@
 
                     if (cswPrivate.currentStepNo === 2) {
                         if (cswPrivate.lastStepNo === 3) {
-                            cswPrivate.state.materialId = '';
-                            cswPrivate.state.documentId = '';
-                            cswPrivate.state.properties = {};
-                                cswPrivate.state.useExistingTempNode = false;
+//                            cswPrivate.state.materialId = '';
+//                            cswPrivate.state.documentId = '';
+//                            cswPrivate.state.properties = {};
+//                            cswPrivate.state.useExistingTempNode = false;
                             cswPrivate.reinitSteps(2);
                         }
                         cswPrivate.createMaterial();
@@ -396,6 +397,7 @@
             //#region Step 3: Size(s)
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
+                //cswPrivate.sizeHeaderAdded = false;
 
                 return function () {
                     var div, selectDiv;
@@ -418,10 +420,6 @@
                         div.br({ number: 1 });
 
                         var makeGrid = function () {
-
-//                            cswPrivate.rows = [
-//                                [{ "value": 5 }, { "value": "9 kg" }, { "value": "AAAL135-09" }]
-//                            ];
 
                             //get Units of Measure for this Material
                             var unitsOfMeasure = [];
@@ -456,8 +454,11 @@
                                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
                             }
                             //if (cswPrivate.rows.length === 0) {
+                            if (cswPrivate.sizeHeaderAdded === false) {
                                 cswPrivate.rows.unshift(cswPrivate.header);
-                           //}
+                            }
+                            cswPrivate.sizeHeaderAdded = true;
+                            //}
                             cswPublic.sizesForm = cswPrivate.divStep3.form();
                             cswPublic.sizeGrid = cswPublic.sizesForm.thinGrid({
                                 linkText: '',
@@ -484,6 +485,7 @@
                                             cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
                                                 name: 'quantityNumberBox',
                                                 MinValue: 0,
+                                                Precision: '',
                                                 excludeRangeLimits: true,
                                                 width: '60px',
                                                 onChange: function (value) {
@@ -600,6 +602,7 @@
                         cswPrivate.addSizeNode = {};
 
                         cswPrivate.stepThreeComplete = true;
+                        
                     }
                 };
             }());
