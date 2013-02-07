@@ -48,7 +48,14 @@ namespace ChemSW.Nbt.LandingPage
                     _ItemData.ActionId = ActionId.ToString();
                     _ItemData.ActionName = ThisAction.Name.ToString();
                     _ItemData.ActionUrl = ThisAction.Url;
-                    _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + "wizard.png";
+                    if( string.IsNullOrEmpty( ThisAction.IconFileName ) )
+                    {
+                        _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + "wizard.png";
+                    }
+                    else
+                    {
+                        _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisAction.IconFileName;
+                    }
                     _ItemData.Type = "action";
                 }
             }

@@ -41,14 +41,19 @@ namespace ChemSW.Nbt.Actions
 
             foreach( DataRow ActionRow in ActionsTable.Rows )
             {
-                CswNbtActionName CurrentActionName;
                 try
                 {
-                    CurrentActionName = CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() );
+                    CswNbtActionName CurrentActionName = CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() );
                     if( CurrentActionName != CswNbtActionName.Unknown )
                     {
                         Int32 ActionId = CswConvert.ToInt32( ActionRow["actionid"] );
-                        CswNbtAction Action = new CswNbtAction( _CswNbtResources, ActionId, ActionRow["url"].ToString(), CurrentActionName, ( ActionRow["showinlist"].ToString() == "1" ), ActionRow["category"].ToString() );
+                        CswNbtAction Action = new CswNbtAction( _CswNbtResources,
+                                                                ActionId,
+                                                                ActionRow["url"].ToString(),
+                                                                CurrentActionName,
+                                                                CswConvert.ToBoolean( ActionRow["showinlist"] ),
+                                                                ActionRow["category"].ToString(),
+                                                                CswConvert.ToString( ActionRow["iconfilename"] ) );
                         string ActionNameAsString = CswNbtAction.ActionNameEnumToString( CurrentActionName );
                         if( false == _ActionSL.ContainsKey( ActionNameAsString ) )
                         {

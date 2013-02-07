@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.Actions
 
         public Int32 ActionId;
         public string Url;
+        public string IconFileName;
         public CswNbtActionName Name;
         public bool ShowInList;
         public string Category;
@@ -45,7 +46,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtAction( CswNbtResources CswNbtResources, Int32 TheActionId, string ActionUrl, CswNbtActionName ActionName, bool ActionShowInList, string ActionCategory )
+        public CswNbtAction( CswNbtResources CswNbtResources, Int32 TheActionId, string ActionUrl, CswNbtActionName ActionName, bool ActionShowInList, string ActionCategory, string ActionIconFileName )
         {
             _CswNbtResources = CswNbtResources;
             ActionId = TheActionId;
@@ -53,6 +54,7 @@ namespace ChemSW.Nbt.Actions
             Name = ActionName;
             ShowInList = ActionShowInList;
             Category = ActionCategory;
+            IconFileName = ActionIconFileName;
         }
 
         public static string ActionNameEnumToString( CswNbtActionName ActionName )

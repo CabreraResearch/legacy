@@ -92,10 +92,17 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
 
 
-            _acceptBlame(CswDeveloper.SS, 28508);
-            if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("nodes", "iconfilename"))
+            _acceptBlame( CswDeveloper.SS, 28508 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "iconfilename" ) )
             {
-                _CswNbtSchemaModTrnsctn.addStringColumn("nodes", "iconfilename", "Overrides the icon from the nodetype", false, false, 50);
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "iconfilename", "Overrides the icon from the nodetype", false, false, 50 );
+            }
+            _resetBlame();
+
+            _acceptBlame( CswDeveloper.SS, 28523 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "actions", "iconfilename" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "actions", "iconfilename", "Default icon for the action", false, false, 50 );
             }
             _resetBlame();
 
