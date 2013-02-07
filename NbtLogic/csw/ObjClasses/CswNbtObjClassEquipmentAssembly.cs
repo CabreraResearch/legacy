@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             if( Type.RelatedNodeId != null )
             {
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.ObjClasses
                     AssemblyParts.YValues = PartsString;
                 }
             }
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

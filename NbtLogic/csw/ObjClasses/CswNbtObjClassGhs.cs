@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             LabelCodes.InitOptions = _initGhsPhraseOptions;
             ClassCodes.InitOptions = _initGhsPhraseOptions;
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setupPhraseView( LabelCodesGrid.View, LabelCodes.Value );
             _setupPhraseView( ClassCodesGrid.View, ClassCodes.Value );
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()
 
         private void _setupPhraseView( CswNbtView View, CswCommaDelimitedString SelectedPhraseIds )

@@ -140,11 +140,11 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             _toggleButtonVisibility();
             PhysicalState.SetOnPropChange( _physicalStatePropChangeHandler );
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         private void _toggleButtonVisibility()

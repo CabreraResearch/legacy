@@ -103,11 +103,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public abstract void afterPropertySetPopulateProps();
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
 
-            CswNbtObjClassDefault.afterPopulateProps();
+            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

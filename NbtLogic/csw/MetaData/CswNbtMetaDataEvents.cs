@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.MetaData
                 //_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
 
                 // case 23185 - reset permission options
-                RoleNodeAsRole.afterPopulateProps();
+                RoleNodeAsRole.triggerAfterPopulateProps();
 
                 _CswNbtResources.Permit.set( AllPerms, NewNodeType, RoleNodeAsRole, true );
 

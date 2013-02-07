@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: HideMenuButton, SaveToDb: false );
         }
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             //TODO: Create Mail Report for Status Changes
 
@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.ObjClasses
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
             Request.SetOnPropChange( _onRequestPropChange );
-            CswNbtObjClassDefault.afterPopulateProps();
+            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

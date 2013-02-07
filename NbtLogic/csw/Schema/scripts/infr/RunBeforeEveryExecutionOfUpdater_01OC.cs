@@ -996,6 +996,13 @@ namespace ChemSW.Nbt.Schema
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
 
+            #region YORICK
+
+            //This has to be first
+            _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
+
+            #endregion YORICK
+
             #region WILLIAM
 
             _addFireClassExemptAmountProps(CswDeveloper.BV, 28283);
@@ -1021,8 +1028,6 @@ namespace ChemSW.Nbt.Schema
             #region YORICK
 
             //YORICK OC changes go here.
-            
-            _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
             
             #endregion YORICK
 

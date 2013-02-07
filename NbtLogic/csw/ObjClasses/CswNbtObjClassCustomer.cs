@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             // Set property values according to the value in the DbConfig file or from the target schema
             if( _CompanyIDDefined() )
@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.SchemaVersion.StaticText = OtherSchemaVersion;
             }
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public static string ModulesEnabledXValue = "Enabled";

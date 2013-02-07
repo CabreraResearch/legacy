@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             // BZ 6744
             // Hide the Child Location Type and Location Template controls
@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.LocationTemplate.setHidden( value: true, SaveToDb: false );
             }
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

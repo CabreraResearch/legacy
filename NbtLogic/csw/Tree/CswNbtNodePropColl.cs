@@ -300,7 +300,7 @@ namespace ChemSW.Nbt
             if( _CswNbtNode != null )
             {
                 //CswNbtObjClass _CswNbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, MetaDataNodeType.ObjectClassId, _CswNbtNode );
-                _CswNbtNode.ObjClass.afterPopulateProps();
+                _CswNbtNode.ObjClass.triggerAfterPopulateProps();
             }
 
             SuspendModifyTracking = false;

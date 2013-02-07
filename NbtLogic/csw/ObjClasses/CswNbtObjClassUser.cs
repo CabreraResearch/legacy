@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         //afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
 
             UsernameProperty.SetOnPropChange( OnUserNamePropChange );
@@ -349,7 +349,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.PasswordProperty.setReadOnly( false, false );
             }
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
 
         }
 

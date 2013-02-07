@@ -268,7 +268,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ActionOptions;
         } // InitActionPermissionOptions()
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             NodeTypePermissions.InitOptions = InitNodeTypePermissionOptions;
             ActionPermissions.InitOptions = InitActionPermissionOptions;
@@ -281,7 +281,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

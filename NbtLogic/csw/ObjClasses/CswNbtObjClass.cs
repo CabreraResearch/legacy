@@ -23,32 +23,34 @@ namespace ChemSW.Nbt.ObjClasses
         private bool canSave(Int32 TabId)
         {
             bool Ret = false;
-            switch( _CswNbtResources.EditMode )
+            if( null != this.Node )
             {
-                case NodeEditMode.Temp:
-                case NodeEditMode.Add:
-                    if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, this.NodeType ) )
-                    {
-                        Ret = true;
-                    }
-                    break;
-                case NodeEditMode.EditInPopup:
-                case NodeEditMode.Edit:
-                    if( TabId > 0 )
-                    {
-                        CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );
-                        if( null != Tab )
+                switch( _CswNbtResources.EditMode )
+                {
+                    case NodeEditMode.Temp:
+                    case NodeEditMode.Add:
+                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, this.NodeType ) )
                         {
-                            Ret = _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType, Tab );
+                            Ret = true;
                         }
-                    }
-                    else
-                    {
-                        Ret = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType );
-                    }
-                    break;
+                        break;
+                    case NodeEditMode.EditInPopup:
+                    case NodeEditMode.Edit:
+                        if( TabId > 0 )
+                        {
+                            CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );
+                            if( null != Tab )
+                            {
+                                Ret = _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType, Tab );
+                            }
+                        }
+                        else
+                        {
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType );
+                        }
+                        break;
+                }
             }
-
             return Ret;
         }
 
@@ -59,11 +61,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtNode = CswNbtNode;
             _CswNbtResources = CswNbtResources;
-            //We don't have a context for which Tab is going to render, but we can eliminate the base conditions for displaying the Save button here.
-            if( false == canSave( TabId: Int32.MinValue ) )
-            {
-                Save.setHidden( value: true, SaveToDb: false );
-            }
         }//ctor()
 
         /// <summary>
@@ -80,7 +77,17 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterWriteNode();
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
-        public abstract void afterPopulateProps();
+        
+        public void triggerAfterPopulateProps()
+        {
+            //We don't have a context for which Tab is going to render, but we can eliminate the base conditions for displaying the Save button here.
+            //if( null != this.Node && false == canSave( TabId : Int32.MinValue ) )
+            //{
+            //    Save.setHidden( value : true, SaveToDb : false );
+            //}
+            afterPopulateProps();
+        }
+        protected abstract void afterPopulateProps();
         
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {

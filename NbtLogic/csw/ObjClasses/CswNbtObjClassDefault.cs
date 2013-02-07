@@ -308,7 +308,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
         }
 

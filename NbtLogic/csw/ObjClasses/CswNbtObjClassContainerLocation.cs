@@ -140,11 +140,11 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             ContainerScan.SetOnPropChange( OnContainerScanPropChange );
             LocationScan.SetOnPropChange( OnLocationScanPropChange );
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

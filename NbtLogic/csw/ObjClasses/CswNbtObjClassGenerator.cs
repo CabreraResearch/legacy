@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
 
@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.ObjClasses
                 WarningDays.MinValue = 0;
                 WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
             }
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
