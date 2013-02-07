@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 _CswNbtResources.commitTransaction();
 
-                if( RlXlsIdx > 500 )
+                if( RlXlsIdx > 50 )
                 {
                     TestCaseStop = true;
                 }
@@ -583,7 +583,7 @@ namespace ChemSW.Nbt.ImportExport
                             {
                                 if( null != RelationshipDestinationRow )
                                 {
-                                    CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = ImportNodesRow[CswImporterDbTables._ColName_ImportNodeId];
+                                    CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
                                     RelationshipPropWasCreated = true;
                                 }
                                 //else
@@ -616,7 +616,7 @@ namespace ChemSW.Nbt.ImportExport
                         RelationshipPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = RelationshipProp.PropId;
                         RelationshipPropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
 
-                        RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = ImportNodesRow[CswImporterDbTables._ColName_ImportNodeId];
+                        RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
                         RelationshipPropWasCreated = true;
 
                     }
