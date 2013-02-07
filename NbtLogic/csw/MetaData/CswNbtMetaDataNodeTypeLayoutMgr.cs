@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -127,7 +128,8 @@ namespace ChemSW.Nbt.MetaData
 
         public void updatePropLayout( LayoutType LayoutType, Int32 NodeTypeId, CswNbtMetaDataNodeTypeProp NtProp, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
         {
-            if( LayoutType != LayoutType.Unknown && null != NtProp )
+            if( LayoutType != LayoutType.Unknown && 
+                null != NtProp )
             {
                 if( DoMove )
                 {
@@ -166,16 +168,34 @@ namespace ChemSW.Nbt.MetaData
                         throw new CswDniException( ErrorType.Error, "Tab is required", "CswNbtMetaDataNodeTypeLayoutMgr.updatePropLayout() requires a valid TabId for Edit layouts" );
                     }
                 }
-                if( DisplayRow != Int32.MinValue && DisplayColumn != Int32.MinValue )
+
+                Int32 FinalDisplayRow = DisplayRow;
+                Int32 FinalDisplayCol = DisplayColumn;
+                
+                //Very special case for 'Save'--it is always last
+                if( FinalDisplayRow == Int32.MaxValue )
                 {
-                    Row["display_row"] = CswConvert.ToDbVal( DisplayRow );
-                    Row["display_column"] = CswConvert.ToDbVal( DisplayColumn );
+                    CswNbtMetaDataObjectClassProp Ocp = NtProp.getObjectClassProp();
+                    if( null == Ocp || Ocp.PropName != CswNbtObjClass.PropertyName.Save )
+                    {
+                        FinalDisplayRow = Int32.MaxValue - 1;
+                    }
                 }
                 else
                 {
-                    Row["display_row"] = CswConvert.ToDbVal( getCurrentMaxDisplayRow( NodeTypeId, TabId, LayoutType ) + 1 );
-                    Row["display_column"] = CswConvert.ToDbVal( 1 );
+
+                    if( FinalDisplayRow <= 0 )
+                    {
+                        FinalDisplayRow = getCurrentMaxDisplayRow( NodeTypeId, TabId, LayoutType ) + 1;
+                    }
+                    if( FinalDisplayCol <= 0 )
+                    {
+                        FinalDisplayCol = 1;
+                    }
                 }
+                Row["display_row"] = CswConvert.ToDbVal( FinalDisplayRow );
+                Row["display_column"] = CswConvert.ToDbVal( FinalDisplayCol );
+
                 Row["tabgroup"] = TabGroup;
 
                 LayoutUpdate.update( LayoutTable );
