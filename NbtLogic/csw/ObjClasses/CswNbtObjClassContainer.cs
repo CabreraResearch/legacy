@@ -146,10 +146,19 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        private void _setDefaultValues()
+        {
+            if( false == CswTools.IsPrimaryKey( Owner.RelatedNodeId ) )
+            {
+                Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            }
+        }
+
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _setDefaultValues();
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
 
