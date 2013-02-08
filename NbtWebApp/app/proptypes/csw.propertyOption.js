@@ -74,7 +74,7 @@
                     },
                     fieldtype: '',
                     propDiv: cswParent,
-                    saveBtn: {},
+                    //saveBtn: {},
                     propData: {
                         id: '',
                         name: '',

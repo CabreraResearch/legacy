@@ -39,7 +39,9 @@
                         });
                         
                         cswPublic.control.required(cswPublic.data.isRequired());
-                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
+                        cswPublic.control.clickOnEnter(function () {
+                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
+                        });
                     }
 
                 };
