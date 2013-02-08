@@ -984,12 +984,16 @@ namespace ChemSW.Nbt
                     string materialId = row["materialid"].ToString();
                     CswNbtObjClassVendor vendorNode = _createVendorNode( vendorNT, row );
                     CswNbtObjClassMaterial materialNode = _createChemical( chemicalNT, row, vendorNode );
-                    materialIds.Add( row["materialid"].ToString() );
+
+                    if( false == materialIds.Contains( materialId ) )
+                    {
+                        materialIds.Add( row["materialid"].ToString() );
+                    }
 
                     if( null != materialNode )
                     {
-                        _createMaterialSynonym( row["materialid"].ToString(), materialNode );
-                        _createSize( row["materialid"].ToString(), materialNode );
+                        _createMaterialSynonym( materialId, materialNode );
+                        _createSize( materialId, materialNode );
                     }
                 }
             }
@@ -1008,7 +1012,12 @@ namespace ChemSW.Nbt
             materialNode.IsTemp = false;
             materialNode.postChanges( true );
             _createdMaterials.Add( materialNode );
-            packageIds.Add( Row["packageid"].ToString() );
+
+            string packageId = Row["packageid"].ToString();
+            if( false == packageIds.Contains( packageId ) )
+            {
+                packageIds.Add( packageId );
+            }
             return materialNode;
         }
 
@@ -1084,7 +1093,7 @@ namespace ChemSW.Nbt
 
         private void _importMaterialSynonym( string MaterialSynonymPK )
         {
-            string sql = @"select materialid, materialsynonymid from materials_synonyms where materialsynonymid = " + MaterialSynonymPK;
+            string sql = @"select materialid, materialsynonymid from materials_synonyms where deleted = '0' and materialsynonymid = " + MaterialSynonymPK;
             CswArbitrarySelect arbSel = _CAFResources.makeCswArbitrarySelect( "cafselect_materialsyn", sql );
             DataTable tbl = arbSel.getTable();
 
@@ -1114,7 +1123,12 @@ namespace ChemSW.Nbt
                     matSyn.Material.RelatedNodeId = ChemicalNode.NodeId;
                     matSyn.IsTemp = false;
                     matSyn.postChanges( true );
-                    matSynIds.Add( row["materialsynonymid"].ToString() );
+
+                    string matSynId = row["materialsynonymid"].ToString();
+                    if( false == matSynIds.Contains( matSynId ) )
+                    {
+                        matSynIds.Add( matSynId );
+                    }
                 }
             }
         }
@@ -1179,7 +1193,7 @@ namespace ChemSW.Nbt
 
                 foreach( DataRow row in tbl.Rows )
                 {
-                    CswNbtObjClassSize sizeNode = _getExistingSize( sizeNT, row["packdetailid"].ToString() );
+                    CswNbtObjClassSize sizeNode = _getExistingSize( sizeNT, row["packdetailid"].ToString(), ChemicalNode.NodeId );
                     if( null == sizeNode )
                     {
                         sizeNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( sizeNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
@@ -1189,12 +1203,16 @@ namespace ChemSW.Nbt
                     sizeNode.IsTemp = false;
                     sizeNode.postChanges( true );
                     _createdSizes.Add( sizeNode );
-                    sizeIds.Add( row["packdetailid"].ToString() );
+                    string sizeId = row["packdetailid"].ToString();
+                    if( false == sizeIds.Contains( sizeId ) )
+                    {
+                        sizeIds.Add( row["packdetailid"].ToString() );
+                    }
                 }
             }
         }
 
-        private CswNbtObjClassSize _getExistingSize( CswNbtMetaDataNodeType SizeNT, string SizeId )
+        private CswNbtObjClassSize _getExistingSize( CswNbtMetaDataNodeType SizeNT, string SizeId, CswPrimaryKey ChemicalNodeId )
         {
             CswNbtObjClassSize ExistingSizeNode = null;
 
@@ -1203,6 +1221,11 @@ namespace ChemSW.Nbt
 
             sizesView.AddViewPropertyAndFilter( parent, sizeLegacyId,
                 Value: SizeId,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            sizesView.AddViewPropertyAndFilter( parent, materialNTP,
+                Value: ChemicalNodeId.PrimaryKey.ToString(),
+                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             ICswNbtTree sizesTree = _NBTResources.Trees.getTreeFromView( sizesView, false, false, true );
