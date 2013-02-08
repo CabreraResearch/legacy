@@ -96,9 +96,9 @@ namespace ChemSW.Nbt.WebServices
             return _NodeSd.DeleteNode( NodePk, out DeletedNodeName, DeleteAllRequiredRelatedNodes );
         }
 
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabId, JObject ReturnProps )
         {
-            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText );
+            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText, TabId, ReturnProps );
         }
 
         private JObject _makeDeletedNodeText( CswNbtMetaDataNodeType NodeType, string NodeName, Int32 NodeId, CswNbtNode Node = null )

@@ -96,11 +96,13 @@
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86" />
     <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Resources\SMTP.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -110,6 +112,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -139,7 +142,17 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28534.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case27901.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_ScheduledRules_Case28564.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case27923_Save.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01W_Case27923_Save.cs" />
+    <Compile Include="DataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -178,6 +191,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <None Include="DataSet1.xsc">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DataSet1.xss">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -189,10 +217,6 @@
     <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
     <None Include="Service References\ChemCatCentral\Search.disco" />
     <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28254.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28260.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27947_part2.cs" />
@@ -991,11 +1015,6 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Resources\SqlRptViewDict.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

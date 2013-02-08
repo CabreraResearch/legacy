@@ -91,12 +91,12 @@ namespace ChemSW.Nbt.ObjClasses
         
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
-            if( ButtonData.TabId > 0 && null != ButtonData.Props && ButtonData.Props.HasValues )
+            if( ButtonData.TabId > 0 && null != ButtonData.SavedProps && ButtonData.SavedProps.HasValues )
             {
                 if( canSave( ButtonData.TabId ) )
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.Props, this.NodeTypeId, null, false );
+                    Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.SavedProps, this.NodeTypeId, null, false );
                 }
             }
             return onButtonClick( ButtonData );
@@ -118,7 +118,14 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Save = "Save";
         }
 
-        public virtual CswNbtNodePropButton Save { get { return _CswNbtNode.Properties[PropertyName.Save]; } }
+        public virtual CswNbtNodePropButton Save 
+        {
+            get
+            {
+                CswNbtNodePropButton Ret = Node.Properties[PropertyName.Save];
+                return Ret;
+            } 
+        }
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
         public CswNbtMetaDataNodeType NodeType { get { return _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId ); } }
@@ -168,7 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
             public string SelectedText;
             public CswNbtMetaDataNodeTypeProp NodeTypeProp;
             public JObject Data;
-            public JObject Props;
+            public JObject SavedProps;
             public Int32 TabId;
             public string Message;
 

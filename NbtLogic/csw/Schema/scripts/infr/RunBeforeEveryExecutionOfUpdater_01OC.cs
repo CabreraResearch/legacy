@@ -975,8 +975,7 @@ namespace ChemSW.Nbt.Schema
                         {
                             PropName = CswNbtObjClass.PropertyName.Save,
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                            ServerManaged = true, //Meaningless for buttons, but future-proof anyway
-                            ReadOnly = true //ditto
+                            Extended = CswNbtNodePropButton.ButtonMode.button
                         } );
                 }
             }

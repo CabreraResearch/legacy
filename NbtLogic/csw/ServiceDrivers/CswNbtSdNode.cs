@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         }
 
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabId, JObject ReturnProps )
         {
             JObject RetObj = new JObject();
             if( null == PropId ||
@@ -211,13 +211,23 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
 
-            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp ) { SelectedText = SelectedText };
+            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp ) { 
+                SelectedText = SelectedText,
+                SavedProps = ReturnProps,
+                TabId = CswConvert.ToInt32( TabId )
+            };
 
             bool Success = NbtObjClass.triggerOnButtonClick( ButtonData );
 
+            if( null == ButtonData.Action || ButtonData.Action == CswNbtObjClass.NbtButtonAction.Unknown )
+            {
+                ButtonData.Action = CswNbtObjClass.NbtButtonAction.nothing;
+            }  
             RetObj["action"] = ButtonData.Action.ToString();
             RetObj["actionData"] = ButtonData.Data;  //e.g. popup url
             RetObj["message"] = ButtonData.Message;
+            RetObj["tabid"] = ButtonData.TabId;
+            RetObj["savedprops"] = ButtonData.SavedProps;
             RetObj["success"] = Success.ToString().ToLower();
 
             return RetObj;

@@ -23,6 +23,7 @@
                     if (cswPrivate.propVals.menuoptions.length > 0) {
                         cswPrivate.menuoptions = cswPrivate.propVals.menuoptions.split(',');
                     }
+                    cswPrivate.propVals.displayText = cswPrivate.propVals.displayText || Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name);
 
                     var buttonOpts = {
                         displayName: cswPrivate.propVals.displayText,
@@ -31,7 +32,7 @@
                         size: cswPublic.data.size,
                         mode: Csw.string(cswPrivate.propVals.mode, 'button'),
                         state: cswPrivate.propVals.state,
-                        menuOptions:  cswPrivate.propVals.selectedText,
+                        menuOptions: cswPrivate.menuoptions,
                         selectedText: cswPrivate.propVals.selectedText,
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
