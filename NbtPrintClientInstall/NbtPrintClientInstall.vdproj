@@ -15,19 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_1C0A04F5F58F459FABB98772AA4F48BC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_374984A58E6B4A8985E2886458A3F2E7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C9658AF1B65B4D52B869F74ECB866EF7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -45,7 +33,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:..\\..\\NbtWebApp\\NbtPrintClient\\NbtPrintClientInstall.msi"
+        "OutputFilename" = "8:..\\NbtWebApp\\NbtPrintClient\\NbtPrintClientInstall.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -142,46 +130,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1C0A04F5F58F459FABB98772AA4F48BC"
-            {
-            "SourcePath" = "8:..\\..\\NbtPrintClient\\print.ico"
-            "TargetName" = "8:print.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C9658AF1B65B4D52B869F74ECB866EF7"
-            {
-            "SourcePath" = "8:..\\..\\NbtPrintClient\\app.config"
-            "TargetName" = "8:app.config"
-            "Tag" = "8:"
-            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -250,7 +198,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CswPrintClientInstall"
         "ProductCode" = "8:{25D55C18-6B9B-4167-B9FB-167E9A8C8E70}"
-        "PackageCode" = "8:{C5751BCA-ED5D-46D8-8018-7D159C2ED200}"
+        "PackageCode" = "8:{4B2E4669-18B0-4603-A776-ADE7BAF8E4EA}"
         "UpgradeCode" = "8:{CDDC3F6A-838B-48A8-8D42-B7E093061F1A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -381,7 +329,7 @@
             "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
             "Folder" = "8:_511576A006FB41278FBC9ABBC2473C69"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Icon" = "8:_1C0A04F5F58F459FABB98772AA4F48BC"
+            "Icon" = "8:"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_76432E082AFD4047AF07D6C390DF31AF"
@@ -395,7 +343,7 @@
             "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
             "Folder" = "8:_84AF7FB0CAA745E3BDC51C23DF2377C2"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Icon" = "8:_1C0A04F5F58F459FABB98772AA4F48BC"
+            "Icon" = "8:"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B361F542957F481DB11DE52D598208BE"
@@ -409,7 +357,7 @@
             "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
             "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Icon" = "8:_1C0A04F5F58F459FABB98772AA4F48BC"
+            "Icon" = "8:"
             "Feature" = "8:"
             }
         }

@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     }
                     else
                     {
-                        ReturnVal = ValueColumn + " > " + NextDayString;
+                        ReturnVal = ValueColumn + " >= " + NextDayString;
                     }
                 }
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     }
                     else
                     {
-                        ReturnVal = ValueColumn + " <= " + NextDayString;
+                        ReturnVal = ValueColumn + " < " + NextDayString;   // not <=, see case 28620
                     }
                 }
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
