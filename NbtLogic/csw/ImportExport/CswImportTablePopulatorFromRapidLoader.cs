@@ -45,6 +45,9 @@ namespace ChemSW.Nbt.ImportExport
         private const string xls_key_nfpa_firecode = "firecode";
         private const string xls_key_nfpa_reactivecode = "reactivecode";
 
+        private const string xls_key_size_unitofmeasurename = "unitofmeasurename";
+        private const string xls_key_size_catalogno = "catalogno";
+
 
 
 
@@ -79,6 +82,8 @@ namespace ChemSW.Nbt.ImportExport
             _ColsWithoutDestinationProp.Add( xls_key_nfpa_firecode );   //    this will require special treatment :-( 
             _ColsWithoutDestinationProp.Add( xls_key_nfpa_reactivecode );
 
+            _ColsWithoutDestinationProp.Add( xls_key_nfpa_reactivecode );
+
 
             //As destination properties for these columsn are found, they will be moved to the mapping dictionary in reader
 
@@ -87,9 +92,11 @@ namespace ChemSW.Nbt.ImportExport
             _KnownOutageProperties.Add( "target_organs" );
             _KnownOutageProperties.Add( "model" );
             _KnownOutageProperties.Add( "pathname" );
+            _KnownOutageProperties.Add( "capacity" );
+            _KnownOutageProperties.Add( "package" );
 
 
-            _KnownOutageProperties.Add( "unitofmeasurename" ); //together with "netquantity" becomes the "quantity" property in NBT
+            //            _KnownOutageProperties.Add( "unitofmeasurename" ); //together with "netquantity" becomes the "quantity" property in NBT
 
 
 
@@ -161,7 +168,9 @@ namespace ChemSW.Nbt.ImportExport
                     string ErrorMessage = string.Empty;
                     string NodeTypeNameCandidate = RapidLoaderDataTable.Rows[NodeTypeRowIdx][CurrentDataColumn].ToString().ToLower();
 
-                    if( true == NodeTypeNameCandidate.ToLower().Contains( "material" ) || true == NodeTypeNameCandidate.ToLower().Contains( "container" ) )//material includes vendor info
+                    if( true == NodeTypeNameCandidate.ToLower().Contains( "material" ) ||
+                        true == NodeTypeNameCandidate.ToLower().Contains( "container" ) ||
+                        true == NodeTypeNameCandidate.ToLower().Contains( "size" ) )//material includes vendor info
                     {
 
                         string NodeTypePropNameCandidate = CurrentDataColumn.ColumnName.ToLower();
@@ -253,9 +262,19 @@ namespace ChemSW.Nbt.ImportExport
 
             string current_material_compount_id = string.Empty;
             string current_vendor = string.Empty;
+            string current_size_id = string.Empty;
             DataRow CurrentVendorRow = null;
             DataRow CurrentMaterialRow = null;
             DataRow CurrentContainerRow = null;
+            DataRow CurrentSizeRow = null;
+
+
+            CswNbtMetaDataNodeType VendorNodeType = _CswNbtResources.MetaData.getNodeType( "Vendor" );
+            CswNbtMetaDataNodeTypeProp VendorNameNodeTypeProp = VendorNodeType.getNodeTypeProp( "Vendor Name" );
+            CswNbtMetaDataNodeType ChemicalNodeType = _CswNbtResources.MetaData.getNodeType( "Chemical" );
+            CswNbtMetaDataNodeType SizeNodeType = _CswNbtResources.MetaData.getNodeType( "Size" );
+            CswNbtMetaDataNodeType ContainerNodeType = _CswNbtResources.MetaData.getNodeType( "Container" );
+
 
             bool TestCaseStop = false;
             for( Int32 RlXlsIdx = 2; RlXlsIdx < RapidLoaderDataTable.Rows.Count && false == TestCaseStop; RlXlsIdx++ )
@@ -268,8 +287,6 @@ namespace ChemSW.Nbt.ImportExport
                     current_vendor = CurrentRlXlsRow[xls_key_vendor].ToString();
 
 
-                    CswNbtMetaDataNodeType VendorNodeType = _CswNbtResources.MetaData.getNodeType( "Vendor" );
-                    CswNbtMetaDataNodeTypeProp VendorNameNodeTypeProp = VendorNodeType.getNodeTypeProp( "Vendor Name" );
 
                     if( null != VendorNodeType && null != VendorNameNodeTypeProp )
                     {
@@ -298,7 +315,6 @@ namespace ChemSW.Nbt.ImportExport
                 if( null != CurrentVendorRow )
                 {
 
-                    CswNbtMetaDataNodeType ChemicalNodeType = _CswNbtResources.MetaData.getNodeType( "Chemical" );
 
                     if( null != ChemicalNodeType )
                     {
@@ -315,6 +331,17 @@ namespace ChemSW.Nbt.ImportExport
 
                         }//if we need to create a new material record
 
+
+                        ChemSW.Core.CswDelimitedString SizeCompoundId = new Core.CswDelimitedString( '-' );
+                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
+                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
+                        if( SizeCompoundId.ToString() != current_size_id )
+                        {
+                            current_size_id = SizeCompoundId.ToString();
+                            _addRowOfNodeType( CurrentRlXlsRow, SizeNodeType, ImportNodesTable, ImportPropsTable, ref CurrentSizeRow, CurrentMaterialRow, "Material" );
+
+                        }//
+
                     }
                     else
                     {
@@ -329,7 +356,6 @@ namespace ChemSW.Nbt.ImportExport
 
                 if( null != CurrentMaterialRow )
                 {
-                    CswNbtMetaDataNodeType ContainerNodeType = _CswNbtResources.MetaData.getNodeType( "Container" );
 
                     _addRowOfNodeType( CurrentRlXlsRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, ref CurrentContainerRow, CurrentMaterialRow, "Material" );
 
@@ -345,7 +371,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 _CswNbtResources.commitTransaction();
 
-                if( RlXlsIdx > 50 )
+                if( RlXlsIdx > 10 )
                 {
                     TestCaseStop = true;
                 }
@@ -424,13 +450,17 @@ namespace ChemSW.Nbt.ImportExport
                             }
                             else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "nfpa" )
                             {
-                                CurrentImportPropsUpdateRow["Special"] = RlXlsDataRow[xls_key_nfpa_nfpacode];
+                                CurrentImportPropsUpdateRow["Special"] = CurrentRlXlsCellVal;
 
                                 //
                                 CurrentImportPropsUpdateRow["Flammability"] = RlXlsDataRow[xls_key_nfpa_firecode];
                                 CurrentImportPropsUpdateRow["Reactivity"] = RlXlsDataRow[xls_key_nfpa_reactivecode];
                                 CurrentImportPropsUpdateRow["Health"] = RlXlsDataRow[xls_key_nfpa_healthcode];
 
+                            }
+                            else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "initial quantity" )
+                            {
+                                CurrentImportPropsUpdateRow["Name"] = CurrentRlXlsCellVal;
                             }
                             else
                             {
@@ -488,6 +518,10 @@ namespace ChemSW.Nbt.ImportExport
 
         }//_addRowOfNodeType()
 
+
+        //private void _addRelationshipForRow( DataRow Source)
+        //{
+        //}//_addRelationshipForRow()
 
     } // CswImportTablePopulatorFromRapidLoader
 

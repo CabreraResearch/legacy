@@ -44,8 +44,13 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
+            _NodeTypePropNameMapper.Add( "containertype", "Container Type" );
+            _NodeTypePropNameMapper.Add( "catalogno", "Catalog No" );
+            _NodeTypePropNameMapper.Add( "unitofmeasurename", "Initial Quantity" );
+
             //_NodeTypePropNameMapper.Add( "", "" );
             //_NodeTypePropNameMapper.Add( "", "" );
+            ////_NodeTypePropNameMapper.Add( "", "" );
 
         }//ctor
 
