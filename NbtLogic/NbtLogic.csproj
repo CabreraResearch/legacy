@@ -126,6 +126,9 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28523.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28745.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28659.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28557.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28714.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28514.cs" />
@@ -475,7 +478,6 @@
     <Compile Include="csw\MetaData\CswNbtMetaDataEvents.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataFieldType.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataForSchemaUpdater.cs" />
-    <Compile Include="csw\MetaData\CswNbtMetaDataIconName.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeType.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeProp.cs" />
