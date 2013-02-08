@@ -33,6 +33,19 @@ namespace ChemSW.Nbt.ImportExport
         private CswNbtMetaDataForSpreadSheetColReader _CswNbtMetaDataForSpreadSheetColReader = null;
 
         private Dictionary<Int32, CswNbtMetaDataForSpreadSheetCol> _MetaDataByColumnIndex = new Dictionary<int, CswNbtMetaDataForSpreadSheetCol>();
+        private List<string> _ColsWithoutDestinationProp = new List<string>();
+
+
+        private const string xls_key_isdata = "ISDATA";
+        private const string xls_key_vendor = "SUPPLIER";
+        private const string xls_key_tradename = "MATERIALNAME";
+        private const string xls_key_productno = "PRODUCTNO";
+        private const string xls_key_nfpa_nfpacode = "nfpacode";
+        private const string xls_key_nfpa_healthcode = "healthcode";
+        private const string xls_key_nfpa_firecode = "firecode";
+        private const string xls_key_nfpa_reactivecode = "reactivecode";
+
+
 
 
         private List<string> _ExcludedNodeTypes = new List<string>();
@@ -59,20 +72,28 @@ namespace ChemSW.Nbt.ImportExport
             _ExcludedNodeTypes.Add( "biological" );
             _ExcludedNodeTypes.Add( "equipment" );
 
+
+
+
+            _ColsWithoutDestinationProp.Add( xls_key_nfpa_healthcode ); //<== these three along with NFPA code column make  up the NFPA property
+            _ColsWithoutDestinationProp.Add( xls_key_nfpa_firecode );   //    this will require special treatment :-( 
+            _ColsWithoutDestinationProp.Add( xls_key_nfpa_reactivecode );
+
+
             //As destination properties for these columsn are found, they will be moved to the mapping dictionary in reader
-            _KnownOutageProperties.Add( "healthcode" );
-            _KnownOutageProperties.Add( "firecode" );
-            _KnownOutageProperties.Add( "reactivecode" );
+
+
+
             _KnownOutageProperties.Add( "target_organs" );
             _KnownOutageProperties.Add( "model" );
-            _KnownOutageProperties.Add( "unitofmeasurename" );
             _KnownOutageProperties.Add( "pathname" );
 
+
+            _KnownOutageProperties.Add( "unitofmeasurename" ); //together with "netquantity" becomes the "quantity" property in NBT
 
 
 
             //WE know the deestination property, but the field type calls for special handling of the columns
-            _KnownOutageProperties.Add( "nfpacode" ); // ==> NFPA
             _KnownOutageProperties.Add( "Supplier" );
             _KnownOutageProperties.Add( "un_no" ); // ==> UN Code
             //            _KnownOutageProperties.Add( "barcodeid" );//==> Barcode <== the Oracle no likey the "Number" field type col 
@@ -107,10 +128,6 @@ namespace ChemSW.Nbt.ImportExport
                 throw new CswDniException( ErrorType.Error, "Could not process the uploaded file: " + _CswNbtImportExportFrame.FilePath, "GetOleDbSchemaTable failed to parse a valid XLS file." );
             }
 
-            string xls_key_isdata = "ISDATA";
-            string xls_key_vendor = "SUPPLIER";
-            string xls_key_tradename = "MATERIALNAME";
-            string xls_key_productno = "PRODUCTNO";
 
             string FirstSheetName = RapidLoaderMetaDataTable.Rows[0]["TABLE_NAME"].ToString();
 
@@ -149,7 +166,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         string NodeTypePropNameCandidate = CurrentDataColumn.ColumnName.ToLower();
 
-                        if( false == _KnownOutageProperties.Contains( NodeTypePropNameCandidate ) )
+                        if( false == _KnownOutageProperties.Contains( NodeTypePropNameCandidate ) && false == _ColsWithoutDestinationProp.Contains( NodeTypePropNameCandidate ) )
                         {
 
 
@@ -268,7 +285,7 @@ namespace ChemSW.Nbt.ImportExport
                         VendorNamePropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = VendorNameNodeTypeProp.PropName;
                         VendorNamePropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = VendorNameNodeTypeProp.PropId;
                         VendorNamePropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-                        VendorNamePropRow["TEXT"] = current_vendor; 
+                        VendorNamePropRow["TEXT"] = current_vendor;
                     }
                     else
                     {
@@ -404,6 +421,16 @@ namespace ChemSW.Nbt.ImportExport
                             else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "supplier" )
                             {
                                 CurrentImportPropsUpdateRow["NAME"] = CurrentRlXlsCellVal;
+                            }
+                            else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "nfpa" )
+                            {
+                                CurrentImportPropsUpdateRow["Special"] = RlXlsDataRow[xls_key_nfpa_nfpacode];
+
+                                //
+                                CurrentImportPropsUpdateRow["Flammability"] = RlXlsDataRow[xls_key_nfpa_firecode];
+                                CurrentImportPropsUpdateRow["Reactivity"] = RlXlsDataRow[xls_key_nfpa_reactivecode];
+                                CurrentImportPropsUpdateRow["Health"] = RlXlsDataRow[xls_key_nfpa_healthcode];
+
                             }
                             else
                             {

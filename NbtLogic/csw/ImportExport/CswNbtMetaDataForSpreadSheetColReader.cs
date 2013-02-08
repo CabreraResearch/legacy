@@ -7,11 +7,14 @@ namespace ChemSW.Nbt.ImportExport
 
     public class CswNbtMetaDataForSpreadSheetColReader
     {
+
+
+
         private Dictionary<string, string> _NodeTypeNameMapper = new Dictionary<string, string>();
-        public  Dictionary<string, string> _NodeTypePropNameMapper = new Dictionary<string, string>();
+        public Dictionary<string, string> _NodeTypePropNameMapper = new Dictionary<string, string>();
         private Dictionary<string, CswNbtMetaDataNodeType> _NodeTypesPerSpreadsheetRowCols = new Dictionary<string, CswNbtMetaDataNodeType>();
 
-        
+        private List<string> _AreNotIndependentPropertyColumns = new List<string>();
 
         private CswNbtResources _CswNbtResources = null;
         public CswNbtMetaDataForSpreadSheetColReader( CswNbtResources CswNbtResources )
@@ -38,7 +41,9 @@ namespace ChemSW.Nbt.ImportExport
             _NodeTypePropNameMapper.Add( "storage_conditions", "Storage and Handling" );
             _NodeTypePropNameMapper.Add( "barcodeid", "Barcode" );
             _NodeTypePropNameMapper.Add( "containerstatus", "Status" );
-            //_NodeTypePropNameMapper.Add( "", "" );
+
+
+
             //_NodeTypePropNameMapper.Add( "", "" );
             //_NodeTypePropNameMapper.Add( "", "" );
 
@@ -47,7 +52,6 @@ namespace ChemSW.Nbt.ImportExport
         public CswNbtMetaDataForSpreadSheetCol read( string NodeTypeNameColVal, string PropTypeNameColVal, ref string Message )
         {
             CswNbtMetaDataForSpreadSheetCol ReturnVal = new CswNbtMetaDataForSpreadSheetCol();
-
 
             if( _NodeTypesPerSpreadsheetRowCols.ContainsKey( NodeTypeNameColVal ) )
             {
