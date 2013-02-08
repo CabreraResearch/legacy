@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28725() ) );              //01W-057
 
             #endregion WILLIAM
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28684() ) );              //01V-051   01W-021
+
             #region YORICK
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_CaseXXXXX() ) );  //01W-000   //01Y-000
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.Schema
 
             #region After Scripts
 
-            _addRunAfterScript(new CswSchemaUpdateDriver(new RunAfterEveryExecutionOfUpdater_01()), RunAfterEveryExecutionOfUpdater_01.Title);
+            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
 
             #endregion After Scripts
 
