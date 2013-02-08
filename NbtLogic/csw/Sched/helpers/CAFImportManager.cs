@@ -25,12 +25,12 @@ namespace ChemSW.Nbt
 
         private Collection<CswNbtObjClassMaterial> _createdMaterials = new Collection<CswNbtObjClassMaterial>();
         private Collection<CswNbtObjClassSize> _createdSizes = new Collection<CswNbtObjClassSize>();
-        private Collection<string> vendorIds = new Collection<string>();
-        private Collection<string> packageIds = new Collection<string>();
-        private Collection<string> matSynIds = new Collection<string>();
-        private Collection<string> unitIds = new Collection<string>();
-        private Collection<string> materialIds = new Collection<string>();
-        private Collection<string> sizeIds = new Collection<string>();
+        private CswCommaDelimitedString vendorIds = new CswCommaDelimitedString();
+        private CswCommaDelimitedString packageIds = new CswCommaDelimitedString();
+        private CswCommaDelimitedString matSynIds = new CswCommaDelimitedString();
+        private CswCommaDelimitedString unitIds = new CswCommaDelimitedString();
+        private CswCommaDelimitedString materialIds = new CswCommaDelimitedString();
+        private CswCommaDelimitedString sizeIds = new CswCommaDelimitedString();
 
         CswNbtMetaDataNodeType vendorNT;
         CswNbtMetaDataNodeType chemicalNT;
@@ -104,66 +104,46 @@ namespace ChemSW.Nbt
             _CAFResources = CswNbtResourcesFactory.makeCswNbtResources( _NBTResources );
             _CAFResources.AccessId = "caf";
 
-            Collection<string> unitIds = _importUnitsOfMeasure(); //always check to import UoMs first
-
-            if( unitIds.Count == 0 ) //if we didn't import UoMs
+            string sql = "select * from (select * from nbtimportqueue where state = 'N' or state = 'S' order by state asc, priority) where rownum <=" + _NumberToProcess;
+            CswArbitrarySelect arbSelect = _CAFResources.makeCswArbitrarySelect( "getImportItems", sql );
+            DataTable dt = arbSelect.getTable();
+            foreach( DataRow Row in dt.Rows )
             {
-                string sql = @"select 
-                                      m.materialname, v.vendorname, p.productno, m.materialid,
-                                      m.nbtuptodate as material_uptodate, v.nbtuptodate as vendor_uptodate, p.nbtuptodate as package_uptodate,
-                                      m.casno, m.specific_gravity, m.expireinterval, m.expireintervalunits, m.formula, m.struct_pict,
-                                      m.physical_state, m.melting_point, m.aqueous_solubility, m.boiling_point, m.vapor_density, m.vapor_pressure, m.molecular_weight, m.flash_point, m.ph,
-                                      m.physical_description,
-                                      v.vendorname, v.city, v.state, v.street1, v.street2, v.zip, v.accountno, v.fax, v.phone, v.contactname,
-                                      p.packageid, v.vendorid
-                               from materials m
-                                    left join packages p on p.materialid = m.materialid
-                                    left join vendors v on v.vendorid = p.supplierid
-                                    left join materials_subclass ms on m.materialsubclassid = ms.materialsubclassid and ms.deleted = '0'
-                                    left join materials_class mc on ms.materialclassid = mc.materialclassid and mc.deleted = '0' and mc.classname = 'CHEMICAL'
-                               where m.deleted = '0' and (m.nbtuptodate = '0' or v.nbtuptodate = '0' or p.nbtuptodate = '0') and rownum <= " + _NumberToProcess;
-
-                CswArbitrarySelect cswArbSelect = _CAFResources.makeCswArbitrarySelect( "cafimport_selectmaterials", sql );
-                DataTable cafTbl = cswArbSelect.getTable();
-
-                foreach( DataRow row in cafTbl.Rows )
+                string tableName = Row["tablename"].ToString();
+                string itemPK = Row["itempk"].ToString();
+                switch( tableName )
                 {
-                    string materialId = row["materialid"].ToString();
-                    CswNbtObjClassVendor vendorNode = _createVendorNode( vendorNT, row );
-                    CswNbtObjClassMaterial materialNode = _createChemical( chemicalNT, row, vendorNode );
-                    materialIds.Add( row["materialid"].ToString() );
-
-                    if( null != materialNode )
-                    {
-                        _createMaterialSynonym( row["materialid"].ToString(), materialNode );
-                        _createSize( row["materialid"].ToString(), materialNode );
-                    }
+                    case "units_of_measure":
+                        _importUnitsOfMeasure( itemPK );
+                        break;
+                    case "materials":
+                        _importChemical( itemPK );
+                        break;
+                    case "vendors":
+                        _importVendor( itemPK );
+                        break;
+                    case "materials_synonyms":
+                        _importMaterialSynonym( itemPK );
+                        break;
+                    case "packdetail":
+                        _importSize( itemPK );
+                        break;
+                    default:
+                        //Add more as we extend the importer
+                        break;
                 }
             }
 
-            if( materialIds.Count > 0 )
+            CswTableUpdate tu = _CAFResources.makeCswTableUpdate( "update_nbtimportqueue", "nbtimportqueue" );
+            string whereClause = _buildWhereClause();
+            if( false == string.IsNullOrEmpty( whereClause ) )
             {
-                _updateCAFTable( materialIds, "materials", "materialid" );
-            }
-            if( matSynIds.Count > 0 )
-            {
-                _updateCAFTable( matSynIds, "materials_synonyms", "materialsynonymid" );
-            }
-            if( sizeIds.Count > 0 )
-            {
-                _updateCAFTable( sizeIds, "packdetail", "packdetailid" );
-            }
-            if( unitIds.Count > 0 )
-            {
-                _updateCAFTable( unitIds, "units_of_measure", "unitofmeasureid" );
-            }
-            if( vendorIds.Count > 0 )
-            {
-                _updateCAFTable( vendorIds, "vendors", "vendorid" );
-            }
-            if( packageIds.Count > 0 )
-            {
-                _updateCAFTable( packageIds, "packages", "packageid" );
+                DataTable nbtimportqueue = tu.getTable( "where " + whereClause );
+                foreach( DataRow Row in nbtimportqueue.Rows )
+                {
+                    Row["state"] = "D"; //D for DONT import me
+                }
+                tu.update( nbtimportqueue );
             }
 
             //Important!!! Always manually release resources after use
@@ -686,31 +666,41 @@ namespace ChemSW.Nbt
             #endregion
         }
 
-
-        private void _updateCAFTable( Collection<string> ids, string tableName, string colName )
+        private string _buildWhereClause()
         {
-            string where = "where ";
-            bool first = true;
-            foreach( string id in ids )
+            string sql = "";
+            Dictionary<string, CswCommaDelimitedString> tables = new Dictionary<string, CswCommaDelimitedString>()
             {
-                if( first )
-                {
-                    first = false;
-                }
-                else
-                {
-                    where += " or ";
-                }
-                where += colName + " = " + id;
-            }
-            CswTableUpdate tu = _CAFResources.makeCswTableUpdate( "cafupdate_nbtuptodate_" + tableName, tableName );
-            DataTable tbl = tu.getTable( where );
-            foreach( DataRow Row in tbl.Rows )
-            {
-                Row["nbtuptodate"] = CswConvert.ToDbVal( 1 );
-            }
-            tu.update( tbl );
+                {"materials", materialIds},
+                {"materials_synonyms", matSynIds},
+                {"vendors", vendorIds},
+                {"packdetail", sizeIds},
+                {"units_of_measure", unitIds}
+            };
 
+            bool first = true;
+            foreach( var item in tables )
+            {
+                if( false == item.Value.IsEmpty )
+                {
+                    if( first )
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        sql += " or ";
+                    }
+                    sql += _getClauseForIds( item.Value, item.Key );
+                }
+            }
+            return sql;
+        }
+
+        private string _getClauseForIds( CswCommaDelimitedString ids, string TableName )
+        {
+            string clause = "(tablename = '" + TableName + "'" + " and ( itempk in ( " + ids.ToString() + " )))";
+            return clause;
         }
 
         private void _addNodeTypeProps( CswNbtNode Node, DataRow Row, CswNbtMetaDataNodeType NodeType )
@@ -758,70 +748,101 @@ namespace ChemSW.Nbt
             } //foreach( CswNbtMetaDataNodeTypeProp ntp in nodeType.getNodeTypeProps() )
         }
 
+        private int _getNodeIdFromLegacyId( string LegacyId, int ExpectedOCId )
+        {
+            int NodeId = Int32.MinValue;
+
+            CswNbtMetaDataObjectClass expectedOC = _NBTResources.MetaData.getObjectClass( ExpectedOCId );
+
+            //it doesn't matter what NT we get the legacy id from
+            CswNbtMetaDataNodeTypeProp legacyIdNTP = null;
+            foreach( CswNbtMetaDataNodeType uomNT in expectedOC.getNodeTypes() )
+            {
+                legacyIdNTP = uomNT.getNodeTypeProp( "Legacy Id" );
+                break;
+            }
+
+            CswNbtView unitsView = new CswNbtView( _NBTResources );
+            CswNbtViewRelationship parent = unitsView.AddViewRelationship( expectedOC, false );
+
+            unitsView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: legacyIdNTP,
+                Value: LegacyId,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( unitsView, false, false, true );
+            int count = tree.getChildNodeCount();
+            for( int i = 0; i < count; i++ )
+            {
+                tree.goToNthChild( i );
+                NodeId = tree.getNodeIdForCurrentPosition().PrimaryKey;
+                tree.goToParentNode();
+            }
+            return NodeId;
+        }
+
+        #endregion
+
         #region Unit of Measure Creation
 
         /// <summary>
         /// Import the Units of Measure if they have not already been imported, returns true if UoMs had to be imported
         /// </summary>
         /// <returns></returns>
-        private Collection<string> _importUnitsOfMeasure()
+        private void _importUnitsOfMeasure( string UnitOfMeasurePK = "" )
         {
-            Collection<string> unitIds = new Collection<string>();
-            string sql = "select * from units_of_measure where nbtuptodate = '0'";
+            string sql = "select * from units_of_measure uom" + ( String.IsNullOrEmpty( UnitOfMeasurePK ) ?
+                " join nbtimportqueue niq on niq.itempk = uom.unitofmeasureid where tablename = 'units_of_measure' and state = 'N'" : ( "where uom.unitofmeasureid = " + UnitOfMeasurePK ) );
             CswArbitrarySelect arbSelect = _CAFResources.makeCswArbitrarySelect( "GetUoMs_28122", sql );
             DataTable cafUoMs = arbSelect.getTable();
 
-            if( cafUoMs.Rows.Count > 0 )
+            foreach( DataRow Row in cafUoMs.Rows )
             {
-                foreach( DataRow Row in cafUoMs.Rows )
+                string unitName = Row["unitofmeasurename"].ToString();
+                CswNbtObjClassUnitOfMeasure unitOfMeasure = _getExistingUnitOfMeasure( unitName );
+                double baseVal = Double.MinValue;
+                int expVal = Int32.MinValue;
+                if( null == unitOfMeasure )
                 {
-                    string unitName = Row["unitofmeasurename"].ToString();
-                    CswNbtObjClassUnitOfMeasure unitOfMeasure = _getExistingUnitOfMeasure( unitName );
-                    double baseVal = Double.MinValue;
-                    int expVal = Int32.MinValue;
-                    if( null == unitOfMeasure )
+                    string unitType = Row["unittype"].ToString();
+                    CswNbtMetaDataNodeType UoM_NT = null;
+
+                    if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Weight._Name.ToLower() ) )
                     {
-                        string unitType = Row["unittype"].ToString();
-                        CswNbtMetaDataNodeType UoM_NT = null;
-
-                        if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Weight._Name.ToLower() ) )
-                        {
-                            UoM_NT = UoM_weight_NT;
-                            baseVal = CswConvert.ToDouble( Row["converttokgs_base"] );
-                            expVal = CswConvert.ToInt32( Row["converttokgs_exp"] );
-                        }
-                        else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Each._Name.ToLower() ) )
-                        {
-                            UoM_NT = UoM_each_NT;
-                            baseVal = CswConvert.ToDouble( Row["converttoeaches_base"] );
-                            expVal = CswConvert.ToInt32( Row["converttoeaches_exp"] );
-                        }
-                        else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Volume._Name.ToLower() ) )
-                        {
-                            UoM_NT = UoM_vol_NT;
-                            baseVal = CswConvert.ToDouble( Row["converttoliters_base"] );
-                            expVal = CswConvert.ToInt32( Row["converttoliters_exp"] );
-                        }
-                        else
-                        {
-                            //My test set only has Weight, Each and Volume - there's still TIME, and RADIATION
-                            //We also might have to handle new Unit of Measure types if there are any
-                        }
-
-                        unitOfMeasure = _NBTResources.Nodes.makeNodeFromNodeTypeId( UoM_NT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                        unitOfMeasure.Name.Text = unitName;
-                        unitOfMeasure.Fractional.Checked = Tristate.False;
-                        unitOfMeasure.ConversionFactor.Base = baseVal;
-                        unitOfMeasure.ConversionFactor.Exponent = expVal;
+                        UoM_NT = UoM_weight_NT;
+                        baseVal = CswConvert.ToDouble( Row["converttokgs_base"] );
+                        expVal = CswConvert.ToInt32( Row["converttokgs_exp"] );
                     }
-                    unitOfMeasure.IsTemp = false;
-                    CswNbtMetaDataNodeTypeProp legacyIdNTP = unitOfMeasure.NodeType.getNodeTypeProp( "Legacy Id" );
-                    unitOfMeasure.Node.Properties[legacyIdNTP].AsNumber.Value = CswConvert.ToDouble( Row["unitofmeasureid"] ); //set the legacy ID
-                    unitIds.Add( Row["unitofmeasureid"].ToString() );
-                    unitOfMeasure.postChanges( false );
+                    else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Each._Name.ToLower() ) )
+                    {
+                        UoM_NT = UoM_each_NT;
+                        baseVal = CswConvert.ToDouble( Row["converttoeaches_base"] );
+                        expVal = CswConvert.ToInt32( Row["converttoeaches_exp"] );
+                    }
+                    else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Volume._Name.ToLower() ) )
+                    {
+                        UoM_NT = UoM_vol_NT;
+                        baseVal = CswConvert.ToDouble( Row["converttoliters_base"] );
+                        expVal = CswConvert.ToInt32( Row["converttoliters_exp"] );
+                    }
+                    else
+                    {
+                        //My test set only has Weight, Each and Volume - there's still TIME, and RADIATION
+                        //We also might have to handle new Unit of Measure types if there are any
+                    }
+
+                    unitOfMeasure = _NBTResources.Nodes.makeNodeFromNodeTypeId( UoM_NT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    unitOfMeasure.Name.Text = unitName;
+                    unitOfMeasure.Fractional.Checked = Tristate.False;
+                    unitOfMeasure.ConversionFactor.Base = baseVal;
+                    unitOfMeasure.ConversionFactor.Exponent = expVal;
                 }
+                unitOfMeasure.IsTemp = false;
+                CswNbtMetaDataNodeTypeProp legacyIdNTP = unitOfMeasure.NodeType.getNodeTypeProp( "Legacy Id" );
+                unitOfMeasure.Node.Properties[legacyIdNTP].AsNumber.Value = CswConvert.ToDouble( Row["unitofmeasureid"] ); //set the legacy ID
+                unitIds.Add( Row["unitofmeasureid"].ToString() );
+                unitOfMeasure.postChanges( false );
             }
-            return unitIds;
         }
 
         /// <summary>
@@ -855,6 +876,19 @@ namespace ChemSW.Nbt
         #endregion
 
         #region Vendor creation
+
+        private void _importVendor( string VendorPK )
+        {
+            string sql = @"select v.vendorname, v.city, v.state, v.street1, v.street2, v.zip, v.accountno, v.fax, v.phone, v.contactname
+                                from vendors v where v.vendorid = " + VendorPK;
+            CswArbitrarySelect cswArbSelect = _CAFResources.makeCswArbitrarySelect( "cafimport_selectvendors", sql );
+            DataTable cafTbl = cswArbSelect.getTable();
+
+            foreach( DataRow Row in cafTbl.Rows )
+            {
+                _createVendorNode( vendorNT, Row );
+            }
+        }
 
         /// <summary>
         /// Creates a new Vendor node if the Vendor does not already exist, otherwise gets the existing Vendor
@@ -920,6 +954,46 @@ namespace ChemSW.Nbt
         #endregion
 
         #region Chemical Creation
+
+        private void _importChemical( string ChemicalPK )
+        {
+            _importUnitsOfMeasure(); //always check to import UoMs first
+
+            if( unitIds.Count == 0 ) //if we didn't import UoMs
+            {
+                string sql = @"select 
+                                      m.materialname, v.vendorname, p.productno, m.materialid,
+                                      m.nbtuptodate as material_uptodate, v.nbtuptodate as vendor_uptodate, p.nbtuptodate as package_uptodate,
+                                      m.casno, m.specific_gravity, m.expireinterval, m.expireintervalunits, m.formula, m.struct_pict,
+                                      m.physical_state, m.melting_point, m.aqueous_solubility, m.boiling_point, m.vapor_density, m.vapor_pressure, m.molecular_weight, m.flash_point, m.ph,
+                                      m.physical_description,
+                                      v.vendorname, v.city, v.state, v.street1, v.street2, v.zip, v.accountno, v.fax, v.phone, v.contactname,
+                                      p.packageid, v.vendorid
+                               from materials m
+                                    left join packages p on p.materialid = m.materialid
+                                    left join vendors v on v.vendorid = p.supplierid
+                                    left join materials_subclass ms on m.materialsubclassid = ms.materialsubclassid and ms.deleted = '0'
+                                    left join materials_class mc on ms.materialclassid = mc.materialclassid and mc.deleted = '0' and mc.classname = 'CHEMICAL'
+                               where m.deleted = '0' and m.materialid = " + ChemicalPK;
+
+                CswArbitrarySelect cswArbSelect = _CAFResources.makeCswArbitrarySelect( "cafimport_selectmaterials", sql );
+                DataTable cafTbl = cswArbSelect.getTable();
+
+                foreach( DataRow row in cafTbl.Rows )
+                {
+                    string materialId = row["materialid"].ToString();
+                    CswNbtObjClassVendor vendorNode = _createVendorNode( vendorNT, row );
+                    CswNbtObjClassMaterial materialNode = _createChemical( chemicalNT, row, vendorNode );
+                    materialIds.Add( row["materialid"].ToString() );
+
+                    if( null != materialNode )
+                    {
+                        _createMaterialSynonym( row["materialid"].ToString(), materialNode );
+                        _createSize( row["materialid"].ToString(), materialNode );
+                    }
+                }
+            }
+        }
 
         private CswNbtObjClassMaterial _createChemical( CswNbtMetaDataNodeType ChemicalNT, DataRow Row, CswNbtObjClassVendor VendorNode )
         {
@@ -1008,6 +1082,18 @@ namespace ChemSW.Nbt
 
         #region Synonym Creation
 
+        private void _importMaterialSynonym( string MaterialSynonymPK )
+        {
+            string sql = @"select materialid, materialsynonymid from materials_synonyms where materialsynonymid = " + MaterialSynonymPK;
+            CswArbitrarySelect arbSel = _CAFResources.makeCswArbitrarySelect( "cafselect_materialsyn", sql );
+            DataTable tbl = arbSel.getTable();
+
+            foreach( DataRow Row in tbl.Rows )
+            {
+                _importChemical( Row["materialid"].ToString() ); //trigger the chemical import, which will end up importing this material synonym
+            }
+        }
+
         private void _createMaterialSynonym( string MaterialId, CswNbtObjClassMaterial ChemicalNode )
         {
             if( null != materialSynNT )
@@ -1066,6 +1152,20 @@ namespace ChemSW.Nbt
 
         #region Size Creation
 
+        private void _importSize( string PackdetailPK )
+        {
+            string sql = @"select p.materialid from packdetail
+                                left join packages p on p.packageid = pd.packageid
+                           where pd.packdetailid = " + PackdetailPK;
+            CswArbitrarySelect arbSel = _CAFResources.makeCswArbitrarySelect( "cafselect_size", sql );
+            DataTable tbl = arbSel.getTable();
+
+            foreach( DataRow Row in tbl.Rows )
+            {
+                _importChemical( Row["materialid"].ToString() ); //trigger the chemical import, which will end up importing this size
+            }
+        }
+
         private void _createSize( string MaterialId, CswNbtObjClassMaterial ChemicalNode )
         {
             if( null != sizeNT )
@@ -1092,39 +1192,6 @@ namespace ChemSW.Nbt
                     sizeIds.Add( row["packdetailid"].ToString() );
                 }
             }
-        }
-
-        private int _getNodeIdFromLegacyId( string LegacyId, int ExpectedOCId )
-        {
-            int NodeId = Int32.MinValue;
-
-            CswNbtMetaDataObjectClass expectedOC = _NBTResources.MetaData.getObjectClass( ExpectedOCId );
-
-            //it doesn't matter what NT we get the legacy id from
-            CswNbtMetaDataNodeTypeProp legacyIdNTP = null;
-            foreach( CswNbtMetaDataNodeType uomNT in expectedOC.getNodeTypes() )
-            {
-                legacyIdNTP = uomNT.getNodeTypeProp( "Legacy Id" );
-                break;
-            }
-
-            CswNbtView unitsView = new CswNbtView( _NBTResources );
-            CswNbtViewRelationship parent = unitsView.AddViewRelationship( expectedOC, false );
-
-            unitsView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: legacyIdNTP,
-                Value: LegacyId,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( unitsView, false, false, true );
-            int count = tree.getChildNodeCount();
-            for( int i = 0; i < count; i++ )
-            {
-                tree.goToNthChild( i );
-                NodeId = tree.getNodeIdForCurrentPosition().PrimaryKey;
-                tree.goToParentNode();
-            }
-            return NodeId;
         }
 
         private CswNbtObjClassSize _getExistingSize( CswNbtMetaDataNodeType SizeNT, string SizeId )
@@ -1183,8 +1250,6 @@ namespace ChemSW.Nbt
 
             return ExistingSizeNode;
         }
-
-        #endregion
 
         #endregion
     }
