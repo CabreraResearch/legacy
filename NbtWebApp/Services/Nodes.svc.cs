@@ -82,14 +82,14 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "makeTemp" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "" )]
-        public NodeResponse makeTemp( string NodeTypeRequest )
+        public NodeResponse makeTemp( string NodeType )
         {
             NodeResponse Ret = new NodeResponse();
             var GetViewDriverType = new CswWebSvcDriver<NodeResponse, string>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.makeTemp,
-                ParamObj: NodeTypeRequest
+                ParamObj: NodeType
                 );
 
             GetViewDriverType.run();

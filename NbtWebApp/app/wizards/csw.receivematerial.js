@@ -166,6 +166,14 @@
                     doNextOnInit: false
                 });
 
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Nodes/makeTemp',
+                    data: "Container",
+                    success: function (data) {
+                        cswPrivate.containerNodeId = data.Nodes[0].NodeId;
+                    }
+                });
+
             } ()); //_preCtor
 
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
@@ -305,6 +313,7 @@
                                     cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
                                 }
                             }
+                            
                         });
 
                         cswPrivate.stepTwoComplete = true;
@@ -369,18 +378,10 @@
 
             (function _post() {
 
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Nodes/makeTemp',
-                    data: "Container",
-                    success: function (data) {
-                        console.log(data);
-                        cswPrivate.containerNodeId = data.Nodes[0].NodeId;
-                    }
-                });
-
-
                 cswPrivate.makeStep1();
+
             } ());
+            
             return cswPublic;
         });
 } ());

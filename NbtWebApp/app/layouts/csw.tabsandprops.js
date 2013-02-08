@@ -61,7 +61,7 @@
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
                 onTabSelect: null,
-                onTabChange: null, // case 28514
+                onTabChange: function () { return true; }, // case 28514
                 onPropertyChange: null,
                 onPropertyRemove: null,
                 onInitFinish: null,
@@ -1180,10 +1180,6 @@
                                     // reload tab
                                     cswPrivate.globalState.propertyData = '';
                                     cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
-                                    //cswPrivate.tabState.EditMode = "Edit";
-                                    cswPublic.resetTabs(cswPublic.getNodeId(), cswPublic.getNodeKey());
-
-
                                 } else {
                                     onSaveSuccess();
                                 }

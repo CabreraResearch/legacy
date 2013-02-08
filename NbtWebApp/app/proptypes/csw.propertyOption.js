@@ -139,8 +139,9 @@
                     cswStaticInternalClosure.preparePropJsonForSave(cswPublic.isMulti(), cswPublic.propData, attributes);
                     if (cswPublic.doPropChangeDataBind()) {
                         Csw.publish('onPropChange_' + cswPublic.propid, { tabid: cswPublic.tabState.tabid, propData: cswPublic.propData });
+                    }
+                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add) {
                         Csw.publish('onTabChange', { tabid: cswPublic.tabState.tabid, propData: cswPublic.propData }); //case 28514
-
                     }
                     
                 };

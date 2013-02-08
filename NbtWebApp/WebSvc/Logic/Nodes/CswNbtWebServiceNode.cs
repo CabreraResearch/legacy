@@ -470,15 +470,15 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void makeTemp( ICswResources CswResources, NodeResponse Response, string nodetype )
+        public static void makeTemp( ICswResources CswResources, NodeResponse Response, string NodeType )
         {
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( nodetype );
-                if( null != NodeType )
+                CswNbtMetaDataNodeType TempNodeNodeType = NbtResources.MetaData.getNodeType( NodeType );
+                if( null != TempNodeNodeType )
                 {
-                    CswNbtNode NewResultNode = NbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    CswNbtNode NewResultNode = NbtResources.Nodes.makeNodeFromNodeTypeId( TempNodeNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
                     if( null != NewResultNode )
                     {
                         CswNbtNode.Node ReturnNode = new CswNbtNode.Node( NewResultNode );
