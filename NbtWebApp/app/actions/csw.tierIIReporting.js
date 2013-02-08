@@ -50,9 +50,14 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
             cswPrivate.controlTbl.cell(1, 1).span({ text: 'Location:' }).addClass('propertylabel');
             var locationControl = cswPrivate.controlTbl.cell(1, 2).location({
                 name: '',
-                onChange: function(locationId, locationName) {
-                    cswPrivate.LocationId = locationId;
-                    cswPrivate.LocationName = locationName;
+                onChange: function (locationId, locationName) {
+                    if (Csw.isNullOrEmpty(locationId)) {
+                        locationControl.comboBox.topContent(cswPrivate.LocationName, cswPrivate.LocationId);
+                        locationControl.comboBox.val(cswPrivate.LocationId);
+                    } else {
+                        cswPrivate.LocationId = locationId;
+                        cswPrivate.LocationName = locationName;
+                    }
                 }
             });
             cswPrivate.LocationId = locationControl.val();

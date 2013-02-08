@@ -122,7 +122,9 @@
                                     link.img({
                                         src: thisItem.ButtonIcon,
                                         border: '',
-                                        cssclass: 'LandingPageImage'
+                                        cssclass: 'LandingPageImage',
+                                        height: '100px',
+                                        width: '100px'
                                     });
                                 }
 

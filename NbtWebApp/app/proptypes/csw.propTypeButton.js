@@ -14,7 +14,7 @@
                 };
 
                 //The render function to be executed as a callback
-                var render = function () {
+                var render = function() {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     cswPrivate.propDiv = cswPublic.data.propDiv;
@@ -22,7 +22,10 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.value = Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name);
                     cswPrivate.mode = Csw.string(cswPrivate.propVals.mode, 'button');
-                    cswPrivate.menuoptions = cswPrivate.propVals.menuoptions.split(',');
+                    cswPrivate.menuoptions = '';
+                    if (cswPrivate.propVals.menuoptions.length > 0) {
+                        cswPrivate.menuoptions = cswPrivate.propVals.menuoptions.split(',');
+                    }
                     cswPrivate.state = cswPrivate.propVals.state;
                     cswPrivate.text = cswPrivate.propVals.text;
                     cswPrivate.selectedText = cswPrivate.propVals.selectedText;
