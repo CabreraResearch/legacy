@@ -1444,8 +1444,6 @@
             labelSelDiv.br();
             labelSelDiv.div({ text: 'Select a Printer:' });
 
-            var userDefaults = JSON.parse(Csw.cookie.get(Csw.cookie.cookieNames.UserDefaults));
-
             var printerSel = labelSelDiv.nodeSelect({
                 name: cswDlgPrivate.name + '_printersel',
                 objectClassName: 'PrinterClass',
@@ -1453,7 +1451,7 @@
                 isRequired: true,
                 showSelectOnLoad: true,
                 isMulti: false,
-                selectedNodeId: userDefaults.DefaultPrinterId
+                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId
             });
 
             cswPublic.div.button({
