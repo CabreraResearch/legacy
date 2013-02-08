@@ -33,6 +33,8 @@ namespace ChemSW.Nbt.ImportExport
         private CswNbtMetaDataForSpreadSheetColReader _CswNbtMetaDataForSpreadSheetColReader = null;
 
         private Dictionary<Int32, CswNbtMetaDataForSpreadSheetCol> _MetaDataByColumnIndex = new Dictionary<int, CswNbtMetaDataForSpreadSheetCol>();
+        private Dictionary<string, Int32> _UofMNodeIdsByUofmName = new Dictionary<string, int>();
+        private Dictionary<string, string> _CISProUofMNamesToNbtSizeNames = new Dictionary<string, string>();
         private List<string> _ColsWithoutDestinationProp = new List<string>();
 
 
@@ -105,7 +107,12 @@ namespace ChemSW.Nbt.ImportExport
             _KnownOutageProperties.Add( "un_no" ); // ==> UN Code
             //            _KnownOutageProperties.Add( "barcodeid" );//==> Barcode <== the Oracle no likey the "Number" field type col 
 
-        }
+
+
+
+            //_CISProSizeNamesToNbtSizeNames.Add(); 
+
+        }//ctor 
 
         private bool _Stop = false;
         public bool Stop
@@ -124,6 +131,16 @@ namespace ChemSW.Nbt.ImportExport
             ////**************************************************************************
             ////Begin: Set up datatable of excel sheet 
             /// 
+
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+
+
+            foreach( CswNbtObjClassUnitOfMeasure CurrentOfM in UnitOfMeasureOC.getNodes( false, true ) )
+            {
+
+                _UofMNodeIdsByUofmName.Add( CurrentOfM.Name.Text, CurrentOfM.NodeId.PrimaryKey );
+            }
+
 
             string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + _CswNbtImportExportFrame.FilePath + ";Extended Properties=Excel 8.0;";
             OleDbConnection ExcelConn = new OleDbConnection( ConnStr );
@@ -359,6 +376,8 @@ namespace ChemSW.Nbt.ImportExport
 
                     _addRowOfNodeType( CurrentRlXlsRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, ref CurrentContainerRow, CurrentMaterialRow, "Material" );
 
+                    _addRelationshipForRow( CurrentContainerRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, CurrentSizeRow, "Size" );
+
                 }
                 else
                 {
@@ -389,6 +408,8 @@ namespace ChemSW.Nbt.ImportExport
 
         }//loadImportTables
 
+
+        //the two import tables don't need to be parameters here -- they can be on the class
         private Int32 _ArbitrarySequentialUniqueId = 0;
         private void _addRowOfNodeType( DataRow RlXlsDataRow, CswNbtMetaDataNodeType NodeTypeToAdd, DataTable ImportNodesTable, DataTable ImportPropsTable, ref DataRow ImportNodesRow, DataRow RelationshipDestinationRow = null, string RelationshipPropName = "" )
         {
@@ -460,7 +481,27 @@ namespace ChemSW.Nbt.ImportExport
                             }
                             else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "initial quantity" )
                             {
-                                CurrentImportPropsUpdateRow["Name"] = CurrentRlXlsCellVal;
+                                ///Should be related node ID of node of type unit of measure
+                                ///
+                                string CandidateSizeName = string.Empty;
+                                if( false == _CISProUofMNamesToNbtSizeNames.ContainsKey( CurrentRlXlsCellVal ) )
+                                {
+                                    CandidateSizeName = CurrentRlXlsCellVal;
+                                }
+                                else
+                                {
+                                    CandidateSizeName = _CISProUofMNamesToNbtSizeNames[CandidateSizeName];
+                                }
+
+                                if( true == _UofMNodeIdsByUofmName.ContainsKey( CandidateSizeName ) )
+                                {
+                                    CurrentImportPropsUpdateRow["NodeID"] = _UofMNodeIdsByUofmName[CandidateSizeName];
+                                }
+                                else
+                                {
+                                    _CswImportExportStatusReporter.reportError( "Unable to import the unit of measure called " + CandidateSizeName );
+                                }
+
                             }
                             else
                             {
@@ -473,8 +514,8 @@ namespace ChemSW.Nbt.ImportExport
                                 {
                                     CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
                                     RelationshipPropWasCreated = true;
+                                    //else
                                 }
-                                //else
                                 //{
                                 //    _CswImportExportStatusReporter.reportError( "A relationship property was specified (" + RelationshipPropName + "), but no destination relationship row was provided" );
                                 //}//if-else we have a desintation row for the relationship
@@ -489,39 +530,46 @@ namespace ChemSW.Nbt.ImportExport
 
                 //DataRow RelationshipDestinationRow = null, string RelationshipPropName = string.Empty 
 
-                if( false == RelationshipPropWasCreated && null != RelationshipDestinationRow && "" != RelationshipPropName )
+                if( ( false == RelationshipPropWasCreated ) && ( null != RelationshipDestinationRow ) && ( "" != RelationshipPropName ) )
                 {
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = NodeTypeToAdd.getNodeTypeProp( RelationshipPropName );
-                    if( null != RelationshipProp )
-                    {
-                        DataRow RelationshipPropRow = ImportPropsTable.NewRow();
-                        ImportPropsTable.Rows.Add( RelationshipPropRow );
-
-                        RelationshipPropRow[CswImporterDbTables._ColName_ImportNodeId] = ImportNodesRow[CswImporterDbTables._ColName_ImportNodeId];
-
-                        RelationshipPropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = RelationshipProp.PropName;
-                        RelationshipPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = RelationshipProp.PropId;
-                        RelationshipPropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-
-                        RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
-                        RelationshipPropWasCreated = true;
-
-                    }
-                    else
-                    {
-                        _CswImportExportStatusReporter.reportError( NodeTypeToAdd.NodeTypeName + ": The specified relationship property(" + RelationshipProp + ") does not exist on this nodetype" );
-                    }
-
-                }//if we haven't yet created the relationship prop
+                    _addRelationshipForRow( ImportNodesRow, NodeTypeToAdd, ImportNodesTable, ImportPropsTable, RelationshipDestinationRow, RelationshipPropName );
+                }
 
             }//if we are adding props
 
         }//_addRowOfNodeType()
 
+        //These params can also be pared down
+        private void _addRelationshipForRow( DataRow SourceImportNodesRow, CswNbtMetaDataNodeType NodeTypeToAdd, DataTable ImportNodesTable, DataTable ImportPropsTable, DataRow RelationshipDestinationRow = null, string RelationshipPropName = "" )
+        {
+            if( ( null != RelationshipDestinationRow ) && ( "" != RelationshipPropName ) )
+            {
+                CswNbtMetaDataNodeTypeProp RelationshipProp = NodeTypeToAdd.getNodeTypeProp( RelationshipPropName );
+                if( null != RelationshipProp )
+                {
+                    DataRow RelationshipPropRow = ImportPropsTable.NewRow();
+                    ImportPropsTable.Rows.Add( RelationshipPropRow );
 
-        //private void _addRelationshipForRow( DataRow Source)
-        //{
-        //}//_addRelationshipForRow()
+                    RelationshipPropRow[CswImporterDbTables._ColName_ImportNodeId] = SourceImportNodesRow[CswImporterDbTables._ColName_ImportNodeId];
+
+                    RelationshipPropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = RelationshipProp.PropName;
+                    RelationshipPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = RelationshipProp.PropId;
+                    RelationshipPropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
+
+                    RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
+                }
+                else
+                {
+                    _CswImportExportStatusReporter.reportError( NodeTypeToAdd.NodeTypeName + ": The specified relationship property(" + RelationshipProp + ") does not exist on this nodetype" );
+                }
+
+            }
+            else
+            {
+                _CswImportExportStatusReporter.reportError( "Unable to add relationship row" );
+            }//
+
+        }//_addRelationshipForRow()
 
     } // CswImportTablePopulatorFromRapidLoader
 
