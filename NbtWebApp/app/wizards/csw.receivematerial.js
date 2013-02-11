@@ -167,14 +167,6 @@
                     doNextOnInit: false
                 });
 
-//                Csw.ajaxWcf.post({
-//                    urlMethod: 'Nodes/makeTemp',
-//                    data: cswPrivate.state.containerNodeTypeId,
-//                    success: function (data) {
-//                        cswPrivate.containerNodeId = data.Nodes[0].NodeId;
-//                    }
-//                });
-
             } ()); //_preCtor
 
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
@@ -307,12 +299,8 @@
                             },
                             ReloadTabOnSave: true,
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
-                                if (data.propData.name === "Owner") {
-                                    console.log("Owner Prop Changed");
                                     cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
-                                } else {
-                                    console.log("Other Prop Changed");
-                                }
+     
                             }
 
                         });

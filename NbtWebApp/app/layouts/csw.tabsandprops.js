@@ -74,7 +74,7 @@
                 properties: [],
                 async: true
             };
-            var cswPublic = { };
+            var cswPublic = {};
 
             cswPrivate.onMultiEdit = function (eventObj, multiOpts) {
                 var isMulti = false;
@@ -150,9 +150,7 @@
 
 
             cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
-                if (data.propData.name === "Owner") {
                     cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
-                }
             };
 
             //#endregion Events
@@ -925,9 +923,11 @@
                     }
                     cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
 
-                    Csw.subscribe('onPropChange_' + propid, function (eventObject, data) {
-                        cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
-                    });
+                    if (propData.ocpname === "Owner") {
+                        Csw.subscribe('onPropChange_' + propid, function(eventObject, data) {
+                            cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
+                        });
+                    }
 
                 }
             };
