@@ -510,6 +510,8 @@ namespace ChemSW.Nbt.ImportExport
                                 if( true == _UofMNodeIdsByUofmName.ContainsKey( CandidateUnitOfMeasureName ) )
                                 {
                                     CurrentImportPropsUpdateRow["NodeID"] = _UofMNodeIdsByUofmName[CandidateUnitOfMeasureName];
+                                    //                                    CurrentImportPropsUpdateRow["Name"] = CandidateSizeName;
+                                    //                                    CurrentImportPropsUpdateRow["Value"] = 1;
                                 }
                                 else
                                 {
