@@ -109,6 +109,12 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
+            _CISProUofMNamesToNbtSizeNames.Add( "L", "Liters" );
+            _CISProUofMNamesToNbtSizeNames.Add( "ML", "mL" );
+            _CISProUofMNamesToNbtSizeNames.Add( "PT", "lb" ); //<==WRONG for now
+            _CISProUofMNamesToNbtSizeNames.Add( "G", "g" );
+            _CISProUofMNamesToNbtSizeNames.Add( "KG", "kg" );
+
 
             //_CISProSizeNamesToNbtSizeNames.Add(); 
 
@@ -132,7 +138,7 @@ namespace ChemSW.Nbt.ImportExport
             ////Begin: Set up datatable of excel sheet 
             /// 
 
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
 
 
             foreach( CswNbtObjClassUnitOfMeasure CurrentOfM in UnitOfMeasureOC.getNodes( false, true ) )
@@ -351,7 +357,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         ChemSW.Core.CswDelimitedString SizeCompoundId = new Core.CswDelimitedString( '-' );
                         SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
-                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
+                        SizeCompoundId.Add( _CISProUofMNamesToNbtSizeNames[CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString()] );
                         if( SizeCompoundId.ToString() != current_size_id )
                         {
                             current_size_id = SizeCompoundId.ToString();
@@ -490,12 +496,14 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                                 else
                                 {
-                                    CandidateSizeName = _CISProUofMNamesToNbtSizeNames[CandidateSizeName];
+                                    CandidateSizeName = _CISProUofMNamesToNbtSizeNames[CurrentRlXlsCellVal];
                                 }
 
                                 if( true == _UofMNodeIdsByUofmName.ContainsKey( CandidateSizeName ) )
                                 {
                                     CurrentImportPropsUpdateRow["NodeID"] = _UofMNodeIdsByUofmName[CandidateSizeName];
+                                    //                                    CurrentImportPropsUpdateRow["Name"] = CandidateSizeName;
+                                    //                                    CurrentImportPropsUpdateRow["Value"] = 1;
                                 }
                                 else
                                 {
