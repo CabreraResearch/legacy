@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ChemSW.Core;
 
 namespace CswPrintClient1
 {
@@ -149,11 +152,65 @@ namespace CswPrintClient1
             return Ret;
         } // _printLabel()
 
+
+        private Int32 FourBytesToInt32( byte[] src, int start )
+        {
+            int headerLen = CswConvert.ToInt32( src[start] );
+            headerLen += CswConvert.ToInt32( src[start + 1] ) * 64;
+            headerLen += CswConvert.ToInt32( src[start + 2] ) * 64 * 64;
+            headerLen += CswConvert.ToInt32( src[start + 3] ) * 64 * 64 * 64;
+            return headerLen;
+        }
+
         private void btnPrintEPL_Click( object sender, EventArgs e )
         {
-            if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, textBox1.Text ) != true )
+            if( false ) //this is debug code for printing images
             {
-                MessageBox.Show( "Print failed!" );
+                //use the EPL command GWx_orig,y_orig,width_bytes,height_bits,[byte array data]
+                byte[] fsArr = File.ReadAllBytes( "skull64.bmp" );
+                //getting the pixel size from the DIB header
+                int height = FourBytesToInt32( fsArr, 18 );
+                int width = FourBytesToInt32( fsArr, 22 );
+                //build the epl data and append the width (bytes) and height (pixels). template has the leading "GWn,n,"  before width
+                byte[] prefix = CswTools.StringToByteArray( textBox1.Text + CswConvert.ToInt32( width / 8 ).ToString() + "," + height.ToString() + "," );
+                byte[] suffix = { 0x50, 0x0D, 0x0A, 0x0D, 0x0A }; //says print now
+                byte[] rv = new byte[prefix.Length + fsArr.Length + suffix.Length];
+
+                //getting header offset from bitmap hader
+                int headerLen = FourBytesToInt32( fsArr, 10 );
+                int newLen = fsArr.Length - headerLen; //BMP format has a variable length header block
+                //concatenate the bytes together
+                System.Buffer.BlockCopy( prefix, 0, rv, 0, prefix.Length );
+                System.Buffer.BlockCopy( fsArr, headerLen, rv, prefix.Length, newLen );
+                System.Buffer.BlockCopy( suffix, 0, rv, prefix.Length + fsArr.Length, suffix.Length );
+
+                //unmanaged code pointer required for the function call
+                IntPtr unmanagedPointer = Marshal.AllocHGlobal( rv.Length );
+                try
+                {
+                    Marshal.Copy( rv, 0, unmanagedPointer, rv.Length );
+                    // Call unmanaged code
+                    //if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, CswTools.ByteArrayToString( rv ) ) != true )
+                    if( RawPrinterHelper.SendBytesToPrinter( tbPrinter.Text, unmanagedPointer, rv.Length ) != true )
+                    {
+                        MessageBox.Show( "Print failed!" );
+                    }
+                }
+                finally
+                {
+                    //unmanaged pointer must be explicitly released to prevent memory leak
+                    Marshal.FreeHGlobal( unmanagedPointer );
+                }
+            }
+            else
+            {
+
+
+                if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, textBox1.Text ) != true )
+                {
+                    MessageBox.Show( "Print failed!" );
+                }
+
             }
         }
 

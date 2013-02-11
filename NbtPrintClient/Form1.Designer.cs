@@ -30,7 +30,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tbLog = new System.Windows.Forms.TextBox();
@@ -374,7 +373,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(20, 236);
+            this.label8.Location = new System.Drawing.Point(20, 272);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(166, 13);
             this.label8.TabIndex = 45;
@@ -382,7 +381,7 @@
             // 
             // btnTestPrintSvc
             // 
-            this.btnTestPrintSvc.Location = new System.Drawing.Point(20, 308);
+            this.btnTestPrintSvc.Location = new System.Drawing.Point(20, 344);
             this.btnTestPrintSvc.Name = "btnTestPrintSvc";
             this.btnTestPrintSvc.Size = new System.Drawing.Size(75, 23);
             this.btnTestPrintSvc.TabIndex = 44;
@@ -392,7 +391,7 @@
             // 
             // tbPrintLabelId
             // 
-            this.tbPrintLabelId.Location = new System.Drawing.Point(95, 284);
+            this.tbPrintLabelId.Location = new System.Drawing.Point(95, 320);
             this.tbPrintLabelId.Name = "tbPrintLabelId";
             this.tbPrintLabelId.Size = new System.Drawing.Size(100, 20);
             this.tbPrintLabelId.TabIndex = 43;
@@ -401,7 +400,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(20, 287);
+            this.label7.Location = new System.Drawing.Point(20, 323);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(63, 13);
             this.label7.TabIndex = 42;
@@ -409,7 +408,7 @@
             // 
             // tbTargetId
             // 
-            this.tbTargetId.Location = new System.Drawing.Point(95, 258);
+            this.tbTargetId.Location = new System.Drawing.Point(95, 294);
             this.tbTargetId.Name = "tbTargetId";
             this.tbTargetId.Size = new System.Drawing.Size(100, 20);
             this.tbTargetId.TabIndex = 41;
@@ -418,7 +417,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(20, 261);
+            this.label6.Location = new System.Drawing.Point(20, 297);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 40;
@@ -436,7 +435,7 @@
             // 
             // btnPrintEPL
             // 
-            this.btnPrintEPL.Location = new System.Drawing.Point(17, 196);
+            this.btnPrintEPL.Location = new System.Drawing.Point(17, 232);
             this.btnPrintEPL.Name = "btnPrintEPL";
             this.btnPrintEPL.Size = new System.Drawing.Size(75, 23);
             this.btnPrintEPL.TabIndex = 6;
@@ -446,13 +445,16 @@
             // 
             // textBox1
             // 
+            this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.Location = new System.Drawing.Point(17, 28);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(358, 162);
+            this.textBox1.Size = new System.Drawing.Size(358, 198);
             this.textBox1.TabIndex = 5;
-            this.textBox1.Text = resources.GetString("textBox1.Text");
+            this.textBox1.Text = "I8,0,001\r\nS2\r\nOD\r\nJF\r\nWN\r\nD12\r\nZB\r\nq600\r\nN\r\nA25,15,0,2,1,1,N,\"CHEMSW\"\r\nB25,80,0,1" +
+    ",3,6,40,N,\"999999\"\r\nA25,130,0,2,1,1,N,\"999999\"\r\nA25,165,0,2,1,1,N,\"Building1,Roo" +
+    "m1\"\r\nGW250,15,";
             // 
             // printDialog1
             // 
