@@ -962,7 +962,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
         private void OnLocationPropChange( CswNbtNodeProp Prop )
         {
-            //added for case 28514
+            // This method is being called multiple times so this was added
             if (CswTools.IsPrimaryKey(Location.SelectedNodeId) && (Location.GetOriginalPropRowValue() != Location.SelectedNodeId.ToString()))
             {
 
@@ -1116,13 +1116,19 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         private void OnOwnerPropChange( CswNbtNodeProp Prop ) //case 28514
         {
-            if( CswTools.IsPrimaryKey( Owner.RelatedNodeId ) )
+            // Because we don't want this logic to fire all the time; only in 
+            // the Receive Material Wizard where the Container Node is Temp.
+            // -- This isn't the best fix but it works for now
+            if (this.IsTemp) 
             {
-                CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
-                if( null != CurrentOwnerNode )
+                if (CswTools.IsPrimaryKey(Owner.RelatedNodeId))
                 {
-                    Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
-                    Location.RefreshNodeName();
+                    CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode(Owner.RelatedNodeId);
+                    if (null != CurrentOwnerNode)
+                    {
+                        Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
+                        Location.RefreshNodeName();
+                    }
                 }
             }
 

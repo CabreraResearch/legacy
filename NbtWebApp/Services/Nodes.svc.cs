@@ -78,23 +78,5 @@ namespace NbtWebApp
             GetViewDriverType.run();
             return ( Ret );
         }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "makeTemp" )]
-        [FaultContract( typeof( FaultException ) )]
-        [Description( "" )]
-        public NodeResponse makeTemp( Int32 MaterialNodeTypeId )
-        {
-            NodeResponse Ret = new NodeResponse();
-            var GetViewDriverType = new CswWebSvcDriver<NodeResponse, Int32>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceNode.makeTemp,
-                ParamObj: MaterialNodeTypeId
-                );
-
-            GetViewDriverType.run();
-            return ( Ret );
-        }
     }
 }

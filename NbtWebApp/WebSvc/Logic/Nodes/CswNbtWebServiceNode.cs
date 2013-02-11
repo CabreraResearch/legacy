@@ -470,24 +470,6 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static void makeTemp( ICswResources CswResources, NodeResponse Response, Int32 MaterialNodeTypeId )
-        {
-            if( null != CswResources )
-            {
-                CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                CswNbtMetaDataNodeType TempNodeNodeType = NbtResources.MetaData.getNodeType( MaterialNodeTypeId );
-                if( null != TempNodeNodeType )
-                {
-                    CswNbtNode NewResultNode = NbtResources.Nodes.makeNodeFromNodeTypeId( TempNodeNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                    if( null != NewResultNode )
-                    {
-                        CswNbtNode.Node ReturnNode = new CswNbtNode.Node( NewResultNode );
-                        Response.Data.Nodes.Add( ReturnNode );
-                    }
-                }
-            }
-        }
-
     } // class CswNbtWebServiceNode
 
 } // namespace ChemSW.Nbt.WebServices

@@ -23,6 +23,7 @@
                 state: {
                     materialId: null,
                     materialNodeTypeId: '',
+                    containerNodeId: '',
                     containerNodeTypeId: '',
                     containerAddLayout: {},
                     tradeName: '',
@@ -37,7 +38,7 @@
                 stepThreeComplete: false,
                 printBarcodes: false,
                 amountsGrid: null,
-                containerNodeId: ''
+                
             };
 
             var cswPublic = {};
@@ -112,7 +113,7 @@
                 cswPrivate.finalize = function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     var container = {
-                        tempnodeid: cswPrivate.containerNodeId,
+                        tempnodeid: cswPrivate.state.containerNodeId,
                         materialid: cswPrivate.state.materialId,
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
                         quantities: cswPrivate.amountsGrid.quantities(),
@@ -166,13 +167,13 @@
                     doNextOnInit: false
                 });
 
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Nodes/makeTemp',
-                    data: cswPrivate.state.materialNodeTypeId,
-                    success: function (data) {
-                        cswPrivate.containerNodeId = data.Nodes[0].NodeId;
-                    }
-                });
+//                Csw.ajaxWcf.post({
+//                    urlMethod: 'Nodes/makeTemp',
+//                    data: cswPrivate.state.containerNodeTypeId,
+//                    success: function (data) {
+//                        cswPrivate.containerNodeId = data.Nodes[0].NodeId;
+//                    }
+//                });
 
             } ()); //_preCtor
 
@@ -302,7 +303,7 @@
                             },
                             globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
-                                currentNodeId: cswPrivate.containerNodeId
+                                currentNodeId: cswPrivate.state.containerNodeId
                             },
                             ReloadTabOnSave: true,
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
@@ -359,7 +360,6 @@
                                     nodetypeid: cswPrivate.state.documentTypeId
                                 },
                                 globalState: {
-                                    //currentNodeId: cswPrivate.containerNodeId,
                                     ShowAsReport: false,
                                     excludeOcProps: ['owner']
                                 },
