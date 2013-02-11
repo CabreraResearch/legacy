@@ -481,9 +481,13 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             Int32 DisplayRow = _getUniqueRow( Layout.DisplayRow, Layout.DisplayColumn );
 
-            if( Int32.MinValue != Prop.ObjectClassPropId && null != Prop.getObjectClassProp() && Prop.getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
+            if( Int32.MaxValue == DisplayRow )
             {
-                DisplayRow = CswNbtMetaDataNodeTypeLayoutMgr.getCurrentMaxDisplayRow( _CswNbtResources, Prop.NodeTypeId, Layout.TabId, Layout.LayoutType ) + 1;
+                DisplayRow = CswNbtMetaDataNodeTypeLayoutMgr.getCurrentMaxDisplayRow( _CswNbtResources, Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
+                if( Int32.MinValue != Prop.ObjectClassPropId && null != Prop.getObjectClassProp() && Prop.getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
+                {
+                    DisplayRow = DisplayRow + 1;
+                }
             }
             PropObj["displayrow"] = DisplayRow;
             PropObj["displaycol"] = Layout.DisplayColumn;
