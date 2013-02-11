@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
@@ -82,14 +83,14 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "makeTemp" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "" )]
-        public NodeResponse makeTemp( string NodeType )
+        public NodeResponse makeTemp( Int32 MaterialNodeTypeId )
         {
             NodeResponse Ret = new NodeResponse();
-            var GetViewDriverType = new CswWebSvcDriver<NodeResponse, string>(
+            var GetViewDriverType = new CswWebSvcDriver<NodeResponse, Int32>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNode.makeTemp,
-                ParamObj: NodeType
+                ParamObj: MaterialNodeTypeId
                 );
 
             GetViewDriverType.run();

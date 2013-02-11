@@ -61,7 +61,7 @@
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
                 onTabSelect: null,
-                onTabChange: function () { return true; }, // case 28514
+                onOwnerPropChange: null, // case 28514
                 onPropertyChange: null,
                 onPropertyRemove: null,
                 onInitFinish: null,
@@ -146,6 +146,13 @@
             cswPublic.tearDown = function () {
                 Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                 cswPrivate.onTearDown();
+            };
+
+
+            cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
+                if (data.propData.name === "Owner") {
+                    cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
+                }
             };
 
             //#endregion Events
@@ -917,6 +924,11 @@
                         propCell.addClass('ui-state-highlight');
                     }
                     cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
+
+                    Csw.subscribe('onPropChange_' + propid, function (eventObject, data) {
+                        cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
+                    });
+
                 }
             };
 
@@ -1241,20 +1253,6 @@
             (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
                 cswPrivate.refreshLinkDiv();
-
-                function onTabChangeMethod(obj, data, tabContentDiv) {
-                    cswPrivate.onTabChange(obj, data, tabContentDiv);
-                }
-
-                Csw.unsubscribe('onTabChange');
-                console.log("Unsubscribed (init)");
-                Csw.subscribe('onTabChange', function (eventObject, data) {
-                    onTabChangeMethod(eventObject, data, cswPrivate.tabContentDiv);
-                });
-                console.log("Subscribed (init)");
-
-
-
             } ());
 
             return cswPublic;

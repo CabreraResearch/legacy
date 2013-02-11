@@ -168,7 +168,7 @@
 
                 Csw.ajaxWcf.post({
                     urlMethod: 'Nodes/makeTemp',
-                    data: "Container",
+                    data: cswPrivate.state.materialNodeTypeId,
                     success: function (data) {
                         cswPrivate.containerNodeId = data.Nodes[0].NodeId;
                     }
@@ -305,15 +305,15 @@
                                 currentNodeId: cswPrivate.containerNodeId
                             },
                             ReloadTabOnSave: true,
-                            onTabChange: function (obj, data, tabContentDiv) {
-                                if (data.propData.name === "Location") {
-                                    console.log("Location Prop Changed");
+                            onOwnerPropChange: function (propObj, data, tabContentDiv) {
+                                if (data.propData.name === "Owner") {
+                                    console.log("Owner Prop Changed");
+                                    cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
                                 } else {
                                     console.log("Other Prop Changed");
-                                    cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
                                 }
                             }
-                            
+
                         });
 
                         cswPrivate.stepTwoComplete = true;
@@ -381,7 +381,7 @@
                 cswPrivate.makeStep1();
 
             } ());
-            
+
             return cswPublic;
         });
 } ());

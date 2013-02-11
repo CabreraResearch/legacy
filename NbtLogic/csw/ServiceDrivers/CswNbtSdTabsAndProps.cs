@@ -673,7 +673,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         case NodeEditMode.Add:
                             if( null != Node )
                             {
-                                Node.IsTemp = false;
+                                //Node.IsTemp = false;
                                 addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
                             }
                             else
