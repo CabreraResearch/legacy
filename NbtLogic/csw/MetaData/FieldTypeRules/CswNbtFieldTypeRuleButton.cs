@@ -16,47 +16,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             StateSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( StateSubField );
 
             MenuOptionsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Value );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( MenuOptionsSubField );
 
             DisplayNameField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Value );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            DisplayNameField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( DisplayNameField );
 
             IconSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.Value );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            IconSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( IconSubField );
         }//ctor
 
