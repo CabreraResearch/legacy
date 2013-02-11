@@ -113,7 +113,7 @@
                 cswPrivate.finalize = function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     var container = {
-                        tempnodeid: cswPrivate.state.containerNodeId,
+                        containernodeid: cswPrivate.state.containerNodeId,
                         materialid: cswPrivate.state.materialId,
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
                         quantities: cswPrivate.amountsGrid.quantities(),
