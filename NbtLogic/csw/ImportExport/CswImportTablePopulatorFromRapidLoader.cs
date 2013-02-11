@@ -109,6 +109,13 @@ namespace ChemSW.Nbt.ImportExport
 
 
 
+            _CISProUofMNamesToNbtSizeNames.Add( "L", "Liters" );
+            _CISProUofMNamesToNbtSizeNames.Add( "ML", "mL" );
+            _CISProUofMNamesToNbtSizeNames.Add( "PT", "ounces" ); //<==WRONG for now
+            _CISProUofMNamesToNbtSizeNames.Add( "G", "g" );
+            _CISProUofMNamesToNbtSizeNames.Add( "KG", "kg" );
+
+
 
             //_CISProSizeNamesToNbtSizeNames.Add(); 
 
@@ -132,7 +139,7 @@ namespace ChemSW.Nbt.ImportExport
             ////Begin: Set up datatable of excel sheet 
             /// 
 
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
 
 
             foreach( CswNbtObjClassUnitOfMeasure CurrentOfM in UnitOfMeasureOC.getNodes( false, true ) )
@@ -156,7 +163,8 @@ namespace ChemSW.Nbt.ImportExport
             string FirstSheetName = RapidLoaderMetaDataTable.Rows[0]["TABLE_NAME"].ToString();
 
             OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
-            string select_statement = "SELECT * FROM [" + FirstSheetName + "] ORDER BY " + xls_key_isdata + "," + xls_key_vendor + "," + xls_key_tradename + "," + xls_key_productno + " ASC";
+            //            string select_statement = "SELECT * FROM [" + FirstSheetName + "]  where [CATALOGNO] IS NOT NULL AND [UNITOFMEASURE] IS NOT NULL ORDER BY " + xls_key_isdata + "," + xls_key_vendor + "," + xls_key_tradename + "," + xls_key_productno + " ASC";
+            string select_statement = "SELECT * FROM [" + FirstSheetName + "]  ORDER BY " + xls_key_isdata + "," + xls_key_vendor + "," + xls_key_tradename + "," + xls_key_productno + " ASC";
             OleDbCommand SelectCommand = new OleDbCommand( select_statement, ExcelConn );
             //            OleDbCommand SelectCommand = new OleDbCommand( "SELECT * FROM [" + FirstSheetName + "] ", ExcelConn );
             DataAdapter.SelectCommand = SelectCommand;
@@ -349,15 +357,20 @@ namespace ChemSW.Nbt.ImportExport
                         }//if we need to create a new material record
 
 
-                        ChemSW.Core.CswDelimitedString SizeCompoundId = new Core.CswDelimitedString( '-' );
-                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
-                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
-                        if( SizeCompoundId.ToString() != current_size_id )
-                        {
-                            current_size_id = SizeCompoundId.ToString();
-                            _addRowOfNodeType( CurrentRlXlsRow, SizeNodeType, ImportNodesTable, ImportPropsTable, ref CurrentSizeRow, CurrentMaterialRow, "Material" );
 
-                        }//
+                        //Re-do as per discussion with steve 
+                        if( ( string.Empty != CurrentRlXlsRow[xls_key_size_catalogno].ToString() ) && ( string.Empty != CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() ) )
+                        {
+                            ChemSW.Core.CswDelimitedString SizeCompoundId = new Core.CswDelimitedString( '-' );
+                            SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
+                            SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
+                            if( SizeCompoundId.ToString() != current_size_id )
+                            {
+                                current_size_id = SizeCompoundId.ToString();
+                                _addRowOfNodeType( CurrentRlXlsRow, SizeNodeType, ImportNodesTable, ImportPropsTable, ref CurrentSizeRow, CurrentMaterialRow, "Material" );
+
+                            }//
+                        }
 
                     }
                     else
@@ -450,14 +463,15 @@ namespace ChemSW.Nbt.ImportExport
                             string CurrentRlXlsCellVal = RlXlsDataRow[CurrentRlxsCol].ToString();
                             if( 1 == CurrentColMetaData.FieldTypeColNames.Count )
                             {
-                                string FieldTypeName = CurrentColMetaData.FieldTypeColNames[0];
-                                if( true == ImportPropsTable.Columns.Contains( FieldTypeName ) )
+                                string FieldTypeColumnName = CurrentColMetaData.FieldTypeColNames[0];
+                                if( true == ImportPropsTable.Columns.Contains( FieldTypeColumnName ) )
                                 {
-                                    CurrentImportPropsUpdateRow[FieldTypeName] = CurrentRlXlsCellVal;
+
+                                    CurrentImportPropsUpdateRow[FieldTypeColumnName] = CurrentRlXlsCellVal;
                                 }
                                 else
                                 {
-                                    _CswImportExportStatusReporter.reportError( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName + ":" + CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName + ": the " + CswImporterDbTables.TblName_ImportProps + " table does not have a column for field type " + FieldTypeName );
+                                    _CswImportExportStatusReporter.reportError( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName + ":" + CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName + ": the " + CswImporterDbTables.TblName_ImportProps + " table does not have a column for field type " + FieldTypeColumnName );
                                 }//if-else we have a column for our prop's field type
                             }
                             else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "barcode" )
@@ -483,23 +497,23 @@ namespace ChemSW.Nbt.ImportExport
                             {
                                 ///Should be related node ID of node of type unit of measure
                                 ///
-                                string CandidateSizeName = string.Empty;
+                                string CandidateUnitOfMeasureName = string.Empty;
                                 if( false == _CISProUofMNamesToNbtSizeNames.ContainsKey( CurrentRlXlsCellVal ) )
                                 {
-                                    CandidateSizeName = CurrentRlXlsCellVal;
+                                    CandidateUnitOfMeasureName = CurrentRlXlsCellVal;
                                 }
                                 else
                                 {
-                                    CandidateSizeName = _CISProUofMNamesToNbtSizeNames[CandidateSizeName];
+                                    CandidateUnitOfMeasureName = _CISProUofMNamesToNbtSizeNames[CurrentRlXlsCellVal];
                                 }
 
-                                if( true == _UofMNodeIdsByUofmName.ContainsKey( CandidateSizeName ) )
+                                if( true == _UofMNodeIdsByUofmName.ContainsKey( CandidateUnitOfMeasureName ) )
                                 {
-                                    CurrentImportPropsUpdateRow["NodeID"] = _UofMNodeIdsByUofmName[CandidateSizeName];
+                                    CurrentImportPropsUpdateRow["NodeID"] = _UofMNodeIdsByUofmName[CandidateUnitOfMeasureName];
                                 }
                                 else
                                 {
-                                    _CswImportExportStatusReporter.reportError( "Unable to import the unit of measure called " + CandidateSizeName );
+                                    _CswImportExportStatusReporter.reportError( "Unable to import the unit of measure called " + CandidateUnitOfMeasureName );
                                 }
 
                             }
