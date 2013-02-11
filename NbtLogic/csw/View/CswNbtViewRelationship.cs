@@ -25,6 +25,9 @@ namespace ChemSW.Nbt
         public bool AllowEdit = true;
         public bool AllowDelete = true;
 
+        /// <summary>
+        /// Whether or not the user can add a Node of the NodeType (set using the AddChildren prop, None = false, anything else = true)
+        /// </summary>
         public bool AllowAdd
         {
             get
