@@ -319,7 +319,7 @@
                     if (data && data.view.TreeView) {
                         currentViewJson = data.view.TreeView;
 
-                    o.viewmode = currentViewJson.mode;
+                        o.viewmode = currentViewJson.mode;
 
                         viewNameTextBox.val(currentViewJson.viewname);
                         categoryTextBox.val(currentViewJson.category);
@@ -360,11 +360,11 @@
 
                         step2CopyFromSelectCell.empty();
                         step2CopyFromButtonCell.empty();
-                        
+
                         var copyViewSel = step2CopyFromSelectCell.select();
 
                         if (data.viewlist && data.viewlist.length > 0) {
-                            data.viewlist.forEach(function(val) {
+                            data.viewlist.forEach(function (val) {
                                 copyViewSel.option({ value: val.id, display: val.name });
                             });
 
@@ -383,10 +383,10 @@
                                                     ViewId: copyViewSel.val(),
                                                     CopyToViewId: o.viewid
                                                 },
-                                                success: function() {
+                                                success: function () {
                                                     _initStepTwo($nextWizard);
                                                 },
-                                                error: function() {
+                                                error: function () {
                                                     btn.enable();
                                                 }
                                             });
@@ -398,7 +398,7 @@
                                 }
                             });
                         }
-                        
+
                         $nextWizard.CswWizard('button', 'next', 'enable');
                     }
                 } // success
@@ -408,7 +408,7 @@
         function cacheStepTwo() {
             currentViewJson.viewname = viewNameTextBox.val();
             currentViewJson.category = categoryTextBox.val();
-            
+
             if (currentViewJson.visibility !== 'Property') {
                 if (false === Csw.isNullOrEmpty(visSelect)) {
                     var visValue = visSelect.getSelected();
@@ -662,7 +662,7 @@
                         type: Csw.enums.inputTypes.checkbox,
                         onChange: function () {
                             var $this = $(this);
-                            if (isFunction(onChange)) {
+                            if (Csw.isFunction(onChange)) {
                                 onChange($this.is(':checked'));
                             }
                         }
@@ -673,6 +673,8 @@
                     }
                 } // makeAllowCB()
 
+                _makeAllowCB(row, 'editrel_view', 'Add', Csw.bool(viewnodejson.allowaddchildren), function (checked) { viewnodejson.allowaddchildren = checked; });
+                row += 1;
                 _makeAllowCB(row, 'editrel_view', 'View', Csw.bool(viewnodejson.allowview), function (checked) { viewnodejson.allowview = checked; });
                 row += 1;
                 _makeAllowCB(row, 'editrel_edit', 'Edit', Csw.bool(viewnodejson.allowedit), function (checked) { viewnodejson.allowedit = checked; });
@@ -897,7 +899,7 @@
                 var listResultMode = filterTable.cell(3, 2)
                     .select({
                         name: o.name + '_resultmode',
-                        values: ['Hide', { value: 'Disabled', display: 'Show Disabled' }],
+                        values: ['Hide', { value: 'Disabled', display: 'Show Disabled'}],
                         onChange: function () {
                             //var $this = $(this);
                             viewNodeData.resultmode = listResultMode.val();
@@ -1252,7 +1254,7 @@
             var arbid = 'root';
             var name = itemJson.viewname;
             var rel = 'root';
-            types.root = { icon: { image: Csw.string(itemJson.iconfilename) } };
+            types.root = { icon: { image: Csw.string(itemJson.iconfilename)} };
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, Csw.enums.viewChildPropNames.root, rel);
@@ -1286,7 +1288,7 @@
             var skipchildoptions = (stepno <= Csw.enums.wizardSteps_ViewEditor.relationships.step);
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
             var showDelete = (stepno === Csw.enums.wizardSteps_ViewEditor.relationships.step);
-            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename) } };
+            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename)} };
 
             var $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, Csw.enums.viewChildPropNames.childrelationships, rel);
 
@@ -1394,7 +1396,7 @@
                     $ret.append($filtUl);
                 }
             }
-            types.property = { icon: { image: "Images/view/property.gif" } };
+            types.property = { icon: { image: "Images/view/property.gif"} };
             return $ret;
         }
 
@@ -1423,7 +1425,7 @@
                     $ret.append(makeViewPropFilterAddSpan(propArbId, itemJson));
                 }
             }
-            types.filter = { icon: { image: "Images/view/filter.gif" } };
+            types.filter = { icon: { image: "Images/view/filter.gif"} };
             return $ret;
         }
 
