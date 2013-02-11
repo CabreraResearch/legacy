@@ -17,6 +17,7 @@ using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
@@ -905,6 +906,15 @@ namespace ChemSW.Nbt.Schema
                 Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
                 ObjectClassTableUpdate.update( NewObjectClassTable );
                 NewObjectClass = _CswNbtResources.MetaData.getObjectClass( NewObjectClassId );
+
+                // Case 27923
+                createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
+                {
+                    PropName = CswNbtObjClass.PropertyName.Save,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    Extended = CswNbtNodePropButton.ButtonMode.button
+                } );
+
             }
             return NewObjectClass;
         }
@@ -924,7 +934,7 @@ namespace ChemSW.Nbt.Schema
         public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
-            if( null != OcpModel.ObjectClass )
+            if( null != OcpModel.ObjectClass && OcpModel.ObjectClass.ObjectClass != CswNbtResources.UnknownEnum )
             {
                 RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
                 if( null == RetProp )
@@ -938,96 +948,6 @@ namespace ChemSW.Nbt.Schema
                     MetaData.refreshAll();
                     RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
                 }
-            }
-            return RetProp;
-        }
-
-        /// <summary>
-        /// Convenience wrapper for creating an Object Class Prop
-        /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( NbtObjectClass NbtObjectClass,
-                                                                    CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
-        {
-            CswNbtMetaDataObjectClassProp RetProp = null;
-            if( NbtObjectClass != CswNbtResources.UnknownEnum )
-            {
-                CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
-                OcpModel.ObjectClass = ObjectClassOc;
-                RetProp = createObjectClassProp( OcpModel );
-            }
-            return RetProp;
-        }
-
-        /// <summary>
-        /// (Deprecated) Convenience wrapper for creating an Object Class Prop
-        /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( NbtObjectClass NbtObjectClass,
-                                                                    string PropName,
-                                                                    CswNbtMetaDataFieldType.NbtFieldType FieldType,
-                                                                    bool IsBatchEntry = false,
-                                                                    bool ReadOnly = false,
-                                                                    bool IsFk = false,
-                                                                    string FkType = "",
-                                                                    Int32 FkValue = Int32.MinValue,
-                                                                    bool IsRequired = false,
-                                                                    bool IsUnique = false,
-                                                                    bool IsGlobalUnique = false,
-                                                                    bool ServerManaged = false,
-                                                                    string ListOptions = "",
-                                                                    Int32 DisplayColAdd = Int32.MinValue,
-                                                                    Int32 DisplayRowAdd = Int32.MinValue,
-                                                                    string Extended = "",
-                                                                    bool SetValOnAdd = false,
-                                                                    string AuditLevel = AuditLevel.NoAudit,
-                                                                    string StaticText = "",
-                                                                    Int32 NumberPrecision = Int32.MinValue
-            )
-        {
-            CswNbtMetaDataObjectClassProp RetProp;
-            if( NbtObjectClass != CswNbtResources.UnknownEnum )
-            {
-                CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
-                RetProp = ObjectClassOc.getObjectClassProp( PropName );
-                if( null == RetProp )
-                {
-                    CswTableUpdate ObjectClassPropUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class_props" );
-                    DataTable UpdateTable = ObjectClassPropUpdate.getEmptyTable();
-                    DataRow NewPropRow = _addObjectClassPropRow( UpdateTable,
-                                                               ObjectClassOc,
-                                                               PropName,
-                                                               FieldType,
-                                                               IsBatchEntry,
-                                                               ReadOnly,
-                                                               IsFk,
-                                                               FkType,
-                                                               FkValue,
-                                                               IsRequired,
-                                                               IsUnique,
-                                                               IsGlobalUnique,
-                                                               ServerManaged,
-                                                               ListOptions,
-                                                               DisplayColAdd,
-                                                               DisplayRowAdd,
-                                                               NumberPrecision );
-
-                    if( false == string.IsNullOrEmpty( Extended ) )
-                    {
-                        NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = CswConvert.ToDbVal( Extended );
-                    }
-                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( SetValOnAdd );
-                    NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( AuditLevel );
-
-                    if( false == string.IsNullOrEmpty( StaticText ) )
-                    {
-                        NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = CswConvert.ToDbVal( StaticText );
-                    }
-                    ObjectClassPropUpdate.update( UpdateTable );
-                    RetProp = ObjectClassOc.getObjectClassProp( PropName );
-                }
-            }
-            else
-            {
-                throw new CswDniException( ErrorType.Error, "Error creating new object class property", "CswNbtSchemaModTrnsctn.createObjectClassProp() called without an object class" );
             }
             return RetProp;
         }
