@@ -17,9 +17,6 @@ namespace ChemSW.Nbt.ObjClasses
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
 
-        private delegate void ifPermiited();
-        
-
         private bool canSave(Int32 TabId)
         {
             bool Ret = false;
