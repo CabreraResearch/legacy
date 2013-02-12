@@ -996,7 +996,7 @@ namespace ChemSW.Nbt.ImportExport
 
             if( NodesTable.Rows.Count > 0 )
             {
-                ReturnVal = CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] );
+                ReturnVal = CswConvert.ToInt32( NodesTable.Rows[0][CswImporterDbTables._ColName_Props_ImportTargetNodeIdOriginal] );
             }
 
             return ( ReturnVal );
