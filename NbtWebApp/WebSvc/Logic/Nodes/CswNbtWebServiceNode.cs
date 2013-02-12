@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return Ret;
         }
-        
+
         /// <summary>
         /// WCF wrapper around getNodes
         /// </summary>
@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                
+
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
