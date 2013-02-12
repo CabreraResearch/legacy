@@ -72,10 +72,17 @@
                     useCheckboxes: cswPrivate.isMulti
                 });
 
-
-                function hoverNode(event, treeNode) {
+                function hoverNode(event, treeNode, htmlElement, index, eventObj, eOpts) {
                     cswPrivate.hoverNodeId = treeNode.raw.nodeid;
-                    Csw.nodeHoverIn(event, cswPrivate.hoverNodeId, treeNode.raw.id);
+                    var $div = $(htmlElement).children().first().children();
+                    var div = Csw.literals.factory($div);
+                    Csw.nodeHoverIn(event, cswPrivate.hoverNodeId, treeNode.raw.id, treeNode.raw.text, div,
+                        function () {
+                            cswPublic.nodeTree.preventSelect();
+                        },
+                        function () {
+                            cswPublic.nodeTree.allowSelect();
+                        });
                 }
 
                 function deHoverNode() {

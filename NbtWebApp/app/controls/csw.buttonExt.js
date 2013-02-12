@@ -32,6 +32,8 @@
                 path: 'Images/newicons/',
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onClick: null,
+                onHoverIn: null,
+                onHoverOut: null,
                 isEnabled: true,
                 bindOnEnter: false,
                 size: 'small',
@@ -48,7 +50,7 @@
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPublic = cswParent.div();
-            }());
+            } ());
 
 
             cswPublic.show = Csw.method(function () {
@@ -104,7 +106,7 @@
                 return cswPublic;
             });
 
-            (function _postCtor () {
+            (function _postCtor() {
                 switch (Csw.string(cswPrivate.size, 'medium').toLowerCase()) {
                     case 'medium':
                         cswPrivate.size = 'medium';
@@ -116,14 +118,14 @@
                         break;
                 }
 
-                var internalOnClick = Csw.makeDelegate(cswPrivate.onClick);
+                //var internalOnClick = Csw.makeDelegate(cswPrivate.onClick);
 
                 var icon = '';
                 if (false === Csw.isNullOrEmpty(cswPrivate.icon) && 'none' !== cswPrivate.icon) {
                     icon = cswPrivate.path + cswPrivate.icon + '.png';
                 }
 
-                function onClick() {
+                function onClick(btn, extEvent) {
                     var doEnable = function () {
                         cswPublic.enable();
                         cswPublic.button.setText(cswPrivate.enabledText);
@@ -138,16 +140,16 @@
                             }
                             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
                         }
-                        Csw.tryExec(internalOnClick, arguments);
+                        Csw.tryExec(cswPrivate.onClick, btn, extEvent.browserEvent);
                     }
                 }
 
-                cswPrivate.onClick = onClick;
+                cswPrivate.onClickInternal = onClick;
 
                 if (Csw.bool(cswPrivate.bindOnEnter)) {
-                    window.Mousetrap.bind('enter', cswPrivate.onClick);
+                    window.Mousetrap.bind('enter', cswPrivate.onClickInternal);
                 }
-                
+
                 if (Csw.isElementInDom(cswPublic.getId())) {
                     try {
                         cswPublic.button = window.Ext.create('Ext.Button', {
@@ -155,13 +157,17 @@
                             renderTo: cswPublic.getId(),
                             text: Csw.string(cswPrivate.enabledText),
                             width: cswPrivate.width,
-                            handler: cswPrivate.onClick,
+                            handler: cswPrivate.onClickInternal,
                             icon: icon,
                             cls: Csw.string(cswPrivate.cssclass),
                             scale: Csw.string(cswPrivate.size, 'medium'),
-                            disabled: cswPrivate.disabled
+                            disabled: cswPrivate.disabled,
+                            listeners: {
+                                mouseover: function() { Csw.tryExec(cswPrivate.onHoverIn); },
+                                mouseout: function() { Csw.tryExec(cswPrivate.onHoverOut); }
+                            }
                         });
-                    } catch(e) {
+                    } catch (e) {
                         cswPublic.button = window.Ext.create('Ext.Button');
                         Csw.debug.error('Failed to create Ext.Button in csw.buttonExt');
                         Csw.debug.error(e);
@@ -170,7 +176,7 @@
                     cswPublic.button = window.Ext.create('Ext.Button');
                 }
                 if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
-                        cswPrivate.tooltip.target = cswPublic.button.getId();
+                    cswPrivate.tooltip.target = cswPublic.button.getId();
                     try {
                         window.Ext.create('Ext.tip.ToolTip', cswPrivate.tooltip);
                         window.Ext.QuickTips.init();
@@ -179,7 +185,7 @@
                         Csw.debug.error(e);
                     }
                 }
-                
+
             } ());
 
             return cswPublic;

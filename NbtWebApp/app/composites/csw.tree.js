@@ -53,6 +53,7 @@
                 cswPrivate.onMouseEnter = cswPrivate.onMouseEnter || function () { };
                 cswPrivate.onMouseExit = cswPrivate.onMouseExit || function () { };
                 cswPrivate.beforeSelect = cswPrivate.beforeSelect || function () { return true; };
+                cswPrivate.preventSelect = false;
 
                 cswParent.empty();
                 cswPublic.div = cswParent.div();
@@ -92,10 +93,10 @@
                     // Ext exposes a slew of click handlers. None of them work unless the node is *selected*, so don't bother.
                     //}
                     itemmouseenter: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
-                        Csw.tryExec(cswPrivate.onMouseEnter, window.event, treeNode);
+                        Csw.tryExec(cswPrivate.onMouseEnter, window.event, treeNode, htmlElement, index, eventObj, eOpts);
                     },
                     itemmouseleave: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
-                        Csw.tryExec(cswPrivate.onMouseExit, window.event, treeNode);
+                        Csw.tryExec(cswPrivate.onMouseExit, window.event, treeNode, htmlElement, index, eventObj, eOpts);
                     },
                     afterlayout: function () {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
@@ -156,7 +157,7 @@
                         return (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
                     },
                     beforeselect: function (rowModel, record, index, eOpts) {
-                        var ret = (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
+                        var ret = (false === cswPrivate.preventSelect && (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1));
                         if (false !== ret && cswPrivate.useCheckboxes !== true) {
                             ret = Csw.tryExec(cswPrivate.beforeSelect);
                         }
@@ -252,7 +253,7 @@
             };
 
             //#region Tree Mutators
-            
+
             cswPublic.collapseAll = function (button, toolbar) {
                 /// <summary>
                 /// Collapses all nodes in the tree.
@@ -308,6 +309,13 @@
                     });
                 }
                 return false;
+            };
+
+            cswPublic.preventSelect = function () {
+                cswPrivate.preventSelect = true;
+            };
+            cswPublic.allowSelect = function () {
+                cswPrivate.preventSelect = false;
             };
 
             cswPublic.addToolbarItem = function (itemDef, position) {
