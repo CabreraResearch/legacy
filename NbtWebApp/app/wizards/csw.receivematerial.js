@@ -107,7 +107,14 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
+                        
+                    if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
+                        cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                        if (cswPrivate.lastStepNo === 2) {
+                            cswPrivate.tabsAndProps.save({}, '', null, false);
+                        }
                     }
+                        
                 };
 
                 cswPrivate.finalize = function () {
@@ -297,12 +304,11 @@
                             globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
                                 currentNodeId: cswPrivate.state.containerNodeId,
-                                setIsTempToFalse: false
+                                RemoveTempStatus: false
                             },
                             ReloadTabOnSave: true,
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
-                                    cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
-     
+                                cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
                             }
 
                         });

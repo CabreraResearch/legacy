@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return _addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View,  bool IsIdentityTab, bool setIsTempToFalse = true )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View,  bool IsIdentityTab, bool RemoveTempStatus = true )
         {
             JObject ret = new JObject();
             if( PropsObj.HasValues )
@@ -673,7 +673,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         case NodeEditMode.Add:
                             if (null != Node)
                             {
-                                if( setIsTempToFalse )
+                                if( RemoveTempStatus )
                                 {
                                     Node.IsTemp = false;
                                 }
