@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.Actions
                                 if( Quantities.HasValues )
                                 {
 
-                                    JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
+                                    //JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
                                     CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
                                     foreach( JObject QuantityDef in Quantities )
                                     {
@@ -234,14 +234,7 @@ namespace ChemSW.Nbt.Actions
 
             Ret["containerscreated"] = ContainerIds.Count;
 
-
-
             return Ret;
-        }
-
-        private void setNewContainerProps(CswNbtObjClassContainer NewContainer)
-        {
-            
         }
 
         /// <summary>
