@@ -899,7 +899,7 @@ namespace ChemSW.Nbt.WebPages
                     string TabGroup = getPropAttributeValue( "EditProp_TabGroupValue" + OldSelectedNodeTypePropId.ToString(), typeof( string ), EditPropPlaceHolder );
                     bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
-                    //We're not using Design mode to configure layouts anymore
+                    //We're not using Design mode to move props between layouts anymore
                     PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, 
                         TabId: Tab.TabId, 
                         DisplayRow: DisplayRow, 
