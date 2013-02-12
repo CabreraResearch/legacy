@@ -36,9 +36,10 @@ namespace ChemSW.Nbt.WebServices
                 if( null != CartView )
                 {
                     bool IsPropertyGrid = !( CartView.ViewName == CswNbtActRequesting.FavoriteItemsViewName ||
-                                             CartView.ViewName == CswNbtActRequesting.RecurringItemsViewName );
-                    CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport : false );
-                    Ret = GridWs.runGrid( Title: null, IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: IsPropertyGrid );
+                                             CartView.ViewName == CswNbtActRequesting.RecurringItemsViewName ||
+                                             CartView.ViewName == CswNbtActRequesting.SubmittedItemsViewName );
+                    CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, CartView, ForReport: false );
+                    Ret = GridWs.runGrid( Title: null, IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: false );
                     Ret["grid"]["title"] = "";
                 }
             }
@@ -115,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != Favorite )
                 {
                     Favorite.IsTemp = false;
-                    Favorite.postChanges( ForceUpdate : false );
+                    Favorite.postChanges( ForceUpdate: false );
                     Succeeded = true;
                 }
             }
@@ -129,7 +130,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Favorite )
                     {
                         Favorite.IsFavorite.Checked = Tristate.True;
-                        Favorite.postChanges( ForceUpdate : false );
+                        Favorite.postChanges( ForceUpdate: false );
                         Succeeded = true;
                         CswPropIdAttr NameIdAttr = new CswPropIdAttr( Favorite.Node, Favorite.Name.NodeTypeProp );
                         Ret.Data.CswRequestId = Favorite.NodeId;
@@ -161,7 +162,7 @@ namespace ChemSW.Nbt.WebServices
             }
             Ret.Data.Succeeded = Succeeded;
         }
-        
+
         /// <summary>
         /// WCF method to copy request items to recurring
         /// </summary>
@@ -189,7 +190,7 @@ namespace ChemSW.Nbt.WebServices
             bool Succeeded = false;
             if( Request.RequestItems.Any() )
             {
-                foreach( CswNbtObjClassRequestMaterialDispense NewRequestItem in 
+                foreach( CswNbtObjClassRequestMaterialDispense NewRequestItem in
                     from Item
                         in Request.RequestItems
                     select _CswNbtResources.Nodes[Item.NodePk]
@@ -199,15 +200,15 @@ namespace ChemSW.Nbt.WebServices
                         ( (CswNbtPropertySetRequestItem) PropertySetRequest ).Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
                         select CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest )
                             into MaterialDispense
-                            where null != MaterialDispense  
-                            select MaterialDispense.copyNode(ClearRequest: false)
+                            where null != MaterialDispense
+                            select MaterialDispense.copyNode( ClearRequest: false )
                                 into NewPropSetRequest
                                 select CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest ) )
                 {
                     NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
                     CopyLogic( NewRequestItem );
                     //  NewRequestItem.Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                    NewRequestItem.postChanges( ForceUpdate : false );
+                    NewRequestItem.postChanges( ForceUpdate: false );
                     Succeeded = true;
                 }
 
@@ -241,7 +242,7 @@ namespace ChemSW.Nbt.WebServices
                                 RequestNode.TotalMoved.Value = ContainersMoved;
                             }
                             RequestNode.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Moved;
-                            RequestNode.postChanges( ForceUpdate : false );
+                            RequestNode.postChanges( ForceUpdate: false );
                         }
                         break;
                 }
@@ -260,7 +261,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ContainerNode.Location.SelectedNodeId = RequestNode.Location.SelectedNodeId;
                         ContainerNode.Location.RefreshNodeName();
-                        ContainerNode.postChanges( ForceUpdate : false );
+                        ContainerNode.postChanges( ForceUpdate: false );
                         Ret += 1;
                     }
                 }
