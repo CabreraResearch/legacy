@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ImportExport
             _NodeTypePropNameMapper.Add( "barcodeid", "Barcode" );
             _NodeTypePropNameMapper.Add( "containerstatus", "Status" );
             _NodeTypePropNameMapper.Add( "netquantity", "Quantity" );
-
+            _NodeTypePropNameMapper.Add( "expirationdate", "Expiration Date" );
 
 
             _NodeTypePropNameMapper.Add( "containertype", "Container Type" );

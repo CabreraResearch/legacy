@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.ImportExport
         private Dictionary<string, Int32> _UofMNodeIdsByUofmName = new Dictionary<string, int>();
         private Dictionary<string, string> _CISProUofMNamesToNbtSizeNames = new Dictionary<string, string>();
         private List<string> _ColsWithoutDestinationProp = new List<string>();
+        private Int32 _ContainerOwnerUserNodeId = Int32.MinValue;
 
 
         private const string xls_key_isdata = "ISDATA";
@@ -136,14 +137,24 @@ namespace ChemSW.Nbt.ImportExport
             /// 
 
             CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
-
-
             foreach( CswNbtObjClassUnitOfMeasure CurrentOfM in UnitOfMeasureOC.getNodes( false, true ) )
             {
 
                 _UofMNodeIdsByUofmName.Add( CurrentOfM.Name.Text, CurrentOfM.NodeId.PrimaryKey );
             }
 
+
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            foreach( CswNbtObjClassUser CurrentUserNode in UserOC.getNodes( false, true ) )
+            {
+                if( "cispro_admin" == CurrentUserNode.Username.ToLower() )
+                {
+                    _ContainerOwnerUserNodeId = CurrentUserNode.NodeId.PrimaryKey;
+                }
+            }
+
+
+            //_ContainerOwnerNodeId
 
             string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + _CswNbtImportExportFrame.FilePath + ";Extended Properties=Excel 8.0;";
             OleDbConnection ExcelConn = new OleDbConnection( ConnStr );
@@ -191,7 +202,7 @@ namespace ChemSW.Nbt.ImportExport
                     //This kludgedelia will make the rest of our algorithm work. Jeeze.
                     if(
                              "netquantity" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
-                             "receivedate" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                             //"receivedate" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
                              "expirationdate" == CurrentDataColumn.ColumnName.ToString().ToLower()
                          )
                     {
@@ -298,21 +309,79 @@ namespace ChemSW.Nbt.ImportExport
             DataRow CurrentMaterialRow = null;
             DataRow CurrentContainerRow = null;
             DataRow CurrentSizeRow = null;
+            DataRow ImportUserRow = null;
             Dictionary<string, DataRow> SizesRowsByCompoundId = new Dictionary<string, DataRow>();
 
             CswNbtMetaDataNodeType VendorNodeType = _CswNbtResources.MetaData.getNodeType( "Vendor" );
             CswNbtMetaDataNodeTypeProp VendorNameNodeTypeProp = VendorNodeType.getNodeTypeProp( "Vendor Name" );
+
             CswNbtMetaDataNodeType ChemicalNodeType = _CswNbtResources.MetaData.getNodeType( "Chemical" );
             CswNbtMetaDataNodeType SizeNodeType = _CswNbtResources.MetaData.getNodeType( "Size" );
             CswNbtMetaDataNodeType ContainerNodeType = _CswNbtResources.MetaData.getNodeType( "Container" );
 
 
+
+
+
+
+            //***********************************************************************************************
+            //BEGIN: Create import user
+
+            //CswNbtMetaDataNodeType UserNodeType = _CswNbtResources.MetaData.getNodeType( "User" );
+            //CswNbtMetaDataNodeTypeProp UserNameNodeTypeProp = UserNodeType.getNodeTypeProp( "Username" );
+            //CswNbtMetaDataNodeTypeProp UserNameNodeTypeProp = UserNodeType.getNodeTypeProp( "Role" );
+            
+            
+            //DataTable ImporUsertNodeTable = ImportNodesUpdater.getEmptyTable();
+            //DataTable ImportUserPropsTable = ImportPropsUpdater.getEmptyTable();
+
+            //CswNbtObjClassRole UserRole = null;
+            //CswNbtMetaDataObjectClass RoleObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            //foreach( CswNbtObjClassRole CurrentRole in RoleObjectClass.getNodes( false, true ) )
+            //{
+            //    if( "CISPro_General" == CurrentRole.Name )
+            //    {
+            //        UserRole = CurrentRole;
+            //    }
+            //}
+
+
+            //_addRowOfNodeType( null, UserNodeType, ImporUsertNodeTable, null, ref ImportUserRow );
+
+            //DataRow UserNamePropRow = ImporUsertNodeTable.NewRow();
+            //ImportUserPropsTable.Rows.Add( UserNamePropRow );
+
+            //UserNamePropRow[CswImporterDbTables._ColName_ImportNodeId] = ImportUserRow[CswImporterDbTables._ColName_ImportNodeId];
+            //UserNamePropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = ImportUserRow[CswImporterDbTables._ColName_ImportNodeId];
+            //UserNamePropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = UserNameNodeTypeProp.PropName;
+            //UserNamePropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = UserNameNodeTypeProp.PropId;
+            //UserNamePropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
+            //UserNamePropRow["TEXT"] = "CisProImportUser";
+
+
+
+            //END: Create import user
+            //***********************************************************************************************
+
+
+            //***********************************************************************************************
+            //BEGIN: Set Import USer
+
+
+
+            //END: 
+            //***********************************************************************************************
+
+
             bool TestCaseStop = false;
             for( Int32 RlXlsIdx = 2; RlXlsIdx < RapidLoaderDataTable.Rows.Count && false == TestCaseStop; RlXlsIdx++ )
             {
+
                 DataRow CurrentRlXlsRow = RapidLoaderDataTable.Rows[RlXlsIdx];
                 DataTable ImportNodesTable = ImportNodesUpdater.getEmptyTable();
                 DataTable ImportPropsTable = ImportPropsUpdater.getEmptyTable();
+
+
                 if( current_vendor != CurrentRlXlsRow[xls_key_vendor].ToString() )
                 {
                     current_vendor = CurrentRlXlsRow[xls_key_vendor].ToString();
@@ -409,6 +478,18 @@ namespace ChemSW.Nbt.ImportExport
                     _addRowOfNodeType( CurrentRlXlsRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, ref CurrentContainerRow, CurrentMaterialRow, "Material", UomName );
 
                     _addRelationshipForRow( CurrentContainerRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, CurrentSizeRow, "Size" );
+
+                    //manually add user
+                    CswNbtMetaDataNodeTypeProp ContainerOwnerNodeTypeProp = ContainerNodeType.getNodeTypeProp( "Owner" );
+                    DataRow OwnerPropRow = ImportPropsTable.NewRow();
+                    ImportPropsTable.Rows.Add( OwnerPropRow );
+
+                    OwnerPropRow[CswImporterDbTables._ColName_ImportNodeId] = CurrentContainerRow[CswImporterDbTables._ColName_ImportNodeId];
+                    OwnerPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = _ContainerOwnerUserNodeId;
+
+                    OwnerPropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = ContainerOwnerNodeTypeProp.PropName;
+                    OwnerPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = ContainerOwnerNodeTypeProp.PropId;
+                    OwnerPropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
 
                 }
                 else
