@@ -287,12 +287,11 @@ namespace ChemSW.Nbt.ImportExport
 
             string current_material_compount_id = string.Empty;
             string current_vendor = string.Empty;
-            string current_size_id = string.Empty;
             DataRow CurrentVendorRow = null;
             DataRow CurrentMaterialRow = null;
             DataRow CurrentContainerRow = null;
             DataRow CurrentSizeRow = null;
-
+            Dictionary<string, DataRow> SizesRowsByCompoundId = new Dictionary<string, DataRow>();
 
             CswNbtMetaDataNodeType VendorNodeType = _CswNbtResources.MetaData.getNodeType( "Vendor" );
             CswNbtMetaDataNodeTypeProp VendorNameNodeTypeProp = VendorNodeType.getNodeTypeProp( "Vendor Name" );
@@ -353,30 +352,38 @@ namespace ChemSW.Nbt.ImportExport
                         {
                             current_material_compount_id = MaterialCompoundId.ToString();
                             _addRowOfNodeType( CurrentRlXlsRow, ChemicalNodeType, ImportNodesTable, ImportPropsTable, ref CurrentMaterialRow, CurrentVendorRow, "Supplier" );
+                            SizesRowsByCompoundId.Clear();
 
                         }//if we need to create a new material record
-
-
-
-                        //Re-do as per discussion with steve 
-                        if( ( string.Empty != CurrentRlXlsRow[xls_key_size_catalogno].ToString() ) && ( string.Empty != CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() ) )
-                        {
-                            ChemSW.Core.CswDelimitedString SizeCompoundId = new Core.CswDelimitedString( '-' );
-                            SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
-                            SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
-                            if( SizeCompoundId.ToString() != current_size_id )
-                            {
-                                current_size_id = SizeCompoundId.ToString();
-                                _addRowOfNodeType( CurrentRlXlsRow, SizeNodeType, ImportNodesTable, ImportPropsTable, ref CurrentSizeRow, CurrentMaterialRow, "Material" );
-
-                            }//
-                        }
 
                     }
                     else
                     {
                         _CswImportExportStatusReporter.reportError( "Could not retrieve chemical node type" );
                     }//if-else we found
+
+
+                    if( CurrentMaterialRow != null )
+                    {
+
+                        ChemSW.Core.CswDelimitedString SizeCompoundId = new Core.CswDelimitedString( '-' );
+                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
+                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
+
+                        if( false == SizesRowsByCompoundId.ContainsKey( SizeCompoundId.ToString() ) )
+                        {
+                            _addRowOfNodeType( CurrentRlXlsRow, SizeNodeType, ImportNodesTable, ImportPropsTable, ref CurrentSizeRow, CurrentMaterialRow, "Material" );
+                            SizesRowsByCompoundId.Add( SizeCompoundId.ToString(), CurrentSizeRow );
+
+                        }
+                        else
+                        {
+                            CurrentSizeRow = SizesRowsByCompoundId[SizeCompoundId.ToString()];
+
+                        }//if-else we already have the size row
+
+                    }//if we have a material
+
 
                 }
                 else
@@ -510,7 +517,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( true == _UofMNodeIdsByUofmName.ContainsKey( CandidateUnitOfMeasureName ) )
                                 {
                                     CurrentImportPropsUpdateRow["NodeID"] = _UofMNodeIdsByUofmName[CandidateUnitOfMeasureName];
-                                    //                                    CurrentImportPropsUpdateRow["Name"] = CandidateSizeName;
+                                    CurrentImportPropsUpdateRow["Name"] = CandidateUnitOfMeasureName;
                                     //                                    CurrentImportPropsUpdateRow["Value"] = 1;
                                 }
                                 else
