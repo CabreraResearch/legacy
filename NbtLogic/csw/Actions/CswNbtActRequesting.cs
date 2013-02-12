@@ -375,10 +375,17 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtViewProperty Vp5 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ) );
 
+                CswNbtMetaDataObjectClassProp isRecurringOCP = MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
+                if( null != isRecurringOCP )
+                {
+                    Ret.AddViewPropertyAndFilter( RequestItemRel, isRecurringOCP,
+                        Value: CswConvert.ToDbVal( false ).ToString(),
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                }
+
                 CswNbtViewRelationship RequesVR = Ret.AddViewRelationship( RequestItemRel, NbtViewPropOwnerType.First, RequestOcp, true );
                 CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
                 CswNbtViewPropertyFilter SubmittedVpf = Ret.AddViewPropertyAndFilter( RequesVR, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull, ShowInGrid: false );
-
             }
             return Ret;
         }
