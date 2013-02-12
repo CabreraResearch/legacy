@@ -146,10 +146,19 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        private void _setDefaultValues()
+        {
+            if( false == CswTools.IsPrimaryKey( Owner.RelatedNodeId ) )
+            {
+                Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            }
+        }
+
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _setDefaultValues();
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
 
@@ -236,6 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
             SourceContainer.SetOnPropChange( OnSourceContainerChange );
             Barcode.SetOnPropChange( OnBarcodePropChange );
             LotControlled.SetOnPropChange( OnLotControlledPropChange );
+            Owner.SetOnPropChange( OnOwnerPropChange ); //case 28514
 
             bool IsDisposed = ( Disposed.Checked == Tristate.True );
             //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
@@ -813,6 +823,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ContDispTransNode.SourceContainer.RelatedNodeId = SrcContainer.NodeId;
                     ContDispTransNode.RemainingSourceContainerQuantity.Quantity = SrcContainer.Quantity.Quantity;
+                    if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose )
+                    {
+                        ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
+                    }
                     ContDispTransNode.RemainingSourceContainerQuantity.UnitId = SrcContainer.Quantity.UnitId;
                 }
                 if( DestinationContainer != null )
@@ -948,65 +962,70 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
         private void OnLocationPropChange( CswNbtNodeProp Prop )
         {
-            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            if( MaterialNode != null )
+            // This method is being called multiple times so this was added
+            if (CswTools.IsPrimaryKey(Location.SelectedNodeId) && (Location.GetOriginalPropRowValue() != Location.SelectedNodeId.ToString()))
             {
-                // case 24488 - When Location is modified, verify that:
-                //  the Material's Storage Compatibility is null,
-                //  or the Material's Storage Compatibility is one the selected values in the new Location.
-                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
-                CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
-                if( null != locationNode ) //what if the user didn't specify a location?
+
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode(Material.RelatedNodeId);
+                if (MaterialNode != null)
                 {
-                    CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatibility];
-                    if( false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
+                    // case 24488 - When Location is modified, verify that:
+                    //  the Material's Storage Compatibility is null,
+                    //  or the Material's Storage Compatibility is one the selected values in the new Location.
+                    CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
+                    CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode(Location.SelectedNodeId);
+                    if (null != locationNode) //what if the user didn't specify a location?
                     {
-                        throw new CswDniException( ErrorType.Warning,
-                                                  "Storage compatibilities do not match, cannot move this container to specified location",
-                                                  "Storage compatibilities do not match, cannot move this container to specified location" );
-                    }
-                }
-            }
-            if( CswTools.IsPrimaryKey( Location.SelectedNodeId ) &&
-                false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
-                Location.CachedNodeName != CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources ) )
-            {
-                if( false == _InventoryLevelModified &&
-                    CswConvert.ToInt32( Quantity.Quantity ) != 0 )
-                {
-                    CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                    CswNbtSubField NodeId = ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( Location.getFieldType().FieldType ) ).NodeIdSubField;
-                    Int32 PrevLocationId = CswConvert.ToInt32( Node.Properties[PropertyName.Location].GetOriginalPropRowValue( NodeId.Column ) );
-                    string Reason = "Container " + Barcode.Barcode + " moved to new location: " + Location.CachedNodeName;
-                    if( Int32.MinValue != PrevLocationId )
-                    {
-                        CswPrimaryKey PrevLocationPk = new CswPrimaryKey( "nodes", PrevLocationId );
-                        if( PrevLocationPk != Location.SelectedNodeId )
+                        CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatibility];
+                        if (false == _isStorageCompatible(materialStorageCompatibilty.Value, locationStorageCompatibility.Value))
                         {
-                            _InventoryLevelModified = Mgr.changeLocationOfQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
+                            throw new CswDniException(ErrorType.Warning,
+                                                      "Storage compatibilities do not match, cannot move this container to specified location",
+                                                      "Storage compatibilities do not match, cannot move this container to specified location");
                         }
                     }
-                    else
-                    {
-                        _InventoryLevelModified = Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
-                    }
                 }
-                _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
-            }
-            if( null != Location.SelectedNodeId )
-            {
-                if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
+                if (CswTools.IsPrimaryKey(Location.SelectedNodeId) &&
+                    false == string.IsNullOrEmpty(Location.CachedNodeName) &&
+                    Location.CachedNodeName != CswNbtNodePropLocation.GetTopLevelName(_CswNbtResources))
                 {
-                    CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
-                    CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
-                    if( null != InvGroupNode )
+                    if (false == _InventoryLevelModified &&
+                        CswConvert.ToInt32(Quantity.Quantity) != 0)
                     {
-                        LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
+                        CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr(_CswNbtResources);
+                        CswNbtSubField NodeId = ((CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule(Location.getFieldType().FieldType)).NodeIdSubField;
+                        Int32 PrevLocationId = CswConvert.ToInt32(Node.Properties[PropertyName.Location].GetOriginalPropRowValue(NodeId.Column));
+                        string Reason = "Container " + Barcode.Barcode + " moved to new location: " + Location.CachedNodeName;
+                        if (Int32.MinValue != PrevLocationId)
+                        {
+                            CswPrimaryKey PrevLocationPk = new CswPrimaryKey("nodes", PrevLocationId);
+                            if (PrevLocationPk != Location.SelectedNodeId)
+                            {
+                                _InventoryLevelModified = Mgr.changeLocationOfQuantity(Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId);
+                            }
+                        }
+                        else
+                        {
+                            _InventoryLevelModified = Mgr.addToCurrentQuantity(Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId);
+                        }
                     }
+                    _updateRequestItems(CswNbtObjClassRequestContainerUpdate.Types.Move);
                 }
-                else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
+                if (null != Location.SelectedNodeId)
                 {
-                    CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
+                    if (String.IsNullOrEmpty(Location.GetOriginalPropRowValue()))
+                    {
+                        CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode(Location.SelectedNodeId);
+                        CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode(LocNode.InventoryGroup.RelatedNodeId);
+                        if (null != InvGroupNode)
+                        {
+                            LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
+                        }
+                    }
+                    else if (Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation)
+                    {
+                        CreateContainerLocationNode(CswNbtObjClassContainerLocation.TypeOptions.Move);
+                    }
                 }
             }
 
@@ -1095,6 +1114,25 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[PropertyName.Dispose] ); } }
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[PropertyName.Undispose] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
+        private void OnOwnerPropChange( CswNbtNodeProp Prop ) //case 28514
+        {
+            // Because we don't want this logic to fire all the time; only in 
+            // the Receive Material Wizard where the Container Node is Temp.
+            // -- This isn't the best fix but it works for now
+            if (this.IsTemp) 
+            {
+                if (CswTools.IsPrimaryKey(Owner.RelatedNodeId))
+                {
+                    CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode(Owner.RelatedNodeId);
+                    if (null != CurrentOwnerNode)
+                    {
+                        Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
+                        Location.RefreshNodeName();
+                    }
+                }
+            }
+
+        }
         public CswNbtNodePropButton ContainerFamily { get { return ( _CswNbtNode.Properties[PropertyName.ContainerFamily] ); } }
         public CswNbtNodePropRelationship ReceiptLot { get { return ( _CswNbtNode.Properties[PropertyName.ReceiptLot] ); } }
         public CswNbtNodePropLogical LotControlled { get { return ( _CswNbtNode.Properties[PropertyName.LotControlled] ); } }

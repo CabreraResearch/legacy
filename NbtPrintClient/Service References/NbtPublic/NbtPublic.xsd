@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="CswWebSvcSessionAuthenticateData.Authentication.Request">
+    <xs:sequence>
+      <xs:element name="CustomerId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IsMobile" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Password" nillable="true" type="xs:string" />
+      <xs:element name="UserName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcSessionAuthenticateData.Authentication.Request" nillable="true" type="tns:CswWebSvcSessionAuthenticateData.Authentication.Request" />
+  <xs:complexType name="CswWebSvcSessionAuthenticateData.Authentication.Response">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AuthenticationStatus" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ExpirationReset" nillable="true" type="tns:CswWebSvcSessionAuthenticateData.Authentication.Response.Expired" />
+      <xs:element minOccurs="0" name="TimeOut" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcSessionAuthenticateData.Authentication.Response" nillable="true" type="tns:CswWebSvcSessionAuthenticateData.Authentication.Response" />
+  <xs:complexType name="CswWebSvcSessionAuthenticateData.Authentication.Response.Expired">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="NewPassword" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PasswordId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserKey" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcSessionAuthenticateData.Authentication.Response.Expired" nillable="true" type="tns:CswWebSvcSessionAuthenticateData.Authentication.Response.Expired" />
+  <xs:complexType name="CswWebSvcReturnBase.Logging">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CustomerId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LogLevel" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LogglyInput" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Server" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcReturnBase.Logging" nillable="true" type="tns:CswWebSvcReturnBase.Logging" />
+  <xs:complexType name="CswWebSvcReturnBase.Performance">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DbCommit" type="xs:double" />
+      <xs:element minOccurs="0" name="DbDeinit" type="xs:double" />
+      <xs:element minOccurs="0" name="DbInit" type="xs:double" />
+      <xs:element minOccurs="0" name="DbQuery" type="xs:double" />
+      <xs:element minOccurs="0" name="ServerInit" type="xs:double" />
+      <xs:element minOccurs="0" name="ServerTotal" type="xs:double" />
+      <xs:element minOccurs="0" name="TreeLoaderSql" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcReturnBase.Performance" nillable="true" type="tns:CswWebSvcReturnBase.Performance" />
+  <xs:complexType name="CswWebSvcReturnBase.Status">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Errors" nillable="true" type="tns:ArrayOfCswWebSvcReturnBase.ErrorMessage" />
+      <xs:element minOccurs="0" name="Success" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcReturnBase.Status" nillable="true" type="tns:CswWebSvcReturnBase.Status" />
+  <xs:complexType name="ArrayOfCswWebSvcReturnBase.ErrorMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswWebSvcReturnBase.ErrorMessage" nillable="true" type="tns:CswWebSvcReturnBase.ErrorMessage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswWebSvcReturnBase.ErrorMessage" nillable="true" type="tns:ArrayOfCswWebSvcReturnBase.ErrorMessage" />
+  <xs:complexType name="CswWebSvcReturnBase.ErrorMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Detail" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ShowError" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcReturnBase.ErrorMessage" nillable="true" type="tns:CswWebSvcReturnBase.ErrorMessage" />
+  <xs:complexType name="CswWebSvcReturnBase.Data">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Succeeded" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswWebSvcReturnBase.Data" nillable="true" type="tns:CswWebSvcReturnBase.Data" />
+</xs:schema>

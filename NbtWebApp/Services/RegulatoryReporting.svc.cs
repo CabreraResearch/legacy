@@ -20,6 +20,25 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
 
         [OperationContract]
+        [WebInvoke( Method = "GET" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get view of all control zones for HMIS Reporting" )]
+        public CswNbtWebServiceRegulatoryReporting.HMISViewReturn getControlZonesView()
+        {
+            CswNbtWebServiceRegulatoryReporting.HMISViewReturn Ret = new CswNbtWebServiceRegulatoryReporting.HMISViewReturn();
+
+            var GetViewDriverType = new CswWebSvcDriver<CswNbtWebServiceRegulatoryReporting.HMISViewReturn, object>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRegulatoryReporting.getControlZonesView,
+                ParamObj : ""
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get all reportable hazardous Materials and their total quantities in a given Control Zone" )]
         [FaultContract( typeof( FaultException ) )]

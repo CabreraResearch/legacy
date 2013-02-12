@@ -368,7 +368,7 @@ window.initMain = window.initMain || function (undefined) {
                                 }
                             };
                         }
-                        onSuccess();
+                        Csw.tryExec(onSuccess);
 
                     } // onAuthenticate
                 }); // CswLogin
@@ -1118,7 +1118,8 @@ window.initMain = window.initMain || function (undefined) {
                 
                 mainTree = Csw.nbt.nodeTreeExt(Csw.main.leftDiv, {
                     forSearch: o.forsearch,
-                    onSelectNode: function(optSelect) {
+                    onBeforeSelectNode: Csw.clientChanges.manuallyCheckChanges,
+                    onSelectNode: function (optSelect) {
                         onSelectTreeNode({
                             tree: mainTree,
                             viewid: optSelect.viewid,
@@ -1132,6 +1133,7 @@ window.initMain = window.initMain || function (undefined) {
                         viewMode: o.viewmode,
                         nodeId: o.nodeid,
                         nodeKey: o.nodekey,
+                        includeInQuickLaunch: true,
                         includeNodeRequired: o.IncludeNodeRequired,
                         onViewChange: function (newviewid, newviewmode) {
                             Csw.clientState.setCurrentView(newviewid, newviewmode);
@@ -1195,6 +1197,7 @@ window.initMain = window.initMain || function (undefined) {
                         var createOpt = {
                             state: o.state,
                             request: o.requestitem,
+                            rows: o.rows || [],
                             onCancel: function() {
                                 clear({ 'all': true });
                                 Csw.clientState.setCurrent(Csw.clientState.getLast());
@@ -1459,9 +1462,10 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
+                    case 'view scheduled_rules':
                     case 'view scheduled rules':
                         var rulesOpt = {
-                            exitFunc: function() {
+                            onCancel: function() {
                                 clear({ 'all': true });
                                 Csw.clientState.setCurrent(Csw.clientState.getLast());
                                 refreshSelected();
@@ -1469,7 +1473,7 @@ window.initMain = window.initMain || function (undefined) {
                             menuRefresh: refreshSelected
                         };
 
-                        Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
+                        Csw.actions.scheduledRules(Csw.main.centerTopDiv, rulesOpt);
                         break;
                     case 'upload legacy mobile data':
                         Csw.nbt.legacyMobileWizard(Csw.main.centerTopDiv, {

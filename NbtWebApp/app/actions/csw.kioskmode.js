@@ -224,8 +224,8 @@
 
                     cswPrivate.operationTbl.cell(4, 1).empty();
                     cswPrivate.operationTbl.cell(4, 1).textArea({
-                        rows: 10,
-                        cols: 80,
+                        rows: 7,
+                        cols: 55,
                         readonly: true,
                         text: logStr
                     }).css('margin-top', '10px');

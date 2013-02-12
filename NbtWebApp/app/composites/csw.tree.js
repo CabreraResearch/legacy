@@ -1,3 +1,4 @@
+/*global Csw:true,Ext:true*/
 (function () {
     'use strict';
 
@@ -6,28 +7,7 @@
 
             //#region Variables
 
-            var cswPublic = {
-                is: (function () {
-                    var isMulti = false;
-                    return {
-                        get multi() {
-                            return isMulti;
-                        },
-                        set multi(val) {
-                            if (val === true) {
-                                isMulti = true;
-                            } else {
-                                isMulti = false;
-                            }
-                            return isMulti;
-                        },
-                        toggleMulti: function () {
-                            isMulti = !isMulti;
-                            return isMulti;
-                        }
-                    };
-                }())
-            };
+            var cswPublic = {};
 
             //#endregion Variables
 
@@ -58,9 +38,7 @@
                 }];
 
                 //State
-                cswPublic.is.multi = cswPrivate.isMulti;
                 cswPrivate.allowMultiSelection = cswPrivate.allowMultiSelection || function () { };
-
 
                 //Styling
                 cswPrivate.height = cswPrivate.height || 410;
@@ -68,16 +46,18 @@
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;
+                cswPrivate.useCheckboxes = cswPrivate.useCheckboxes;
 
                 //Events
                 cswPrivate.onClick = cswPrivate.onClick || function () { };
                 cswPrivate.onMouseEnter = cswPrivate.onMouseEnter || function () { };
                 cswPrivate.onMouseExit = cswPrivate.onMouseExit || function () { };
+                cswPrivate.beforeSelect = cswPrivate.beforeSelect || function () { return true; };
 
                 cswParent.empty();
                 cswPublic.div = cswParent.div();
 
-            }());
+            } ());
 
             //#endregion Pre-ctor
 
@@ -119,22 +99,41 @@
                     },
                     afterlayout: function () {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
-                        cswPublic.toggleCheckboxes();
-                        $('.x-grid-cell-treecolumn').css({ background: 'transparent' });
+                        //cswPublic.toggleCheckboxes();
+                        $('.x-grid-cell-treecolumn').css({
+                            background: 'transparent',
+                            border: '0px'
+                        });
+                        $('#' + this.id + '-body').css({
+                            background: 'transparent',
+                            border: '0px'
+                        });
+                        Csw.each(this.dockedItems.items, function (item) {
+                            $('#' + item.id).css({
+                                background: 'transparent',
+                                border: '0px'
+                            });
+                        });
                     },
                     afterrender: function () {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
                         //It _will_ in the next nano-second, so we have to defer.
-                        cswPublic.toggleCheckboxes();
+                        //cswPublic.toggleCheckboxes();
                     },
                     viewready: function () {
                         //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
                         Csw.defer(function () {
-                            var lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
-
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
+
+                            var lastSelectedPath;
+                            if (Csw.isNullOrEmpty(cswPrivate.selectedId)) {
+                                lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
+                            } else {
+                                lastSelectedPath = cswPublic.getPathFromId(cswPrivate.selectedId);
+                            }
+
                             var firstChild = cswPrivate.rootNode.childNodes[0];
-                            
+
                             if (!lastSelectedPath) {
                                 lastSelectedPath = firstChild.raw.path;
                             }
@@ -146,79 +145,66 @@
                                     cswPublic.selectNode(null, lastSelectedPath);
                                 }
                             });
-                            cswPublic.toggleMultiEdit(cswPublic.is.multi);
+                            //cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
 
                     },
                     afteritemcollapse: function () {
-                        cswPublic.toggleCheckboxes();
+                        //cswPublic.toggleCheckboxes();
+                    },
+                    beforedeselect: function (rowModel, record, index, eOpts) {
+                        return (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
+                    },
+                    beforeselect: function (rowModel, record, index, eOpts) {
+                        var ret = (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
+                        if (false !== ret && cswPrivate.useCheckboxes !== true) {
+                            ret = Csw.tryExec(cswPrivate.beforeSelect);
+                        }
+                        return ret;
                     },
                     select: function (rowModel, record, index, eOpts) {
                         //If you click a node, this event is firing. We must:
                         //1. Keep this generic. Defer to the caller for implementation-specific validation.
                         //2. Properly track the currently and previously selected node (multiple clicks to the same node trigger this event)
-                        var ret = true;
-                        if (cswPublic.is.multi !== true) {
-                            if (record != cswPublic.selectedTreeNode) {
-                                record.expand();
-                                cswPublic.previousTreeNode = cswPublic.selectedTreeNode;
-                                cswPublic.selectedTreeNode = record;
-                                Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
-                                //If we're in single edit mode, the count is always 1
-                                cswPrivate.selectedNodeCount = 1;
+                        if (cswPublic.selectedTreeNode !== record) {
+                            cswPublic.selectedTreeNode = record;
+                            cswPrivate.selectedNodeCount = 1;
+                            record.expand();
+                            Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
+                            Csw.tryExec(cswPrivate.onSelect, record.raw);
+
+                            if (cswPrivate.useCheckboxes) {
+                                // also check this node
+                                cswPrivate.check(record, true);
                             }
                         }
-                        if (cswPrivate.selectedNodeCount === 1) {
-                            //In either single or multi-edit, render whenever the node count is 1
-                            Csw.tryExec(cswPrivate.onSelect, record.raw);
-                        }
-                        return ret;
                     },
                     checkchange: function (record, checked, eOpts) {
                         //Unfortunately, this event doesn't fire regularly if watched. Debug carefully!
-
-                        //Ext doesn't update the raw data, which is the only thing we have to manage state.
-                        //Manually keep it up to date.
-                        record.raw.checked = checked;
-                        if (cswPublic.is.multi) {
-                            var tmpPrevNode = cswPublic.selectedTreeNode;
-                            var tmpCrntNode = record;
-
-                            if (null === tmpPrevNode ||
-                                tmpPrevNode.raw.checked === false ||
-                                null === cswPublic.selectedTreeNode ||
-                                Csw.tryExec(cswPrivate.allowMultiSelection, tmpPrevNode, tmpCrntNode)
-                             ) {
-                                //if the previous node was null (starting from the root) or if the previous node is unchecked
-                                //or if the currently selected node is null (unlikely)
-                                //or if the caller's algorithm to allow simultaneous selection passes, 
-                                //then increment up or down and set the current and previous nodes accordingly
-                                var inc = (checked) ? 1 : -1;
-                                if (cswPrivate.selectedNodeCount <= 1 || null === cswPrivate.firstSelectedNode) {
-                                    cswPrivate.firstSelectedNode = tmpCrntNode;
-                                } else {
-                                    cswPublic.selectNode(cswPrivate.firstSelectedNode);
-                                }
-                                cswPublic.previousTreeNode = tmpPrevNode;
-                                cswPublic.selectedTreeNode = tmpCrntNode;
-                                cswPrivate.selectedNodeCount += inc;
-                            } else {
-                                //else, manually "uncheck" this node and select the unchanged current node
-                                record.raw.checked = false;
-                                record.set('checked', false);
-                                if (cswPrivate.selectedNodeCount > 0) {
-                                    cswPublic.selectNode(cswPrivate.firstSelectedNode);
-                                }
-                            }
-                        }
+                        cswPrivate.check(record, checked);
                     }
                 };
-            };
+            }; // cswPrivate.makeListeners()
 
-            cswPrivate.firstSelectedNode = null;
+            cswPrivate.check = function (record, checked) {
+                //Ext doesn't update the raw data, which is the only thing we have to manage state.
+                //Manually keep it up to date.
+                var inc = (checked) ? 1 : -1;
+                if (cswPrivate.useCheckboxes) {
+                    if (null !== cswPublic.selectedTreeNode &&
+                        false === Csw.tryExec(cswPrivate.allowMultiSelection, cswPublic.selectedTreeNode, record)) {
+                        // manually "uncheck" this node and select the unchanged current node
+                        checked = false;
+                        inc = 0;
+                    }
+                }
+                record.raw.checked = checked;
+                record.set('checked', checked);
+                cswPrivate.selectedNodeCount += inc;
+            }; // cswPrivate.check()
+
             cswPrivate.selectedNodeCount = 0;
             cswPublic.selectedTreeNode = null;
-            cswPublic.previousTreeNode = null;
 
             cswPrivate.makeTree = function () {
                 /// <summary>
@@ -266,51 +252,7 @@
             };
 
             //#region Tree Mutators
-
-            cswPrivate.showCheckboxes = function () {
-                /// <summary>
-                /// For Multii-Edit, uses jQuery selector to show all checkboxes.
-                /// </summary>
-                $('.x-tree-checkbox').show();
-                return true;
-            };
-
-            cswPrivate.hideCheckboxes = function () {
-                /// <summary>
-                /// For Multii-Edit, uses jQuery selector to hide all checkboxes.
-                /// </summary>
-                cswPrivate.firstSelectedNode = null;
-                $('.x-tree-checkbox').hide();
-                return true;
-            };
-
-            cswPublic.toggleMultiEdit = function () {
-                /// <summary>
-                /// Toggles Multi-Edit state on this instance.
-                /// </summary>
-                var selModel = cswPublic.tree.getSelectionModel();
-                if (cswPublic.is.multi) {
-                    selModel.setSelectionMode('MULTI');
-                } else {
-                    selModel.setSelectionMode('SINGLE');
-                }
-                cswPublic.toggleCheckboxes();
-                return true;
-            };
-
-            cswPublic.toggleCheckboxes = function () {
-                /// <summary>
-                /// Shows or hides all checkboxes according to Multi-Edit state.
-                /// </summary>
-                /// <returns type="Csw.composites.tree">This tree</returns>
-                if (true === cswPublic.is.multi) {
-                    cswPrivate.showCheckboxes();
-                } else {
-                    cswPrivate.hideCheckboxes();
-                }
-                return cswPublic;
-            };
-
+            
             cswPublic.collapseAll = function (button, toolbar) {
                 /// <summary>
                 /// Collapses all nodes in the tree.
@@ -361,7 +303,7 @@
                 /// <param name="treeNode"></param>
                 path = path || cswPublic.getPath(treeNode);
                 if (path) {
-                    cswPublic.tree.selectPath(path, null, '|', function(succeeded, oLastNode) {
+                    cswPublic.tree.selectPath(path, null, '|', function (succeeded, oLastNode) {
                         Csw.tryExec(onSuccess, succeeded, oLastNode);
                     });
                 }
@@ -398,9 +340,28 @@
                 return ret;
             };
 
+            cswPublic.getPathFromId = function (id) {
+                /// <summary>
+                /// Get the path of a tree node from root
+                /// </summary>
+                /// <returns type="String"></returns>
+                var ret = '';
+                if (id) {
+                    cswPublic.eachNode(function (node) {
+                        var keepIterating = true;
+                        if (node && node.raw && node.raw.id === id) {
+                            ret = cswPublic.getPath(node);
+                            keepIterating = false; //stop iterating when we've found a match
+                        }
+                        return keepIterating;
+                    });
+                }
+                return ret;
+            };
+
             cswPublic.getChecked = function () {
                 /// <summary>
-                /// For Multii-Edit, get all nodes which are selected (checked) in the tree.
+                /// For Multi-Edit, get all nodes which are selected (checked) in the tree.
                 /// </summary>
                 var checked = cswPublic.tree.getChecked() || [];
                 if (checked.length === 0) {
@@ -421,14 +382,19 @@
             };
 
             cswPrivate.eachNodeRecursive = function (node, callBack) {
+                var ret = true;
                 if (node && callBack) {
-                    callBack(node);
-                    if (node.childNodes && node.childNodes.length > 0) {
+                    ret = callBack(node);
+                    if (false !== ret &&
+                        node.childNodes &&
+                        node.childNodes.length > 0) {
+
                         node.childNodes.forEach(function (childNode) {
-                            cswPrivate.eachNodeRecursive(childNode, callBack);
+                            ret = cswPrivate.eachNodeRecursive(childNode, callBack);
                         });
                     }
                 }
+                return ret;
             };
 
             cswPublic.eachNode = function (callBack) {
@@ -451,11 +417,11 @@
                     //throw
                 }
 
-            }());
+            } ());
 
             //#endregion Post-ctor
 
             return cswPublic;
         });
 
-}());
+} ());

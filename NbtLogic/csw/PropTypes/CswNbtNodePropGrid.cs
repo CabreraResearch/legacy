@@ -95,6 +95,23 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        /// <summary>
+        /// If set to false, column headers will not be displayed in Small display mode.
+        /// </summary>
+        public bool HasHeader
+        {
+            get
+            {
+                bool ShowHeader = true;
+                String Ret = _CswNbtMetaDataNodeTypeProp.Attribute1;
+                if( false == String.IsNullOrEmpty( Ret ) )
+                {
+                    ShowHeader = CswConvert.ToBoolean( Ret );
+                }
+                return ShowHeader;
+            }
+        }
+
         public Int32 MaxRows
         {
             get
@@ -121,6 +138,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["maxrows"] = MaxRows;
             ParentObject["viewid"] = View.ViewId.ToString();
             ParentObject["width"] = Width.ToString();
+            ParentObject["hasHeader"] = HasHeader.ToString();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -131,6 +149,11 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             // Nothing to restore
+        }
+
+        public override void SyncGestalt()
+        {
+
         }
     }//CswNbtNodeProp
 

@@ -251,7 +251,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
-                if( _CswNbtResources.EditMode == NodeEditMode.Add )
+                bool isNode = CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) );
+                if( (_CswNbtResources.EditMode == NodeEditMode.Add) && false == isNode )
                 {
                     Node = getAddNode( NodeTypeId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
@@ -276,6 +277,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( CswTools.IsPrimaryKey( Node.NodeId ) )
                 {
                     Ret["nodeid"] = Node.NodeId.ToString();
+                    Ret["nodelink"] = Node.NodeLink;
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
@@ -333,7 +335,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
             }
             else
-            {
+            {   
                 RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
             }
             RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
@@ -559,7 +561,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ), false, TabId, NewRow, NewColumn );
                     ret = true;
                 }
-            } // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            } // _canEditLayout()
             else
             {
                 throw new CswDniException( ErrorType.Warning, "You do not have permission to configure layout", _CswNbtResources.CurrentNbtUser.Username + " tried to change property layout without administrative or Design privileges" );
@@ -584,7 +586,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Prop.removeFromLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ), TabId );
                     ret = true;
                 }
-            } // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            } // _canEditLayout()
             else
             {
                 throw new CswDniException( ErrorType.Warning, "You do not have permission to configure layout", _CswNbtResources.CurrentNbtUser.Username + " tried to change property layout without administrative or Design privileges" );
@@ -737,6 +739,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["result"] = "Succeeded";
                     //If we're Adding, NodeName won't be valid until now.
                     ret["nodename"] = Node.NodeName;
+                    ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
                 }

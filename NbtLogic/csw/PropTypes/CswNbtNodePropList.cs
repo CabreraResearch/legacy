@@ -109,6 +109,11 @@ namespace ChemSW.Nbt.PropTypes
                 Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
             }
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

@@ -69,9 +69,14 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 // For Logicals, return the property name
-                return PropName;
+                string ret = string.Empty;
+                if( Checked == Tristate.True )
+                {
+                    ret = PropName;
+                }
+                return ret;
             }
-        }
+        } // ValueForNameTemplate
 
 
         public static string toLogicalGestalt( Tristate Tristate )
@@ -102,6 +107,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Checked = CswConvert.ToTristate( JObject[_CheckedSubField.ToXmlNodeName( true )].ToString() );
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, toLogicalGestalt( Checked ) );
         }
     }//CswNbtNodeProp
 

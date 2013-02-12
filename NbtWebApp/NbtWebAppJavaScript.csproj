@@ -85,6 +85,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\actions\csw.scheduledRules.js" />
     <Content Include="app\actions\csw.tierIIReporting.js" />
     <Content Include="app\actions\csw.hmisReporting.js" />
     <Content Include="app\actions\csw.kioskmode.js" />
@@ -94,6 +95,7 @@
     <Content Include="app\actions\csw.containermove.js" />
     <Content Include="app\composites\_template.js" />
     <Content Include="app\composites\csw.tabstrip.js" />
+    <Content Include="app\controls\csw.imageSelect.js" />
     <Content Include="app\controls\csw.quickTip.js" />
     <Content Include="app\controls\csw.tabselect.js" />
     <Content Include="app\controls\_template.js" />
@@ -103,7 +105,6 @@
     <Content Include="app\literals\_template.js" />
     <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\nodes\csw.node.treeExt.js" />
-    <Content Include="app\proptypes\csw.propTypeChildContents.js" />
     <Content Include="app\proptypes\csw.propTypeCASNo.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
     <Content Include="app\core\csw.ajaxWcf.js" />
@@ -151,13 +152,11 @@
     <Content Include="app\types\csw.casno.js" />
     <Content Include="app\wizards\_template.js" />
     <Content Include="ConnectTest.html" />
-    <None Include="css\csw.label.less" />
+    <Content Include="PrintingLabels.html" />
     <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
-    <Content Include="PrintTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.html" />
-    <Content Include="app\composites\csw.jzebra.js" />
     <Content Include="app\controls\csw.radiobutton.js" />
     <Content Include="app\controls\csw.buttonExt.js" />
     <Content Include="app\literals\csw.applet.js" />
@@ -187,7 +186,6 @@
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <Content Include="perf.html" />
-    <Content Include="Print.html" />
     <Content Include="Template.html" />
     <Content Include="TEST.html" />
     <Content Include="vendor\es5-shim.min.js" />
@@ -705,18 +703,6 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
-    <Content Include="vendor\jZebra\directPrint.js" />
-    <Content Include="vendor\jZebra\html2canvas.js" />
-    <Content Include="vendor\jZebra\jquery.plugin.html2canvas.js" />
-    <Content Include="vendor\jZebra\jzebra.jar" />
-    <Content Include="vendor\jZebra\jzebra.js" />
-    <Content Include="vendor\jZebra\jzebra_batch.js" />
-    <Content Include="vendor\jZebra\lib\pdf-renderer.jar" />
-    <Content Include="vendor\jZebra\loading.html" />
-    <Content Include="vendor\jZebra\loading_green.gif" />
-    <Content Include="vendor\jZebra\loading_red.gif" />
-    <Content Include="vendor\jZebra\loading_yellow.gif" />
-    <Content Include="vendor\jZebra\PluginDetect.js" />
     <Content Include="vendor\less-1.3.1.min.js" />
     <Content Include="vendor\loggly-0.1.0.js" />
     <Content Include="vendor\modernizr.custom.06564.js" />
@@ -765,7 +751,6 @@
     <Content Include="app\controls\csw.morediv.js" />
     <Content Include="app\nodes\csw.node.tree.js" />
     <Content Include="app\Main.js" />
-    <Content Include="app\wizards\csw.scheduledrules.js" />
     <Content Include="app\wizards\csw.createinspection.js" />
     <Content Include="app\_first-vsdoc.js" />
     <Content Include="app\_last-vsdoc.js" />
@@ -803,7 +788,6 @@
     <Content Include="app\controls\csw.visibilityselect.js" />
     <Content Include="app\core\csw.dom.js" />
     <Content Include="app\composites\csw.grid.js" />
-    <Content Include="app\composites\csw.table.js" />
     <Content Include="app\controls\csw.timeinterval.js" />
     <Content Include="app\controls\csw.checkboxarray.js" />
     <Content Include="app\controls\csw.combobox.js" />

@@ -74,10 +74,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public static string GetFullURL( string Prefix, string HrefBody, string Suffix )
         {
-            string fullUrl = Prefix + HrefBody + Suffix;
-            if( false == Regex.IsMatch( fullUrl, @"^https?://.*" ) ) //if the hyperlink doesn't contain http:// or https://
+            string fullUrl = HrefBody;
+            if( false == String.IsNullOrEmpty( fullUrl ) )
             {
-                fullUrl = "http://" + fullUrl;
+                fullUrl = Prefix + HrefBody + Suffix;
+                if( false == Regex.IsMatch( fullUrl, @"^https?://.*" ) ) //if the hyperlink doesn't contain http:// or https://
+                {
+                    fullUrl = "http://" + fullUrl;
+                }
             }
             return fullUrl;
         }
@@ -139,6 +143,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Text );
         }
     }//CswNbtNodeProp
 

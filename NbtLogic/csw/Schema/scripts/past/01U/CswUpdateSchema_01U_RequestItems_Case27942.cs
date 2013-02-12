@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RmdCommentsNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Comments );
             CswNbtMetaDataNodeTypeProp RmdLocationNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Location );
             CswNbtMetaDataNodeTypeProp RmdRequestedForNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RequestedFor );
-            CswNbtMetaDataNodeTypeProp RmdReorderNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Recurring );
+            CswNbtMetaDataNodeTypeProp RmdReorderNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
 
             //Add Layout: Case 27263
             //Nothing to add to this Layout

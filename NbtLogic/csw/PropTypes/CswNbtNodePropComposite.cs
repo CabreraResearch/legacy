@@ -89,6 +89,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             PendingUpdate = true;
         }
+
+        public override void SyncGestalt()
+        {
+            string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, gestaltVal );
+        }
     }//CswNbtNodePropComposite
 
 }//namespace ChemSW.Nbt

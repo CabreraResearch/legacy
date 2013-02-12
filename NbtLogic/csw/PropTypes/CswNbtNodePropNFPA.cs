@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _RedSubField.Column, value );
-                _setGestalt();
+                SyncGestalt();
             }
         }
         public string Yellow
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _YellowSubField.Column, value );
-                _setGestalt();
+                SyncGestalt();
             }
         }
         public string Blue
@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _BlueSubField.Column, value );
-                _setGestalt();
+                SyncGestalt();
             }
         }
         public string White
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _WhiteSubField.Column, value );
-                _setGestalt();
+                SyncGestalt();
             }
         }
 
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private void _setGestalt()
+        public override void SyncGestalt()
         {
             string newGestalt = "Flammability: " + Red + ", ";
             newGestalt += "Reactivity: " + Yellow + ", ";
@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.PropTypes
                 newGestalt += ", Special: " + White;
             }
 
-            _CswNbtNodePropData.Gestalt = newGestalt;
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, newGestalt );
         }
 
         public override string ValueForNameTemplate

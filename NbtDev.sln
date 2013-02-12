@@ -62,6 +62,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript.Test", "TestApps\NbtWebAppJavaScript.Test\NbtWebAppJavaScript.Test.csproj", "{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtPrintClient", "NbtPrintClient\NbtPrintClient.csproj", "{6D195BB6-1566-46C7-A500-1C55EB9ACD99}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DB33D180-B7CC-407B-8611-52DEB49363A8} = {DB33D180-B7CC-407B-8611-52DEB49363A8}
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NbtPrintClientInstall", "NbtPrintClientInstall\NbtPrintClientInstall.vdproj", "{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -420,12 +425,14 @@ Global
 		{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}.Test|x86.ActiveCfg = Test|x64
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x64.ActiveCfg = Debug|x86
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x64.Build.0 = Debug|Any CPU
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x86.ActiveCfg = Debug|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x86.Build.0 = Debug|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x64.ActiveCfg = Release|x86
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x64.ActiveCfg = Release|Any CPU
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x64.Build.0 = Release|Any CPU
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x86.ActiveCfg = Release|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x86.Build.0 = Release|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Test|Mixed Platforms.ActiveCfg = Release|x86
@@ -433,6 +440,23 @@ Global
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Test|x64.ActiveCfg = Release|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Test|x86.ActiveCfg = Release|x86
 		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Test|x86.Build.0 = Release|x86
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Debug|Mixed Platforms.Build.0 = Debug
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Debug|x64.ActiveCfg = Debug
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Debug|x86.ActiveCfg = Debug
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Debug|x86.Build.0 = Debug
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|Mixed Platforms.ActiveCfg = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|Mixed Platforms.Build.0 = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x64.ActiveCfg = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x64.Build.0 = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x86.ActiveCfg = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x86.Build.0 = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Test|Mixed Platforms.ActiveCfg = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Test|Mixed Platforms.Build.0 = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Test|x64.ActiveCfg = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Test|x64.Build.0 = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Test|x86.ActiveCfg = Release
+		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Test|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

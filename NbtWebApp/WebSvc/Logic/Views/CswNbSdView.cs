@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.WebServices
                         ViewSelect.Response.Item ActionItem = _addViewSelectObj( FavoritesCategory, 
                                                                                  Action.DisplayName, 
                                                                                  ItemType.Action,
-                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", 
+                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName, 
                                                                                  Action.ActionId.ToString() );
                         ActionItem.url = Action.Url;
                     }
@@ -230,7 +230,7 @@ namespace ChemSW.Nbt.WebServices
                                                                                  Action.Category, 
                                                                                  Action.DisplayName, 
                                                                                  ItemType.Action,
-                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", 
+                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName, 
                                                                                  Action.ActionId.ToString() );
                         ActionItem.url = Action.Url;
                     }

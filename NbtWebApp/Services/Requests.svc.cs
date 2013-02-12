@@ -156,6 +156,23 @@ namespace NbtWebApp
             return ( Ret );
         }
 
-        // Add more operations here and mark them with [OperationContract]
+        [OperationContract()]
+        [WebInvoke( Method = "POST", UriTemplate = "Recurring/copy" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Copy Request Items to or from a Favorites list" )]
+        public CswNbtRequestDataModel.CswRequestReturn copyRecurring( CswNbtRequestDataModel.CswRequestReturn.Ret Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtRequestDataModel.CswRequestReturn Ret = new CswNbtRequestDataModel.CswRequestReturn();
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, CswNbtRequestDataModel.CswRequestReturn.Ret>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceRequesting.copyRecurring,
+                ParamObj : Request
+                );
+
+            InitDriverType.run();
+            return ( Ret );
+        }
     }
 }

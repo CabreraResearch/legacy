@@ -110,7 +110,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject["text"] = NodeTypeProp.StaticText;
             ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
-            ParentObject["menuoptions"] = MenuOptions;
+            if( NodeTypeProp.Extended.ToLower() == ButtonMode.menu )
+            {
+                ParentObject["menuoptions"] = MenuOptions;
+            }
+            else
+            {
+                ParentObject["menuoptions"] = string.Empty;
+            }
+
             ParentObject["selectedText"] = SelectedText;
         }
 
@@ -122,6 +130,11 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             //nothing        
+        }
+
+        public override void SyncGestalt()
+        {
+
         }
 
     }//CswNbtNodeProp

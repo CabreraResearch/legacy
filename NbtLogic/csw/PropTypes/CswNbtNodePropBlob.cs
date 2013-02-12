@@ -125,6 +125,12 @@ namespace ChemSW.Nbt.PropTypes
                 FileName = JObject[_FileNameSubField.ToXmlNodeName( true )].ToString();
             }
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, FileName );
+        }
+
     }
 
 }//namespace ChemSW.Nbt.PropTypes

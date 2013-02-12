@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//beforeWriteNode()
 
         public override void afterWriteNode()
-        {            
+        {
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 

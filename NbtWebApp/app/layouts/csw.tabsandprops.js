@@ -1,7 +1,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function () {  
+(function () {
 
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
@@ -53,6 +53,7 @@
 
                 },
                 IdentityTab: null,
+                tabContentDiv: null,
                 showTitle: true,
                 onNodeIdSet: null,
                 onSave: null,
@@ -60,6 +61,7 @@
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
                 onTabSelect: null,
+                onOwnerPropChange: null, // case 28514
                 onPropertyChange: null,
                 onPropertyRemove: null,
                 onInitFinish: null,
@@ -106,7 +108,8 @@
                     cswPrivate.identityWrapDiv = cswParent.div();
 
                     cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
-                    cswPrivate.identityDiv = cswPrivate.tabsTable.cell(1, 1); //.div();
+
+                    cswPrivate.identityForm = cswPrivate.tabsTable.cell(1, 1).form();
 
                     cswPrivate.outerTabDiv = cswPrivate.tabsTable
                         .cell(3, 1)
@@ -114,6 +117,9 @@
                     cswPrivate.tabcnt = 0;
                 };
                 cswPrivate.init();
+
+
+
             } ());
 
             //#region Events
@@ -124,6 +130,7 @@
 
             cswPrivate.onTearDownProps = function () {
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
+
             };
 
             cswPrivate.onTearDown = function () {
@@ -141,13 +148,18 @@
                 cswPrivate.onTearDown();
             };
 
+
+            cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
+                    cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
+            };
+
             //#endregion Events
 
             //#region Tabs
 
             cswPrivate.clearTabs = function () {
                 cswPrivate.titleDiv.empty();
-                cswPrivate.identityDiv.empty();
+                cswPrivate.identityForm.empty();
                 cswPrivate.outerTabDiv.empty();
             };
 
@@ -172,7 +184,9 @@
                 }
                 tabContentDiv.data('canEditLayout', canEditLayout);
                 tabContentDiv.data('tabid', tabid);
+
                 return tabContentDiv;
+
             };
 
             cswPrivate.setPrivateProp = function (obj, propName) {
@@ -225,9 +239,15 @@
                         }
                         if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                             cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
-                            cswPrivate.identityDiv.empty();
-                            cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
-                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
+
+                            cswPrivate.identityForm.empty();
+                            var identityFormTbl = cswPrivate.identityForm.table({
+                                name: cswPrivate.name + '_formtbl_' + cswPrivate.IdentityTabId,
+                                width: '100%'
+                            }).css({ padding: '10px' });
+
+                            cswPrivate.identityLayoutTable = identityFormTbl.cell(1, 1).layoutTable(layoutOpts);
+                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityForm, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
                         }
                     }
                 }
@@ -243,6 +263,7 @@
 
                     var tabid = cswPrivate.tabState.EditMode + "_tab";
                     tabContentDiv = cswPrivate.makeTabContentDiv(tabContentDiv, tabid, false);
+                    cswPrivate.tabContentDiv = tabContentDiv;
                     cswPrivate.getProps(tabContentDiv, tabid);
 
                 } else {
@@ -303,24 +324,29 @@
 
                                 cswPrivate.tabcnt = tabno;
 
-                                cswPrivate.genTab = function () {
-                                    if (false !== Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid)) {
+                                cswPrivate.genTab = function (noChangesToPost) {
+                                    var ret = (true === noChangesToPost || Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid));
+                                    if (ret) {
                                         Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                         cswPrivate.form.empty();
                                         cswPrivate.onTearDown();
                                         makeTabs();
-                                        return false;
                                     }
+                                    return ret;
                                 };
 
                                 Csw.each(tabdivs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
                                         selected: cswPrivate.tabState.tabNo,
                                         select: function (event, ui) {
-                                            var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
-                                            cswPrivate.tabState.tabNo = Csw.number(ui.index);
-                                            cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
-                                            return cswPrivate.genTab();
+                                            var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
+                                            if (ret) {
+                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
+                                                cswPrivate.tabState.tabNo = Csw.number(ui.index);
+                                                cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
+                                                cswPrivate.genTab();
+                                            }
+                                            return ret;
                                         } // select()
                                     }); // tabs
                                     var eachTabContentDiv;
@@ -368,7 +394,7 @@
             };
 
             cswPublic.isFormValid = function () {
-                return cswPrivate.form.$.valid();
+                return cswPrivate.form.$.valid() && cswPrivate.identityForm.$.valid();
             };
 
             //#endregion Validator
@@ -411,9 +437,11 @@
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = nodekey;
                         cswPrivate.globalState.currentNodeId = nodeid;
+                        cswPrivate.globalState.currentNodeLink = data.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
                     }
                     delete data.nodeid;
+                    delete data.nodelink;
                 }
                 return nodeid;
             };
@@ -615,6 +643,7 @@
                 } else {
                     cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
                 }
+
             }; // getProps()
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
@@ -825,7 +854,6 @@
 
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
-                Csw.debug.assert(Csw.isPlainObject(propData), 'handleProp was given an invalid object representing propertyData');
                 if (Csw.isPlainObject(propData)) {
                     var propid = propData.id,
                         cellSet,
@@ -841,6 +869,7 @@
 
                         labelCell = cswPrivate.getLabelCell(cellSet);
 
+                        labelCell.addClass('propertylabelcell');
                         if (Csw.bool(propData.highlight)) {
                             labelCell.addClass('ui-state-highlight');
                         }
@@ -893,6 +922,13 @@
                         propCell.addClass('ui-state-highlight');
                     }
                     cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
+
+                    if (propData.ocpname === "Owner") {
+                        Csw.subscribe('onPropChange_' + propid, function(eventObject, data) {
+                            cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
+                        });
+                    }
+
                 }
             };
 
@@ -1145,7 +1181,7 @@
                             cswPrivate.enableSaveBtn();
                             var onSaveSuccess = function () {
                                 var onSaveRefresh = function () {
-                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename);
+                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename, successData.nodelink);
                                     Csw.tryExec(onSuccess);
                                 };
 
@@ -1154,6 +1190,7 @@
                             if (false === cswPrivate.isMultiEdit()) {
                                 if (cswPrivate.ReloadTabOnSave) {
                                     // reload tab
+                                    cswPrivate.globalState.propertyData = '';
                                     cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
                                 } else {
                                     onSaveSuccess();

@@ -45,7 +45,7 @@ namespace ChemSw.Nbt.Test
             {
                 LocationNode.ControlZone.RelatedNodeId = ControlZoneId;
             }
-            LocationNode.postChanges( false );
+            LocationNode.postChanges( true );
             return LocationNode.Node;
         }
 
@@ -67,7 +67,7 @@ namespace ChemSw.Nbt.Test
                 ContainerLocationNode.Location.RefreshNodeName();
             }
             ContainerLocationNode.ContainerScan.Text = ContainerScan;
-            ContainerLocationNode.postChanges( false );
+            ContainerLocationNode.postChanges( true );
             return ContainerLocationNode.Node;
         }
 

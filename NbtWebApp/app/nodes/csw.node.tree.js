@@ -1,6 +1,6 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
+/*global Csw:true*/
 (function csw_nbt_nodeTree() {
     "use strict";
 

@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
 
-            #region VIOLA
+            #region WILLIAM
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case26827() ) );              //01V-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28283Part1() ) );         //01V-002
@@ -53,29 +53,47 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case27436D() ) );             //01V-025
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28498() ) );              //01V-026
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28570() ) );              //01V-027
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28526() ) );              //01V-028
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28122() ) );              //01V-029
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28611() ) );              //01V-030
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );              //01W-031
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );              //01W-032
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );              //01W-033
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );              //01W-034
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_TreeGrouping_Case27882() ) ); //01W-035
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );             //01W-036
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28345() ) );              //01W-037
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28507() ) );              //01W-038
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28508() ) );              //01W-039
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28560() ) );              //01W-040
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28409() ) );              //01W-041
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395() ) );              //01W-042
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28258() ) );              //01W-043
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28513() ) );              //01W-044
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Recurring_Case28340() ) );    //01W-045
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case27901() ) );              //01W-046
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case26840() ) );              //01W-047
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28655() ) );              //01W-048
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28534() ) );              //01W-049
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28557() ) );              //01W-050 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28713() ) );              //01W-051
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395B() ) );             //01W-052
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_ScheduledRules_Case28564() ) );//01W-053
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28717() ) );              //01W-054
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28724() ) );              //01W-055
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28725() ) );              //01W-056
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28514() ) );              //01W-057
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28684() ) );              //01W-058
+            /* IMPORTANT: Script for Case 28714 must come BEFORE script for Case 24647 */
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28714() ) );              //01W-059
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );              //01W-060
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28523() ) );              //01W-061
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28659() ) );              //01W-062
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28745() ) );              //01W-063
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28750() ) );              //01W-064
 
-
-            #endregion VIOLA
-
-            #region WILLIAM
-
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );           //01V-000   01W-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );              //01V-028   01W-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );              //01V-029   01W-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );              //01V-030   01W-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );              //01V-031   01W-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );              //01V-032   01W-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_TreeGrouping_Case27882() ) ); //01V-033   01W-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );             //01V-034   01W-007
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28345() ) );              //01V-035   01W-008
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28507() ) );              //01V-036   01W-009
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28508() ) );              //01V-037   01W-010
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28560() ) );              //01V-038   01W-011
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28409() ) );              //01V-039   01W-012
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395() ) );              //01V-040   01W-013
-
-            
             #endregion WILLIAM
+
 
 
             // This automatically detects the latest version
@@ -188,7 +206,7 @@ namespace ChemSW.Nbt.Schema
             char ReleaseIdentifier = _MinimumVersion.ReleaseIdentifier;
             if( 'Z' != ReleaseIdentifier )
             {
-                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUWXYZ".ToCharArray(); //No V for Viola
                 List<char> Chars = new List<char>( alpha );
                 int ReleaseIdInt = Chars.IndexOf( ReleaseIdentifier );
                 ReleaseIdInt++;

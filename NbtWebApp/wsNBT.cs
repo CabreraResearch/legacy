@@ -323,7 +323,7 @@ namespace ChemSW.Nbt.WebServices
         private AuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, true );
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
 
@@ -1043,7 +1043,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runGrid( string ViewId, string IncludeNodeKey, string IncludeNodeId, string IncludeInQuickLaunch, string ForReport )
+        public string runGrid( string Title, string ViewId, string IncludeNodeKey, string IncludeNodeId, string IncludeInQuickLaunch, string ForReport )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -1061,7 +1061,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != View )
                 {
                     var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( ForReport ) );
-                    ReturnVal = ws.runGrid( IsQuickLaunch );
+                    ReturnVal = ws.runGrid( Title, IsQuickLaunch );
                 }
 
                 _deInitResources();
@@ -2704,180 +2704,7 @@ namespace ChemSW.Nbt.WebServices
         #endregion NodeType Layout
 
         #region Search
-
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string getClientSearchJson( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
-        //{
-        //    JObject ReturnVal = new JObject();
-
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh();
-
-        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-        //        {
-        //            CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-        //            CswNbtView View = _getView( ViewId );
-        //            ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NbtNodeKey );
-        //        }
-
-        //        _deInitResources();
-        //    }
-
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-        //    return ReturnVal.ToString();
-
-        //}
-
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string getNodeTypeSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string IdPrefix, string NodeKey )
-        //{
-        //    JObject ReturnVal = new JObject();
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh();
-
-        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-        //        {
-        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-        //            ReturnVal = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
-        //        }
-
-        //        _deInitResources();
-        //    }
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-
-        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-        //    return ReturnVal.ToString();
-
-        //} // getSearch()
-
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string getSearchableViews( string IsMobile, string OrderBy )
-        //{
-        //    JObject ReturnVal = new JObject();
-
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh();
-
-        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-        //        {
-
-        //            ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
-        //            bool ForMobile = CswConvert.ToBoolean( IsMobile );
-        //            var ws = new CswNbtWebServiceView( _CswNbtResources );
-        //            //SearchNode =  ws.getSearchableViewTree( UserId, ForMobile, true, OrderBy ); 
-        //        }
-
-        //        _deInitResources();
-
-        //    }
-
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-        //    return ReturnVal.ToString();
-
-        //} // getSearch()
-
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string doViewSearch( object SearchJson )
-        //{
-        //    JObject ReturnVal = new JObject();
-
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh();
-
-        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-        //        {
-        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-        //            CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
-        //            if( null != SearchPair )
-        //            {
-        //                ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
-        //                ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
-        //                ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
-        //            }
-        //        }
-
-        //        _deInitResources();
-        //    }
-
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-        //    return ReturnVal.ToString();
-
-        //} // getSearch()
-
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string doNodeTypeSearch( object SearchJson )
-        //{
-        //    JObject ReturnVal = new JObject();
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh();
-
-        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-        //        {
-        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-        //            CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
-        //            if( null != SearchPair )
-        //            {
-        //                ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
-        //                ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
-        //                ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
-        //            }
-        //        }
-
-        //        _deInitResources();
-        //    }
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-        //    return ReturnVal.ToString();
-
-        //}
-
+        
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string doUniversalSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
@@ -3601,7 +3428,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.View_Scheduled_Rules );
                 ReturnVal = ws.getActiveAccessIds();
 
                 _deInitResources();
@@ -3616,34 +3443,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // getActiveAccessIds()
-
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string getScheduledRulesGrid( string AccessId )
-        //{
-        //    JObject ReturnVal = new JObject();
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh( true );
-
-        //        CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
-        //        ReturnVal = ws.getScheduledRulesGrid();
-
-        //        _deInitResources();
-        //    }
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-        //    return ReturnVal.ToString();
-
-        //} // getScheduledRulesGrid()
-
+        
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string updateScheduledRule()
@@ -3656,7 +3456,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 string AccessId = CswConvert.ToString( Context.Request["AccessId"] );
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId, CswNbtActionName.View_Scheduled_Rules );
                 ReturnVal["success"] = ws.updateScheduledRule( Context );
 
                 _deInitResources();
@@ -3671,42 +3471,14 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // updateScheduledRule()
-
-
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string updateAllScheduledRules( string AccessId, string Action )
-        //{
-        //    JObject ReturnVal = new JObject();
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh( true );
-
-        //        CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
-        //        ReturnVal["success"] = ws.updateAllScheduledRules( Action );
-
-        //        _deInitResources();
-        //    }
-        //    catch( Exception Ex )
-        //    {
-        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-        //    return ReturnVal.ToString();
-
-        //} // updateScheduledRule()
-
+        
         #endregion Nbt Manager
 
         #region CISPro
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string createMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo )
+        public string createMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo, string NodeId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3716,7 +3488,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.createMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo );
+                ReturnVal = ws.createMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, NodeId );
 
                 _deInitResources();
             }

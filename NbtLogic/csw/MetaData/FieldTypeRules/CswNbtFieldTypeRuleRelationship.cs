@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 if( MetaDataProp != null && MetaDataProp.IsUserRelationship() )
                 {
-                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
+                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" && false == ( RunAsUser is CswNbtSystemUser ) )
                     {
                         CswNbtViewPropertyFilterIn.SubfieldName = NodeIDSubField.Name;
                         CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 RetView.ViewId = MetaDataProp.ViewId;
                 RetView.Visibility = NbtViewVisibility.Property;
-                RetView.ViewMode = NbtViewRenderingMode.List;
+                RetView.ViewMode = NbtViewRenderingMode.Tree;
                 RetView.ViewName = MetaDataProp.PropName;
                 RetView.save();
             }

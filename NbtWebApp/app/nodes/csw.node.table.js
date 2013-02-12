@@ -315,19 +315,22 @@
                                 width: ('Import'.length * 8) + 16,
                                 enabledText: 'Import',
                                 disableOnClick: false,
-                                //tooltip: { title: 'Delete' },
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.down),
                                 onClick: Csw.method(function () {
-                                    $.CswDialog('ImportC3RecordDialog', {
-                                        nodenames: [nodeObj.nodename]
-                                    }); // CswDialog
+                                    Csw.ajaxWcf.post({
+                                        async: false,
+                                        urlMethod: 'ChemCatCentral/importProduct',
+                                        data: nodeObj.c3productid,
+                                        success: function (data) {
+                                            Csw.publish(Csw.enums.events.main.handleAction, data);
+                                        }
+                                    }); // ajaxWcf
                                 }) // onClick
                             }); // CswButton
                             btncol += 1;
                         } // if (nodeObj.allowimport)
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.extraAction)) {
-                            Csw.debug.assert(Csw.number(cswPrivate.extraActionIcon) > 0, 'No icon specified for extraAction.');
                             Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');
 
                             btnTable.cell(1, btncol).buttonExt({
@@ -589,4 +592,4 @@
 
             return cswPublic;
         }); // register
-})();    // (function
+})();     // (function

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.WebSvc.Logic.Labels
 {
@@ -68,6 +69,140 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         [Description( "Label ID" )]
         public string Id = string.Empty;
 
+    }
+
+    /// <summary>
+    /// Request to register a label printer
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer registration" )]
+    public class LabelPrinter
+    {
+        /// <summary>
+        /// LPC name is unique in nt schem to identify printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "LPC Name uniquely identifies an NBT Label Printer to users" )]
+        public string LpcName = string.Empty;
+
+        /// <summary>
+        /// Additional descriptive info about the label printer
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "Additional descriptive info about the label printer" )]
+        public string Description = string.Empty;
+
+    }
+
+    /// <summary>
+    /// Request for next label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer nodekey" )]
+    public class CswNbtLabelJobRequest
+    {
+        /// <summary>
+        /// Nodekey of defined NBT printer
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Nodekey of defined NBT Label Printer" )]
+        public string PrinterKey = string.Empty;
+    }
+
+    /// <summary>
+    /// Request for updating a label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label print job" )]
+    public class CswNbtLabelJobUpdateRequest
+    {
+        /// <summary>
+        /// Nodekey of defined NBT print job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Nodekey of defined NBT Label Print Job" )]
+        public string JobKey = string.Empty;
+
+        /// <summary>
+        /// Nodekey of defined NBT print job
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "Whether the job finished successfully" )]
+        public bool Succeeded = false;
+
+        /// <summary>
+        /// Error message
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "If an error occurred, this is the message to log" )]
+        public string ErrorMessage = string.Empty;
+    }
+
+    /// <summary>
+    /// Response for updating a label printer job    
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label print job" )]
+    public class CswNbtLabelJobUpdateResponse : CswWebSvcReturn
+    {
+    }
+
+    /// <summary>
+    /// Request for next label printer job
+    /// </summary>
+    [DataContract]
+    [Description( "Represents a label printer job" )]
+    public class CswNbtLabelJobResponse : CswWebSvcReturn
+    {
+        /// <summary>
+        /// NBT label printer job
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "label print JobNo" )]
+        public string JobNo = string.Empty;
+
+        /// <summary>
+        /// NBT label printer job
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "label print Job key" )]
+        public string JobKey = string.Empty;
+
+        /// <summary>
+        /// NBT label printer
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "label print Owner" )]
+        public string JobOwner = string.Empty;
+
+        /// <summary>
+        /// NBT labels count
+        /// </summary>
+        [DataMember( IsRequired = true )]
+        [Description( "label count for this job" )]
+        public int LabelCount = 0;
+
+        /// <summary>
+        /// NBT label name
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "label template name " )]
+        public string LabelName = string.Empty;
+
+        /// <summary>
+        /// NBT label printer data
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "label printer data " )]
+        public string LabelData = string.Empty;
+
+        /// <summary>
+        /// Remaining job count
+        /// </summary>
+        [DataMember( IsRequired = false )]
+        [Description( "Remaining job count" )]
+        public int RemainingJobCount = 0;
+         
     }
 
     /// <summary>
@@ -149,6 +284,26 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [Description( "Optional params to apply to EPL text on label" )]
                 public string Params = string.Empty;
             }
+
+            /// <summary>
+            /// Print Job Request Object
+            /// </summary>
+            [DataContract]
+            public class printJob
+            {
+                [DataMember]
+                [Description( "Print Label to print" )]
+                public string LabelId;
+
+                [DataMember]
+                [Description( "Printer to print on" )]
+                public string PrinterId;
+
+                [DataMember]
+                [Description( "Nodes whose labels to print" )]
+                public string TargetIds;
+            }
+
         }
 
         /// <summary>
@@ -193,8 +348,59 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 public string SelectedLabelId = string.Empty;
             }
 
+            /// <summary>
+            /// Returns status of register printer request
+            /// </summary>
+            [DataContract]
+            [Description( "Returns status of register printer request" )]
+            public class registeredLpc
+            {
+                /// <summary>
+                /// Printer
+                /// </summary>
+                [DataMember]
+                [Description( "The label printer" )]
+                public LabelPrinter printer = new LabelPrinter();
+
+                /// <summary>
+                /// printer is enabled
+                /// </summary>
+                [DataMember]
+                [Description( "Whether printer is enabled in NBT" )]
+                public bool enabled = false;
+
+                /// <summary>
+                /// status string of request
+                /// </summary>
+                [DataMember]
+                [Description( "Status string of this request" )]
+                public string status = string.Empty;
+
+            }
+
+
+            /// <summary>
+            /// Returns a print job
+            /// </summary>
+            [DataContract]
+            [Description( "Returns a print job" )]
+            public class printJob
+            {
+                [DataMember]
+                [Description( "Job No for Job" )]
+                public string JobNo;
+
+                [DataMember]
+                [Description( "Primary key for Job" )]
+                public string JobId;
+
+                [DataMember]
+                [Description( "Node Link for Job" )]
+                public string JobLink;
+            }
 
         }
+
 
     }
 

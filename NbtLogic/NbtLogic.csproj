@@ -127,6 +127,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetColReader.cs" />
+    <Compile Include="csw\ImportExport\CswImporterLocationTree.cs" />
     <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetCol.cs" />
     <Compile Include="csw\ImportExport\CswImporterNodeLoader.cs" />
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromRapidLoader.cs" />
@@ -134,6 +135,27 @@
     <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28750.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28523.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28745.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28659.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28557.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28714.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28514.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28725.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28724.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28395B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28717.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28713.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28655.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28684.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case26840.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassPrintJob.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassPrinter.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28534.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case27901.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_ScheduledRules_Case28564.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -143,14 +165,18 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleC3.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropChildContents.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02SQL.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28570.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28498.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436C.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436D.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28295.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part2.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28408_Part1.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28293.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28611.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28526.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28570.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28498.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case27436C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case27436D.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28295.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28408_Part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28408_Part1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28293.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28258.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28513.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28560.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28409.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28508.cs" />
@@ -162,6 +188,7 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28246.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case24647.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_TreeGrouping_Case27882.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Recurring_Case28340.cs" />
     <Compile Include="Service References\ChemCatCentral\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -198,6 +225,9 @@
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28146.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerUpdate.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropCASNo.cs" />
+    <Compile Include="csw\Sched\helpers\CAFImportManager.cs" />
+    <Compile Include="csw\Sched\helpers\CafTranslator.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtCAFImport.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtTierII.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerLocation.cs" />
@@ -387,28 +417,29 @@
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case24489.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
     <Content Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28046.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28267.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28374B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27436.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28374.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28399B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28393.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28399.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28247.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case5083.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28252.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case27649.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case26827.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28282.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part1.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28283Part2.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28281.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28339.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28122.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28267.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28374B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case27436B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case27436.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28374.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28399B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28393.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28399.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28247.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case5083.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28252.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case27649.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case26827.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28282.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28283Part1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28283Part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28281.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28339.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28393B.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28363.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01V\CswUpdateSchema_01V_Case28331.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28331.cs" />
     <Compile Include="csw\Search\CswNbtSearchFilter.cs" />
     <Compile Include="csw\Search\CswNbtSearchManager.cs" />
     <Compile Include="csw\Search\CswNbtSearchPropOrder.cs" />
@@ -458,7 +489,6 @@
     <Compile Include="csw\MetaData\CswNbtMetaDataEvents.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataFieldType.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataForSchemaUpdater.cs" />
-    <Compile Include="csw\MetaData\CswNbtMetaDataIconName.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeType.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeProp.cs" />
@@ -988,12 +1018,6 @@
       <SubType>Component</SubType>
     </Compile>
     <None Include="Properties\DataSources\ChemSW.MtSched.Core.CswSchedSvcReturn.datasource" />
-    <None Include="Service References\NbtSchedSvcRef\item7.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtSchedSvcRef\item8.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -1007,7 +1031,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSchedSvcRef\CswSchedSvcAdminEndPoint.wsdl" />
-    <None Include="Service References\NbtSchedSvcRef\item.xsd" />
     <None Include="Service References\ChemCatCentral\Search.wsdl" />
     <None Include="Service References\ChemCatCentral\Search.xsd">
       <SubType>Designer</SubType>
@@ -1025,9 +1048,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSchedSvcRef\item4.xsd" />
-    <None Include="Service References\ChemCatCentral\Search4.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\item5.xsd" />
     <None Include="Service References\ChemCatCentral\Search41.xsd">
       <SubType>Designer</SubType>

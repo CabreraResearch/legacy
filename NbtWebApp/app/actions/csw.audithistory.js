@@ -34,6 +34,10 @@
                 title: 'History',
                 stateId: '',
                 width: cswPrivate.width,
+                sorters: [{
+                    property: 'changedate',
+                    direction: 'DESC'
+                }],
 
                 showActionColumn: cswPrivate.allowEditRow,
                 showView: false,
@@ -57,6 +61,7 @@
                         var rowid = grid.getRowIdForVal('changedate', cswPrivate.selectedDate.toString());
                         grid.setSelection(rowid);
                         cswPrivate.preventSelectTrigger = false;
+
                     }
                 },
                 onSelect: function (row) {
@@ -64,8 +69,8 @@
                         Csw.tryExec(cswPrivate.onSelectRow, row.changedate);
                     }
                 },
-                onEdit: function (rows) {
-                    Csw.tryExec(cswPrivate.onEditRow, rows[0].changedate);
+                onEdit: function (rows, raw) {
+                    Csw.tryExec(cswPrivate.onEditRow, raw.changedate);
                 }
             });
             // set selected row by date

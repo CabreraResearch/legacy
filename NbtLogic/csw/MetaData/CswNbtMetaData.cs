@@ -206,6 +206,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns the first version of a particular nodetype
+        /// </summary>
+        public CswNbtMetaDataNodeType getNodeTypeFirstVersion( string NodeTypeName )
+        {
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeFirstVersion( NodeTypeName );
+        }
+
+        /// <summary>
         /// Returns the latest version of a particular nodetype
         /// </summary>
         public CswNbtMetaDataNodeType getNodeTypeLatestVersion( CswNbtMetaDataNodeType NodeType )

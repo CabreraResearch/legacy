@@ -36,7 +36,7 @@
                         cswPrivate.cell22 = cswPublic.control.cell(2, 2);
                         cswPrivate.cell31 = cswPublic.control.cell(3, 1);
                         cswPrivate.cell32 = cswPublic.control.cell(3, 2);
-                        
+
                         cswPrivate.textBox1 = cswPrivate.cell12.input({
                             name: cswPublic.data.name + '_pwd1',
                             type: Csw.enums.inputTypes.password,
@@ -50,7 +50,7 @@
                         });
 
                         /* Text Box 2 */
-                        cswPrivate.cell22.input({
+                        cswPrivate.textBox2 = cswPrivate.cell22.input({
                             name: cswPublic.data.name + '_pwd2',
                             type: Csw.enums.inputTypes.password,
                             value: '',
@@ -76,8 +76,8 @@
                         }
 
                         $.validator.addMethod("password2", function () {
-                            cswPrivate.pwd1 = $('#' + cswPublic.data.name + '_pwd1').val();
-                            cswPrivate.pwd2 = $('#' + cswPublic.data.name + '_pwd2').val();
+                            cswPrivate.pwd1 = cswPrivate.textBox1.val();
+                            cswPrivate.pwd2 = cswPrivate.textBox2.val();
                             return ((cswPrivate.pwd1 === '' && cswPrivate.pwd2 === '') || cswPrivate.pwd1 === cswPrivate.pwd2);
                         }, 'Passwords do not match!');
                         //Case 26096
@@ -105,11 +105,11 @@
 
                 //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
-                
+
                 //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
                 //cswPublic.data.unBindRender();
 
                 return cswPublic;
             }));
 
-}());
+} ());

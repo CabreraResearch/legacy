@@ -113,7 +113,8 @@ namespace ChemSW.Nbt.ObjClasses
                         if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
                         {
                             if( ( Action.Name == CswNbtActionName.Design ||
-                                    Action.Name == CswNbtActionName.Create_Inspection ) && //Case 24288
+                                    Action.Name == CswNbtActionName.Create_Inspection || //Case 24288
+                                    Action.Name == CswNbtActionName.View_Scheduled_Rules ) && //Case 28564
                                     _CswNbtResources.CurrentNbtUser.Rolename != ChemSWAdminRoleName &&  //Case 28433: chemsw_admin can grant Design to anyone.
                                     false == _CswNbtResources.IsSystemUser
                                 )

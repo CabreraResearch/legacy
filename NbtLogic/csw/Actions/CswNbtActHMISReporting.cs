@@ -150,6 +150,19 @@ namespace ChemSW.Nbt.Actions
 
         #region Public Methods
 
+        public CswNbtView getControlZonesView()
+        {
+            CswNbtView ControlZonesView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Control Zone" );
+            if( null != ControlZoneNT )
+            {
+                ControlZonesView.AddViewRelationship(ControlZoneNT, IncludeDefaultFilters: true);
+                ControlZonesView.ViewName = "HMIS Control Zones";
+                ControlZonesView.SaveToCache(IncludeInQuickLaunch: false);
+            }
+            return ControlZonesView;
+        }
+
         public HMISData getHMISData( HMISData.HMISDataRequest Request )
         {
             ControlZoneId = CswConvert.ToPrimaryKey( Request.ControlZoneId );

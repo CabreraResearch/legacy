@@ -329,5 +329,11 @@ namespace ChemSW.Nbt.PropTypes
             }
             return Ret;
         } // SelectedUserNames()
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, SelectedUserNames().ToString() );
+        }
+
     }//CswNbtNodePropUserSelect
 }//namespace ChemSW.Nbt.PropTypes

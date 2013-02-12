@@ -23,6 +23,20 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
+        /// Return Object for HMIS ControlZones View
+        /// </summary>
+        [DataContract]
+        public class HMISViewReturn : CswWebSvcReturn
+        {
+            public HMISViewReturn()
+            {
+                Data = new View();
+            }
+            [DataMember]
+            public View Data;
+        }
+
+        /// <summary>
         /// Return Object for TierII Data
         /// </summary>
         [DataContract]
@@ -47,6 +61,16 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
             Return.Data = _CswNbtActHMISReporting.getHMISData( Request );
+        }
+
+        /// <summary>
+        /// Gets view of all control zones for HMIS Reporting
+        /// </summary>
+        public static void getControlZonesView( ICswResources CswResources, HMISViewReturn Return, object Request )
+        {
+            CswNbtActHMISReporting _CswNbtActHMISReporting = new CswNbtActHMISReporting( (CswNbtResources) CswResources );
+            CswNbtView ControlZonesView = _CswNbtActHMISReporting.getControlZonesView();
+            Return.Data.SessionViewId = ControlZonesView.SessionViewId;
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.LandingPage
 
                     _ItemData.ViewId = NodeViewId.ToString();
                     _ItemData.ViewMode = ThisView.ViewMode.ToString().ToLower();
-                    if( ThisView.Root.ChildRelationships[0] != null )
+                    if( ThisView.Root.ChildRelationships.Count > 0 && ThisView.Root.ChildRelationships[0] != null )
                     {
                         _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisView.Root.ChildRelationships[0].SecondIconFileName;
                     }
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.LandingPage
                     _ItemData.ActionId = ActionId.ToString();
                     _ItemData.ActionName = ThisAction.Name.ToString();
                     _ItemData.ActionUrl = ThisAction.Url;
-                    _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + "wizard.png";
+                    _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisAction.IconFileName;
                     _ItemData.Type = "action";
                 }
             }

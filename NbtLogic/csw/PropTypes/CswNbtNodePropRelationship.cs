@@ -319,6 +319,10 @@ namespace ChemSW.Nbt.PropTypes
                     RequireViewPermissions: false,
                     IncludeHiddenNodes: false );
                 _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
+                if( RelationshipProp.IsRequired && Options.Count == 2 )
+                {
+                    Options.Remove(new CswPrimaryKey());
+                }
             }
             return Options;
         }
@@ -429,6 +433,7 @@ namespace ChemSW.Nbt.PropTypes
                         {
                             JOption["id"] = NodePk.ToString();
                             JOption["value"] = Options[NodePk];
+                            JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
                         }
                         else
                         {
@@ -514,6 +519,11 @@ namespace ChemSW.Nbt.PropTypes
         public bool IsUserRelationship()
         {
             return _CswNbtMetaDataNodeTypeProp.IsUserRelationship();
+        }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedNodeName );
         }
 
     }//CswNbtNodePropRelationship

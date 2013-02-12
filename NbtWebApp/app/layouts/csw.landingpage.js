@@ -7,7 +7,7 @@
             'use strict';
             var cswPrivate = {
                 name: 'landingpage',
-                Title: '',                
+                Title: '',
                 RoleId: '',
                 ActionId: '',
                 ObjectClassId: '',
@@ -33,8 +33,9 @@
                     tab: 4,
                     button: 5,
                     text: 6,
-                    add: 7
-                }                
+                    icon: 7,
+                    add: 8
+                }
             };
             if (options) {
                 Csw.extend(cswPrivate, options);
@@ -72,13 +73,13 @@
                                 'text-align': 'center',
                                 'font-size': '1.2em'
                             });
-                        
+
                         cswPrivate.landingPageTable = cswPrivate.landingPageDiv.table({
                             name: 'landingpage_tbl',
                             align: 'center',
                             width: '100%'
                         });
-                                                
+
                         cswPrivate.buildActionLinkTable(cswPrivate.landingPageTable.cell(1, 1));
 
                         cswPrivate.layoutTable = cswPrivate.landingPageTable.cell(1, 2).layoutTable({
@@ -122,7 +123,9 @@
                                     link.img({
                                         src: thisItem.ButtonIcon,
                                         border: '',
-                                        cssclass: 'LandingPageImage'
+                                        cssclass: 'LandingPageImage',
+                                        height: '100px',
+                                        width: '100px'
                                     });
                                 }
 
@@ -158,9 +161,9 @@
                         });
                     } // success{}
                 }); // Csw.ajax
-            }());
+            } ());
 
-            cswPrivate.buildActionLinkTable = function(parentDiv) {
+            cswPrivate.buildActionLinkTable = function (parentDiv) {
                 cswPrivate.actionLinkTable = parentDiv.table({
                     name: 'actionLink_tbl',
                     cellpadding: 5,
@@ -268,18 +271,18 @@
             };
 
             cswPrivate.getAddItemForm = function (parentDiv, addOptions) {
-                cswPrivate.addItemForm.table = parentDiv.table({ name: 'addlandingpageitem_tbl' });            
+                cswPrivate.addItemForm.table = parentDiv.table({ name: 'addlandingpageitem_tbl' });
                 cswPrivate.makeTypeControl();
                 cswPrivate.makeViewControl();
                 cswPrivate.makeNodeTypeControl();
-                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId))
-                {
+                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId)) {
                     cswPrivate.makeTabControl();
                     if (false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
                         cswPrivate.makeButtonControl();
                     }
                 }
                 cswPrivate.makeTextControl();
+                cswPrivate.makeIconControl();
                 cswPrivate.makeAddControl(addOptions);
             };
 
@@ -306,7 +309,7 @@
                     cswPrivate.onTypeChange();
                 });
             };
-            
+
             cswPrivate.makeViewControl = function () {
                 cswPrivate.resetAddItem(cswPrivate.select.view);
                 cswPrivate.addItemForm[cswPrivate.select.view].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.view, 1).span({ text: 'View:' }).hide();
@@ -317,7 +320,7 @@
                 });
                 cswPrivate.addItemForm[cswPrivate.select.view].control.$.hide();
             };
-            
+
             cswPrivate.makeNodeTypeControl = function () {
                 cswPrivate.resetAddItem(cswPrivate.select.nodetype);
                 var filter = '', text = '', objClassId = '';
@@ -341,7 +344,7 @@
                 });
                 cswPrivate.makeTabControl();
             };
-            
+
             cswPrivate.makeTabControl = function () {
                 cswPrivate.resetAddItem(cswPrivate.select.tab);
                 cswPrivate.addItemForm[cswPrivate.select.tab].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.tab, 1).span({ text: 'Select Tab:' });
@@ -355,13 +358,39 @@
                     cswPrivate.addItemForm[cswPrivate.select.tab].control.hide();
                 }
             };
-            
+
             cswPrivate.makeTextControl = function () {
                 cswPrivate.resetAddItem(cswPrivate.select.text);
                 cswPrivate.addItemForm[cswPrivate.select.text].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.text, 1).span({ text: 'Text:' });
                 cswPrivate.addItemForm[cswPrivate.select.text].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.text, 2).input({ name: 'landingpage_text' });
             };
-            
+
+            cswPrivate.makeIconControl = function () {
+                cswPrivate.resetAddItem(cswPrivate.select.icon);
+                cswPrivate.addItemForm[cswPrivate.select.icon].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.icon, 1).span({ text: 'Icon:' });
+
+                var iconOptions = [{
+                    name: 'Default',
+                    href: 'Images/blank.gif',
+                    id: ''
+                }];
+                //Csw.each(Csw.enums.iconType, function (iconincrement, iconname) {
+                var iconsArr = Object.keys(Csw.enums.iconType).sort();
+                iconsArr.forEach(function(iconname) {
+                    if (iconname != 'none' && iconname != 'iconType') {
+                        iconOptions.push({
+                            name: iconname,
+                            href: 'Images/newicons/100/' + iconname + '.png',   // better if this used the sprites file
+                            id: iconname + '.png'
+                        });
+                    }
+                });
+                cswPrivate.addItemForm[cswPrivate.select.icon].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.icon, 2).imageSelect({
+                    defaultText: 'Default',
+                    options: iconOptions
+                });
+            };
+
             cswPrivate.makeButtonControl = function () {
                 cswPrivate.resetAddItem(cswPrivate.select.button);
                 cswPrivate.addItemForm[cswPrivate.select.button].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.button, 1).span({ text: 'Select Action:' }).hide();
@@ -414,6 +443,7 @@
                             pkvalue: pkvalue,
                             nodetypeid: cswPrivate.addItemForm[cswPrivate.select.nodetype].control.val(),
                             text: cswPrivate.addItemForm[cswPrivate.select.text].control.val(),
+                            buttonIcon: cswPrivate.addItemForm[cswPrivate.select.icon].control.val(),
                             onSuccess: addOptions.onAdd,
                             onError: function () { cswPrivate.addItemForm[cswPrivate.select.add].control.enable(); }
                         });
@@ -421,8 +451,8 @@
                 });
             };
 
-            cswPrivate.resetAddItem = function(row) {
-                cswPrivate.addItemForm[row] = { label: { }, control: { } };
+            cswPrivate.resetAddItem = function (row) {
+                cswPrivate.addItemForm[row] = { label: {}, control: {} };
                 cswPrivate.addItemForm.table.cell(row, 1).empty();
                 cswPrivate.addItemForm.table.cell(row, 2).empty();
             };
@@ -435,7 +465,8 @@
                     ViewType: addOptions.viewtype,
                     PkValue: addOptions.pkvalue,
                     NodeTypeId: addOptions.nodetypeid,
-                    Text: addOptions.text
+                    Text: addOptions.text,
+                    ButtonIcon: addOptions.buttonIcon
                 };
                 Csw.ajaxWcf.post({
                     urlMethod: 'LandingPages/addItem',
@@ -475,8 +506,8 @@
                 }
             };
 
-            cswPrivate.toggleVisibility = function(type, show) {
-                if(show) {
+            cswPrivate.toggleVisibility = function (type, show) {
+                if (show) {
                     cswPrivate.addItemForm[type].label.show();
                     cswPrivate.addItemForm[type].control.show();
                 } else {

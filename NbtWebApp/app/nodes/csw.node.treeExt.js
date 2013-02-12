@@ -1,6 +1,6 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
+/*global Csw:true*/
 (function csw_nbt_nodeTree() {
     "use strict";
 
@@ -9,9 +9,8 @@
 
             var cswPrivate = {
                 forSearch: false, // if true, used to override default behavior of list views
-                useScrollbars: true,
                 onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
-                onInitialSelectNode: null,
+                onBeforeSelectNode: function () { return true; }, //false prevents selection
                 isMulti: false,
                 validateCheckboxes: true,
                 showToggleLink: true,
@@ -26,9 +25,9 @@
                     nodeKey: '',
                     includeNodeRequired: false,
                     includeInQuickLaunch: true,
-                    onViewChange: function () {},
+                    onViewChange: function () { },
                     treeData: {
-                        
+
                     },
                     defaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name
                 }
@@ -36,12 +35,12 @@
 
             var cswPublic = {};
 
-            (function _preCtor () {
+            (function _preCtor() {
                 Csw.extend(cswPrivate, opts);
                 cswPublic.div = cswParent.div();
-            }());
+            } ());
 
-            cswPrivate.allowMultiSelection = function(currentNode, checkedNode) {
+            cswPrivate.allowMultiSelection = function (currentNode, checkedNode) {
                 var ret = false;
                 if (currentNode && currentNode.raw && currentNode.raw.nodetypeid &&
                     checkedNode && checkedNode.raw && checkedNode.raw.nodetypeid &&
@@ -52,7 +51,7 @@
             };
 
             cswPrivate.make = function (data) {
-                
+
                 cswPublic.nodeTree = cswPublic.div.tree({
                     height: cswPrivate.height,
                     width: cswPrivate.width,
@@ -60,15 +59,17 @@
                     root: data.Tree,
                     columns: data.Columns,
                     fields: data.Fields,
-                    
+                    selectedId: data.SelectedId,
+
                     onMouseEnter: hoverNode,
                     onMouseExit: deHoverNode,
                     onSelect: cswPrivate.handleSelectNode,
+                    beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,
-                        
+
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
                     useToggles: cswPrivate.ShowToggleLink,
-                    isMulti: cswPrivate.isMulti
+                    useCheckboxes: cswPrivate.isMulti
                 });
 
 
@@ -76,38 +77,25 @@
                     cswPrivate.hoverNodeId = treeNode.raw.nodeid;
                     Csw.nodeHoverIn(event, cswPrivate.hoverNodeId, treeNode.raw.id);
                 }
-                
+
                 function deHoverNode() {
                     Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
                 }
-                
-                //cswPublic.treeDiv.find('li').$.each(function () {
-                //    if (thislocked) {
-                //        $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
-                //            .appendTo($childObj.children('a').first());
-                //    }
-
-                //    if (thisdisabled) {
-                //        $childObj.children('a').addClass('disabled');
-                //    }
-
-                //}); // each()
-
-                
-                Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
-                    return function _onMulti(eventObj, multiOpts) {
-                        if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
-                            cswPublic.nodeTree.is.multi = (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
-                            cswPublic.nodeTree.toggleMultiEdit();
-                        } else {
-                            Csw.unsubscribe('CswMultiEdit', null, _onMulti);
-                            Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
-                        }
-                    };
-                }()));
+                //               
+                //                Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
+                //                    return function _onMulti(eventObj, multiOpts) {
+                //                        if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
+                //                            //cswPublic.nodeTree.is.multi = (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
+                //                            cswPublic.nodeTree.toggleUseCheckboxes();
+                //                        } else {
+                //                            Csw.unsubscribe('CswMultiEdit', null, _onMulti);
+                //                            Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
+                //                        }
+                //                    };
+                //                }()));
 
             }; // cswPrivate.make()
-            
+
             cswPrivate.selectedNode = null;
 
             cswPrivate.handleSelectNode = function (myoptions) {
@@ -120,7 +108,7 @@
                     forsearch: cswPrivate.forsearch
                 };
                 Csw.extend(m, myoptions);
-                
+
                 var optSelect = {
                     nodeid: m.nodeid,
                     nodename: m.text,
@@ -129,16 +117,16 @@
                     nodespecies: m.species,
                     viewid: cswPrivate.state.viewId
                 };
-                
+
                 Csw.tryExec(m.onSelectNode, optSelect);
             }; // cswPrivate.handleSelectNode()
 
-            
+
             // For making a tree without using the regular mechanism for fetching tree data
             cswPublic.makeTree = function (treeData) {
                 cswPrivate.make(treeData);
             };
-            
+
             cswPublic.getChecked = function () {
                 var checked = cswPublic.nodeTree.getChecked();
                 var ret = [];
@@ -150,15 +138,9 @@
                 return ret;
             };
 
-
-            (function _postCtor() {
-                var url = 'Trees/run';
-                if (Csw.isNullOrEmpty(cswPrivate.state.viewId)) {
-                    url += '/' + cswPrivate.state.nodeId;
-                }
-
+            cswPrivate.runTree = function () {
                 Csw.ajaxWcf.post({
-                    urlMethod: url,
+                    urlMethod: 'Trees/run',
                     data: {
                         AccessedByObjClassId: '',
                         DefaultSelect: cswPrivate.state.defaultSelect,
@@ -166,17 +148,18 @@
                         IncludeNodeRequired: cswPrivate.state.includeNodeRequired,
                         NbtViewId: cswPrivate.state.viewId,
                         NodeId: cswPrivate.state.nodeId,
-                        NodeKey: cswPrivate.state.nodeKey
+                        NodeKey: cswPrivate.state.nodeKey,
+                        UseCheckboxes: cswPrivate.isMulti
                     },
                     success: function (data) {
 
                         if (Csw.isNullOrEmpty(data.Tree)) {
                             Csw.error.showError(Csw.enums.errorType.error.name,
-                                                'The requested view cannot be rendered as a Tree.',
-                                                'View with ViewId: ' + cswPrivate.state.viewId + ' does not exist or is not a Tree view.');
+                                    'The requested view cannot be rendered as a Tree.',
+                                    'View with ViewId: ' + cswPrivate.state.viewId + ' does not exist or is not a Tree view.');
                         } else {
                             if (Csw.clientSession.isDebug()) {
-                                data.Columns.forEach(function(column) {
+                                data.Columns.forEach(function (column) {
                                     if (column.dataIndex === 'text') {
                                         column.menuDisabled = false;
                                     }
@@ -193,7 +176,26 @@
 
                     } // success
                 }); // ajax
-                
+            }; // runTree
+
+            (function _postCtor() {
+
+                cswPrivate.runTree();
+
+                Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
+                    return function _onMulti(eventObj, multiOpts) {
+                        if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
+                            //cswPublic.nodeTree.is.multi = (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
+                            //cswPublic.nodeTree.toggleUseCheckboxes();
+                            cswPrivate.isMulti = multiOpts.multi;
+                            cswPrivate.runTree();
+                        } else {
+                            Csw.unsubscribe('CswMultiEdit', null, _onMulti);
+                            Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
+                        }
+                    };
+                } ()));
+
             })(); // constructor
 
             return cswPublic;

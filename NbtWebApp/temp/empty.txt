@@ -1,0 +1,1 @@
+An "empty" text file so Mercurial will track the 'temp' folder.

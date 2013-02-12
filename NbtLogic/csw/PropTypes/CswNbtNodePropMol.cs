@@ -92,6 +92,11 @@ namespace ChemSW.Nbt.PropTypes
                 Mol = JObject[_MolSubField.ToXmlNodeName( true )].ToString();
             }
         }
+
+        public override void SyncGestalt()
+        {
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Mol );
+        }
     }//CswNbtNodePropMol
 
 }//namespace ChemSW.Nbt.PropTypes

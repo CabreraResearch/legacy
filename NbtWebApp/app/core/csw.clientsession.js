@@ -12,8 +12,6 @@
         onAuthenticate: null, // function (UserName) {} 
         onFail: null, // function (errormessage) {} 
         logoutpath: '',
-        authenticateUrl: 'Session/Init',
-        DeauthenticateUrl: 'Session/End',
         expiretimeInterval: '',
         expiretime: '',
         expiredInterval: '',
@@ -75,7 +73,7 @@
         });
 
     Csw.clientSession.currentUserName = Csw.clientSession.currentUserName ||
-        Csw.clientSession.register('currentUserName', function() {
+        Csw.clientSession.register('currentUserName', function () {
             return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.Username), cswPrivate.UserName);
         });
 
@@ -155,18 +153,19 @@
             }
             cswPrivate.isAuthenticated = true;
             Csw.ajaxWcf.post({
-                urlMethod: cswPrivate.authenticateUrl,
+                urlMethod: 'Session/Init',
                 data: {
                     CustomerId: cswPrivate.AccessId,
                     UserName: cswPrivate.UserName,
                     Password: cswPrivate.Password,
                     IsMobile: cswPrivate.ForMobile
                 },
-                success: function () {
+                success: function (data) {
                     Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
                     Csw.clientSession.setUsername(cswPrivate.UserName);
                     Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
                     Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
+                    Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
                 },
                 onloginfail: function (txt) {
                     cswPrivate.isAuthenticated = false;
@@ -193,7 +192,7 @@
             }
             cswPrivate.isAuthenticated = false;
             Csw.ajaxWcf.post({
-                urlMethod: cswPrivate.DeauthenticateUrl,
+                urlMethod: 'Session/End',
                 data: {},
                 success: function () {
                     Csw.clientSession.finishLogout();
@@ -296,7 +295,7 @@
                     txt = 'An error occurred';
                     break;
             }
-            if(false === Csw.isNullOrEmpty(txt)) {
+            if (false === Csw.isNullOrEmpty(txt)) {
                 Csw.tryExec(o.failure, txt, o.status);
             }
 
@@ -323,6 +322,16 @@
                     }
                 }
             });
-        });
+        }); // isAdministrator()
 
-}());
+
+    Csw.clientSession.userDefaults = Csw.clientSession.userDefaults ||
+        Csw.clientSession.register('userDefaults', function () {
+            var ret = {};
+            var userDefaults = Csw.cookie.get(Csw.cookie.cookieNames.UserDefaults);
+            if (false === Csw.isNullOrEmpty(userDefaults)) {
+                ret = JSON.parse(userDefaults);
+            }
+            return ret;
+        }); // userDefaults()
+} ());

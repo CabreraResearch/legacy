@@ -23,6 +23,7 @@
                 state: {
                     materialId: null,
                     materialNodeTypeId: '',
+                    containerNodeId: '',
                     containerNodeTypeId: '',
                     containerAddLayout: {},
                     tradeName: '',
@@ -36,7 +37,8 @@
                 stepTwoComplete: false,
                 stepThreeComplete: false,
                 printBarcodes: false,
-                amountsGrid: null
+                amountsGrid: null,
+                
             };
 
             var cswPublic = {};
@@ -111,6 +113,7 @@
                 cswPrivate.finalize = function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     var container = {
+                        containernodeid: cswPrivate.state.containerNodeId,
                         materialid: cswPrivate.state.materialId,
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
                         quantities: cswPrivate.amountsGrid.quantities(),
@@ -118,7 +121,7 @@
                         props: cswPrivate.tabsAndProps.getPropJson(),
                         documentid: cswPrivate.state.documentId
                     };
-                    if(false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
                         container.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
                     }
                     Csw.ajax.post({
@@ -209,14 +212,14 @@
                         var containerSelect = Csw.wizard.nodeTypeSelect(tbl.cell(1, 2), {
                             objectClassName: 'ContainerClass',
                             data: cswPrivate.state.container,
-                            onSelect: function() {
+                            onSelect: function () {
                                 if (cswPrivate.state.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
                                     cswPrivate.reinitSteps(2);
                                     cswPrivate.state.containerAddLayout = null;
                                 }
                                 cswPrivate.state.containerNodeTypeId = containerSelect.selectedNodeTypeId;
                             },
-                            onSuccess: function(types, nodetypecount) {
+                            onSuccess: function (types, nodetypecount) {
                                 makeAmountsGrid();
                                 makeBarcodeCheckBox();
                                 if (nodetypecount > 1) {
@@ -225,7 +228,7 @@
                                 }
                             }
                         });
-                        
+
                         var makeAmountsGrid = function () {
                             cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate.divStep1.div();
                             cswPrivate.amountsDiv.empty();
@@ -241,7 +244,7 @@
                             });
                         };
 
-                        var makeBarcodeCheckBox = function() {
+                        var makeBarcodeCheckBox = function () {
                             cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate.divStep1.div();
                             cswPrivate.barcodeCheckBoxDiv.empty();
 
@@ -249,7 +252,7 @@
                                 cellvalign: 'middle'
                             });
                             var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
-                                onChange: Csw.method(function() {
+                                onChange: Csw.method(function () {
                                     var val;
                                     if (printBarcodesCheckBox.checked()) {
                                         cswPrivate.printBarcodes = true;
@@ -291,8 +294,15 @@
                                 nodetypeid: cswPrivate.state.containerNodeTypeId
                             },
                             globalState: {
-                                propertyData: cswPrivate.state.containerAddLayout
+                                propertyData: cswPrivate.state.containerAddLayout,
+                                currentNodeId: cswPrivate.state.containerNodeId
+                            },
+                            ReloadTabOnSave: true,
+                            onOwnerPropChange: function (propObj, data, tabContentDiv) {
+                                    cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
+     
                             }
+
                         });
 
                         cswPrivate.stepTwoComplete = true;
@@ -352,12 +362,14 @@
                     }
                 };
 
-            }());
-
+            } ());
 
             (function _post() {
+
                 cswPrivate.makeStep1();
+
             } ());
+
             return cswPublic;
         });
 } ());
