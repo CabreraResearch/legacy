@@ -95,6 +95,7 @@ namespace ChemSW.Nbt.Schema
             #endregion WILLIAM
 
 
+
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
