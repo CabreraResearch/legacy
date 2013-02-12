@@ -252,6 +252,7 @@
                                 cellvalign: 'middle'
                             });
                             var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                                checked: true,
                                 onChange: Csw.method(function () {
                                     var val;
                                     if (printBarcodesCheckBox.checked()) {
