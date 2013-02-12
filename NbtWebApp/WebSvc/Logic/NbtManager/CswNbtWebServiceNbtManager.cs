@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.ServiceModel;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -179,6 +180,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 // GOTO CswSchedSvcAdminEndPoint for actual implementation
                 CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+                //Overwrite the app.config endpoint uri with the one defined in SetupVbls
+                EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
+                SchedSvcRef.Endpoint.Address = URI;
                 svcReturn = SchedSvcRef.getRules();
             }
             catch( Exception Exception )
