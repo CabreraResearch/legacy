@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.ImportExport
             _NodeTypePropNameMapper.Add( "storage_conditions", "Storage and Handling" );
             _NodeTypePropNameMapper.Add( "barcodeid", "Barcode" );
             _NodeTypePropNameMapper.Add( "containerstatus", "Status" );
+            _NodeTypePropNameMapper.Add( "netquantity", "Quantity" );
 
 
 

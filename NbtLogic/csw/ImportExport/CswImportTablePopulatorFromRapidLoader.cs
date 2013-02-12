@@ -98,10 +98,6 @@ namespace ChemSW.Nbt.ImportExport
             _KnownOutageProperties.Add( "package" );
 
 
-            //            _KnownOutageProperties.Add( "unitofmeasurename" ); //together with "netquantity" becomes the "quantity" property in NBT
-
-
-
             //WE know the deestination property, but the field type calls for special handling of the columns
             _KnownOutageProperties.Add( "Supplier" );
             _KnownOutageProperties.Add( "un_no" ); // ==> UN Code
@@ -174,16 +170,10 @@ namespace ChemSW.Nbt.ImportExport
             DataAdapter.Fill( RapidLoaderDataTable );
 
 
-            ////End: Set up datatable of excel sheet 
-            ////**************************************************************************
-
-
-            //********************************************************************************************************************
-            //Begin: Set up NBT field-types per-prop mapping
-
 
             List<string> PropColumnNames = new List<string>();
-            int NodeTypeRowIdx = 1;
+            int NodeTypeRowIdx = 0;
+
             foreach( DataColumn CurrentDataColumn in RapidLoaderDataTable.Columns )
             {
 
@@ -192,6 +182,23 @@ namespace ChemSW.Nbt.ImportExport
 
                     string ErrorMessage = string.Empty;
                     string NodeTypeNameCandidate = RapidLoaderDataTable.Rows[NodeTypeRowIdx][CurrentDataColumn].ToString().ToLower();
+
+
+                    //***** BEGIN: STARK RAVING KLUDGE
+                    //For some unknown reason, the blessed select from spreadsheet oblivion is nuking the node type data for these props. 
+                    //This is probably some frickin' spreadsheet format voo doo because if you try to change the nodetype name in the 
+                    //specified column, you get an error about that column being a double. 
+                    //This kludgedelia will make the rest of our algorithm work. Jeeze.
+                    if(
+                             "netquantity" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                             "receivedate" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                             "expirationdate" == CurrentDataColumn.ColumnName.ToString().ToLower()
+                         )
+                    {
+                        NodeTypeNameCandidate = "container";
+                    }
+                    //***** END: STARK RAVING KLUDGE
+
 
                     if( true == NodeTypeNameCandidate.ToLower().Contains( "material" ) ||
                         true == NodeTypeNameCandidate.ToLower().Contains( "container" ) ||
@@ -336,6 +343,7 @@ namespace ChemSW.Nbt.ImportExport
 
                 }//if we need to create a curent vendor record
 
+                ChemSW.Core.CswDelimitedString CurrentSizeCompoundId = null;
                 if( null != CurrentVendorRow )
                 {
 
@@ -362,23 +370,22 @@ namespace ChemSW.Nbt.ImportExport
                         _CswImportExportStatusReporter.reportError( "Could not retrieve chemical node type" );
                     }//if-else we found
 
-
                     if( CurrentMaterialRow != null )
                     {
 
-                        ChemSW.Core.CswDelimitedString SizeCompoundId = new Core.CswDelimitedString( '-' );
-                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
-                        SizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
+                        CurrentSizeCompoundId = new Core.CswDelimitedString( '-' );
+                        CurrentSizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_catalogno].ToString() );
+                        CurrentSizeCompoundId.Add( CurrentRlXlsRow[xls_key_size_unitofmeasurename].ToString() );
 
-                        if( false == SizesRowsByCompoundId.ContainsKey( SizeCompoundId.ToString() ) )
+                        if( false == SizesRowsByCompoundId.ContainsKey( CurrentSizeCompoundId.ToString() ) )
                         {
                             _addRowOfNodeType( CurrentRlXlsRow, SizeNodeType, ImportNodesTable, ImportPropsTable, ref CurrentSizeRow, CurrentMaterialRow, "Material" );
-                            SizesRowsByCompoundId.Add( SizeCompoundId.ToString(), CurrentSizeRow );
+                            SizesRowsByCompoundId.Add( CurrentSizeCompoundId.ToString(), CurrentSizeRow );
 
                         }
                         else
                         {
-                            CurrentSizeRow = SizesRowsByCompoundId[SizeCompoundId.ToString()];
+                            CurrentSizeRow = SizesRowsByCompoundId[CurrentSizeCompoundId.ToString()];
 
                         }//if-else we already have the size row
 
@@ -393,8 +400,13 @@ namespace ChemSW.Nbt.ImportExport
 
                 if( null != CurrentMaterialRow )
                 {
+                    string UomName = "";
+                    if( null != CurrentSizeCompoundId )
+                    {
+                        UomName = CurrentSizeCompoundId[1]; //living dangerously; another kludge
+                    }
 
-                    _addRowOfNodeType( CurrentRlXlsRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, ref CurrentContainerRow, CurrentMaterialRow, "Material" );
+                    _addRowOfNodeType( CurrentRlXlsRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, ref CurrentContainerRow, CurrentMaterialRow, "Material", UomName );
 
                     _addRelationshipForRow( CurrentContainerRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, CurrentSizeRow, "Size" );
 
@@ -431,7 +443,7 @@ namespace ChemSW.Nbt.ImportExport
 
         //the two import tables don't need to be parameters here -- they can be on the class
         private Int32 _ArbitrarySequentialUniqueId = 0;
-        private void _addRowOfNodeType( DataRow RlXlsDataRow, CswNbtMetaDataNodeType NodeTypeToAdd, DataTable ImportNodesTable, DataTable ImportPropsTable, ref DataRow ImportNodesRow, DataRow RelationshipDestinationRow = null, string RelationshipPropName = "" )
+        private void _addRowOfNodeType( DataRow RlXlsDataRow, CswNbtMetaDataNodeType NodeTypeToAdd, DataTable ImportNodesTable, DataTable ImportPropsTable, ref DataRow ImportNodesRow, DataRow RelationshipDestinationRow = null, string RelationshipPropName = "", string ContainerSizeUnit = "" )
         {
 
             ImportNodesRow = ImportNodesTable.NewRow();
@@ -517,7 +529,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( true == _UofMNodeIdsByUofmName.ContainsKey( CandidateUnitOfMeasureName ) )
                                 {
                                     //CurrentImportPropsUpdateRow["NodeID"] = _UofMNodeIdsByUofmName[CandidateUnitOfMeasureName];
-                                    CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = _UofMNodeIdsByUofmName[CandidateUnitOfMeasureName]; 
+                                    CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = _UofMNodeIdsByUofmName[CandidateUnitOfMeasureName];
                                     CurrentImportPropsUpdateRow["Name"] = CandidateUnitOfMeasureName;
                                     //                                    CurrentImportPropsUpdateRow["Value"] = 1;
                                 }
@@ -526,6 +538,27 @@ namespace ChemSW.Nbt.ImportExport
                                     _CswImportExportStatusReporter.reportError( "Unable to import the unit of measure called " + CandidateUnitOfMeasureName );
                                 }
 
+                            }
+                            else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "quantity" )
+                            {
+                                CurrentImportPropsUpdateRow["Value"] = CurrentRlXlsCellVal;
+                                CurrentImportPropsUpdateRow["Name"] = ContainerSizeUnit;
+
+                                if( true == _CISProUofMNamesToNbtSizeNames.ContainsKey( ContainerSizeUnit ) )
+                                {
+                                    if( _UofMNodeIdsByUofmName.ContainsKey( _CISProUofMNamesToNbtSizeNames[ContainerSizeUnit] ) )
+                                    {
+                                        CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = _UofMNodeIdsByUofmName[_CISProUofMNamesToNbtSizeNames[ContainerSizeUnit]];
+                                    }
+                                    else
+                                    {
+                                        _CswImportExportStatusReporter.reportError( "Error creating quantity: the CISPRO unit of measure name " + ContainerSizeUnit + " mapped to NBT unit of measur ename " + _UofMNodeIdsByUofmName[ContainerSizeUnit] + ": cannot find a the target unit of measure node" );
+                                    }
+                                }
+                                else
+                                {
+                                    _CswImportExportStatusReporter.reportError( "Error creating quantity with unit of measure name " + ContainerSizeUnit + ": there is no mapping of for this unit of measure name" );
+                                }
                             }
                             else
                             {
