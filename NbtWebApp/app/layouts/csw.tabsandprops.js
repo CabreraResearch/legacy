@@ -33,7 +33,8 @@
                     excludeOcProps: [],
                     ShowAsReport: true,
                     viewid: '',
-                    checkBoxes: {}
+                    checkBoxes: {},
+                    setIsTempToFalse: true
                 },
                 tabState: {
                     nodename: '',
@@ -1175,7 +1176,8 @@
                             NodeTypeId: cswPrivate.tabState.nodetypeid,
                             NewPropsJson: Csw.serialize(cswPrivate.globalState.propertyData),
                             IdentityTabJson: Csw.serialize(cswPrivate.IdentityTab),
-                            ViewId: cswPublic.getViewId()
+                            ViewId: cswPublic.getViewId(),
+                            setIsTempToFalse: cswPrivate.globalState.setIsTempToFalse
                         },
                         success: function (successData) {
                             cswPrivate.enableSaveBtn();

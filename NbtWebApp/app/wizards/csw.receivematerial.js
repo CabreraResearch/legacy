@@ -295,7 +295,8 @@
                             },
                             globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
-                                currentNodeId: cswPrivate.state.containerNodeId
+                                currentNodeId: cswPrivate.state.containerNodeId,
+                                setIsTempToFalse: false
                             },
                             ReloadTabOnSave: true,
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {

@@ -75,9 +75,9 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.addNode( NodeType, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool setIsTempToFalse, bool IsIdentityTab )
         {
-            return _TabsPropsSd.saveProps( NodePk, TabId, NewPropsJson, NodeTypeId, View, IsIdentityTab );
+            return _TabsPropsSd.saveProps( NodePk, TabId, NewPropsJson, NodeTypeId, View, IsIdentityTab, setIsTempToFalse );
         } // saveProps()
 
         public JObject copyPropValues( string SourceNodeId, string CopyNodeIds, string PropIds )
