@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
+
 namespace ChemSW.Nbt.ImportExport
 {
 
@@ -43,8 +45,14 @@ namespace ChemSW.Nbt.ImportExport
             _NodeTypePropNameMapper.Add( "containerstatus", "Status" );
             _NodeTypePropNameMapper.Add( "netquantity", "Quantity" );
             _NodeTypePropNameMapper.Add( "expirationdate", "Expiration Date" );
+            _NodeTypePropNameMapper.Add( "receiveddate", CswNbtObjClassContainer.PropertyName.DateCreated );
+            _NodeTypePropNameMapper.Add( "physical_description", "Physical Description" );
+            _NodeTypePropNameMapper.Add( "molecular_weight", "Molecular Weight" );
+            _NodeTypePropNameMapper.Add( "specific_gravity", CswNbtObjClassMaterial.PropertyName.SpecificGravity );
 
-
+            _NodeTypePropNameMapper.Add( "storpress", "Storage Pressure" );
+            _NodeTypePropNameMapper.Add( "stortemp", "Storage Temperature" );
+            _NodeTypePropNameMapper.Add( "usetype", "Use Type" );
             _NodeTypePropNameMapper.Add( "containertype", "Container Type" );
             _NodeTypePropNameMapper.Add( "catalogno", "Catalog No" );
             _NodeTypePropNameMapper.Add( "unitofmeasurename", "Initial Quantity" );

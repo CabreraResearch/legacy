@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Text.RegularExpressions;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Schema;
@@ -34,9 +35,11 @@ namespace ChemSW.Nbt.ImportExport
 
         private Dictionary<Int32, CswNbtMetaDataForSpreadSheetCol> _MetaDataByColumnIndex = new Dictionary<int, CswNbtMetaDataForSpreadSheetCol>();
         private Dictionary<string, Int32> _UofMNodeIdsByUofmName = new Dictionary<string, int>();
+        private Dictionary<string, string> _PhysicalStateMap = new Dictionary<string, string>();
         private Dictionary<string, string> _CISProUofMNamesToNbtSizeNames = new Dictionary<string, string>();
         private List<string> _ColsWithoutDestinationProp = new List<string>();
         private Int32 _ContainerOwnerUserNodeId = Int32.MinValue;
+        private Int32 _SitePk = Int32.MinValue;
 
 
         private const string xls_key_isdata = "ISDATA";
@@ -113,6 +116,10 @@ namespace ChemSW.Nbt.ImportExport
             _CISProUofMNamesToNbtSizeNames.Add( "KG", "kg" );
 
 
+            _PhysicalStateMap.Add( "S", CswNbtObjClassMaterial.PhysicalStates.Solid );
+            _PhysicalStateMap.Add( "G", CswNbtObjClassMaterial.PhysicalStates.Gas );
+            _PhysicalStateMap.Add( "L", CswNbtObjClassMaterial.PhysicalStates.Liquid );
+
 
             //_CISProSizeNamesToNbtSizeNames.Add(); 
 
@@ -141,6 +148,8 @@ namespace ChemSW.Nbt.ImportExport
             CswNbtMetaDataNodeType SizeNodeType = _CswNbtResources.MetaData.getNodeType( "Size" );
             CswNbtMetaDataNodeType ContainerNodeType = _CswNbtResources.MetaData.getNodeType( "Container" );
 
+            CswNbtMetaDataNodeType SiteNodeType = _CswNbtResources.MetaData.getNodeType( "Site" );
+
 
             ////**************************************************************************
             ////Begin: Set up NBT field-types per-prop mapping
@@ -149,7 +158,6 @@ namespace ChemSW.Nbt.ImportExport
             CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
             foreach( CswNbtObjClassUnitOfMeasure CurrentOfM in UnitOfMeasureOC.getNodes( false, true ) )
             {
-
                 _UofMNodeIdsByUofmName.Add( CurrentOfM.Name.Text, CurrentOfM.NodeId.PrimaryKey );
             }
 
@@ -160,6 +168,14 @@ namespace ChemSW.Nbt.ImportExport
                 if( "cispro_admin" == CurrentUserNode.Username.ToLower() )
                 {
                     _ContainerOwnerUserNodeId = CurrentUserNode.NodeId.PrimaryKey;
+                }
+            }
+
+            foreach( CswNbtObjClassLocation LocationNode in SiteNodeType.getNodes( false, true ) )
+            {
+                if( "Site 1" == LocationNode.Name.Text )
+                {
+                    _SitePk = LocationNode.NodeId.PrimaryKey;
                 }
             }
 
@@ -217,14 +233,27 @@ namespace ChemSW.Nbt.ImportExport
                     //This is probably some frickin' spreadsheet format voo doo because if you try to change the nodetype name in the 
                     //specified column, you get an error about that column being a double. 
                     //This kludgedelia will make the rest of our algorithm work. Jeeze.
-                    if(
-                             "netquantity" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
-                        //"receivedate" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
-                             "expirationdate" == CurrentDataColumn.ColumnName.ToString().ToLower()
-                         )
+                    if( "netquantity" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                        "expirationdate" == CurrentDataColumn.ColumnName.ToString().ToLower() )
                     {
                         NodeTypeNameCandidate = "container";
                     }
+                    else if( "specific_gravity" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                        "molecular_weight" == CurrentDataColumn.ColumnName.ToString().ToLower() )
+                    {
+                        NodeTypeNameCandidate = "material";
+                    }
+                    else if( "capacity" == CurrentDataColumn.ColumnName.ToString().ToLower() )
+                    {
+                        NodeTypeNameCandidate = "size";
+                    }
+                    else if( "storpress" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                        "stortemp" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                        "usetype" == CurrentDataColumn.ColumnName.ToString().ToLower() )
+                    {
+                        NodeTypeNameCandidate = "container";
+                    }
+
                     //***** END: STARK RAVING KLUDGE
 
 
@@ -265,10 +294,11 @@ namespace ChemSW.Nbt.ImportExport
             //*** Manually add location node types
 
 
-            CswNbtMetaDataNodeType SiteNodeType = _CswNbtResources.MetaData.getNodeType( "Site" );
+            //CswNbtMetaDataNodeType SiteNodeType = _CswNbtResources.MetaData.getNodeType( "Site" );
             CswNbtMetaDataNodeType BuildingNodeType = _CswNbtResources.MetaData.getNodeType( "Building" );
             CswNbtMetaDataNodeType RoomNodeType = _CswNbtResources.MetaData.getNodeType( "Room" );
             CswNbtMetaDataNodeType CabinetNodeType = _CswNbtResources.MetaData.getNodeType( "Cabinet" );
+            CswNbtMetaDataNodeType ShelfNodeType = _CswNbtResources.MetaData.getNodeType( "Shelf" );
 
 
             //*** We are somewhat dundantly creating the spreadsheet col thingies for the locations to get the subfield collection
@@ -375,9 +405,9 @@ namespace ChemSW.Nbt.ImportExport
             CswImporterLocationTree CswImporterLocationTree = new ImportExport.CswImporterLocationTree();
 
             //populate the location tree
-            foreach( DataRow CurrentPathhnameRow in RapidLoaderDataTablePathNames.Rows )
+            foreach( DataRow CurrentPathnameRow in RapidLoaderDataTablePathNames.Rows )
             {
-                string CurrentPathName = CurrentPathhnameRow["pathname"].ToString();
+                string CurrentPathName = CurrentPathnameRow["pathname"].ToString();
                 if( string.Empty != CurrentPathName )
                 {
                     ChemSW.Core.CswCommaDelimitedString CurrentCommaDelimtedString = new Core.CswCommaDelimitedString();
@@ -389,7 +419,45 @@ namespace ChemSW.Nbt.ImportExport
 
             //create site
             DataTable LocationNodesTable = ImportNodesUpdater.getEmptyTable();
-            DataTable LocationPropsTable = ImportNodesUpdater.getEmptyTable();
+            DataTable LocationPropsTable = ImportPropsUpdater.getEmptyTable();
+            
+            //add all locations in breadth first order
+            foreach( CswImporterLocationTree.LocationEntry Entry in CswImporterLocationTree.BreadthFirst() )
+            {
+                CswNbtMetaDataNodeType LocationNT = null;
+                bool AllowInventory = true;
+                switch( Entry.Level )
+                {
+                    case 1:
+                        LocationNT = BuildingNodeType;
+                        break;
+                    case 2:
+                        LocationNT = RoomNodeType;
+                        break;
+                    case 3:
+                        LocationNT = CabinetNodeType;
+                        break;
+                    case 4:
+                        LocationNT = ShelfNodeType;
+                        break;
+                }
+
+                Int32 ParentImportNodeId;
+                if( null != Entry.Parent )
+                {
+                    ParentImportNodeId = Entry.Parent.ImportNodeId;
+                }
+                else
+                {
+                    ParentImportNodeId = _SitePk;
+                }
+                DataRow NewLocationRow = _addLocation( LocationNT, LocationNodesTable, LocationPropsTable, Entry.Name, AllowInventory, ParentImportNodeId );
+                Entry.ImportNodeId = CswConvert.ToInt32( NewLocationRow[CswImporterDbTables._ColName_ImportNodeId] );
+            }
+
+            ImportNodesUpdater.update( LocationNodesTable );
+            ImportPropsUpdater.update( LocationPropsTable );
+
 
             /// 
             ////End: Build location tree
@@ -568,7 +636,16 @@ namespace ChemSW.Nbt.ImportExport
 
                     _addRowOfNodeType( CurrentRlXlsRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, ref CurrentContainerRow, CurrentMaterialRow, "Material", UomName );
 
-                    _addRelationshipForRow( CurrentContainerRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, CurrentSizeRow, "Size" );
+                    _addRelationshipForRow( CurrentContainerRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, CswConvert.ToInt32(CurrentSizeRow[CswImporterDbTables._ColName_ImportNodeId]), "Size" );
+
+                    CswCommaDelimitedString pathCDS = new CswCommaDelimitedString();
+                    pathCDS.FromString(CurrentRlXlsRow["pathname"].ToString());
+                    CswImporterLocationTree.LocationEntry pathEntry = CswImporterLocationTree.FindPath( pathCDS );
+
+                    if( null != pathEntry )
+                    {
+                        _addRelationshipForRow( CurrentContainerRow, ContainerNodeType, ImportNodesTable, ImportPropsTable, pathEntry.ImportNodeId, "Location" );
+                    }
 
                     //manually add user
                     CswNbtMetaDataNodeTypeProp ContainerOwnerNodeTypeProp = ContainerNodeType.getNodeTypeProp( "Owner" );
@@ -652,18 +729,28 @@ namespace ChemSW.Nbt.ImportExport
                             CurrentImportPropsUpdateRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
 
                             string CurrentRlXlsCellVal = RlXlsDataRow[CurrentRlxsCol].ToString();
+
                             if( 1 == CurrentColMetaData.FieldTypeColNames.Count )
                             {
                                 string FieldTypeColumnName = CurrentColMetaData.FieldTypeColNames[0];
-                                if( true == ImportPropsTable.Columns.Contains( FieldTypeColumnName ) )
+                                // Special case for Physical State remapping
+                                if( null != CurrentColMetaData.CswNbtMetaDataNodeTypeProp.getObjectClassProp() &&
+                                    CurrentColMetaData.CswNbtMetaDataNodeTypeProp.getObjectClassProp().PropName == CswNbtObjClassMaterial.PropertyName.PhysicalState &&
+                                    _PhysicalStateMap.ContainsKey( CurrentRlXlsCellVal ) )
                                 {
-
-                                    CurrentImportPropsUpdateRow[FieldTypeColumnName] = CurrentRlXlsCellVal;
+                                    CurrentImportPropsUpdateRow[FieldTypeColumnName] = _PhysicalStateMap[CurrentRlXlsCellVal];
                                 }
                                 else
                                 {
-                                    _CswImportExportStatusReporter.reportError( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName + ":" + CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName + ": the " + CswImporterDbTables.TblName_ImportProps + " table does not have a column for field type " + FieldTypeColumnName );
-                                }//if-else we have a column for our prop's field type
+                                    if( true == ImportPropsTable.Columns.Contains( FieldTypeColumnName ) )
+                                    {
+                                        CurrentImportPropsUpdateRow[FieldTypeColumnName] = CurrentRlXlsCellVal;
+                                    }
+                                    else
+                                    {
+                                        _CswImportExportStatusReporter.reportError( CurrentColMetaData.CswNbtMetaDataNodeType.NodeTypeName + ":" + CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName + ": the " + CswImporterDbTables.TblName_ImportProps + " table does not have a column for field type " + FieldTypeColumnName );
+                                    } //if-else we have a column for our prop's field type
+                                }
                             }
                             else if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.PropName.ToLower() == "barcode" )
                             {
@@ -761,61 +848,52 @@ namespace ChemSW.Nbt.ImportExport
 
                 if( ( false == RelationshipPropWasCreated ) && ( null != RelationshipDestinationRow ) && ( "" != RelationshipPropName ) )
                 {
-                    _addRelationshipForRow( ImportNodesRow, NodeTypeToAdd, ImportNodesTable, ImportPropsTable, RelationshipDestinationRow, RelationshipPropName );
+                    _addRelationshipForRow( ImportNodesRow, NodeTypeToAdd, ImportNodesTable, ImportPropsTable, CswConvert.ToInt32(RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId]), RelationshipPropName );
                 }
 
             }//if we are adding props
 
         }//_addRowOfNodeType()
 
-        private void _addProperptyRow( DataTable PropsTable, DataRow NodeRow, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, ref DataRow PropertyRow )
+        private DataRow _addPropertyRow( DataTable PropsTable, DataRow NodeRow, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
         {
-            PropertyRow = PropsTable.NewRow();
+            DataRow PropertyRow = PropsTable.NewRow();
             PropsTable.Rows.Add( PropertyRow );
 
             PropertyRow[CswImporterDbTables._ColName_ImportNodeId] = NodeRow[CswImporterDbTables._ColName_ImportNodeId];
             PropertyRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = CswNbtMetaDataNodeTypeProp.PropName;
             PropertyRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = CswNbtMetaDataNodeTypeProp.PropId;
             PropertyRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-
+            
+            return PropertyRow;
         }
 
-        private void _addLocation( CswNbtMetaDataNodeType LocationType, DataTable LocationNodesTable, DataTable LocationPropsTable, string LocationName, bool AllowInventory, ref DataRow NewLocationRow, DataRow ParentRow = null )
+        private DataRow _addLocation( CswNbtMetaDataNodeType LocationType, DataTable LocationNodesTable, DataTable LocationPropsTable, string LocationName, bool AllowInventory, Int32 ParentNodeId = Int32.MinValue )
         {
-
+            DataRow NewLocationRow = null;
             _addRowOfNodeType( null, LocationType, LocationNodesTable, null, ref NewLocationRow );
 
-            DataRow NamePropRow = null;
-            _addProperptyRow( LocationPropsTable, NewLocationRow, LocationType.getNodeTypeProp( "Name" ), ref NamePropRow );
+            DataRow NamePropRow  = _addPropertyRow( LocationPropsTable, NewLocationRow, LocationType.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.Name ) );
             NamePropRow["text"] = LocationName;
 
-            DataRow AllowInventoryPropRow = null;
-            _addProperptyRow( LocationPropsTable, NewLocationRow, LocationType.getNodeTypeProp( "Allow Inventory" ), ref AllowInventoryPropRow );
-            AllowInventoryPropRow["checked"] = AllowInventory ? "1" : "0";
+            DataRow AllowInventoryPropRow = _addPropertyRow( LocationPropsTable, NewLocationRow, LocationType.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.AllowInventory ) );
+            AllowInventoryPropRow["checked"] = CswConvert.ToDbVal( AllowInventory );
 
-            if( null != ParentRow )
+            if( Int32.MinValue != ParentNodeId )
             {
-                CswNbtMetaDataNodeTypeProp LocationProp = LocationType.getNodeTypeProp("Location");
+                CswNbtMetaDataNodeTypeProp LocationProp = LocationType.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
 
-                DataRow LocationPropRow = LocationPropsTable.NewRow();
-                LocationPropsTable.Rows.Add( LocationPropRow );
-
-                LocationPropRow[CswImporterDbTables._ColName_ImportNodeId] = NewLocationRow[CswImporterDbTables._ColName_ImportNodeId];
-
-                LocationPropRow[CswImporterDbTables._ColName_Infra_Nodes_NodeTypePropName] = LocationProp.PropName;
-                LocationPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = LocationProp.PropId;
-                LocationPropRow [CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-
-                LocationPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = NewLocationRow[CswImporterDbTables._ColName_ImportNodeId];
-
+                DataRow LocationPropRow = _addPropertyRow( LocationPropsTable, NewLocationRow, LocationProp );
+                LocationPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = ParentNodeId;
             }
+            return NewLocationRow;
         }//_addLocation()
 
 
         //These params can also be pared down
-        private void _addRelationshipForRow( DataRow SourceImportNodesRow, CswNbtMetaDataNodeType NodeTypeToAdd, DataTable ImportNodesTable, DataTable ImportPropsTable, DataRow RelationshipDestinationRow = null, string RelationshipPropName = "" )
+        private void _addRelationshipForRow( DataRow SourceImportNodesRow, CswNbtMetaDataNodeType NodeTypeToAdd, DataTable ImportNodesTable, DataTable ImportPropsTable, Int32 TargetImportNodeId, string RelationshipPropName = "" )
         {
-            if( ( null != RelationshipDestinationRow ) && ( "" != RelationshipPropName ) )
+            if( ( Int32.MinValue != TargetImportNodeId ) && ( "" != RelationshipPropName ) )
             {
                 CswNbtMetaDataNodeTypeProp RelationshipProp = NodeTypeToAdd.getNodeTypeProp( RelationshipPropName );
                 if( null != RelationshipProp )
@@ -829,7 +907,7 @@ namespace ChemSW.Nbt.ImportExport
                     RelationshipPropRow[CswImporterDbTables.ColName_ImportPropsRealPropId] = RelationshipProp.PropId;
                     RelationshipPropRow[CswImporterDbTables._ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
 
-                    RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
+                    RelationshipPropRow[CswImporterDbTables._ColName_Props_ImportTargetNodeIdUnique] = TargetImportNodeId;  //RelationshipDestinationRow[CswImporterDbTables._ColName_ImportNodeId];
                 }
                 else
                 {
