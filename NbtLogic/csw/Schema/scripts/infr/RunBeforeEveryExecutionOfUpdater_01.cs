@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -95,13 +96,37 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
 
 
-            _acceptBlame(CswDeveloper.SS, 28508);
-            if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("nodes", "iconfilename"))
+            _acceptBlame( CswDeveloper.SS, 28508 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "iconfilename" ) )
             {
-                _CswNbtSchemaModTrnsctn.addStringColumn("nodes", "iconfilename", "Overrides the icon from the nodetype", false, false, 50);
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "iconfilename", "Overrides the icon from the nodetype", false, false, 50 );
             }
             _resetBlame();
 
+            _acceptBlame( CswDeveloper.SS, 28523 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "actions", "iconfilename" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "actions", "iconfilename", "Default icon for the action", false, false, 50 );
+            }
+            _resetBlame();
+
+            _acceptBlame( CswDeveloper.BV, 28746 );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "extended" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "nodetype_props", "extended", DataDictionaryPortableDataType.String, 100 );
+            }
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "extended" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "object_class_props", "extended", DataDictionaryPortableDataType.String, 100 );
+            }
+            _resetBlame();
+
+            _acceptBlame( CswDeveloper.BV, 27642 );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "scheduledrules", "statusmessage" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "scheduledrules", "statusmessage", DataDictionaryPortableDataType.Clob, Int32.MinValue );
+            }
+            _resetBlame();
 
             #endregion WILLIAM
 

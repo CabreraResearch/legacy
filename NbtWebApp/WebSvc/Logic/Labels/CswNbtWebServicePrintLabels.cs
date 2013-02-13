@@ -587,8 +587,10 @@ namespace ChemSW.Nbt.WebServices
 
                             Job.JobState.Value = CswNbtObjClassPrintJob.StateOption.Processing;
                             Job.ProcessedDate.DateTimeValue = DateTime.Now;
+                            Job.postChanges( false );
 
                             Printer.LastJobRequest.DateTimeValue = DateTime.Now;
+                            Printer.postChanges( false );
 
                             Return.Status.Success = true;
                             Return.JobKey = Job.NodeId.ToString();

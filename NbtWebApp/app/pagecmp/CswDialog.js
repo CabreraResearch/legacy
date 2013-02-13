@@ -1070,7 +1070,8 @@
 
             //SearchTypes Picklist
             var searchTypeSelect = tableInner.cell(1, 2).select({
-                name: 'C3Search_searchTypeSelect'
+                name: 'C3Search_searchTypeSelect',
+                selected: 'Name'
             });
 
             function getSearchTypes() {
@@ -1443,8 +1444,6 @@
             labelSelDiv.br();
             labelSelDiv.div({ text: 'Select a Printer:' });
 
-            var userDefaults = JSON.parse(Csw.cookie.get(Csw.cookie.cookieNames.UserDefaults));
-
             var printerSel = labelSelDiv.nodeSelect({
                 name: cswDlgPrivate.name + '_printersel',
                 objectClassName: 'PrinterClass',
@@ -1452,7 +1451,7 @@
                 isRequired: true,
                 showSelectOnLoad: true,
                 isMulti: false,
-                selectedNodeId: userDefaults.DefaultPrinterId
+                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId
             });
 
             cswPublic.div.button({

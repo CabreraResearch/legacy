@@ -95,7 +95,8 @@ namespace ChemSW.Nbt
             if( SessionType == CswNbtSessionDataItem.SessionDataType.Action )
             {
                 Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
-                _addQuickLaunchAction( Category, Name, SessionDataId, _CswNbtResources.Actions[ActionId].Name, _CswNbtResources.Actions[ActionId].Url );
+                CswNbtAction Action = _CswNbtResources.Actions[ActionId];
+                _addQuickLaunchAction( Category, Name, SessionDataId, Action );
             }
             else if( SessionType == CswNbtSessionDataItem.SessionDataType.View )
             {
@@ -120,15 +121,15 @@ namespace ChemSW.Nbt
             });
         }
 
-        private void _addQuickLaunchAction( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, CswNbtActionName ActionName, string ActionUrl )
+        private void _addQuickLaunchAction( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, CswNbtAction Action )
         {
             Category.items.Add(
                 new ViewSelect.Response.Item( ItemType.Action )
                 {
                     name = Text,
                     itemid = SessionDataId.ToString(),
-                    iconurl = CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png",
-                    url = CswConvert.ToString( ActionUrl )
+                    iconurl = CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName,
+                    url = CswConvert.ToString( Action.Url )
                 } );
         }
 

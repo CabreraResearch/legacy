@@ -20,11 +20,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( NbtScheduleRuleNames.CAFImport.ToString() ); }
         }
 
-        public bool doesItemRunNow()
-        {
-            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
-        }
-
 
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;

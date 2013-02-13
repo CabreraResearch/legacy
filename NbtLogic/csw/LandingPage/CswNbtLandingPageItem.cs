@@ -2,6 +2,7 @@
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.LandingPage
 {
@@ -40,7 +41,14 @@ namespace ChemSW.Nbt.LandingPage
             _ItemData.LinkType = LandingPageRow["componenttype"].ToString();
             _ItemData.DisplayRow = LandingPageRow["display_row"].ToString();
             _ItemData.DisplayCol = LandingPageRow["display_col"].ToString();
-        }
+            
+            // this intentionally overrides values set elsewhere
+            string buttonIcon = LandingPageRow["buttonicon"].ToString();
+            if( false == string.IsNullOrEmpty( buttonIcon ) )
+            {
+                _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + buttonIcon;
+            }
+        } // _setCommonItemDataForUI()
 
         public abstract void setItemDataForDB( LandingPageData.Request Request );
 

@@ -196,6 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
                             CswNbtObjClassContainer Container = Act.makeContainer();
                             Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            ButtonData.Data["state"]["containerNodeId"] = Container.NodeId.ToString();
                             ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
@@ -208,9 +209,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
                                 {
                                     JToken name = child.First.SelectToken( "name" );
-                                    if( name.ToString() == "Expiration Date" )
+                                    if (null != name)
                                     {
-                                        ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
+                                        if (name.ToString() == "Expiration Date")
+                                        {
+                                            ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
+                                        }
                                     }
                                 }
                             }
@@ -222,6 +226,9 @@ namespace ChemSW.Nbt.ObjClasses
                             }
 
                             ButtonData.Action = NbtButtonAction.receive;
+
+                            Container.postChanges( false );
+
                         }
                         break;
                     case PropertyName.ViewSDS:

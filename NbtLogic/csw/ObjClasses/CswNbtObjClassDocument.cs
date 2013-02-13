@@ -284,12 +284,21 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
         {
             ArchiveDate.setHidden( value: Archived.Checked != Tristate.True, SaveToDb: true );
+            string ArchivedTitleSuffix = " (Archived)";
             if( Archived.Checked == Tristate.True )
             {
                 ArchiveDate.DateTimeValue = DateTime.Now;
-                Title.Text += " (Archived)";
+                Title.Text += ArchivedTitleSuffix;
             }
-        }
+            else
+            {
+                ArchiveDate.DateTimeValue = DateTime.MinValue;
+                if( Title.Text.EndsWith( ArchivedTitleSuffix ) )
+                {
+                    Title.Text = Title.Text.Substring( 0, Title.Text.Length - ArchivedTitleSuffix.Length );
+                }
+            }
+        } // OnArchivedPropChange()
 
         public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
         private void OnLanguagePropChange( CswNbtNodeProp NodeProp )
