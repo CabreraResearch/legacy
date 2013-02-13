@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Exception )
             {
-                throw new CswDniException( "Could not communicate with the Schedule Service", Exception );
+                throw new CswDniException( "Could not communicate with the Schedule Service: " + Exception.Message, Exception );
             }
 
             try
@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Exception )
             {
-                throw new CswDniException( "Could not generate a grid of the Schedule Service's current rules.", Exception );
+                throw new CswDniException( "Could not generate a grid of the Schedule Service's current rules: " + Exception.Message, Exception );
             }
 
         }//getScheduledRulesGrid()
