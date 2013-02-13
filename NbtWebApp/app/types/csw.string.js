@@ -173,12 +173,11 @@
                         }
                     });
                 } else if(string && string.length > 0) {
-                    Csw.extend(cswPrivate, opts);
                     var delimitedString = cswPrivate.parse(string);
                     cswPrivate.initString = delimitedString;
                     cswPublic.array = delimitedString.split(cswPrivate.delimiter);
                 }
-
+                Csw.extend(cswPrivate, opts);
                 cswPrivate.deleteDuplicates();
             }(arguments));
             return cswPublic;
