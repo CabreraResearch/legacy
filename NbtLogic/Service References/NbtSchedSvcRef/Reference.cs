@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.NbtSchedSvcRef {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/CswSchedSvcAdminEndPoint/getRules", ReplyAction="http://tempuri.org/CswSchedSvcAdminEndPoint/getRulesResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="http://tempuri.org/CswSchedSvcAdminEndPoint/getRulesFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        ChemSW.MtSched.Core.CswSchedSvcReturn getRules();
+        ChemSW.MtSched.Core.CswSchedSvcReturn getRules( MtSched.Core.CswSchedSvcParams CswSchedSvcParams );
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/CswSchedSvcAdminEndPoint/getRunStatus", ReplyAction="http://tempuri.org/CswSchedSvcAdminEndPoint/getRunStatusResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="http://tempuri.org/CswSchedSvcAdminEndPoint/getRunStatusFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
@@ -53,9 +53,10 @@ namespace ChemSW.Nbt.NbtSchedSvcRef {
         public CswSchedSvcAdminEndPointClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
         }
-        
-        public ChemSW.MtSched.Core.CswSchedSvcReturn getRules() {
-            return base.Channel.getRules();
+
+        public ChemSW.MtSched.Core.CswSchedSvcReturn getRules( MtSched.Core.CswSchedSvcParams CswSchedSvcParams )
+        {
+            return base.Channel.getRules( CswSchedSvcParams );
         }
         
         public ChemSW.MtSched.Core.CswSchedSvcReturn getRunStatus(ChemSW.MtSched.Core.CswSchedSvcParams CswSchedSvcParams) {

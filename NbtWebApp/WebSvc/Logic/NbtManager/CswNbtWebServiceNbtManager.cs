@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _addScheduledRulesGrid( CswNbtResources NbtResources, Collection<CswScheduleLogicDetail> LogicDetails, CswNbtScheduledRulesReturn Ret )
         {
-            if( LogicDetails.Count > 0 && 
+            if( null != LogicDetails && LogicDetails.Count > 0 && 
                 null != Ret && 
                 null != Ret.Data )
             {
@@ -150,21 +150,24 @@ namespace ChemSW.Nbt.WebServices
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
                 {
-                    DataRow Row = GridTable.NewRow();
-                    Row[CswScheduleLogicDetail.ColumnNames.RuleName] = LogicDetail.RuleName;
-                    Row[CswScheduleLogicDetail.ColumnNames.Recurrance] = LogicDetail.Recurrence;
-                    Row[CswScheduleLogicDetail.ColumnNames.Interval] = LogicDetail.Interval;
-                    Row[CswScheduleLogicDetail.ColumnNames.ReprobateThreshold] = LogicDetail.ReprobateThreshold;
-                    Row[CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs] = LogicDetail.MaxRunTimeMs;
-                    Row[CswScheduleLogicDetail.ColumnNames.Reprobate] = LogicDetail.Reprobate;
-                    Row[CswScheduleLogicDetail.ColumnNames.RunStartTime] = LogicDetail.RunStartTime;
-                    Row[CswScheduleLogicDetail.ColumnNames.RunEndTime] = LogicDetail.RunEndTime;
-                    Row[CswScheduleLogicDetail.ColumnNames.TotalRogueCount] = LogicDetail.TotalRogueCount;
-                    Row[CswScheduleLogicDetail.ColumnNames.FailedCount] = LogicDetail.FailedCount;
-                    Row[CswScheduleLogicDetail.ColumnNames.ThreadId] = LogicDetail.ThreadId;
-                    Row[CswScheduleLogicDetail.ColumnNames.StatusMessage] = LogicDetail.StatusMessage;
-                    
-                    GridTable.Rows.Add( Row );
+                    if( null != LogicDetail )
+                    {
+                        DataRow Row = GridTable.NewRow();
+                        Row[CswScheduleLogicDetail.ColumnNames.RuleName] = LogicDetail.RuleName;
+                        Row[CswScheduleLogicDetail.ColumnNames.Recurrance] = LogicDetail.Recurrence;
+                        Row[CswScheduleLogicDetail.ColumnNames.Interval] = LogicDetail.Interval;
+                        Row[CswScheduleLogicDetail.ColumnNames.ReprobateThreshold] = LogicDetail.ReprobateThreshold;
+                        Row[CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs] = LogicDetail.MaxRunTimeMs;
+                        Row[CswScheduleLogicDetail.ColumnNames.Reprobate] = LogicDetail.Reprobate;
+                        Row[CswScheduleLogicDetail.ColumnNames.RunStartTime] = LogicDetail.RunStartTime;
+                        Row[CswScheduleLogicDetail.ColumnNames.RunEndTime] = LogicDetail.RunEndTime;
+                        Row[CswScheduleLogicDetail.ColumnNames.TotalRogueCount] = LogicDetail.TotalRogueCount;
+                        Row[CswScheduleLogicDetail.ColumnNames.FailedCount] = LogicDetail.FailedCount;
+                        Row[CswScheduleLogicDetail.ColumnNames.ThreadId] = LogicDetail.ThreadId;
+                        Row[CswScheduleLogicDetail.ColumnNames.StatusMessage] = LogicDetail.StatusMessage;
+
+                        GridTable.Rows.Add(Row);
+                    }
                 }
                 CswNbtGrid gd = new CswNbtGrid( NbtResources );
                 Ret.Data.Grid = gd.DataTableToGrid( GridTable );
@@ -176,30 +179,19 @@ namespace ChemSW.Nbt.WebServices
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
             //TODO: switch Resources to alternate AccessId, if different than our current AccessId
-            try
-            {
-                // GOTO CswSchedSvcAdminEndPoint for actual implementation
-                CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
-                //Overwrite the app.config endpoint uri with the one defined in SetupVbls
-                EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
-                SchedSvcRef.Endpoint.Address = URI;
-                svcReturn = SchedSvcRef.getRules();
-            }
-            catch( Exception Exception )
-            {
-                throw new CswDniException( "Could not communicate with the Schedule Service: " + Exception.Message, Exception );
-            }
-
-            try
+            // GOTO CswSchedSvcAdminEndPoint for actual implementation
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+            //Overwrite the app.config endpoint uri with the one defined in SetupVbls
+            EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
+            SchedSvcRef.Endpoint.Address = URI;
+            CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
+            CswSchedSvcParams.CustomerId = AccessId;
+            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams );
+            if( null != svcReturn )
             {
                 _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
-                Return.Data.CustomerId = AccessId;
             }
-            catch( Exception Exception )
-            {
-                throw new CswDniException( "Could not generate a grid of the Schedule Service's current rules: " + Exception.Message, Exception );
-            }
-
+            Return.Data.CustomerId = AccessId;
         }//getScheduledRulesGrid()
 
 
