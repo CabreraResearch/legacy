@@ -151,7 +151,6 @@
 
 
             cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
-                console.log("Owner prop changed");
                 cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
             };
 
@@ -926,16 +925,11 @@
                     cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
 
                     if (propData.ocpname === "Owner") {
-                        //console.log(propData.name + " changed.");
                         Csw.unsubscribe('onPropChange_' + propid);
                         Csw.subscribe('onPropChange_' + propid, function (eventObject, data) {
                             cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
                         });
                     }
-                    //else {
-                    //                        //console.log(propData.name + " changed.");
-                    //                    }
-
                 }
             };
 

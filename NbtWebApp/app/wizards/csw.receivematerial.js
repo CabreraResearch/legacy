@@ -107,12 +107,6 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
-                        
-                    if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
-                        cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
-                        if (cswPrivate.lastStepNo === 2) {
-                            cswPrivate.tabsAndProps.save({}, '', null, false);
-                        }
                     }
                         
                 };
