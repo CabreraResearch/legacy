@@ -196,6 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
                             CswNbtObjClassContainer Container = Act.makeContainer();
                             Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             ButtonData.Data["state"]["containerNodeId"] = Container.NodeId.ToString();
                             ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
