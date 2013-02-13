@@ -33,7 +33,8 @@
                     excludeOcProps: [],
                     ShowAsReport: true,
                     viewid: '',
-                    checkBoxes: {}
+                    checkBoxes: {},
+                    removeTempStatus: true
                 },
                 tabState: {
                     nodename: '',
@@ -150,7 +151,7 @@
 
 
             cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
-                    cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
+                cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
             };
 
             //#endregion Events
@@ -924,11 +925,11 @@
                     cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
 
                     if (propData.ocpname === "Owner") {
-                        Csw.subscribe('onPropChange_' + propid, function(eventObject, data) {
+                        Csw.unsubscribe('onPropChange_' + propid);
+                        Csw.subscribe('onPropChange_' + propid, function (eventObject, data) {
                             cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
                         });
                     }
-
                 }
             };
 
@@ -1175,7 +1176,8 @@
                             NodeTypeId: cswPrivate.tabState.nodetypeid,
                             NewPropsJson: Csw.serialize(cswPrivate.globalState.propertyData),
                             IdentityTabJson: Csw.serialize(cswPrivate.IdentityTab),
-                            ViewId: cswPublic.getViewId()
+                            ViewId: cswPublic.getViewId(),
+                            RemoveTempStatus: cswPrivate.globalState.removeTempStatus
                         },
                         success: function (successData) {
                             cswPrivate.enableSaveBtn();
