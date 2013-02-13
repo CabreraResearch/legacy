@@ -208,10 +208,13 @@ namespace ChemSW.Nbt.Actions
                         }
                         if( false == String.IsNullOrEmpty( UseType ) )
                         {
-                            HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( ExistingMaterial => ExistingMaterial.Material == MaterialName );
-                            if( null != HMISMaterial )
+                            IEnumerable<HMISData.HMISMaterial> HMISMaterials = Data.Materials.Where( ExistingMaterial => ExistingMaterial.Material == MaterialName );
+                            if( HMISMaterials.Any() )
                             {
-                                _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
+                                foreach( HMISData.HMISMaterial HMISMaterial in HMISMaterials )
+                                {
+                                    _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
+                                }
                             }
                             else
                             {
@@ -220,7 +223,7 @@ namespace ChemSW.Nbt.Actions
                                 CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
                                 foreach( String HazardClass in MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value )
                                 {
-                                    HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
+                                    HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
                                     if( null != HMISMaterial )//This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
                                     {
                                         if ( false == String.IsNullOrEmpty( HMISMaterial.Material ) )
