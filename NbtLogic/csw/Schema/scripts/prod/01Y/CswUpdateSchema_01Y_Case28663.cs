@@ -39,28 +39,24 @@ namespace ChemSW.Nbt.Schema
                 if( null != invLevelsNTP )
                 {
                     CswNbtView invLevelsView = _CswNbtSchemaModTrnsctn.restoreView( invLevelsNTP.ViewId );
+                    invLevelsView.Root.ChildRelationships.Clear();
 
-                    CswNbtView newInvLevelsView = _CswNbtSchemaModTrnsctn.makeNewView( invLevelsView.ViewName, invLevelsView.Visibility );
-                    newInvLevelsView.SetViewMode( invLevelsView.ViewMode );
-                    invLevelsView.Delete();
-
-                    CswNbtViewRelationship locationParent = newInvLevelsView.AddViewRelationship( locationNT, true );
-                    CswNbtViewRelationship invLvlParent = newInvLevelsView.AddViewRelationship( locationParent, NbtViewPropOwnerType.Second, locationOCP, true );
+                    CswNbtViewRelationship locationParent = invLevelsView.AddViewRelationship( locationNT, true );
+                    CswNbtViewRelationship invLvlParent = invLevelsView.AddViewRelationship( locationParent, NbtViewPropOwnerType.Second, locationOCP, true );
                     invLvlParent.AddChildren = NbtViewAddChildrenSetting.None; //cannot add Inv Levels
 
                     int order = 1;
-                    _addProp( newInvLevelsView, invLvlParent, currentQuantOCP, order );
+                    _addProp( invLevelsView, invLvlParent, currentQuantOCP, order );
                     order++;
-                    _addProp( newInvLevelsView, invLvlParent, levelOCP, order );
+                    _addProp( invLevelsView, invLvlParent, levelOCP, order );
                     order++;
-                    _addProp( newInvLevelsView, invLvlParent, materialOCP, order );
+                    _addProp( invLevelsView, invLvlParent, materialOCP, order );
                     order++;
-                    _addProp( newInvLevelsView, invLvlParent, statusOCP, order );
+                    _addProp( invLevelsView, invLvlParent, statusOCP, order );
                     order++;
-                    _addProp( newInvLevelsView, invLvlParent, typeOCP, order );
+                    _addProp( invLevelsView, invLvlParent, typeOCP, order );
 
-                    newInvLevelsView.save();
-                    invLevelsNTP.ViewId = newInvLevelsView.ViewId;
+                    invLevelsView.save();
                 }
             }
 
@@ -69,8 +65,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _addProp( CswNbtView view, CswNbtViewRelationship parent, CswNbtMetaDataObjectClassProp prop, int order )
         {
-            CswNbtViewProperty viewProp = view.AddViewProperty( parent, prop );
-            viewProp.Order = order;
+            CswNbtViewProperty viewProp = view.AddViewProperty( parent, prop, order );
         }
 
     }//class CswUpdateSchema_01Y_Case28663
