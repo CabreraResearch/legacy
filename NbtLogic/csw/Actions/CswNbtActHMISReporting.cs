@@ -221,7 +221,12 @@ namespace ChemSW.Nbt.Actions
                                 HMISTree.goToNthChild( 0 );
                                 CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
                                 CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
-                                foreach( String HazardClass in MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value )
+                                CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
+                                if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
+                                {
+                                    HazardClasses.Add("FL-Comb");
+                                }
+                                foreach( String HazardClass in HazardClasses )
                                 {
                                     HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
                                     if( null != HMISMaterial )//This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
