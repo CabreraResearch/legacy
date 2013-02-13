@@ -37,11 +37,10 @@ namespace ChemSW.Nbt.Schema
 
             ICswNbtTree tree = _CswNbtSchemaModTrnsctn.getTreeFromView( workUnits, true );
             CswPrimaryKey nodeid = null;
-            for( int i = 0; i < tree.getChildNodeCount(); i++ )
+            if( tree.getChildNodeCount() > 0 )
             {
-                tree.goToNthChild( i );
+                tree.goToNthChild( 0 );
                 nodeid = tree.getNodeIdForCurrentPosition();
-                tree.goToParentNode();
             }
 
             if( null != nodeid )
