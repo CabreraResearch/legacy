@@ -41,12 +41,13 @@
                 cswPrivate.allowMultiSelection = cswPrivate.allowMultiSelection || function () { };
 
                 //Styling
-                cswPrivate.height = cswPrivate.height || 410;
+                cswPrivate.height = cswPrivate.height || '100%';
                 cswPrivate.width = cswPrivate.width || 270;
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;
                 cswPrivate.useCheckboxes = cswPrivate.useCheckboxes;
+                cswPrivate.useScrollbars = cswPrivate.useScrollbars;
 
                 //Events
                 cswPrivate.onClick = cswPrivate.onClick || function () { };
@@ -58,6 +59,11 @@
                 cswParent.empty();
                 cswPublic.div = cswParent.div();
 
+                if (cswPrivate.useScrollbars) {
+                    cswPublic.div.addClass('treediv');
+                } else {
+                    cswPublic.div.addClass('treediv_noscroll');
+                }
             } ());
 
             //#endregion Pre-ctor
@@ -259,11 +265,15 @@
                 /// Collapses all nodes in the tree.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                button.setText('Expand All');
-                cswPublic.tree.getEl().mask('Collapsing tree...');
+                if (cswPrivate.useToggles) {
+                    button.setText('Expand All');
+                    cswPublic.tree.getEl().mask('Collapsing tree...');
+                }
                 cswPublic.tree.collapseAll(function () {
-                    cswPublic.tree.getEl().unmask();
-                    toolbar.enable();
+                    if (cswPrivate.useToggles) {
+                        cswPublic.tree.getEl().unmask();
+                        toolbar.enable();
+                    }
                 });
                 return cswPublic;
             };
@@ -273,14 +283,17 @@
                 /// Expand all nodes in the tree.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                button.setText('Collapse All');
-                cswPublic.tree.getEl().mask('Expanding tree...');
+                if (cswPrivate.useToggles) {
+                    button.setText('Collapse All');
+                    cswPublic.tree.getEl().mask('Expanding tree...');
+                }
                 cswPublic.eachNode(function (node) {
                     node.expand();
                 });
-                cswPublic.tree.getEl().unmask();
-                toolbar.enable();
-
+                if (cswPrivate.useToggles) {
+                    cswPublic.tree.getEl().unmask();
+                    toolbar.enable();
+                }
                 return cswPublic;
             };
 

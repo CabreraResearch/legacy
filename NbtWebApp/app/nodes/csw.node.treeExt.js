@@ -14,6 +14,7 @@
                 isMulti: false,
                 validateCheckboxes: true,
                 showToggleLink: true,
+                useScrollbars: true,
                 height: '',
                 width: '',
 
@@ -69,7 +70,8 @@
 
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
                     useToggles: cswPrivate.ShowToggleLink,
-                    useCheckboxes: cswPrivate.isMulti
+                    useCheckboxes: cswPrivate.isMulti,
+                    useScrollbars: cswPrivate.useScrollbars
                 });
 
                 function hoverNode(event, treeNode, htmlElement, index, eventObj, eOpts) {

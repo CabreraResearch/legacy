@@ -35,7 +35,7 @@
                 }).css({
                     position: 'absolute',
                     top: parentDiv.$.position().top + 'px',
-                    right: '5px'
+                    right: '25px'
                 });
             }
         }); // Csw.nodeHoverIn 

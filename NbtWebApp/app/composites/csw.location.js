@@ -88,7 +88,7 @@
                     return cswPrivate.value;
                 };
 
-                cswPublic.selectedName = function() {
+                cswPublic.selectedName = function () {
                     return cswPrivate.selectedName;
                 };
 
@@ -107,7 +107,7 @@
                     Csw.defer(function () { cswPublic.comboBox.close(); }, 100);
                 };
 
-                cswPrivate.makeLocationCombo = function() {
+                cswPrivate.makeLocationCombo = function () {
                     cswPublic.table.cell(1, 1).hide();
                     cswPublic.table.cell(1, 2).hide();
                     cswPublic.table.cell(2, 1).show();
@@ -121,7 +121,7 @@
                             var first = true;
                             return function () {
                                 if (first) {      // only do this once
-                                    cswPublic.locationTree.expandAll();
+                                    cswPublic.locationTree.nodeTree.expandAll();
                                     first = false;
                                 }
                                 cswPublic.comboBox.open(); // ensure we're open on click
@@ -130,27 +130,21 @@
                         })()
                     });
                     cswPublic.comboBox.required(cswPrivate.isRequired);
-                    cswPublic.locationTree = Csw.nbt.nodeTree({
-                        name: cswPrivate.name,
-                        parent: cswPublic.comboBox.pickList,
-                        onInitialSelectNode: function (optSelect) {
-                            cswPrivate.onTreeSelect(optSelect);
-                        },
-                        onSelectNode: function (optSelect) {
-                            cswPrivate.onTreeSelect(optSelect);
-                        },
-                        UseScrollbars: false,
-                        ShowToggleLink: false
-                    });
 
-                    cswPublic.locationTree.init({
-                        viewid: cswPrivate.viewid,
-                        nodeid: cswPrivate.nodeid,
-                        nodekey: cswPrivate.nodeKey,
-                        IncludeInQuickLaunch: false,
-                        DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                    cswPublic.locationTree = Csw.nbt.nodeTreeExt(cswPublic.comboBox.pickList, {
+                        name: cswPrivate.name,
+                        onSelectNode: cswPrivate.onTreeSelect,
+                        showToggleLink: false,
+                        useScrollbars: false,
+                        state: {
+                            viewId: cswPrivate.viewid,
+                            nodeId: cswPrivate.nodeid,
+                            nodeKey: cswPrivate.nodeKey,
+                            includeInQuickLaunch: false,
+                            defaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                        }
                     });
-                };
+                }; // makeLocationCombo()
 
                 //#endregion cswPrivate/cswPublic methods and props
 
