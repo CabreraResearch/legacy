@@ -336,23 +336,29 @@
                             RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId)
                         },
                         success: function (data) {
-                            var found = false;
-                            //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
-                            data.Nodes.forEach(function (obj) {
-                                if (obj.NodeId === nodeid) {
-                                    found = true;
-                                    cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
-                                    cswPrivate.select.option({ value: obj.NodeId, display: obj.NodeName, selected: true }).data({ link: obj.NodeLink });
-                                    cswPrivate.select.val(obj.NodeId);
-                                    cswPrivate.selectedNodeId = obj.NodeId;
-                                }
-                            });
-                            if (false === found) {
-                                cswPrivate.select.val(cswPrivate.selectedNodeId);
-                                cswPrivate.table.cell(1, cswPrivate.tipCellCol).nodeLink({
-                                    cssclasstext: 'CswErrorMessage_ValidatorError',
-                                    text: '&nbsp;' + nodelink + ' has been added. However,<br/>&nbsp;it is not an available option for ' + cswPrivate.name + '.'
+                            //Case 28798 - we only want the else condition if we expected results, but didn't get any.
+                            //In the case where the current select control has no results, we expect no results.
+                            if (data.Nodes.length > 0 || cswPrivate.options.length === 0) {
+                                var found = false;
+                                //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
+                                data.Nodes.forEach(function (obj) {
+                                    if (obj.NodeId === nodeid) {
+                                        found = true;
+                                        cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, isSelected: obj.NodeId === nodeid });
+                                        cswPrivate.select.option({ value: obj.NodeId, display: obj.NodeName, selected: true }).data({ link: obj.NodeLink });
+                                        cswPrivate.select.val(obj.NodeId);
+                                        cswPrivate.selectedNodeId = obj.NodeId;
+                                    }
                                 });
+                                if (false === found) {
+                                    cswPrivate.select.val(cswPrivate.selectedNodeId);
+                                    cswPrivate.table.cell(1, cswPrivate.tipCellCol).nodeLink({
+                                        cssclasstext: 'CswErrorMessage_ValidatorError',
+                                        text: '&nbsp;' + nodelink + ' has been added. However,<br/>&nbsp;it is not an available option for ' + cswPrivate.name + '.'
+                                    });
+                                }
+                            } else {
+                                cswPrivate.select.option({ value: nodeid, display: nodename, isSelected: true });
                             }
                             Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                         }
