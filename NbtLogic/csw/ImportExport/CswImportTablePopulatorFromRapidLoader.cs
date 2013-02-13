@@ -112,8 +112,16 @@ namespace ChemSW.Nbt.ImportExport
             _CISProUofMNamesToNbtSizeNames.Add( "L", "Liters" );
             _CISProUofMNamesToNbtSizeNames.Add( "ML", "mL" );
             _CISProUofMNamesToNbtSizeNames.Add( "PT", "ounces" ); //<==WRONG for now
+            _CISProUofMNamesToNbtSizeNames.Add( "oz", "ounces" ); 
             _CISProUofMNamesToNbtSizeNames.Add( "G", "g" );
+            _CISProUofMNamesToNbtSizeNames.Add( "GAL", "gal" );
             _CISProUofMNamesToNbtSizeNames.Add( "KG", "kg" );
+            _CISProUofMNamesToNbtSizeNames.Add( "KIT", "kg" );
+            _CISProUofMNamesToNbtSizeNames.Add( "GM", "g" );
+            _CISProUofMNamesToNbtSizeNames.Add( "ML (each)", "mL" );
+            _CISProUofMNamesToNbtSizeNames.Add( "vial", "Each" );
+            _CISProUofMNamesToNbtSizeNames.Add( "each", "Each" );
+            _CISProUofMNamesToNbtSizeNames.Add( "MG", "mg" );
 
 
             _PhysicalStateMap.Add( "S", CswNbtObjClassMaterial.PhysicalStates.Solid );
@@ -234,7 +242,8 @@ namespace ChemSW.Nbt.ImportExport
                     //specified column, you get an error about that column being a double. 
                     //This kludgedelia will make the rest of our algorithm work. Jeeze.
                     if( "netquantity" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
-                        "expirationdate" == CurrentDataColumn.ColumnName.ToString().ToLower() )
+                        "expirationdate" == CurrentDataColumn.ColumnName.ToString().ToLower() ||
+                        "receiveddate" == CurrentDataColumn.ColumnName.ToString().ToLower() )
                     {
                         NodeTypeNameCandidate = "container";
                     }
@@ -572,6 +581,7 @@ namespace ChemSW.Nbt.ImportExport
                 }//if we need to create a curent vendor record
 
                 ChemSW.Core.CswDelimitedString CurrentSizeCompoundId = null;
+                ChemSW.Core.CswDelimitedString MaterialCompoundId = null;
                 if( null != CurrentVendorRow )
                 {
 
@@ -579,7 +589,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( null != ChemicalNodeType )
                     {
 
-                        ChemSW.Core.CswDelimitedString MaterialCompoundId = new Core.CswDelimitedString( '-' );
+                        MaterialCompoundId = new Core.CswDelimitedString( '-' );
                         MaterialCompoundId.Add( current_vendor );
                         MaterialCompoundId.Add( CurrentRlXlsRow[xls_key_productno].ToString() );
                         MaterialCompoundId.Add( CurrentRlXlsRow[xls_key_tradename].ToString() );
@@ -671,9 +681,10 @@ namespace ChemSW.Nbt.ImportExport
 
                 _CswNbtResources.commitTransaction();
 
-                if( RlXlsIdx > 10 )
+                if( RlXlsIdx > 1000 )
                 {
                     TestCaseStop = true;
+                    _CswImportExportStatusReporter.reportProgress( "Stopping import record creation afte having imported material: " + MaterialCompoundId.ToString() );
                 }
             }//iterate all rapid loader rows
 
