@@ -792,7 +792,7 @@ namespace ChemSW.Nbt
         private void _importUnitsOfMeasure( string UnitOfMeasurePK = "" )
         {
             string sql = "select * from units_of_measure uom" + ( String.IsNullOrEmpty( UnitOfMeasurePK ) ?
-                " join nbtimportqueue niq on niq.itempk = uom.unitofmeasureid where tablename = 'units_of_measure' and state = 'N'" : ( "where uom.unitofmeasureid = " + UnitOfMeasurePK ) );
+                " join nbtimportqueue niq on niq.itempk = uom.unitofmeasureid where tablename = 'units_of_measure' and state = 'N'" : ( " where uom.unitofmeasureid = " + UnitOfMeasurePK ) );
             CswArbitrarySelect arbSelect = _CAFResources.makeCswArbitrarySelect( "GetUoMs_28122", sql );
             DataTable cafUoMs = arbSelect.getTable();
 
