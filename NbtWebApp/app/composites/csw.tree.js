@@ -41,28 +41,51 @@
                 cswPrivate.allowMultiSelection = cswPrivate.allowMultiSelection || function () { };
 
                 //Styling
-                cswPrivate.height = cswPrivate.height || 410;
+                cswPrivate.height = cswPrivate.height || '100%';
                 cswPrivate.width = cswPrivate.width || 270;
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;
                 cswPrivate.useCheckboxes = cswPrivate.useCheckboxes;
+                cswPrivate.useScrollbars = cswPrivate.useScrollbars;
 
                 //Events
                 cswPrivate.onClick = cswPrivate.onClick || function () { };
                 cswPrivate.onMouseEnter = cswPrivate.onMouseEnter || function () { };
                 cswPrivate.onMouseExit = cswPrivate.onMouseExit || function () { };
                 cswPrivate.beforeSelect = cswPrivate.beforeSelect || function () { return true; };
+                cswPrivate.preventSelect = false;
+
+                cswPrivate.lastSelectedPathDbName = 'CswTree_' + cswPrivate.name + '_LastSelectedPath';
 
                 cswParent.empty();
                 cswPublic.div = cswParent.div();
 
+                if (cswPrivate.useScrollbars) {
+                    cswPublic.div.addClass('treediv');
+                } else {
+                    cswPublic.div.addClass('treediv_noscroll');
+                }
             } ());
 
             //#endregion Pre-ctor
 
 
             //#region Define Class Members
+
+            cswPrivate.getLastSelectedPath = function () {
+                var lastSelectedPath;
+                if (Csw.isNullOrEmpty(cswPrivate.selectedId)) {
+                    lastSelectedPath = Csw.clientDb.getItem(cswPrivate.lastSelectedPathDbName);
+                } else {
+                    lastSelectedPath = cswPublic.getPathFromId(cswPrivate.selectedId);
+                }
+                if (!lastSelectedPath) {
+                    lastSelectedPath = cswPrivate.rootNode.childNodes[0].raw.path;
+                }
+                Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, lastSelectedPath);
+                return lastSelectedPath;
+            }; // getLastSelectedPath()
 
             cswPrivate.makeStore = function () {
                 /// <summary>
@@ -92,10 +115,10 @@
                     // Ext exposes a slew of click handlers. None of them work unless the node is *selected*, so don't bother.
                     //}
                     itemmouseenter: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
-                        Csw.tryExec(cswPrivate.onMouseEnter, window.event, treeNode);
+                        Csw.tryExec(cswPrivate.onMouseEnter, window.event, treeNode, htmlElement, index, eventObj, eOpts);
                     },
                     itemmouseleave: function (thisView, treeNode, htmlElement, index, eventObj, eOpts) {
-                        Csw.tryExec(cswPrivate.onMouseExit, window.event, treeNode);
+                        Csw.tryExec(cswPrivate.onMouseExit, window.event, treeNode, htmlElement, index, eventObj, eOpts);
                     },
                     afterlayout: function () {
                         //afterlayout fires anytime you expand/collapse nodes in the tree. It fires once for all new content.
@@ -125,24 +148,13 @@
                         Csw.defer(function () {
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
 
-                            var lastSelectedPath;
-                            if (Csw.isNullOrEmpty(cswPrivate.selectedId)) {
-                                lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
-                            } else {
-                                lastSelectedPath = cswPublic.getPathFromId(cswPrivate.selectedId);
-                            }
+                            var lastSelectedPath = cswPrivate.getLastSelectedPath();
 
-                            var firstChild = cswPrivate.rootNode.childNodes[0];
-
-                            if (!lastSelectedPath) {
-                                lastSelectedPath = firstChild.raw.path;
-                            }
-                            Csw.clientDb.setItem('CswTree_LastSelectedPath', lastSelectedPath);
                             cswPublic.selectNode(null, lastSelectedPath, function _success(succeeded, oLastNode) {
                                 if (!succeeded || oLastNode.isRoot()) {
-                                    lastSelectedPath = firstChild.raw.path;
-                                    Csw.clientDb.setItem('CswTree_LastSelectedPath', lastSelectedPath);
-                                    cswPublic.selectNode(null, lastSelectedPath);
+                                    var firstChild = cswPrivate.rootNode.childNodes[0];
+                                    Csw.clientDb.setItem('CswTree_LastSelectedPath', firstChild.raw.path);
+                                    cswPublic.selectNode(null, firstChild.raw.path);
                                 }
                             });
                             //cswPublic.toggleMultiEdit(cswPublic.is.multi);
@@ -156,7 +168,7 @@
                         return (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
                     },
                     beforeselect: function (rowModel, record, index, eOpts) {
-                        var ret = (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
+                        var ret = (false === cswPrivate.preventSelect && (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1));
                         if (false !== ret && cswPrivate.useCheckboxes !== true) {
                             ret = Csw.tryExec(cswPrivate.beforeSelect);
                         }
@@ -170,7 +182,7 @@
                             cswPublic.selectedTreeNode = record;
                             cswPrivate.selectedNodeCount = 1;
                             record.expand();
-                            Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
+                            Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, cswPublic.selectedTreeNode.raw.path);
                             Csw.tryExec(cswPrivate.onSelect, record.raw);
 
                             if (cswPrivate.useCheckboxes) {
@@ -231,6 +243,7 @@
                         xtype: 'toolbar',
                         items: []
                     },
+                    scroll: false,
                     plugins: [new Ext.ux.tree.plugin.NodeDisabled()]
                 };
 
@@ -252,17 +265,21 @@
             };
 
             //#region Tree Mutators
-            
+
             cswPublic.collapseAll = function (button, toolbar) {
                 /// <summary>
                 /// Collapses all nodes in the tree.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                button.setText('Expand All');
-                cswPublic.tree.getEl().mask('Collapsing tree...');
+                if (cswPrivate.useToggles) {
+                    button.setText('Expand All');
+                    cswPublic.tree.getEl().mask('Collapsing tree...');
+                }
                 cswPublic.tree.collapseAll(function () {
-                    cswPublic.tree.getEl().unmask();
-                    toolbar.enable();
+                    if (cswPrivate.useToggles) {
+                        cswPublic.tree.getEl().unmask();
+                        toolbar.enable();
+                    }
                 });
                 return cswPublic;
             };
@@ -272,14 +289,17 @@
                 /// Expand all nodes in the tree.
                 /// </summary>
                 /// <returns type="Csw.composites.tree">This tree</returns>
-                button.setText('Collapse All');
-                cswPublic.tree.getEl().mask('Expanding tree...');
+                if (cswPrivate.useToggles) {
+                    button.setText('Collapse All');
+                    cswPublic.tree.getEl().mask('Expanding tree...');
+                }
                 cswPublic.eachNode(function (node) {
                     node.expand();
                 });
-                cswPublic.tree.getEl().unmask();
-                toolbar.enable();
-
+                if (cswPrivate.useToggles) {
+                    cswPublic.tree.getEl().unmask();
+                    toolbar.enable();
+                }
                 return cswPublic;
             };
 
@@ -308,6 +328,13 @@
                     });
                 }
                 return false;
+            };
+
+            cswPublic.preventSelect = function () {
+                cswPrivate.preventSelect = true;
+            };
+            cswPublic.allowSelect = function () {
+                cswPrivate.preventSelect = false;
             };
 
             cswPublic.addToolbarItem = function (itemDef, position) {

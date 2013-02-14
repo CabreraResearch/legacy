@@ -151,7 +151,7 @@
 
 
             cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
-                cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
+                Csw.tryExec(cswPrivate.onOwnerPropChange, obj, data, tabContentDiv);
             };
 
             //#endregion Events
@@ -1158,8 +1158,15 @@
                 }
             };
 
-            cswPublic.save = Csw.method(function (tabContentDiv, tabid, onSuccess, async) {
+            cswPublic.save = Csw.method(function (tabContentDiv, tabid, onSuccess, async, reloadTabOnSave) {
                 'use strict';
+
+                // This basically sets a default for reloadOnTabSave:
+                // if there is no value, we default to cswPrivate.ReloadTabOnSave
+                if (typeof reloadTabOnSave == 'undefined') {
+                    reloadTabOnSave = cswPrivate.ReloadTabOnSave;
+                }
+
                 if (cswPrivate.isMultiEdit() || cswPublic.isFormValid()) {
                     async = Csw.bool(async, true) && false === cswPrivate.isMultiEdit();
                     //Do NOT register save for tear down. Only true gets are eligible for teardown.
@@ -1190,7 +1197,7 @@
                                 onSaveRefresh();
                             };
                             if (false === cswPrivate.isMultiEdit()) {
-                                if (cswPrivate.ReloadTabOnSave) {
+                                if (reloadTabOnSave) {
                                     // reload tab
                                     cswPrivate.globalState.propertyData = '';
                                     cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);

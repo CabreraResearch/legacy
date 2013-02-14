@@ -146,19 +146,10 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        private void _setDefaultValues()
-        {
-            if( false == CswTools.IsPrimaryKey( Owner.RelatedNodeId ) )
-            {
-                Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-            }
-        }
-
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _setDefaultValues();
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
 
@@ -1116,18 +1107,22 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         private void OnOwnerPropChange( CswNbtNodeProp Prop ) //case 28514
         {
-            // Because we don't want this logic to fire all the time; only in 
-            // the Receive Material Wizard where the Container Node is Temp.
-            // -- This isn't the best fix but it works for now
-            if (this.IsTemp) 
+            // Case 28800 - Fixes received container's location always defaulting to current user
+            if (CswTools.IsPrimaryKey(Owner.RelatedNodeId) && (Owner.GetOriginalPropRowValue() != Owner.Gestalt))
             {
-                if (CswTools.IsPrimaryKey(Owner.RelatedNodeId))
+                // Because we don't want this logic to fire all the time; only in 
+                // the Receive Material Wizard where the Container Node is Temp.
+                // -- This isn't the best fix but it works for now
+                if (this.IsTemp)
                 {
-                    CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode(Owner.RelatedNodeId);
-                    if (null != CurrentOwnerNode)
+                    if (CswTools.IsPrimaryKey(Owner.RelatedNodeId))
                     {
-                        Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
-                        Location.RefreshNodeName();
+                        CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode(Owner.RelatedNodeId);
+                        if (null != CurrentOwnerNode)
+                        {
+                            Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
+                            Location.RefreshNodeName();
+                        }
                     }
                 }
             }
