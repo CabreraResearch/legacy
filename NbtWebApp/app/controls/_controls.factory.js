@@ -108,6 +108,14 @@
                     return Csw.controls.imageButton(cswParent, opts);
                 };
 
+                cswParent.imageSelect = function (opts) {
+                    /// <summary> Creates a Csw.imageSelect on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the imageSelect.</param>
+                    /// <returns type="Csw.controls.imageButton">A Csw.controls.imageSelect</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'imageSelect');
+                    return Csw.controls.imageSelect(cswParent, opts);
+                };
+
                 cswParent.moreDiv = function (opts) {
                     /// <summary> Creates a Csw.multiSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the moreDiv.</param>

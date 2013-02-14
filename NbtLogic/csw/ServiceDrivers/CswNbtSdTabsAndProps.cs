@@ -251,7 +251,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
-                if( _CswNbtResources.EditMode == NodeEditMode.Add )
+                bool isNode = CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) );
+                if( (_CswNbtResources.EditMode == NodeEditMode.Add) && false == isNode )
                 {
                     Node = getAddNode( NodeTypeId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
@@ -631,7 +632,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return _addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View,  bool IsIdentityTab, bool RemoveTempStatus = true )
         {
             JObject ret = new JObject();
             if( PropsObj.HasValues )
@@ -670,9 +671,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                             }
                             break;
                         case NodeEditMode.Add:
-                            if( null != Node )
+                            if (null != Node)
                             {
-                                Node.IsTemp = false;
+                                if( RemoveTempStatus )
+                                {
+                                    Node.IsTemp = false;
+                                }
                                 addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
                             }
                             else

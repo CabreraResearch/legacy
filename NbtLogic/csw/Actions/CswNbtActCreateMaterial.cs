@@ -302,8 +302,7 @@ namespace ChemSW.Nbt.Actions
                 NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
                 NodeAsSize.UnitCount.Value = CswConvert.ToDouble( SizeObj["unitCount"] );
 
-                if( ( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
-                    || false == CswTools.IsDouble( NodeAsSize.UnitCount.Value ) )
+                if( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
                 {
                     SizeNode = null; //Case 27665 - instead of throwing a serverside warning, just throw out the size
                 }

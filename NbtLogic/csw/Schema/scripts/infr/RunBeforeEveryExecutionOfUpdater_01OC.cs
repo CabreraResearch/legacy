@@ -1,5 +1,7 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -68,7 +70,11 @@ namespace ChemSW.Nbt.Schema
             return Prop;
         }
 
-        #region WILLIAM Methods
+        private static string _makeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission Permission )
+        {
+            return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
+        }
+
 
         #region Case 28283
 
@@ -950,6 +956,35 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        #region Case 28714
+
+        private void _removeCreateMaterialPermission( CswDeveloper Dev, Int32 CaseNo )
+        {
+            CswNbtObjClassRole AdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            if( null != AdminRoleNode )
+            {
+
+                bool CanCreateMaterial = _CswNbtSchemaModTrnsctn.Permit.can( CswNbtActionName.Create_Material, AdminRoleNode );
+                if( CanCreateMaterial )
+                {
+                    bool HasOneMaterialCreate = false;
+                    CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                    foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+                    {
+                        string NodeTypePermission = _makeNodeTypePermissionValue( MaterialNt.FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission.Create );
+                        HasOneMaterialCreate = AdminRoleNode.NodeTypePermissions.CheckValue( NodeTypePermission );
+                    }
+
+                    if( false == HasOneMaterialCreate )
+                    {
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Create_Material, AdminRoleNode, false );
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         #endregion WILLIAM Methods
 
         /// <summary>
@@ -979,6 +1014,7 @@ namespace ChemSW.Nbt.Schema
             _fixRecurringRequestProp(CswDeveloper.CF, 28340);
             _makeLabelPrinterOCs( CswDeveloper.SS, 28534 );
             _ChangeMaterialProps( CswDeveloper.BV, 28713 );
+            _removeCreateMaterialPermission(CswDeveloper.CM, 28714);
 
             #endregion WILLIAM
 

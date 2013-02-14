@@ -235,7 +235,7 @@
     Csw.enums.iconType = Csw.enums.iconType ||
         Csw.enums.register('iconType', {
             none: -1,
-            infobox: 0,
+            about: 0,
             info: 1,
             plus: 2,
             add: 2,
@@ -272,7 +272,7 @@
             world: 32,
             cart: 33,
             flag: 34,
-            docs: 35,
+            copy: 35,
             barchart: 36,
             harddrive: 37,
             bell: 38,
@@ -292,10 +292,10 @@
             folder: 52,
             foldergear: 53,
             gear: 54,
-            gears: 55,
+            gearset: 55,
             trianglegear: 56,
-            clipgear: 57,
-            clipboard: 58,
+            clipboardgear: 57,
+            clipboardcheck: 58,
             target: 59,
             targetgroup: 60,
             compass: 61,
@@ -308,10 +308,18 @@
             cabinet: 68,
             box: 69,
             warning: 70,
-            save: 71,   //not actually in the img, but the file is present
-            search: 72,  //not actually in the img, but the file is present
-            cat: 73, //not actually in the img, but the file is present 
-            structuresearch: 74 //not actually in the img, but the file is present
+            save: 71,
+            search: 72,
+            cat: 73,
+            atommag: 74,
+            atomplus: 75,
+            cartplus: 76,
+            bottle: 77,
+            bottlebox: 78,
+            bottlecalendar: 79,
+            calendarstack: 80,
+            envelopes: 81,
+            personclock: 82
         });
 
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||

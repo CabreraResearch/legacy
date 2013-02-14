@@ -12,11 +12,12 @@
                 topContent: '',
                 selectContent: 'This ComboBox Is Empty!',
                 width: '180px',
+                height: '',
                 onClick: function () {
                     return true;
                 },
                 topTable: {},
-            hidedelay: 500,
+                hidedelay: 500,
 
                 hideTo: null
             };
@@ -73,7 +74,8 @@
                 cswPublic.pickList = cswPrivate.comboDiv.div({
                     name: cswPrivate.name + '_child',
                     cssclass: 'CswComboBox_ChildDiv',
-                    width: cswPrivate.width
+                    width: cswPrivate.width,
+                    height: cswPrivate.height
                 })
                 .bind('click', handleClick)
                 .append(cswPrivate.selectContent);

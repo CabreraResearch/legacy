@@ -37,6 +37,7 @@
                     unitCountName: 'Unit Count'
                 },
                 rows: [],
+                sizeHeaderAdded: false, // Case 28693
                 tabsAndProps: null,
                 documentTabsAndProps: null,
                 showQuantityEditable: false,
@@ -49,8 +50,8 @@
                     documentTypeId: '',
                     documentId: '',
                     materialType: { name: '', val: '' },
-                    tradeName: '',
-                    supplier: { name: '', val: '' },
+                    tradeName: '', 
+                    supplier: { name: '', val: '' }, 
                     partNo: '',
                     properties: {},
                     documentProperties: {},
@@ -141,7 +142,7 @@
                             cswPrivate.state.materialId = '';
                             cswPrivate.state.documentId = '';
                             cswPrivate.state.properties = {};
-                                cswPrivate.state.useExistingTempNode = false;
+                            cswPrivate.state.useExistingTempNode = false;
                             cswPrivate.reinitSteps(2);
                         }
                         cswPrivate.createMaterial();
@@ -396,6 +397,7 @@
             //#region Step 3: Size(s)
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
+                //cswPrivate.sizeHeaderAdded = false;
 
                 return function () {
                     var div, selectDiv;
@@ -418,10 +420,6 @@
                         div.br({ number: 1 });
 
                         var makeGrid = function () {
-
-//                            cswPrivate.rows = [
-//                                [{ "value": 5 }, { "value": "9 kg" }, { "value": "AAAL135-09" }]
-//                            ];
 
                             //get Units of Measure for this Material
                             var unitsOfMeasure = [];
@@ -455,9 +453,12 @@
                             if (cswPrivate.showDispensable) {
                                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
                             }
-                            //if (cswPrivate.rows.length === 0) {
+                            
+                            if (cswPrivate.sizeHeaderAdded === false) {     // Case 28693: Stops header from duplicating if size(s) are provided
                                 cswPrivate.rows.unshift(cswPrivate.header);
-                           //}
+                            }
+                            cswPrivate.sizeHeaderAdded = true;
+ 
                             cswPublic.sizesForm = cswPrivate.divStep3.form();
                             cswPublic.sizeGrid = cswPublic.sizesForm.thinGrid({
                                 linkText: '',
@@ -472,7 +473,6 @@
                                         case cswPrivate.config.unitCountName:
                                             cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
                                                 name: 'sizeUnitCount',
-                                                value: 1,
                                                 MinValue: 1,
                                                 Precision: 0,
                                                 onChange: function (value) {
@@ -485,6 +485,7 @@
                                             cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
                                                 name: 'quantityNumberBox',
                                                 MinValue: 0,
+                                                Precision: '',
                                                 excludeRangeLimits: true,
                                                 width: '60px',
                                                 onChange: function (value) {
@@ -544,7 +545,7 @@
                                         quantity: '',
                                         unit: '',
                                         unitid: '',
-                                        unitCount: 1,
+                                        unitCount: '',
                                         quantEditableChecked: 'true',
                                         dispensibleChecked: 'true',
                                         nodetypeid: cswPrivate.state.sizeNodeTypeId
@@ -601,6 +602,7 @@
                         cswPrivate.addSizeNode = {};
 
                         cswPrivate.stepThreeComplete = true;
+                        
                     }
                 };
             }());
