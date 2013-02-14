@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             List<CswNbtView> ContainerViews = _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews("Containers");
             foreach ( CswNbtView View in ContainerViews )
             {
-                if( View.Visibility != NbtViewVisibility.Property )
+                if( View.ViewName == "Containers" && View.Visibility != NbtViewVisibility.Property )
                 {
                     View.Delete();
                 }
