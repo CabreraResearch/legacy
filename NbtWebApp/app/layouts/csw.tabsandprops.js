@@ -151,9 +151,7 @@
 
 
             cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
-                if (false === Csw.isNullOrEmpty(cswPrivate.onOwnerPropChange)) {
-                    cswPrivate.onOwnerPropChange(obj, data, tabContentDiv);
-                }
+                Csw.tryExec(cswPrivate.onOwnerPropChange, obj, data, tabContentDiv);
             };
 
             //#endregion Events
