@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.ImportExport
             _CISProUofMNamesToNbtSizeNames.Add( "vial", "Each" );
             _CISProUofMNamesToNbtSizeNames.Add( "each", "Each" );
             _CISProUofMNamesToNbtSizeNames.Add( "MG", "mg" );
-
+            _CISProUofMNamesToNbtSizeNames.Add( "LB", "lb" );
 
             _PhysicalStateMap.Add( "S", CswNbtObjClassMaterial.PhysicalStates.Solid );
             _PhysicalStateMap.Add( "G", CswNbtObjClassMaterial.PhysicalStates.Gas );
@@ -681,11 +681,11 @@ namespace ChemSW.Nbt.ImportExport
 
                 _CswNbtResources.commitTransaction();
 
-                if( RlXlsIdx > 1000 )
-                {
-                    TestCaseStop = true;
-                    _CswImportExportStatusReporter.reportProgress( "Stopping import record creation afte having imported material: " + MaterialCompoundId.ToString() );
-                }
+                //if( RlXlsIdx > 1000 )
+                //{
+                //    TestCaseStop = true;
+                //    _CswImportExportStatusReporter.reportProgress( "Stopping import record creation afte having imported material: " + MaterialCompoundId.ToString() );
+                //}
             }//iterate all rapid loader rows
 
 
