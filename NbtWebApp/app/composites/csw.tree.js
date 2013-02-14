@@ -238,6 +238,7 @@
                         xtype: 'toolbar',
                         items: []
                     },
+                    scroll: false,
                     plugins: [new Ext.ux.tree.plugin.NodeDisabled()]
                 };
 
