@@ -80,6 +80,9 @@ namespace ChemSw.Nbt.Test
                 UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters" + Sequence, 1.0, 0, Tristate.True );
             }
             ContainerNode.Quantity.UnitId = UnitOfMeasure.NodeId;
+            ContainerNode.UseType.Value = CswNbtObjClassContainer.UseTypes.Storage;
+            ContainerNode.StorageTemperature.Value = CswNbtObjClassContainer.StorageTemperatures.RoomTemperature;
+            ContainerNode.StoragePressure.Value = CswNbtObjClassContainer.StoragePressures.Atmospheric;
             if( Material != null )
             {
                 ContainerNode.Material.RelatedNodeId = Material.NodeId;

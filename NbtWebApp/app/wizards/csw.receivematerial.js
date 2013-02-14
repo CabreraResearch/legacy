@@ -108,6 +108,7 @@
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
                     }
+                        
                 };
 
                 cswPrivate.finalize = function () {
@@ -252,6 +253,7 @@
                                 cellvalign: 'middle'
                             });
                             var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                                checked: true,
                                 onChange: Csw.method(function () {
                                     var val;
                                     if (printBarcodesCheckBox.checked()) {
@@ -295,12 +297,12 @@
                             },
                             globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
-                                currentNodeId: cswPrivate.state.containerNodeId
+                                currentNodeId: cswPrivate.state.containerNodeId,
+                                RemoveTempStatus: false
                             },
                             ReloadTabOnSave: true,
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
-                                    cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
-     
+                                cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
                             }
 
                         });
