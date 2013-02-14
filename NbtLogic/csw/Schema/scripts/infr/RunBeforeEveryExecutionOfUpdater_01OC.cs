@@ -978,7 +978,11 @@ namespace ChemSW.Nbt.Schema
 
                     if( false == HasOneMaterialCreate )
                     {
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Create_Material, AdminRoleNode, false );
+                        while (CanCreateMaterial)
+                        {
+                            _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Create_Material, AdminRoleNode, false );
+                            CanCreateMaterial = _CswNbtSchemaModTrnsctn.Permit.can(CswNbtActionName.Create_Material, AdminRoleNode);
+                        }
                     }
                 }
             }

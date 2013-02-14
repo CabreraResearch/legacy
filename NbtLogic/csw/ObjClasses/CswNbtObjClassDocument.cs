@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -181,6 +182,7 @@ namespace ChemSW.Nbt.ObjClasses
             Archived.SetOnPropChange( OnArchivedPropChange );
             Language.SetOnPropChange( OnLanguagePropChange );
             Format.SetOnPropChange( OnFormatPropChange );
+            FileType.SetOnPropChange( OnFileTypePropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -271,6 +273,23 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
+        private void OnFileTypePropChange( CswNbtNodeProp NodeProp )
+        {
+            //case 28755 - clear the File/Link prop, depending on what the FileType was changed to
+            CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+            CswNbtNodePropWrapper wrapper = null;
+            if( FileType.Value.Equals( FileTypes.File ) )
+            {
+                wrapper = Node.Properties[PropertyName.Link];
+            }
+            else
+            {
+                wrapper = Node.Properties[PropertyName.File];
+                wrapper.ClearBlob();
+            }
+            wrapper.ClearValue();
+        }
+
         public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
         public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
         private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
