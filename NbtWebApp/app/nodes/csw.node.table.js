@@ -192,10 +192,20 @@
                             });
                         }
 
-                        thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
-                                function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
-                        textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
-                                function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
+                        thumbnailCell.$.hover(
+                            function (event) {
+                                Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell });
+                            },
+                            function (event) {
+                                Csw.nodeHoverOut();
+                            });
+                        textCell.$.hover(
+                            function (event) {
+                                Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell });  // yes, thumbnailCell.
+                            },
+                            function (event) {
+                                Csw.nodeHoverOut();
+                            });
 
                         var btnTable = btncell.table({
                             name: cswPrivate.name + '_' + nodeid + '_btntbl',
@@ -263,7 +273,7 @@
                                 width: ('Details'.length * 7) + 16,
                                 enabledText: 'Details',
                                 disableOnClick: false,
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                                 onClick: function () {
                                     //If C3 search {} else if Universal search {}
                                     if (cswPrivate.searchType === "chemcatcentral") {
@@ -592,4 +602,4 @@
 
             return cswPublic;
         }); // register
-})();     // (function
+})();        // (function
