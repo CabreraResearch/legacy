@@ -143,6 +143,7 @@
 
                 Csw.ajax.post({
                     urlMethod: 'getActiveAccessIds',
+                    async: false,
                     success: function (data) {
                         cswPrivate.customerIds = data.customerids;
                         if (cswPrivate.customerIds.length > 1) {
