@@ -320,6 +320,7 @@ namespace ChemSW.Nbt.WebServices
             if( ThisNodeDisabled )
             {
                 Ret.IsDisabled = true;
+                Ret.CssClass = "disabled";
             }
 
             if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
