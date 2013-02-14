@@ -84,13 +84,14 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28725() ) );              //01W-056
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28514() ) );              //01W-057
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28684() ) );              //01W-058
-            /* IMPORTANT: Script for Case 28714 must come BEFORE script for Case 24647 */
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28714() ) );              //01W-059
+            // Placeholder added below as logic for Case 28714 was moved to a before script
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_CaseXXXXX() ) );              //01W-059
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );              //01W-060
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28523() ) );              //01W-061
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28659() ) );              //01W-062
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28745() ) );              //01W-063
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28750() ) );              //01W-064
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28807() ) );              //01W-065
 
             #endregion WILLIAM
 

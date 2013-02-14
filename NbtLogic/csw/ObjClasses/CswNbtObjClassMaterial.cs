@@ -106,6 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
             CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
             if( null != ChemicalHazardClassesNTP )
             {
@@ -115,7 +116,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
                         _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
-                    ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
+                    String FLComb = "FL-Comb";
+                    int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
+                    String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
+                    ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
                 }
             }
 
