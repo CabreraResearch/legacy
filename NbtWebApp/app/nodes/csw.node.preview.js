@@ -32,8 +32,7 @@
                             nodeid: p.nodeid,
                             nodekey: p.nodekey,
                             nodename: p.nodename,
-                            top: btnEvent.pageY,
-                            left: btnEvent.pageX
+                            event: btnEvent
                         });
                         preview.open();
                         return false;
@@ -65,21 +64,30 @@
                 nodeid: '',
                 nodekey: '',
                 nodename: '',
-                top: 0,
-                left: 0
+                height: 200,
+                width: 600,
+                event: null
             };
             Csw.extend(cswPrivate, options);
 
             var cswPublic = {};
 
             cswPublic.open = function () {
+                var y = cswPrivate.event.pageY;
+                var x = cswPrivate.event.pageX;
+
+                // Make sure preview div is within the window
+                var windowX = $(window).width() - 10;
+                if (x + cswPrivate.width > windowX) {
+                    x = windowX - cswPrivate.width;
+                }
 
                 cswPrivate.extWindow = Ext.create('Ext.window.Window', {
                     title: cswPrivate.nodename,
-                    y: cswPrivate.top,
-                    x: cswPrivate.left,
-                    height: 200,
-                    width: 600,
+                    y: y,
+                    x: x,
+                    height: cswPrivate.height,
+                    width: cswPrivate.width,
                     layout: 'fit',
                     items: {
                         xtype: 'component',

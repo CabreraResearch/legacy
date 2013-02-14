@@ -112,8 +112,7 @@
                             nodeid: nodeObj.nodeid,
                             nodekey: nodeObj.nodekey,
                             nodename: nodeObj.nodename,
-                            top: event.pageY,
-                            left: event.pageX
+                            event: event
                         });
                         preview.open();
                     }
