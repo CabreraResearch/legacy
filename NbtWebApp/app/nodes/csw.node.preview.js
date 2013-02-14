@@ -6,43 +6,49 @@
 
     var hoverButton;
     Csw.nodeHoverIn = Csw.nodeHoverIn ||
-        Csw.register('nodeHoverIn', function (event, nodeid, nodekey, nodename, parentDiv, buttonHoverIn, buttonHoverOut) {
+        Csw.register('nodeHoverIn', function (event, opts) {  //, , buttonHoverIn, buttonHoverOut, position) {
             'use strict';
-            var previewopts = {
-                name: nodeid + '_preview',
-                nodeid: nodeid,
-                nodekey: nodekey,
-                nodename: nodename,
-                eventArg: event
+            var p = {
+                nodeid: '',
+                nodekey: '',
+                nodename: '',
+                parentDiv: null,
+                buttonHoverIn: null,
+                buttonHoverOut: null
             };
+            Csw.extend(p, opts);
 
-            if (false === Csw.isNullOrEmpty(nodeid)) {
-                hoverButton = parentDiv.buttonExt({
+            if (hoverButton == null && false === Csw.isNullOrEmpty(p.nodeid)) {
+                hoverButton = p.parentDiv.buttonExt({
                     name: 'preview',
                     enabledText: '',
                     width: '100px',
                     disableOnClick: false,
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
-                    onHoverIn: function() { Csw.tryExec(buttonHoverIn); },
-                    onHoverOut: function() { Csw.tryExec(buttonHoverOut); },
-                    onClick: function(btn, btnEvent) {
-                        previewopts.top = btnEvent.pageY;
-                        previewopts.left = btnEvent.pageX;
-                        var preview = Csw.nbt.nodePreview(Csw.main.body, previewopts);
+                    onHoverIn: function () { Csw.tryExec(p.buttonHoverIn); },
+                    onHoverOut: function () { Csw.tryExec(p.buttonHoverOut); },
+                    onClick: function (btn, btnEvent) {
+                        var preview = Csw.nbt.nodePreview(Csw.main.body, {
+                            nodeid: p.nodeid,
+                            nodekey: p.nodekey,
+                            nodename: p.nodename,
+                            top: btnEvent.pageY,
+                            left: btnEvent.pageX
+                        });
                         preview.open();
                         return false;
                     }
                 }).css({
                     position: 'absolute',
-                    top: parentDiv.$.position().top + 'px',
-                    right: '25px'
+                    top: p.parentDiv.$.position().top + 'px',
+                    left: (p.parentDiv.$.position().left + p.parentDiv.$.width() - 40) + 'px'
                 });
             }
         }); // Csw.nodeHoverIn 
 
 
     Csw.nodeHoverOut = Csw.nodeHoverOut ||
-        Csw.register('nodeHoverOut', function (event, nodeid) {
+        Csw.register('nodeHoverOut', function () {
             if (null != hoverButton) {
                 hoverButton.remove();
                 hoverButton = null;
@@ -59,7 +65,6 @@
                 nodeid: '',
                 nodekey: '',
                 nodename: '',
-                eventArg: {},
                 top: 0,
                 left: 0
             };

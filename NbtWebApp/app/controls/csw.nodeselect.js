@@ -238,9 +238,6 @@
 
                 cswPrivate.select.required(cswPrivate.isRequired);
 
-                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.select.val()); },
-                                function (event) { Csw.nodeHoverOut(event, cswPrivate.select.val()); });
-
                 // case 28427 - default private values to currently selected
                 cswPrivate.selectedNodeId = cswPrivate.select.val();
                 cswPrivate.selectedName = cswPrivate.select.selectedText();
@@ -283,9 +280,6 @@
                             });
                         }
                     });
-
-                    cswPrivate.nameSpan.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
-                        function (event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
                 }
             };
 
@@ -432,8 +426,7 @@
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink
                     });
-                    cswPublic.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
-                                    function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
+                    
                 } else {
                     if (cswPrivate.options.length > 0 || false === cswPrivate.doGetNodes) {
                         cswPrivate.makeControl();
@@ -441,6 +434,20 @@
                         cswPrivate.getNodes();
                     }
                 } // if-else (o.ReadOnly) {
+
+
+                cswPublic.$.hover(
+                function(event) {
+                        Csw.nodeHoverIn(event, {
+                            nodeid: cswPrivate.selectedNodeId,
+                            nodename: cswPrivate.selectedName,
+                            parentDiv: cswPublic
+                        });
+                    },
+                    function(event) {
+                        Csw.nodeHoverOut();
+                    }
+                );
             } ());
 
             return cswPublic;

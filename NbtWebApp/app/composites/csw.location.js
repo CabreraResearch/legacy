@@ -163,8 +163,18 @@
                                 onClick: cswPrivate.makeLocationCombo
                             }); // imageButton
                         }
-                        cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value')); },
-                                          function (event) { Csw.nodeHoverOut(event, cswPrivate.selectDiv.propNonDom('value')); });
+
+                        cswPublic.table.cell(1, 1).$.hover(function (event) {
+                            Csw.nodeHoverIn(event, {
+                                nodeid: cswPrivate.value,
+                                nodekey: '',
+                                nodename: cswPrivate.selectedName,
+                                parentDiv: cswPublic.table.cell(1, 1),
+                                buttonHoverIn: null,
+                                buttonHoverOut: null
+                            });
+                        },
+                        function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });
                     }
                 } ());
                 //#region final ctor

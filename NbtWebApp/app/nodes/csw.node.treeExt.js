@@ -78,30 +78,24 @@
                     cswPrivate.hoverNodeId = treeNode.raw.nodeid;
                     var $div = $(htmlElement).children().first().children();
                     var div = Csw.literals.factory($div);
-                    Csw.nodeHoverIn(event, cswPrivate.hoverNodeId, treeNode.raw.id, treeNode.raw.text, div,
-                        function () {
+                    
+                    Csw.nodeHoverIn(event, {
+                        nodeid: cswPrivate.hoverNodeId,
+                        nodekey:  treeNode.raw.id,
+                        nodename:  treeNode.raw.text,
+                        parentDiv: div,
+                        buttonHoverIn: function () {
                             cswPublic.nodeTree.preventSelect();
                         },
-                        function () {
+                        buttonHoverOut: function () {
                             cswPublic.nodeTree.allowSelect();
-                        });
-                }
+                        }
+                    });
+                } // hoverNode()
 
                 function deHoverNode() {
-                    Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
+                    Csw.nodeHoverOut();
                 }
-                //               
-                //                Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
-                //                    return function _onMulti(eventObj, multiOpts) {
-                //                        if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
-                //                            //cswPublic.nodeTree.is.multi = (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
-                //                            cswPublic.nodeTree.toggleUseCheckboxes();
-                //                        } else {
-                //                            Csw.unsubscribe('CswMultiEdit', null, _onMulti);
-                //                            Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
-                //                        }
-                //                    };
-                //                }()));
 
             }; // cswPrivate.make()
 
