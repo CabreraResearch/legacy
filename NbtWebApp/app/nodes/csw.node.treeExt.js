@@ -69,7 +69,7 @@
                     allowMultiSelection: cswPrivate.allowMultiSelection,
 
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
-                    useToggles: cswPrivate.ShowToggleLink,
+                    useToggles: cswPrivate.showToggleLink,
                     useCheckboxes: cswPrivate.isMulti,
                     useScrollbars: cswPrivate.useScrollbars
                 });
