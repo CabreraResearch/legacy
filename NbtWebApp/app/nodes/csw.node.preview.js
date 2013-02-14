@@ -97,8 +97,6 @@
                 cswPrivate.div = Csw.domNode({
                     el: cswPrivate.extWindow.items.items[0].getEl().dom,
                     ID: cswPrivate.extWindow.items.items[0].getEl().id
-                }).css({
-                    background: 'transparent'
                 });
 
                 cswPrivate.loadingDiv = cswPrivate.div.div({
@@ -123,7 +121,7 @@
                     onInitFinish: function (AtLeastOneProp) {
                         cswPrivate.loadingDiv.remove();
                         if (false === AtLeastOneProp) {
-                            cswPublic.close();
+                            cswPrivate.div.text('No preview available.');
                         }
                     }
                 });
@@ -131,7 +129,7 @@
 
 
             cswPublic.close = function () {
-                cswPrivate.div.remove();
+                cswPrivate.extWindow.close();
             }; // close()
 
             return cswPublic;
