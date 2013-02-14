@@ -1102,6 +1102,7 @@
                 name: 'c3SearchBtn',
                 enabledText: 'Search',
                 disabledText: "Searching...",
+                bindOnEnter: div,
                 onClick: function () {
 
                     var CswC3SearchParams = {
@@ -1124,7 +1125,6 @@
                     });
                 }
             });
-
 
             tableOuter.cell(2, 1).div(tableInner);
 
@@ -1482,7 +1482,7 @@
                 onImpersonate: null
             };
             if (options) Csw.extend(o, options);
-            
+
             function onOpen(div) {
                 Csw.ajax.post({
                     urlMethod: 'getUsers',
@@ -1517,7 +1517,7 @@
                     } // success
                 }); // ajax    
             }
-            
+
             openDialog(Csw.literals.div(), 400, 300, null, 'Impersonate', onOpen);
         }, // ImpersonateDialog
 
