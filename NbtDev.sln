@@ -448,7 +448,6 @@ Global
 		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|Mixed Platforms.ActiveCfg = Release
 		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|Mixed Platforms.Build.0 = Release
 		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x64.ActiveCfg = Release
-		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x64.Build.0 = Release
 		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x86.ActiveCfg = Release
 		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Release|x86.Build.0 = Release
 		{F3CD5A76-BBD0-4D54-8869-91FE36DD5F07}.Test|Mixed Platforms.ActiveCfg = Release
