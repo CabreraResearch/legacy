@@ -75,6 +75,7 @@ namespace ChemSW.Nbt.Schema
             return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
 
+        #region William Methods
 
         #region Case 28283
 
