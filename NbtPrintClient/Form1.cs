@@ -199,12 +199,13 @@ namespace CswPrintClient1
             {
                 cbEnabled.Checked = false;
                 cbEnabled.Enabled = false;
-                lblRegisterStatus.Text = "Print jobs are disabled, see Setup tab.";
+                lblStatus.Text = "Print jobs are disabled, see Setup tab.";
             }
             else
             {
                 cbEnabled.Enabled = true;
             }
+            btnSelPrn.Enabled = !cbEnabled.Checked;
         }
 
         private void setBtnRegisterState( string errorStatus )
@@ -212,7 +213,7 @@ namespace CswPrintClient1
             if( _printerKey != string.Empty )
             {
                 btnRegister.Enabled = false;
-                lblRegisterStatus.Text = "Success! Registered PrinterKey is " + _printerKey;
+                lblRegisterStatus.Text = "Success! Your printer is registered (" + _printerKey + ").";
             }
             else
             {
@@ -280,6 +281,15 @@ namespace CswPrintClient1
 
                 Log( "Loaded settings." );
                 setBtnRegisterState( "" );
+                if( true != cbEnabled.Checked )
+                {
+                    lblStatus.Text = "Print jobs are not enabled, see Setup tab.";
+                }
+                else
+                {
+                    timer1.Enabled = true;
+                    lblStatus.Text = "Waiting...";
+                }
             }
             catch( Exception e )
             {
@@ -316,6 +326,7 @@ namespace CswPrintClient1
 
         private void cbEnabled_Click( object sender, EventArgs e )
         {
+            setEnablePrintJobsStates();
             if( cbEnabled.Checked == true )
             {
                 Status( "Waiting for print job." );
