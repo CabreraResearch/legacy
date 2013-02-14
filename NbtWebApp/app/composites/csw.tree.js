@@ -56,6 +56,8 @@
                 cswPrivate.beforeSelect = cswPrivate.beforeSelect || function () { return true; };
                 cswPrivate.preventSelect = false;
 
+                cswPrivate.lastSelectedPathDbName = 'CswTree_' + cswPrivate.name + '_LastSelectedPath';
+
                 cswParent.empty();
                 cswPublic.div = cswParent.div();
 
@@ -70,6 +72,20 @@
 
 
             //#region Define Class Members
+
+            cswPrivate.getLastSelectedPath = function () {
+                var lastSelectedPath;
+                if (Csw.isNullOrEmpty(cswPrivate.selectedId)) {
+                    lastSelectedPath = Csw.clientDb.getItem(cswPrivate.lastSelectedPathDbName);
+                } else {
+                    lastSelectedPath = cswPublic.getPathFromId(cswPrivate.selectedId);
+                }
+                if (!lastSelectedPath) {
+                    lastSelectedPath = cswPrivate.rootNode.childNodes[0].raw.path;
+                }
+                Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, lastSelectedPath);
+                return lastSelectedPath;
+            }; // getLastSelectedPath()
 
             cswPrivate.makeStore = function () {
                 /// <summary>
@@ -132,24 +148,13 @@
                         Csw.defer(function () {
                             cswPrivate.rootNode = cswPublic.tree.getRootNode();
 
-                            var lastSelectedPath;
-                            if (Csw.isNullOrEmpty(cswPrivate.selectedId)) {
-                                lastSelectedPath = Csw.clientDb.getItem('CswTree_LastSelectedPath');
-                            } else {
-                                lastSelectedPath = cswPublic.getPathFromId(cswPrivate.selectedId);
-                            }
+                            var lastSelectedPath = cswPrivate.getLastSelectedPath();
 
-                            var firstChild = cswPrivate.rootNode.childNodes[0];
-
-                            if (!lastSelectedPath) {
-                                lastSelectedPath = firstChild.raw.path;
-                            }
-                            Csw.clientDb.setItem('CswTree_LastSelectedPath', lastSelectedPath);
                             cswPublic.selectNode(null, lastSelectedPath, function _success(succeeded, oLastNode) {
                                 if (!succeeded || oLastNode.isRoot()) {
-                                    lastSelectedPath = firstChild.raw.path;
-                                    Csw.clientDb.setItem('CswTree_LastSelectedPath', lastSelectedPath);
-                                    cswPublic.selectNode(null, lastSelectedPath);
+                                    var firstChild = cswPrivate.rootNode.childNodes[0];
+                                    Csw.clientDb.setItem('CswTree_LastSelectedPath', firstChild.raw.path);
+                                    cswPublic.selectNode(null, firstChild.raw.path);
                                 }
                             });
                             //cswPublic.toggleMultiEdit(cswPublic.is.multi);
@@ -177,7 +182,7 @@
                             cswPublic.selectedTreeNode = record;
                             cswPrivate.selectedNodeCount = 1;
                             record.expand();
-                            Csw.clientDb.setItem('CswTree_LastSelectedPath', cswPublic.selectedTreeNode.raw.path);
+                            Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, cswPublic.selectedTreeNode.raw.path);
                             Csw.tryExec(cswPrivate.onSelect, record.raw);
 
                             if (cswPrivate.useCheckboxes) {

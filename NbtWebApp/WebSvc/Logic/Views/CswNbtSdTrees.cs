@@ -132,6 +132,9 @@ namespace ChemSW.Nbt.WebServices
                         ViewMode = NbtViewRenderingMode.Tree;
                         PageSize = 50;
                     }
+                    
+                    [DataMember]
+                    public string Name;
 
                     [DataMember]
                     public Collection<CswExtTree.TreeNode> Tree;
@@ -352,10 +355,11 @@ namespace ChemSW.Nbt.WebServices
         public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request )
         {
             ResponseData.Tree = ResponseData.Tree ?? new Collection<CswExtTree.TreeNode>();
-
+            
             if( null != _View ) //&& ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                ResponseData.Name = _View.ViewName;
                 _View.SaveToCache( Request.IncludeInQuickLaunch );
 
                 if( CswTools.IsPrimaryKey( Request.IncludeNodeId ) && null == Request.IncludeNodeKey )

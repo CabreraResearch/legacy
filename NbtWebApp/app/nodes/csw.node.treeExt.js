@@ -54,6 +54,7 @@
             cswPrivate.make = function (data) {
 
                 cswPublic.nodeTree = cswPublic.div.tree({
+                    name: data.Name,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
 
@@ -78,11 +79,11 @@
                     cswPrivate.hoverNodeId = treeNode.raw.nodeid;
                     var $div = $(htmlElement).children().first().children();
                     var div = Csw.literals.factory($div);
-                    
+
                     Csw.nodeHoverIn(event, {
                         nodeid: cswPrivate.hoverNodeId,
-                        nodekey:  treeNode.raw.id,
-                        nodename:  treeNode.raw.text,
+                        nodekey: treeNode.raw.id,
+                        nodename: treeNode.raw.text,
                         parentDiv: div,
                         buttonHoverIn: function () {
                             cswPublic.nodeTree.preventSelect();
