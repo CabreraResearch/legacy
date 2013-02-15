@@ -56,7 +56,8 @@
                     properties: {},
                     documentProperties: {},
                     useExistingTempNode: false,
-                    materialProperies: {}
+                    materialProperies: {},
+                    sizes: []
                 }
             };
 
@@ -138,6 +139,14 @@
                     cswPrivate['makeStep' + newStepNo]();
 
                     if (cswPrivate.currentStepNo === 2) {
+                        
+                        //If the last step was 1, then save the step 1 props
+                        if (cswPrivate.lastStepNo === 1) {
+                            cswPrivate.saveProps();
+                        }
+
+
+
                         if (cswPrivate.lastStepNo === 3) {
                             cswPrivate.state.materialId = '';
                             cswPrivate.state.documentId = '';
@@ -145,11 +154,11 @@
                             cswPrivate.state.useExistingTempNode = false;
                             cswPrivate.reinitSteps(2);
                         }
-                        cswPrivate.createMaterial();
-                        if (cswPrivate.isDuplicateMaterial) {
+                        //cswPrivate.createMaterial();
+//                        if (cswPrivate.isDuplicateMaterial) {
 
-                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                        }
+//                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+//                        }
                     }
                     if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
                         cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
@@ -174,36 +183,36 @@
                         if (cswPrivate.materialTypeSelect &&
                             Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
 
-                            hasChanged = true;
+                            //hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         }
                         if (cswPrivate.supplierSelect &&
                             cswPrivate.supplierSelect.selectedText &&
                             Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
 
-                            hasChanged = true;
+                            //hasChanged = true;
                             cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
                         }
                         if (cswPrivate.tradeNameInput &&
                             cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
 
-                            hasChanged = true;
+                            //hasChanged = true;
                             cswPrivate.state.tradeName = cswPrivate.tradeNameInput.val();
                         }
                         if (cswPrivate.partNoInput &&
                             cswPrivate.state.partNo !== cswPrivate.partNoInput.val()) {
 
-                            hasChanged = true;
+                            //hasChanged = true;
                             cswPrivate.state.partNo = cswPrivate.partNoInput.val();
                         }
 
-                        if (hasChanged) {
-                            cswPrivate.state.materialId = '';
-                            cswPrivate.state.documentId = '';
-                            cswPrivate.state.properties = {};
-                            cswPrivate.state.useExistingTempNode = false;
-                            cswPrivate.reinitSteps(2);
-                        }
+//                        if (hasChanged) {
+//                            cswPrivate.state.materialId = '';
+//                            cswPrivate.state.documentId = '';
+//                            cswPrivate.state.properties = {};
+//                            cswPrivate.state.useExistingTempNode = false;
+//                            cswPrivate.reinitSteps(2);
+//                        }
                     }
 
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -232,7 +241,6 @@
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
-                            //onSelect: changeMaterial,
                             onChange: changeMaterial,
                             onSuccess: changeMaterial,
                             isRequired: true
@@ -300,18 +308,45 @@
                                 foundMaterialLabel = null;
                             }
                         };
-                        cswPrivate.createMaterial = function () {
+//                        cswPrivate.createMaterial = function () {
+//                            Csw.ajax.post({
+//                                urlMethod: 'createMaterial',
+//                                async: false,
+//                                data: {
+//                                    NodeTypeId: cswPrivate.state.materialType.val,
+//                                    Tradename: cswPrivate.state.tradeName,
+//                                    Supplier: cswPrivate.state.supplier.val,
+//                                    PartNo: cswPrivate.state.partNo,
+//                                    NodeId: cswPrivate.state.materialId
+//                                },
+//                                success: function (data) {
+//                                    removeFoundMaterialLabel();
+//                                    cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
+//                                    if (cswPrivate.isDuplicateMaterial) {
+//                                        cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
+//                                        foundMaterialLabel = cswPrivate.divStep1.nodeLink({
+//                                            text: "A material with these properties already exists with a tradename of " + data.noderef,
+//                                            name: "materialExistsLabel"
+//                                        });
+//                                    } else {
+//                                        cswPrivate.state.materialId = data.materialid;
+//                                        cswPrivate.state.documentTypeId = data.documenttypeid;
+//                                        cswPrivate.state.properties = data.properties;
+//                                        Csw.publish('CreateMaterialSuccess');
+//                                    }
+//                                },
+//                                error: function () {
+//                                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
+//                                }
+//                            });
+//                        };
+
+                        cswPrivate.saveProps = function() {
                             Csw.ajax.post({
-                                urlMethod: 'createMaterial',
+                                urlMethod: 'saveMaterial',
+                                data: { state: JSON.stringify(cswPrivate.state) },
                                 async: false,
-                                data: {
-                                    NodeTypeId: cswPrivate.state.materialType.val,
-                                    Tradename: cswPrivate.state.tradeName,
-                                    Supplier: cswPrivate.state.supplier.val,
-                                    PartNo: cswPrivate.state.partNo,
-                                    NodeId: cswPrivate.state.materialId
-                                },
-                                success: function (data) {
+                                success: function(data) {
                                     removeFoundMaterialLabel();
                                     cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
                                     if (cswPrivate.isDuplicateMaterial) {
@@ -324,14 +359,14 @@
                                         cswPrivate.state.materialId = data.materialid;
                                         cswPrivate.state.documentTypeId = data.documenttypeid;
                                         cswPrivate.state.properties = data.properties;
-                                        Csw.publish('CreateMaterialSuccess');
+                                        Csw.publish('SaveMaterialSuccess');
                                     }
                                 },
                                 error: function () {
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
                                 }
                             });
-                        };
+                        };//cswPrivate.saveProps()
 
                         cswPrivate.stepOneComplete = true;
                     }
@@ -381,7 +416,7 @@
 
                         div = cswPrivate.divStep2.div();
                         if (false === cswPrivate.state.useExistingTempNode) {
-                            Csw.subscribe('CreateMaterialSuccess', function() {
+                            Csw.subscribe('SaveMaterialSuccess', function() {
                                 renderProps();
                                 //cswPrivate.stepTwoComplete = true;
                             });
@@ -445,7 +480,7 @@
                             };
 
                             cswPrivate.header = [{ "value": cswPrivate.config.unitCountName, "isRequired": false },
-                                { "value": cswPrivate.config.quantityName, "isRequired": true },
+                                { "value": cswPrivate.config.quantityName, "isRequired": false },
                                 { "value": cswPrivate.config.numberName, "isRequired": false }];
                             if (cswPrivate.showQuantityEditable) {
                                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false }]);
@@ -717,7 +752,7 @@
                             Csw.tryExec(cswPrivate.onFinish, data.landingpagedata);
                         }
                     });
-                };
+                };//cswPrivate.finalize
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
                     Title: 'Create Material',
@@ -735,14 +770,24 @@
                     doNextOnInit: false
                 });
 
-                //Get the Suppliers View to drive the Supplier picklist
-                Csw.ajaxWcf.get({
-                    urlMethod: 'Materials/views',
-                    async: false,
-                    success: function (data) {
-                        cswPrivate.supplierViewId = data.SuppliersView.ViewId;
-                    }
-                });
+                //cswPrivate.initialize = function() {
+                    // Initialize the wizard //
+                    // - get the supplier view
+                    // - get or create a temp node
+                    // - get the sizes if any exist
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Materials/initialize',
+                        data: cswPrivate.state.materialId,
+                        async: false,
+                        success: function(data) {
+                            //console.log(data);
+                            cswPrivate.supplierViewId = data.SuppliersView.ViewId;
+                            cswPrivate.state.materialId = data.TempNode.NodeId;
+                            cswPrivate.state.sizes = data.SizeNodes;
+                        }
+                    });
+               // };//cswPrivate.initialize
 
             }());
 

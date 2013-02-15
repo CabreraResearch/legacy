@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -265,6 +266,80 @@ namespace ChemSW.Nbt.Actions
 
         #region Public
 
+        public JObject saveMaterial( CswNbtResources CswNbtResources, string Request )
+        {
+            JObject Ret = new JObject();
+
+            JObject PropObj = CswConvert.ToJObject( Request );
+            if( PropObj.HasValues )
+            {
+                CswPrimaryKey SupplierPk = CswConvert.ToPrimaryKey( PropObj["supplier"]["val"].ToString() );
+                Int32 NodeTypeId = CswConvert.ToInt32( PropObj["materialType"]["val"].ToString() );
+                string PartNo = PropObj["partNo"].ToString();
+                string TradeName = PropObj["tradeName"].ToString();
+
+                CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( PropObj["materialId"].ToString() );
+                if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
+                {
+                    CswNbtObjClassMaterial CurrentTempNode = CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
+                    Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
+                    //1. get the node and get its current nodetype,
+                    //if the incoming nodetype is different from the current nodetype then 
+                    //we scrap that first tempnode that was made and make a new temp node with the new nodetype
+                    // here we can call createMaterial and send in the proeprties and we are done
+                    if( NodeTypeId != CurrentNodeTypeId )
+                    {
+                        //Then we want to just forget about the first temp node created and create a new one with the new nodetype
+                        //todo: TEST -- make sure sending null as the NodeId is okay
+                        Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, null );
+                    }
+                    else
+                    {
+                        //2. if the nodetype isn't different then we need to update the preexisting tempnode
+                        // 2a. set the tradename
+                        // 2b. set the supplier
+                        // 2c. set the partno
+                        CurrentTempNode.TradeName.Text = TradeName;
+                        CurrentTempNode.Supplier.RelatedNodeId = SupplierPk;
+                        CurrentTempNode.PartNumber.Text = PartNo;
+                        //set the physical state to default to solid here otherwise it doesn't get defaulted to anything as commit isn't called
+                        CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                        CurrentTempNode.postChanges(false);
+
+                        //now we can call _tryCreateMaterial to do the rest!
+                        Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, CurrentTempNodePk.ToString() );
+                    }
+                }
+            }//if( PropObj.HasValues )
+
+            return Ret;
+        }
+
+        /// <summary>
+        /// Makes a temporary node of the Chemical nodetype. The reason we can't use createMaterial()
+        /// is because we don't have the any properties to provide to the method and tradename,
+        /// material type, and supplier are required.
+        /// </summary>
+        /// <param name="NodeId"></param>
+        /// <returns></returns>
+        public CswPrimaryKey makeTemp( string NodeId )
+        {
+            CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( NodeId );
+
+            if( false == CswTools.IsPrimaryKey( NodePk ) )
+            {
+                // Default to the Chemical NodeType
+                CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Chemical" );
+                if( null != ChemicalNT )
+                {
+                    CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    NodePk = NewMaterialTempNode.Node.NodeId;
+                }
+            }
+
+            return NodePk;
+        }
+
         /// <summary>
         /// Creates a new material, if one does not already exist, and returns the material nodeid
         /// </summary>
@@ -319,40 +394,67 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
+        //public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
+        //{
+        //    JObject Ret = new JObject();
+
+        //    if( null == MaterialId )
+        //    {
+        //        throw new CswDniException( ErrorType.Error,
+        //                                   "Cannot get material's sizes without a valid materialid.",
+        //                                   "Attempted to call getMaterialSizes with invalid or empty parameters." );
+        //    }
+
+        //    CswNbtNode MaterialNode = CswNbtResources.Nodes.GetNode( MaterialId );
+
+        //    if( null == MaterialNode ||
+        //        MaterialNode.getObjectClass().ObjectClass != NbtObjectClass.MaterialClass )
+        //    {
+        //        throw new CswDniException( ErrorType.Error,
+        //                                   "The provided node was not a valid material.",
+        //                                   "Attempted to call getMaterialSizes with a node that was not valid." );
+        //    }
+
+        //    CswNbtView SizesView = new CswNbtView( CswNbtResources ); //MaterialNode.getNodeType().CreateDefaultView();
+        //    SizesView.ViewMode = NbtViewRenderingMode.Grid;
+        //    CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+
+        //    CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+        //    CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
+
+        //    SizesView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+        //    SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ) );
+        //    SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ) );
+        //    SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable ) );
+
+        //    return Ret;
+        //}
+
+        public ICswNbtTree getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
         {
-            JObject Ret = new JObject();
-
-            if( null == MaterialId )
+            ICswNbtTree SizesTree = null;
+            if( null != MaterialId )
             {
-                throw new CswDniException( ErrorType.Error,
-                                           "Cannot get material's sizes without a valid materialid.",
-                                           "Attempted to call getMaterialSizes with invalid or empty parameters." );
+                CswPrimaryKey pk = MaterialId;
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtMetaDataObjectClass sizeOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+
+                    CswNbtView sizesView = new CswNbtView( CswNbtResources );
+                    CswNbtViewRelationship parent = sizesView.AddViewRelationship( sizeOC, true );
+                    sizesView.AddViewPropertyAndFilter( parent,
+                                                       MetaDataProp: materialOCP,
+                                                       Value: pk.PrimaryKey.ToString(),
+                                                       SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                    SizesTree = CswNbtResources.Trees.getTreeFromView( sizesView, true, false, false );
+
+                }
             }
 
-            CswNbtNode MaterialNode = CswNbtResources.Nodes.GetNode( MaterialId );
-
-            if( null == MaterialNode ||
-                MaterialNode.getObjectClass().ObjectClass != NbtObjectClass.MaterialClass )
-            {
-                throw new CswDniException( ErrorType.Error,
-                                           "The provided node was not a valid material.",
-                                           "Attempted to call getMaterialSizes with a node that was not valid." );
-            }
-
-            CswNbtView SizesView = new CswNbtView( CswNbtResources ); //MaterialNode.getNodeType().CreateDefaultView();
-            SizesView.ViewMode = NbtViewRenderingMode.Grid;
-            CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-
-            CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-            CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
-
-            SizesView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ) );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ) );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable ) );
-
-            return Ret;
+            return SizesTree;
         }
 
         private CswNbtNode _commitMaterialNode( JObject MaterialObj )
