@@ -188,7 +188,24 @@ namespace CswPrintClient1
             if( printDialog1.ShowDialog() == DialogResult.OK )
             {
                 tbPrinter.Text = printDialog1.PrinterSettings.PrinterName;
+                setEnablePrintJobsStates();
+                SaveSettings();
             }
+        }
+
+        private void setEnablePrintJobsStates()
+        {
+            if( btnRegister.Enabled || tbPrinter.Text == string.Empty )
+            {
+                cbEnabled.Checked = false;
+                cbEnabled.Enabled = false;
+                lblStatus.Text = "Print jobs are disabled, see Setup tab.";
+            }
+            else
+            {
+                cbEnabled.Enabled = true;
+            }
+            btnSelPrn.Enabled = !cbEnabled.Checked;
         }
 
         private void setBtnRegisterState( string errorStatus )
@@ -196,17 +213,17 @@ namespace CswPrintClient1
             if( _printerKey != string.Empty )
             {
                 btnRegister.Enabled = false;
-                lblRegisterStatus.Text = "Success! Registered PrinterKey is " + _printerKey;
+                lblRegisterStatus.Text = "Success! Your printer is registered (" + _printerKey + ").";
             }
             else
             {
                 btnRegister.Enabled = true;
                 lblRegisterStatus.Text = errorStatus;
-                cbEnabled.Checked = false;
+                setEnablePrintJobsStates();
             }
             tbDescript.Enabled = btnRegister.Enabled;
             tbLPCname.Enabled = btnRegister.Enabled;
-            cbEnabled.Enabled = !( btnRegister.Enabled );
+            setEnablePrintJobsStates();
         }
 
 
@@ -224,7 +241,7 @@ namespace CswPrintClient1
             //let's being our setup
             Log( "Starting up..." );
             LoadSettings();
-            cbEnabled_Click( sender, e );
+            setEnablePrintJobsStates();
         }
 
         private void SaveSettings()
@@ -264,10 +281,20 @@ namespace CswPrintClient1
 
                 Log( "Loaded settings." );
                 setBtnRegisterState( "" );
+                if( true != cbEnabled.Checked )
+                {
+                    lblStatus.Text = "Print jobs are not enabled, see Setup tab.";
+                }
+                else
+                {
+                    timer1.Enabled = true;
+                    lblStatus.Text = "Waiting...";
+                }
             }
             catch( Exception e )
             {
-                Log( e.Message );
+                Log( "No configuration data found." );
+                lblStatus.Text = "Use Setup tab.";
             }
         }
 
@@ -299,6 +326,7 @@ namespace CswPrintClient1
 
         private void cbEnabled_Click( object sender, EventArgs e )
         {
+            setEnablePrintJobsStates();
             if( cbEnabled.Checked == true )
             {
                 Status( "Waiting for print job." );
@@ -332,6 +360,7 @@ namespace CswPrintClient1
             setBtnRegisterState( "" );
             SaveSettings();
         }
+
 
     }
 }

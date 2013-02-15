@@ -1422,3 +1422,7 @@ ul li div {
     font-weight: bold;
     font-size: 12px;
 }
+
+.x-window-body-default {
+    background-color: #ffffff !Important;
+}

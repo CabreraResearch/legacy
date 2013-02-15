@@ -551,8 +551,8 @@ namespace ChemSW.Nbt.WebPages
                             ChangeObjectClassSelect.Visible = false;
                         if( ChangeObjectClassLabel != null )
                             ChangeObjectClassLabel.Visible = false;
-                        if( _LayoutLink != null )
-                            _LayoutLink.Visible = false;
+                        //if( _LayoutLink != null )
+                        //    _LayoutLink.Visible = false;
                     }
                     else
                     {
@@ -891,21 +891,21 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.ListOptions = ListOptionsCDS.ToString();
 
                     PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    CswNbtMetaDataNodeTypeTab Tab = Master.CswNbtResources.MetaData.getNodeTypeTabVersion( PropToSave.NodeTypeId, CswConvert.ToInt32( EditPropTabSelect.SelectedValue ) );
-                    Int32 DisplayRow = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    Int32 DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    Int32 DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    Int32 DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
-                    string TabGroup = getPropAttributeValue( "EditProp_TabGroupValue" + OldSelectedNodeTypePropId.ToString(), typeof( string ), EditPropPlaceHolder );
-                    bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
+                    //CswNbtMetaDataNodeTypeTab Tab = Master.CswNbtResources.MetaData.getNodeTypeTabVersion( PropToSave.NodeTypeId, CswConvert.ToInt32( EditPropTabSelect.SelectedValue ) );
+                    //Int32 DisplayRow = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    //Int32 DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    //Int32 DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    //Int32 DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    //string TabGroup = getPropAttributeValue( "EditProp_TabGroupValue" + OldSelectedNodeTypePropId.ToString(), typeof( string ), EditPropPlaceHolder );
+                    //bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
-                    //We're not using Design mode to configure layouts anymore
-                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, 
-                        TabId: Tab.TabId, 
-                        DisplayRow: DisplayRow, 
-                        DisplayColumn: DisplayColumn, 
-                        TabGroup: TabGroup, 
-                        DoMove: false );
+                    ////We're not using Design mode to configure layouts anymore
+                    //PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, 
+                    //    TabId: Tab.TabId, 
+                    //    DisplayRow: DisplayRow, 
+                    //    DisplayColumn: DisplayColumn, 
+                    //    TabGroup: TabGroup, 
+                    //    DoMove: false );
                     
                     //if( SetValueOnAdd )
                     //{
@@ -996,13 +996,13 @@ namespace ChemSW.Nbt.WebPages
             }
         }
 
-        protected void _LayoutLink_Click( object sender, EventArgs e )
-        {
-            if( _Mode == NbtDesignMode.Inspection )
-                Master.Redirect( "Design_Layout.aspx?mode=Inspection&nodetypeid=" + _SelectedNodeType.NodeTypeId );
-            else
-                Master.Redirect( "Design_Layout.aspx?nodetypeid=" + _SelectedNodeType.NodeTypeId );
-        }
+        //protected void _LayoutLink_Click( object sender, EventArgs e )
+        //{
+        //    if( _Mode == NbtDesignMode.Inspection )
+        //        Master.Redirect( "Design_Layout.aspx?mode=Inspection&nodetypeid=" + _SelectedNodeType.NodeTypeId );
+        //    else
+        //        Master.Redirect( "Design_Layout.aspx?nodetypeid=" + _SelectedNodeType.NodeTypeId );
+        //}
 
         protected void _DefaultViewLink_Click( object sender, EventArgs e )
         {
@@ -1115,7 +1115,7 @@ namespace ChemSW.Nbt.WebPages
         private TableRow _ViewXmlRow;
         private CswViewStructureTree _RelationshipViewTree;
         private Label _WarningLabel;
-        private LinkButton _LayoutLink;
+        //private LinkButton _LayoutLink;
         private LinkButton _DefaultViewLink;
         private Label NodeTypeVersionLabel;
         private DropDownList NodeTypeVersionSelect;
@@ -1229,10 +1229,10 @@ namespace ChemSW.Nbt.WebPages
             //Spacer4 = new Literal();
             //Spacer4.Text = "&nbsp;";
 
-            _LayoutLink = new LinkButton();
-            _LayoutLink.ID = "layoutlink_" + _SelectedValue;
-            _LayoutLink.Text = "Edit Property Layout";
-            _LayoutLink.Click += new EventHandler( _LayoutLink_Click );
+            //_LayoutLink = new LinkButton();
+            //_LayoutLink.ID = "layoutlink_" + _SelectedValue;
+            //_LayoutLink.Text = "Edit Property Layout";
+            //_LayoutLink.Click += new EventHandler( _LayoutLink_Click );
 
             _DefaultViewLink = new LinkButton();
             _DefaultViewLink.ID = "defaultviewlink_" + _SelectedValue;
@@ -1274,7 +1274,7 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 14, 1, ChangeObjectClassSelect );
             TabTable.addControl( 15, 1, _ChangeObjectClassButton );
             TabTable.addControl( 16, 0, new CswLiteralNbsp() );
-            TabTable.addControl( 17, 1, _LayoutLink );
+            //TabTable.addControl( 17, 1, _LayoutLink );
             TabTable.addControl( 18, 1, _DefaultViewLink );
         }
 
@@ -1608,18 +1608,18 @@ namespace ChemSW.Nbt.WebPages
                     //DisplayColValue.Text = SelectedNodeTypeProp.FirstEditLayout.DisplayColumn.ToString();
                     //DisplayColRow.Cells[1].Controls.Add( DisplayColValue );
 
-                    TableRow DisplayRowRow = makeEditPropTableRow( EditPropPlaceHolder );
-                    if( _Mode == NbtDesignMode.Inspection )
-                    {
-                        ( (Literal) DisplayRowRow.Cells[0].Controls[0] ).Text = "Question Order:";
-                        //else
-                        //    ( (Literal) DisplayRowRow.Cells[0].Controls[0] ).Text = LabelNodeTypeTab + "  Display Row:";
-                        TextBox DisplayRowValue = new TextBox();
-                        DisplayRowValue.CssClass = "textinput";
-                        DisplayRowValue.ID = "EditProp_DisplayRowValue" + SelectedNodeTypeProp.PropId.ToString();
-                        DisplayRowValue.Text = SelectedNodeTypeProp.FirstEditLayout.DisplayRow.ToString();
-                        DisplayRowRow.Cells[1].Controls.Add( DisplayRowValue );
-                    }
+                    //TableRow DisplayRowRow = makeEditPropTableRow( EditPropPlaceHolder );
+                    //if( _Mode == NbtDesignMode.Inspection )
+                    //{
+                    //    ( (Literal) DisplayRowRow.Cells[0].Controls[0] ).Text = "Question Order:";
+                    //    //else
+                    //    //    ( (Literal) DisplayRowRow.Cells[0].Controls[0] ).Text = LabelNodeTypeTab + "  Display Row:";
+                    //    TextBox DisplayRowValue = new TextBox();
+                    //    DisplayRowValue.CssClass = "textinput";
+                    //    DisplayRowValue.ID = "EditProp_DisplayRowValue" + SelectedNodeTypeProp.PropId.ToString();
+                    //    DisplayRowValue.Text = SelectedNodeTypeProp.FirstEditLayout.DisplayRow.ToString();
+                    //    DisplayRowRow.Cells[1].Controls.Add( DisplayRowValue );
+                    //}
 
                     //TableRow DisplayColAdd = makeEditPropTableRow( EditPropPlaceHolder );
                     //( (Literal) DisplayColAdd.Cells[0].Controls[0] ).Text = "Add Display Column:";

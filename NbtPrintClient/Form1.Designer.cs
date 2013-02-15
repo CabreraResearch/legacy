@@ -119,7 +119,6 @@
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(418, 56);
             this.lblStatus.TabIndex = 19;
-            this.lblStatus.Text = "starting...";
             // 
             // tabPage2
             // 
@@ -234,7 +233,7 @@
             this.tbURL.Name = "tbURL";
             this.tbURL.Size = new System.Drawing.Size(304, 20);
             this.tbURL.TabIndex = 47;
-            this.tbURL.Text = "https://imcslive.chemswlive.com/nbtwebapp/Services/";
+            this.tbURL.Text = "https://nbtlive.chemswlive.com/nbtwebapp/Services/";
             // 
             // label9
             // 
@@ -286,9 +285,9 @@
             // 
             this.tbPassword.Location = new System.Drawing.Point(101, 295);
             this.tbPassword.Name = "tbPassword";
+            this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(124, 20);
             this.tbPassword.TabIndex = 35;
-            this.tbPassword.Text = "admin";
             // 
             // label5
             // 
@@ -305,7 +304,6 @@
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(124, 20);
             this.tbUsername.TabIndex = 33;
-            this.tbUsername.Text = "admin";
             // 
             // label4
             // 
@@ -322,7 +320,6 @@
             this.tbAccessId.Name = "tbAccessId";
             this.tbAccessId.Size = new System.Drawing.Size(124, 20);
             this.tbAccessId.TabIndex = 31;
-            this.tbAccessId.Text = "nbt_master";
             // 
             // label3
             // 
@@ -349,7 +346,6 @@
             this.tbPrinter.ReadOnly = true;
             this.tbPrinter.Size = new System.Drawing.Size(152, 20);
             this.tbPrinter.TabIndex = 28;
-            this.tbPrinter.Text = "ZDesigner TLP 3842";
             // 
             // tabPage3
             // 
@@ -471,7 +467,7 @@
             this.ClientSize = new System.Drawing.Size(432, 403);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
-            this.Text = "ChemSW Label Printer Client v0.1";
+            this.Text = "ChemSW Label Printer Client v1.2";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
