@@ -441,13 +441,13 @@
                     }
                 } // if-else (o.ReadOnly) {
 
-
                 cswPublic.$.hover(
-                function(event) {
+                   function(event) {
                         Csw.nodeHoverIn(event, {
                             nodeid: cswPrivate.selectedNodeId,
                             nodename: cswPrivate.selectedName,
-                            parentDiv: cswPublic
+                            parentDiv: cswPublic,
+                            rightpad: 0
                         });
                     },
                     function(event) {
