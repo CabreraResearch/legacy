@@ -744,16 +744,17 @@
             //#region Public methods
 
             cswPublic.reload = function () {
-                cswPrivate.getData(function (result) {
-                    if (result && result.grid && result.grid.data && result.grid.data.items) {
-                        cswPrivate.rows = result.grid.data;
-                        cswPrivate.store.destroy();
-                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
-                        cswPrivate.grid.reconfigure(cswPrivate.store);
-                    } else {
-                        Csw.debug.error('Failed to reload grid');
-                    }
-                });
+                cswPrivate.reInit();
+//                cswPrivate.getData(function (result) {
+//                    if (result && result.grid && result.grid.data && result.grid.data.items) {
+//                        cswPrivate.rows = result.grid.data;
+//                        cswPrivate.store.destroy();
+//                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
+//                        cswPrivate.grid.reconfigure(cswPrivate.store);
+//                    } else {
+//                        Csw.debug.error('Failed to reload grid');
+//                    }
+//                });
             };
 
             cswPublic.getCell = Csw.method(function (rowindex, key) {
