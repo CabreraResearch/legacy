@@ -32,6 +32,7 @@
                     showCheckboxes: false,
                     showActionColumn: true,
                     showView: true,
+                    showPreview: true,
                     showLock: true,
                     showEdit: true,
                     showDelete: true,
@@ -40,6 +41,7 @@
 
                     onLoad: function (grid, ajaxResult) { },
                     onEdit: function (rows) { },
+                    onPreview: function (rows) { },
                     onDelete: function (rows) { },
                     onSelect: function (rows) { },
                     onDeselect: function (row) { },
@@ -76,7 +78,7 @@
                 Csw.extend(cswPrivate, options);
                 cswPrivate.ID = cswPrivate.ID || cswPublic.getId();
                 cswPrivate.ID += cswPrivate.suffix;
-            }());
+            } ());
 
             //#endregion _preCtor
 
@@ -118,33 +120,27 @@
 
                                 var table = div.table({ cellpadding: 0 });
 
-                                var editCell = table.cell(1, 1).css({ width: '26px' });
-                                var delCel = table.cell(1, 2).css({ width: '26px' });
+                                var previewCell = table.cell(1, 1).css({ width: '26px' });
+                                var editCell = table.cell(1, 2).css({ width: '26px' });
+                                var delCel = table.cell(1, 3).css({ width: '26px' });
 
                                 var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(tblObj.cellData.canedit, true);
+                                var canpreview = Csw.bool(cswPrivate.showPreview) && Csw.bool(tblObj.cellData.canview, true);
                                 var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
                                 var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
                                 var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
 
-                                // only show one of edit/view/lock
-                                var doHover = false;
-                                if (islocked) {
-                                    cswPrivate.makeActionButton(editCell, 'Locked', Csw.enums.iconType.lock, null, tblObj.cellData);
-                                    doHover = true;
-                                } else if (canedit) {
-                                    doHover = true;
-                                    cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
-                                } else if (canview) {
-                                    doHover = true;
-                                    cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, tblObj);
+                                if (canpreview) {
+                                    cswPrivate.makeActionButton(previewCell, 'Preview', Csw.enums.iconType.magglass, cswPrivate.onPreview, tblObj);
                                 }
 
-                                if (doHover) {
-                                    table.$.hover(function (event) {
-                                        Csw.tryExec(cswPrivate.onMouseEnter, event, tblObj);
-                                    }, function (event) {
-                                        Csw.tryExec(cswPrivate.onMouseExit, event, tblObj);
-                                    });
+                                // only show one of edit/view/lock
+                                if (islocked) {
+                                    cswPrivate.makeActionButton(editCell, 'Locked', Csw.enums.iconType.lock, null, tblObj.cellData);
+                                } else if (canedit) {
+                                    cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
+                                } else if (canview) {
+                                    cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
                                 }
 
                                 if (candelete) {
@@ -168,8 +164,8 @@
                     };
                     if (false === Csw.isNullOrEmpty(clickFunc)) {
                         iconopts.isButton = true;
-                        iconopts.onClick = function () {
-                            Csw.tryExec(clickFunc, [cell.cellData], cell.raw);
+                        iconopts.onClick = function (event) {
+                            Csw.tryExec(clickFunc, [cell.cellData], cell.raw, event);
                         };
                     }
                     tableCell.icon(iconopts);
@@ -195,7 +191,7 @@
                     groupField: cswPrivate.groupField,
                     sorters: cswPrivate.sorters
                 };
-                
+
                 if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                     var newfld = { name: cswPrivate.actionDataIndex };
                     storeopts.fields.splice(0, 0, newfld);
@@ -484,7 +480,7 @@
                     var newcol = {
                         header: 'Action',
                         dataIndex: cswPrivate.actionDataIndex,
-                        width: 60,
+                        width: 70,
                         flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
@@ -568,7 +564,7 @@
                     if (cswPrivate.showCheckboxes) {
                         gridopts.selType = 'checkboxmodel';
                         gridopts.selModel = { mode: 'Simple' };
-                        gridopts.listeners.selectionchange = function(t, selected, eOpts) {
+                        gridopts.listeners.selectionchange = function (t, selected, eOpts) {
                             if (cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
                                 if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
                                     cswPrivate.editAllButton.disable();
@@ -581,11 +577,11 @@
                         };
                     } else {
                         gridopts.selType = 'rowmodel';
-                        gridopts.listeners.beforeselect = function() {
+                        gridopts.listeners.beforeselect = function () {
                             return Csw.bool(cswPrivate.canSelectRow);
                         };
                     }
-                } else if(cswPrivate.selModel) {
+                } else if (cswPrivate.selModel) {
                     gridopts.selType = cswPrivate.selModel.selType;
                 }
                 // Paging
@@ -727,7 +723,7 @@
                 }
             });
 
-            cswPrivate.setInternalGridState = function(data) {
+            cswPrivate.setInternalGridState = function (data) {
                 if (data) {
                     cswPrivate.pageSize = Csw.number(data.pageSize);
                     if (false === Csw.isNullOrEmpty(data.truncated)) {
@@ -757,7 +753,7 @@
                 if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
-                            cswPrivate.setInternalGridState(result.grid);                            
+                            cswPrivate.setInternalGridState(result.grid);
                             cswPrivate.ajaxResult = result;
                             cswPrivate.init();
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
@@ -878,7 +874,7 @@
                 return return_val;
             };
 
-            cswPrivate.extractRows = function(rawRows) {
+            cswPrivate.extractRows = function (rawRows) {
                 var ret = [];
                 if (rawRows && rawRows.length > 0) {
                     rawRows.forEach(function (item) {
@@ -912,7 +908,7 @@
                 var return_val = [];
 
                 if (cswPrivate.store && cswPrivate.store.getUpdatedRecords) {
-                    return_val = cswPrivate.extractRows( cswPrivate.store.getUpdatedRecords() );
+                    return_val = cswPrivate.extractRows(cswPrivate.store.getUpdatedRecords());
                 }
 
                 return return_val;
@@ -964,11 +960,11 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.reInit();
-            }());
+            } ());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
 
-}());
+} ());
