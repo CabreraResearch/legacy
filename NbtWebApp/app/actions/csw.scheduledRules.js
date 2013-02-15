@@ -357,6 +357,8 @@
                             storeId: gridId,
                             data: result.Grid,
                             stateId: gridId,
+                            height: 375,
+                            width: '100%',
                             title: 'Scheduled Rules',
                             usePaging: false,
                             showActionColumn: false,
