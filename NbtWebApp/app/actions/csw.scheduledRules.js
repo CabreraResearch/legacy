@@ -40,7 +40,8 @@
                 var idx = cswPrivate.tabNames.indexOf(tabName);
                 if (idx !== -1) {
                     cswPrivate.tabs.setActiveTab(idx);
-                    cswPrivate.onTabSelect(tabName);
+                    //cswPrivate.onTabSelect(tabName);
+                    cswPrivate.makeRulesTab();
                 }
             };
 
@@ -407,7 +408,7 @@
 
                 cswParent.empty();
                 cswPrivate.tabs = cswParent.tabStrip({
-                    onTabSelect: cswPrivate.onTabSelect
+                    //onTabSelect: cswPrivate.onTabSelect
                 });
                 cswPrivate.tabs.setTitle('Scheduled Rules by Customer ID');
 
