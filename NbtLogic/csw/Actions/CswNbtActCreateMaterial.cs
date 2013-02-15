@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     // If a preexisting material was provided, Node will not be null
                     // because it was set in the constructor
-                    _ExistingNode = Node;
+                    //_ExistingNode = Node;
                     if( null == _ExistingNode )
                     {
                         _ExistingNode = CswNbtObjClassMaterial.getExistingMaterial( _NbtResources, NodeTypeId, SupplierId, TradeName, PartNo );
@@ -283,30 +283,23 @@ namespace ChemSW.Nbt.Actions
                 {
                     CswNbtObjClassMaterial CurrentTempNode = CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
                     Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
-                    //1. get the node and get its current nodetype,
-                    //if the incoming nodetype is different from the current nodetype then 
-                    //we scrap that first tempnode that was made and make a new temp node with the new nodetype
-                    // here we can call createMaterial and send in the proeprties and we are done
                     if( NodeTypeId != CurrentNodeTypeId )
                     {
-                        //Then we want to just forget about the first temp node created and create a new one with the new nodetype
-                        //todo: TEST -- make sure sending null as the NodeId is okay
+                        // Then we want to just forget about the first temp node created and create a new one with the new nodetype
                         Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, null );
                     }
                     else
                     {
-                        //2. if the nodetype isn't different then we need to update the preexisting tempnode
-                        // 2a. set the tradename
-                        // 2b. set the supplier
-                        // 2c. set the partno
+                        // If the nodetype isn't different then we need to update the node
                         CurrentTempNode.TradeName.Text = TradeName;
                         CurrentTempNode.Supplier.RelatedNodeId = SupplierPk;
                         CurrentTempNode.PartNumber.Text = PartNo;
-                        //set the physical state to default to solid here otherwise it doesn't get defaulted to anything as commit isn't called
-                        CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                        if (string.IsNullOrEmpty(CurrentTempNode.PhysicalState.Value))
+                        {
+                            CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                        }
                         CurrentTempNode.postChanges(false);
 
-                        //now we can call _tryCreateMaterial to do the rest!
                         Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, CurrentTempNodePk.ToString() );
                     }
                 }
@@ -393,42 +386,6 @@ namespace ChemSW.Nbt.Actions
 
             return Ret;
         }
-
-        //public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
-        //{
-        //    JObject Ret = new JObject();
-
-        //    if( null == MaterialId )
-        //    {
-        //        throw new CswDniException( ErrorType.Error,
-        //                                   "Cannot get material's sizes without a valid materialid.",
-        //                                   "Attempted to call getMaterialSizes with invalid or empty parameters." );
-        //    }
-
-        //    CswNbtNode MaterialNode = CswNbtResources.Nodes.GetNode( MaterialId );
-
-        //    if( null == MaterialNode ||
-        //        MaterialNode.getObjectClass().ObjectClass != NbtObjectClass.MaterialClass )
-        //    {
-        //        throw new CswDniException( ErrorType.Error,
-        //                                   "The provided node was not a valid material.",
-        //                                   "Attempted to call getMaterialSizes with a node that was not valid." );
-        //    }
-
-        //    CswNbtView SizesView = new CswNbtView( CswNbtResources ); //MaterialNode.getNodeType().CreateDefaultView();
-        //    SizesView.ViewMode = NbtViewRenderingMode.Grid;
-        //    CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-
-        //    CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-        //    CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
-
-        //    SizesView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-        //    SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ) );
-        //    SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ) );
-        //    SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable ) );
-
-        //    return Ret;
-        //}
 
         public ICswNbtTree getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
         {

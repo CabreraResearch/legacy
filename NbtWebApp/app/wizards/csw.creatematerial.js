@@ -142,11 +142,14 @@
                         
                         //If the last step was 1, then save the step 1 props
                         if (cswPrivate.lastStepNo === 1) {
-                            cswPrivate.saveProps();
+                            cswPrivate.saveMaterial();
+                            if (cswPrivate.isDuplicateMaterial) {
+
+                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+                            }
                         }
 
-
-
+                        //todo: this needs to go because we can't be creating a new material or losing props on next/prev
                         if (cswPrivate.lastStepNo === 3) {
                             cswPrivate.state.materialId = '';
                             cswPrivate.state.documentId = '';
@@ -154,18 +157,15 @@
                             cswPrivate.state.useExistingTempNode = false;
                             cswPrivate.reinitSteps(2);
                         }
-                        //cswPrivate.createMaterial();
-//                        if (cswPrivate.isDuplicateMaterial) {
-
-//                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-//                        }
-                    }
+                    }//if (cswPrivate.currentStepNo === 2)
+                    
                     if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
                         cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                         if (cswPrivate.lastStepNo === 2) {
                             cswPrivate.tabsAndProps.save({}, '', null, false);
                         }
                     }
+                    
                     if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
                         cswPrivate.state.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
                     }
@@ -178,42 +178,26 @@
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
+                    
                     function changeMaterial() {
-                        var hasChanged = false;
                         if (cswPrivate.materialTypeSelect &&
                             Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
-
-                            //hasChanged = true;
                             cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         }
                         if (cswPrivate.supplierSelect &&
                             cswPrivate.supplierSelect.selectedText &&
                             Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
-
-                            //hasChanged = true;
                             cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
                         }
                         if (cswPrivate.tradeNameInput &&
                             cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
-
-                            //hasChanged = true;
                             cswPrivate.state.tradeName = cswPrivate.tradeNameInput.val();
                         }
                         if (cswPrivate.partNoInput &&
                             cswPrivate.state.partNo !== cswPrivate.partNoInput.val()) {
-
-                            //hasChanged = true;
                             cswPrivate.state.partNo = cswPrivate.partNoInput.val();
                         }
-
-//                        if (hasChanged) {
-//                            cswPrivate.state.materialId = '';
-//                            cswPrivate.state.documentId = '';
-//                            cswPrivate.state.properties = {};
-//                            cswPrivate.state.useExistingTempNode = false;
-//                            cswPrivate.reinitSteps(2);
-//                        }
-                    }
+                    }//changeMaterial()
 
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -225,7 +209,8 @@
                         cswPrivate.divStep1.empty();
 
                         cswPrivate.divStep1.span({
-                            text: "This wizard will guide you through the process of creating a new material. If the attributes below match an existing material, you will be given the option to view that material.",
+                            text: "This wizard will guide you through the process of creating a new material." +
+                                "If the attributes below match an existing material, you will be given the option to view that material.",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep1.br({ number: 4 });
@@ -234,7 +219,7 @@
                             FirstCellRightAlign: true,
                         });
 
-                        //Material
+                        /* Material Type */
                         tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
                         cswPrivate.materialTypeSelect = tbl.cell(1, 2).nodeTypeSelect({
                             name: 'nodeTypeSelect',
@@ -246,7 +231,7 @@
                             isRequired: true
                         });
 
-                        // TRADENAME
+                        /* Tradename */
                         tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);
                         cswPrivate.tradeNameInput = tbl.cell(2, 2).input({
                             name: 'tradename',
@@ -258,8 +243,7 @@
                             isRequired: true
                         });
 
-
-                        // SUPPLIER
+                        /* Supplier */
                         cswPrivate.makeSupplierCtrl = function (NodeTypeId) {
                             tbl.cell(3, 1).empty();
                             tbl.cell(3, 2).empty();
@@ -286,10 +270,9 @@
                                 isRequired: true
                             });
                         };
-                        // Call the function to create the Supplier Picklist
                         cswPrivate.makeSupplierCtrl();
 
-                        // PARTNO
+                        /* Part Number */
                         tbl.cell(4, 1).span().setLabelText('Part No:  ');
                         cswPrivate.partNoInput = tbl.cell(4, 2).input({
                             name: 'partno',
@@ -308,40 +291,8 @@
                                 foundMaterialLabel = null;
                             }
                         };
-//                        cswPrivate.createMaterial = function () {
-//                            Csw.ajax.post({
-//                                urlMethod: 'createMaterial',
-//                                async: false,
-//                                data: {
-//                                    NodeTypeId: cswPrivate.state.materialType.val,
-//                                    Tradename: cswPrivate.state.tradeName,
-//                                    Supplier: cswPrivate.state.supplier.val,
-//                                    PartNo: cswPrivate.state.partNo,
-//                                    NodeId: cswPrivate.state.materialId
-//                                },
-//                                success: function (data) {
-//                                    removeFoundMaterialLabel();
-//                                    cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
-//                                    if (cswPrivate.isDuplicateMaterial) {
-//                                        cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
-//                                        foundMaterialLabel = cswPrivate.divStep1.nodeLink({
-//                                            text: "A material with these properties already exists with a tradename of " + data.noderef,
-//                                            name: "materialExistsLabel"
-//                                        });
-//                                    } else {
-//                                        cswPrivate.state.materialId = data.materialid;
-//                                        cswPrivate.state.documentTypeId = data.documenttypeid;
-//                                        cswPrivate.state.properties = data.properties;
-//                                        Csw.publish('CreateMaterialSuccess');
-//                                    }
-//                                },
-//                                error: function () {
-//                                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
-//                                }
-//                            });
-//                        };
 
-                        cswPrivate.saveProps = function() {
+                        cswPrivate.saveMaterial = function() {
                             Csw.ajax.post({
                                 urlMethod: 'saveMaterial',
                                 data: { state: JSON.stringify(cswPrivate.state) },
@@ -366,11 +317,13 @@
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
                                 }
                             });
-                        };//cswPrivate.saveProps()
+                        };//cswPrivate.saveMaterial()
 
                         cswPrivate.stepOneComplete = true;
-                    }
+                        
+                    }//if (false === cswPrivate.stepOneComplete)
                 };
+                
             }());
             //#endregion Step 1: Choose Type and Identity
 
@@ -770,24 +723,20 @@
                     doNextOnInit: false
                 });
 
-                //cswPrivate.initialize = function() {
-                    // Initialize the wizard //
-                    // - get the supplier view
-                    // - get or create a temp node
-                    // - get the sizes if any exist
-
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Materials/initialize',
-                        data: cswPrivate.state.materialId,
-                        async: false,
-                        success: function(data) {
-                            //console.log(data);
-                            cswPrivate.supplierViewId = data.SuppliersView.ViewId;
-                            cswPrivate.state.materialId = data.TempNode.NodeId;
-                            cswPrivate.state.sizes = data.SizeNodes;
-                        }
-                    });
-               // };//cswPrivate.initialize
+                // Initialize the wizard:
+                //  -Get the supplier view 
+                //  -Get or create a temp node
+                //  -Get the size nodes (if there are any)
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Materials/initialize',
+                    data: cswPrivate.state.materialId,
+                    async: false,
+                    success: function(data) {
+                        cswPrivate.supplierViewId = data.SuppliersView.ViewId;
+                        cswPrivate.state.materialId = data.TempNode.NodeId;
+                        cswPrivate.state.sizes = data.SizeNodes;
+                    }
+                });
 
             }());
 

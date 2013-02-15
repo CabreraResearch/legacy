@@ -67,18 +67,18 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
                 CswNbtActCreateMaterial CreateMaterialAction = new CswNbtActCreateMaterial( NbtResources );
 
-                // create/get node
+                // Get/Create a node
                 CswPrimaryKey NodePk = CreateMaterialAction.makeTemp( NodeId );
                 Response.Data.TempNode = new CswNbtNode.Node( NbtResources.getNode( NodePk, DateTime.Now ) );
 
-                //suppliers view
+                // Suppliers view
                 CswNbtView SupplierView = CreateMaterialAction.getMaterialSuppliersView();
                 if( null != SupplierView )
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
 
-                //material sizes (if exist)
+                // Material sizes (if exist)
                 ICswNbtTree SizesTree = CreateMaterialAction.getMaterialSizes( NbtResources, NodePk );
                 for( int i = 0; i < SizesTree.getChildNodeCount(); i++ )
                 {
