@@ -15,6 +15,7 @@
                 validateCheckboxes: true,
                 showToggleLink: true,
                 useScrollbars: true,
+                useHover: true,
                 height: '',
                 width: '',
 
@@ -53,7 +54,7 @@
 
             cswPrivate.make = function (data) {
 
-                cswPublic.nodeTree = cswPublic.div.tree({
+                var treeOpts = {
                     name: data.Name,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
@@ -63,8 +64,6 @@
                     fields: data.Fields,
                     selectedId: data.SelectedId,
 
-                    onMouseEnter: hoverNode,
-                    onMouseExit: deHoverNode,
                     onSelect: cswPrivate.handleSelectNode,
                     beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,
@@ -73,7 +72,12 @@
                     useToggles: cswPrivate.showToggleLink,
                     useCheckboxes: cswPrivate.isMulti,
                     useScrollbars: cswPrivate.useScrollbars
-                });
+                };
+                if (cswPrivate.useHover) {
+                    treeOpts.onMouseEnter = hoverNode;
+                    treeOpts.onMouseExit = deHoverNode;
+                }
+                cswPublic.nodeTree = cswPublic.div.tree(treeOpts);
 
                 function hoverNode(event, treeNode, htmlElement, index, eventObj, eOpts) {
                     cswPrivate.hoverNodeId = treeNode.raw.nodeid;
