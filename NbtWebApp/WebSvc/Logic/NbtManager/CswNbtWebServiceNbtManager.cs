@@ -51,22 +51,9 @@ namespace ChemSW.Nbt.WebServices
 
         private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
-            if( _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) )
+            if( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername  || ( _NbtManagerResources.CurrentNbtUser.IsAdministrator() && AllowAnyAdmin ) )
             {
                 _AllowAllAccessIds = true;
-            }
-            else if( ( _NbtManagerResources.CurrentNbtUser.IsAdministrator() && AllowAnyAdmin ) ||
-                     _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
-            {
-                _AllowAllAccessIds = false;
-            }
-            else if( _Action == CswNbtActionName.View_Scheduled_Rules && _NbtManagerResources.Permit.can( _Action, _NbtManagerResources.CurrentNbtUser ) )
-            {
-                _AllowAllAccessIds = false;
-            }
-            else
-            {
-                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Attempted to authenticate as " + _NbtManagerResources.CurrentNbtUser.Username + " on a privileged method." );
             }
         }
 
