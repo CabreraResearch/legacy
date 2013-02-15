@@ -139,12 +139,16 @@
                 cswPrivate.make(treeData);
             };
 
-            cswPublic.getChecked = function () {
+            cswPublic.checkedNodes = function () {
                 var checked = cswPublic.nodeTree.getChecked();
                 var ret = [];
                 if (checked && checked.length > 0) {
                     checked.forEach(function (treeNode) {
-                        ret.push({ nodeid: treeNode.raw.nodeid, nodekey: treeNode.raw.id });
+                        ret.push({ 
+                            nodeid: treeNode.raw.nodeid, 
+                            nodekey: treeNode.raw.id,
+                            nodename: treeNode.raw.text 
+                        });
                     });
                 }
                 return ret;
