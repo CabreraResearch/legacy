@@ -15,6 +15,7 @@
                 validateCheckboxes: true,
                 showToggleLink: true,
                 useScrollbars: true,
+                rootVisible: false,
                 useHover: true,
                 height: '',
                 width: '',
@@ -71,7 +72,8 @@
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
                     useToggles: cswPrivate.showToggleLink,
                     useCheckboxes: cswPrivate.isMulti,
-                    useScrollbars: cswPrivate.useScrollbars
+                    useScrollbars: cswPrivate.useScrollbars,
+                    rootVisible: cswPrivate.rootVisible
                 };
                 if (cswPrivate.useHover) {
                     treeOpts.onMouseEnter = hoverNode;
@@ -80,22 +82,24 @@
                 cswPublic.nodeTree = cswPublic.div.tree(treeOpts);
 
                 function hoverNode(event, treeNode, htmlElement, index, eventObj, eOpts) {
-                    cswPrivate.hoverNodeId = treeNode.raw.nodeid;
-                    var $div = $(htmlElement).children().first().children();
-                    var div = Csw.literals.factory($div);
+                    if (null != treeNode && null != treeNode.raw) {
+                        cswPrivate.hoverNodeId = treeNode.raw.nodeid;
+                        var $div = $(htmlElement).children().first().children();
+                        var div = Csw.literals.factory($div);
 
-                    Csw.nodeHoverIn(event, {
-                        nodeid: cswPrivate.hoverNodeId,
-                        nodekey: treeNode.raw.id,
-                        nodename: treeNode.raw.text,
-                        parentDiv: div,
-                        buttonHoverIn: function () {
-                            cswPublic.nodeTree.preventSelect();
-                        },
-                        buttonHoverOut: function () {
-                            cswPublic.nodeTree.allowSelect();
-                        }
-                    });
+                        Csw.nodeHoverIn(event, {
+                            nodeid: cswPrivate.hoverNodeId,
+                            nodekey: treeNode.raw.id,
+                            nodename: treeNode.raw.text,
+                            parentDiv: div,
+                            buttonHoverIn: function() {
+                                cswPublic.nodeTree.preventSelect();
+                            },
+                            buttonHoverOut: function() {
+                                cswPublic.nodeTree.allowSelect();
+                            }
+                        });
+                    }
                 } // hoverNode()
 
                 function deHoverNode() {

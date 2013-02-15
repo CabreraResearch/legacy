@@ -136,6 +136,7 @@
                         onSelectNode: cswPrivate.onTreeSelect,
                         showToggleLink: false,
                         useScrollbars: false,
+                        rootVisible: true,
                         useHover: (cswPrivate.EditMode !== Csw.enums.editMode.Add), // case 28849
                         state: {
                             viewId: cswPrivate.viewid,
