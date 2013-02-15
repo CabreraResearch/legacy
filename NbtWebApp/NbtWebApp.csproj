@@ -1219,7 +1219,6 @@
     <Content Include="Scripts\jquery.mobile-1.0rc1.min.js" />
     <Content Include="Images\favicon.ico" />
     <Content Include="Design.aspx" />
-    <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
     <Content Include="Deprecated\ie6style.css" />
@@ -1673,9 +1672,6 @@
     <Compile Include="Design.aspx.designer.cs">
       <DependentUpon>Design.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Design_Layout.aspx.designer.cs">
-      <DependentUpon>Design_Layout.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
     </Compile>
@@ -1720,10 +1716,6 @@
     </Compile>
     <Compile Include="Design.aspx.cs">
       <DependentUpon>Design.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Design_Layout.aspx.cs">
-      <DependentUpon>Design_Layout.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">

@@ -97,8 +97,8 @@
 
                 // Case 24112: IE7 processes url() using https but handles the response as http--prompting the security dialog.
 
-                cswPublic.bind('click', function () {
-                    Csw.tryExec(cswPrivate.onClick);
+                cswPublic.bind('click', function (event) {
+                    Csw.tryExec(cswPrivate.onClick, event);
                 });
                 cswPublic.setType(cswPrivate.iconType);
             } ());
