@@ -961,6 +961,8 @@ namespace ChemSW.Nbt.Schema
 
         private void _removeCreateMaterialPermission( CswDeveloper Dev, Int32 CaseNo )
         {
+            _acceptBlame( Dev, CaseNo );
+
             CswNbtObjClassRole AdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
             if( null != AdminRoleNode )
             {
@@ -986,9 +988,35 @@ namespace ChemSW.Nbt.Schema
                     }
                 }
             }
+
+            _resetBlame();
         }
 
         #endregion
+
+        #region Case 28834
+
+        private void _addUnitConversionTextProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClassProp UnitConversionOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UnitOfMeasureOC )
+            {
+                PropName = CswNbtObjClassUnitOfMeasure.PropertyName.UnitConversion,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static,
+                SetValOnAdd = true,
+                StaticText = @"Conversion Factor should be set to the number required to make the current unit equal to the base unit.<br/>
+Example: <strong>g(1E3) = kg</strong><br/>where g is the current unit, kg is the base unit, and 1E3 is the conversion factor."
+            } );
+
+            CswNbtMetaDataObjectClassProp BaseUnitOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( UnitOfMeasureOC.ObjectClassId, CswNbtObjClassUnitOfMeasure.PropertyName.BaseUnit );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( BaseUnitOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+
+            _resetBlame();
+        }
+
+        #endregion Case 28834
 
         #endregion WILLIAM Methods
 
@@ -1020,6 +1048,7 @@ namespace ChemSW.Nbt.Schema
             _makeLabelPrinterOCs( CswDeveloper.SS, 28534 );
             _ChangeMaterialProps( CswDeveloper.BV, 28713 );
             _removeCreateMaterialPermission(CswDeveloper.CM, 28714);
+            _addUnitConversionTextProp( CswDeveloper.BV, 28834 );
 
             #endregion WILLIAM
 
