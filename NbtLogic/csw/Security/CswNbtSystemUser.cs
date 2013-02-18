@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Security;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.Security
 {
-    public enum CswSystemUserNames { SysUsr_ObjClassCustomer, SysUsr_SchedSvc, SysUsr_SchemaUpdt, SysUsr__SchemaImport, SysUsr_NbtWebSvcMgr, SysUsr_DbConnectTest, SysUsr_Test }
     public class CswNbtSystemUser : ICswNbtUser
     {
         private ICswResources _Resources;
