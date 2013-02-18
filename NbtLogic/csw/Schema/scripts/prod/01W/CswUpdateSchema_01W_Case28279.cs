@@ -1,4 +1,5 @@
 ﻿using ChemSW.Nbt.csw.Dev;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -20,6 +21,16 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // This is a placeholder script that does nothing.
+            foreach( string CurrentSystemUserName in CswSystemUserNames.getValues() )
+            {
+                string delete_props_audit_cmd = "delete from jct_nodes_props_audit where audittransactionid in (select audittransactionid from audit_transactions where transactionusername = '" + CurrentSystemUserName + "')";
+                string delete_nodes_audit_cmd = "delete from nodes_audit where audittransactionid in (select audittransactionid from audit_transactions where transactionusername = '" + CurrentSystemUserName + "')";
+                string delete_transactions_cmd = "delete from audit_transactions where transactionusername = '" + CurrentSystemUserName + "'";
+
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( delete_props_audit_cmd );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( delete_nodes_audit_cmd );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( delete_transactions_cmd );
+            }
         } //Update()
 
     }//class CswUpdateSchema_01V_CaseXXXXX
