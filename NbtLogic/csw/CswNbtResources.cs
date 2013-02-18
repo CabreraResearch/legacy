@@ -1014,7 +1014,7 @@ namespace ChemSW.Nbt
         /// If set to false, turns off auditing globally, and overrides the configuration_variable
         /// "auditing" setting
         /// </summary>
-        public bool DoNotDoAuditing { set { _CswResources.DoNotDoAuditing = value; } }
+        public bool DoAuditing { set { _CswResources.DoAuditing = value; } }
 
         public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
         public Collection<CswMailMessage> makeMailMessages( string Subject, string Message, string Recipient ) { return _CswResources.makeMailMessages( Subject, Message, Recipient ); }
