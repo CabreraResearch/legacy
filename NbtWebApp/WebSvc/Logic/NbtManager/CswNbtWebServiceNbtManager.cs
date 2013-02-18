@@ -53,7 +53,9 @@ namespace ChemSW.Nbt.WebServices
 
         private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
-            if( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername  || ( _NbtManagerResources.CurrentNbtUser.IsAdministrator() && AllowAnyAdmin ) )
+            if( _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) &&
+                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || 
+                ( _NbtManagerResources.CurrentNbtUser.IsAdministrator() && AllowAnyAdmin ) ) )
             {
                 _AllowAllAccessIds = true;
             }
