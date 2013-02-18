@@ -98,7 +98,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     LAST_RUN_DATE date;
   begin
     DATE_ADDED := sysdate;
-    select max(dateadded)
+    select nvl(max(dateadded), sysdate-1)
       into LAST_RUN_DATE
       from tier2;
     LAST_RUN_INTERVAL := trunc(DATE_ADDED) - trunc(LAST_RUN_DATE);

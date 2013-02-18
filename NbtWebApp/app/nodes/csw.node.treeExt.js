@@ -14,6 +14,9 @@
                 isMulti: false,
                 validateCheckboxes: true,
                 showToggleLink: true,
+                useScrollbars: true,
+                rootVisible: false,
+                useHover: true,
                 height: '',
                 width: '',
 
@@ -52,7 +55,8 @@
 
             cswPrivate.make = function (data) {
 
-                cswPublic.nodeTree = cswPublic.div.tree({
+                var treeOpts = {
+                    name: data.Name,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
 
@@ -61,38 +65,46 @@
                     fields: data.Fields,
                     selectedId: data.SelectedId,
 
-                    onMouseEnter: hoverNode,
-                    onMouseExit: deHoverNode,
                     onSelect: cswPrivate.handleSelectNode,
                     beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,
 
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
-                    useToggles: cswPrivate.ShowToggleLink,
-                    useCheckboxes: cswPrivate.isMulti
-                });
-
-
-                function hoverNode(event, treeNode) {
-                    cswPrivate.hoverNodeId = treeNode.raw.nodeid;
-                    Csw.nodeHoverIn(event, cswPrivate.hoverNodeId, treeNode.raw.id);
+                    useToggles: cswPrivate.showToggleLink,
+                    useCheckboxes: cswPrivate.isMulti,
+                    useScrollbars: cswPrivate.useScrollbars,
+                    rootVisible: cswPrivate.rootVisible
+                };
+                if (cswPrivate.useHover) {
+                    treeOpts.onMouseEnter = hoverNode;
+                    treeOpts.onMouseExit = deHoverNode;
                 }
+                cswPublic.nodeTree = cswPublic.div.tree(treeOpts);
+
+                function hoverNode(event, treeNode, htmlElement, index, eventObj, eOpts) {
+                    if (null != treeNode && null != treeNode.raw) {
+                        cswPrivate.hoverNodeId = treeNode.raw.nodeid;
+                        var $div = $(htmlElement).children().first().children();
+                        var div = Csw.literals.factory($div);
+
+                        Csw.nodeHoverIn(event, {
+                            nodeid: cswPrivate.hoverNodeId,
+                            nodekey: treeNode.raw.id,
+                            nodename: treeNode.raw.text,
+                            parentDiv: div,
+                            buttonHoverIn: function() {
+                                cswPublic.nodeTree.preventSelect();
+                            },
+                            buttonHoverOut: function() {
+                                cswPublic.nodeTree.allowSelect();
+                            }
+                        });
+                    }
+                } // hoverNode()
 
                 function deHoverNode() {
-                    Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
+                    Csw.nodeHoverOut();
                 }
-                //               
-                //                Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
-                //                    return function _onMulti(eventObj, multiOpts) {
-                //                        if (multiOpts && multiOpts.viewid === cswPrivate.state.viewId) {
-                //                            //cswPublic.nodeTree.is.multi = (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes));
-                //                            cswPublic.nodeTree.toggleUseCheckboxes();
-                //                        } else {
-                //                            Csw.unsubscribe('CswMultiEdit', null, _onMulti);
-                //                            Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
-                //                        }
-                //                    };
-                //                }()));
 
             }; // cswPrivate.make()
 
@@ -127,12 +139,16 @@
                 cswPrivate.make(treeData);
             };
 
-            cswPublic.getChecked = function () {
+            cswPublic.checkedNodes = function () {
                 var checked = cswPublic.nodeTree.getChecked();
                 var ret = [];
                 if (checked && checked.length > 0) {
                     checked.forEach(function (treeNode) {
-                        ret.push({ nodeid: treeNode.raw.nodeid, nodekey: treeNode.raw.id });
+                        ret.push({ 
+                            nodeid: treeNode.raw.nodeid, 
+                            nodekey: treeNode.raw.id,
+                            nodename: treeNode.raw.text 
+                        });
                     });
                 }
                 return ret;
