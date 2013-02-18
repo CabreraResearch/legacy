@@ -26,6 +26,7 @@
             //showempty: false, // if true, shows an empty tree (primarily for search)
             forsearch: false, // if true, used to override default behavior of list views
             UseScrollbars: true,
+            rootVisible: false,
             onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
             onInitialSelectNode: null,
             ShowCheckboxes: false,

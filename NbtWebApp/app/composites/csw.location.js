@@ -136,6 +136,8 @@
                         onSelectNode: cswPrivate.onTreeSelect,
                         showToggleLink: false,
                         useScrollbars: false,
+                        rootVisible: true,
+                        useHover: (cswPrivate.EditMode !== Csw.enums.editMode.Add), // case 28849
                         state: {
                             viewId: cswPrivate.viewid,
                             nodeId: cswPrivate.nodeid,
@@ -164,12 +166,12 @@
                             }); // imageButton
                         }
 
-                        cswPublic.table.cell(1, 1).$.hover(function (event) {
+                        cswParent.$.hover(function (event) {
                             Csw.nodeHoverIn(event, {
                                 nodeid: cswPrivate.value,
                                 nodekey: '',
                                 nodename: cswPrivate.selectedName,
-                                parentDiv: cswPublic.table.cell(1, 1),
+                                parentDiv: cswParent,
                                 buttonHoverIn: null,
                                 buttonHoverOut: null
                             });

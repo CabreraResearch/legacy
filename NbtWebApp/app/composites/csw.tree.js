@@ -48,7 +48,8 @@
                 cswPrivate.useToggles = cswPrivate.useToggles;
                 cswPrivate.useCheckboxes = cswPrivate.useCheckboxes;
                 cswPrivate.useScrollbars = cswPrivate.useScrollbars;
-
+                cswPrivate.rootVisible = cswPrivate.rootVisible;
+                
                 //Events
                 cswPrivate.onClick = cswPrivate.onClick || function () { };
                 cswPrivate.onMouseEnter = cswPrivate.onMouseEnter || function () { };
@@ -96,7 +97,6 @@
                     extend: 'Ext.data.Model',
                     fields: cswPrivate.fields
                 });
-
                 cswPrivate.store = cswPrivate.store ||
                     window.Ext.create('Ext.data.TreeStore', {
                         model: 'Tree',
@@ -182,7 +182,9 @@
                             cswPublic.selectedTreeNode = record;
                             cswPrivate.selectedNodeCount = 1;
                             record.expand();
-                            Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, cswPublic.selectedTreeNode.raw.path);
+                            if (cswPublic.selectedTreeNode.raw) {
+                                Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, cswPublic.selectedTreeNode.raw.path);
+                            }
                             Csw.tryExec(cswPrivate.onSelect, record.raw);
 
                             if (cswPrivate.useCheckboxes) {
@@ -233,7 +235,7 @@
                     //maxWidth: cswPrivate.width,
                     title: cswPrivate.root[0].text,  //root should already be validated at this point
                     useArrows: cswPrivate.useArrows, //not for List views
-                    rootVisible: false, //the root node (ViewName) is displayed as the title
+                    rootVisible: cswPrivate.rootVisible,
                     hideHeaders: hideHeaders, //this hides the tree grid column names
                     border: false,
                     bodyStyle: 'background: transparent !important;',
@@ -277,6 +279,7 @@
                 }
                 cswPublic.tree.collapseAll(function () {
                     if (cswPrivate.useToggles) {
+                        cswPrivate.rootNode.expand();     // expand the root
                         cswPublic.tree.getEl().unmask();
                         toolbar.enable();
                     }

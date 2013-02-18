@@ -449,7 +449,7 @@
 
             cswPrivate.setSelectedNodes = function () {
                 if (false === Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
-                    var nodeData = cswPrivate.nodeTreeCheck.getChecked();
+                    var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
                     //It's easier to nuke the collection than to remap it
                     cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
                     cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
