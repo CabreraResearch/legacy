@@ -55,6 +55,7 @@
                 },
                 IdentityTab: null,
                 tabContentDiv: null,
+                propid: '',
                 showTitle: true,
                 onNodeIdSet: null,
                 onSave: null,
@@ -130,7 +131,9 @@
             };
 
             cswPrivate.onTearDownProps = function () {
+                Csw.unsubscribe('onPropChange_' + cswPrivate.propid);
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
+                
 
             };
 
@@ -927,7 +930,9 @@
                     if (propData.ocpname === "Owner") {
                         Csw.unsubscribe('onPropChange_' + propid);
                         Csw.subscribe('onPropChange_' + propid, function (eventObject, data) {
+                            cswPrivate.propid = propid;
                             cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
+                            
                         });
                     }
                 }
