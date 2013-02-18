@@ -127,6 +127,7 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28787.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28779.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28846.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28783.cs" />
