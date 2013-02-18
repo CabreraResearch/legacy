@@ -6,13 +6,13 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Security
 {
-    public enum SystemUserNames { SysUsr_ObjClassCustomer, SysUsr_SchedSvc, SysUsr_SchemaUpdt, SysUsr__SchemaImport, SysUsr_NbtWebSvcMgr, SysUsr_DbConnectTest, SysUsr_Test }
+    public enum CswSystemUserNames { SysUsr_ObjClassCustomer, SysUsr_SchedSvc, SysUsr_SchemaUpdt, SysUsr__SchemaImport, SysUsr_NbtWebSvcMgr, SysUsr_DbConnectTest, SysUsr_Test }
     public class CswNbtSystemUser : ICswNbtUser
     {
         private ICswResources _Resources;
-        private SystemUserNames _SystemUserName;
+        private CswSystemUserNames _SystemUserName;
 
-        public CswNbtSystemUser( ICswResources CswNbtResources, SystemUserNames SystemUserName )
+        public CswNbtSystemUser( ICswResources CswNbtResources, CswSystemUserNames SystemUserName )
         {
             _Resources = CswNbtResources;
             _SystemUserName = SystemUserName;

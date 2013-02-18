@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
 
 
                 CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString( 0, "'" );
-                foreach( SystemUserNames sysUserName in Enum.GetValues( typeof( SystemUserNames ) ) )
+                foreach( CswSystemUserNames sysUserName in Enum.GetValues( typeof( CswSystemUserNames ) ) )
                 {
                     sysUserNames.Add( sysUserName.ToString() );
                 }

@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Schema
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr__SchemaImport );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr__SchemaImport );
         }
 
         public CswDataTable getDbInstances()

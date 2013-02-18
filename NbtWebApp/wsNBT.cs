@@ -3202,7 +3202,7 @@ namespace ChemSW.Nbt.WebServices
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_DbConnectTest );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_DbConnectTest );
         }
 
 
