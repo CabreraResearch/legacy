@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.Batch
                         CswNbtObjClassUser UserOC = UserNode;
                         if( null != UserOC )
                         {
-                            CswNbtResources.DoAuditing = true;
+                            CswNbtResources.DoNotDoAuditing = false;//Turn auditing back on if it's enabled (case 
                             CswNbtResources.AuditContext = "Batch Op: " + BatchNode.OpNameValue;
                             CswNbtResources.AuditFirstName = UserOC.FirstName;
                             CswNbtResources.AuditLastName = UserOC.LastName;
