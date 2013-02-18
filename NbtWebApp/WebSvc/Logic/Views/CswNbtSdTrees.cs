@@ -443,7 +443,7 @@ namespace ChemSW.Nbt.WebServices
 
                 Tree.goToRoot();
 
-                //Build the Respose:
+                //Build the Response:
 
                 //#1: the Root node
                 CswExtTree.TreeNode RootNode = new CswExtTree.TreeNode();
@@ -454,6 +454,7 @@ namespace ChemSW.Nbt.WebServices
                 RootNode.Expanded = true;
                 RootNode.Path = "|root";
                 RootNode.Id = "root";
+                RootNode.Icon = "Images/view/viewtree.gif";
 
                 //#2: the columns for the Tree Grid
                 ResponseData.Columns.Add( new CswExtJsGridColumn

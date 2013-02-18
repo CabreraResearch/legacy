@@ -14,7 +14,8 @@
                 nodename: '',
                 parentDiv: null,
                 buttonHoverIn: null,
-                buttonHoverOut: null
+                buttonHoverOut: null,
+                rightpad: 40
             };
             Csw.extend(p, opts);
 
@@ -40,7 +41,7 @@
                 }).css({
                     position: 'absolute',
                     top: p.parentDiv.$.position().top + 'px',
-                    left: (p.parentDiv.$.position().left + p.parentDiv.$.width() - 40) + 'px'
+                    left: (p.parentDiv.$.position().left + p.parentDiv.$.width() - p.rightpad) + 'px'
                 });
             }
         }); // Csw.nodeHoverIn 
