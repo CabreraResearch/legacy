@@ -110,10 +110,12 @@
             cswPrivate.reinitSteps = function (startWithStep) {
                 cswPrivate.stepFourComplete = false;
                 if (startWithStep <= 3) {
-                    cswPrivate.stepThreeComplete = false;
-
+                    cswPrivate.stepFourComplete = false;
                     if (startWithStep <= 2) {
-                        cswPrivate.stepTwoComplete = false;
+                        cswPrivate.stepThreeComplete = false;
+                        if (startWithStep <= 1) {
+                            cswPrivate.stepTwoComplete = false;
+                        }
                     }
                 }
             };
@@ -137,27 +139,30 @@
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
                     cswPrivate['makeStep' + newStepNo]();
+                    
+                    if (cswPrivate.currentStepNo === 1) {
+                        if (cswPrivate.lastStepNo === 2) {
+                            cswPrivate.reinitSteps(1);
+                        }
+                    }
 
                     if (cswPrivate.currentStepNo === 2) {
-                        
-                        //If the last step was 1, then save the step 1 props
                         if (cswPrivate.lastStepNo === 1) {
                             cswPrivate.saveMaterial();
                             if (cswPrivate.isDuplicateMaterial) {
-
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         }
-
-                        //todo: this needs to go because we can't be creating a new material or losing props on next/prev
                         if (cswPrivate.lastStepNo === 3) {
-                            cswPrivate.state.materialId = '';
-                            cswPrivate.state.documentId = '';
-                            cswPrivate.state.properties = {};
-                            cswPrivate.state.useExistingTempNode = false;
                             cswPrivate.reinitSteps(2);
                         }
                     }//if (cswPrivate.currentStepNo === 2)
+                    
+                    if (cswPrivate.currentStepNo === 3) {
+                        if (cswPrivate.lastStepNo === 4) {
+                            cswPrivate.reinitSteps(3);
+                        }
+                    }
                     
                     if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
                         cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
@@ -371,11 +376,12 @@
                         if (false === cswPrivate.state.useExistingTempNode) {
                             Csw.subscribe('SaveMaterialSuccess', function() {
                                 renderProps();
-                                //cswPrivate.stepTwoComplete = true;
                             });
                         } else {
                             renderProps();
                         }
+                        
+                        cswPrivate.stepTwoComplete = true;
 
                     } // if (false === cswPrivate.stepTwoComplete)
                 };
