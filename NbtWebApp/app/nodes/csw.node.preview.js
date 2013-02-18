@@ -15,6 +15,7 @@
                 parentDiv: null,
                 buttonHoverIn: null,
                 buttonHoverOut: null,
+                useAbsolutePosition: true,
                 rightpad: 40
             };
             Csw.extend(p, opts);
@@ -38,11 +39,14 @@
                         preview.open();
                         return false;
                     }
-                }).css({
-                    position: 'absolute',
-                    top: p.parentDiv.$.position().top + 'px',
-                    left: (p.parentDiv.$.position().left + p.parentDiv.$.width() - p.rightpad) + 'px'
                 });
+                if (p.useAbsolutePosition) {
+                    hoverButton.css({
+                        position: 'absolute',
+                        top: p.parentDiv.$.position().top + 'px',
+                        left: (p.parentDiv.$.position().left + p.parentDiv.$.width() - p.rightpad) + 'px'
+                    });
+                }
             }
         }); // Csw.nodeHoverIn 
 

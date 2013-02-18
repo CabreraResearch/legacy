@@ -79,6 +79,7 @@
                 cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 1;
                 cswPrivate.addCellCol = cswPrivate.cellCol + 4;
                 cswPrivate.tipCellCol = cswPrivate.cellCol + 5;
+                cswPrivate.previewCellCol = cswPrivate.cellCol + 6;
 
             } ());
 
@@ -441,12 +442,14 @@
                     }
                 } // if-else (o.ReadOnly) {
 
+                cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
                 cswPublic.$.hover(
                    function(event) {
                         Csw.nodeHoverIn(event, {
                             nodeid: cswPrivate.selectedNodeId,
                             nodename: cswPrivate.selectedName,
-                            parentDiv: cswPublic,
+                            parentDiv: cswPrivate.table.cell(1,cswPrivate.previewCellCol),
+                            useAbsolutePosition: false,
                             rightpad: 0
                         });
                     },
