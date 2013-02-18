@@ -229,7 +229,9 @@
                                     saveoptions = saveoptions || { onSuccess: null };
                                     Csw.tryExec(saveoptions.onSuccess);
                                 };
-                                var fieldOpt = Csw.nbt.propertyOption(propObj, btnTable.cell(1, btncol).div());
+
+                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': propObj.name.length * 7 + 8 });
+                                var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
 
                                 cswPrivate.properties[propObj.propid] = Csw.nbt.property(fieldOpt);
 
@@ -602,4 +604,4 @@
 
             return cswPublic;
         }); // register
-})();        // (function
+})();               // (function
