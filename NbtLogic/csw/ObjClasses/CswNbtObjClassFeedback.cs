@@ -70,6 +70,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            DateSubmitted.DateTimeValue = DateTime.Now;
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 

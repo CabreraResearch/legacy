@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
     [ScriptService]
     [WebService( Namespace = "ChemSW.Nbt.WebServices" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-    public class wsNBT: WebService
+    public class wsNBT : WebService
     {
         // case 25887
         CswTimer Timer = new CswTimer();
@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
 
             // case 26549 - we need to remove the old session
-            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie : false );
+            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie: false );
 
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
@@ -989,7 +989,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ReturnVal["rows"] = ws.getThinGridRows( RowLimit );
                 }
 
@@ -1024,7 +1024,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, SafeNodeKey );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ws.ExportCsv( Context );
                 }
 
@@ -1060,7 +1060,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( ForReport ) );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( ForReport ) );
                     ReturnVal = ws.runGrid( Title, IsQuickLaunch );
                 }
 
@@ -1097,7 +1097,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( false ) );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( false ) );
                     ReturnVal = g.getGridRowCount();
                 }
 
@@ -2704,7 +2704,7 @@ namespace ChemSW.Nbt.WebServices
         #endregion NodeType Layout
 
         #region Search
-        
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string doUniversalSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
@@ -3078,9 +3078,6 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
                 CswNbtObjClassFeedback newFeedbackNode = tabsandprops.getAddNode( feedbackNT );
 
-                newFeedbackNode.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                newFeedbackNode.DateSubmitted.DateTimeValue = System.DateTime.Now;
-
                 //if we have an action this is all we want/need/care about
                 if( false == String.IsNullOrEmpty( actionname ) )
                 {
@@ -3166,7 +3163,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile : true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
             return ( Connected.ToString() );
         }
 
@@ -3194,7 +3191,7 @@ namespace ChemSW.Nbt.WebServices
                 Connected["result"] = "OK";
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile : true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
             //_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
 
@@ -3443,7 +3440,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // getActiveAccessIds()
-        
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string updateScheduledRule()
@@ -3471,7 +3468,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // updateScheduledRule()
-        
+
         #endregion Nbt Manager
 
         #region CISPro
