@@ -79,6 +79,7 @@
                 cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 1;
                 cswPrivate.addCellCol = cswPrivate.cellCol + 4;
                 cswPrivate.tipCellCol = cswPrivate.cellCol + 5;
+                cswPrivate.previewCellCol = cswPrivate.cellCol + 6;
 
             } ());
 
@@ -352,8 +353,16 @@
                                     });
                                 }
                             } else {
-                                cswPrivate.select.option({ value: nodeid, display: nodename, isSelected: true });
+                                cswPrivate.select.option({ value: nodeid, display: nodename, selected: true });
+                                cswPrivate.select.val(nodeid);
+                                cswPrivate.selectedNodeId = nodeid;
                             }
+                            Csw.tryExec(cswPrivate.onSelectNode, {
+                                nodeid: cswPrivate.select.selectedVal(),
+                                name: cswPrivate.select.selectedText(),
+                                selectedNodeId: cswPrivate.selectedNodeId,
+                                relatednodelink: cswPrivate.select.selectedData('link')
+                            });
                             Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                         }
                     });
@@ -441,12 +450,14 @@
                     }
                 } // if-else (o.ReadOnly) {
 
+                cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
                 cswPublic.$.hover(
                    function(event) {
                         Csw.nodeHoverIn(event, {
                             nodeid: cswPrivate.selectedNodeId,
                             nodename: cswPrivate.selectedName,
-                            parentDiv: cswPublic,
+                            parentDiv: cswPrivate.table.cell(1,cswPrivate.previewCellCol),
+                            useAbsolutePosition: false,
                             rightpad: 0
                         });
                     },

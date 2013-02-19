@@ -1994,7 +1994,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // saveProps()
+        } // saveMaterial()
 
 
         [WebMethod( EnableSession = false )]
@@ -3199,7 +3199,7 @@ namespace ChemSW.Nbt.WebServices
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_DbConnectTest );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_DbConnectTest );
         }
 
 
@@ -3486,6 +3486,32 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
                 ReturnVal = ws.createMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, NodeId );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // createMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveMaterial( string state )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
+                ReturnVal = ws.saveMaterial( state );
 
                 _deInitResources();
             }
