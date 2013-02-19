@@ -1134,12 +1134,6 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
                             Location.RefreshNodeName();
-                            if( false == _checkStorageCompatibility() )
-                            {
-                                throw new CswDniException( ErrorType.Warning,
-                                              "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location.",
-                                              "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location." );
-                            }
                         }
                     }
                 }
