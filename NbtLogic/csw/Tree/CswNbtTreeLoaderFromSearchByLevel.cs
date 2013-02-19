@@ -192,6 +192,24 @@ namespace ChemSW.Nbt
             }
 
             #endregion
+
+            #region Material Receive Button View Permission
+
+            if( canView )
+            {
+                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                if( null != MaterialClass )
+                {
+                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp(MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive);
+                    if (NTProp.ObjectClassPropId == RequestProp.PropId)
+                    {
+                        canView = _CswNbtResources.Permit.can(CswNbtActionName.Receiving);
+                    }
+                }
+            }
+
+            #endregion
+
             return canView;
         }
 

@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
         {
             if( _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) &&
                 ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || 
-                ( _NbtManagerResources.CurrentNbtUser.IsAdministrator() && AllowAnyAdmin ) ) )
+                _NbtManagerResources.CurrentNbtUser.IsAdministrator() ) )
             {
                 _AllowAllAccessIds = true;
             }
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.WebServices
         }
         private ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_NbtWebSvcMgr );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_NbtWebSvcMgr );
         }
 
         public JObject getActiveAccessIds()
@@ -138,6 +138,7 @@ namespace ChemSW.Nbt.WebServices
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.StatusMessage, typeof( string ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.HasChanged, typeof( bool ) );
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
                 {
@@ -156,6 +157,7 @@ namespace ChemSW.Nbt.WebServices
                         Row[CswScheduleLogicDetail.ColumnNames.FailedCount] = LogicDetail.FailedCount;
                         Row[CswScheduleLogicDetail.ColumnNames.ThreadId] = LogicDetail.ThreadId;
                         Row[CswScheduleLogicDetail.ColumnNames.StatusMessage] = LogicDetail.StatusMessage;
+                        Row[CswScheduleLogicDetail.ColumnNames.HasChanged] = false;
 
                         GridTable.Rows.Add(Row);
                     }
@@ -262,33 +264,37 @@ namespace ChemSW.Nbt.WebServices
             SchedSvcRef.Endpoint.Address = URI;
 
             CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
+            CswSchedSvcParams.CustomerId = Request.CustomerId;
             CswSchedSvcParams.LogicDetails = new Collection<CswScheduleLogicDetail>();
             String GridPrefix = "ScheduledRules";
             foreach( CswExtJsGridRow GridRow in Request.Grid.rowData.rows )
             {
-                DateTime StartTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime )] )
-                                         ? DateTime.MinValue
-                                         : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime )] );
-                DateTime EndTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime )] )
-                                         ? DateTime.MinValue
-                                         : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime )] );
-
-                CswScheduleLogicDetail Rule = new CswScheduleLogicDetail
+                if( CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.HasChanged )] ) )
                 {
-                    RuleName = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName )],
-                    Recurrence = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance )],
-                    Interval = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Interval )]),
-                    ReprobateThreshold = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ReprobateThreshold )]),
-                    MaxRunTimeMs = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs )]),
-                    Reprobate = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Reprobate )]),
-                    RunStartTime = StartTime,
-                    RunEndTime = EndTime,
-                    TotalRogueCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount )]),
-                    FailedCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount )]),
-                    ThreadId = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId )]),
-                    StatusMessage = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage )]
-                };
-                CswSchedSvcParams.LogicDetails.Add( Rule );
+                    DateTime StartTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)])
+                                             ? DateTime.MinValue
+                                             : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)]);
+                    DateTime EndTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)])
+                                           ? DateTime.MinValue
+                                           : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)]);
+
+                    CswScheduleLogicDetail Rule = new CswScheduleLogicDetail
+                    {
+                        RuleName = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName)],
+                        Recurrence = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance)],
+                        Interval = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Interval)]),
+                        ReprobateThreshold = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ReprobateThreshold)]),
+                        MaxRunTimeMs = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs)]),
+                        Reprobate = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Reprobate)]),
+                        RunStartTime = StartTime,
+                        RunEndTime = EndTime,
+                        TotalRogueCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount)]),
+                        FailedCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount)]),
+                        ThreadId = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId)]),
+                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage)]
+                    };
+                    CswSchedSvcParams.LogicDetails.Add(Rule);
+                }
             }
 
             svcReturn = SchedSvcRef.updateScheduledRules( CswSchedSvcParams );
