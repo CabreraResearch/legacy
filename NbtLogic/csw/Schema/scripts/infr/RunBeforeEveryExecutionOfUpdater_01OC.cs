@@ -1018,6 +1018,12 @@ Example: <strong>g(1E3) = kg</strong><br/>where g is the current unit, kg is the
             CswNbtMetaDataObjectClassProp DateCreatedOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.PropertyName.DateCreated );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DateCreatedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
 
+            CswNbtMetaDataObjectClassProp MaterialOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.PropertyName.Material );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+
+            CswNbtMetaDataObjectClassProp SizeOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.PropertyName.Size );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SizeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp MaterialIdOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PropertyName.MaterialId );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialIdOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
