@@ -309,25 +309,17 @@
                                     col.editable = true;
                                     col.xtype = 'checkcolumn';
                                     col.listeners = {
-                                        checkchange: function (checkbox, checked) {
-                                            //TODO - Case 28874 - figure out how to get active grid row context
-                                            //cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][result.ColumnIds.reprobate] = checked;
-                                            //cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[result.ColumnIds.reprobate] = checked;
-                                            //cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row['has_changed'] = 'true';
+                                        checkchange: function (checkbox, rowNum, isChecked) {
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum]['reprobate'] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['reprobate'] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['has_changed'] = 'true';
                                         }
                                     };
-                                    Object.defineProperty(col, 'editor', {
+                                    col.editor = {
                                         writable: true,
                                         configurable: true,
-                                        enumerable: true,
-                                        value: new Ext.form.field.Checkbox({})
-                                    });
-                                    //col.width = 60;
-                                    //col.stopSelection = false;
-                                    //col.editor = {
-                                    //    xtype: 'checkcolumn',
-                                    //    cls: 'x-grid-checkheader-editor'
-                                    //};
+                                        enumerable: true
+                                    };
                                     break;
                                 case result.ColumnIds.rogue_cnt:
                                     col.editable = true;
