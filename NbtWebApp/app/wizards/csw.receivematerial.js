@@ -304,7 +304,8 @@
                             globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
                                 currentNodeId: cswPrivate.state.containerNodeId,
-                                removeTempStatus: false
+                                removeTempStatus: false,
+                                excludeOcProps: ['size', 'material']
                             },
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
                                 cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false, true);
