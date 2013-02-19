@@ -264,6 +264,7 @@ namespace ChemSW.Nbt.WebServices
             SchedSvcRef.Endpoint.Address = URI;
 
             CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
+            CswSchedSvcParams.CustomerId = Request.CustomerId;
             CswSchedSvcParams.LogicDetails = new Collection<CswScheduleLogicDetail>();
             String GridPrefix = "ScheduledRules";
             foreach( CswExtJsGridRow GridRow in Request.Grid.rowData.rows )
