@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Grid.ExtJs;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
@@ -51,7 +53,9 @@ namespace ChemSW.Nbt.WebServices
 
         private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
-            if( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername  || ( _NbtManagerResources.CurrentNbtUser.IsAdministrator() && AllowAnyAdmin ) )
+            if( _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) &&
+                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || 
+                _NbtManagerResources.CurrentNbtUser.IsAdministrator() ) )
             {
                 _AllowAllAccessIds = true;
             }
@@ -87,7 +91,7 @@ namespace ChemSW.Nbt.WebServices
         }
         private ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_NbtWebSvcMgr );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_NbtWebSvcMgr );
         }
 
         public JObject getActiveAccessIds()
@@ -134,6 +138,7 @@ namespace ChemSW.Nbt.WebServices
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.StatusMessage, typeof( string ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.HasChanged, typeof( bool ) );
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
                 {
@@ -152,6 +157,7 @@ namespace ChemSW.Nbt.WebServices
                         Row[CswScheduleLogicDetail.ColumnNames.FailedCount] = LogicDetail.FailedCount;
                         Row[CswScheduleLogicDetail.ColumnNames.ThreadId] = LogicDetail.ThreadId;
                         Row[CswScheduleLogicDetail.ColumnNames.StatusMessage] = LogicDetail.StatusMessage;
+                        Row[CswScheduleLogicDetail.ColumnNames.HasChanged] = false;
 
                         GridTable.Rows.Add(Row);
                     }
@@ -250,37 +256,52 @@ namespace ChemSW.Nbt.WebServices
 
         public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, CswNbtScheduledRulesReturn.Ret Request )
         {
-            //bool RetSuccess = false;
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+            //Overwrite the app.config endpoint uri with the one defined in SetupVbls
+            EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
+            SchedSvcRef.Endpoint.Address = URI;
 
-            //ScheduledRuleActions RuleAction;
-            //Enum.TryParse( Action, true, out RuleAction );
+            CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
+            CswSchedSvcParams.CustomerId = Request.CustomerId;
+            CswSchedSvcParams.LogicDetails = new Collection<CswScheduleLogicDetail>();
+            String GridPrefix = "ScheduledRules";
+            foreach( CswExtJsGridRow GridRow in Request.Grid.rowData.rows )
+            {
+                if( CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.HasChanged )] ) )
+                {
+                    DateTime StartTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)])
+                                             ? DateTime.MinValue
+                                             : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)]);
+                    DateTime EndTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)])
+                                           ? DateTime.MinValue
+                                           : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)]);
 
-            //switch( RuleAction )
-            //{
-            //    case ScheduledRuleActions.Unknown:
-            //        throw new CswDniException( ErrorType.Error, "Method was invoked with an invalid action", "Cannot call this web method with action " + Action + "." );
-            //    case ScheduledRuleActions.ClearAllReprobates:
-            //        CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "ClearAllReprobates_on_accessid_" + _OtherResources.AccessId + "_id", "scheduledrules" );
-            //        DataTable RulesTable = RulesUpdate.getTable();
-            //        foreach( DataRow Row in RulesTable.Rows )
-            //        {
-            //            Row["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
-            //            Row["REPROBATE"] = CswConvert.ToDbVal( 0 );
-            //            Row["STATUSMESSAGE"] = DBNull.Value;
-            //        }
+                    CswScheduleLogicDetail Rule = new CswScheduleLogicDetail
+                    {
+                        RuleName = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName)],
+                        Recurrence = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance)],
+                        Interval = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Interval)]),
+                        ReprobateThreshold = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ReprobateThreshold)]),
+                        MaxRunTimeMs = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs)]),
+                        Reprobate = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Reprobate)]),
+                        RunStartTime = StartTime,
+                        RunEndTime = EndTime,
+                        TotalRogueCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount)]),
+                        FailedCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount)]),
+                        ThreadId = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId)]),
+                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage)]
+                    };
+                    CswSchedSvcParams.LogicDetails.Add(Rule);
+                }
+            }
 
-            //        RetSuccess = RulesUpdate.update( RulesTable );
-            //        break;
-            //}
-
-            //if( false == RetSuccess )
-            //{
-            //    throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledrules on Customer ID " + _OtherResources.AccessId + "." );
-            //}
-            //_finalize( _OtherResources );
-            //return RetSuccess;
-
-            //TODO: return the new Grid based on the update
+            svcReturn = SchedSvcRef.updateScheduledRules( CswSchedSvcParams );
+            if( null != svcReturn )
+            {
+                _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
+            }
         }
 
         public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )

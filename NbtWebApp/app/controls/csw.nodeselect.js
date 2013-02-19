@@ -353,8 +353,16 @@
                                     });
                                 }
                             } else {
-                                cswPrivate.select.option({ value: nodeid, display: nodename, isSelected: true });
+                                cswPrivate.select.option({ value: nodeid, display: nodename, selected: true });
+                                cswPrivate.select.val(nodeid);
+                                cswPrivate.selectedNodeId = nodeid;
                             }
+                            Csw.tryExec(cswPrivate.onSelectNode, {
+                                nodeid: cswPrivate.select.selectedVal(),
+                                name: cswPrivate.select.selectedText(),
+                                selectedNodeId: cswPrivate.selectedNodeId,
+                                relatednodelink: cswPrivate.select.selectedData('link')
+                            });
                             Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                         }
                     });
