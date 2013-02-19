@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.WebServices
         }
         private ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_NbtWebSvcMgr );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_NbtWebSvcMgr );
         }
 
         public JObject getActiveAccessIds()

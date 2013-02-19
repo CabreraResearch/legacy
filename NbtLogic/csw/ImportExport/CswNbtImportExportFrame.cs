@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -103,13 +104,35 @@ namespace ChemSW.Nbt.ImportExport
 
         private CswNbtResources _CswNbtResources;
 
-        private XmlDocument _XmlDoc;
         private XmlElement _RootNode;
         private XmlNode _MetaDataNode;
         private XmlNode _ViewsNode;
         private XmlNode _NodesNode;
 
         #region Constructors
+
+
+        private XmlDocument __XmlDoc = null;
+        private XmlDocument _XmlDoc
+        {
+            get
+            {
+                if( null == __XmlDoc )
+                {
+                    Stream FileStream = File.OpenRead( _FilePath );
+                    StreamReader FileSR = new StreamReader( FileStream );
+                    string FileContents = FileSR.ReadToEnd();
+                    FileStream.Close();
+
+                    __XmlDoc = new XmlDocument();
+                    __XmlDoc.InnerXml = FileContents;
+                }
+
+                return ( __XmlDoc );
+            }
+        }
+
+
 
         /// <summary>
         /// Constructor for brand new empty XML document
@@ -118,7 +141,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             _CswNbtResources = CswNbtResources;
 
-            _XmlDoc = new XmlDocument();
+            __XmlDoc = new XmlDocument();
             _RootNode = CswXmlDocument.SetDocumentElement( _XmlDoc, _Element_NbtData );
             CswXmlDocument.AppendXmlNode( _RootNode, _Element_AccessId, _CswNbtResources.AccessId.ToString() );
             CswXmlDocument.AppendXmlNode( _RootNode, _Element_UserName, _CswNbtResources.CurrentUser.Username );
@@ -129,11 +152,12 @@ namespace ChemSW.Nbt.ImportExport
         /// <summary>
         /// Constructor for an existing XML document in string format
         /// </summary>
-        public CswNbtImportExportFrame( CswNbtResources CswNbtResources, string XmlString )
+        public CswNbtImportExportFrame( CswNbtResources CswNbtResources, string FilePath )
         {
+
             _CswNbtResources = CswNbtResources;
-            _XmlDoc = new XmlDocument();
-            _XmlDoc.InnerXml = XmlString;
+            _FilePath = FilePath;
+
         }
 
         public void clear()
@@ -144,7 +168,7 @@ namespace ChemSW.Nbt.ImportExport
             // we are not publically exposing the XML: once we hand out a reference, we have no way of letting the GC
             // know that he should free up the memory, because every Tom Dick and Harry caller could have is own 
             // reference to it, and the reference count will never go to zero.
-            _XmlDoc = null; 
+            __XmlDoc = null;
         }//clear() 
 
         #endregion Constructors
@@ -239,6 +263,7 @@ namespace ChemSW.Nbt.ImportExport
 
         #region Reading XML
 
+
         public Dictionary<string, string> NodeTypes
         {
             get
@@ -298,6 +323,11 @@ namespace ChemSW.Nbt.ImportExport
             return XmlData;
         }
 
+        private string _FilePath = string.Empty;
+        public string FilePath
+        {
+            get { return ( _FilePath ); }
+        }
 
 
 

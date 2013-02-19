@@ -79,7 +79,14 @@ namespace ChemSW.Nbt.ImportExport
                 LocationEntry Entry = Level.FirstOrDefault( e => e.Name.ToLower() == ThisName.ToLower() );
                 if( null != Entry )
                 {
-                    ret = _FindPathRecursive( Path, Entry.Children );
+                    if( Path.Count > 0 )
+                    {
+                        ret = _FindPathRecursive( Path, Entry.Children );
+                    }
+                    else
+                    {
+                        ret = Entry;
+                    }
                 }
             }
             return ret;

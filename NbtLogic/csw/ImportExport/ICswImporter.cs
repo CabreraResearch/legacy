@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.ImportExport
 
     } // ImportMode
 
-    public enum ImportAlgorithm { Legacy, Experimental }
+    public enum ImportAlgorithm { Legacy, DbTableBased }
 
     public interface ICswImporter
     {
