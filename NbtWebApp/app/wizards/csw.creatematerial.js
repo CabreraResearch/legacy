@@ -740,7 +740,7 @@
                     success: function(data) {
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
                         cswPrivate.state.materialId = data.TempNode.NodeId;
-                        cswPrivate.state.sizes = data.SizeNodes;
+                        //cswPrivate.state.sizes = data.SizeNodes;
                     }
                 });
 
