@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.LandingPage
                     if ( null != NodeType )
                     {
                         CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByObjectClassProp( ObjectClassPropId );
-                        if ( null != NodeTypeProp )
+                        if( null != NodeTypeProp && false == RequestNode.Properties[NodeTypeProp].AsButton.Hidden )
                         {                            
                             String DisplayText = LandingPageRow["displaytext"].ToString();
                             _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : "Add New " + NodeTypeProp.PropName;
