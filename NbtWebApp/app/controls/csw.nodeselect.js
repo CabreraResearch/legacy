@@ -418,6 +418,10 @@
                 return cswPrivate.selectedName;
             }; // selectedName
 
+            cswPublic.optionsCount = function() {
+                return cswPrivate.options.length;
+            }
+
             //#endregion Public
 
             //#region _postCtor

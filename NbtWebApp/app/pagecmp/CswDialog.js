@@ -1436,7 +1436,7 @@
                             labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
                         }
                     } else {
-                        labelSelDiv.span({ text: 'No labels have been assigned!' });
+                        labelSelDiv.span({ cssclass: 'warning', text: 'No labels have been assigned!' });
                     }
                 } // success
             }); // ajax
@@ -1452,7 +1452,22 @@
                 isRequired: true,
                 showSelectOnLoad: true,
                 isMulti: false,
-                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId
+                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
+                onSuccess: function () {
+                    if (printerSel.optionsCount === 0) {
+                        printerSel.hide();
+                        printBtn.hide();
+                        labelSelDiv.span({ cssclass: 'warning', text: 'No printers have been registered!' });
+                    }
+                }
+            });
+
+            var printBtn = cswPublic.div.button({
+                name: 'print_label_print',
+                enabledText: 'Print',
+                //disabledText: 'Printing...', 
+                disableOnClick: false,
+                onClick: handlePrint //getEplContext
             });
 
             cswPublic.div.button({
@@ -1463,15 +1478,6 @@
                     cswPublic.close();
                 }
             });
-
-            cswPublic.div.button({
-                name: 'print_label_print',
-                enabledText: 'Print',
-                //disabledText: 'Printing...', 
-                disableOnClick: false,
-                onClick: handlePrint //getEplContext
-            });
-            //printBtn.hide();
 
             openDialog(cswPublic.div, 400, 300, null, 'Print');
             return cswPublic;
