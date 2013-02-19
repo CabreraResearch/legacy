@@ -91,9 +91,6 @@ namespace ChemSW.Nbt.WebServices
             public State state = null;
 
             [DataMember]
-            public Collection<Collection<SizeColumnValue>> rows;
-
-            [DataMember]
             public bool success;
 
             [DataContract]
@@ -117,6 +114,9 @@ namespace ChemSW.Nbt.WebServices
 
                 [DataMember]
                 public bool useExistingTempNode;
+
+                [DataMember]
+                public Collection<Collection<SizeColumnValue>> sizes;
 
                 [DataMember]
                 public Supplier supplier = null;
@@ -287,7 +287,6 @@ namespace ChemSW.Nbt.WebServices
 
                 Return.Data.success = true;
                 Return.Data.actionname = "create material";
-                Return.Data.rows = ProductSizes;
 
                 C3CreateMaterialResponse.State.MaterialType MaterialType = new C3CreateMaterialResponse.State.MaterialType();
                 MaterialType.name = ChemicalNT.NodeTypeName;
@@ -300,6 +299,7 @@ namespace ChemSW.Nbt.WebServices
                 State.useExistingTempNode = true;
                 State.supplier = Supplier;
                 State.materialType = MaterialType;
+                State.sizes = ProductSizes;
 
                 Return.Data.state = State;
 

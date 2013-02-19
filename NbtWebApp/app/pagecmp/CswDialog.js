@@ -1103,6 +1103,7 @@
                 name: 'c3SearchBtn',
                 enabledText: 'Search',
                 disabledText: "Searching...",
+                bindOnEnter: div,
                 onClick: function () {
 
                     var CswC3SearchParams = {
@@ -1125,7 +1126,6 @@
                     });
                 }
             });
-
 
             tableOuter.cell(2, 1).div(tableInner);
 
