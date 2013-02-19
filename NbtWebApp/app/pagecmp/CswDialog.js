@@ -593,8 +593,9 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
             Csw.extend(cswDlgPrivate, options);
+
             var cswPublic = {
-                div: Csw.literals.div(),
+                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
                     Csw.tryExec(cswDlgPrivate.onClose);
