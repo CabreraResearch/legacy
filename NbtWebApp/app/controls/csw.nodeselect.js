@@ -79,6 +79,7 @@
                 cswPrivate.searchButtonCellCol = cswPrivate.cellCol + 1;
                 cswPrivate.addCellCol = cswPrivate.cellCol + 4;
                 cswPrivate.tipCellCol = cswPrivate.cellCol + 5;
+                cswPrivate.previewCellCol = cswPrivate.cellCol + 6;
 
             } ());
 
@@ -238,9 +239,6 @@
 
                 cswPrivate.select.required(cswPrivate.isRequired);
 
-                cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.select.val()); },
-                                function (event) { Csw.nodeHoverOut(event, cswPrivate.select.val()); });
-
                 // case 28427 - default private values to currently selected
                 cswPrivate.selectedNodeId = cswPrivate.select.val();
                 cswPrivate.selectedName = cswPrivate.select.selectedText();
@@ -283,9 +281,6 @@
                             });
                         }
                     });
-
-                    cswPrivate.nameSpan.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
-                        function (event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
                 }
             };
 
@@ -358,8 +353,16 @@
                                     });
                                 }
                             } else {
-                                cswPrivate.select.option({ value: nodeid, display: nodename, isSelected: true });
+                                cswPrivate.select.option({ value: nodeid, display: nodename, selected: true });
+                                cswPrivate.select.val(nodeid);
+                                cswPrivate.selectedNodeId = nodeid;
                             }
+                            Csw.tryExec(cswPrivate.onSelectNode, {
+                                nodeid: cswPrivate.select.selectedVal(),
+                                name: cswPrivate.select.selectedText(),
+                                selectedNodeId: cswPrivate.selectedNodeId,
+                                relatednodelink: cswPrivate.select.selectedData('link')
+                            });
                             Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                         }
                     });
@@ -438,8 +441,7 @@
                     cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                         text: cswPrivate.selectedNodeLink
                     });
-                    cswPublic.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
-                                    function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
+                    
                 } else {
                     if (cswPrivate.options.length > 0 || false === cswPrivate.doGetNodes) {
                         cswPrivate.makeControl();
@@ -447,6 +449,22 @@
                         cswPrivate.getNodes();
                     }
                 } // if-else (o.ReadOnly) {
+
+                cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
+                cswPublic.$.hover(
+                   function(event) {
+                        Csw.nodeHoverIn(event, {
+                            nodeid: cswPrivate.selectedNodeId,
+                            nodename: cswPrivate.selectedName,
+                            parentDiv: cswPrivate.table.cell(1,cswPrivate.previewCellCol),
+                            useAbsolutePosition: false,
+                            rightpad: 0
+                        });
+                    },
+                    function(event) {
+                        Csw.nodeHoverOut();
+                    }
+                );
             } ());
 
             return cswPublic;

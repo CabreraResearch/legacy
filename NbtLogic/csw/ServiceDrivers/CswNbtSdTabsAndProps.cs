@@ -326,20 +326,11 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
         {
-            bool RetShow = false;
-
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
-            {
-                //Case 24023: Exclude buttons on Add
-                RetShow = ( Prop.EditProp( Node, _ThisUser, true ) &&
-                            Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
-            }
-            else
-            {   
-                RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
-            }
-            RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
-            return RetShow;
+            //Case 24023: Exclude buttons on Add
+            return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || 
+                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) && 
+                Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) && 
+                ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
         }
 
         /// <summary>

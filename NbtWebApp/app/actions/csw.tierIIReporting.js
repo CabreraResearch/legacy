@@ -51,12 +51,12 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
             var locationControl = cswPrivate.controlTbl.cell(1, 2).location({
                 name: '',
                 onChange: function (locationId, locationName) {
+                    cswPrivate.LocationId = locationId;
+                    cswPrivate.LocationName = locationName;
                     if (Csw.isNullOrEmpty(locationId)) {
-                        locationControl.comboBox.topContent(cswPrivate.LocationName, cswPrivate.LocationId);
-                        locationControl.comboBox.val(cswPrivate.LocationId);
+                        updateButton.disable();
                     } else {
-                        cswPrivate.LocationId = locationId;
-                        cswPrivate.LocationName = locationName;
+                        updateButton.enable();
                     }
                 }
             });
@@ -109,6 +109,9 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                     updateButton.enable();
                 }
             });
+            if (Csw.isNullOrEmpty(cswPrivate.LocationId)) {
+                updateButton.disable();
+            }
         };
         //#endregion Setup Controls
         

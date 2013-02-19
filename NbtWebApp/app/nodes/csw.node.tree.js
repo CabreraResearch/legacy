@@ -26,6 +26,7 @@
             //showempty: false, // if true, shows an empty tree (primarily for search)
             forsearch: false, // if true, used to override default behavior of list views
             UseScrollbars: true,
+            rootVisible: false,
             onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
             onInitialSelectNode: null,
             ShowCheckboxes: false,
@@ -86,20 +87,20 @@
             }
             cswPublic.treeDiv.bind('select_node.jstree', selectNode);
 
-            function hoverNode(e, bindData) {
-                var $hoverLI = $(bindData.rslt.obj[0]);
-                //var nodeid = $hoverLI.CswAttrDom('id').substring(cswPrivate.idPrefix.length);
-                cswPrivate.hoverNodeId = $hoverLI.CswAttrNonDom('nodeid');
-                var nodekey = $hoverLI.CswAttrNonDom('nodekey');
-                Csw.nodeHoverIn(bindData.args[1], cswPrivate.hoverNodeId, nodekey);
-            }
-            cswPublic.treeDiv.bind('hover_node.jstree', hoverNode);
+//            function hoverNode(e, bindData) {
+//                var $hoverLI = $(bindData.rslt.obj[0]);
+//                //var nodeid = $hoverLI.CswAttrDom('id').substring(cswPrivate.idPrefix.length);
+//                cswPrivate.hoverNodeId = $hoverLI.CswAttrNonDom('nodeid');
+//                var nodekey = $hoverLI.CswAttrNonDom('nodekey');
+//                Csw.nodeHoverIn(bindData.args[1], cswPrivate.hoverNodeId, nodekey);
+//            }
+//            cswPublic.treeDiv.bind('hover_node.jstree', hoverNode);
 
-            function deHoverNode() {
-                Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
-                Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
-            }
-            cswPublic.treeDiv.bind('dehover_node.jstree', deHoverNode);
+//            function deHoverNode() {
+//                Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
+//                Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
+//            }
+//            cswPublic.treeDiv.bind('dehover_node.jstree', deHoverNode);
 
             cswPublic.treeDiv.$.jstree('select_node', Csw.tryParseElement(data.selectid));
 
