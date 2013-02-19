@@ -36,7 +36,6 @@
                     quantityEditableName: 'Quantity Editable',
                     unitCountName: 'Unit Count'
                 },
-                rows: [],
                 sizeHeaderAdded: false, // Case 28693
                 tabsAndProps: null,
                 documentTabsAndProps: null,
@@ -58,25 +57,26 @@
                     useExistingTempNode: false,
                     materialProperies: {},
                     sizes: []
+                },
+                phyStateModified: false,
+                newSizes: {
+                    rows: {
+                        rowid: {
+                            catalogNoCtrl: {},
+                            quantityCtrl: {},
+                            unitsCtrl: {},
+                            dispensibleCtrl: {},
+                            quantEditableCtrl: {},
+                            unitCountCtrl: {},
+                            sizeValues: {}
+                        }
+                    },
+                    sizesForm: null,
+                    sizeGrid: null                
                 }
             };
 
-            var cswPublic = {
-                rows: {
-                    rowid: {
-                        catalogNoCtrl: {},
-                        quantityCtrl: {},
-                        unitsCtrl: {},
-                        dispensibleCtrl: {},
-                        quantEditableCtrl: {},
-                        unitCountCtrl: {},
-                        sizeValues: {}
-                    }
-                },
-                sizes: [],
-                sizesForm: null,
-                sizeGrid: null
-            };
+            var cswPublic = {};
 
             //#endregion Properties
 
@@ -138,6 +138,19 @@
                 if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
+                    
+                    if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
+                        cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                        if (cswPrivate.lastStepNo === 2) {
+                            cswPrivate.tabsAndProps.save({}, '', null, false);
+                            //Saves size(s) already entered in the grid on step 3 if the phsyical state
+                            //wasn't modified ELSE reset the grid with the new state.
+                            if (cswPrivate.phyStateModified === true) {
+                                cswPrivate.reinitSteps(2);
+                            }
+                        }
+                    }
+                     
                     cswPrivate['makeStep' + newStepNo]();
                     
                     if (cswPrivate.currentStepNo === 1) {
@@ -153,9 +166,6 @@
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         }
-                        if (cswPrivate.lastStepNo === 3) {
-                            cswPrivate.reinitSteps(2);
-                        }
                     }//if (cswPrivate.currentStepNo === 2)
                     
                     if (cswPrivate.currentStepNo === 3) {
@@ -164,12 +174,7 @@
                         }
                     }
                     
-                    if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
-                        cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
-                        if (cswPrivate.lastStepNo === 2) {
-                            cswPrivate.tabsAndProps.save({}, '', null, false);
-                        }
-                    }
+
                     
                     if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
                         cswPrivate.state.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
@@ -242,9 +247,7 @@
                             name: 'tradename',
                             cssclass: 'required',
                             value: cswPrivate.state.tradeName,
-                            onChange: function () {
-                                changeMaterial();
-                            },
+                            onChange: changeMaterial,
                             isRequired: true
                         });
 
@@ -282,9 +285,7 @@
                         cswPrivate.partNoInput = tbl.cell(4, 2).input({
                             name: 'partno',
                             value: cswPrivate.state.partNo,
-                            onChange: function () {
-                                changeMaterial();
-                            }
+                            onChange: changeMaterial
                         });
 
                         cswPrivate.divStep1.br({ number: 3 });
@@ -358,7 +359,10 @@
                                 EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                             },
                             ReloadTabOnSave: false,
-                            async: false
+                            async: false,
+                            onSave: function(nodeid, nodekey, tabcnt, nodename, nodelink, physicalstatemodified) {
+                                cswPrivate.phyStateModified = physicalstatemodified;
+                            }
                         });
                     };
 
@@ -391,7 +395,6 @@
             //#region Step 3: Size(s)
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
-                //cswPrivate.sizeHeaderAdded = false;
 
                 return function () {
                     var div, selectDiv;
@@ -405,10 +408,8 @@
                         cswPrivate.divStep3.empty();
                         div = cswPrivate.divStep3.div();
 
-
-
                         div.label({
-                            text: "Sizes are used to receive material inventory.  You can create additional sizes for this material elsewhere.",
+                            text: "Sizes are used to receive material inventory. You can create additional sizes for this material elsewhere.",
                             cssclass: "wizardHelpDesc"
                         });
                         div.br({ number: 1 });
@@ -439,100 +440,99 @@
                             };
 
                             cswPrivate.header = [{ "value": cswPrivate.config.unitCountName, "isRequired": false },
-                                { "value": cswPrivate.config.quantityName, "isRequired": false },
-                                { "value": cswPrivate.config.numberName, "isRequired": false }];
+                                                 { "value": cswPrivate.config.quantityName, "isRequired": false },
+                                                 { "value": cswPrivate.config.numberName, "isRequired": false }];
                             if (cswPrivate.showQuantityEditable) {
                                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false }]);
                             }
                             if (cswPrivate.showDispensable) {
                                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
                             }
-                            
-                            if (cswPrivate.sizeHeaderAdded === false) {     // Case 28693: Stops header from duplicating if size(s) are provided
-                                cswPrivate.rows.unshift(cswPrivate.header);
+                            // Case 28693: Stops header from duplicating if size(s) are provided
+                            if (cswPrivate.sizeHeaderAdded === false) {
+                                cswPrivate.state.sizes.unshift(cswPrivate.header);
                             }
                             cswPrivate.sizeHeaderAdded = true;
  
-                            cswPublic.sizesForm = cswPrivate.divStep3.form();
-                            cswPublic.sizeGrid = cswPublic.sizesForm.thinGrid({
+                            cswPrivate.newSizes.sizesForm = cswPrivate.divStep3.form();
+                            cswPrivate.newSizes.sizeGrid = cswPrivate.newSizes.sizesForm.thinGrid({
                                 linkText: '',
                                 hasHeader: true,
-                                rows: cswPrivate.rows,
+                                rows: cswPrivate.state.sizes,
                                 allowDelete: true,
                                 allowAdd: true,
                                 makeAddRow: function (cswCell, columnName, rowid) {
                                     'use strict';
-
                                     switch (columnName) {
                                         case cswPrivate.config.unitCountName:
-                                            cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
+                                            cswPrivate.newSizes.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
                                                 name: 'sizeUnitCount',
                                                 MinValue: 1,
                                                 Precision: 0,
                                                 onChange: function (value) {
-                                                    cswPublic.rows[rowid].sizeValues.unitCount = cswPublic.rows[rowid].unitCountCtrl.val();
+                                                   cswPrivate.newSizes.rows[rowid].sizeValues.unitCount = cswPrivate.newSizes.rows[rowid].unitCountCtrl.val();
                                                 }
                                             });
                                             cswCell.span({ text: ' x' });
                                             break;
                                         case cswPrivate.config.quantityName:
-                                            cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
+                                            cswPrivate.newSizes.rows[rowid].quantityCtrl = cswCell.numberTextBox({
                                                 name: 'quantityNumberBox',
                                                 MinValue: 0,
                                                 Precision: '',
                                                 excludeRangeLimits: true,
                                                 width: '60px',
                                                 onChange: function (value) {
-                                                    cswPublic.rows[rowid].sizeValues.quantity = cswPublic.rows[rowid].quantityCtrl.val();
+                                                    cswPrivate.newSizes.rows[rowid].sizeValues.quantity = cswPrivate.newSizes.rows[rowid].quantityCtrl.val();
                                                 }
                                             });
-                                            cswPublic.rows[rowid].unitsCtrl = cswCell.select({
+                                            cswPrivate.newSizes.rows[rowid].unitsCtrl = cswCell.select({
                                                 name: 'unitsOfMeasureSelect',
                                                 values: unitsOfMeasure,
                                                 onChange: function (value) {
-                                                    cswPublic.rows[rowid].sizeValues.unit = cswPublic.rows[rowid].unitsCtrl.val();
-                                                    cswPublic.rows[rowid].sizeValues.unitid = getID(cswPublic.rows[rowid].sizeValues.unit);
+                                                    cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
+                                                    cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
                                                 }
                                             });
-                                            cswPublic.rows[rowid].sizeValues.unit = cswPublic.rows[rowid].unitsCtrl.val();
-                                            cswPublic.rows[rowid].sizeValues.unitid = getID(cswPublic.rows[rowid].sizeValues.unit);
+                                            cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
+                                            cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
                                             break;
                                         case cswPrivate.config.numberName:
-                                            cswPublic.rows[rowid].catalogNoCtrl = cswCell.input({
+                                            cswPrivate.newSizes.rows[rowid].catalogNoCtrl = cswCell.input({
                                                 name: 'sizeCatalogNo',
                                                 width: '80px',
                                                 onChange: function (value) {
-                                                    cswPublic.rows[rowid].sizeValues.catalogNo = value;
+                                                    cswPrivate.newSizes.rows[rowid].sizeValues.catalogNo = value;
                                                 }
                                             });
                                             break;
                                         case cswPrivate.config.quantityEditableName:
-                                            cswPublic.rows[rowid].quantEditableCtrl = cswCell.checkBox({
+                                            cswPrivate.newSizes.rows[rowid].quantEditableCtrl = cswCell.checkBox({
                                                 name: 'sizeQuantEditable',
                                                 checked: true,
                                                 onChange: function (value) {
-                                                    cswPublic.rows[rowid].sizeValues.quantEditableChecked = cswPublic.rows[rowid].quantEditableCtrl.val();
+                                                    cswPrivate.newSizes.rows[rowid].sizeValues.quantEditableChecked = cswPrivate.newSizes.rows[rowid].quantEditableCtrl.val();
                                                 }
                                             });
                                             break;
                                         case cswPrivate.config.dispensibleName:
-                                            cswPublic.rows[rowid].dispensibleCtrl = cswCell.checkBox({
+                                            cswPrivate.newSizes.rows[rowid].dispensibleCtrl = cswCell.checkBox({
                                                 name: 'sizeDispensible',
                                                 checked: true,
                                                 onChange: function (value) {
-                                                    cswPublic.rows[rowid].sizeValues.dispensibleChecked = cswPublic.rows[rowid].dispensibleCtrl.val();
+                                                    cswPrivate.newSizes.rows[rowid].sizeValues.dispensibleChecked = cswPrivate.newSizes.rows[rowid].dispensibleCtrl.val();
                                                 }
                                             });
                                             break;
                                     }
                                 },
-                                onAdd: function (newRowid) {
+                                onAdd: function(newRowid) {
                                     var newSize = {};
                                     //This while loop serves as a buffer to remove the +1/-1 issues when comparing the data with the table cell rows in the thingrid.
                                     //This puts the burden on the user of thingrid to ensure their data lines up with the table cells.
                                     //Also, undefined size values break the serverside foreach loop, so an empty one is inserted in each element (including deleted elements).
-                                    while (cswPublic.rows.length < newRowid) {
-                                        cswPublic.rows[newRowid] = { sizeValues: {} };
+                                    while (cswPrivate.newSizes.rows.length < newRowid) {
+                                        cswPrivate.newSizes.rows[newRowid] = { sizeValues: {} };
                                     }
                                     newSize = {
                                         catalogNo: '',
@@ -544,15 +544,15 @@
                                         dispensibleChecked: 'true',
                                         nodetypeid: cswPrivate.state.sizeNodeTypeId
                                     };
-                                    var extractNewAmount = function (object) {
+                                    var extractNewAmount = function(object) {
                                         var ret = Csw.extend({}, object, true);
                                         return ret;
                                     };
-                                    cswPublic.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
+                                    cswPrivate.newSizes.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
                                 },
                                 onDelete: function (rowid) {
-                                    delete cswPublic.rows[rowid];
-                                    cswPublic.rows[rowid] = { sizeValues: {} };
+                                    delete cswPrivate.newSizes.rows[rowid];
+                                    cswPrivate.newSizes.rows[rowid] = { sizeValues: {} };
                                 }
                             });
                         };
@@ -688,7 +688,7 @@
                             createMaterialDef.documentid = cswPrivate.state.documentId;
                             createMaterialDef.supplierid = cswPrivate.state.supplier.val;
                             createMaterialDef.suppliername = cswPrivate.state.supplier.name;
-                            Csw.each(cswPublic.rows, function (row) {
+                            Csw.each(cswPrivate.newSizes.rows, function (row) {
                                 createMaterialDef.sizeNodes.push(row.sizeValues);
                             });
                             createMaterialDef.properties = cswPrivate.state.properties;
