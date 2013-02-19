@@ -539,7 +539,7 @@ namespace ChemSW.Nbt
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
                                     if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                     {
-                                        FilterClause += @"  where (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"')) ";
+                                        FilterClause += @"  where (lower(p.propname) = '" + CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) + @"')) ";
                                     }
                                     else
                                     {
@@ -558,7 +558,7 @@ namespace ChemSW.Nbt
 
                                 if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                 {
-                                    FilterClause += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"') ";
+                                    FilterClause += @"            join nodetype_props p on (lower(p.propname) = '" + CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) + @"') ";
                                 }
                                 else
                                 {
