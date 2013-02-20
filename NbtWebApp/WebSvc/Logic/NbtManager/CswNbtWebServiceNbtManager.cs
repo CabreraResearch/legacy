@@ -173,13 +173,22 @@ namespace ChemSW.Nbt.WebServices
             CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
             //TODO: switch Resources to alternate AccessId, if different than our current AccessId
             // GOTO CswSchedSvcAdminEndPoint for actual implementation
-            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
+
+            
+            //Here are using the web reference for the schedule service. The 
             //Overwrite the app.config endpoint uri with the one defined in SetupVbls
+            //The CswSchedSvcAdminEndPointClient::getRules() method will return a collection 
+            //of objects each which represents a scheduled rule, for the accessid specified
+            //as an input parameter on CswSchedSvcParams. You can find the server side of this connection in 
+            //CswCommon/Csw/MtSched/port
+            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
             EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
             SchedSvcRef.Endpoint.Address = URI;
             CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
             CswSchedSvcParams.CustomerId = AccessId;
-            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams );
+            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams ); 
+
+
             if( null != svcReturn )
             {
                 _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
