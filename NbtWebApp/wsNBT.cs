@@ -3078,9 +3078,6 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
                 CswNbtObjClassFeedback newFeedbackNode = tabsandprops.getAddNode( feedbackNT );
 
-                newFeedbackNode.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                newFeedbackNode.DateSubmitted.DateTimeValue = System.DateTime.Now;
-
                 //if we have an action this is all we want/need/care about
                 if( false == String.IsNullOrEmpty( actionname ) )
                 {
