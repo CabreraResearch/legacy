@@ -102,6 +102,7 @@ namespace ChemSW.Nbt.Schema
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_CaseXXXXX() ) );  //01W-000   //01Y-000
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28669() ) );              //01W-075   //01Y-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28711() ) );              //01W-076   //01Y-002
 
             #endregion YORICK
 
