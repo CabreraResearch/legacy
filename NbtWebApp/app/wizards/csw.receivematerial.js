@@ -38,7 +38,8 @@
                 stepThreeComplete: false,
                 printBarcodes: false,
                 amountsGrid: null,
-                
+                saveError: false
+
             };
 
             var cswPublic = {};
@@ -107,15 +108,22 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
-                        
-                        if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
-                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
-                            if (cswPrivate.lastStepNo === 2) {
-                                cswPrivate.tabsAndProps.save({}, '', null, false, false);
+
+                        if (cswPrivate.currentStepNo === 3) {
+                            if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
+                                cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                                if (cswPrivate.lastStepNo === 2) {
+                                    cswPrivate.tabsAndProps.save({}, '', null, false, false);
+                                    if (cswPrivate.saveError === true) {
+                                        cswPrivate.saveError = false;
+                                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+                                        cswPrivate.reinitSteps(2);
+                                    }
+                                }
                             }
-                        }  
-                    }        
-                };//cswPrivate.handleStep
+                        }
+                    }
+                }; //cswPrivate.handleStep
 
                 cswPrivate.finalize = function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
@@ -308,6 +316,10 @@
                             },
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
                                 cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false, true);
+                            },
+                            onSaveError: function (errorData) {
+                                console.log(errorData);
+                                cswPrivate.saveError = true;
                             }
 
                         });
