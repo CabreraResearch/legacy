@@ -741,6 +741,7 @@
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
                         cswPrivate.state.materialId = data.TempNode.NodeId;
                         //cswPrivate.state.sizes = data.SizeNodes;
+                        cswPrivate.makeStep1();
                     }
                 });
 
@@ -748,7 +749,7 @@
 
             //#endregion ctor
 
-            cswPrivate.makeStep1();
+            
 
             return cswPublic;
         });
