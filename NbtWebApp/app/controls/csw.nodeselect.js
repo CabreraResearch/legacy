@@ -205,7 +205,7 @@
                     }
                 });
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
-                    cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, selected: true }).data({ link: cswPrivate.selectedNodeLink });
+                    cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });
                 }
 
                 cswPrivate.bindSelectMethods();
