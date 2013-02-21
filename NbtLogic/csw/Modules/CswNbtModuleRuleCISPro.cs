@@ -1,5 +1,6 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt
 {
@@ -84,6 +85,9 @@ namespace ChemSW.Nbt
             //   Above Maximum Inventory
             //   Below Minimum Inventory
             _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", NbtViewVisibility.Global );
+
+            // Case 28930 - Enable Scheduled Rules
+            _CswNbtResources.Modules.ToggleScheduledRule(NbtScheduleRuleNames.GenRequest, Disabled: false);
         }
 
         public override void OnDisable()
@@ -164,6 +168,8 @@ namespace ChemSW.Nbt
             //   Below Minimum Inventory
             _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", NbtViewVisibility.Global );
 
+            // Case 28930 - Enable Scheduled Rules
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled : true );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro
