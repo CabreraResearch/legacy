@@ -295,6 +295,24 @@ namespace ChemSW.Nbt.ServiceDrivers
                         _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
                     {
                         var CswNbtNodePropColl = Node.Properties;
+
+                        Collection<CswNbtMetaDataNodeTypeProp> FiltProps = new Collection<CswNbtMetaDataNodeTypeProp>();
+                        if( _ConfigMode )
+                        {
+                            //FiltProps = Node.Properties.All( FiltProps.Add( CswNbtMetaDataNodeTypeProp <= T ) );
+                        }
+                        foreach( CswNbtNodePropWrapper PropWrapper in 
+                            from _PropWrap 
+                                in CswNbtNodePropColl 
+                            select _PropWrap
+                        
+                        
+                            
+                        )
+                        {
+                            
+                        }
+                        
                         IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
                                                                                   where CswNbtNodePropColl != null
                                                                                   let Pw = CswNbtNodePropColl[_Prop]
@@ -304,6 +322,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                         foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
                         {
+                          
                             _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
                         }
                     }
@@ -312,32 +331,35 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        /// <summary>
-        /// Get props of a Node instance
-        /// </summary>
-        public void addPropsToResponse( JObject Ret, IEnumerable<CswNbtMetaDataNodeTypeProp> Props, CswNbtNode Node )
-        {
-            foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
-            {
-                _addProp( Ret, Node, Prop, Int32.MinValue );
-            }
-        }
-
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
         {
             bool RetShow = false;
 
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+            if( Prop.ShowSaveProp(LayoutType) )
             {
-                //Case 24023: Exclude buttons on Add
-                RetShow = ( Prop.EditProp( Node, _ThisUser, true ) &&
-                            Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
+                if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+                {
+                    RetShow = true;
+                }
+                else
+                {
+                    RetShow = false;
+                }
             }
             else
-            {   
-                RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
+            {
+                if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+                {
+                    //Case 24023: Exclude buttons on Add
+                    RetShow = ( Prop.EditProp( Node, _ThisUser, true ) &&
+                                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
+                }
+                else
+                {
+                    RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
+                }
+                RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
             }
-            RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
             return RetShow;
         }
 

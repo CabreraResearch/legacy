@@ -13,7 +13,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
+    public class CswNbtMetaDataNodeTypeProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         public enum NodeTypePropAttributes
         {
@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.MetaData
                         //If the prop isn't on the Add layout, Add it.
                         if( false == ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                         {
-                            updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
+                            updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId : Int32.MinValue, TabGroup : string.Empty, DisplayRow : Int32.MinValue, DisplayColumn : Int32.MinValue, DoMove : false );
                         }
                     }
                 }
@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.MetaData
         public bool ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Type )
         {
             bool Ret = false;
-            
+
             if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
             {
                 Ret = _ExistsInLayout( getAddLayout() );
@@ -493,6 +493,40 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         }
+
+        private bool? _IsSaveProp;
+        public bool IsSaveProp
+        {
+            get
+            {
+                bool? Ret = false;
+                if( null != _IsSaveProp )
+                {
+                    Ret = _IsSaveProp;
+                }
+                else
+                {
+                    if( Int32.MinValue != ObjectClassPropId &&
+                        null != getObjectClassProp() &&
+                        getObjectClassProp().getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button &&
+                        getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
+                    {
+                        _IsSaveProp = true;
+                    }
+                    else
+                    {
+                        _IsSaveProp = false;
+                    }
+                }
+                return Ret.Value;
+            }
+        }
+
+        public bool ShowSaveProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Layout )
+        {
+            return IsSaveProp && ( Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit || Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+        }
+
 
         /// <summary>
         /// Returns whether any property values have been saved on nodetype prop
@@ -569,23 +603,16 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            var ret = ( false == hasFilter() && false == Node.Properties[this].Hidden &&
+            var ret = ( (
+                         ( false == hasFilter() &&
+                            false == Node.Properties[this].Hidden ) ||
+                         ShowSaveProp( LayoutType ) ) &&
                         (
                            _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
                            _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
                            _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
                         )
                       );
-            if( ret && null != getObjectClassProp() && getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
-            {
-                //Don't show the Save prop if the properties on this tab aren't editable
-                if( false == _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId )  || 
-                    false == _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Tab ) ||
-                    false == _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType() ) )
-                {
-                    ret = false;
-                }
-            }
             //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }

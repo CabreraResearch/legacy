@@ -120,6 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 CswNbtNodePropButton Ret = Node.Properties[PropertyName.Save];
+                
                 return Ret;
             } 
         }
