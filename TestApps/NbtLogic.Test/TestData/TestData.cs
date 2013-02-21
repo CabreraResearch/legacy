@@ -47,7 +47,7 @@ namespace ChemSw.Nbt.Test
 
         private ICswUser _InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_Test );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_Test );
         }
 
         private void _setHighWaterMark()

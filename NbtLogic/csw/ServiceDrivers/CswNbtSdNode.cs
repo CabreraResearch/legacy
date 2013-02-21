@@ -451,25 +451,21 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView View = _getView( Request );
             if( null != View )
             {
-                if( Request.NodeTypeId <= 0 && Request.ObjectClassId <= 0 &&
-                    CswNbtResources.UnknownEnum == Request.ObjectClass )
+                // Absent a MetaDataObject ID, 
+                // the safest assumption is that we want all nodes of the same Object Class at the lowest level of the View,
+                // using the relationships defined on the View, of course.
+                Dictionary<Int32, Int32> LowestLevelNodeTypes = _getRelationshipSecondType( View );
+                foreach( KeyValuePair<int, int> KeyValuePair in LowestLevelNodeTypes )
                 {
-                    // Absent a MetaDataObject ID, 
-                    // the safest assumption is that we want all nodes of the same Object Class at the lowest level of the View,
-                    // using the relationships defined on the View, of course.
-                    Dictionary<Int32, Int32> LowestLevelNodeTypes = _getRelationshipSecondType( View );
-                    foreach( KeyValuePair<int, int> KeyValuePair in LowestLevelNodeTypes )
-                    {
-                        NodeTypeIds.Add( KeyValuePair.Key );
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( KeyValuePair.Key );
+                    NodeTypeIds.Add( KeyValuePair.Key );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( KeyValuePair.Key );
                             
-                        Ret.CanAdd = Ret.CanAdd ||
-                                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create,
-                                                                            NodeType );
-                    }
-                    Ret.ObjectClassId = LowestLevelNodeTypes.FirstOrDefault().Value;
-                    MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Ret.ObjectClassId );
+                    Ret.CanAdd = Ret.CanAdd ||
+                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create,
+                                                                        NodeType );
                 }
+                Ret.ObjectClassId = LowestLevelNodeTypes.FirstOrDefault().Value;
+                MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Ret.ObjectClassId );
             }
             
 

@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public ICswUser InitUser( ICswResources Resources )
         {
-            ICswUser RetUser = new CswNbtSystemUser( _CswNbtResources, SystemUserNames.SysUsr_ObjClassCustomer );
+            ICswUser RetUser = new CswNbtSystemUser( _CswNbtResources, CswSystemUserNames.SysUsr_ObjClassCustomer );
             return RetUser;
         }
 

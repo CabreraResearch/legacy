@@ -74,15 +74,17 @@
                             }); // CswDialog
                         } // onClick
                     }); // link
-
                     cswPrivate.childContentsDiv = cswPrivate.parent.div();
 
                     if (false === Csw.isNullOrEmpty(nodeSelect.selectedNodeId)) {
                         cswPrivate.loadNode(nodeSelect.selectedNodeId);
+                    } else {
+                        cswPublic.editLink.hide();
                     }
                 }; // render()
 
                 cswPrivate.loadNode = function (nodeid) {
+                    cswPublic.editLink.show();
                     cswPrivate.childContentsDiv.empty();
 
                     Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {

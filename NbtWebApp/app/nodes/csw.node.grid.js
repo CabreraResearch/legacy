@@ -2,9 +2,9 @@
 (function () {
 
     Csw.nbt.nodeGrid = Csw.nbt.nodeGrid ||
-        Csw.nbt.register('nodeGrid', function(cswParent, params) {
+        Csw.nbt.register('nodeGrid', function (cswParent, params) {
 
-            var cswPublic = { };
+            var cswPublic = {};
 
             var cswPrivate = {
                 selectedRowId: '',
@@ -36,7 +36,7 @@
 
 
             /* fetchGridSkeleton */
-            (function() {
+            (function () {
                 cswPublic = cswParent.grid({
                     name: cswPrivate.name,
                     stateId: cswPrivate.viewid,
@@ -58,14 +58,14 @@
                     height: cswPrivate.height,
                     canSelectRow: cswPrivate.canSelectRow,
                     onSelect: cswPrivate.onSelect,
-                    onEdit: function(rows) {
+                    onEdit: function (rows) {
                         // this works for both Multi-edit and regular
                         var nodekeys = Csw.delimitedString(),
                             nodeids = Csw.delimitedString(),
                             nodenames = [],
                             firstNodeId, firstNodeKey;
 
-                        Csw.each(rows, function(row) {
+                        Csw.each(rows, function (row) {
                             firstNodeId = firstNodeId || row.nodeid;
                             firstNodeKey = firstNodeKey || row.nodekey;
                             nodekeys.add(row.nodekey);
@@ -82,17 +82,17 @@
                             Multi: (nodeids.count() > 1),
                             onEditNode: cswPrivate.onEditNode,
                             onEditView: cswPrivate.onEditView,
-                            onClose: function() {
+                            onClose: function () {
                                 cswPublic.reload();
                             },
                             onRefresh: cswPrivate.onRefresh
                         });
                     }, // onEdit
-                    onDelete: function(rows) {
+                    onDelete: function (rows) {
                         // this works for both Multi-edit and regular
-                        var nodes = { };
+                        var nodes = {};
 
-                        Csw.each(rows, function(row) {
+                        Csw.each(rows, function (row) {
                             nodes[row.nodeid] = {
                                 nodeid: row.nodeid,
                                 nodekey: row.nodekey,
@@ -107,11 +107,14 @@
                             publishDeleteEvent: false
                         });
                     }, // onDelete
-                    onMouseEnter: function(event, nodeObj) {
-                        Csw.nodeHoverIn(event, nodeObj.raw.nodeid);
-                    },
-                    onMouseExit: function (event, nodeObj) {
-                        Csw.nodeHoverOut(event, nodeObj.raw.nodeid);
+                    onPreview: function (o, nodeObj, event) {
+                        var preview = Csw.nbt.nodePreview(Csw.main.body, {
+                            nodeid: nodeObj.nodeid,
+                            nodekey: nodeObj.nodekey,
+                            nodename: nodeObj.nodename,
+                            event: event
+                        });
+                        preview.open();
                     }
                 }); // grid()
 
@@ -121,5 +124,5 @@
             return cswPublic;
 
         });
-}());
+} ());
 

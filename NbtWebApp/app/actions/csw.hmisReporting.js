@@ -207,7 +207,7 @@ Csw.actions.hmisReporting = Csw.actions.template ||
                         groupField: 'hazardclass',
                         groupHeaderTpl: '{name}',
                         summaryEnabled: true,
-                        printingEnabled: true,
+                        printingEnabled: HMISGridData.length > 0,
                         gridToPrint: function(grid) {
                             return cswPrivate.makeSummaryGrid(grid);
                         }

@@ -593,8 +593,9 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
             Csw.extend(cswDlgPrivate, options);
+
             var cswPublic = {
-                div: Csw.literals.div(),
+                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
                     Csw.tryExec(cswDlgPrivate.onClose);
@@ -1070,7 +1071,8 @@
 
             //SearchTypes Picklist
             var searchTypeSelect = tableInner.cell(1, 2).select({
-                name: 'C3Search_searchTypeSelect'
+                name: 'C3Search_searchTypeSelect',
+                selected: 'Name'
             });
 
             function getSearchTypes() {
@@ -1101,6 +1103,7 @@
                 name: 'c3SearchBtn',
                 enabledText: 'Search',
                 disabledText: "Searching...",
+                bindOnEnter: div,
                 onClick: function () {
 
                     var CswC3SearchParams = {
@@ -1123,7 +1126,6 @@
                     });
                 }
             });
-
 
             tableOuter.cell(2, 1).div(tableInner);
 
@@ -1443,8 +1445,6 @@
             labelSelDiv.br();
             labelSelDiv.div({ text: 'Select a Printer:' });
 
-            var userDefaults = JSON.parse(Csw.cookie.get(Csw.cookie.cookieNames.UserDefaults));
-
             var printerSel = labelSelDiv.nodeSelect({
                 name: cswDlgPrivate.name + '_printersel',
                 objectClassName: 'PrinterClass',
@@ -1452,7 +1452,7 @@
                 isRequired: true,
                 showSelectOnLoad: true,
                 isMulti: false,
-                selectedNodeId: userDefaults.DefaultPrinterId
+                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId
             });
 
             cswPublic.div.button({
@@ -1483,7 +1483,7 @@
                 onImpersonate: null
             };
             if (options) Csw.extend(o, options);
-            
+
             function onOpen(div) {
                 Csw.ajax.post({
                     urlMethod: 'getUsers',
@@ -1518,7 +1518,7 @@
                     } // success
                 }); // ajax    
             }
-            
+
             openDialog(Csw.literals.div(), 400, 300, null, 'Impersonate', onOpen);
         }, // ImpersonateDialog
 

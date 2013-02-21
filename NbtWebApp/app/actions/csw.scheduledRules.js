@@ -40,7 +40,8 @@
                 var idx = cswPrivate.tabNames.indexOf(tabName);
                 if (idx !== -1) {
                     cswPrivate.tabs.setActiveTab(idx);
-                    cswPrivate.onTabSelect(tabName);
+                    //cswPrivate.onTabSelect(tabName);
+                    cswPrivate.makeRulesTab();
                 }
             };
 
@@ -143,6 +144,7 @@
 
                 Csw.ajax.post({
                     urlMethod: 'getActiveAccessIds',
+                    async: false,
                     success: function (data) {
                         cswPrivate.customerIds = data.customerids;
                         if (cswPrivate.customerIds.length > 1) {
@@ -306,20 +308,18 @@
                                 case result.ColumnIds.reprobate:
                                     col.editable = true;
                                     col.xtype = 'checkcolumn';
-                                    Object.defineProperty(col, 'editor', {
+                                    col.listeners = {
+                                        checkchange: function (checkbox, rowNum, isChecked) {
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum]['reprobate'] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['reprobate'] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['has_changed'] = 'true';
+                                        }
+                                    };
+                                    col.editor = {
                                         writable: true,
                                         configurable: true,
-                                        enumerable: true,
-                                        value: new Ext.form.field.Checkbox({
-
-                                        })
-                                    });
-                                    //col.width = 60;
-                                    //col.stopSelection = false;
-                                    //col.editor = {
-                                    //    xtype: 'checkcolumn',
-                                    //    cls: 'x-grid-checkheader-editor'
-                                    //};
+                                        enumerable: true
+                                    };
                                     break;
                                 case result.ColumnIds.rogue_cnt:
                                     col.editable = true;
@@ -345,6 +345,20 @@
                                         }
                                     });
                                     break;
+                                case result.ColumnIds.has_changed:
+                                    col.editable = true;
+                                    col.hidden = true;
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'booleancolumn',
+                                            trueText: 'true',
+                                            falseText: 'false',
+                                        }
+                                    });
+                                    break;
                             }
                         });
 
@@ -356,6 +370,8 @@
                             storeId: gridId,
                             data: result.Grid,
                             stateId: gridId,
+                            height: 375,
+                            width: '95%',
                             title: 'Scheduled Rules',
                             usePaging: false,
                             showActionColumn: false,
@@ -377,10 +393,12 @@
                 });
             };
 
-            cswPrivate.onGridEdit = function(grid, row, opts) {
+            cswPrivate.onGridEdit = function (grid, row, opts) {
+                if (cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][row.field] !== Csw.string(row.value)) {
+                    cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row['has_changed'] = 'true';
+                }
                 cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx][row.field] = row.value;
                 cswPrivate.schedulerRequest.Grid.data.items[row.rowIdx].Row[row.field] = row.value;
-                debugger;
             };
 
             cswPrivate.addBtnGroup = function (el) {
@@ -404,7 +422,7 @@
 
                 cswParent.empty();
                 cswPrivate.tabs = cswParent.tabStrip({
-                    onTabSelect: cswPrivate.onTabSelect
+                    //onTabSelect: cswPrivate.onTabSelect
                 });
                 cswPrivate.tabs.setTitle('Scheduled Rules by Customer ID');
 

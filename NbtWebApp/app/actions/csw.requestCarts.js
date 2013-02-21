@@ -20,7 +20,7 @@
                 cswPrivate.containernodeid = cswPrivate.containernodeid || '';
 
                 cswParent.empty();
-            }());
+            } ());
 
             cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
             cswPrivate.gridOpts = {};
@@ -59,9 +59,10 @@
 
             //#region AJAX methods
 
-            cswPrivate.getCart = function () {
+            cswPrivate.getCart = function (ActiveTab, TabName) {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/cart',
+                    async: false,
                     success: function (data) {
                         cswPrivate.state.pendingItemsViewId = data.PendingItemsView.SessionViewId;
                         cswPrivate.state.favoritesListViewId = data.FavoritesView.SessionViewId;
@@ -71,7 +72,13 @@
                         cswPrivate.state.pendingCartId = data.CurrentRequest.NodeId;
 
                         cswPrivate.saveState();
-                        cswPrivate.onTabSelect(cswPrivate.currentTab);
+
+                        if (ActiveTab && TabName) {
+                            cswPrivate.tabs.setActiveTab(ActiveTab);
+                            cswPrivate.onTabSelect(TabName);
+                        } else {
+                            cswPrivate.onTabSelect(cswPrivate.currentTab);
+                        }
                     }
                 });
             };
@@ -138,8 +145,7 @@
                     },
                     success: function (json) {
                         if (json.Succeeded) {
-                            cswPrivate.tabs.setActiveTab(1);
-                            cswPrivate.onTabSelect('Submitted');
+                            cswPrivate.getCart(1, "Submitted");
                             Csw.tryExec(cswPrivate.onSubmit);
                         }
                     }
@@ -198,7 +204,7 @@
                         success: function () {
                             cswPrivate.openTab('Recurring');
                         },
-                        error: function() {
+                        error: function () {
                             onError();
                         }
                     });
@@ -265,7 +271,7 @@
                 return ret;
             };
 
-            cswPrivate.onTabSelect = function(tabName, el, eventObj, callBack) {
+            cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
                 var tgtTxt = null, evtTxt;
                 if (tabName.indexOf('<') === 0 &&
                     tabName.lastIndexOf('>') === tabName.length - 1) {
@@ -752,13 +758,13 @@
 
                 cswPrivate.tabs.setActiveTab(0);
                 //cswPrivate.openTab('Pending');
-                
+
                 cswPrivate.getCart();
 
-            }());
+            } ());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
-}());
+} ());

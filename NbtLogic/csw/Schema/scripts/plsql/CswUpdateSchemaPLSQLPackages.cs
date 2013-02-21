@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.Schema
 PACKAGE TIER_II_DATA_MANAGER AS 
 
   DATE_ADDED date;
+  LAST_RUN_INTERVAL number;
   WEIGHT_BASE_UNIT_ID number;
 
   procedure SET_TIER_II_DATA;
@@ -94,8 +95,13 @@ END UNIT_CONVERSION;" );
 PACKAGE BODY TIER_II_DATA_MANAGER AS
   
   procedure SET_PACKAGE_PROPERTIES is
+    LAST_RUN_DATE date;
   begin
     DATE_ADDED := sysdate;
+    select nvl(max(dateadded), sysdate-1)
+      into LAST_RUN_DATE
+      from tier2;
+    LAST_RUN_INTERVAL := trunc(DATE_ADDED) - trunc(LAST_RUN_DATE);
     WEIGHT_BASE_UNIT_ID := UNIT_CONVERSION.GET_BASE_UNIT('Unit (Weight)');
   end SET_PACKAGE_PROPERTIES;
   
@@ -319,42 +325,44 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
     Materials tier_ii_material_table;
   begin
     SET_PACKAGE_PROPERTIES();
-    Locations := GET_LOCATIONS();
-    for loc in 1..Locations.count loop
-      Materials := GET_MATERIALS(Locations(loc).LocationId);
-      if Materials.exists(Materials.first) then
-        for mat in Materials.first..Materials.last loop
-          if Materials.exists(mat) then
-            insert
-              into TIER2
-              (
-                TIER2ID,
-                DATEADDED, 
-                LOCATIONID, 
-                PARENTLOCATIONID, 
-                MATERIALID, 
-                CASNO, 
-                QUANTITY, 
-                TOTALQUANTITY,
-                UNITID
-              ) 
-              values 
-              (
-                SEQ_TIER2ID.nextval,
-                DATE_ADDED, 
-                Locations(loc).LOCATIONID, 
-                Locations(loc).PARENTLOCATIONID, 
-                Materials(mat).MATERIALID,
-                Materials(mat).CASNO,
-                Materials(mat).QUANTITY,
-                Materials(mat).TOTALQUANTITY,
-                Materials(mat).UNITID
-              );
-          end if;
-        end loop;
-        commit;
-      end if;
-    end loop;
+    if LAST_RUN_INTERVAL > 0 then
+      Locations := GET_LOCATIONS();
+      for loc in 1..Locations.count loop
+        Materials := GET_MATERIALS(Locations(loc).LocationId);
+        if Materials.exists(Materials.first) then
+          for mat in Materials.first..Materials.last loop
+            if Materials.exists(mat) then
+              insert
+                into TIER2
+                (
+                  TIER2ID,
+                  DATEADDED, 
+                  LOCATIONID, 
+                  PARENTLOCATIONID, 
+                  MATERIALID, 
+                  CASNO, 
+                  QUANTITY, 
+                  TOTALQUANTITY,
+                  UNITID
+                ) 
+                values 
+                (
+                  SEQ_TIER2ID.nextval,
+                  DATE_ADDED, 
+                  Locations(loc).LOCATIONID, 
+                  Locations(loc).PARENTLOCATIONID, 
+                  Materials(mat).MATERIALID,
+                  Materials(mat).CASNO,
+                  Materials(mat).QUANTITY,
+                  Materials(mat).TOTALQUANTITY,
+                  Materials(mat).UNITID
+                );
+            end if;
+          end loop;
+          commit;
+        end if;
+      end loop;
+    end if;
   end SET_TIER_II_DATA;
 
 END TIER_II_DATA_MANAGER;" );

@@ -349,7 +349,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Ret["qtyReadonly"] = "true";
                     }
-                    Ret["unitCount"] = Size.UnitCount.Value.ToString();
+                    Ret["unitCount"] = CswTools.IsDouble( Size.UnitCount.Value ) ? Size.UnitCount.Value.ToString() : "";
                 }
                 else if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.dispense.ToString() )
                 {
@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return Ret;
         }
-        
+
         /// <summary>
         /// WCF wrapper around getNodes
         /// </summary>
@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != CswResources )
             {
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                
+
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {

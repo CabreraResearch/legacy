@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -181,7 +182,7 @@ namespace ChemSW.Nbt.ObjClasses
             Archived.SetOnPropChange( OnArchivedPropChange );
             Language.SetOnPropChange( OnLanguagePropChange );
             Format.SetOnPropChange( OnFormatPropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
+            FileType.SetOnPropChange( OnFileTypePropChange );
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -271,6 +272,23 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
+        private void OnFileTypePropChange( CswNbtNodeProp NodeProp )
+        {
+            //case 28755 - clear the File/Link prop, depending on what the FileType was changed to
+            CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+            CswNbtNodePropWrapper wrapper = null;
+            if( FileType.Value.Equals( FileTypes.File ) )
+            {
+                wrapper = Node.Properties[PropertyName.Link];
+            }
+            else
+            {
+                wrapper = Node.Properties[PropertyName.File];
+                wrapper.ClearBlob();
+            }
+            wrapper.ClearValue();
+        }
+
         public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
         public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
         private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
@@ -284,12 +302,21 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
         {
             ArchiveDate.setHidden( value: Archived.Checked != Tristate.True, SaveToDb: true );
+            string ArchivedTitleSuffix = " (Archived)";
             if( Archived.Checked == Tristate.True )
             {
                 ArchiveDate.DateTimeValue = DateTime.Now;
-                Title.Text += " (Archived)";
+                Title.Text += ArchivedTitleSuffix;
             }
-        }
+            else
+            {
+                ArchiveDate.DateTimeValue = DateTime.MinValue;
+                if( Title.Text.EndsWith( ArchivedTitleSuffix ) )
+                {
+                    Title.Text = Title.Text.Substring( 0, Title.Text.Length - ArchivedTitleSuffix.Length );
+                }
+            }
+        } // OnArchivedPropChange()
 
         public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
         private void OnLanguagePropChange( CswNbtNodeProp NodeProp )

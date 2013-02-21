@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
-        
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
 
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TargetType.Empty && Type.Value == TypeOptionView )
             {
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
-                if( null != View && 
+                if( null != View &&
                     View.Root.ChildRelationships.Count > 0 &&
                     View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
@@ -167,7 +167,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Type.SetOnPropChange( OnTypePropChange );
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
-            
+            ReportView.SetOnPropChange( OnReportViewChange );
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -217,6 +218,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropUserSelect Recipients { get { return ( _CswNbtNode.Properties[PropertyName.Recipients] ); } }
         public CswNbtNodePropRelationship Report { get { return ( _CswNbtNode.Properties[PropertyName.Report] ); } }
         public CswNbtNodePropViewReference ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
+        public void OnReportViewChange( CswNbtNodeProp Prop )
+        {
+            // case 28844 - Change view visibility from 'Property' to 'Hidden', so grids will run correctly
+            // This will only trigger when the viewid is first set.
+            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
+            View.SetVisibility( NbtViewVisibility.Hidden, null, null );
+            View.save();
+        } // OnReportViewChange()
         public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
         public CswNbtNodePropComments RunStatus { get { return ( _CswNbtNode.Properties[PropertyName.RunStatus] ); } }
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }

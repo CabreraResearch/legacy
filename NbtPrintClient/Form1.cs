@@ -188,7 +188,24 @@ namespace CswPrintClient1
             if( printDialog1.ShowDialog() == DialogResult.OK )
             {
                 tbPrinter.Text = printDialog1.PrinterSettings.PrinterName;
+                setEnablePrintJobsStates();
+                SaveSettings();
             }
+        }
+
+        private void setEnablePrintJobsStates()
+        {
+            if( btnRegister.Enabled || tbPrinter.Text == string.Empty )
+            {
+                cbEnabled.Checked = false;
+                cbEnabled.Enabled = false;
+                lblStatus.Text = "Print jobs are disabled, see Setup tab.";
+            }
+            else
+            {
+                cbEnabled.Enabled = true;
+            }
+            btnSelPrn.Enabled = !cbEnabled.Checked;
         }
 
         private void setBtnRegisterState( string errorStatus )
@@ -196,17 +213,17 @@ namespace CswPrintClient1
             if( _printerKey != string.Empty )
             {
                 btnRegister.Enabled = false;
-                lblRegisterStatus.Text = "Success! Registered PrinterKey is " + _printerKey;
+                lblRegisterStatus.Text = "Success! Your printer is registered (" + _printerKey + ").";
             }
             else
             {
                 btnRegister.Enabled = true;
                 lblRegisterStatus.Text = errorStatus;
-                cbEnabled.Checked = false;
+                setEnablePrintJobsStates();
             }
             tbDescript.Enabled = btnRegister.Enabled;
             tbLPCname.Enabled = btnRegister.Enabled;
-            cbEnabled.Enabled = !( btnRegister.Enabled );
+            setEnablePrintJobsStates();
         }
 
 
@@ -224,7 +241,7 @@ namespace CswPrintClient1
             //let's being our setup
             Log( "Starting up..." );
             LoadSettings();
-            cbEnabled_Click( sender, e );
+            setEnablePrintJobsStates();
         }
 
         private void SaveSettings()
@@ -246,22 +263,39 @@ namespace CswPrintClient1
 
         private void LoadSettings()
         {
-            tbLPCname.Text = Application.CommonAppDataRegistry.GetValue( "LPCname" ).ToString();
-            cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
-            tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
-            _printerKey = Application.CommonAppDataRegistry.GetValue( "printerkey" ).ToString();
-            tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
-            tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
-            tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
-            tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();
-            tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
-            if( tbURL.Text == string.Empty )
+            try
             {
-                tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
-            }
+                tbLPCname.Text = Application.CommonAppDataRegistry.GetValue( "LPCname" ).ToString();
+                cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
+                tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
+                _printerKey = Application.CommonAppDataRegistry.GetValue( "printerkey" ).ToString();
+                tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
+                tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
+                tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
+                tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();
+                tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
+                if( tbURL.Text == string.Empty )
+                {
+                    tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
+                }
 
-            Log( "Loaded settings." );
-            setBtnRegisterState( "" );
+                Log( "Loaded settings." );
+                setBtnRegisterState( "" );
+                if( true != cbEnabled.Checked )
+                {
+                    lblStatus.Text = "Print jobs are not enabled, see Setup tab.";
+                }
+                else
+                {
+                    timer1.Enabled = true;
+                    lblStatus.Text = "Waiting...";
+                }
+            }
+            catch( Exception e )
+            {
+                Log( "No configuration data found." );
+                lblStatus.Text = "Use Setup tab.";
+            }
         }
 
         private void Form1_FormClosed( object sender, System.Windows.Forms.FormClosedEventArgs e )
@@ -292,6 +326,7 @@ namespace CswPrintClient1
 
         private void cbEnabled_Click( object sender, EventArgs e )
         {
+            setEnablePrintJobsStates();
             if( cbEnabled.Checked == true )
             {
                 Status( "Waiting for print job." );
@@ -325,6 +360,7 @@ namespace CswPrintClient1
             setBtnRegisterState( "" );
             SaveSettings();
         }
+
 
     }
 }

@@ -52,39 +52,55 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28122() ) );              //01W-029
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01V_Case28611() ) );              //01W-030
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28363() ) );              //01W-031
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );              //01W-032
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );              //01W-033
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );              //01W-034
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );              //01W-035
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_TreeGrouping_Case27882() ) ); //01W-036
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );             //01W-037
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28345() ) );              //01W-038
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28507() ) );              //01W-039
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28508() ) );              //01W-040
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28560() ) );              //01W-041
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28409() ) );              //01W-042
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395() ) );              //01W-043
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28258() ) );              //01W-044
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28513() ) );              //01W-045
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Recurring_Case28340() ) );    //01W-046
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case27901() ) );              //01W-047
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case26840() ) );              //01W-048
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28655() ) );              //01W-049
-                 _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28534() ) );              //01W-050
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28557() ) );                //01W-050
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_ScheduledRules_Case28564() ) ); //01W-051
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28534() ) );                //01W-052
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28713() ) );                //01W-053
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395B() ) );               //01W-054
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28717() ) );                //01W-055
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28724() ) );                //01W-056 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28725() ) );                //01W-057
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28684() ) );                //01W-058
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28246() ) );              //01W-032
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28277() ) );              //01W-033
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28053() ) );              //01W-034
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_TreeGrouping_Case27882() ) ); //01W-035
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28393B() ) );             //01W-036
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28345() ) );              //01W-037
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28507() ) );              //01W-038
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28508() ) );              //01W-039
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28560() ) );              //01W-040
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28409() ) );              //01W-041
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395() ) );              //01W-042
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28258() ) );              //01W-043
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28513() ) );              //01W-044
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Recurring_Case28340() ) );    //01W-045
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case27901() ) );              //01W-046
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case26840() ) );              //01W-047
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28655() ) );              //01W-048
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28534() ) );              //01W-049
 
 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28557() ) );              //01W-050 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28713() ) );              //01W-051
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28395B() ) );             //01W-052
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_ScheduledRules_Case28564() ) );//01W-053
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28717() ) );              //01W-054
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28724() ) );              //01W-055
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28725() ) );              //01W-056
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28514() ) );              //01W-057
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28684() ) );              //01W-058
+            // Placeholder added below as logic for Case 28714 was moved to a before script
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_CaseXXXXX() ) );              //01W-059
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case24647() ) );              //01W-060
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28523() ) );              //01W-061
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28659() ) );              //01W-062
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28745() ) );              //01W-063
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28750() ) );              //01W-064
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28807() ) );              //01W-065
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28754() ) );              //01W-066
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28523B() ) );             //01W-067
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28783() ) );              //01W-068
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28844() ) );              //01W-069
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28846() ) );              //01W-070
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28779() ) );              //01W-071
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28787() ) );              //01W-072
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28650() ) );              //01W-073
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28279() ) );              //01W-074
 
             #endregion WILLIAM
+
 
             #region YORICK
 

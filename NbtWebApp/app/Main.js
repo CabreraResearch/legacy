@@ -1197,7 +1197,6 @@ window.initMain = window.initMain || function (undefined) {
                         var createOpt = {
                             state: o.state,
                             request: o.requestitem,
-                            rows: o.rows || [],
                             onCancel: function() {
                                 clear({ 'all': true });
                                 Csw.clientState.setCurrent(Csw.clientState.getLast());

@@ -132,6 +132,9 @@ namespace ChemSW.Nbt.WebServices
                         ViewMode = NbtViewRenderingMode.Tree;
                         PageSize = 50;
                     }
+                    
+                    [DataMember]
+                    public string Name;
 
                     [DataMember]
                     public Collection<CswExtTree.TreeNode> Tree;
@@ -317,6 +320,7 @@ namespace ChemSW.Nbt.WebServices
             if( ThisNodeDisabled )
             {
                 Ret.IsDisabled = true;
+                Ret.CssClass = "disabled";
             }
 
             if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
@@ -352,10 +356,11 @@ namespace ChemSW.Nbt.WebServices
         public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request )
         {
             ResponseData.Tree = ResponseData.Tree ?? new Collection<CswExtTree.TreeNode>();
-
+            
             if( null != _View ) //&& ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                ResponseData.Name = _View.ViewName;
                 _View.SaveToCache( Request.IncludeInQuickLaunch );
 
                 if( CswTools.IsPrimaryKey( Request.IncludeNodeId ) && null == Request.IncludeNodeKey )
@@ -438,7 +443,7 @@ namespace ChemSW.Nbt.WebServices
 
                 Tree.goToRoot();
 
-                //Build the Respose:
+                //Build the Response:
 
                 //#1: the Root node
                 CswExtTree.TreeNode RootNode = new CswExtTree.TreeNode();
@@ -449,6 +454,7 @@ namespace ChemSW.Nbt.WebServices
                 RootNode.Expanded = true;
                 RootNode.Path = "|root";
                 RootNode.Id = "root";
+                RootNode.Icon = "Images/view/viewtree.gif";
 
                 //#2: the columns for the Tree Grid
                 ResponseData.Columns.Add( new CswExtJsGridColumn

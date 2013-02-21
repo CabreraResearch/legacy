@@ -4,178 +4,139 @@
 (function () {
     'use strict';
 
-    var previews = {};
-    Csw.nodeHoverIn = Csw.nodeHoverIn || 
-        Csw.register('nodeHoverIn', function (event, nodeid, nodekey, delay) {
+    var hoverButton;
+    Csw.nodeHoverIn = Csw.nodeHoverIn ||
+        Csw.register('nodeHoverIn', function (event, opts) {  //, , buttonHoverIn, buttonHoverOut, position) {
             'use strict';
-            var previewopts = {
-                name: nodeid + '_preview',
-                nodeid: nodeid,
-                nodekey: nodekey,
-                eventArg: event
+            var p = {
+                nodeid: '',
+                nodekey: '',
+                nodename: '',
+                parentDiv: null,
+                buttonHoverIn: null,
+                buttonHoverOut: null,
+                useAbsolutePosition: true,
+                rightpad: 40
             };
-            
-            if (false === Csw.isNullOrEmpty(nodeid)){
-                if (Csw.number(delay, -1) >= 0) {
-                    previewopts.openDelay = delay;
+            Csw.extend(p, opts);
+
+            if (hoverButton == null && false === Csw.isNullOrEmpty(p.nodeid)) {
+                hoverButton = p.parentDiv.buttonExt({
+                    name: 'preview',
+                    enabledText: '',
+                    width: '100px',
+                    disableOnClick: false,
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                    onHoverIn: function () { Csw.tryExec(p.buttonHoverIn); },
+                    onHoverOut: function () { Csw.tryExec(p.buttonHoverOut); },
+                    onClick: function (btn, btnEvent) {
+                        var preview = Csw.nbt.nodePreview(Csw.main.body, {
+                            nodeid: p.nodeid,
+                            nodekey: p.nodekey,
+                            nodename: p.nodename,
+                            event: btnEvent
+                        });
+                        preview.open();
+                        return false;
+                    }
+                });
+                if (p.useAbsolutePosition) {
+                    hoverButton.css({
+                        position: 'absolute',
+                        top: p.parentDiv.$.position().top + 'px',
+                        left: (p.parentDiv.$.position().left + p.parentDiv.$.width() - p.rightpad) + 'px'
+                    });
                 }
-                previews[nodeid] = Csw.nbt.nodePreview(Csw.main.body, previewopts);
-                previews[nodeid].open();
             }
         }); // Csw.nodeHoverIn 
 
 
     Csw.nodeHoverOut = Csw.nodeHoverOut ||
-        Csw.register('nodeHoverOut', function (event, nodeid) {
-            'use strict';
-            if (false === Csw.isNullOrEmpty(nodeid) &&
-                false === Csw.isNullOrEmpty(previews[nodeid])) {
-                previews[nodeid].close(); 
-                previews[nodeid] = undefined;
+        Csw.register('nodeHoverOut', function () {
+            if (null != hoverButton) {
+                hoverButton.remove();
+                hoverButton = null;
             }
-    }); // Csw.nodeHoverOut
+        }); // Csw.nodeHoverOut
 
 
     Csw.nbt.nodePreview = Csw.nbt.nodePreview ||
         Csw.nbt.register('nodePreview', function (cswParent, options) {
             'use strict';
-            
+
             var cswPrivate = {
                 name: '',
                 nodeid: '',
                 nodekey: '',
-                eventArg: {},
-                openDelay: 1500,
-                closeDelay: 500
+                nodename: '',
+                height: 200,
+                width: 600,
+                event: null
             };
             Csw.extend(cswPrivate, options);
-                
+
             var cswPublic = {};
 
-            cswPrivate.fixDimensions = function(div) {
-                if (div) {
-                    // Make sure preview div is within the window
-                    var windowX = $(window).width() - 10;
-                    var windowY = $(window).height() - 10;
-                    var divwidth = div.$.width();
-                    var divheight = div.$.height();
-                    var X = cswPrivate.eventArg.pageX + 20; // move it to the right of the cursor, to keep from preventing click events
-                    var Y = cswPrivate.eventArg.pageY;
+            cswPublic.open = function () {
+                var y = cswPrivate.event.pageY;
+                var x = cswPrivate.event.pageX;
 
-                    if (X + divwidth > windowX) X = windowX - divwidth;
-                    // this doesn't work with page scrolling
-                    // if(Y + divheight > windowY) Y = windowY - divheight;
-
-                    div.css({
-                        maxWidth: windowX,
-                        maxHeight: windowY,
-                        top: Y + 'px',
-                        left: X + 'px'
-                    });
-                    div.css('z-index', '100');
+                // Make sure preview div is within the window
+                var windowX = $(window).width() - 10;
+                if (x + cswPrivate.width > windowX) {
+                    x = windowX - cswPrivate.width;
                 }
-            };// fixDimensions()
 
-            cswPrivate.loadPreview = function() {
-                var div = cswPrivate.setup();
-                if (div) {
-                    div.show();
-
-                    cswPrivate.previewTabsAndProps = Csw.layouts.tabsAndProps(div, {
-                        name: cswPrivate.name + 'tabs',
-                        globalState: {
-                            currentNodeId: cswPrivate.nodeid,
-                            currentNodeKey: cswPrivate.nodekey,
-                            ShowAsReport: false
-                        },
-                        tabState: {
-                            EditMode: Csw.enums.editMode.Preview,
-                            showSaveButton: false
-                        },
-                        AjaxWatchGlobal: false,
-                        onInitFinish: function(AtLeastOneProp) {
-                            cswPrivate.loadingDiv.remove();
-                            if (AtLeastOneProp) {
-                                cswPrivate.fixDimensions(div);
-                            } else {
-                                div.hide();
-                            }
-                        }
-                    });
-                }
-            }; // loadPreview()
-
-            cswPrivate.hoverIn = function() {
-                clearTimeout(cswPrivate.closeTimeoutHandle);
-            }; // hoverIn()
-            
-            cswPrivate.hoverOut = function() {
-                cswPublic.close();
-            }; // hoverOut()
-
-            
-            cswPublic.open = function (options) {
-                cswPrivate.openTimeoutHandle = Csw.defer(cswPrivate.loadPreview, cswPrivate.openDelay);
-            }; // open()
-
-
-            cswPublic.close = function () {
-                clearTimeout(cswPrivate.openTimeoutHandle);
-                // Clear all node previews, in case other ones are hanging around
-                cswPrivate.closeTimeoutHandle = Csw.defer(cswPrivate.unBindThisPreview, cswPrivate.closeDelay);
-            }; // close()
-
-
-            cswPrivate.unBindThisPreview = function() {
-            };
-
-            cswPrivate.setup = function() {
-
-                var ret = cswParent.div({
-                    name: cswPrivate.name,
-                    cssclass: 'CswNodePreview'
-                })
-                    .css({
-                        position: 'absolute',
-                        overflow: 'auto',
-                        border: '1px solid #003366',
-                        padding: '2px',
-                        backgroundColor: '#ffffff'
-                    })
-                    .hide();
-
-                //Case 28397
-                //1st: nuke any existing previews
-                Csw.publish('CswUnbindOldPreviews');
-
-                //2nd: declare the nuke _this_ preview
-                cswPrivate.unBindThisPreview = function() {
-                    if (ret) {
-                        //cswPrivate.div.unbind('mouseenter mouseleave');
-                        ret.remove();
+                cswPrivate.extWindow = Ext.create('Ext.window.Window', {
+                    title: cswPrivate.nodename,
+                    y: y,
+                    x: x,
+                    height: cswPrivate.height,
+                    width: cswPrivate.width,
+                    layout: 'fit',
+                    items: {
+                        xtype: 'component',
+                        layout: 'fit'
                     }
-                    if (cswPrivate.previewTabsAndProps) {
-                        cswPrivate.previewTabsAndProps.tearDown();
-                    }
-                    Csw.unsubscribe('CswUnbindOldPreviews', null, cswPrivate.unBindThisPreview);
-                };
-                //3rd: bind to nuke _this_ preview
-                Csw.subscribe('CswUnbindOldPreviews', cswPrivate.unBindThisPreview);
+                }).show();
+                cswPrivate.div = Csw.domNode({
+                    el: cswPrivate.extWindow.items.items[0].getEl().dom,
+                    ID: cswPrivate.extWindow.items.items[0].getEl().id
+                });
 
-                ret.$.hover(cswPrivate.hoverIn, cswPrivate.hoverOut);
-
-                cswPrivate.fixDimensions(ret);
-
-                cswPrivate.loadingDiv = ret.div({
+                cswPrivate.loadingDiv = cswPrivate.div.div({
                     text: '&nbsp;&nbsp;&nbsp;Loading...',
                     styles: {
                         fontStyle: 'italic'
                     }
                 });
-                
-                return ret;
-            }; 
+
+                cswPrivate.previewTabsAndProps = Csw.layouts.tabsAndProps(cswPrivate.div, {
+                    name: cswPrivate.name + 'tabs',
+                    globalState: {
+                        currentNodeId: cswPrivate.nodeid,
+                        currentNodeKey: cswPrivate.nodekey,
+                        ShowAsReport: false
+                    },
+                    tabState: {
+                        EditMode: Csw.enums.editMode.Preview,
+                        showSaveButton: false
+                    },
+                    AjaxWatchGlobal: false,
+                    onInitFinish: function (AtLeastOneProp) {
+                        cswPrivate.loadingDiv.remove();
+                        if (false === AtLeastOneProp) {
+                            cswPrivate.div.text('No preview available.');
+                        }
+                    }
+                });
+            }; // open()
+
+
+            cswPublic.close = function () {
+                cswPrivate.extWindow.close();
+            }; // close()
 
             return cswPublic;
-    }); // Csw.controls.nodeLink
+        }); // Csw.nbt.nodePreview
 } ());

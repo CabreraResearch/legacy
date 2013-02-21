@@ -41,13 +41,6 @@ namespace ChemSW.Nbt.Sched
             return ( true );
         }
 
-
-
-        public bool doesItemRunNow()
-        {
-            return ( _CswSchedItemTimingFactory.makeReportTimer( _CswScheduleLogicDetail.Recurrence, _CswScheduleLogicDetail.RunEndTime, _CswScheduleLogicDetail.Interval ).doesItemRunNow() );
-        }
-
         public void stop()
         {
             _LogicRunStatus = LogicRunStatus.Stopping;

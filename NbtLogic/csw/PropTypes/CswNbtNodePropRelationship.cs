@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.PropTypes
                 _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
                 if( RelationshipProp.IsRequired && Options.Count == 2 )
                 {
-                    Options.Remove(new CswPrimaryKey());
+                    Options.Remove( new CswPrimaryKey() );
                 }
             }
             return Options;
