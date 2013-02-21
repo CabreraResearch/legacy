@@ -118,7 +118,12 @@ namespace ChemSW.Nbt.Schema
             }
             _resetBlame();
 
-
+            _acceptBlame( CswDeveloper.BV, 27642 );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "scheduledrules", "statusmessage" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "scheduledrules", "statusmessage", DataDictionaryPortableDataType.Clob, Int32.MinValue );
+            }
+            _resetBlame();
 
             #endregion WILLIAM
 

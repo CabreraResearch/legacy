@@ -246,8 +246,10 @@
                     });
                     cswPrivate.rowCount += 1;
                 }
-                Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
-                Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
+                if (cswPrivate.rows.length < 2) {
+                    Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
+                    Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
+                }
 
             } ());
 

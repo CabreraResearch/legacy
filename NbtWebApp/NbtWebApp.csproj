@@ -599,6 +599,26 @@
     <Content Include="Images\newicons\KioskMode\Transfer_code39.png" />
     <Content Include="Images\pagelayout\header_logo32.png" />
     <Content Include="Images\tab-scroller-menu.gif" />
+    <Content Include="NbtPrintClient\install1.jpg" />
+    <Content Include="NbtPrintClient\install11.jpg" />
+    <Content Include="NbtPrintClient\install12.jpg" />
+    <Content Include="NbtPrintClient\install13.jpg" />
+    <Content Include="NbtPrintClient\install13a.jpg" />
+    <Content Include="NbtPrintClient\install13b.jpg" />
+    <Content Include="NbtPrintClient\install14.jpg" />
+    <Content Include="NbtPrintClient\install2.jpg" />
+    <Content Include="NbtPrintClient\install20.jpg" />
+    <Content Include="NbtPrintClient\install21.jpg" />
+    <Content Include="NbtPrintClient\install22.jpg" />
+    <Content Include="NbtPrintClient\install3.jpg" />
+    <Content Include="NbtPrintClient\install30.jpg" />
+    <Content Include="NbtPrintClient\install4.jpg" />
+    <Content Include="NbtPrintClient\install5.jpg" />
+    <Content Include="NbtPrintClient\install6.jpg" />
+    <Content Include="NbtPrintClient\install7.jpg" />
+    <Content Include="NbtPrintClient\install8.jpg" />
+    <Content Include="NbtPrintClient\install9.jpg" />
+    <Content Include="NbtPrintClient\setup.exe" />
     <Content Include="Services\NbtPublic.svc" />
     <Content Include="Services\Scheduler.svc" />
     <Content Include="Services\KioskMode.svc" />
@@ -1219,7 +1239,6 @@
     <Content Include="Scripts\jquery.mobile-1.0rc1.min.js" />
     <Content Include="Images\favicon.ico" />
     <Content Include="Design.aspx" />
-    <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
     <Content Include="Deprecated\ie6style.css" />
@@ -1673,9 +1692,6 @@
     <Compile Include="Design.aspx.designer.cs">
       <DependentUpon>Design.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Design_Layout.aspx.designer.cs">
-      <DependentUpon>Design_Layout.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DisplayLog.aspx.designer.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>
     </Compile>
@@ -1720,10 +1736,6 @@
     </Compile>
     <Compile Include="Design.aspx.cs">
       <DependentUpon>Design.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Design_Layout.aspx.cs">
-      <DependentUpon>Design_Layout.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
@@ -1881,6 +1893,7 @@
     <None Include="Images\cispro\xn.pcx" />
     <None Include="Images\newicons\clipcheck_mobile.pspimage" />
     <None Include="Images\newicons\icons.pspimage" />
+    <None Include="NbtPrintClient\NbtPrintClientInstall.msi" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
     <None Include="SkinPrint\Grid\Thumbs.db" />

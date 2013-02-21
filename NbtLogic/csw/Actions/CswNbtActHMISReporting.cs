@@ -208,19 +208,27 @@ namespace ChemSW.Nbt.Actions
                         }
                         if( false == String.IsNullOrEmpty( UseType ) )
                         {
-                            HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( ExistingMaterial => ExistingMaterial.Material == MaterialName );
-                            if( null != HMISMaterial )
+                            IEnumerable<HMISData.HMISMaterial> HMISMaterials = Data.Materials.Where( ExistingMaterial => ExistingMaterial.Material == MaterialName );
+                            if( HMISMaterials.Any() )
                             {
-                                _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
+                                foreach( HMISData.HMISMaterial HMISMaterial in HMISMaterials )
+                                {
+                                    _addQuantityDataToHMISMaterial( HMISMaterial, UseType, Quantity, UnitId, MaterialId );
+                                }
                             }
                             else
                             {
                                 HMISTree.goToNthChild( 0 );
                                 CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
                                 CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
-                                foreach( String HazardClass in MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value )
+                                CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
+                                if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
                                 {
-                                    HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
+                                    HazardClasses.Add("FL-Comb");
+                                }
+                                foreach( String HazardClass in HazardClasses )
+                                {
+                                    HMISData.HMISMaterial HMISMaterial = Data.Materials.FirstOrDefault( EmptyHazardClass => EmptyHazardClass.HazardClass == HazardClass );
                                     if( null != HMISMaterial )//This would only be null if the Material's HazardClass options don't match the Default FireClass nodes
                                     {
                                         if ( false == String.IsNullOrEmpty( HMISMaterial.Material ) )

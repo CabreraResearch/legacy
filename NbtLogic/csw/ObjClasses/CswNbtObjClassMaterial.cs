@@ -106,6 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
             CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
             if( null != ChemicalHazardClassesNTP )
             {
@@ -115,7 +116,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
                         _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
-                    ChemicalHazardClassesNTP.ListOptions = FireClassHazardTypesNTP.ListOptions;
+                    String FLComb = "FL-Comb";
+                    int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
+                    String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
+                    ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
                 }
             }
 
@@ -197,6 +201,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtObjClassContainer Container = Act.makeContainer();
                             Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
                             Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                            ButtonData.Data["state"]["containerNodeId"] = Container.NodeId.ToString();
                             ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
@@ -209,9 +214,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
                                 {
                                     JToken name = child.First.SelectToken( "name" );
-                                    if( name.ToString() == "Expiration Date" )
+                                    if (null != name)
                                     {
-                                        ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
+                                        if (name.ToString() == "Expiration Date")
+                                        {
+                                            ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
+                                        }
                                     }
                                 }
                             }
@@ -223,6 +231,9 @@ namespace ChemSW.Nbt.ObjClasses
                             }
 
                             ButtonData.Action = NbtButtonAction.receive;
+
+                            Container.postChanges( false );
+
                         }
                         break;
                     case PropertyName.ViewSDS:

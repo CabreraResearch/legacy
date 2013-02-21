@@ -1036,7 +1036,7 @@ namespace ChemSW.Nbt
          */
         private void _onConfigVblChange( string VariableName, string NewValue )
         {
-            if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )  //TODO: this should not be a hardcoded string here
+            if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
             {
                 CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
                 if( null != locationOC )
@@ -1057,7 +1057,39 @@ namespace ChemSW.Nbt
                      */
                     _CswResources.execArbitraryPlatformNeutralSql( sql );
                 }
-            }
+            } // if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
+
+            // case 28895
+            if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
+            {
+                // Keep 'Locations' view up to date
+
+                CswNbtMetaDataObjectClass LocationOC = this.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+
+                Int32 maxDepth = CswConvert.ToInt32( NewValue );
+                if( maxDepth == Int32.MinValue )
+                {
+                    maxDepth = 5;
+                }
+
+                CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", NbtViewVisibility.Global );
+                if( null != LocationsView )
+                {
+                    LocationsView.Root.ChildRelationships.Clear();
+                    CswNbtViewRelationship LocRel1 = LocationsView.AddViewRelationship( LocationOC, true );
+                    LocationsView.AddViewPropertyAndFilter( LocRel1, LocationLocationOCP,
+                                                            Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                            SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                    CswNbtViewRelationship LocReln = LocRel1;
+                    for( Int32 i = 2; i <= maxDepth; i++ )
+                    {
+                        LocReln = LocationsView.AddViewRelationship( LocReln, NbtViewPropOwnerType.Second, LocationLocationOCP, true );
+                    }
+                    LocationsView.save();
+                }
+            } // if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
         }
 
         #endregion

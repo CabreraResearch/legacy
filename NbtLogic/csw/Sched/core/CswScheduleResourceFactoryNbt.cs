@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Sched
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_SchedSvc );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_SchedSvc );
         }
 
     }//CswReportTimingDaily

@@ -593,8 +593,9 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
             Csw.extend(cswDlgPrivate, options);
+
             var cswPublic = {
-                div: Csw.literals.div(),
+                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
                     Csw.tryExec(cswDlgPrivate.onClose);
@@ -1102,6 +1103,7 @@
                 name: 'c3SearchBtn',
                 enabledText: 'Search',
                 disabledText: "Searching...",
+                bindOnEnter: div,
                 onClick: function () {
 
                     var CswC3SearchParams = {
@@ -1124,7 +1126,6 @@
                     });
                 }
             });
-
 
             tableOuter.cell(2, 1).div(tableInner);
 
@@ -1435,7 +1436,7 @@
                             labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
                         }
                     } else {
-                        labelSelDiv.span({ text: 'No labels have been assigned!' });
+                        labelSelDiv.span({ cssclass: 'warning', text: 'No labels have been assigned!' });
                     }
                 } // success
             }); // ajax
@@ -1451,7 +1452,22 @@
                 isRequired: true,
                 showSelectOnLoad: true,
                 isMulti: false,
-                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId
+                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
+                onSuccess: function () {
+                    if (printerSel.optionsCount === 0) {
+                        printerSel.hide();
+                        printBtn.hide();
+                        labelSelDiv.span({ cssclass: 'warning', text: 'No printers have been registered!' });
+                    }
+                }
+            });
+
+            var printBtn = cswPublic.div.button({
+                name: 'print_label_print',
+                enabledText: 'Print',
+                //disabledText: 'Printing...', 
+                disableOnClick: false,
+                onClick: handlePrint //getEplContext
             });
 
             cswPublic.div.button({
@@ -1463,15 +1479,6 @@
                 }
             });
 
-            cswPublic.div.button({
-                name: 'print_label_print',
-                enabledText: 'Print',
-                //disabledText: 'Printing...', 
-                disableOnClick: false,
-                onClick: handlePrint //getEplContext
-            });
-            //printBtn.hide();
-
             openDialog(cswPublic.div, 400, 300, null, 'Print');
             return cswPublic;
         }, // PrintLabelDialog
@@ -1482,7 +1489,7 @@
                 onImpersonate: null
             };
             if (options) Csw.extend(o, options);
-            
+
             function onOpen(div) {
                 Csw.ajax.post({
                     urlMethod: 'getUsers',
@@ -1517,7 +1524,7 @@
                     } // success
                 }); // ajax    
             }
-            
+
             openDialog(Csw.literals.div(), 400, 300, null, 'Impersonate', onOpen);
         }, // ImpersonateDialog
 

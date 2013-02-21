@@ -75,6 +75,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount ).ToString(), CswScheduleLogicDetail.ColumnNames.FailedCount );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId ).ToString(), CswScheduleLogicDetail.ColumnNames.ThreadId );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage ).ToString(), CswScheduleLogicDetail.ColumnNames.StatusMessage );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.HasChanged ).ToString(), CswScheduleLogicDetail.ColumnNames.HasChanged );
 
                     return Ret;
                 }

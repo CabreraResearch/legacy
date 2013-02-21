@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_SchemaUpdt );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_SchemaUpdt );
         }
 
         private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )

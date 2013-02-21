@@ -134,6 +134,9 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     [DataMember]
+                    public string Name;
+
+                    [DataMember]
                     public Collection<CswExtTree.TreeNode> Tree;
 
                     [DataMember]
@@ -255,7 +258,7 @@ namespace ChemSW.Nbt.WebServices
             string ThisNodeId = "";
             int ThisNodeTypeId = int.MinValue;
             int ThisObjectClassId = int.MinValue;
-            
+
             bool ThisNodeLocked = false;
             bool ThisNodeDisabled = false;
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
@@ -317,6 +320,7 @@ namespace ChemSW.Nbt.WebServices
             if( ThisNodeDisabled )
             {
                 Ret.IsDisabled = true;
+                Ret.CssClass = "disabled";
             }
 
             if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
@@ -333,7 +337,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret.ParentId = ParentKey.ToString();
             }
-            
+
             Ret.Path += "|" + Ret.Id;
 
             if( Tree.getChildNodeCount() > 0 )
@@ -352,41 +356,67 @@ namespace ChemSW.Nbt.WebServices
         public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request )
         {
             ResponseData.Tree = ResponseData.Tree ?? new Collection<CswExtTree.TreeNode>();
-
-            if( null != _View ) //&& ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
+            ICswNbtTree Tree = null;
+            string RootName = string.Empty;
+            if( null != _View )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                 _View.SaveToCache( Request.IncludeInQuickLaunch );
+                RootName = _View.ViewName;
+            }
 
-                if( CswTools.IsPrimaryKey( Request.IncludeNodeId ) && null == Request.IncludeNodeKey )
+            CswPrimaryKey IncludeNodeId = null;
+            CswNbtNodeKey SelectKey = null;
+            Int32 IncludeNodeTypeId = Int32.MinValue;
+            if( null != Request.IncludeNodeKey )
+            {
+                IncludeNodeId = Request.IncludeNodeKey.NodeId;
+                IncludeNodeTypeId = Request.IncludeNodeKey.NodeTypeId;
+                if( null != Tree )
                 {
-                    Request.IncludeNodeKey = Tree.getNodeKeyByNodeId( Request.IncludeNodeId );
-                    if( Request.IncludeNodeRequired && null == Request.IncludeNodeKey )
+                    Tree.makeNodeCurrent( Request.IncludeNodeKey );
+                    if( Tree.isCurrentNodeDefined() )
                     {
-                        CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.Nodes[Request.IncludeNodeId].getNodeType();
-                        _View = IncludeKeyNodeType.CreateDefaultView();
-                        _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
-                        _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Request.IncludeNodeId );
-                        _View.SaveToCache( Request.IncludeInQuickLaunch ); // case 22713
-                        ResponseData.ViewId = _View.SessionViewId;
-                        ResponseData.ViewMode = _View.ViewMode;
-                        Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                        SelectKey = Request.IncludeNodeKey;
                     }
                 }
-                if( Request.IncludeNodeRequired && Request.IncludeNodeKey != null && Tree.getNodeKeyByNodeId( Request.IncludeNodeKey.NodeId ) == null )
+            }
+            else if( CswTools.IsPrimaryKey( Request.IncludeNodeId ) )
+            {
+                IncludeNodeId = Request.IncludeNodeId;
+                CswNbtNode IncludeNode = _CswNbtResources.Nodes[IncludeNodeId];
+                if( null != IncludeNode )
                 {
-                    CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.MetaData.getNodeType( Request.IncludeNodeKey.NodeTypeId );
-                    _View = IncludeKeyNodeType.CreateDefaultView();
-                    _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
-                    _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Request.IncludeNodeKey.NodeId );
+                    IncludeNodeTypeId = IncludeNode.NodeTypeId;
+                }
+                if( null != Tree )
+                {
+                    SelectKey = Tree.getNodeKeyByNodeId( IncludeNodeId );
+                }
+            }
+
+            if( ( CswTools.IsPrimaryKey( IncludeNodeId ) && IncludeNodeTypeId != Int32.MinValue ) &&
+               ( Tree == null ||
+                ( Request.IncludeNodeRequired && SelectKey == null ) ) )
+            {
+                CswNbtMetaDataNodeType IncludeNodeType = _CswNbtResources.MetaData.getNodeType( IncludeNodeTypeId );
+                if( null != IncludeNodeType )
+                {
+                    _View = IncludeNodeType.CreateDefaultView();
+                    _View.ViewName = IncludeNodeType.NodeTypeName;
+                    _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeId );
                     _View.SaveToCache( Request.IncludeInQuickLaunch ); // case 22713
-                    ResponseData.ViewId = _View.SessionViewId;
-                    ResponseData.ViewMode = _View.ViewMode;
+                    RootName = _View.ViewName;
+
                     Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                 }
+            }
 
+            bool HasResults = false;
+            if( null != Tree )
+            {
                 Tree.goToRoot();
-                bool HasResults = ( Tree.getChildNodeCount() > 0 );
+                HasResults = ( Tree.getChildNodeCount() > 0 );
                 //ReturnObj["result"] = HasResults.ToString().ToLower();
                 //ReturnObj["types"] = getTypes();
                 ResponseData.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
@@ -397,12 +427,12 @@ namespace ChemSW.Nbt.WebServices
                     // Determine the default selected node:
                     // If the requested node to select is on the tree, return it.
                     // If the requested node to select is not on the tree, return the first child of the root.
-                    if( Request.IncludeNodeKey != null )
+                    if( SelectKey != null )
                     {
-                        Tree.makeNodeCurrent( Request.IncludeNodeKey );
+                        Tree.makeNodeCurrent( SelectKey );
                         if( Tree.isCurrentNodeDefined() )
                         {
-                            ResponseData.SelectedNodeKey = Request.IncludeNodeKey;
+                            ResponseData.SelectedNodeKey = SelectKey;
                         }
                     }
                     if( ResponseData.SelectedNodeKey == null )
@@ -437,97 +467,100 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 Tree.goToRoot();
+            }
+            //Build the Response:
 
-                //Build the Respose:
+            ResponseData.Name = RootName;
 
-                //#1: the Root node
-                CswExtTree.TreeNode RootNode = new CswExtTree.TreeNode();
-                ResponseData.Tree.Add( RootNode );
+            //#1: the Root node
+            CswExtTree.TreeNode RootNode = new CswExtTree.TreeNode();
+            ResponseData.Tree.Add( RootNode );
 
-                RootNode.Name = _View.ViewName;
-                RootNode.IsRoot = true;
-                RootNode.Expanded = true;
-                RootNode.Path = "|root";
-                RootNode.Id = "root";
+            RootNode.Name = RootName;
+            RootNode.IsRoot = true;
+            RootNode.Expanded = true;
+            RootNode.Path = "|root";
+            RootNode.Id = "root";
+            RootNode.Icon = "Images/view/viewtree.gif";
 
-                //#2: the columns for the Tree Grid
-                ResponseData.Columns.Add( new CswExtJsGridColumn
-                    {
-                        ExtDataIndex = "text",
-                        xtype = extJsXType.treecolumn,
-                        MenuDisabled = true,
-                        width = 269,
-                        header = "Tree",
-                        resizable = false,
-                    } );
-                ResponseData.Columns.Add( new CswExtJsGridColumn
-                    {
-                        ExtDataIndex = "nodetypeid",
-                        header = "NodeTypeId",
-                        hidden = true,
-                        resizable = false,
-                        width = 0,
-                        xtype = extJsXType.gridcolumn,
-                        MenuDisabled = true
-                    } );
-                ResponseData.Columns.Add( new CswExtJsGridColumn
-                    {
-                        ExtDataIndex = "objectclassid",
-                        header = "ObjectClassId",
-                        hidden = true,
-                        resizable = false,
-                        width = 0,
-                        xtype = extJsXType.gridcolumn,
-                        MenuDisabled = true
-                    } );
-                ResponseData.Columns.Add( new CswExtJsGridColumn
+            //#2: the columns for the Tree Grid
+            ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    ExtDataIndex = "nodeid",
-                    header = "NodeId",
+                    ExtDataIndex = "text",
+                    xtype = extJsXType.treecolumn,
+                    MenuDisabled = true,
+                    width = 269,
+                    header = "Tree",
+                    resizable = false,
+                } );
+            ResponseData.Columns.Add( new CswExtJsGridColumn
+                {
+                    ExtDataIndex = "nodetypeid",
+                    header = "NodeTypeId",
                     hidden = true,
                     resizable = false,
                     width = 0,
                     xtype = extJsXType.gridcolumn,
                     MenuDisabled = true
                 } );
-                ResponseData.Columns.Add( new CswExtJsGridColumn
-                    {
-                        ExtDataIndex = "disabled",
-                        header = "Disabled",
-                        hidden = true,
-                        resizable = false,
-                        width = 0,
-                        xtype = extJsXType.booleancolumn,
-                        MenuDisabled = true
-                    } );
-
-
-                //#3: The fields to map the columns to the data store
-                ResponseData.Fields.Add( new CswExtJsGridField { name = "text", type = "string" } );
-                ResponseData.Fields.Add( new CswExtJsGridField { name = "nodetypeid", type = "string" } );
-                ResponseData.Fields.Add( new CswExtJsGridField { name = "objectclassid", type = "string" } );
-                ResponseData.Fields.Add( new CswExtJsGridField { name = "nodeid", type = "string" } );
-                ResponseData.Fields.Add( new CswExtJsGridField { name = "disabled", type = "bool" } );
-
-                //#4: the tree
-                RootNode.Children = new Collection<CswExtTree.TreeNode>();
-                if( HasResults )
+            ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    Tree.goToRoot();
-                    _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request.UseCheckboxes );
-                }
-                else
+                    ExtDataIndex = "objectclassid",
+                    header = "ObjectClassId",
+                    hidden = true,
+                    resizable = false,
+                    width = 0,
+                    xtype = extJsXType.gridcolumn,
+                    MenuDisabled = true
+                } );
+            ResponseData.Columns.Add( new CswExtJsGridColumn
+            {
+                ExtDataIndex = "nodeid",
+                header = "NodeId",
+                hidden = true,
+                resizable = false,
+                width = 0,
+                xtype = extJsXType.gridcolumn,
+                MenuDisabled = true
+            } );
+            ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    CswExtTree.TreeNode EmptyNode = new CswExtTree.TreeNode();
-                    EmptyNode.Name = "No Results";
-                    EmptyNode.IsLeaf = true;
-                    EmptyNode.Selected = true;
-                    EmptyNode.Id = "empty";
-                    EmptyNode.ParentId = RootNode.Id;
-                    EmptyNode.Path = RootNode.Path + "|empty"; 
-                    RootNode.Children.Add( EmptyNode );
-                }
+                    ExtDataIndex = "disabled",
+                    header = "Disabled",
+                    hidden = true,
+                    resizable = false,
+                    width = 0,
+                    xtype = extJsXType.booleancolumn,
+                    MenuDisabled = true
+                } );
+
+
+            //#3: The fields to map the columns to the data store
+            ResponseData.Fields.Add( new CswExtJsGridField { name = "text", type = "string" } );
+            ResponseData.Fields.Add( new CswExtJsGridField { name = "nodetypeid", type = "string" } );
+            ResponseData.Fields.Add( new CswExtJsGridField { name = "objectclassid", type = "string" } );
+            ResponseData.Fields.Add( new CswExtJsGridField { name = "nodeid", type = "string" } );
+            ResponseData.Fields.Add( new CswExtJsGridField { name = "disabled", type = "bool" } );
+
+            //#4: the tree
+            RootNode.Children = new Collection<CswExtTree.TreeNode>();
+            if( HasResults )
+            {
+                Tree.goToRoot();
+                _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request.UseCheckboxes );
             }
+            else
+            {
+                CswExtTree.TreeNode EmptyNode = new CswExtTree.TreeNode();
+                EmptyNode.Name = "No Results";
+                EmptyNode.IsLeaf = true;
+                EmptyNode.Selected = true;
+                EmptyNode.Id = "empty";
+                EmptyNode.ParentId = RootNode.Id;
+                EmptyNode.Path = RootNode.Path + "|empty";
+                RootNode.Children.Add( EmptyNode );
+            }
+            //}
         } // runTree()
 
         public static void runTree( ICswResources CswResources, Contract.Response Response, Contract.Request Request )
@@ -544,11 +577,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     View = Resources.ViewSelect.getSessionView( Request.SessionViewId );
                 }
-                if( null != View )
-                {
-                    CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
-                    SdTrees.runTree( Response.Data, Request );
-                }
+                //if( null != View )
+                //{
+                CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
+                SdTrees.runTree( Response.Data, Request );
+                //}
             }
         }
 

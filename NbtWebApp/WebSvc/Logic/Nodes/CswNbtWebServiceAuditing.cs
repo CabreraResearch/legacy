@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.Security;
 using ChemSW.Core;
 using ChemSW.Grid.ExtJs;
-
+using ChemSW.Security;
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceAuditing
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
 
 
                 CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString( 0, "'" );
-                foreach( SystemUserNames sysUserName in Enum.GetValues( typeof( SystemUserNames ) ) )
+                foreach( CswSystemUserNames sysUserName in CswSystemUserNames.getValues() )
                 {
                     sysUserNames.Add( sysUserName.ToString() );
                 }

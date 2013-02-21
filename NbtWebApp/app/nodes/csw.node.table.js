@@ -192,10 +192,20 @@
                             });
                         }
 
-                        thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
-                                function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
-                        textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
-                                function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
+                        thumbnailCell.$.hover(
+                            function (event) {
+                                Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell });
+                            },
+                            function (event) {
+                                Csw.nodeHoverOut();
+                            });
+                        textCell.$.hover(
+                            function (event) {
+                                Csw.nodeHoverIn(event, { nodeid: nodeid, nodename: nodeObj.nodename, parentDiv: thumbnailCell });  // yes, thumbnailCell.
+                            },
+                            function (event) {
+                                Csw.nodeHoverOut();
+                            });
 
                         var btnTable = btncell.table({
                             name: cswPrivate.name + '_' + nodeid + '_btntbl',
@@ -219,7 +229,10 @@
                                     saveoptions = saveoptions || { onSuccess: null };
                                     Csw.tryExec(saveoptions.onSuccess);
                                 };
-                                var fieldOpt = Csw.nbt.propertyOption(propObj, btnTable.cell(1, btncol).div());
+
+                                var selectedText = propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText : propObj.name
+                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': selectedText * 7 + 8 });
+                                var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
 
                                 cswPrivate.properties[propObj.propid] = Csw.nbt.property(fieldOpt);
 
@@ -263,7 +276,7 @@
                                 width: ('Details'.length * 7) + 16,
                                 enabledText: 'Details',
                                 disableOnClick: false,
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                                 onClick: function () {
                                     //If C3 search {} else if Universal search {}
                                     if (cswPrivate.searchType === "chemcatcentral") {
@@ -592,4 +605,4 @@
 
             return cswPublic;
         }); // register
-})();     // (function
+})();               // (function

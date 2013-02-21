@@ -1,5 +1,7 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -63,6 +65,11 @@ namespace ChemSW.Nbt.Schema
                 );
 
             return Prop;
+        }
+
+        private static string _makeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission Permission )
+        {
+            return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
 
         #region Viola Methods
@@ -950,6 +957,82 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        #region Case 28714
+
+        private void _removeCreateMaterialPermission( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtObjClassRole AdminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            if( null != AdminRoleNode )
+            {
+
+                bool CanCreateMaterial = _CswNbtSchemaModTrnsctn.Permit.can( CswNbtActionName.Create_Material, AdminRoleNode );
+                if( CanCreateMaterial )
+                {
+                    bool HasOneMaterialCreate = false;
+                    CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                    foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+                    {
+                        string NodeTypePermission = _makeNodeTypePermissionValue( MaterialNt.FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission.Create );
+                        HasOneMaterialCreate = AdminRoleNode.NodeTypePermissions.CheckValue( NodeTypePermission );
+                    }
+
+                    if( false == HasOneMaterialCreate )
+                    {
+                        while (CanCreateMaterial)
+                        {
+                            _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Create_Material, AdminRoleNode, false );
+                            CanCreateMaterial = _CswNbtSchemaModTrnsctn.Permit.can(CswNbtActionName.Create_Material, AdminRoleNode);
+                        }
+                    }
+                }
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
+
+        #region Case 28834
+
+        private void _addUnitConversionTextProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClassProp UnitConversionOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UnitOfMeasureOC )
+            {
+                PropName = CswNbtObjClassUnitOfMeasure.PropertyName.UnitConversion,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static,
+                SetValOnAdd = true,
+                StaticText = @"Conversion Factor should be set to the number required to make the current unit equal to the base unit.<br/>
+Example: <strong>g(1E3) = kg</strong><br/>where g is the current unit, kg is the base unit, and 1E3 is the conversion factor."
+            } );
+
+            CswNbtMetaDataObjectClassProp BaseUnitOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( UnitOfMeasureOC.ObjectClassId, CswNbtObjClassUnitOfMeasure.PropertyName.BaseUnit );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( BaseUnitOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( BaseUnitOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp DateCreatedOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.PropertyName.DateCreated );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DateCreatedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+
+            CswNbtMetaDataObjectClassProp MaterialOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.PropertyName.Material );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+
+            CswNbtMetaDataObjectClassProp SizeOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.PropertyName.Size );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SizeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp MaterialIdOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PropertyName.MaterialId );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialIdOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+
+            _resetBlame();
+        }
+
+        #endregion Case 28834
+
         #endregion WILLIAM Methods
 
         /// <summary>
@@ -979,6 +1062,8 @@ namespace ChemSW.Nbt.Schema
             _fixRecurringRequestProp(CswDeveloper.CF, 28340);
             _makeLabelPrinterOCs( CswDeveloper.SS, 28534 );
             _ChangeMaterialProps( CswDeveloper.BV, 28713 );
+            _removeCreateMaterialPermission(CswDeveloper.CM, 28714);
+            _addUnitConversionTextProp( CswDeveloper.BV, 28834 );
 
             #endregion WILLIAM
 
