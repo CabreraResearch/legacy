@@ -576,8 +576,25 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public bool EditProp( CswNbtNode Node, ICswNbtUser User, bool InPopUp )
+        {
+            //CswNbtMetaDataNodeTypeProp Prop = this;
+            bool IsOnAdd = ( ( IsRequired && ( ( null == DefaultValue ) || ( DefaultValue.Empty ) ) ) ||
+                             Node.Properties[this].TemporarilyRequired ||
+                             AddLayout != null );
+
+            var ret = ( ( false == InPopUp || IsOnAdd ) &&
+                FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
+                        false == Node.Properties[this].Hidden &&
+                        ( _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId ) ) &&
+                          _CswNbtMetaDataResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, this, null ) );
+            return ret;
+        }
+
         public bool ShowProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtNode Node, ICswNbtUser User, Int32 TabId )
         {
+            
+             
             bool ret = true;
             CswNbtMetaDataNodeTypeTab Tab = null;
             if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
@@ -594,16 +611,39 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            var ret = ( (
-                         ( false == hasFilter() &&
-                            false == Node.Properties[this].Hidden ) ||
-                         ShowSaveProp( LayoutType ) ) &&
+            //TODO: reinject ShowSaveProp( LayoutType ) ) 
+            ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden &&
                         (
                            _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
                            _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
                            _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
                         )
                       );
+
+            //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
+            return ret;
+            
+            //CF version
+
+            //CswNbtMetaDataNodeTypeTab Tab = null;
+            //if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            //{
+            //    CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout( TabId );
+            //    if( EditLayout != null )
+            //    {
+            //        Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+            //    }
+            //}
+            //var ret = ( (
+            //             ( false == hasFilter() &&
+            //                false == Node.Properties[this].Hidden ) ||
+            //             ShowSaveProp( LayoutType ) ) &&
+            //            (
+            //               _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
+            //               _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
+            //               _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
+            //            )
+            //          );
             //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }

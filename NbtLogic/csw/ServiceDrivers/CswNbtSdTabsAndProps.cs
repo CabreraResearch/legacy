@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
+                    throw new CswDniException(ErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
                 }
             }
             return Ret;
@@ -251,8 +251,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
-                bool isNode = CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) );
-                if( ( _CswNbtResources.EditMode == NodeEditMode.Add ) && false == isNode )
+                if( _CswNbtResources.EditMode == NodeEditMode.Add )
                 {
                     Node = getAddNode( NodeTypeId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
@@ -334,38 +333,42 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
         {
-            bool RetShow = false;
+          return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || 
+  Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) && 
+  //TODO: reinject? save prop logic
+  Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) && 
+  ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            
+            //CF version
 
-            if( Prop.ShowSaveProp(LayoutType) )
-            {
-                if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
-                {
-                    RetShow = true;
-                }
-                else
-                {
-                    RetShow = false;
-                }
-            }
-            else
-            {
-//return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || 
-//                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) && 
-//                Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) && 
-//                ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            //bool RetShow = false;
 
-                if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
-                {
-                    //Case 24023: Exclude buttons on Add
-                    RetShow = ( Prop.EditProp( Node, _ThisUser, true ) &&
-                                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
-                }
-                else
-                {
-                    RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
-                }
-                RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
-            }
+            //if( Prop.ShowSaveProp(LayoutType) )
+            //{
+            //    if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            //    {
+            //        RetShow = true;
+            //    }
+            //    else
+            //    {
+            //        RetShow = false;
+            //    }
+            //}
+            //else
+            //{
+            //    if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+            //    {
+            //        //Case 24023: Exclude buttons on Add
+            //        RetShow = ( Prop.ShowProp( Node, _ThisUser, true ) &&
+            //                    Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
+            //    }
+            //    else
+            //    {
+            //        RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
+            //    }
+            //    RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            //}
+            //return RetShow;
         }
 
         /// <summary>
@@ -664,7 +667,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return _addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab, bool RemoveTempStatus = true )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab, bool setIsTempToFalse = true )
         {
             JObject ret = new JObject();
             if( PropsObj.HasValues )
@@ -705,7 +708,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         case NodeEditMode.Add:
                             if( null != Node )
                             {
-                                if( RemoveTempStatus )
+                                if( setIsTempToFalse )
                                 {
                                     Node.IsTemp = false;
                                 }
@@ -777,15 +780,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
-
-                    //This is used in the Create Material Wizard to determine whether to reinit Step 3 --
-                    //  --If the Physical State was changed, then we reinit
-                    CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-                    if( NodeType.ObjectClassId == MaterialOC.ObjectClassId )
-                    {
-                        CswNbtObjClassMaterial MaterialNode = Node;
-                        ret["physicalstatemodified"] = MaterialNode.PhysicalState.WasModified;
-                    }
                 }
             }
             return ret;

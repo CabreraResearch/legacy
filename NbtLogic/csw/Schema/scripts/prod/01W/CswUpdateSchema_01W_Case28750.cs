@@ -1,6 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _updatePropLayoutOrder( CswNbtMetaDataNodeType MaterialNT, CswNbtMetaDataNodeTypeProp NTP, int RowIdx, CswNbtMetaDataNodeTypeTab IdentityTab )
         {
-            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, MaterialNT.NodeTypeId, NTP.PropId, true,
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, MaterialNT.NodeTypeId, NTP, true,
                 TabId: IdentityTab.TabId,
                 DisplayRow: RowIdx,
                 DisplayColumn: 1

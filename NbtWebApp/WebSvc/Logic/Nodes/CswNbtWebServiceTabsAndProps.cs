@@ -7,7 +7,6 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
-using NbtWebApp.WebSvc.Logic.CISPro;
 
 namespace ChemSW.Nbt.WebServices
 {
