@@ -50,6 +50,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleC3( CswNbtResources );
             }
+            else if( CswNbtModuleName.Containers == ModuleName )
+            {
+                ret = new CswNbtModuleRuleContainers( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( ErrorType.Error,

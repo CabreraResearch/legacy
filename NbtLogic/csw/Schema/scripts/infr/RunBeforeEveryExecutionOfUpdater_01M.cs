@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
 
         #region Blame Logic
 
-        private void _acceptBlame(CswDeveloper BlameMe, Int32 BlameCaseNo)
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -52,10 +52,22 @@ namespace ChemSW.Nbt.Schema
 
             #region YORICK
 
-            //YORICK modules go here.
+            _makeContainersModule( CswDeveloper.MB, 28902 );
 
             #endregion YORICK
+
         }//Update()
+
+        private void _makeContainersModule( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( CswDeveloper.MB, 28902 );
+            int moduleId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.Containers );
+            if( Int32.MinValue == moduleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString(), false );
+            }
+            _resetBlame();
+        }
 
     }//class RunBeforeEveryExecutionOfUpdater_01M
 

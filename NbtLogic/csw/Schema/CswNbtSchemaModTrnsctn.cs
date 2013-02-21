@@ -486,7 +486,7 @@ namespace ChemSW.Nbt.Schema
             }
             else if( AllViews.Count > 1 )
             {
-                List<CswNbtView> VisibilityViews = AllViews.Where(View => View.Visibility == Visibility).ToList();
+                List<CswNbtView> VisibilityViews = AllViews.Where( View => View.Visibility == Visibility ).ToList();
                 if( 1 == VisibilityViews.Count )
                 {
                     ReturnVal = VisibilityViews[0];
@@ -773,9 +773,9 @@ namespace ChemSW.Nbt.Schema
             _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_nodetypes", "nodetypeid" );
             _changeJunctionModuleId( OldModuleId, NewModuleId, "jct_modules_objectclass", "objectclassid" );
         }
-        
+
         #endregion  Change Junctions
-        
+
         #region Getters
 
         public Int32 getModuleId( CswNbtModuleName Module )
@@ -807,7 +807,7 @@ namespace ChemSW.Nbt.Schema
                 return _CswNbtResources.Modules;
             }
         }
-        
+
         /// <summary>
         /// Convenience function for getting Object Class ID by name (usually for the purpose of deleting because the Enum has been removed)
         /// </summary>
@@ -833,7 +833,7 @@ namespace ChemSW.Nbt.Schema
         #endregion Getters
 
         #region Create Schema/Meta Data
-        
+
         /// <summary>
         /// Convenience function for making new Module
         /// </summary>
@@ -1035,11 +1035,11 @@ namespace ChemSW.Nbt.Schema
         #endregion Create Schema/Meta Data
 
         #region Delete Schema/Meta Data
-        
+
         public void deleteModule( string ModuleName )
         {
             Int32 ModuleId = getModuleId( ModuleName );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId : Int32.MinValue );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId: Int32.MinValue );
             deleteAllModuleObjectClassJunctions( ModuleId );
 
             CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
@@ -1108,9 +1108,26 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void deleteModuleNodeTypeJunction( Int32 ModuleId, Int32 NodeTypeId )
         {
-            if( Int32.MinValue != ModuleId && Int32.MinValue != NodeTypeId )
+            _deleteModuleJunction( ModuleId, NodeTypeId, false );
+        }
+
+        public void deleteModuleObjectClassJunction( CswNbtModuleName Module, Int32 ObjectClassId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            _deleteModuleJunction( ModuleId, ObjectClassId, true );
+        }
+
+        public void deleteModuleObjectClassJunction( Int32 ModuleId, Int32 ObjectClassId )
+        {
+            _deleteModuleJunction( ModuleId, ObjectClassId, true );
+        }
+
+        private void _deleteModuleJunction( Int32 ModuleId, Int32 ItemId, bool IsObjClassId )
+        {
+            if( Int32.MinValue != ModuleId && Int32.MinValue != ItemId )
             {
-                CswTableUpdate jct_modules_nodetypesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "jct_modules_nodetypes" );
+                string tableName = IsObjClassId ? "jct_modules_objectclass" : "jct_modules_nodetypes";
+                CswTableUpdate jct_modules_TU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleJunction", tableName );
                 string WhereSql = "";
                 if( Int32.MinValue != ModuleId )
                 {
@@ -1120,17 +1137,18 @@ namespace ChemSW.Nbt.Schema
                 {
                     WhereSql += " and ";
                 }
-                if( Int32.MinValue != NodeTypeId )
+                if( Int32.MinValue != ItemId )
                 {
-                    WhereSql += " nodetypeid = " + NodeTypeId;
+                    string colname = IsObjClassId ? "objectclassid" : "nodetypeid";
+                    WhereSql += colname + " = " + ItemId;
                 }
-                DataTable jct_modules_nodetypesDT = jct_modules_nodetypesTU.getTable( "where " + WhereSql );
-                Int32 RowCount = jct_modules_nodetypesDT.Rows.Count;
+                DataTable jct_modules_DT = jct_modules_TU.getTable( "where " + WhereSql );
+                Int32 RowCount = jct_modules_DT.Rows.Count;
                 for( Int32 R = 0; R < RowCount; R += 1 )
                 {
-                    jct_modules_nodetypesDT.Rows[R].Delete();
+                    jct_modules_DT.Rows[R].Delete();
                 }
-                jct_modules_nodetypesTU.update( jct_modules_nodetypesDT );
+                jct_modules_TU.update( jct_modules_DT );
             }
         }
 
@@ -1141,7 +1159,7 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
             {
-                deleteModuleNodeTypeJunction( ModuleId : Int32.MinValue, NodeTypeId : NodeTypeId );
+                deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
             }
 
             CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );
@@ -1168,7 +1186,7 @@ namespace ChemSW.Nbt.Schema
             }
             jct_modules_objectclassTU.update( jct_modules_objectclassDT );
         }
-        
+
         #endregion Delete Junctions
 
         #region DML
@@ -1366,7 +1384,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion DML
-        
+
         #region DDL
 
         /// <summary>
@@ -1465,8 +1483,8 @@ namespace ChemSW.Nbt.Schema
             addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
                        false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Clob, false,
                        required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
-        } 
-        
+        }
+
         #endregion DDL
 
         #endregion
