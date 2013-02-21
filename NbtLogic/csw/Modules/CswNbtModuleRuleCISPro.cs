@@ -35,6 +35,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.StorageCompatibility );
                 //LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
+                LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, false );
 
                 CswNbtMetaDataNodeTypeProp LocationContainersGridNTP = LocationNT.getNodeTypeProp( "Containers" );
                 if( null != LocationContainersGridNTP )

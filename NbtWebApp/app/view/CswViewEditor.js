@@ -324,7 +324,7 @@
                         viewNameTextBox.val(currentViewJson.viewname);
                         categoryTextBox.val(currentViewJson.category);
                         var visibility = Csw.string(currentViewJson.visibility);
-                        if (visibility !== 'Property') {
+                        if (visibility !== 'Property' && visibility !== 'Hidden') {
                             visSelect.setSelected({
                                 visibility: visibility,
                                 roleid: 'nodes_' + currentViewJson.visibilityroleid,
@@ -349,7 +349,7 @@
                         groupBySibCell.hide();
 
                         if (mode === 'Tree') {
-                            if (currentViewJson.visibility !== 'Property') {
+                            if (currentViewJson.visibility !== 'Property' && currentViewJson.visibility !== 'Hidden' ) {
                                 groupBySiblings.show();
                                 groupBySibCell.show();
                             }
@@ -409,7 +409,7 @@
             currentViewJson.viewname = viewNameTextBox.val();
             currentViewJson.category = categoryTextBox.val();
 
-            if (currentViewJson.visibility !== 'Property') {
+            if (currentViewJson.visibility !== 'Property' && currentViewJson.visibility !== 'Hidden' ) {
                 if (false === Csw.isNullOrEmpty(visSelect)) {
                     var visValue = visSelect.getSelected();
                     currentViewJson.visibility = visValue.visibility;

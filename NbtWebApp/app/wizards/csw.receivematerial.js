@@ -107,8 +107,15 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
-                    }
-                };
+                        
+                        if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
+                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                            if (cswPrivate.lastStepNo === 2) {
+                                cswPrivate.tabsAndProps.save({}, '', null, false, false);
+                            }
+                        }  
+                    }        
+                };//cswPrivate.handleStep
 
                 cswPrivate.finalize = function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
@@ -252,6 +259,7 @@
                                 cellvalign: 'middle'
                             });
                             var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                                checked: true,
                                 onChange: Csw.method(function () {
                                     var val;
                                     if (printBarcodesCheckBox.checked()) {
@@ -295,12 +303,11 @@
                             },
                             globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
-                                currentNodeId: cswPrivate.state.containerNodeId
+                                currentNodeId: cswPrivate.state.containerNodeId,
+                                removeTempStatus: false
                             },
-                            ReloadTabOnSave: true,
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
-                                    cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false);
-     
+                                cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false, true);
                             }
 
                         });

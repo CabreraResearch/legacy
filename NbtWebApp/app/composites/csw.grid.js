@@ -32,6 +32,7 @@
                     showCheckboxes: false,
                     showActionColumn: true,
                     showView: true,
+                    showPreview: true,
                     showLock: true,
                     showEdit: true,
                     showDelete: true,
@@ -40,6 +41,7 @@
 
                     onLoad: function (grid, ajaxResult) { },
                     onEdit: function (rows) { },
+                    onPreview: function (rows) { },
                     onDelete: function (rows) { },
                     onSelect: function (rows) { },
                     onDeselect: function (row) { },
@@ -56,8 +58,6 @@
                     pageSize: '',  // overridden by webservice
 
                     actionDataIndex: 'action',
-                    actionTableIds: [],
-                    actionTableKeys: [],
 
                     topToolbar: [],
                     groupField: '',
@@ -76,7 +76,7 @@
                 Csw.extend(cswPrivate, options);
                 cswPrivate.ID = cswPrivate.ID || cswPublic.getId();
                 cswPrivate.ID += cswPrivate.suffix;
-            }());
+            } ());
 
             //#endregion _preCtor
 
@@ -103,58 +103,44 @@
 
             //#region Grid Control Constructors
 
-            cswPrivate.makeActionColumns = function (delay) {
-                if (cswPrivate.showActionColumn) {
-                    delay = delay || 100;
-                    Csw.defer(Csw.method(function () {
+            cswPrivate.makeActionCell = function (tblObj) {
+                if (Csw.isElementInDom(tblObj.cellId)) {
+                    var div = Csw.domNode({
+                        ID: tblObj.cellId,
+                        tagName: 'DIV'
+                    });
+                    div.empty();
 
-                        cswPrivate.actionTableIds.forEach(function (tblObj) {
-                            if (Csw.isElementInDom(tblObj.cellId)) {
-                                var div = Csw.domNode({
-                                    ID: tblObj.cellId,
-                                    tagName: 'DIV'
-                                });
-                                div.empty();
+                    var table = div.table({ cellpadding: 0 });
 
-                                var table = div.table({ cellpadding: 0 });
+                    var previewCell = table.cell(1, 1).css({ width: '26px' });
+                    var editCell = table.cell(1, 2).css({ width: '26px' });
+                    var delCel = table.cell(1, 3).css({ width: '26px' });
 
-                                var editCell = table.cell(1, 1).css({ width: '26px' });
-                                var delCel = table.cell(1, 2).css({ width: '26px' });
+                    var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(tblObj.cellData.canedit, true);
+                    var canpreview = Csw.bool(cswPrivate.showPreview) && Csw.bool(tblObj.cellData.canview, true);
+                    var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
+                    var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
+                    var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
 
-                                var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(tblObj.cellData.canedit, true);
-                                var canview = Csw.bool(cswPrivate.showView) && Csw.bool(tblObj.cellData.canview, true);
-                                var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(tblObj.cellData.candelete, true);
-                                var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(tblObj.cellData.islocked, false);
+                    if (canpreview) {
+                        cswPrivate.makeActionButton(previewCell, 'Preview', Csw.enums.iconType.magglass, cswPrivate.onPreview, tblObj);
+                    }
 
-                                // only show one of edit/view/lock
-                                var doHover = false;
-                                if (islocked) {
-                                    cswPrivate.makeActionButton(editCell, 'Locked', Csw.enums.iconType.lock, null, tblObj.cellData);
-                                    doHover = true;
-                                } else if (canedit) {
-                                    doHover = true;
-                                    cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
-                                } else if (canview) {
-                                    doHover = true;
-                                    cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, tblObj);
-                                }
+                    // only show one of edit/view/lock
+                    if (islocked) {
+                        cswPrivate.makeActionButton(editCell, 'Locked', Csw.enums.iconType.lock, null, tblObj.cellData);
+                    } else if (canedit) {
+                        cswPrivate.makeActionButton(editCell, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
+                    } else if (canview) {
+                        cswPrivate.makeActionButton(editCell, 'View', Csw.enums.iconType.pencil, cswPrivate.onEdit, tblObj);
+                    }
 
-                                if (doHover) {
-                                    table.$.hover(function (event) {
-                                        Csw.tryExec(cswPrivate.onMouseEnter, event, tblObj);
-                                    }, function (event) {
-                                        Csw.tryExec(cswPrivate.onMouseExit, event, tblObj);
-                                    });
-                                }
-
-                                if (candelete) {
-                                    cswPrivate.makeActionButton(delCel, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, tblObj);
-                                }
-                            }
-                        });
-                    }), delay);
-                }
-            };
+                    if (candelete) {
+                        cswPrivate.makeActionButton(delCel, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, tblObj);
+                    }
+                } // if (Csw.isElementInDom(tblObj.cellId)) {
+            }; // makeActionCell()
 
             cswPrivate.makeActionButton = function (tableCell, buttonName, iconType, clickFunc, cell) {
                 if (cswPrivate.showActionColumn) {
@@ -168,8 +154,8 @@
                     };
                     if (false === Csw.isNullOrEmpty(clickFunc)) {
                         iconopts.isButton = true;
-                        iconopts.onClick = function () {
-                            Csw.tryExec(clickFunc, [cell.cellData], cell.raw);
+                        iconopts.onClick = function (event) {
+                            Csw.tryExec(clickFunc, [cell.cellData], cell.raw, event);
                         };
                     }
                     tableCell.icon(iconopts);
@@ -195,7 +181,7 @@
                     groupField: cswPrivate.groupField,
                     sorters: cswPrivate.sorters
                 };
-                
+
                 if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                     var newfld = { name: cswPrivate.actionDataIndex };
                     storeopts.fields.splice(0, 0, newfld);
@@ -233,23 +219,21 @@
                     viewready: function () {
                         //of the methods we're listening to here, called 4th. Will also trigger afterlayout.
                         Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
-                        cswPrivate.makeActionColumns(100);
                     },
                     //sortchange: function () { debugFunc(); },
-                    render: function () {
-                        //of the methods we're listening to here, called 1st
-                        //debugFunc();
-                    },
+//                    render: function () {
+//                        //of the methods we're listening to here, called 1st
+//                        //debugFunc();
+//                    },
                     //activate: function () { debugFunc(); },
                     //add: function () { debugFunc(); },
                     //added: function () { debugFunc(); },
-                    afterlayout: function () {
-                        //of the methods we're listening to here, called 3rd on a new grid.
-                        //empty grid is now rendered
+//                    afterlayout: function () {
+//                        //of the methods we're listening to here, called 3rd on a new grid.
+//                        //empty grid is now rendered
 
-                        //Also called on any mutation to grid (sort, columns show/hide, etc)
-                        cswPrivate.makeActionColumns(0);
-                    }
+//                        //Also called on any mutation to grid (sort, columns show/hide, etc)
+//                    }
                     //beforeactivate: function () { debugFunc(); },
                     //beforeadd: function () { debugFunc(); },
                     //beforeclose: function () { debugFunc(); },
@@ -484,35 +468,21 @@
                     var newcol = {
                         header: 'Action',
                         dataIndex: cswPrivate.actionDataIndex,
-                        width: 60,
+                        width: 70,
                         flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
-                        listeners: {
-                            move: function () {
-                                cswPrivate.makeActionColumns(0);
-                            }
-
-                        },
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //Terrible choice in words, "renderer" means the event that will run sometime after this based on the HTML string you define.
-                            cswPrivate.actionTableIds = cswPrivate.actionTableIds || [];
-
-                            //renderer may run over the same cell multiple times. Index only once.
-                            cswPrivate.actionTableKeys = cswPrivate.actionTableKeys || [];
                             var divId = cswPrivate.name + 'action' + rowIndex + colIndex;
-                            if (-1 === cswPrivate.actionTableKeys.indexOf(divId)) {
-                                cswPrivate.actionTableKeys.push(divId);
-
-                                cswPrivate.actionTableIds.push({
+                            Csw.defer(Csw.method(function() {
+                                cswPrivate.makeActionCell({
                                     cellId: divId,
                                     cellData: record.data,
                                     raw: record.raw
                                 });
-
-                            }
-                            //Guarantee the same base return for any call to render
-                            return '<div id="' + divId + '"></div>';
+                            }), 100);
+                            return '<div id="' + divId + '" style="height:18px;"></div>';
                         } // renderer()
                     }; // newcol
                     gridopts.columns.splice(0, 0, newcol);
@@ -568,7 +538,7 @@
                     if (cswPrivate.showCheckboxes) {
                         gridopts.selType = 'checkboxmodel';
                         gridopts.selModel = { mode: 'Simple' };
-                        gridopts.listeners.selectionchange = function(t, selected, eOpts) {
+                        gridopts.listeners.selectionchange = function (t, selected, eOpts) {
                             if (cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
                                 if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
                                     cswPrivate.editAllButton.disable();
@@ -581,11 +551,11 @@
                         };
                     } else {
                         gridopts.selType = 'rowmodel';
-                        gridopts.listeners.beforeselect = function() {
+                        gridopts.listeners.beforeselect = function () {
                             return Csw.bool(cswPrivate.canSelectRow);
                         };
                     }
-                } else if(cswPrivate.selModel) {
+                } else if (cswPrivate.selModel) {
                     gridopts.selType = cswPrivate.selModel.selType;
                 }
                 // Paging
@@ -662,6 +632,7 @@
                 } else {
                     cswPublic.extGrid = window.Ext.create('Ext.panel.Panel');
                 }
+                
                 return cswPublic.extGrid;
             }); // makeGrid()
 
@@ -727,7 +698,7 @@
                 }
             });
 
-            cswPrivate.setInternalGridState = function(data) {
+            cswPrivate.setInternalGridState = function (data) {
                 if (data) {
                     cswPrivate.pageSize = Csw.number(data.pageSize);
                     if (false === Csw.isNullOrEmpty(data.truncated)) {
@@ -757,7 +728,7 @@
                 if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
-                            cswPrivate.setInternalGridState(result.grid);                            
+                            cswPrivate.setInternalGridState(result.grid);
                             cswPrivate.ajaxResult = result;
                             cswPrivate.init();
                         } // if(false === Csw.isNullOrEmpty(data.griddata)) {
@@ -773,21 +744,17 @@
             //#region Public methods
 
             cswPublic.reload = function () {
-                cswPrivate.getData(function (result) {
-                    if (result && result.grid && result.grid.data && result.grid.data.items) {
-                        cswPrivate.actionTableIds = [];
-                        cswPrivate.actionTableKeys = [];
-
-                        cswPrivate.rows = result.grid.data;
-                        cswPrivate.store.destroy();
-                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
-                        cswPrivate.grid.reconfigure(cswPrivate.store);
-
-                        cswPrivate.makeActionColumns(0);
-                    } else {
-                        Csw.debug.error('Failed to reload grid');
-                    }
-                });
+                cswPrivate.reInit();
+//                cswPrivate.getData(function (result) {
+//                    if (result && result.grid && result.grid.data && result.grid.data.items) {
+//                        cswPrivate.rows = result.grid.data;
+//                        cswPrivate.store.destroy();
+//                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
+//                        cswPrivate.grid.reconfigure(cswPrivate.store);
+//                    } else {
+//                        Csw.debug.error('Failed to reload grid');
+//                    }
+//                });
             };
 
             cswPublic.getCell = Csw.method(function (rowindex, key) {
@@ -878,7 +845,7 @@
                 return return_val;
             };
 
-            cswPrivate.extractRows = function(rawRows) {
+            cswPrivate.extractRows = function (rawRows) {
                 var ret = [];
                 if (rawRows && rawRows.length > 0) {
                     rawRows.forEach(function (item) {
@@ -912,7 +879,7 @@
                 var return_val = [];
 
                 if (cswPrivate.store && cswPrivate.store.getUpdatedRecords) {
-                    return_val = cswPrivate.extractRows( cswPrivate.store.getUpdatedRecords() );
+                    return_val = cswPrivate.extractRows(cswPrivate.store.getUpdatedRecords());
                 }
 
                 return return_val;
@@ -964,11 +931,11 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.reInit();
-            }());
+            } ());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
 
-}());
+} ());

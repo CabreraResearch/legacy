@@ -114,8 +114,7 @@ namespace ChemSW.Nbt
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
                 string CurrentViewName = CswConvert.ToString( CurrentRow["viewname"] ).ToLower().Trim();
-                if( ViewName == CurrentViewName ||
-                    CurrentViewName.Contains( ViewName ) )
+                if( ViewName == CurrentViewName )
                 {
                     ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
                 }

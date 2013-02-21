@@ -100,7 +100,6 @@ namespace ChemSW.Nbt.Schema
                     "FL-1A",
                     "FL-1B",
                     "FL-1C",
-                    "FL-Comb",
                     "FS",
                     "HT",
                     "Irr",

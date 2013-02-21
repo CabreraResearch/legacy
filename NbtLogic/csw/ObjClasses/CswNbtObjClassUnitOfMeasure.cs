@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ConversionFactor = "Conversion Factor";
             public const string Fractional = "Fractional";
             public const string UnitType = "Unit Type";
+            public const string UnitConversion = "Unit Conversion";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -113,6 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[PropertyName.Fractional] ); } }
         public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[PropertyName.UnitType] ); } }
+        public CswNbtNodePropStatic UnitConversion { get { return ( _CswNbtNode.Properties[PropertyName.UnitConversion] ); } }
 
         #endregion
 

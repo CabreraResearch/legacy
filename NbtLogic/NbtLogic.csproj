@@ -93,6 +93,9 @@
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -123,17 +126,32 @@
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
+    <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetColReader.cs" />
     <Compile Include="csw\ImportExport\CswImporterLocationTree.cs" />
+    <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetCol.cs" />
+    <Compile Include="csw\ImportExport\CswImporterNodeLoader.cs" />
+    <Compile Include="csw\ImportExport\CswImportTablePopulatorFromRapidLoader.cs" />
+    <Compile Include="csw\ImportExport\CswImportTablePopulatorFromXml.cs" />
+    <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28717.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28279.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28787.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28650.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28844.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28779.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28846.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28783.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28754.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28523B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28807.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28750.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28523.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28745.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28659.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28557.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28714.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28514.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28725.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28724.cs" />

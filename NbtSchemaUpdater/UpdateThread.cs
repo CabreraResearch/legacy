@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Schema
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_SchemaUpdt );
+            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_SchemaUpdt );
         }
 
         private void _CloseSessionResources( CswNbtResources CswNbtResources )
