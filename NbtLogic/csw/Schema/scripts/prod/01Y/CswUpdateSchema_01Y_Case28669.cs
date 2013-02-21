@@ -25,12 +25,9 @@ namespace ChemSW.Nbt.Schema
             if( null != ContainerNT )
             {
                 CswNbtMetaDataNodeTypeTab FireCodeTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ContainerNT, "Fire Code" );
-                CswNbtMetaDataNodeTypeProp StoragePressureNTP =
-                    _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StoragePressure );
-                CswNbtMetaDataNodeTypeProp StorageTemperatureNTP =
-                    _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
-                CswNbtMetaDataNodeTypeProp UseTypeNTP =
-                    _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.UseType );
+                CswNbtMetaDataNodeTypeProp StoragePressureNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.StoragePressure );
+                CswNbtMetaDataNodeTypeProp StorageTemperatureNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.StorageTemperature );
+                CswNbtMetaDataNodeTypeProp UseTypeNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.UseType );
                 StoragePressureNTP.removeFromAllLayouts();
                 StorageTemperatureNTP.removeFromAllLayouts();
                 UseTypeNTP.removeFromAllLayouts();
@@ -48,8 +45,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     DispensesTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ContainerNT, "Dispenses", 4 );
                 }
-                CswNbtMetaDataNodeTypeProp DispenseNTP =
-                    _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Dispense );
+                CswNbtMetaDataNodeTypeProp DispenseNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Dispense );
                 DispenseNTP.removeFromAllLayouts();
                 DispenseNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, DispensesTab.TabId, 1, 1 );
             }
