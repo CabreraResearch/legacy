@@ -230,7 +230,8 @@
                                     Csw.tryExec(saveoptions.onSuccess);
                                 };
 
-                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': propObj.name.length * 7 + 8 });
+                                var selectedText = propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText : propObj.name
+                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': selectedText * 7 + 8 });
                                 var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
 
                                 cswPrivate.properties[propObj.propid] = Csw.nbt.property(fieldOpt);
