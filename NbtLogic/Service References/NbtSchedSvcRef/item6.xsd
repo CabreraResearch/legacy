@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ChemSW.MtSched.Core" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ChemSW.MtSched.Core" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
+  <xs:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Grid.ExtJs" />
+  <xs:complexType name="CswSchedSvcReturn">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Authentication" nillable="true" type="q1:CswWebSvcSessionAuthenticateData.Authentication.Response" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/ChemSW.Grid.ExtJs" minOccurs="0" name="ExtJsGrid" nillable="true" type="q2:CswGridExtJsGrid" />
+      <xs:element minOccurs="0" name="RuleInfoItems" nillable="true" type="tns:ArrayOfCswSchedSvcRuleInfoItem" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Status" nillable="true" type="q3:CswWebSvcReturnBase.Status" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswSchedSvcReturn" nillable="true" type="tns:CswSchedSvcReturn" />
+  <xs:complexType name="ArrayOfCswSchedSvcRuleInfoItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswSchedSvcRuleInfoItem" nillable="true" type="tns:CswSchedSvcRuleInfoItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswSchedSvcRuleInfoItem" nillable="true" type="tns:ArrayOfCswSchedSvcRuleInfoItem" />
+  <xs:complexType name="CswSchedSvcRuleInfoItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AccessId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FailedCount" type="xs:int" />
+      <xs:element minOccurs="0" name="Frequency" type="xs:int" />
+      <xs:element minOccurs="0" name="MaxFail" type="xs:int" />
+      <xs:element minOccurs="0" name="MaxMs" type="xs:int" />
+      <xs:element minOccurs="0" name="Reprobate" type="xs:boolean" />
+      <xs:element minOccurs="0" name="RogueCount" type="xs:int" />
+      <xs:element minOccurs="0" name="RuleName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RunEnd" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="RunStart" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ThreadId" type="xs:int" />
+      <xs:element minOccurs="0" name="Type" type="tns:Recurrence" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswSchedSvcRuleInfoItem" nillable="true" type="tns:CswSchedSvcRuleInfoItem" />
+  <xs:simpleType name="Recurrence">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Unknown" />
+      <xs:enumeration value="Never" />
+      <xs:enumeration value="Always" />
+      <xs:enumeration value="NSeconds" />
+      <xs:enumeration value="Hourly" />
+      <xs:enumeration value="Daily" />
+      <xs:enumeration value="DayOfWeek" />
+      <xs:enumeration value="DayOfMonth" />
+      <xs:enumeration value="DayOfYear" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Recurrence" nillable="true" type="tns:Recurrence" />
+  <xs:complexType name="CswSchedSvcParams">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="InfoItems" nillable="true" type="tns:ArrayOfCswSchedSvcRuleInfoItem" />
+      <xs:element minOccurs="0" name="ReadOnly" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Test" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Update" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswSchedSvcParams" nillable="true" type="tns:CswSchedSvcParams" />
+</xs:schema>
