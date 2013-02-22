@@ -82,6 +82,24 @@ namespace ChemSW.Nbt
             return ret;
         } // IsModuleEnabled()
 
+        public Int32 GetModuleId( CswNbtModuleName Module )
+        {
+            return GetModuleId( Module.ToString() );
+        }
+
+        public Int32 GetModuleId( string ModuleName )
+        {
+            Int32 RetModuleId = Int32.MinValue;
+            CswTableSelect ModulesTable = _CswNbtResources.makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where lower(name)='" + ModuleName.ToLower() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
+            {
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
+            }
+            return RetModuleId;
+        }
 
         /// <summary>
         /// Collection of all enabled modules

@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Schema
         private void _makeContainersModule( CswDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( CswDeveloper.MB, 28902 );
-            int moduleId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.Containers );
+            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.Containers );
             if( Int32.MinValue == moduleId )
             {
                 _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString(), false );

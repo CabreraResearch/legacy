@@ -1,7 +1,10 @@
 using System;
+using System.Data;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Actions;
+using ChemSW.DB;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -85,6 +88,9 @@ namespace ChemSW.Nbt
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.KioskMode );
+
+            //Show Print Labels with a dependent NodeType
+            _togglePrintLabels( false );
         }
 
         public override void OnDisable()
@@ -154,6 +160,9 @@ namespace ChemSW.Nbt
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.KioskMode );
 
+            //Hide Print Labels with a dependent NodeType
+            _togglePrintLabels( true );
+
         } // OnDisable()
 
         #region Private helpers
@@ -179,7 +188,55 @@ namespace ChemSW.Nbt
                 reportNode.postChanges( false );
                 reportsTree.goToParentNode();
             }
+        }
 
+        private void _togglePrintLabels( bool Hidden )
+        {
+            CswNbtMetaDataObjectClass printLabelOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp nodetypesOCP = printLabelOC.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
+
+            CswNbtView printLabelsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = printLabelsView.AddViewRelationship( printLabelOC, false );
+
+            CswTableSelect childObjectClasses_TS = _CswNbtResources.makeCswTableSelect( "getModuleChildren", "jct_modules_objectclass" );
+
+            int containerModuleId = _CswNbtResources.Modules.GetModuleId( CswNbtModuleName.Containers );
+            DataTable childObjClasses_DT = childObjectClasses_TS.getTable( "where moduleid = " + containerModuleId );
+            bool first = true;
+            foreach( DataRow Row in childObjClasses_DT.Rows )
+            {
+                int ObjClassId = CswConvert.ToInt32( Row["objectclassid"] );
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes( ObjClassId ) )
+                {
+                    if( first )
+                    {
+                        printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
+                            Value: NodeType.NodeTypeName,
+                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+                        first = false;
+                    }
+                    else
+                    {
+                        printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
+                            Value: NodeType.NodeTypeName,
+                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains,
+                            Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.Or );
+                    }
+                }
+            }
+
+
+            ICswNbtTree printLabelsTree = _CswNbtResources.Trees.getTreeFromView( printLabelsView, false, true, true );
+            int childCount = printLabelsTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                printLabelsTree.goToNthChild( i );
+                CswNbtNode printLabelNode = printLabelsTree.getNodeForCurrentPosition();
+                printLabelNode.Hidden = Hidden;
+                printLabelNode.postChanges( false );
+                printLabelsTree.goToParentNode();
+            }
         }
 
         private void _addPropToFirstTab( int NodeTypeId, string PropName, int Row = Int32.MinValue, int Col = Int32.MinValue )
