@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            //Tie the Containers, Size and Inventory Level OCs to the Containers Module and remove them from CISPro
+            //Tie the Containers, Size and Inventory Level, Inventory Group, Inventory Group Permission and Work Unit OCs to the Containers Module and remove them from CISPro
             int containerOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.ContainerClass );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, containerOC_Id );
             _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, containerOC_Id );
@@ -35,6 +35,18 @@ namespace ChemSW.Nbt.Schema
             int invLvlOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.InventoryLevelClass );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, invLvlOC_Id );
             _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, invLvlOC_Id );
+
+            int workUnitOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.WorkUnitClass );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, workUnitOC_Id );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, workUnitOC_Id );
+
+            int invGrpOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.InventoryGroupClass );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, invGrpOC_Id );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, invGrpOC_Id );
+
+            int invGrpPermOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.InventoryGroupPermissionClass );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, invGrpPermOC_Id );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, invGrpPermOC_Id );
 
             //Tie Receive, Reconcile and Submit_Request and Legacy_Mobile_Data actions to the module (intentionally leave Kiosk Mode out)
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Receiving );
