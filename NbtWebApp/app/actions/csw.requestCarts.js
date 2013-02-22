@@ -418,6 +418,15 @@
                         if (opts.showCheckboxes) {
                             Csw.tryExec(opts.onSelectChange, rowCount);
                         }
+                    },
+                    onPreview: function (o, nodeObj, event) {
+                        var preview = Csw.nbt.nodePreview(Csw.main.body, {
+                            nodeid: nodeObj.nodeid,
+                            nodekey: nodeObj.nodekey,
+                            nodename: nodeObj.nodename,
+                            event: event
+                        });
+                        preview.open();
                     }
                 });
             };
