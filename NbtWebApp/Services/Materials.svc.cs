@@ -79,50 +79,26 @@ namespace NbtWebApp.Services
             return ( Ret );
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "initialize")]
-        [FaultContract( typeof( FaultException ) )]
-        [Description( "Fetch the views relevant to Create Material" )]
-        public MaterialResponse initializeCreateMaterial(string NodeId)
-        {
-            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            MaterialResponse Ret = new MaterialResponse();
-            var GetViewDriverType = new CswWebSvcDriver<MaterialResponse, string>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.initializeCreateMaterial,
-                ParamObj: NodeId
-                );
-
-            GetViewDriverType.run();
-            return ( Ret );
-        }
-
         ///// <summary>
         ///// 
         ///// </summary>
         //[OperationContract]
-        //[WebInvoke( Method = "POST", UriTemplate = "saveMaterial", ResponseFormat = WebMessageFormat.Json)]
+        //[WebInvoke( Method = "POST", UriTemplate = "initialize")]
         //[FaultContract( typeof( FaultException ) )]
         //[Description( "Fetch the views relevant to Create Material" )]
-        //public MaterialResponse saveStep1Props( string state )
+        //public MaterialResponse initializeCreateMaterial(string NodeId)
         //{
         //    //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
         //    MaterialResponse Ret = new MaterialResponse();
         //    var GetViewDriverType = new CswWebSvcDriver<MaterialResponse, string>(
         //        CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
         //        ReturnObj: Ret,
-        //        WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.saveMaterial,
-        //        ParamObj: state
+        //        WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.initializeCreateMaterial,
+        //        ParamObj: NodeId
         //        );
 
         //    GetViewDriverType.run();
         //    return ( Ret );
         //}
-
-
     }
 }

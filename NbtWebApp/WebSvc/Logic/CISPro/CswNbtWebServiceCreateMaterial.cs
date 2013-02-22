@@ -40,6 +40,11 @@ namespace ChemSW.Nbt.WebServices
             return _CswNbtActCreateMaterial.createMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
         }
 
+        public JObject alreadyExists( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        {
+            return _CswNbtActCreateMaterial.alreadyExists( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
+        }
+
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
         {
             return CswNbtActCreateMaterial.getSizeNodeProps( CswNbtResources, SizeNodeTypeId, SizeDefinition, WriteNode );
@@ -60,38 +65,40 @@ namespace ChemSW.Nbt.WebServices
             return new JObject(); //CswNbtActCreateMaterial.getMaterialSizes( CswNbtResources, MaterialId );
         }
 
-        public static void initializeCreateMaterial( ICswResources CswResources, MaterialResponse Response, string NodeId )
+        public JObject initializeCreateMaterial( CswNbtResources CswNbtResources, string NodeId )
         {
-            if( null != CswResources )
+            JObject Ret = new JObject();
+
+            if( null != CswNbtResources )
             {
-                CswNbtResources NbtResources = (CswNbtResources) CswResources;
-                CswNbtActCreateMaterial CreateMaterialAction = new CswNbtActCreateMaterial( NbtResources );
+                CswNbtActCreateMaterial CreateMaterialAction = new CswNbtActCreateMaterial( CswNbtResources );
 
                 // Get/Create a node
-                CswPrimaryKey NodePk = CreateMaterialAction.makeTemp( NodeId );
-                Response.Data.TempNode = new CswNbtNode.Node( NbtResources.getNode( NodePk, DateTime.Now ) );
+                Ret["nodedata"] = CreateMaterialAction.makeTemp(NodeId);
 
                 // Suppliers view
                 CswNbtView SupplierView = CreateMaterialAction.getMaterialSuppliersView();
                 if( null != SupplierView )
                 {
-                    Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
+                    Ret["sessionviewid"] = SupplierView.SessionViewId.ToString();
                 }
 
                 // Material sizes (if exist)
-                ICswNbtTree SizesTree = CreateMaterialAction.getMaterialSizes( NbtResources, NodePk );
-                for( int i = 0; i < SizesTree.getChildNodeCount(); i++ )
-                {
-                    SizesTree.goToNthChild( i );
-                    Response.Data.SizeNodes.Add( new CswNbtNode.Node( null )
-                    {
-                        NodeId = SizesTree.getNodeIdForCurrentPosition(),
-                        NodeName = SizesTree.getNodeNameForCurrentPosition()
-                    } );
-                    SizesTree.goToParentNode();
-                }
+                //ICswNbtTree SizesTree = CreateMaterialAction.getMaterialSizes( NbtResources, NodePk );
+                //for( int i = 0; i < SizesTree.getChildNodeCount(); i++ )
+                //{
+                //    SizesTree.goToNthChild( i );
+                //    Response.Data.SizeNodes.Add( new CswNbtNode.Node( null )
+                //    {
+                //        NodeId = SizesTree.getNodeIdForCurrentPosition(),
+                //        NodeName = SizesTree.getNodeNameForCurrentPosition()
+                //    } );
+                //    SizesTree.goToParentNode();
+                //}
 
             }
+
+            return Ret;
         }
 
         public static void getCreateMaterialViews( ICswResources CswResources, MaterialResponse Response, object Request )
@@ -110,7 +117,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject saveMaterial( string state )
         {
-            return _CswNbtActCreateMaterial.saveMaterial(_CswNbtResources, state);
+            return _CswNbtActCreateMaterial.saveMaterial( _CswNbtResources, state );
         }
 
         /// <summary>

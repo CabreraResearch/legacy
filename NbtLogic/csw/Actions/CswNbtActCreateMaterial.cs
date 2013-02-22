@@ -222,6 +222,28 @@ namespace ChemSW.Nbt.Actions
 
         #endregion ctor
 
+        private JObject _alreadyExistsInDb( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
+        {
+            JObject Ret = new JObject();
+
+            NewMaterial PotentialMaterial = new NewMaterial( _CswNbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo, NodeId );
+
+            Ret["materialexists"] = PotentialMaterial.existsInDb();
+            if( PotentialMaterial.existsInDb() )
+            {
+                //    CswNbtObjClassMaterial NodeAsMaterial = PotentialMaterial.Node;
+                //    Ret["noderef"] = NodeAsMaterial.Node.NodeLink;
+                //}
+                //else
+                //{
+
+                CswNbtObjClassMaterial ExisitingMaterial = PotentialMaterial.existingMaterial();
+                Ret["noderef"] = ExisitingMaterial.Node.NodeLink;
+            }
+
+            return Ret;
+        }
+
         private JObject _tryCreateMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
@@ -266,6 +288,11 @@ namespace ChemSW.Nbt.Actions
 
         #region Public
 
+        public JObject alreadyExists( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        {
+            return _alreadyExistsInDb( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
+        }
+
         public JObject saveMaterial( CswNbtResources CswNbtResources, string Request )
         {
             JObject Ret = new JObject();
@@ -294,11 +321,11 @@ namespace ChemSW.Nbt.Actions
                         CurrentTempNode.TradeName.Text = TradeName;
                         CurrentTempNode.Supplier.RelatedNodeId = SupplierPk;
                         CurrentTempNode.PartNumber.Text = PartNo;
-                        if (string.IsNullOrEmpty(CurrentTempNode.PhysicalState.Value))
+                        if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
                         {
                             CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                         }
-                        CurrentTempNode.postChanges(false);
+                        CurrentTempNode.postChanges( false );
 
                         Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, CurrentTempNodePk.ToString() );
                     }
@@ -315,22 +342,61 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         /// <param name="NodeId"></param>
         /// <returns></returns>
-        public CswPrimaryKey makeTemp( string NodeId )
+        public JObject makeTemp( string NodeId )
         {
+            JObject Ret = new JObject();
+
             CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( NodeId );
 
-            if( false == CswTools.IsPrimaryKey( NodePk ) )
+            if( false == CswTools.IsPrimaryKey( NodePk ) ) //node doesn't exist
             {
                 // Default to the Chemical NodeType
                 CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Chemical" );
                 if( null != ChemicalNT )
                 {
                     CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                    NodePk = NewMaterialTempNode.Node.NodeId;
+                    if (null != NewMaterialTempNode)
+                    {
+                        Ret["materialid"] = NewMaterialTempNode.NodeId.ToString();
+                        Ret["tradename"] = NewMaterialTempNode.TradeName.Text;
+                        Ret["partno"] = NewMaterialTempNode.PartNumber.Text;
+                        Ret["supplier"] = NewMaterialTempNode.Supplier.CachedNodeName;
+                        Ret["nodetypeid"] = NewMaterialTempNode.NodeTypeId;
+                        _CswNbtResources.EditMode = NodeEditMode.Temp;
+                        CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps(_CswNbtResources);
+                        Ret["properties"] = SdProps.getProps(NewMaterialTempNode.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add);
+                        Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId(_CswNbtResources, NewMaterialTempNode);
+                        if (Int32.MinValue != DocumentNodeTypeId)
+                        {
+                            Ret["documenttypeid"] = DocumentNodeTypeId;
+                        }
+                        Ret["noderef"] = NewMaterialTempNode.Node.NodeLink; //for the link
+                    }
+                }
+            }
+            else //node exists
+            {
+                CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( NodePk );
+                if( null != NodeAsMaterial )
+                {
+                    Ret["materialid"] = NodeAsMaterial.NodeId.ToString();
+                    Ret["tradename"] = NodeAsMaterial.TradeName.Text;
+                    Ret["partno"] = NodeAsMaterial.PartNumber.Text;
+                    Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
+                    Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
+                    _CswNbtResources.EditMode = NodeEditMode.Temp;
+                    CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
+                    if( Int32.MinValue != DocumentNodeTypeId )
+                    {
+                        Ret["documenttypeid"] = DocumentNodeTypeId;
+                    }
+                    Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
                 }
             }
 
-            return NodePk;
+            return Ret;
         }
 
         /// <summary>

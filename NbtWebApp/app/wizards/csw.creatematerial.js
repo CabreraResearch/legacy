@@ -138,19 +138,6 @@
                 if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
-                    
-                    if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
-                        cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
-                        if (cswPrivate.lastStepNo === 2) {
-                            cswPrivate.tabsAndProps.save({}, '', null, false);
-                            //Saves size(s) already entered in the grid on step 3 if the phsyical state
-                            //wasn't modified ELSE reset the grid with the new state.
-                            if (cswPrivate.phyStateModified === true) {
-                                cswPrivate.reinitSteps(2);
-                            }
-                        }
-                    }
-                     
                     cswPrivate['makeStep' + newStepNo]();
                     
                     if (cswPrivate.currentStepNo === 1) {
@@ -172,12 +159,6 @@
                         if (cswPrivate.lastStepNo === 4) {
                             cswPrivate.reinitSteps(3);
                         }
-                    }
-                    
-
-                    
-                    if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                        cswPrivate.state.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
                     }
                 }
             };
@@ -298,10 +279,17 @@
                             }
                         };
 
+                        //todo: rename!!!
                         cswPrivate.saveMaterial = function() {
                             Csw.ajax.post({
-                                urlMethod: 'saveMaterial',
-                                data: { state: JSON.stringify(cswPrivate.state) },
+                                urlMethod: 'alreadyExists',
+                                data: {
+                                    NodeTypeId: cswPrivate.state.materialType.val,
+                                    Tradename: cswPrivate.state.tradeName,
+                                    Supplier: cswPrivate.state.supplier.val,
+                                    PartNo: cswPrivate.state.partNo,
+                                    NodeId: cswPrivate.state.materialId
+                                },
                                 async: false,
                                 success: function(data) {
                                     removeFoundMaterialLabel();
@@ -313,9 +301,6 @@
                                             name: "materialExistsLabel"
                                         });
                                     } else {
-                                        cswPrivate.state.materialId = data.materialid;
-                                        cswPrivate.state.documentTypeId = data.documenttypeid;
-                                        cswPrivate.state.properties = data.properties;
                                         Csw.publish('SaveMaterialSuccess');
                                     }
                                 },
@@ -359,10 +344,7 @@
                                 EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                             },
                             ReloadTabOnSave: false,
-                            async: false,
-                            onSave: function(nodeid, nodekey, tabcnt, nodename, nodelink, physicalstatemodified) {
-                                cswPrivate.phyStateModified = physicalstatemodified;
-                            }
+                            async: false
                         });
                     };
 
@@ -677,27 +659,36 @@
                             sizes: cswPrivate.sizeNodes,
                             sizeNodes: []
                         };
-
-                        //TODO: Come back to this logic with CF to make sure removing this if/else is ok.
-                        //if (false === cswPrivate.state.useExistingTempNode) {
-                            createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
-                            createMaterialDef.materialId = cswPrivate.state.materialId;
-                            createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
-                            createMaterialDef.tradename = cswPrivate.state.tradeName;
-                            createMaterialDef.partno = cswPrivate.state.partNo;
-                            createMaterialDef.documentid = cswPrivate.state.documentId;
-                            createMaterialDef.supplierid = cswPrivate.state.supplier.val;
-                            createMaterialDef.suppliername = cswPrivate.state.supplier.name;
-                            Csw.each(cswPrivate.newSizes.rows, function (row) {
-                                createMaterialDef.sizeNodes.push(row.sizeValues);
-                            });
+                        
+                        //From step 0: request, materialid
+                        createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
+                        createMaterialDef.materialId = cswPrivate.state.materialId;
+                        
+                        //From step 1: materialtype, tradename, supplier, partno
+                        createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
+                        createMaterialDef.tradename = cswPrivate.state.tradeName;
+                        createMaterialDef.partno = cswPrivate.state.partNo;
+                        createMaterialDef.supplierid = cswPrivate.state.supplier.val;
+                        createMaterialDef.suppliername = cswPrivate.state.supplier.name;
+                        
+                        //From step 2: any properties on 'Add' layout
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
+                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                             createMaterialDef.properties = cswPrivate.state.properties;
-                            if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                                createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
-                            }
-                        //} else {
-                            //createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
-                        //}
+                        }
+                        
+                        //From step 3: Sizes
+                        Csw.each(cswPrivate.newSizes.rows, function (row) {
+                            createMaterialDef.sizeNodes.push(row.sizeValues);
+                        });
+                        
+                        //From step 4: material document
+                        createMaterialDef.documentid = cswPrivate.state.documentId;
+                        if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                        }
+
+                        // Return the created object
                         return JSON.stringify(createMaterialDef);
                     }
 
@@ -732,15 +723,16 @@
                 // Initialize the wizard:
                 //  -Get the supplier view 
                 //  -Get or create a temp node
-                //  -Get the size nodes (if there are any)
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Materials/initialize',
-                    data: cswPrivate.state.materialId,
+                //  -Get documenttypeid
+                Csw.ajax.post({
+                    urlMethod: 'initializeCreateMaterial',
+                    data: { NodeId: cswPrivate.state.materialId },
                     async: false,
                     success: function(data) {
-                        cswPrivate.supplierViewId = data.SuppliersView.ViewId;
-                        cswPrivate.state.materialId = data.TempNode.NodeId;
-                        //cswPrivate.state.sizes = data.SizeNodes;
+                        cswPrivate.supplierViewId = data.sessionviewid;
+                        cswPrivate.state.properties = data.nodedata.properties;
+                        cswPrivate.state.materialId = data.nodedata.materialid;
+                        cswPrivate.state.documentTypeId = data.nodedata.documenttypeid;
                         cswPrivate.makeStep1();
                     }
                 });
