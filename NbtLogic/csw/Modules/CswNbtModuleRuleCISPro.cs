@@ -38,10 +38,6 @@ namespace ChemSW.Nbt
         public override void OnDisable()
         {
             //Disable dependent modules
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
-            }
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.Containers );
