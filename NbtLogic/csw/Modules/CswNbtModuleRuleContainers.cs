@@ -47,6 +47,7 @@ namespace ChemSW.Nbt
             //   Approved for Receiving
             //   Receive (button)
             //   Request (button)
+            //   Storage Compatibility
             int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
@@ -64,6 +65,16 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeTab materialIdentityNTT = materialNT.getIdentityTab();
                 _addPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Receive, materialIdentityNTT, 2, 2 );
                 _addPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Request, materialIdentityNTT, 1, 2 );
+
+                _addPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.StorageCompatibility, "Hazards" );
+            }
+
+            //Show the following RequestMaterialCreateProps
+            //   Request
+            int requestMatCreateOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialCreateClass );
+            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( requestMatCreateOC_Id ) )
+            {
+                _addPropToFirstTab( NodeTypeId, CswNbtObjClassRequestMaterialCreate.PropertyName.Request );
             }
 
             //Show the following User props...
@@ -111,6 +122,7 @@ namespace ChemSW.Nbt
             //   Approved for Receiving
             //   Receive (button)
             //   Request (button)
+            //   Storage Compatibility
             int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
@@ -125,6 +137,23 @@ namespace ChemSW.Nbt
                 _hideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
                 _hideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Receive );
                 _hideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Request );
+                _hideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.StorageCompatibility );
+            }
+
+            //Hide the following RequestMaterialCreateProps
+            //   Request
+            int requestMatCreateOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialCreateClass );
+            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( requestMatCreateOC_Id ) )
+            {
+                _hideProp( NodeTypeId, CswNbtObjClassRequestMaterialCreate.PropertyName.Request );
+            }
+
+            //Hide the following User props...
+            //   Work Unit
+            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.UserClass );
+            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
+            {
+                _hideProp( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
             }
 
             //Hide all views in the Containers category
