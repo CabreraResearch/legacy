@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtPrintClient", "NbtPrintClient\NbtPrintClient.csproj", "{6D195BB6-1566-46C7-A500-1C55EB9ACD99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCore", "..\..\Common\CswCore\CswCore.csproj", "{9498738D-42C2-4BBF-875B-846918A8821B}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NbtPrintClientInstall", "NbtPrintClientInstall\NbtPrintClientInstall.vdproj", "{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x86.ActiveCfg = Debug|x86
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x86.Build.0 = Debug|x86
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x86.ActiveCfg = Release|x86
+		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x86.Build.0 = Release|x86
+		{9498738D-42C2-4BBF-875B-846918A8821B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9498738D-42C2-4BBF-875B-846918A8821B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9498738D-42C2-4BBF-875B-846918A8821B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9498738D-42C2-4BBF-875B-846918A8821B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9498738D-42C2-4BBF-875B-846918A8821B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9498738D-42C2-4BBF-875B-846918A8821B}.Release|x86.ActiveCfg = Release|Any CPU
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Debug|Any CPU.ActiveCfg = Debug
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Debug|Any CPU.Build.0 = Debug
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Debug|x86.ActiveCfg = Debug
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Debug|x86.Build.0 = Debug
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Release|Any CPU.ActiveCfg = Release
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Release|Any CPU.Build.0 = Release
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Release|x86.ActiveCfg = Release
+		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Release|x86.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

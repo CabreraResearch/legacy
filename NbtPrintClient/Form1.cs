@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using ChemSW.Encryption;
 
 namespace CswPrintClient1
 {
@@ -246,6 +247,9 @@ namespace CswPrintClient1
 
         private void SaveSettings()
         {
+            CswEncryption _CswEncryption = new CswEncryption( string.Empty );
+            _CswEncryption.Method = EncryptionMethod.TypeOne;
+
             Application.CommonAppDataRegistry.SetValue( "LPCname", tbLPCname.Text );
             Application.CommonAppDataRegistry.SetValue( "Enabled", cbEnabled.Checked.ToString() );
             Application.CommonAppDataRegistry.SetValue( "printer", tbPrinter.Text );
@@ -253,7 +257,7 @@ namespace CswPrintClient1
             Application.CommonAppDataRegistry.SetValue( "description", tbDescript.Text );
             Application.CommonAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
             Application.CommonAppDataRegistry.SetValue( "logon", tbUsername.Text );
-            Application.CommonAppDataRegistry.SetValue( "code", tbPassword.Text );
+            Application.CommonAppDataRegistry.SetValue( "password", _CswEncryption.encrypt( tbPassword.Text ) );
             if( tbURL.Modified && tbURL.Text == string.Empty )
             {
                 tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
@@ -263,8 +267,12 @@ namespace CswPrintClient1
 
         private void LoadSettings()
         {
+            CswEncryption _CswEncryption = new CswEncryption( string.Empty );
+            _CswEncryption.Method = EncryptionMethod.TypeZero;
+
             try
             {
+
                 tbLPCname.Text = Application.CommonAppDataRegistry.GetValue( "LPCname" ).ToString();
                 cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
                 tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
@@ -272,7 +280,7 @@ namespace CswPrintClient1
                 tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
                 tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
                 tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
-                tbPassword.Text = Application.CommonAppDataRegistry.GetValue( "code" ).ToString();
+                tbPassword.Text = _CswEncryption.decrypt( Application.CommonAppDataRegistry.GetValue( "password" ).ToString() );
                 tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
                 if( tbURL.Text == string.Empty )
                 {

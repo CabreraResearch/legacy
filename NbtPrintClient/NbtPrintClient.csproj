@@ -8,8 +8,8 @@
     <ProjectGuid>{6D195BB6-1566-46C7-A500-1C55EB9ACD99}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CswPrintClient1</RootNamespace>
-    <AssemblyName>CswPrintClient1</AssemblyName>
+    <RootNamespace>NbtPrintClient</RootNamespace>
+    <AssemblyName>NbtPrintClient</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -137,46 +137,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelEpl.datasource">
+    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelEpl.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelJobResponse.datasource">
+    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelJobResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelJobUpdateResponse.datasource">
+    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelJobUpdateResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtLabelPrinterReg.datasource">
+    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelPrinterReg.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\NbtPublic\CswPrintClient1.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn.datasource">
+    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic.wsdl" />
-    <None Include="Service References\NbtPublic\NbtPublic.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic1.wsdl" />
-    <None Include="Service References\NbtPublic\NbtPublic1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic6.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic7.xsd">
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -192,16 +166,46 @@
     <None Include="Service References\NbtPublic\configuration.svcinfo" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Service References\NbtPublic\NbtPublic2.wsdl" />
+    <None Include="Service References\NbtPublic\NbtPublic21.wsdl" />
+    <None Include="Service References\NbtPublic\NbtPublic8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtPublic\NbtPublic81.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtPublic\NbtPublic82.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtPublic\NbtPublic83.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtPublic\NbtPublic84.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtPublic\NbtPublic85.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtPublic\NbtPublic86.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\NbtPublic\NbtPublic87.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\NbtPublic\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\NbtPublic\NbtPublic.disco" />
+    <Content Include="print.ico" />
+    <None Include="Service References\NbtPublic\NbtPublic1.disco" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="print.ico" />
+    <ProjectReference Include="..\..\..\Common\CswCore\CswCore.csproj">
+      <Project>{9498738D-42C2-4BBF-875B-846918A8821B}</Project>
+      <Name>CswCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
