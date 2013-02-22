@@ -257,7 +257,12 @@ namespace CswPrintClient1
             Application.CommonAppDataRegistry.SetValue( "description", tbDescript.Text );
             Application.CommonAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
             Application.CommonAppDataRegistry.SetValue( "logon", tbUsername.Text );
-            Application.CommonAppDataRegistry.SetValue( "password", _CswEncryption.encrypt( tbPassword.Text ) );
+            string pwd = "";
+            if( tbPassword.Text.Length > 0 )
+            {
+                pwd = _CswEncryption.encrypt( tbPassword.Text );
+            }
+            Application.CommonAppDataRegistry.SetValue( "password", pwd );
             if( tbURL.Modified && tbURL.Text == string.Empty )
             {
                 tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
@@ -280,7 +285,16 @@ namespace CswPrintClient1
                 tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
                 tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
                 tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
-                tbPassword.Text = _CswEncryption.decrypt( Application.CommonAppDataRegistry.GetValue( "password" ).ToString() );
+                string pwd = Application.CommonAppDataRegistry.GetValue( "password" ).ToString();
+                //pwd = "pb0J8NLNMoSQKaX3Q5qBNA=="; //unencrypted is "a_nbt"
+                try
+                {
+                    tbPassword.Text = _CswEncryption.decrypt( pwd );
+                }
+                catch( Exception e )
+                {
+                    tbPassword.Text = "";
+                }
                 tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
                 if( tbURL.Text == string.Empty )
                 {
