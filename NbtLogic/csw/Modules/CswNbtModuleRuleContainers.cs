@@ -97,6 +97,11 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
+            }
+
             //Hide the following Location properties...
             //   Containers
             //   Inventory Levels
