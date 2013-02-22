@@ -20,6 +20,7 @@ namespace ChemSW.Nbt
             //   Location.Inventory Group
             //   Location.Storage Compatibility
             //   Location.Containers Grid
+            //   Location.Allow Inventory
             //   User.WorkUnit
             //   User.Jurisdiction
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
@@ -37,6 +38,10 @@ namespace ChemSW.Nbt
                 //LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
                 LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, false );
+
+                CswNbtMetaDataNodeTypeProp LocationAllowInventoryNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.AllowInventory );
+                LocationAllowInventoryNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+                LocationAllowInventoryNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
 
                 CswNbtMetaDataNodeTypeProp LocationContainersGridNTP = LocationNT.getNodeTypeProp( "Containers" );
                 if( null != LocationContainersGridNTP )
@@ -120,6 +125,9 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.StorageCompatibility );
                 LocationStorCompatNTP.removeFromAllLayouts();
+
+                CswNbtMetaDataNodeTypeProp LocationAllowInventoryNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.AllowInventory );
+                LocationAllowInventoryNTP.removeFromAllLayouts();
 
                 CswNbtMetaDataNodeTypeProp LocationContainersGridNTP = LocationNT.getNodeTypeProp( "Containers" );
                 if( null != LocationContainersGridNTP )

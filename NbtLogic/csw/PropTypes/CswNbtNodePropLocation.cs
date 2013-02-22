@@ -215,7 +215,9 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
             CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.AllowInventory );
 
+            CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
+            bool IsContainerNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == ContainerOC.ObjectClassId );
 
             Ret.ViewName = GetTopLevelName( CswNbtResources );
             Ret.Root.Included = IsLocationNode;
@@ -228,7 +230,7 @@ namespace ChemSW.Nbt.PropTypes
 
             // Only Locations with null parent locations at the root
             Ret.AddViewPropertyAndFilter( LocationLevel1, LocationLocationOCP, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-            if( false == IsLocationNode )
+            if( IsContainerNode )
             {
                 Ret.AddViewPropertyAndFilter( LocationLevel1, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
             }
@@ -245,7 +247,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
                 }
-                if( false == IsLocationNode )
+                if( IsContainerNode )
                 {
                     Ret.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
                 }
