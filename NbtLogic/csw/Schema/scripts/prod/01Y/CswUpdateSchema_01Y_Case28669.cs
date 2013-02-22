@@ -46,7 +46,6 @@ namespace ChemSW.Nbt.Schema
                     DispensesTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ContainerNT, "Dispenses", 4 );
                 }
                 CswNbtMetaDataNodeTypeProp DispenseNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Dispense );
-                DispenseNTP.removeFromAllLayouts();
                 DispenseNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, DispensesTab.TabId, 1, 1 );
             }
 
