@@ -477,7 +477,7 @@ namespace ChemSW.Nbt.WebServices
         public JArray _dictionaryToJson()
         {
             JArray ret = new JArray();
-            foreach( CswNbtMetaDataNodeType NodeType in _TableDict.Keys.OrderByDescending( NodeType => _TableDict[NodeType].Count ) )
+            foreach( CswNbtMetaDataNodeType NodeType in _TableDict.Keys.OrderBy( NodeType => NodeType.NodeTypeName ) )
             {
                 JObject NodeTypeObj = new JObject();
                 ret.Add( NodeTypeObj );
