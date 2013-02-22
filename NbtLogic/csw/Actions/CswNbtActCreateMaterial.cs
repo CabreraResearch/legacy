@@ -222,49 +222,6 @@ namespace ChemSW.Nbt.Actions
 
         #endregion ctor
 
-        private JObject _alreadyExistsInDb( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
-        {
-            JObject Ret = new JObject();
-
-            NewMaterial PotentialMaterial = new NewMaterial( _CswNbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo, NodeId );
-
-            Ret["materialexists"] = PotentialMaterial.existsInDb();
-            if( PotentialMaterial.existsInDb() )
-            {
-                CswNbtObjClassMaterial ExisitingMaterial = PotentialMaterial.existingMaterial();
-                Ret["noderef"] = ExisitingMaterial.Node.NodeLink;
-            }
-
-            return Ret;
-        }
-
-        private JObject _createReturnObject( CswNbtObjClassMaterial MaterialNode )
-        {
-            JObject Ret = new JObject();
-
-            Ret["materialid"] = MaterialNode.NodeId.ToString();
-            Ret["tradename"] = MaterialNode.TradeName.Text;
-            Ret["partno"] = MaterialNode.PartNumber.Text;
-            Ret["supplier"] = MaterialNode.Supplier.CachedNodeName;
-            Ret["nodetypeid"] = MaterialNode.NodeTypeId;
-            _CswNbtResources.EditMode = NodeEditMode.Temp;
-            if( string.IsNullOrEmpty( MaterialNode.PhysicalState.Value ) )
-            {
-                MaterialNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid; //Default to solid
-            }
-            CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-            Ret["properties"] = SdProps.getProps( MaterialNode.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-            Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, MaterialNode );
-            if( Int32.MinValue != DocumentNodeTypeId )
-            {
-                Ret["documenttypeid"] = DocumentNodeTypeId;
-            }
-            Ret["noderef"] = MaterialNode.Node.NodeLink; //for the link
-
-
-            return Ret;
-        }
-
         private JObject _tryCreateMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
@@ -308,52 +265,33 @@ namespace ChemSW.Nbt.Actions
 
         #region Public
 
-        public JObject alreadyExists( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
         {
-            return _alreadyExistsInDb( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
+            JObject Ret = new JObject();
+
+            CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( NodeId );
+            if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
+            {
+                CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
+                Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
+                if( NodeTypeId != CurrentNodeTypeId )
+                {
+                    // Then we want to just forget about the first temp node created and create a new one with the new nodetype
+                    Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, null );
+                }
+                else
+                {
+                    // If the nodetype isn't different then we want to get the props and check if it exsits
+                    if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
+                    {
+                        CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                    }
+                    Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
+                }
+            }
+
+            return Ret;
         }
-
-        //public JObject saveMaterial( CswNbtResources CswNbtResources, string Request )
-        //{
-        //    JObject Ret = new JObject();
-
-        //    JObject PropObj = CswConvert.ToJObject( Request );
-        //    if( PropObj.HasValues )
-        //    {
-        //        CswPrimaryKey SupplierPk = CswConvert.ToPrimaryKey( PropObj["supplier"]["val"].ToString() );
-        //        Int32 NodeTypeId = CswConvert.ToInt32( PropObj["materialType"]["val"].ToString() );
-        //        string PartNo = PropObj["partNo"].ToString();
-        //        string TradeName = PropObj["tradeName"].ToString();
-
-        //        CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( PropObj["materialId"].ToString() );
-        //        if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
-        //        {
-        //            CswNbtObjClassMaterial CurrentTempNode = CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
-        //            Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
-        //            if( NodeTypeId != CurrentNodeTypeId )
-        //            {
-        //                // Then we want to just forget about the first temp node created and create a new one with the new nodetype
-        //                Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, null );
-        //            }
-        //            else
-        //            {
-        //                // If the nodetype isn't different then we need to update the node
-        //                CurrentTempNode.TradeName.Text = TradeName;
-        //                CurrentTempNode.Supplier.RelatedNodeId = SupplierPk;
-        //                CurrentTempNode.PartNumber.Text = PartNo;
-        //                if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
-        //                {
-        //                    CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
-        //                }
-        //                CurrentTempNode.postChanges( false );
-
-        //                Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, CurrentTempNodePk.ToString() );
-        //            }
-        //        }
-        //    }//if( PropObj.HasValues )
-
-        //    return Ret;
-        //}
 
         /// <summary>
         /// Makes a temporary node of the Chemical nodetype. The reason we can't use createMaterial()
@@ -362,9 +300,9 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         /// <param name="NodeId"></param>
         /// <returns></returns>
-        public JObject makeTemp( string NodeId )
+        public CswPrimaryKey makeTemp( string NodeId )
         {
-            JObject Ret = new JObject();
+            CswPrimaryKey Ret = new CswPrimaryKey();
 
             CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( NodeId );
 
@@ -377,17 +315,13 @@ namespace ChemSW.Nbt.Actions
                     CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
                     if( null != NewMaterialTempNode )
                     {
-                        Ret = _createReturnObject(NewMaterialTempNode);
+                        Ret = NewMaterialTempNode.Node.NodeId;
                     }
                 }
             }
             else //node exists
             {
-                CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( NodePk );
-                if( null != NodeAsMaterial )
-                {
-                    Ret = _createReturnObject(NodeAsMaterial);
-                }
+                Ret = NodePk;
             }
 
             return Ret;

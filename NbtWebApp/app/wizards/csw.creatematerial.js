@@ -108,15 +108,12 @@
             //#region Wizard Functions
 
             cswPrivate.reinitSteps = function (startWithStep) {
-                cswPrivate.stepFourComplete = false;
-                if (startWithStep <= 3) {
-                    cswPrivate.stepFourComplete = false;
-                    if (startWithStep <= 2) {
-                        cswPrivate.stepThreeComplete = false;
-                        if (startWithStep <= 1) {
-                            cswPrivate.stepTwoComplete = false;
-                        }
-                    }
+                if (startWithStep === 2) {
+                    cswPrivate.stepThreeComplete = false;
+                }
+                
+                if (startWithStep === 1) {
+                    cswPrivate.stepTwoComplete = false;
                 }
             };
 
@@ -153,7 +150,6 @@
                     cswPrivate.currentStepNo = newStepNo;
                     
                     if (cswPrivate.currentStepNo === 3) {
-                        //console.log(cswPrivate.physicalStateModified);
                         cswPrivate.setPhysicalStateValue();
                         if (cswPrivate.physicalStateModified) {
                             cswPrivate.reinitSteps(2);
@@ -177,12 +173,6 @@
                             }
                         }  
                     }//if (cswPrivate.currentStepNo === 2)
-                    
-                    if (cswPrivate.currentStepNo === 3) {
-                        if (cswPrivate.lastStepNo === 4) {
-                            cswPrivate.reinitSteps(3);
-                        }
-                    }
                 }
             };
 
@@ -302,10 +292,9 @@
                             }
                         };
 
-                        //todo: rename!!!
                         cswPrivate.saveMaterial = function() {
                             Csw.ajax.post({
-                                urlMethod: 'alreadyExists',
+                                urlMethod: 'saveMaterial',
                                 data: {
                                     NodeTypeId: cswPrivate.state.materialType.val,
                                     Tradename: cswPrivate.state.tradeName,
@@ -324,6 +313,9 @@
                                             name: "materialExistsLabel"
                                         });
                                     } else {
+                                        cswPrivate.state.materialId = data.materialid;
+                                        cswPrivate.state.documentTypeId = data.documenttypeid;
+                                        cswPrivate.state.properties = data.properties;
                                         Csw.publish('SaveMaterialSuccess');
                                     }
                                 },
@@ -757,15 +749,13 @@
                 //  -Get the supplier view 
                 //  -Get or create a temp node
                 //  -Get documenttypeid
-                Csw.ajax.post({
-                    urlMethod: 'initializeCreateMaterial',
-                    data: { NodeId: cswPrivate.state.materialId },
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Materials/initialize',
+                    data: cswPrivate.state.materialId,
                     async: false,
-                    success: function(data) {
-                        cswPrivate.supplierViewId = data.sessionviewid;
-                        cswPrivate.state.properties = data.nodedata.properties;
-                        cswPrivate.state.materialId = data.nodedata.materialid;
-                        cswPrivate.state.documentTypeId = data.nodedata.documenttypeid;
+                    success: function(data) {                        
+                        cswPrivate.supplierViewId = data.SuppliersView.ViewId;
+                        cswPrivate.state.materialId = data.TempNode.NodeId; 
                         cswPrivate.makeStep1();
                     }
                 });
