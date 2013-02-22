@@ -1,4 +1,3 @@
-
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
@@ -12,6 +11,8 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: DDL";
 
+        #region Blame Logic
+
         private CswDeveloper _Author = CswDeveloper.NBT;
 
         public override CswDeveloper Author
@@ -19,7 +20,7 @@ namespace ChemSW.Nbt.Schema
             get { return _Author; }
         }
 
-        private Int32 _CaseNo = 0;
+        private Int32 _CaseNo;
 
         public override int CaseNo
         {
@@ -37,6 +38,8 @@ namespace ChemSW.Nbt.Schema
             _Author = CswDeveloper.NBT;
             _CaseNo = 0;
         }
+
+        #endregion Blame Logic
 
         public override void update()
         {
@@ -127,8 +130,13 @@ namespace ChemSW.Nbt.Schema
 
             #endregion WILLIAM
 
-        }//Update()
+            #region YORICK
 
+            //YORICK DDL changes go here.
+
+            #endregion YORICK
+
+        }//Update()
 
         private void _createTierIITable(CswDeveloper Dev, Int32 CaseNum)
         {
@@ -177,9 +185,7 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-
     }//class RunBeforeEveryExecutionOfUpdater_01
-
 }//namespace ChemSW.Nbt.Schema
 
 

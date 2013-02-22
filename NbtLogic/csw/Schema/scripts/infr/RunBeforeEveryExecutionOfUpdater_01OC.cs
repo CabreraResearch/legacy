@@ -16,6 +16,8 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: OC";
 
+        #region Blame Logic
+
         private void _acceptBlame(CswDeveloper BlameMe, Int32 BlameCaseNo)
         {
             _Author = BlameMe;
@@ -35,13 +37,14 @@ namespace ChemSW.Nbt.Schema
             get { return _Author; }
         }
 
-        private Int32 _CaseNo = 0;
+        private Int32 _CaseNo;
 
         public override int CaseNo
         {
             get { return _CaseNo; }
         }
 
+        #endregion Blame Logic
 
         private CswNbtMetaDataNodeTypeProp _createNewProp(CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true)
         {
@@ -72,7 +75,7 @@ namespace ChemSW.Nbt.Schema
             return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
 
-        #region Viola Methods
+        #region William Methods
 
         #region Case 28283
 
@@ -483,7 +486,6 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28247
 
-
         #region Case 28145
 
         private void _correctSpellingOnStorageCompField(CswDeveloper Dev, Int32 CaseNum)
@@ -612,9 +614,7 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 27436
 
-        #endregion Viola Methods
-
-        #region WILLIAM Methods
+        //Everything above this point was previously VIOLA.
 
         #region Case 28363
 
@@ -1067,14 +1067,16 @@ Example: <strong>g/(1E3) = kg</strong><br/>where g is the current unit, kg is th
 
             #endregion WILLIAM
 
+            #region YORICK
+
+            //YORICK OC changes go here.
+
+            #endregion YORICK
+
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-        }
-
-        //Update()
-
+        } //Update()
     }//class RunBeforeEveryExecutionOfUpdater_01OC
-
 }//namespace ChemSW.Nbt.Schema
 
 
