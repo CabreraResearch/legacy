@@ -55,10 +55,10 @@
                     properties: {},
                     documentProperties: {},
                     useExistingTempNode: false,
-                    materialProperies: {},
+                    physicalState: '',
                     sizes: []
                 },
-                phyStateModified: false,
+                physicalStateModified: false,
                 newSizes: {
                     rows: {
                         rowid: {
@@ -133,11 +133,34 @@
                 return false;
             };
 
+            cswPrivate.setPhysicalStateValue = function() {
+                if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
+                    cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                }
+
+                for (var key in cswPrivate.state.properties) {
+                    var obj = cswPrivate.state.properties[key];
+                    if (obj["ocpname"] === "Physical State") {
+                        cswPrivate.state.physicalState = obj["values"]["value"];
+                    }
+                }
+            };
+
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
                 if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
+                    
+                    if (cswPrivate.currentStepNo === 3) {
+                        //console.log(cswPrivate.physicalStateModified);
+                        cswPrivate.setPhysicalStateValue();
+                        if (cswPrivate.physicalStateModified) {
+                            cswPrivate.reinitSteps(2);
+                            cswPrivate.physicalStateModified = false;
+                        }
+                    }
+
                     cswPrivate['makeStep' + newStepNo]();
                     
                     if (cswPrivate.currentStepNo === 1) {
@@ -152,7 +175,7 @@
                             if (cswPrivate.isDuplicateMaterial) {
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
-                        }
+                        }  
                     }//if (cswPrivate.currentStepNo === 2)
                     
                     if (cswPrivate.currentStepNo === 3) {
@@ -344,7 +367,17 @@
                                 EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                             },
                             ReloadTabOnSave: false,
-                            async: false
+                            async: false,
+                            onPropertyChange: function(propid, propName, propData) {
+                                console.log(propid);
+                                console.log(propName);
+                                console.log(propData);
+                                if (propName === "Physical State") {
+                                    console.log(propData.values.value);
+                                    cswPrivate.physicalStateModified = true;
+                                }
+                                console.log(arguments);
+                        }
                         });
                     };
 
@@ -403,7 +436,7 @@
                             Csw.ajax.post({
                                 urlMethod: 'getMaterialUnitsOfMeasure',
                                 data: {
-                                    MaterialId: cswPrivate.state.materialId
+                                    PhysicalStateValue: cswPrivate.state.physicalState
                                 },
                                 async: false, //wait for this request to finish
                                 success: function (data) {

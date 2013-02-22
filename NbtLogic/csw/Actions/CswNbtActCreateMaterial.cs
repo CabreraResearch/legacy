@@ -670,35 +670,39 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
+        public static JObject getMaterialUnitsOfMeasure( string PhysicalStateValue, CswNbtResources CswNbtResources )
         {
             JObject ret = new JObject();
-            string PhysicalState = CswNbtObjClassMaterial.PhysicalStates.Solid;
-            CswNbtObjClassMaterial Material = CswNbtResources.Nodes[MaterialId];
-            if( null != Material &&
-                false == string.IsNullOrEmpty( Material.PhysicalState.Value ) )
+            string PhysicalState = string.Empty;
+            foreach (string CurrentPhysicalState in CswNbtObjClassMaterial.PhysicalStates.Options)
             {
-                PhysicalState = Material.PhysicalState.Value;
+                if( PhysicalStateValue.Equals( CurrentPhysicalState ) )
+                {
+                    PhysicalState = CurrentPhysicalState;
+                }
             }
 
-            CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder( CswNbtResources );
-
-            CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
-
-            Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
-            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, unitsView, true, false, false );
-            UnitsTree.goToRoot();
-            for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
+            if (false == string.IsNullOrEmpty(PhysicalState))
             {
-                UnitsTree.goToNthChild( i );
-                _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
-                UnitsTree.goToParentNode();
-            }
+                CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder(CswNbtResources);
 
-            foreach( CswNbtNode unitNode in _UnitNodes )
-            {
-                CswNbtObjClassUnitOfMeasure nodeAsUnitOfMeasure = (CswNbtObjClassUnitOfMeasure) unitNode;
-                ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
+                CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView(PhysicalState);
+
+                Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
+                ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView(CswNbtResources.CurrentNbtUser, unitsView, true, false, false);
+                UnitsTree.goToRoot();
+                for (int i = 0; i < UnitsTree.getChildNodeCount(); i++)
+                {
+                    UnitsTree.goToNthChild(i);
+                    _UnitNodes.Add(UnitsTree.getNodeForCurrentPosition());
+                    UnitsTree.goToParentNode();
+                }
+
+                foreach (CswNbtNode unitNode in _UnitNodes)
+                {
+                    CswNbtObjClassUnitOfMeasure nodeAsUnitOfMeasure = (CswNbtObjClassUnitOfMeasure) unitNode;
+                    ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
+                }
             }
 
             return ret;

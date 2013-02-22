@@ -3682,7 +3682,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMaterialUnitsOfMeasure( string MaterialId )
+        public string getMaterialUnitsOfMeasure( string PhysicalStateValue )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3691,7 +3691,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialUnitsOfMeasure( MaterialId, _CswNbtResources );
+                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialUnitsOfMeasure( PhysicalStateValue, _CswNbtResources );
 
                 _deInitResources();
             }

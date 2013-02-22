@@ -136,9 +136,9 @@ namespace ChemSW.Nbt.WebServices
             return CswNbtActCreateMaterial.getLandingPageData( NbtResources, MaterialNode, MaterialNodeView );
         }
 
-        public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
+        public static JObject getMaterialUnitsOfMeasure( string PhysicalStateValue, CswNbtResources CswNbtResources )
         {
-            return CswNbtActCreateMaterial.getMaterialUnitsOfMeasure( MaterialId, CswNbtResources );
+            return CswNbtActCreateMaterial.getMaterialUnitsOfMeasure( PhysicalStateValue, CswNbtResources );
         }
 
         public JObject getSizeLogicalsVisibility( int SizeNodeTypeId )
