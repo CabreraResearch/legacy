@@ -46,7 +46,7 @@
                     relatednodename: '',
                     relatednodetypeid: '',
                     relatedobjectclassid: '',
-                    tabid: '',
+                    //tabid: '',
                     tabNo: 0,
                     nodetypeid: ''
                 },
@@ -81,6 +81,20 @@
             };
             var cswPublic = {};
 
+            (function() {
+                var tabid = '';
+                Object.defineProperty(cswPrivate.tabState, 'tabid', {
+                    get: function() {
+                        return tabid;
+                    },
+                    set: function(val) {
+                        if (typeof(val) !== 'string' && typeof(val) !== 'number') {
+                            throw new Error('Tabid must be a string or a number');
+                        }
+                        tabid = val;
+                    }
+                });
+            }());
             cswPrivate.onMultiEdit = function (eventObj, multiOpts) {
                 var isMulti = false;
                 /* Case 25936 */
@@ -315,7 +329,7 @@
                                 delete data.IdentityTab;
                                 
                                 var tabIds = Csw.delimitedString();
-                                Csw.each(data, function (tab) {
+                                Csw.each(data.tabs, function (tab) {
                                     tabIds.add(tab.id);
                                 });
                                 if (false === tabIds.contains(cswPrivate.tabState.tabid)) {
@@ -327,8 +341,8 @@
                                 var tabParent, tabUl;
 
                                 var tabFunc = function (tabId) {
-                                    if (tabId && data[tabId] && Csw.isPlainObject(data[tabId])) {
-                                        var thisTab = data[tabId];
+                                    if (tabId && data.tabs[tabId] && Csw.isPlainObject(data.tabs[tabId])) {
+                                        var thisTab = data.tabs[tabId];
                                         var thisTabId = thisTab.id;
 
                                         if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
@@ -351,7 +365,7 @@
                                         tabno += 1;
                                     }
                                 };
-                                Object.keys(data).forEach(tabFunc);
+                                Object.keys(data.tabs).forEach(tabFunc);
                                 
                                 cswPrivate.tabcnt = tabno;
 
@@ -397,7 +411,7 @@
                                         } // select()
                                     }); // tabs
                                     cswPrivate.getProps(cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabs[cswPrivate.tabState.tabid]);
+                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
 
                                 }); // for(var t in tabdivs)
                             }

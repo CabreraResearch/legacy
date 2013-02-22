@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ServiceDrivers
     {
 
         private readonly CswNbtResources _CswNbtResources;
-        private readonly ICswNbtUser _ThisUser;
+        
         private readonly bool _IsMultiEdit;
         private readonly bool _ConfigMode;
         private string HistoryTabPrefix = "history_";
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public CswNbtSdTabsAndProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents = null, bool Multi = false, bool ConfigMode = false )
         {
             _CswNbtResources = CswNbtResources;
-            _ThisUser = _CswNbtResources.CurrentNbtUser;
+            
             _IsMultiEdit = Multi;
             _ConfigMode = ConfigMode;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
@@ -41,6 +41,8 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject getTabs( string NodeId, string NodeKey, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
+            JObject Tabs = new JObject();
+            Ret["tabs"] = Tabs;
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId, NodeKey, Date );
             if( null != Node )
             {
@@ -69,7 +71,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     )
                                )
                             {
-                                _makeTab( Ret, Tab, false );
+                                _makeTab( Tabs, Tab, false );
                                 break;
                             }
                         }
@@ -87,7 +89,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                     ) )
                                                               select _Tab )
                     {
-                        _makeTab( Ret, Tab, _canEditLayout() );
+                        _makeTab( Tabs, Tab, _canEditLayout() );
                     }
 
                     // History tab
@@ -99,7 +101,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) )
                         {
-                            _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
+                            _makeTab( Tabs, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
                     }
                     Ret["nodename"] = Node.NodeName;
@@ -164,7 +166,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
                 else
                 {
-                    throw new CswDniException(ErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
+                    throw new CswDniException( ErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
                 }
             }
             return Ret;
@@ -215,7 +217,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                                     select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
-                                    Ret.postChanges( ForceUpdate: false );
+                                    Ret.postChanges( ForceUpdate : false );
                                 }
                             }
                         }
@@ -296,33 +298,17 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         var CswNbtNodePropColl = Node.Properties;
 
-                        Collection<CswNbtMetaDataNodeTypeProp> FiltProps = new Collection<CswNbtMetaDataNodeTypeProp>();
-                        if( _ConfigMode )
-                        {
-                            //FiltProps = Node.Properties.All( FiltProps.Add( CswNbtMetaDataNodeTypeProp <= T ) );
-                        }
-                        foreach( CswNbtNodePropWrapper PropWrapper in 
-                            from _PropWrap 
-                                in CswNbtNodePropColl 
-                            select _PropWrap
-                        
-                        
-                            
-                        )
-                        {
-                            
-                        }
-                        
+                        bool HasEditableProps = Props.Any( Prop => Prop.IsSaveeable );
+
                         IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
                                                                                   where CswNbtNodePropColl != null
-                                                                                  let Pw = CswNbtNodePropColl[_Prop]
-                                                                                  where _ConfigMode ||
-                                                                                        _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node )
+                                                                                  //let Pw = CswNbtNodePropColl[_Prop]
+                                                                                  where _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node, HasEditableProps )
                                                                                   select _Prop );
 
                         foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
                         {
-                          
+
                             _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
                         }
                     }
@@ -331,14 +317,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
+        private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node, bool HasEditableProps )
         {
-          return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || 
-  Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) && 
-  //TODO: reinject? save prop logic
-  Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) && 
-  ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
-            
+            bool Ret = Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) &&
+                       ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            return Ret;
             //CF version
 
             //bool RetShow = false;
@@ -873,7 +856,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                                 }
 
-                                CopyToNode.postChanges( ForceUpdate: false );
+                                CopyToNode.postChanges( ForceUpdate : false );
 
                             } // foreach( string NodeIdStr in CopyNodeIds )
                             ret["result"] = "true";
@@ -1067,7 +1050,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
                     _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
                 }
-                Node.postChanges( ForceUpdate: false );
+                Node.postChanges( ForceUpdate : false );
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;
