@@ -426,7 +426,7 @@ PACKAGE BODY UNIT_CONVERSION AS
   return number is
     converted_value number;
   begin
-    converted_value := value_to_convert * old_conversion_factor * specific_gravity / new_conversion_factor;
+    converted_value := value_to_convert / old_conversion_factor * specific_gravity * new_conversion_factor;
     return converted_value;
   end CONVERT_UNIT;
 

@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.csw.Conversion
         public double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
         {
             _validateValuesForConversion( ValueToConvert, OldConversionFactor, NewConversionFactor, SpecificGravity );
-            Double ConvertedValue = ValueToConvert * OldConversionFactor * SpecificGravity / NewConversionFactor; //See W1005 for more details
+            Double ConvertedValue = ValueToConvert / OldConversionFactor * SpecificGravity * NewConversionFactor; //See W1005 for more details
             return ConvertedValue;
         }
 

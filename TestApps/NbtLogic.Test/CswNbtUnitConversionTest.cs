@@ -34,9 +34,9 @@ namespace ChemSw.Nbt.Test
         public void convertUnitTestWikiExample()
         {
             Double ValueToConvert = 3;
-            CswNbtNode OuncesNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "ounces", 2.83495231, -2, Tristate.True );
-            CswNbtNode MilligramNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "mg", 1.0, -6, Tristate.True );
-            Double Expected = 85048.56;
+            CswNbtNode OuncesNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "ounces", 3.527396, 1, Tristate.True );
+            CswNbtNode MilligramNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "mg", 1.0, 6, Tristate.True );
+            Double Expected = 85048.574076;
             //Rounding to sixth significant digit since the numbers are stored in the DB as number (15,6)
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, OuncesNode.NodeId, MilligramNode.NodeId );
             Double Actual = Math.Round( ConversionObj.convertUnit( ValueToConvert ), 6 );
@@ -52,7 +52,7 @@ namespace ChemSw.Nbt.Test
         {
             Double ValueToConvert = 4;
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtNode MilliliterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "mL", 1.0, -3, Tristate.True );
+            CswNbtNode MilliliterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "mL", 1.0, 3, Tristate.True );
             Double Expected = 4000;
 
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, LiterNode.NodeId, MilliliterNode.NodeId );
@@ -90,12 +90,12 @@ namespace ChemSw.Nbt.Test
         public void convertUnitTestWeightToVolumeUnitTypes()
         {
             Double ValueToConvert = 4;
-            CswNbtNode GramNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "g", 1.0, -3, Tristate.True );
+            CswNbtNode KilogramNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( "Chemical", "Liquid", .1 );
-            Double Expected = 0.04;
+            Double Expected = 40;
 
-            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, GramNode.NodeId, LiterNode.NodeId, ChemicalNode.NodeId );
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, KilogramNode.NodeId, LiterNode.NodeId, ChemicalNode.NodeId );
 
             Double Actual = ConversionObj.convertUnit( ValueToConvert );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
@@ -125,7 +125,7 @@ namespace ChemSw.Nbt.Test
         {
             Double ValueToConvert = Double.NaN;
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtNode MilliliterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "mL", 1.0, -3, Tristate.True );
+            CswNbtNode MilliliterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "mL", 1.0, 3, Tristate.True );
             Double Expected = 0;
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, LiterNode.NodeId, MilliliterNode.NodeId );
             Double Actual = ConversionObj.convertUnit( ValueToConvert );
@@ -140,8 +140,8 @@ namespace ChemSw.Nbt.Test
         {
             double convertedValue = Double.NaN;
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, null, null );
-            convertedValue = ConversionObj.convertUnit( 1 );
+                convertedValue = ConversionObj.convertUnit( 1 );
             Assert.AreEqual( convertedValue, 1 );
+            }
+            }
         }
-    }
-}
