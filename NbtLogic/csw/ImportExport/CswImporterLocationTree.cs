@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             if( Path.Count > 0 )
             {
-                string ThisName = Path.Pop().Trim();
+                string ThisName = Path.Unshift().Trim();
                 LocationEntry Entry = Level.FirstOrDefault( e => e.Name.ToLower() == ThisName.ToLower() );
                 if( null == Entry )
                 {
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.ImportExport
             LocationEntry ret = null;
             if( Path.Count > 0 )
             {
-                string ThisName = Path.Pop();
+                string ThisName = Path.Unshift();
                 LocationEntry Entry = Level.FirstOrDefault( e => e.Name.ToLower() == ThisName.ToLower() );
                 if( null != Entry )
                 {

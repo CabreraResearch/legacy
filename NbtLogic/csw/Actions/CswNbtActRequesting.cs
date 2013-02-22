@@ -34,7 +34,9 @@ namespace ChemSW.Nbt.Actions
             {
                 _ThisUser = _CswNbtResources.CurrentNbtUser;
             }
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.IsSystemUser &&
+                false == _ThisUser is CswNbtSystemUser &&
+                false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
