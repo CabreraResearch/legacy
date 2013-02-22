@@ -127,7 +127,7 @@
                                 text: 'New Create Material Request',
                                 nodetypeid: data.NodeTypeId,
                                 onAddNode: function () {
-                                    grid.reload();
+                                    grid.reload(true);
                                     cswPrivate.getCartCounts();
                                 }
                             });
