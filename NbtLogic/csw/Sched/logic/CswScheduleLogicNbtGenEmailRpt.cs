@@ -163,6 +163,10 @@ namespace ChemSW.Nbt.Sched
                     {
                         _CswScheduleLogicDetail.StatusMessage = "The following errors occurred during processing: " + InnerErrorMessage;
                     }
+                    else
+                    {
+                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                    }
 
                     if( MailReportIdsToRun.Count > 0 )
                     {

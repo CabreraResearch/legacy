@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ChemSW.Grid.ExtJs" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ChemSW.Grid.ExtJs" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8010/SchedService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="CswGridExtJsGrid">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PageSize" type="xs:int" />
+      <xs:element minOccurs="0" name="Truncated" type="xs:boolean" />
+      <xs:element minOccurs="0" name="columns" nillable="true" type="tns:ArrayOfCswGridExtJsColumn" />
+      <xs:element minOccurs="0" name="data" nillable="true" type="tns:CswGridExtJsGrid.data" />
+      <xs:element minOccurs="0" name="fields" nillable="true" type="tns:ArrayOfCswGridExtJsField" />
+      <xs:element minOccurs="0" name="groupfield" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="title" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswGridExtJsGrid" nillable="true" type="tns:CswGridExtJsGrid" />
+  <xs:complexType name="ArrayOfCswGridExtJsColumn">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswGridExtJsColumn" nillable="true" type="tns:CswGridExtJsColumn" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswGridExtJsColumn" nillable="true" type="tns:ArrayOfCswGridExtJsColumn" />
+  <xs:complexType name="CswGridExtJsColumn">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="dataIndex" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="dateformat" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="editable" type="xs:boolean" />
+      <xs:element minOccurs="0" name="flex" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="header" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="hidden" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="hideable" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="menuDisabled" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="resizable" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="width" type="xs:int">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="xtype" nillable="true" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswGridExtJsColumn" nillable="true" type="tns:CswGridExtJsColumn" />
+  <xs:complexType name="CswGridExtJsGrid.data">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="buttons" nillable="true" type="tns:ArrayOfCswGridExtJsButton" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="items" nillable="true" type="q1:ArrayOfanyType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswGridExtJsGrid.data" nillable="true" type="tns:CswGridExtJsGrid.data" />
+  <xs:complexType name="ArrayOfCswGridExtJsButton">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswGridExtJsButton" nillable="true" type="tns:CswGridExtJsButton" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswGridExtJsButton" nillable="true" type="tns:ArrayOfCswGridExtJsButton" />
+  <xs:complexType name="CswGridExtJsButton">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DataIndex" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MenuOptions" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PropAttr" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RowNo" type="xs:int" />
+      <xs:element minOccurs="0" name="SelectedText" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswGridExtJsButton" nillable="true" type="tns:CswGridExtJsButton" />
+  <xs:complexType name="ArrayOfCswGridExtJsField">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswGridExtJsField" nillable="true" type="tns:CswGridExtJsField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswGridExtJsField" nillable="true" type="tns:ArrayOfCswGridExtJsField" />
+  <xs:complexType name="CswGridExtJsField">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="type" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CswGridExtJsField" nillable="true" type="tns:CswGridExtJsField" />
+</xs:schema>
