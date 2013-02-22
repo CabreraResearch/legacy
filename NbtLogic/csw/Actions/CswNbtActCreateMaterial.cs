@@ -231,15 +231,36 @@ namespace ChemSW.Nbt.Actions
             Ret["materialexists"] = PotentialMaterial.existsInDb();
             if( PotentialMaterial.existsInDb() )
             {
-                //    CswNbtObjClassMaterial NodeAsMaterial = PotentialMaterial.Node;
-                //    Ret["noderef"] = NodeAsMaterial.Node.NodeLink;
-                //}
-                //else
-                //{
-
                 CswNbtObjClassMaterial ExisitingMaterial = PotentialMaterial.existingMaterial();
                 Ret["noderef"] = ExisitingMaterial.Node.NodeLink;
             }
+
+            return Ret;
+        }
+
+        private JObject _createReturnObject( CswNbtObjClassMaterial MaterialNode )
+        {
+            JObject Ret = new JObject();
+
+            Ret["materialid"] = MaterialNode.NodeId.ToString();
+            Ret["tradename"] = MaterialNode.TradeName.Text;
+            Ret["partno"] = MaterialNode.PartNumber.Text;
+            Ret["supplier"] = MaterialNode.Supplier.CachedNodeName;
+            Ret["nodetypeid"] = MaterialNode.NodeTypeId;
+            _CswNbtResources.EditMode = NodeEditMode.Temp;
+            if( string.IsNullOrEmpty( MaterialNode.PhysicalState.Value ) )
+            {
+                MaterialNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid; //Default to solid
+            }
+            CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+            Ret["properties"] = SdProps.getProps( MaterialNode.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, MaterialNode );
+            if( Int32.MinValue != DocumentNodeTypeId )
+            {
+                Ret["documenttypeid"] = DocumentNodeTypeId;
+            }
+            Ret["noderef"] = MaterialNode.Node.NodeLink; //for the link
+
 
             return Ret;
         }
@@ -285,7 +306,6 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-
         #region Public
 
         public JObject alreadyExists( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
@@ -293,47 +313,47 @@ namespace ChemSW.Nbt.Actions
             return _alreadyExistsInDb( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
         }
 
-        public JObject saveMaterial( CswNbtResources CswNbtResources, string Request )
-        {
-            JObject Ret = new JObject();
+        //public JObject saveMaterial( CswNbtResources CswNbtResources, string Request )
+        //{
+        //    JObject Ret = new JObject();
 
-            JObject PropObj = CswConvert.ToJObject( Request );
-            if( PropObj.HasValues )
-            {
-                CswPrimaryKey SupplierPk = CswConvert.ToPrimaryKey( PropObj["supplier"]["val"].ToString() );
-                Int32 NodeTypeId = CswConvert.ToInt32( PropObj["materialType"]["val"].ToString() );
-                string PartNo = PropObj["partNo"].ToString();
-                string TradeName = PropObj["tradeName"].ToString();
+        //    JObject PropObj = CswConvert.ToJObject( Request );
+        //    if( PropObj.HasValues )
+        //    {
+        //        CswPrimaryKey SupplierPk = CswConvert.ToPrimaryKey( PropObj["supplier"]["val"].ToString() );
+        //        Int32 NodeTypeId = CswConvert.ToInt32( PropObj["materialType"]["val"].ToString() );
+        //        string PartNo = PropObj["partNo"].ToString();
+        //        string TradeName = PropObj["tradeName"].ToString();
 
-                CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( PropObj["materialId"].ToString() );
-                if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
-                {
-                    CswNbtObjClassMaterial CurrentTempNode = CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
-                    Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
-                    if( NodeTypeId != CurrentNodeTypeId )
-                    {
-                        // Then we want to just forget about the first temp node created and create a new one with the new nodetype
-                        Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, null );
-                    }
-                    else
-                    {
-                        // If the nodetype isn't different then we need to update the node
-                        CurrentTempNode.TradeName.Text = TradeName;
-                        CurrentTempNode.Supplier.RelatedNodeId = SupplierPk;
-                        CurrentTempNode.PartNumber.Text = PartNo;
-                        if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
-                        {
-                            CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
-                        }
-                        CurrentTempNode.postChanges( false );
+        //        CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( PropObj["materialId"].ToString() );
+        //        if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
+        //        {
+        //            CswNbtObjClassMaterial CurrentTempNode = CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
+        //            Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
+        //            if( NodeTypeId != CurrentNodeTypeId )
+        //            {
+        //                // Then we want to just forget about the first temp node created and create a new one with the new nodetype
+        //                Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, null );
+        //            }
+        //            else
+        //            {
+        //                // If the nodetype isn't different then we need to update the node
+        //                CurrentTempNode.TradeName.Text = TradeName;
+        //                CurrentTempNode.Supplier.RelatedNodeId = SupplierPk;
+        //                CurrentTempNode.PartNumber.Text = PartNo;
+        //                if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
+        //                {
+        //                    CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+        //                }
+        //                CurrentTempNode.postChanges( false );
 
-                        Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, CurrentTempNodePk.ToString() );
-                    }
-                }
-            }//if( PropObj.HasValues )
+        //                Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, CurrentTempNodePk.ToString() );
+        //            }
+        //        }
+        //    }//if( PropObj.HasValues )
 
-            return Ret;
-        }
+        //    return Ret;
+        //}
 
         /// <summary>
         /// Makes a temporary node of the Chemical nodetype. The reason we can't use createMaterial()
@@ -355,22 +375,9 @@ namespace ChemSW.Nbt.Actions
                 if( null != ChemicalNT )
                 {
                     CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                    if (null != NewMaterialTempNode)
+                    if( null != NewMaterialTempNode )
                     {
-                        Ret["materialid"] = NewMaterialTempNode.NodeId.ToString();
-                        Ret["tradename"] = NewMaterialTempNode.TradeName.Text;
-                        Ret["partno"] = NewMaterialTempNode.PartNumber.Text;
-                        Ret["supplier"] = NewMaterialTempNode.Supplier.CachedNodeName;
-                        Ret["nodetypeid"] = NewMaterialTempNode.NodeTypeId;
-                        _CswNbtResources.EditMode = NodeEditMode.Temp;
-                        CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps(_CswNbtResources);
-                        Ret["properties"] = SdProps.getProps(NewMaterialTempNode.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add);
-                        Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId(_CswNbtResources, NewMaterialTempNode);
-                        if (Int32.MinValue != DocumentNodeTypeId)
-                        {
-                            Ret["documenttypeid"] = DocumentNodeTypeId;
-                        }
-                        Ret["noderef"] = NewMaterialTempNode.Node.NodeLink; //for the link
+                        Ret = _createReturnObject(NewMaterialTempNode);
                     }
                 }
             }
@@ -379,20 +386,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( NodePk );
                 if( null != NodeAsMaterial )
                 {
-                    Ret["materialid"] = NodeAsMaterial.NodeId.ToString();
-                    Ret["tradename"] = NodeAsMaterial.TradeName.Text;
-                    Ret["partno"] = NodeAsMaterial.PartNumber.Text;
-                    Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
-                    Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
-                    _CswNbtResources.EditMode = NodeEditMode.Temp;
-                    CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
-                    if( Int32.MinValue != DocumentNodeTypeId )
-                    {
-                        Ret["documenttypeid"] = DocumentNodeTypeId;
-                    }
-                    Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
+                    Ret = _createReturnObject(NodeAsMaterial);
                 }
             }
 
@@ -674,7 +668,7 @@ namespace ChemSW.Nbt.Actions
         {
             JObject ret = new JObject();
             string PhysicalState = string.Empty;
-            foreach (string CurrentPhysicalState in CswNbtObjClassMaterial.PhysicalStates.Options)
+            foreach( string CurrentPhysicalState in CswNbtObjClassMaterial.PhysicalStates.Options )
             {
                 if( PhysicalStateValue.Equals( CurrentPhysicalState ) )
                 {
@@ -682,23 +676,23 @@ namespace ChemSW.Nbt.Actions
                 }
             }
 
-            if (false == string.IsNullOrEmpty(PhysicalState))
+            if( false == string.IsNullOrEmpty( PhysicalState ) )
             {
-                CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder(CswNbtResources);
+                CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder( CswNbtResources );
 
-                CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView(PhysicalState);
+                CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
 
                 Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
-                ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView(CswNbtResources.CurrentNbtUser, unitsView, true, false, false);
+                ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, unitsView, true, false, false );
                 UnitsTree.goToRoot();
-                for (int i = 0; i < UnitsTree.getChildNodeCount(); i++)
+                for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
                 {
-                    UnitsTree.goToNthChild(i);
-                    _UnitNodes.Add(UnitsTree.getNodeForCurrentPosition());
+                    UnitsTree.goToNthChild( i );
+                    _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
                     UnitsTree.goToParentNode();
                 }
 
-                foreach (CswNbtNode unitNode in _UnitNodes)
+                foreach( CswNbtNode unitNode in _UnitNodes )
                 {
                     CswNbtObjClassUnitOfMeasure nodeAsUnitOfMeasure = (CswNbtObjClassUnitOfMeasure) unitNode;
                     ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
