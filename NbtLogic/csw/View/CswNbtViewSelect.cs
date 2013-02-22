@@ -70,6 +70,28 @@ namespace ChemSW.Nbt
 
         }//restoreView()
 
+        public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility )
+        {
+            CswNbtView ReturnVal = null;
+
+            List<CswNbtView> AllViews = restoreViews( ViewName );
+            if( 1 == AllViews.Count )
+            {
+                ReturnVal = AllViews[0];
+            }
+            else if( AllViews.Count > 1 )
+            {
+                List<CswNbtView> VisibilityViews = AllViews.Where( View => View.Visibility == Visibility ).ToList();
+                if( 1 == VisibilityViews.Count )
+                {
+                    ReturnVal = VisibilityViews[0];
+                }
+            }
+
+            return ( ReturnVal );
+        }//restoreView() 
+
+
         public List<CswNbtView> restoreViews( string ViewName )
         {
             return restoreViews( ViewName, NbtViewVisibility.Unknown, Int32.MinValue );
