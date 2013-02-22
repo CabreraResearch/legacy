@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Receiving );
             _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Reconciliation );
             _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Submit_Request );
-            _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Upload_Legacy_Mobile_Data );
+            _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Upload_Legacy_Mobile_Data );
 
 
         } //Update()
