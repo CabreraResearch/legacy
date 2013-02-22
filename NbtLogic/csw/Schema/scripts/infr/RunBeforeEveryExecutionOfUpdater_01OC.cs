@@ -1007,7 +1007,7 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static,
                 SetValOnAdd = true,
                 StaticText = @"Conversion Factor should be set to the number required to make the current unit equal to the base unit.<br/>
-Example: <strong>g/(1E3) = kg</strong><br/>where g is the current unit, kg is the base unit, and 1E3 is the conversion factor."
+Example: <strong>g(1E3) = kg</strong><br/>where g is the current unit, kg is the base unit, and 1E3 is the conversion factor."
             } );
 
             CswNbtMetaDataObjectClassProp BaseUnitOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( UnitOfMeasureOC.ObjectClassId, CswNbtObjClassUnitOfMeasure.PropertyName.BaseUnit );
