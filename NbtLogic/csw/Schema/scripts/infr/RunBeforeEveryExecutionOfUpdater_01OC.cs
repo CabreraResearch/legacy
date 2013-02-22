@@ -1006,8 +1006,8 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassUnitOfMeasure.PropertyName.UnitConversion,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static,
                 SetValOnAdd = true,
-                StaticText = @"Conversion Factor should be set to the ratio between the current unit and the base unit.<br/>
-Example: <strong>g(1E-3) = kg</strong><br/>where g is the current unit, kg is the base unit, and 1E-3 is the conversion factor."
+                StaticText = @"Conversion Factor should be set to the number required to make the current unit equal to the base unit.<br/>
+Example: <strong>g(1E3) = kg</strong><br/>where g is the current unit, kg is the base unit, and 1E3 is the conversion factor."
             } );
 
             CswNbtMetaDataObjectClassProp BaseUnitOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( UnitOfMeasureOC.ObjectClassId, CswNbtObjClassUnitOfMeasure.PropertyName.BaseUnit );
@@ -1034,25 +1034,6 @@ Example: <strong>g(1E-3) = kg</strong><br/>where g is the current unit, kg is th
         #endregion Case 28834
 
         #endregion WILLIAM Methods
-
-        #region YORICK Methods
-
-        private void _updateUnitConversionTextProp( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame(Dev, CaseNo);
-
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
-            CswNbtMetaDataObjectClassProp SizeOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( UnitOfMeasureOC.ObjectClassId, CswNbtObjClassUnitOfMeasure.PropertyName.UnitConversion );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( 
-                SizeOCP, 
-                CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, 
-                @"Conversion Factor should be set to the ratio between the current unit and the base unit.<br/>
-Example: <strong>g(1E-3) = kg</strong><br/>where g is the current unit, kg is the base unit, and 1E-3 is the conversion factor." );
-            
-            _resetBlame();
-        }
-
-        #endregion YORICK Methods
 
         /// <summary>
         /// The actual update call
@@ -1089,7 +1070,6 @@ Example: <strong>g(1E-3) = kg</strong><br/>where g is the current unit, kg is th
             #region YORICK
 
             //YORICK OC changes go here.
-            _updateUnitConversionTextProp( CswDeveloper.BV, 28833 );
 
             #endregion YORICK
 

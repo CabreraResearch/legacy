@@ -166,7 +166,6 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28534.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case27901.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_ScheduledRules_Case28564.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28833.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28711.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28669.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
