@@ -60,6 +60,10 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, requestContaineDispenseOC_Id );
             _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, requestContaineDispenseOC_Id );
 
+            int requestMaterialCreateOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialCreateClass );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, requestMaterialCreateOC_Id );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, requestMaterialCreateOC_Id );
+
             //Tie Receive, Reconcile and Submit_Request and Legacy_Mobile_Data actions to the module (intentionally leave Kiosk Mode out)
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Receiving );
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Reconciliation );

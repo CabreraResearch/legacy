@@ -69,14 +69,6 @@ namespace ChemSW.Nbt
                 _addPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.StorageCompatibility, "Hazards" );
             }
 
-            //Show the following RequestMaterialCreateProps
-            //   Request
-            int requestMatCreateOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialCreateClass );
-            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( requestMatCreateOC_Id ) )
-            {
-                _addPropToFirstTab( NodeTypeId, CswNbtObjClassRequestMaterialCreate.PropertyName.Request );
-            }
-
             //Show the following User props...
             //   Work Unit
             int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.UserClass );
@@ -143,14 +135,6 @@ namespace ChemSW.Nbt
                 _hideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Receive );
                 _hideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Request );
                 _hideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.StorageCompatibility );
-            }
-
-            //Hide the following RequestMaterialCreateProps
-            //   Request
-            int requestMatCreateOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialCreateClass );
-            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( requestMatCreateOC_Id ) )
-            {
-                _hideProp( NodeTypeId, CswNbtObjClassRequestMaterialCreate.PropertyName.Request );
             }
 
             //Hide the following User props...
