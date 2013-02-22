@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.csw.Conversion
                 CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( _OldUnitType, _NewUnitType );
                 if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.Same )
                 {
-                    ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor );
+                    ConvertedValue = _applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor );
                 }
                 else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported )
                 {
@@ -98,11 +98,11 @@ namespace ChemSW.Nbt.csw.Conversion
                         //UnitType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, 1.0 / _MaterialSpecificGravity );
+                            ConvertedValue = _applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, 1.0 / _MaterialSpecificGravity );
                         }
                         else if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, _MaterialSpecificGravity );
+                            ConvertedValue = _applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, _MaterialSpecificGravity );
                         }
                     }
                     else
@@ -125,8 +125,9 @@ namespace ChemSW.Nbt.csw.Conversion
         /// <summary>
         /// Takes a numeric value and converts it from one Unit of Measurement into another using the given Conversion Factor values
         /// If unit conversion cannot be applied, an error is thrown.
+        /// We're assuming the specific gravity is inverted when converting from Weight to Volume.
         /// </summary>
-        public double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
+        private double _applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
         {
             _validateValuesForConversion( ValueToConvert, OldConversionFactor, NewConversionFactor, SpecificGravity );
             Double ConvertedValue = ValueToConvert * OldConversionFactor * SpecificGravity / NewConversionFactor; //See W1005 for more details
