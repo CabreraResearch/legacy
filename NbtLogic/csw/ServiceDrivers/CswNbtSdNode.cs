@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret = _CswNbtResources.ViewSelect.getSessionView( Request.SessionViewId );
                 }
             }
-            catch( CswDniException DniException )
+            catch( CswDniException )
             {
                 Ret = null;
             }

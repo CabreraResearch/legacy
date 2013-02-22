@@ -5,12 +5,11 @@ using System.Data;
 using System.Data.OleDb;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Schema;
 using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Schema;
 //using Microsoft.Office.Interop.Excel;
 
 namespace ChemSW.Nbt.ImportExport
@@ -387,7 +386,6 @@ namespace ChemSW.Nbt.ImportExport
 
 
             // Updaters for the import nodes we just created
-            Int32 CurrentArbitraryImportId = 0;
             CswTableUpdate ImportNodesUpdater = _CswNbtResources.makeCswTableUpdate( "importer_update_" + CswImporterDbTables.TblName_ImportNodes, CswImporterDbTables.TblName_ImportNodes );
             CswTableUpdate ImportPropsUpdater = _CswNbtResources.makeCswTableUpdate( "importer_update_" + CswImporterDbTables.TblName_ImportProps, CswImporterDbTables.TblName_ImportProps );
 
@@ -482,7 +480,7 @@ namespace ChemSW.Nbt.ImportExport
             DataRow CurrentMaterialRow = null;
             DataRow CurrentContainerRow = null;
             DataRow CurrentSizeRow = null;
-            DataRow ImportUserRow = null;
+            
             Dictionary<string, DataRow> SizesRowsByCompoundId = new Dictionary<string, DataRow>();
 
 
