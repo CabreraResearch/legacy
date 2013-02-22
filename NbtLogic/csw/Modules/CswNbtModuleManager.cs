@@ -190,6 +190,9 @@ namespace ChemSW.Nbt
             // case 26029
             _CswNbtResources.MetaData.ResetEnabledNodeTypes();
 
+            //We have to clear Session data or the view selects recent views will have non-accesible views and break
+            _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+
             return ret;
         }
 
