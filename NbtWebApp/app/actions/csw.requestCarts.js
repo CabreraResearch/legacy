@@ -22,7 +22,7 @@
                 cswParent.empty();
             } ());
 
-            cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
+            cswPrivate.requestName = "";
             cswPrivate.gridOpts = {};
             cswPrivate.ajaxii = {};
 

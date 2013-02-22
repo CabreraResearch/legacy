@@ -23,16 +23,16 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            //change the Request NT name to '{Requestor} {Date Submitted}' and change the submitted date to unclude the time
+            //change the Request NT name to '{Name} {Date Submitted}' and change the submitted date to unclude the time
             CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
             foreach( CswNbtMetaDataNodeType requestNT in requestOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp requestorNTP = requestNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+                CswNbtMetaDataNodeTypeProp nameNTP = requestNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Name );
                 CswNbtMetaDataNodeTypeProp dateSubmittedNTP = requestNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
 
                 dateSubmittedNTP.Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString();
 
-                string newNameTemplate = CswNbtMetaData.MakeTemplateEntry( requestorNTP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( dateSubmittedNTP.PropName );
+                string newNameTemplate = CswNbtMetaData.MakeTemplateEntry( nameNTP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( dateSubmittedNTP.PropName );
                 requestNT.setNameTemplateText( newNameTemplate );
             }
 
