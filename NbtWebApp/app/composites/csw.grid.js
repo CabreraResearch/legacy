@@ -76,7 +76,9 @@
                 Csw.extend(cswPrivate, options);
                 cswPrivate.ID = cswPrivate.ID || cswPublic.getId();
                 cswPrivate.ID += cswPrivate.suffix;
-            } ());
+
+
+            }());
 
             //#endregion _preCtor
 
@@ -91,9 +93,7 @@
                         success: function (result) {
                             if (false === Csw.isNullOrEmpty(result.grid)) {
                                 Csw.tryExec(onSuccess, result);
-                                var temp = cswPrivate.store.data;
-                                //var temp = result.grid.getAllGridRows();
-                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+                            }
                         } // success
                     });
                 } // ajax.post()
@@ -221,19 +221,19 @@
                         Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                     },
                     //sortchange: function () { debugFunc(); },
-//                    render: function () {
-//                        //of the methods we're listening to here, called 1st
-//                        //debugFunc();
-//                    },
+                    //                    render: function () {
+                    //                        //of the methods we're listening to here, called 1st
+                    //                        //debugFunc();
+                    //                    },
                     //activate: function () { debugFunc(); },
                     //add: function () { debugFunc(); },
                     //added: function () { debugFunc(); },
-//                    afterlayout: function () {
-//                        //of the methods we're listening to here, called 3rd on a new grid.
-//                        //empty grid is now rendered
+                    //                    afterlayout: function () {
+                    //                        //of the methods we're listening to here, called 3rd on a new grid.
+                    //                        //empty grid is now rendered
 
-//                        //Also called on any mutation to grid (sort, columns show/hide, etc)
-//                    }
+                    //                        //Also called on any mutation to grid (sort, columns show/hide, etc)
+                    //                    }
                     //beforeactivate: function () { debugFunc(); },
                     //beforeadd: function () { debugFunc(); },
                     //beforeclose: function () { debugFunc(); },
@@ -327,6 +327,7 @@
 
 
             cswPrivate.makeDockedItems = function () {
+                cswPrivate.dockedItems = [];
                 var topToolbarItems = [];
 
                 //Printing
@@ -343,7 +344,7 @@
 
                 //Grouping and Group Summary
                 if (cswPrivate.groupField &&
-                         cswPrivate.groupField.length > 0) {
+                    cswPrivate.groupField.length > 0) {
                     cswPrivate.groupField = cswPrivate.groupField.replace(' ', '_');
 
 
@@ -397,6 +398,45 @@
                         });
                     }
                 }
+
+                // Multi-Edit
+                if (cswPrivate.showMultiEditToolbar !== false &&
+                    cswPrivate.showCheckboxes &&
+                    cswPrivate.showActionColumn) {
+
+                    cswPrivate.editAllButton = window.Ext.create('Ext.button.Button', {
+                        id: cswPrivate.ID + 'edit',
+                        xtype: 'button',
+                        text: 'Edit Selected',
+                        icon: 'Images/newicons/16/pencil.png',
+                        disabled: true,
+                        handler: function () {
+                            var rows = [];
+                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
+                                rows.push(selectedRow.raw);
+                            });
+                            cswPrivate.onEdit(rows);
+                        } // edit handler
+                    });
+                    topToolbarItems.push(cswPrivate.editAllButton);
+
+                    cswPrivate.deleteAllButton = window.Ext.create('Ext.button.Button', {
+                        id: cswPrivate.ID + 'delete',
+                        xtype: 'button',
+                        text: 'Delete Selected',
+                        icon: 'Images/newicons/16/trash.png',
+                        disabled: true,
+                        handler: function () {
+                            var rows = [];
+                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
+                                rows.push(selectedRow.raw);
+                            });
+                            cswPrivate.onDelete(rows);
+                        } // delete handler
+                    });
+                    topToolbarItems.push(cswPrivate.deleteAllButton);
+                } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
+
                 if (topToolbarItems.length > 0) {
                     cswPrivate.dockedItems.push({
                         xtype: 'toolbar',
@@ -475,7 +515,7 @@
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //Terrible choice in words, "renderer" means the event that will run sometime after this based on the HTML string you define.
                             var divId = cswPrivate.name + 'action' + rowIndex + colIndex;
-                            Csw.defer(Csw.method(function() {
+                            Csw.defer(Csw.method(function () {
                                 cswPrivate.makeActionCell({
                                     cellId: divId,
                                     cellData: record.data,
@@ -515,7 +555,7 @@
                                 Csw.defer(function _tryMakeBtn() {
                                     //Case 28343. The problem here is that 
                                     // a) our div is not in the DOM until this method returns and 
-                                    // b) we're not always guaranteed to be the writable porion of the cell--the div we return might be thrown away by Ext
+                                    // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
                                     if (Csw.isElementInDom(id)) {
                                         var div = Csw.domNode({ ID: id });
                                         div.nodeButton({
@@ -581,58 +621,12 @@
                     }
                 }
 
-                // Multi-Edit
-                if (cswPrivate.showMultiEditToolbar !== false &&
-                    cswPrivate.showCheckboxes &&
-                    cswPrivate.showActionColumn) {
-
-                    cswPrivate.editAllButton = window.Ext.create('Ext.button.Button', {
-                        id: cswPrivate.ID + 'edit',
-                        xtype: 'button',
-                        text: 'Edit Selected',
-                        icon: 'Images/newicons/16/pencil.png',
-                        disabled: true,
-                        handler: function () {
-                            var rows = [];
-                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
-                                rows.push(selectedRow.raw);
-                            });
-                            cswPrivate.onEdit(rows);
-                        } // edit handler
-                    });
-                    cswPrivate.topToolbar.push(cswPrivate.editAllButton);
-
-                    cswPrivate.deleteAllButton = window.Ext.create('Ext.button.Button', {
-                        id: cswPrivate.ID + 'delete',
-                        xtype: 'button',
-                        text: 'Delete Selected',
-                        icon: 'Images/newicons/16/trash.png',
-                        disabled: true,
-                        handler: function () {
-                            var rows = [];
-                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
-                                rows.push(selectedRow.raw);
-                            });
-                            cswPrivate.onDelete(rows);
-                        } // delete handler
-                    });
-                    cswPrivate.topToolbar.push(cswPrivate.deleteAllButton);
-                } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
-
-                if (cswPrivate.topToolbar.length > 0) {
-                    gridopts.dockedItems.push({
-                        xtype: 'toolbar',
-                        dock: 'top',
-                        items: cswPrivate.topToolbar
-                    }); // panelopts.dockedItems
-                }
-
                 if (Csw.isElementInDom(cswPublic.getId())) {
                     cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
                 } else {
                     cswPublic.extGrid = window.Ext.create('Ext.panel.Panel');
                 }
-                
+
                 return cswPublic.extGrid;
             }); // makeGrid()
 
@@ -700,6 +694,7 @@
 
             cswPrivate.setInternalGridState = function (data) {
                 if (data) {
+                    cswPrivate.data = data;
                     cswPrivate.pageSize = Csw.number(data.pageSize);
                     if (false === Csw.isNullOrEmpty(data.truncated)) {
                         cswPrivate.truncated = data.truncated;
@@ -731,7 +726,7 @@
                             cswPrivate.setInternalGridState(result.grid);
                             cswPrivate.ajaxResult = result;
                             cswPrivate.init();
-                        } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+                        }
                     });
                 } else {
                     cswPrivate.setInternalGridState(cswPrivate.data);
@@ -743,18 +738,8 @@
 
             //#region Public methods
 
-            cswPublic.reload = function () {
-                cswPrivate.reInit();
-//                cswPrivate.getData(function (result) {
-//                    if (result && result.grid && result.grid.data && result.grid.data.items) {
-//                        cswPrivate.rows = result.grid.data;
-//                        cswPrivate.store.destroy();
-//                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
-//                        cswPrivate.grid.reconfigure(cswPrivate.store);
-//                    } else {
-//                        Csw.debug.error('Failed to reload grid');
-//                    }
-//                });
+            cswPublic.reload = function (forceRefresh) {
+                cswPrivate.reInit(forceRefresh);
             };
 
             cswPublic.getCell = Csw.method(function (rowindex, key) {
@@ -931,11 +916,11 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.reInit();
-            } ());
+            }());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
 
-} ());
+}());

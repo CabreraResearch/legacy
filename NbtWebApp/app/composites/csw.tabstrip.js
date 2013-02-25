@@ -180,8 +180,11 @@
                         click: {
                             element: 'el', //bind to the underlying el property on the panel
                             fn: function (el, eventObj, callBack) {
-                                var tabName = el.target.innerHTML;
-                                Csw.tryExec(cswPrivate.onTabSelect, tabName, el, eventObj, callBack);
+                                var clickedItem = el.target.innerHTML;
+                                var tabName = cswPublic.tabPanel.activeTab.title;
+                                if(clickedItem.indexOf(tabName) > -1){
+                                    Csw.tryExec(cswPrivate.onTabSelect, tabName, el, eventObj, callBack);
+                                }
                             }
                         }
                     }

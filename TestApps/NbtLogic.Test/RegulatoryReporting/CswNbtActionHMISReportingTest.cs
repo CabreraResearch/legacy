@@ -121,7 +121,7 @@ namespace ChemSw.Nbt.Test
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode( ControlZoneId: ControlZoneId ).NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( Hazards: "Exp" );
-            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 2.641721, -1, Tristate.True );
+            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 3.78541178, 0, Tristate.True );
             TestData.Nodes.createContainerNode( "Container", 1, GallonsUnit, ChemicalNode, LocationId );
             HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest
             {
@@ -153,7 +153,7 @@ namespace ChemSw.Nbt.Test
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode( ControlZoneId: ControlZoneId ).NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( Hazards: "Carc,Exp" );
-            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 2.641721, -1, Tristate.True );
+            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 3.78541178, 0, Tristate.True );
             TestData.Nodes.createContainerNode( "Container", 1, GallonsUnit, ChemicalNode, LocationId );
             HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest
             {
@@ -181,7 +181,7 @@ namespace ChemSw.Nbt.Test
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode( ControlZoneId: ControlZoneId ).NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( Hazards: "Exp" );
-            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 2.641721, -1, Tristate.True );
+            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 3.78541178, 0, Tristate.True );
             TestData.Nodes.createContainerNode( "Container", 1, GallonsUnit, ChemicalNode, LocationId );
             TestData.Nodes.createContainerNode( "Container", 1, GallonsUnit, ChemicalNode, LocationId );
             HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest
@@ -210,7 +210,7 @@ namespace ChemSw.Nbt.Test
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode( ControlZoneId: ControlZoneId ).NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( Hazards: "Exp" );
             CswNbtNode ChemicalNode2 = TestData.Nodes.createMaterialNode( Hazards: "Exp" );
-            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 2.641721, -1, Tristate.True );
+            CswNbtNode GallonsUnit = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal_Test", 3.78541178, 0, Tristate.True );
             TestData.Nodes.createContainerNode( "Container", 1, GallonsUnit, ChemicalNode, LocationId );
             TestData.Nodes.createContainerNode( "Container", 1, GallonsUnit, ChemicalNode2, LocationId );
             HMISData.HMISDataRequest Request = new HMISData.HMISDataRequest

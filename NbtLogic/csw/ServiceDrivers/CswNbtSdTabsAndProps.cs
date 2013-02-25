@@ -327,9 +327,9 @@ namespace ChemSW.Nbt.ServiceDrivers
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
         {
             //Case 24023: Exclude buttons on Add
-            return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || 
-                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) && 
-                Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) && 
+            return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
+                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) &&
                 ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
         }
 
@@ -625,6 +625,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab, bool RemoveTempStatus = true )
         {
+
+
             JObject ret = new JObject();
             if( PropsObj.HasValues )
             {
@@ -736,6 +738,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["nodelink"] = Node.NodeLink;
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
+
                 }
             }
             return ret;
