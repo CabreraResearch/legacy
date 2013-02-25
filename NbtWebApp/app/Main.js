@@ -732,8 +732,8 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
                 }
 
-                o.onEditNode = function () { grid.reload(); };
-                o.onDeleteNode = function () { grid.reload(); };
+                o.onEditNode = function () { grid.reload(true); };
+                o.onDeleteNode = function () { grid.reload(true); };
                 o.onRefresh = function (options) {
                     clear({ centertop: true, centerbottom: true });
                     Csw.clientChanges.unsetChanged();

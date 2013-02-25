@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CswPrintClient1")]
+[assembly: AssemblyTitle( "NbtPrintClient" )]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("csw")]
+[assembly: AssemblyCompany( "ChemSW" )]
 [assembly: AssemblyProduct("CswPrintClient1")]
 [assembly: AssemblyCopyright("Copyright © csw 2012")]
 [assembly: AssemblyTrademark("")]

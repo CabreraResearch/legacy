@@ -44,6 +44,7 @@
                 showLock: false,
                 showEdit: true,
                 showDelete: false,
+                showPreview: false,
                 canSelectRow: cswPrivate.JustDateColumn,
 
                 usePaging: (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport),
