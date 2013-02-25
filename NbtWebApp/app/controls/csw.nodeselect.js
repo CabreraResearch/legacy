@@ -103,7 +103,6 @@
                         ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
-                        //cswPrivate.options = JSON.parse(data.options);
                         cswPrivate.options = [];
                         if (false === cswPrivate.isRequired) {
                             cswPrivate.options.push({ id: '', value: '' });
@@ -437,7 +436,7 @@
 
             cswPublic.optionsCount = function() {
                 return cswPrivate.options.length;
-            }
+            };
 
             //#endregion Public
 
