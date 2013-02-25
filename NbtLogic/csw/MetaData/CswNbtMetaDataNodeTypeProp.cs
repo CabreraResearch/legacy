@@ -843,6 +843,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( ObjectClassPropId );
         }
 
+        public string getObjectClassPropName()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassPropName( ObjectClassPropId );
+        }
+
         public void CopyPropToNewNodeTypePropRow( DataRow NewPropRow )
         {
             foreach( DataColumn PropColumn in NewPropRow.Table.Columns )

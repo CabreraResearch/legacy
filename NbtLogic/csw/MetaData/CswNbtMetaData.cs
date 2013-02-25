@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public Dictionary<NbtObjectClass, Int32> getObjectClassIds()
+        public Dictionary<Int32, NbtObjectClass> getObjectClassIds()
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds();
         }
@@ -360,6 +360,13 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassPropId )
         {
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassPropId );
+        }
+        /// <summary>
+        /// Fetches an Object Class Property Name based on the primary key (all object classes)
+        /// </summary>
+        public string getObjectClassPropName( Int32 ObjectClassPropId )
+        {
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropName( ObjectClassPropId );
         }
         /// <summary>
         /// Fetches an Object Class Property based on the primary key (all object classes)

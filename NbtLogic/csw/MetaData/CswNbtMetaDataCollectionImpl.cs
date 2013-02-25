@@ -181,8 +181,8 @@ namespace ChemSW.Nbt.MetaData
 
 
 
-        private Dictionary<string, Int32> _PkDict = null;
-        public Dictionary<string, Int32> getPkDict()
+        private Dictionary<Int32, string> _PkDict = null;
+        public Dictionary<Int32, string> getPkDict()
         {
             if( _PkDict == null )
             {
@@ -191,12 +191,12 @@ namespace ChemSW.Nbt.MetaData
             return _PkDict;
         } // getPkDict()
 
-        private Dictionary<string, Dictionary<string, Int32>> _PkDictsWhere = null;
-        public Dictionary<string, Int32> getPkDict( string Where )
+        private Dictionary<string, Dictionary<Int32, string>> _PkDictsWhere = null;
+        public Dictionary<Int32, string> getPkDict( string Where )
         {
             if( _PkDictsWhere == null )
             {
-                _PkDictsWhere = new Dictionary<string, Dictionary<string, Int32>>();
+                _PkDictsWhere = new Dictionary<string, Dictionary<Int32, string>>();
             }
             if( false == _PkDictsWhere.ContainsKey( Where ) )
             {
@@ -209,10 +209,10 @@ namespace ChemSW.Nbt.MetaData
 
                 DataTable Table = _TableSelect.getTable( Select, string.Empty, Int32.MinValue, WhereClause, false );
 
-                Dictionary<string, Int32> Coll = new Dictionary<string, Int32>();
+                Dictionary<Int32, string> Coll = new Dictionary<Int32, string>();
                 foreach( DataRow Row in Table.Rows )
                 {
-                    Coll.Add( CswConvert.ToString( Row[_NameColumnName] ), CswConvert.ToInt32( Row[_PkColumnName] ) );
+                    Coll.Add( CswConvert.ToInt32( Row[_PkColumnName] ), CswConvert.ToString( Row[_NameColumnName] ) );
                 }
                 _PkDictsWhere[Where] = Coll;
             }

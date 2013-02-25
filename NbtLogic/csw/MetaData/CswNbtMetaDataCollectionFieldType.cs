@@ -41,18 +41,10 @@ namespace ChemSW.Nbt.MetaData
 
         public Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> getFieldTypeIds()
         {
-            Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> ret = new Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType>();
-            Dictionary<string, Int32> FTDict = _CollImpl.getPkDict();
-            foreach( string Key in FTDict.Keys )
-            {
-                CswNbtMetaDataFieldType.NbtFieldType Ft = (CswNbtMetaDataFieldType.NbtFieldType) Key;
-                if( Ft != CswNbtResources.UnknownEnum && 
-                    false == ret.ContainsKey( FTDict[Key] ) )
-                {
-                    ret.Add( FTDict[Key], Ft );
-                }
-            }
-            return ret;
+            Dictionary<Int32, string> FTDict = _CollImpl.getPkDict();
+            return FTDict.Keys
+                         .Where( key => FTDict[key] != CswNbtResources.UnknownEnum )
+                         .ToDictionary( key => key, key => (CswNbtMetaDataFieldType.NbtFieldType) FTDict[key] );
         } // getFieldTypeIds()
 
         public IEnumerable<CswNbtMetaDataFieldType> getFieldTypes()

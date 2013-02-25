@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.MetaData
             //} // foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypes )
 
 
-            foreach( Int32 ObjectClassId in this.getObjectClassIds().Values )
+            foreach( Int32 ObjectClassId in this.getObjectClassIds().Keys )
             {
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProps( ObjectClassId ) )
                 {
