@@ -1078,13 +1078,23 @@ Example: <strong>g/(1E3) = kg</strong><br/>where g is the current unit, kg is th
             if( null != MaterialOC )
             {
 
-                CswNbtMetaDataObjectClassProp UNCodeOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PropertyName.UNCode );
-                if( null != UNCodeOCP )
+                //first remove existing prop which is of type relationship
+                CswNbtMetaDataObjectClassProp UNCodeOCPOld = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PropertyName.UNCode );
+                if( null != UNCodeOCPOld )
                 {
 
-                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( UNCodeOCP, true );
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( UNCodeOCPOld, true );
 
                 }//if we have a un ocp
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
+                    {
+                        PropName = CswNbtObjClassMaterial.PropertyName.UNCode,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                    } );
+
+                //now add new prop which is of type text
+
             }//if we have a material oc
 
             _resetBlame();
