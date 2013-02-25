@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 //using ChemSW;
-using CswPrintClient1.NbtPublic;
+using NbtPrintClient.NbtPublic;
 
 namespace CswPrintClient1
 {
@@ -48,7 +48,7 @@ namespace CswPrintClient1
             public string baseURL;
         }
 
-        public delegate void AuthSuccessHandler(NbtPublicClient Client);
+        public delegate void AuthSuccessHandler( NbtPublicClient Client );
 
         private void _Authenticate( NbtAuth auth, ServiceThreadEventArgs e, AuthSuccessHandler success )
         {

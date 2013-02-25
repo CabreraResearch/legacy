@@ -3501,7 +3501,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMaterial( string state )
+        public string saveMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo, string NodeId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3511,7 +3511,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.saveMaterial( state );
+                ReturnVal = ws.saveMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, NodeId );
 
                 _deInitResources();
             }
@@ -3523,7 +3523,7 @@ namespace ChemSW.Nbt.WebServices
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // createMaterial()
+        } // saveMaterial()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3653,7 +3653,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMaterialUnitsOfMeasure( string MaterialId )
+        public string getMaterialUnitsOfMeasure( string PhysicalStateValue )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3662,7 +3662,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialUnitsOfMeasure( MaterialId, _CswNbtResources );
+                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialUnitsOfMeasure( PhysicalStateValue, _CswNbtResources );
 
                 _deInitResources();
             }
