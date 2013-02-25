@@ -293,8 +293,13 @@ namespace ChemSW.Nbt
                 CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
                 if( null != view )
                 {
-                    view.SetVisibility( SetVisibility, null, null );
-                    view.save();
+                    // case 28964 - check for redundant existing view
+                    DataTable redundantViewDT = _CswNbtResources.ViewSelect.getView( viewName, SetVisibility, null, null );
+                    if( redundantViewDT.Rows.Count == 0 )
+                    {
+                        view.SetVisibility( SetVisibility, null, null );
+                        view.save();
+                    }
                 }
             }
         }
@@ -311,7 +316,7 @@ namespace ChemSW.Nbt
             DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );
             foreach( DataRow row in nodeviews.Rows )
             {
-                _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString(), visibility );
+                ToggleView( hidden, row["viewname"].ToString(), visibility );
             }
         }
 
@@ -336,6 +341,29 @@ namespace ChemSW.Nbt
                 row["disabled"] = CswConvert.ToDbVal( Disabled );
             }
             RuleUpdate.update( RuleDt );
+        }
+
+        public void ToggleReportNodes( string Category, bool Hidden )
+        {
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClassProp categoryOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Category );
+
+            CswNbtView reportsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = reportsView.AddViewRelationship( reportOC, false );
+            reportsView.AddViewPropertyAndFilter( parent, categoryOCP,
+                Value: Category,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            ICswNbtTree reportsTree = _CswNbtResources.Trees.getTreeFromView( reportsView, false, true, true );
+            int childCount = reportsTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                reportsTree.goToNthChild( i );
+                CswNbtNode reportNode = reportsTree.getNodeForCurrentPosition();
+                reportNode.Hidden = Hidden;
+                reportNode.postChanges( false );
+                reportsTree.goToParentNode();
+            }
         }
 
     } // class CswNbtModuleManager
