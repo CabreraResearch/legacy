@@ -467,11 +467,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropObj["name"] = Prop.PropNameWithQuestionNo;
             PropObj["helptext"] = Prop.HelpText;
             PropObj["fieldtype"] = FieldType.ToString();
-            CswNbtMetaDataObjectClassProp OCP = Prop.getObjectClassProp();
-            if( OCP != null )
-            {
-                PropObj["ocpname"] = OCP.PropName;
-            }
+            PropObj["ocpname"] = Prop.getObjectClassPropName();
             Int32 DisplayRow = _getUniqueRow( Row, Column );
 
             PropObj["displayrow"] = DisplayRow.ToString();

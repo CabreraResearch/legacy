@@ -845,7 +845,12 @@ namespace ChemSW.Nbt.MetaData
 
         public string getObjectClassPropName()
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassPropName( ObjectClassPropId );
+            string ret = string.Empty;
+            if( Int32.MinValue != ObjectClassPropId )
+            {
+                ret = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassPropName( ObjectClassPropId );
+            }
+            return ret;
         }
 
         public void CopyPropToNewNodeTypePropRow( DataRow NewPropRow )

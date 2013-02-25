@@ -273,11 +273,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
                 bool HasPermission = false;
-                switch( OCP.PropName )
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
                 {
                     case PropertyName.Dispose:
                         if( canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
@@ -342,7 +342,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == HasPermission )
                 {
-                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCP.PropName + " action.", "You do not have permission to the " + OCP.PropName + " action." );
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
                 }
             }
             return true;

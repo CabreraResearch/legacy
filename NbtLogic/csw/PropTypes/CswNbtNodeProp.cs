@@ -166,11 +166,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                CswNbtMetaDataObjectClassProp OCP = _CswNbtMetaDataNodeTypeProp.getObjectClassProp();
-                if( OCP != null )
-                    return OCP.PropName;
-                else
-                    return string.Empty;
+                return _CswNbtMetaDataNodeTypeProp.getObjectClassPropName();
             }
         }
         //public bool IsPropRow( DataRow DataRow ) { return ( _CswNbtNodePropData.Row == DataRow ); }

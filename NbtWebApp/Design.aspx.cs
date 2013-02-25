@@ -1575,7 +1575,7 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) OrigNameRow.Cells[0].Controls[0] ).Text = "Original Name:";
                         Literal OrigNameValue = new Literal();
                         //OrigNameValue.ID = "EditProp_OrigNameValue" + SelectedNodeTypeProp.PropId.ToString();
-                        OrigNameValue.Text = SelectedNodeTypeProp.getObjectClassProp().PropName;
+                        OrigNameValue.Text = SelectedNodeTypeProp.getObjectClassPropName();
                         OrigNameRow.Cells[1].Controls.Add( OrigNameValue );
                     }
 
