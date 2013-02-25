@@ -293,8 +293,13 @@ namespace ChemSW.Nbt
                 CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
                 if( null != view )
                 {
-                    view.SetVisibility( SetVisibility, null, null );
-                    view.save();
+                    // case 28964 - check for redundant existing view
+                    DataTable redundantViewDT = _CswNbtResources.ViewSelect.getView( viewName, SetVisibility, null, null );
+                    if( redundantViewDT.Rows.Count == 0 )
+                    {
+                        view.SetVisibility( SetVisibility, null, null );
+                        view.save();
+                    }
                 }
             }
         }
@@ -311,7 +316,7 @@ namespace ChemSW.Nbt
             DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );
             foreach( DataRow row in nodeviews.Rows )
             {
-                _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString(), visibility );
+                ToggleView( hidden, row["viewname"].ToString(), visibility );
             }
         }
 
