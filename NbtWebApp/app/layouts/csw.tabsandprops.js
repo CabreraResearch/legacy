@@ -974,7 +974,7 @@
                             if (Csw.bool(propData.hassubprops)) {
                                 Csw.tryExec(cswPrivate.updateSubProps, propData, propCell, tabContentDiv, tabid, false, layoutTable);
                             }
-                            Csw.tryExec(cswPrivate.onPropertyChange, fieldOpt.propid, propName);
+                            Csw.tryExec(cswPrivate.onPropertyChange, fieldOpt.propid, propName, propData);
                         },
                         doSave: function (saveopts) {
                             var s = {
