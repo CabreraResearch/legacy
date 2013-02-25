@@ -64,6 +64,25 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, requestMaterialCreateOC_Id );
             _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, requestMaterialCreateOC_Id );
 
+            int containerDispenseTransOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.ContainerDispenseTransactionClass );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, containerDispenseTransOC_Id );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, containerDispenseTransOC_Id );
+
+            int containerGroupOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.ContainerGroupClass );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, containerGroupOC_Id );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, containerGroupOC_Id );
+
+            int containerLocationOC_Id = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.ContainerLocationClass );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.Containers, containerLocationOC_Id );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, containerLocationOC_Id );
+
+            CswNbtMetaDataNodeType containerDocNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container Document" );
+            if( null != containerDocNT )
+            {
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.Containers, containerDocNT.NodeTypeId );
+                _CswNbtSchemaModTrnsctn.deleteModuleNodeTypeJunction( CswNbtModuleName.CISPro, containerDocNT.NodeTypeId );
+            }
+
             //Tie Receive, Reconcile and Submit_Request and Legacy_Mobile_Data actions to the module (intentionally leave Kiosk Mode out)
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Receiving );
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Reconciliation );
