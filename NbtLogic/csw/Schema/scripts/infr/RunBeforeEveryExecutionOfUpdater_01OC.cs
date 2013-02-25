@@ -1087,10 +1087,13 @@ Example: <strong>g/(1E3) = kg</strong><br/>where g is the current unit, kg is th
 
                 }//if we have a un ocp
 
+
+                //Further config: optional, tab, default: blank
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                     {
                         PropName = CswNbtObjClassMaterial.PropertyName.UNCode,
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        IsRequired = false
                     } );
 
                 //now add new prop which is of type text

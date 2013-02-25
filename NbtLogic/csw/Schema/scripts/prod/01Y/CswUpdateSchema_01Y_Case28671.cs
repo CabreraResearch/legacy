@@ -26,6 +26,10 @@ namespace ChemSW.Nbt.Schema
             //CswNbtObjClassMaterial MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
 
             string UNCodeNodeTypeName = "UN Code";
+            string ChemicalNodeTypeName = "Chemical";
+            string LQNoNodeTypeName = "LQNo";
+            string HazardsTabName = "Hazards";
+
             CswNbtMetaDataNodeType UNCodeNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( UNCodeNodeTypeName );
             if( null != UNCodeNodeType )
             {
@@ -37,38 +41,55 @@ namespace ChemSW.Nbt.Schema
             //at the object-class prop level from relationship to text.
 
 
-            //string ChemicalNodeTypeName = "Chemical";
-            //string LQNoNodeTypeName = "LQNo";
-            //string HazardsTabName = "Hazards";
 
-            //CswNbtMetaDataNodeType ChemicaNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( ChemicalNodeTypeName );
+            CswNbtMetaDataNodeType ChemicaNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( ChemicalNodeTypeName );
 
-            //if( null != ChemicaNodeType )
-            //{
-            //    CswNbtMetaDataNodeType UNCodeNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( UNCodeNodeTypeName );
-            //    if( null != UNCodeNodeType )
-            //    {
-            //        _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeType( UNCodeNodeType );
-            //    }
+            if( null != ChemicaNodeType )
+            {
+                //get the Un Code's tab squared away
+                //                CswNbtMetaDataNodeTypeProp UnCodeProp = ChemicaNodeType.getNodeTypeProp( UNCodeNodeTypeName );
 
-            //    CswNbtMetaDataNodeTypeProp OldUnCodeProp = ChemicaNodeType.getNodeTypeProp( UNCodeNodeTypeName );
-            //    if( null != OldUnCodeProp )
-            //    {
-            //        _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( OldUnCodeProp );
-            //    }
+                CswNbtMetaDataNodeTypeProp UnCodeProp = ChemicaNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+
+                if( null != UnCodeProp )
+                {
+                    CswNbtMetaDataNodeTypeTab HazardsTab = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeTab( ChemicaNodeType.NodeTypeId, HazardsTabName );
+
+                    if( null != HazardsTab )
+                    {
+                        UnCodeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId );
+                    }//if we have a hazards tab
+
+                }//if we have a uncode 
+
+                //CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
+
+                //CswNbtMetaDataNodeTypeProp ITargetLocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Location );
+                //CswNbtMetaDataNodeTypeProp IDesignLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Location );
+                //IDesignLocationNtp.SetFK( NbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, NbtViewPropIdType.NodeTypePropId.ToString(), ITargetLocationNtp.PropId );
 
 
-            //    CswNbtMetaDataNodeTypeProp NewUnCodeProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicaNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, UNCodeNodeTypeName, HazardsTabName );
+                //Add the LQNo prop on Chemical
+                CswNbtMetaDataNodeType LQNoNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( LQNoNodeTypeName );
+                if( null != LQNoNodeType )
+                {
+                    CswNbtMetaDataNodeTypeProp LQNoProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicaNodeType, CswNbtMetaDataFieldType.NbtFieldType.Relationship, LQNoNodeType.NodeTypeName, HazardsTabName );
+                    LQNoProp.SetFK( NbtViewPropIdType.NodeTypePropId.ToString(), LQNoNodeType.NodeTypeId );
 
+                    CswNbtView LQPNoView = _CswNbtSchemaModTrnsctn.makeView();
+                    LQPNoView.saveNew( LQNoNodeTypeName, NbtViewVisibility.Hidden );
+                    LQPNoView.ViewMode = NbtViewRenderingMode.Table;
+                    LQPNoView.Width = 100;
 
-            //    CswNbtMetaDataNodeType LQNoNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( LQNoNodeTypeName );
-            //    if( null != LQNoNodeType )
-            //    {
-            //        CswNbtMetaDataNodeTypeProp LQNoProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicaNodeType, CswNbtMetaDataFieldType.NbtFieldType.Relationship, LQNoNodeType.NodeTypeName, HazardsTabName );
-            //        LQNoProp.SetFK( NbtViewPropIdType.NodeTypePropId.ToString(), LQNoNodeType.NodeTypeId );
-            //    }
+                    //CswNbtMetaDataNodeType Rel1SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "LQNo" );
+                    CswNbtViewRelationship Rel1 = LQPNoView.AddViewRelationship( LQNoNodeType, true );
+                    LQPNoView.save();
 
-            //}//if we have a chemcial node type
+                    LQNoProp.ViewId = LQPNoView.ViewId;
+                }
+
+            }//if we have a chemcial node type
+
 
 
 
