@@ -287,10 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             //case 28010 - delete all view assigned to this user
-            foreach( KeyValuePair<CswNbtViewId, CswNbtView> pair in _CswNbtResources.ViewSelect.getViewsByUserId( NodeId ) )
-            {
-                pair.Value.Delete();
-            }
+            _CswNbtResources.ViewSelect.deleteViewsByUserId( NodeId );
 
         }
 

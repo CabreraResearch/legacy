@@ -457,40 +457,26 @@ namespace ChemSW.Nbt
             return Ret;
         }
 
-        public Dictionary<CswNbtViewId, CswNbtView> getViewsByRoleId( CswPrimaryKey RoleNodeId )
+        public void deleteViewsByRoleId( CswPrimaryKey RoleNodeId )
         {
-            Dictionary<CswNbtViewId, CswNbtView> RoleViews = new Dictionary<CswNbtViewId, CswNbtView>();
-
-            CswTableSelect viewsSelect = _CswNbtResources.makeCswTableSelect( "getRoleViews_select", "node_views" );
-            DataTable node_views = viewsSelect.getTable( "where roleid = " + RoleNodeId.PrimaryKey.ToString() );
-
+            CswTableUpdate viewsUpdate = _CswNbtResources.makeCswTableUpdate( "getRoleViews_select", "node_views" );
+            DataTable node_views = viewsUpdate.getTable( "where roleid = " + RoleNodeId.PrimaryKey.ToString() );
             foreach( DataRow Row in node_views.Rows )
             {
-                CswNbtViewId viewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
-                CswNbtView view = new CswNbtView( _CswNbtResources );
-                view.LoadXml( Row["viewxml"].ToString() );
-                RoleViews.Add( viewId, view );
+                Row.Delete();
             }
-
-            return RoleViews;
+            viewsUpdate.update( node_views );
         }
 
-        public Dictionary<CswNbtViewId, CswNbtView> getViewsByUserId( CswPrimaryKey UserNodeId )
+        public void deleteViewsByUserId( CswPrimaryKey UserNodeId )
         {
-            Dictionary<CswNbtViewId, CswNbtView> RoleViews = new Dictionary<CswNbtViewId, CswNbtView>();
-
-            CswTableSelect viewsSelect = _CswNbtResources.makeCswTableSelect( "getRoleViews_select", "node_views" );
-            DataTable node_views = viewsSelect.getTable( "where userid = " + UserNodeId.PrimaryKey.ToString() );
-
+            CswTableUpdate viewsUpdate = _CswNbtResources.makeCswTableUpdate( "getUserViews_select", "node_views" );
+            DataTable node_views = viewsUpdate.getTable( "where userid = " + UserNodeId.PrimaryKey.ToString() );
             foreach( DataRow Row in node_views.Rows )
             {
-                CswNbtViewId viewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
-                CswNbtView view = new CswNbtView( _CswNbtResources );
-                view.LoadXml( Row["viewxml"].ToString() );
-                RoleViews.Add( viewId, view );
+                Row.Delete();
             }
-
-            return RoleViews;
+            viewsUpdate.update( node_views );
         }
 
     }
