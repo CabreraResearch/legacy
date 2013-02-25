@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
             int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.Containers );
             if( Int32.MinValue == moduleId )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString(), false );
+                _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString(), true );
             }
             _resetBlame();
         }
