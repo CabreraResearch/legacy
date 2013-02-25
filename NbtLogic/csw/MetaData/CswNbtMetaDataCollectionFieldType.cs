@@ -39,17 +39,17 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataFieldType( Resources, Row );
         }
 
-        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> getFieldTypeIds()
+        public Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> getFieldTypeIds()
         {
-            Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> ret = new Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32>();
+            Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> ret = new Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType>();
             Dictionary<string, Int32> FTDict = _CollImpl.getPkDict();
             foreach( string Key in FTDict.Keys )
             {
                 CswNbtMetaDataFieldType.NbtFieldType Ft = (CswNbtMetaDataFieldType.NbtFieldType) Key;
-                if( Ft != CswNbtResources.UnknownEnum &&
-                    false == ret.ContainsKey( Ft ) )
+                if( Ft != CswNbtResources.UnknownEnum && 
+                    false == ret.ContainsKey( FTDict[Key] ) )
                 {
-                    ret.Add( Ft, FTDict[Key] );
+                    ret.Add( FTDict[Key], Ft );
                 }
             }
             return ret;
@@ -68,6 +68,13 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataFieldType getFieldType( Int32 FieldTypeId )
         {
             return (CswNbtMetaDataFieldType) _CollImpl.getByPk( FieldTypeId );
+        }
+
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue( Int32 FieldTypeId )
+        {
+            // This fetches all of them at once.  This was done on purpose.
+            // This will actually perform better in any case where you need more than one.
+            return getFieldTypeIds()[FieldTypeId];
         }
 
         public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )

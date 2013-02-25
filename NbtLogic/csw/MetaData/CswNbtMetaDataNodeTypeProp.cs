@@ -311,7 +311,7 @@ namespace ChemSW.Nbt.MetaData
         public ICswNbtFieldTypeRule getFieldTypeRule()
         {
             if( _FieldTypeRule == null )
-                _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldType().FieldType );
+                _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldTypeValue() );
             return _FieldTypeRule;
         }
 
@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.MetaData
                     // This prop is missing a view, so make one
                     CswNbtView ThisView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
                     ThisView.saveNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
-                    if( this.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid )
+                    if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Grid )
                     {
                         // BZ 9203 - View starts with this property's nodetype at root
                         ThisView.AddViewRelationship( this.getNodeType(), true );
@@ -823,6 +823,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId );
         }
 
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeValue( FieldTypeId );
+        }
+
         public CswNbtMetaDataNodeType getNodeType()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( NodeTypeId );
@@ -1196,7 +1201,7 @@ namespace ChemSW.Nbt.MetaData
             CswNbtNodePropWrapper FilterProp = Node.Properties[FilterMetaDataProp];
 
             // Logical needs a special case
-            if( FilterMetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+            if( FilterMetaDataProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Logical )
             {
                 if( SubField.Name == CswNbtSubField.SubFieldName.Checked )
                 {
@@ -1218,7 +1223,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 string ValueToCompare = string.Empty;
 
-                switch( FilterMetaDataProp.getFieldType().FieldType )
+                switch( FilterMetaDataProp.getFieldTypeValue() )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.List:
                         ValueToCompare = FilterProp.AsList.Value;
@@ -1230,7 +1235,7 @@ namespace ChemSW.Nbt.MetaData
                         ValueToCompare = FilterProp.AsText.Text;
                         break;
                     default:
-                        throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldType().FieldType.ToString() );
+                        throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
                 } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                 if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
@@ -1359,11 +1364,11 @@ namespace ChemSW.Nbt.MetaData
                     {
                         CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[this];
 
-                        if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
+                        if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
                         {
                             CurrentNode.Properties[this].AsSequence.setSequenceValue();
                         }
-                        else if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
+                        else if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
                         {
                             CurrentNode.Properties[this].AsBarcode.setBarcodeValue();
                         }
@@ -1749,7 +1754,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUserRelationship()
         {
             bool ret = false;
-            if( this.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
             {
                 if( FKType != string.Empty )
                 {

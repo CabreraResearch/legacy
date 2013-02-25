@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Field Type primary keys
         /// </summary>
-        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> getFieldTypeIds()
+        public Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> getFieldTypeIds()
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds();
         }
@@ -258,6 +258,14 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataFieldType getFieldType( Int32 FieldTypeId )
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldType( FieldTypeId );
+        }
+
+        /// <summary>
+        /// Returns a CswNbtMetaDataFieldType based on the Field Type primary key provided
+        /// </summary>
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue( Int32 FieldTypeId )
+        {
+            return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeValue( FieldTypeId );
         }
 
         /// <summary>

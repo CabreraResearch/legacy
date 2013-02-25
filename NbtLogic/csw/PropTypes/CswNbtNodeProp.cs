@@ -146,6 +146,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtMetaDataNodeTypeProp.getFieldType() ); }
         /// <summary>
+        /// Reference to FieldType Meta Data object for this property
+        /// </summary>
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue() { return ( _CswNbtMetaDataNodeTypeProp.getFieldTypeValue() ); }
+        /// <summary>
         /// If the property derives from an Object Class Property, the Object Class Property's Primary Key
         /// </summary>
         public Int32 ObjectClassPropId
