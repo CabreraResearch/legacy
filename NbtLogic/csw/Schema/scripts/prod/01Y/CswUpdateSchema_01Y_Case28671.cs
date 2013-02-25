@@ -25,18 +25,19 @@ namespace ChemSW.Nbt.Schema
 
             //CswNbtObjClassMaterial MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            string UNCodeNodeTypeName = "UN Code";
+            CswNbtMetaDataNodeType UNCodeNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( UNCodeNodeTypeName );
+            if( null != UNCodeNodeType )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeType( UNCodeNodeType );
+            }
 
-            CswNbtMetaDataObjectClassProp UNCodeOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PropertyName.UNCode );
-
-            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( UNCodeOCP, true );
 
             //TO DO: In addition to the other meta data items on the spec, will need to change the field-type 
             //at the object-class prop level from relationship to text.
 
 
             //string ChemicalNodeTypeName = "Chemical";
-            //string UNCodeNodeTypeName = "UN Code";
             //string LQNoNodeTypeName = "LQNo";
             //string HazardsTabName = "Hazards";
 
