@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.MetaData
                                 }
                                 else
                                 {
-                                    PropName += " " + ObjectClassProp.getFieldType().FieldType.ToString();
+                                    PropName += " " + ObjectClassProp.getFieldTypeValue().ToString();
                                     PropName += " " + ObjectClassProp.ObjectClassPropId;
                                 }
                             } // while( KeepSearching )

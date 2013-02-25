@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtResources.EditMode != NodeEditMode.Add )
             {
                 CswNbtNodePropWrapper LocationWrapper = Node.Properties[PropertyName.Location];
-                string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
+                string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldTypeValue() ) ).NodeIdSubField.Column );
 
                 CswPrimaryKey PrevLocationPk = null;
                 CswPrimaryKey CurrLocationPk = null;

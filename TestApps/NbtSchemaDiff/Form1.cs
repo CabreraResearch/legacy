@@ -418,12 +418,12 @@ namespace ChemSW.NbtSchemaDiff
                 foreach( CswNbtNodePropWrapper RightPropWrapper in RightProps )
                 {
                     if( LeftPropWrapper.PropName == RightPropWrapper.PropName &&
-                        LeftPropWrapper.getFieldType().FieldType == RightPropWrapper.getFieldType().FieldType )
+                        LeftPropWrapper.getFieldTypeValue() == RightPropWrapper.getFieldTypeValue() )
                     {
                         MatchingRightProp = RightPropWrapper;
 
                         //bool SpecialCase = _CompareValue( Subfield.Name, LeftPropWrapper, RightPropWrapper, NodeMatches );
-                        CompareValueMatchCase SpecialCase = _CompareValue( LeftPropWrapper.getFieldType().FieldType, LeftPropWrapper, RightPropWrapper, NodeMatches );
+                        CompareValueMatchCase SpecialCase = _CompareValue( LeftPropWrapper.getFieldTypeValue(), LeftPropWrapper, RightPropWrapper, NodeMatches );
 
                         foreach( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.getFieldTypeRule().SubFields )
                         {

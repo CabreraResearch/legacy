@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             {
                                 foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                                                                         in Ret.Properties
-                                                                                    where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                                                                                    where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
                                                                                       ( ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
                                                                                           _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
                                                                                        ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             //Case 24023: Exclude buttons on Add
             return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
-                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
                 Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) &&
                 ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
         }
@@ -407,8 +407,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
                         HasSubProps = true;
-                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout =
-                            _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
+                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
                         JProperty JPFilterProp = makePropJson( Node.NodeId, TabId, FilterProp,
                                                                Node.Properties[FilterProp],
                                                                FilterPropLayout.DisplayRow,
@@ -463,7 +462,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             JObject PropObj = new JObject();
             //ParentObj["prop_" + PropIdAttr] = PropObj;
             JProperty ret = new JProperty( "prop_" + PropIdAttr, PropObj );
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.getFieldType().FieldType;
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
             PropObj["helptext"] = Prop.HelpText;

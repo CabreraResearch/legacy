@@ -74,7 +74,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             CswFieldTypeWebControl Control = null;
 
-            switch( MetaDataProp.getFieldType().FieldType )
+            switch( MetaDataProp.getFieldTypeValue() )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
                     Control = new CswBarcode( CswNbtResources, MetaDataProp, EditMode ); //, (EditMode == NodeEditMode.AddInPopup));

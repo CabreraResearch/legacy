@@ -996,7 +996,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswConvert.ToInt32(Quantity.Quantity) != 0)
                     {
                         CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr(_CswNbtResources);
-                        CswNbtSubField NodeId = ((CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule(Location.getFieldType().FieldType)).NodeIdSubField;
+                        CswNbtSubField NodeId = ((CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule(Location.getFieldTypeValue())).NodeIdSubField;
                         Int32 PrevLocationId = CswConvert.ToInt32(Node.Properties[PropertyName.Location].GetOriginalPropRowValue(NodeId.Column));
                         string Reason = "Container " + Barcode.Barcode + " moved to new location: " + Location.CachedNodeName;
                         if (Int32.MinValue != PrevLocationId)
@@ -1083,7 +1083,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == _InventoryLevelModified )
             {
                 CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                double PrevQuantity = CswConvert.ToDouble( Node.Properties[PropertyName.Quantity].GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( Quantity.getFieldType().FieldType ) ).QuantitySubField.Column ) );
+                double PrevQuantity = CswConvert.ToDouble( Node.Properties[PropertyName.Quantity].GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( Quantity.getFieldTypeValue() ) ).QuantitySubField.Column ) );
                 if( false == CswTools.IsDouble( PrevQuantity ) )
                 {
                     PrevQuantity = 0;
