@@ -69,21 +69,27 @@ namespace ChemSW.Nbt.Schema
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
                     ShowInGrid: false );
 
-                missingContainersView.AddViewPropertyAndFilter( containerParent,
-                    MetaDataProp: disposedOCP,
-                    Value: false.ToString(),
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                    ShowInGrid: false );
+                CswNbtViewProperty barcodeVP = missingContainersView.AddViewProperty( containerParent, barcodeOCP );
+                barcodeVP.Order = 1;
 
-                missingContainersView.AddViewProperty( containerParent, barcodeOCP );
-                missingContainersView.AddViewProperty( containerParent, expDateOCP );
-                missingContainersView.AddViewProperty( containerParent, quantityOCP );
-                missingContainersView.AddViewProperty( containerParent, locationOCP );
+                CswNbtViewProperty expDateVP = missingContainersView.AddViewProperty( containerParent, expDateOCP );
+                expDateVP.Order = 2;
+
+                CswNbtViewProperty quantVP = missingContainersView.AddViewProperty( containerParent, quantityOCP );
+                quantVP.Order = 3;
+
+                CswNbtViewProperty locationVP = missingContainersView.AddViewProperty( containerParent, locationOCP );
+                locationVP.Order = 4;
 
                 CswNbtViewRelationship materialParent = missingContainersView.AddViewRelationship( containerParent, NbtViewPropOwnerType.First, materialOCP, true );
-                missingContainersView.AddViewProperty( materialParent, tradeNameOCP );
-                missingContainersView.AddViewProperty( materialParent, partNoOCP );
-                missingContainersView.AddViewProperty( materialParent, supplierOCP );
+                CswNbtViewProperty tradeNameVP = missingContainersView.AddViewProperty( materialParent, tradeNameOCP );
+                tradeNameVP.Order = 5;
+
+                CswNbtViewProperty partNoVP = missingContainersView.AddViewProperty( materialParent, partNoOCP );
+                partNoVP.Order = 6;
+
+                CswNbtViewProperty supplierVP = missingContainersView.AddViewProperty( materialParent, supplierOCP );
+                supplierVP.Order = 7;
 
                 missingContainersView.save();
             }
