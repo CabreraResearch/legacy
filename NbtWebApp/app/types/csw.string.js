@@ -166,6 +166,7 @@
             };
 
             (function (a) { //ctor
+                Csw.extend(cswPrivate, opts);
                 if (a.length > 1 && false === Csw.isPlainObject(opts)) {
                     Csw.each(a, function (val) {
                         if (false === Csw.isNullOrEmpty(val)) {
@@ -177,7 +178,6 @@
                     cswPrivate.initString = delimitedString;
                     cswPublic.array = delimitedString.split(cswPrivate.delimiter);
                 }
-                Csw.extend(cswPrivate, opts);
                 cswPrivate.deleteDuplicates();
             }(arguments));
             return cswPublic;
