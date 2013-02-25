@@ -26,7 +26,10 @@ namespace ChemSW.Nbt
 
         public void clear()
         {
-            _CswTableUpdateNodes.clear();
+            if( null != _CswTableUpdateNodes )
+            {
+                _CswTableUpdateNodes.clear();
+            }
         }//clear()
 
         public CswNbtNodeWriterNative( CswNbtResources CswNbtResources )

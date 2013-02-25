@@ -475,26 +475,7 @@ namespace ChemSW.Nbt.Schema
         }
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
         public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
-        public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility = null )
-        {
-            CswNbtView ReturnVal = null;
-
-            List<CswNbtView> AllViews = restoreViews( ViewName );
-            if( 1 == AllViews.Count )
-            {
-                ReturnVal = AllViews[0];
-            }
-            else if( AllViews.Count > 1 )
-            {
-                List<CswNbtView> VisibilityViews = AllViews.Where(View => View.Visibility == Visibility).ToList();
-                if( 1 == VisibilityViews.Count )
-                {
-                    ReturnVal = VisibilityViews[0];
-                }
-            }
-
-            return ( ReturnVal );
-        }//restoreView() 
+        public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
 
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, false ); }
         public List<CswNbtView> restoreViews( string ViewName )

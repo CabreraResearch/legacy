@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             if( null != Tab )
             {
-                if( Tab.getNodeTypePropsByDisplayOrder().Any() )
+                if( _ConfigMode || Tab.getNodeTypePropsByDisplayOrder().Any() )
                 {
                     _makeTab( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout );
                 }

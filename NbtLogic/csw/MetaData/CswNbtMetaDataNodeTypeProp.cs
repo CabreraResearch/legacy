@@ -416,7 +416,7 @@ namespace ChemSW.Nbt.MetaData
             bool Ret = false;
             if( null != Layout )
             {
-                if( Int32.MinValue == Layout.PropId ||
+                if( Int32.MinValue != Layout.PropId &&
                     ( Layout.PropId == this.PropId ||
                       Layout.PropId == this.FirstPropVersionId ||
                       Layout.PropId == this.getNodeTypePropLatestVersion().PropId ) )
