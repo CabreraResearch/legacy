@@ -248,7 +248,7 @@ namespace CswPrintClient1
         private void SaveSettings()
         {
             CswEncryption _CswEncryption = new CswEncryption( string.Empty );
-            _CswEncryption.Method = EncryptionMethod.TypeOne;
+            _CswEncryption.Method = EncryptionMethod.TypeZero;
 
             Application.CommonAppDataRegistry.SetValue( "LPCname", tbLPCname.Text );
             Application.CommonAppDataRegistry.SetValue( "Enabled", cbEnabled.Checked.ToString() );
@@ -257,12 +257,12 @@ namespace CswPrintClient1
             Application.CommonAppDataRegistry.SetValue( "description", tbDescript.Text );
             Application.CommonAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
             Application.CommonAppDataRegistry.SetValue( "logon", tbUsername.Text );
-            string pwd = "";
-            if( tbPassword.Text.Length > 0 )
+            String pwd = tbPassword.Text;
+            if( pwd.Length > 0 )
             {
-                pwd = _CswEncryption.encrypt( tbPassword.Text );
+                pwd = _CswEncryption.encrypt( pwd );
             }
-            Application.CommonAppDataRegistry.SetValue( "password", pwd );
+            Application.CommonAppDataRegistry.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
             if( tbURL.Modified && tbURL.Text == string.Empty )
             {
                 tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
@@ -285,8 +285,8 @@ namespace CswPrintClient1
                 tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
                 tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
                 tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
-                string pwd = Application.CommonAppDataRegistry.GetValue( "password" ).ToString();
-                //pwd = "pb0J8NLNMoSQKaX3Q5qBNA=="; //unencrypted is "a_nbt"
+                String pwd = Application.CommonAppDataRegistry.GetValue( "password" ).ToString();
+                pwd = pwd.Replace( "\0", string.Empty );
                 try
                 {
                     tbPassword.Text = _CswEncryption.decrypt( pwd );
