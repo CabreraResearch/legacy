@@ -343,6 +343,29 @@ namespace ChemSW.Nbt
             RuleUpdate.update( RuleDt );
         }
 
+        public void ToggleReportNodes( string Category, bool Hidden )
+        {
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClassProp categoryOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Category );
+
+            CswNbtView reportsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = reportsView.AddViewRelationship( reportOC, false );
+            reportsView.AddViewPropertyAndFilter( parent, categoryOCP,
+                Value: Category,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            ICswNbtTree reportsTree = _CswNbtResources.Trees.getTreeFromView( reportsView, false, true, true );
+            int childCount = reportsTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                reportsTree.goToNthChild( i );
+                CswNbtNode reportNode = reportsTree.getNodeForCurrentPosition();
+                reportNode.Hidden = Hidden;
+                reportNode.postChanges( false );
+                reportsTree.goToParentNode();
+            }
+        }
+
     } // class CswNbtModuleManager
 
 }// namespace ChemSW.Nbt
