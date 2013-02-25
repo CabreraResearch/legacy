@@ -5,9 +5,10 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt
 {
@@ -345,6 +346,17 @@ namespace ChemSW.Nbt
                 row["showinlist"] = CswConvert.ToDbVal( showInList );
             }
             actionTU.update( actionsDT );
+        }
+
+        public void ToggleScheduledRule( NbtScheduleRuleNames RuleName, bool Disabled )
+        {
+            CswTableUpdate RuleUpdate = _CswNbtResources.makeCswTableUpdate( "toggleScheduledRule", "scheduledrules" );
+            DataTable RuleDt = RuleUpdate.getTable( "where lower(rulename) = '" + RuleName.ToString().ToLower() + "'" );
+            foreach( DataRow row in RuleDt.Rows )
+            {
+                row["disabled"] = CswConvert.ToDbVal( Disabled );
+            }
+            RuleUpdate.update( RuleDt );
         }
 
         public void ToggleReportNodes( string Category, bool Hidden )

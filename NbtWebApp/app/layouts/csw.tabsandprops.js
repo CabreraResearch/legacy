@@ -59,6 +59,7 @@
                 showTitle: true,
                 onNodeIdSet: null,
                 onSave: null,
+                onSaveError: null,
                 ReloadTabOnSave: true,
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
@@ -1165,7 +1166,6 @@
 
             cswPublic.save = Csw.method(function (tabContentDiv, tabid, onSuccess, async, reloadTabOnSave) {
                 'use strict';
-
                 // This basically sets a default for reloadOnTabSave:
                 // if there is no value, we default to cswPrivate.ReloadTabOnSave
                 if (typeof reloadTabOnSave == 'undefined') {
@@ -1212,14 +1212,18 @@
                             } else {
                                 cswPublic.copy(onSaveSuccess);
                             }
-
                         }, // success
-                        error: cswPrivate.enableSaveBtn
+                        error: function (errorData) {
+                            cswPrivate.enableSaveBtn();
+                            Csw.tryExec(cswPrivate.onSaveError, errorData);
+                        }
                     }); // ajax
                 } // if(cswPrivate.isValid())
                 else {
                     cswPrivate.enableSaveBtn();
                 }
+
+                //return ret;
             }); // Save()
 
             //#endregion commit

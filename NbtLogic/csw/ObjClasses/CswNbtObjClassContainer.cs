@@ -849,6 +849,31 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // _setDisposedReadOnly()
 
+        private bool _checkStorageCompatibility()
+        {
+            bool Ret = true;
+
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( MaterialNode != null )
+            {
+                // case 24488 - When Location is modified, verify that:
+                //  the Material's Storage Compatibility is null,
+                //  or the Material's Storage Compatibility is one the selected values in the new Location.
+                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
+                CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
+                if( null != locationNode ) //what if the user didn't specify a location?
+                {
+                    CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatibility];
+                    if( false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
+                    {
+                        Ret = false;
+                    }
+                }
+            }
+
+            return Ret;
+        }
+
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
             //if storage compatibility on the material is null, it can go anywhere
@@ -956,26 +981,13 @@ namespace ChemSW.Nbt.ObjClasses
             // This method is being called multiple times so this was added
             if (CswTools.IsPrimaryKey(Location.SelectedNodeId) && (Location.GetOriginalPropRowValue() != Location.SelectedNodeId.ToString()))
             {
-
-                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode(Material.RelatedNodeId);
-                if (MaterialNode != null)
+                if (false == _checkStorageCompatibility())
                 {
-                    // case 24488 - When Location is modified, verify that:
-                    //  the Material's Storage Compatibility is null,
-                    //  or the Material's Storage Compatibility is one the selected values in the new Location.
-                    CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
-                    CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode(Location.SelectedNodeId);
-                    if (null != locationNode) //what if the user didn't specify a location?
-                    {
-                        CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatibility];
-                        if (false == _isStorageCompatible(materialStorageCompatibilty.Value, locationStorageCompatibility.Value))
-                        {
-                            throw new CswDniException(ErrorType.Warning,
-                                                      "Storage compatibilities do not match, cannot move this container to specified location",
-                                                      "Storage compatibilities do not match, cannot move this container to specified location");
-                        }
-                    }
+                    throw new CswDniException( ErrorType.Warning,
+                                              "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location.",
+                                              "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location." );
                 }
+
                 if (CswTools.IsPrimaryKey(Location.SelectedNodeId) &&
                     false == string.IsNullOrEmpty(Location.CachedNodeName) &&
                     Location.CachedNodeName != CswNbtNodePropLocation.GetTopLevelName(_CswNbtResources))
