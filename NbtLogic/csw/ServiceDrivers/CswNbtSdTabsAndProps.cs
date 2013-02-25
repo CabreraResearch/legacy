@@ -739,17 +739,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
 
-                    //This is used in the Create Material Wizard to determine whether to reinit Step 3 --
-                    //  --If the Physical State was changed, then we reinit
-                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
-                    {
-                        CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-                        if( NodeType.ObjectClassId == MaterialOC.ObjectClassId )
-                        {
-                            CswNbtObjClassMaterial MaterialNode = Node;
-                            ret["physicalstatemodified"] = MaterialNode.PhysicalState.WasModified;
-                        }
-                    }
                 }
             }
             return ret;

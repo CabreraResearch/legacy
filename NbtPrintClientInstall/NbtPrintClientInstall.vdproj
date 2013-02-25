@@ -21,8 +21,26 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A7AB76C5152D6716FFC32F6F528955E9"
+        "OwnerKey" = "8:_374984A58E6B4A8985E2886458A3F2E7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DE0ABE5078434B5A817FA12274B2F555"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_374984A58E6B4A8985E2886458A3F2E7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A7AB76C5152D6716FFC32F6F528955E9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -70,7 +88,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\..\\NbtWebApp\\NbtPrintClient\\NbtPrintClientInstall.msi"
+        "OutputFilename" = "8:..\\NbtWebApp\\NbtPrintClient\\NbtPrintClientInstall.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -130,6 +148,57 @@
         }
         "File"
         {
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A7AB76C5152D6716FFC32F6F528955E9"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:CswCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_A7AB76C5152D6716FFC32F6F528955E9"
+                    {
+                    "Name" = "8:CswCore.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:CswCore.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE0ABE5078434B5A817FA12274B2F555"
+            {
+            "SourcePath" = "8:..\\NbtPrintClient\\print.ico"
+            "TargetName" = "8:print.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -196,22 +265,22 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:CswPrintClientInstall"
+        "ProductName" = "8:NbtPrintClient"
         "ProductCode" = "8:{25D55C18-6B9B-4167-B9FB-167E9A8C8E70}"
-        "PackageCode" = "8:{4B2E4669-18B0-4603-A776-ADE7BAF8E4EA}"
+        "PackageCode" = "8:{3B460106-7C3F-442E-8172-2ACE50E79E09}"
         "UpgradeCode" = "8:{CDDC3F6A-838B-48A8-8D42-B7E093061F1A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:ChemSW, Inc."
+        "ProductVersion" = "8:1.4.0"
+        "Manufacturer" = "8:ChemSW"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:CswPrintClientInstall"
+        "Title" = "8:NbtPrintClient"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:ChemSW, Inc."
+        "ARPCONTACT" = "8:ChemSW"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:ChemSW Label Printer Client for Windows"
         "ARPURLINFOABOUT" = "8:http://www.chemsw.com"
@@ -329,7 +398,7 @@
             "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
             "Folder" = "8:_511576A006FB41278FBC9ABBC2473C69"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Icon" = "8:"
+            "Icon" = "8:_DE0ABE5078434B5A817FA12274B2F555"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_76432E082AFD4047AF07D6C390DF31AF"
@@ -343,7 +412,7 @@
             "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
             "Folder" = "8:_84AF7FB0CAA745E3BDC51C23DF2377C2"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Icon" = "8:"
+            "Icon" = "8:_DE0ABE5078434B5A817FA12274B2F555"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B361F542957F481DB11DE52D598208BE"
@@ -357,7 +426,7 @@
             "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
             "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Icon" = "8:"
+            "Icon" = "8:_DE0ABE5078434B5A817FA12274B2F555"
             "Feature" = "8:"
             }
         }
@@ -761,7 +830,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_374984A58E6B4A8985E2886458A3F2E7"
             {
-            "SourcePath" = "8:..\\NbtPrintClient\\obj\\Debug\\CswPrintClient1.exe"
+            "SourcePath" = "8:..\\NbtPrintClient\\obj\\Debug\\NbtPrintClient.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
