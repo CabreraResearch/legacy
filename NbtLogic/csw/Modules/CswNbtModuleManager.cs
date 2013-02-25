@@ -434,8 +434,11 @@ namespace ChemSW.Nbt
         public void AddPropToFirstTab( int NodeTypeId, string PropName, int Row = Int32.MinValue, int Col = Int32.MinValue )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            CswNbtMetaDataNodeTypeTab firstNTT = NodeType.getFirstNodeTypeTab();
-            AddPropToTab( NodeTypeId, PropName, firstNTT, Row, Col );
+            if( null != NodeType )
+            {
+                CswNbtMetaDataNodeTypeTab firstNTT = NodeType.getFirstNodeTypeTab();
+                AddPropToTab( NodeTypeId, PropName, firstNTT, Row, Col );
+            }
         }
 
         public void AddPropToTab( int NodeTypeId, string PropName, CswNbtMetaDataNodeTypeTab Tab, int Row = Int32.MinValue, int Col = Int32.MinValue )
