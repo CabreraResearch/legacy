@@ -53,14 +53,14 @@ namespace ChemSW.Nbt
             //Case 27864 on enable show Material props...
             //   Manufacturing Sites
             //   UN Code
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-            foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
-                CswNbtMetaDataNodeTypeTab HazardsTab = materialNT.getNodeTypeTab( "Hazards" );
-                int TabId = HazardsTab != null ? HazardsTab.TabId : materialNT.getFirstNodeTypeTab().TabId;
-                uNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId );
-            }
+            //CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            //foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+            //{
+            //    CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+            //    CswNbtMetaDataNodeTypeTab HazardsTab = materialNT.getNodeTypeTab( "Hazards" );
+            //    int TabId = HazardsTab != null ? HazardsTab.TabId : materialNT.getFirstNodeTypeTab().TabId;
+            //    uNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId );
+            //}
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
@@ -138,12 +138,12 @@ namespace ChemSW.Nbt
             //Case 27864 on enable hide Material props...
             //   Manufacturing Sites
             //   UN Code
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-            foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
-                uNCodeNTP.removeFromAllLayouts();
-            }
+            //CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            //foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+            //{
+            //    CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+            //    uNCodeNTP.removeFromAllLayouts();
+            //}
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
