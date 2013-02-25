@@ -216,7 +216,7 @@
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                         cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });
-                    } else {
+                    } else if (cswPrivate.options.length > 0) {
                         // case 28918 - select the first option, and trigger the change event
                         handleChange();
                     }
