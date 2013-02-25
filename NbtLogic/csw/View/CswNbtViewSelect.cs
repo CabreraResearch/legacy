@@ -475,5 +475,23 @@ namespace ChemSW.Nbt
             return RoleViews;
         }
 
+        public Dictionary<CswNbtViewId, CswNbtView> getViewsByUserId( CswPrimaryKey UserNodeId )
+        {
+            Dictionary<CswNbtViewId, CswNbtView> RoleViews = new Dictionary<CswNbtViewId, CswNbtView>();
+
+            CswTableSelect viewsSelect = _CswNbtResources.makeCswTableSelect( "getRoleViews_select", "node_views" );
+            DataTable node_views = viewsSelect.getTable( "where userid = " + UserNodeId.PrimaryKey.ToString() );
+
+            foreach( DataRow Row in node_views.Rows )
+            {
+                CswNbtViewId viewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
+                CswNbtView view = new CswNbtView( _CswNbtResources );
+                view.LoadXml( Row["viewxml"].ToString() );
+                RoleViews.Add( viewId, view );
+            }
+
+            return RoleViews;
+        }
+
     }
 }

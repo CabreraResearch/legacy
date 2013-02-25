@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -284,6 +285,13 @@ namespace ChemSW.Nbt.ObjClasses
                                                _CswNbtResources.CurrentUser.Username + ") is not an administrator." ) );
                 }
             }
+
+            //case 28010 - delete all view assigned to this user
+            foreach( KeyValuePair<CswNbtViewId, CswNbtView> pair in _CswNbtResources.ViewSelect.getViewsByUserId( NodeId ) )
+            {
+                pair.Value.Delete();
+            }
+
         }
 
         //beforeDeleteNode()
