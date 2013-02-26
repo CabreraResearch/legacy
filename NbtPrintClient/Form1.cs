@@ -313,7 +313,7 @@ namespace CswPrintClient1
                     lblStatus.Text = "Waiting...";
                 }
             }
-            catch( Exception e )
+            catch( Exception )
             {
                 Log( "No configuration data found." );
                 lblStatus.Text = "Use Setup tab.";
