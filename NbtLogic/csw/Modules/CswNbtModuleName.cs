@@ -61,6 +61,10 @@ namespace ChemSW.Nbt
         /// Containers
         /// </summary>
         public static readonly CswNbtModuleName Containers = new CswNbtModuleName( "Containers" );
+        /// <summary>
+        /// Regulatory Lists
+        /// </summary>
+        public static readonly CswNbtModuleName RegulatoryLists = new CswNbtModuleName( "Regulatory Lists" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt
