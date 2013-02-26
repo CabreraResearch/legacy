@@ -21,7 +21,7 @@ namespace CswPrintClient1
         public ConfirmEvent onOk = null;
         public ConfirmEvent onCancel = null;
 
-        public string Text
+        public override string Text
         {
             set { lblText.Text = value; }
         }

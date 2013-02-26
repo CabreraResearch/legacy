@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
                         UoMNode.ConversionFactor.Base = 2.83495231;
                         UoMNode.ConversionFactor.Exponent = -2;
                         break;
-                    case "ml":
+                    case "mL":
                         UoMNode.ConversionFactor.Base = 1.0;
                         UoMNode.ConversionFactor.Exponent = -3;
                         break;
