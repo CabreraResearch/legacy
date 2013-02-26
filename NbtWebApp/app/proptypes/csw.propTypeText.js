@@ -55,7 +55,6 @@
                         }
 
                         $.validator.addMethod("text_regex_validate", function () {
-                            debugger;
                             var regex_obj = new RegExp(cswPrivate.regex);
                             return ( true ==  regex_obj.test(cswPrivate.value) );
                         }, Message);
