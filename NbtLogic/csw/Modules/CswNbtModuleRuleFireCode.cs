@@ -69,11 +69,6 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
-            }
-
             //Hide the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
