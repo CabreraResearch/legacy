@@ -33,10 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWcfServices", "NbtWcfSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructureSearch", "..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj", "{E9156C9A-605E-4F21-8BB1-0970DA055FF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtPrintClient", "NbtPrintClient\NbtPrintClient.csproj", "{6D195BB6-1566-46C7-A500-1C55EB9ACD99}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NbtPrintClientInstall", "NbtPrintClientInstall\NbtPrintClientInstall.vdproj", "{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -245,26 +241,6 @@ Global
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.ActiveCfg = Release|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.Build.0 = Release|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x86.ActiveCfg = Release|x64
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x64.Build.0 = Debug|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Debug|x86.ActiveCfg = Debug|x86
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x64.ActiveCfg = Release|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x64.Build.0 = Release|Any CPU
-		{6D195BB6-1566-46C7-A500-1C55EB9ACD99}.Release|x86.ActiveCfg = Release|x86
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Debug|Any CPU.ActiveCfg = Debug
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Debug|Mixed Platforms.ActiveCfg = Debug
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Debug|x64.ActiveCfg = Debug
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Debug|x86.ActiveCfg = Debug
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Release|Any CPU.ActiveCfg = Release
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Release|Mixed Platforms.ActiveCfg = Release
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Release|x64.ActiveCfg = Release
-		{95BE4FDE-2AF9-44A1-993D-A1F3DF9E6A8C}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

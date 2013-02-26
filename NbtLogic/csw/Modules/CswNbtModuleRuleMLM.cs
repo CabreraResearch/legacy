@@ -19,6 +19,10 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
             }
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            {
+                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.Containers );
+            }
 
             //Turn on all views in the MLM (demo) category
             _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", NbtViewVisibility.Global );

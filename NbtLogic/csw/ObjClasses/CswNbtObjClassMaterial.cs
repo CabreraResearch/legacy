@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Liquid = "liquid";
             public const string Solid = "solid";
             public const string Gas = "gas";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, NA };
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, Gas, NA };
         }
 
         public sealed class Requests

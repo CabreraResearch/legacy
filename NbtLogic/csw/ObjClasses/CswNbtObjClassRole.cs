@@ -184,6 +184,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
             }
+
+            //case 28010 - delete all view assigned to this role
+            _CswNbtResources.ViewSelect.deleteViewsByRoleId( NodeId );
+
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
