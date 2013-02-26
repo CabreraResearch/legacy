@@ -1078,6 +1078,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                                            ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
                                            : CswConvert.ToPrimaryKey( SelectedNodeId );
             CswNbtMetaDataNodeType LocationNT = _CswNbtResources.MetaData.getNodeType( "Site" );
+            if( null == LocationNT )
+            {
+                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                LocationNT = LocationOC.FirstNodeType;
+            }
             CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LocationNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             LocationNode.Location.SelectedNodeId = LocationId;
             LocationNode.Location.RefreshNodeName();
