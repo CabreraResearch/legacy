@@ -52,7 +52,8 @@ namespace ChemSW.Nbt.Schema
 
                     UnCodeProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
-                    UnCodeProp.Attribute3 = "UN[0-9]{4}"; //set regex attribute
+                    UnCodeProp.Attribute3 = "UN[0-9]{4}$"; //set regex attribute
+                    UnCodeProp.Attribute4 = "Format of UN Code is 'UN####' !"; //set regex attribute
 
                 }//if we have a uncode 
 

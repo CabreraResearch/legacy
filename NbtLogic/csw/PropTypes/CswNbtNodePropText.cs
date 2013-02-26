@@ -93,6 +93,14 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public string RegExMsg
+        {
+            get
+            {
+                return ( _CswNbtMetaDataNodeTypeProp.Attribute4 ); 
+            }
+        }
+
 
         public override string ValueForNameTemplate
         {
@@ -108,6 +116,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["size"] = Size.ToString();
             ParentObject["maxlength"] = MaxLength.ToString();
             ParentObject["regex"] = RegEx;
+            ParentObject["regexmsg"] = RegExMsg;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
