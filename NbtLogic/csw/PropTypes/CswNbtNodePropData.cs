@@ -535,7 +535,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool PendingUpdate
         {
             get { return _getRowBoolVal( CswNbtSubField.PropColumn.PendingUpdate ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.PendingUpdate, value ); }
+            set { SetPropRowValue( CswNbtSubField.PropColumn.PendingUpdate, value, IsNonModifying: true ); }
         }
 
         public string Gestalt
