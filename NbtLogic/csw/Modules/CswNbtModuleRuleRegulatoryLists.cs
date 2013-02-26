@@ -25,11 +25,25 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
             }
 
+            //Show the following Material properties
+            //   Regulatory Lists
+            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( MaterialOC_Id ) )
+            {
+                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
+            }
 
         }
 
         public override void OnDisable()
         {
+            //Hide the following Material properties
+            //   Regulatory Lists
+            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( MaterialOC_Id ) )
+            {
+                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
+            }
 
         } // OnDisable()
 
