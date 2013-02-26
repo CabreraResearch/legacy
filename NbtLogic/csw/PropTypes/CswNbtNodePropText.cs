@@ -85,6 +85,15 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public string RegEx
+        {
+            get
+            {
+                return ( _CswNbtMetaDataNodeTypeProp.Attribute3 ); 
+            }
+        }
+
+
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
@@ -98,6 +107,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject["size"] = Size.ToString();
             ParentObject["maxlength"] = MaxLength.ToString();
+            ParentObject["regex"] = RegEx;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
