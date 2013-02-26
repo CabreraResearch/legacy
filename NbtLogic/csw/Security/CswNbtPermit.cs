@@ -381,6 +381,9 @@ namespace ChemSW.Nbt.Security
 
         #region NodeTypes
 
+        /// <summary>
+        /// Does this User have this NodeTypePermission on this nodetype?
+        /// </summary>
         public bool canNodeType( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null )
         {
             _initPermissionInfo( null, User, NodeType, Permission );
@@ -411,10 +414,6 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Does this User have this NodeTypePermission on this nodetype?
         /// </summary>
-        /// <param name="Permission"></param>
-        /// <param name="NodeType"></param>
-        /// <param name="User"></param>
-        /// <returns></returns>
         public bool canNodeType( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role )
         {
             _initPermissionInfo( Role, null, NodeType, Permission );
@@ -444,8 +443,9 @@ namespace ChemSW.Nbt.Security
 
         }//canNodeType() 
 
-
-
+        /// <summary>
+        /// Private logic behind canNodeType
+        /// </summary>
         private bool _CanNodeTypeImpl()
         {
             bool ret = _CswNbtPermitInfo.NoExceptionCases;
@@ -470,8 +470,10 @@ namespace ChemSW.Nbt.Security
             return ( ret );
 
         } // _CanNodeTypeImpl()
-
-
+        
+        /// <summary>
+        /// Determines if the User has permission on this Tab (and only this Tab)
+        /// </summary>
         public bool canTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, ICswNbtUser User = null )
         {
             _initPermissionInfo( null, User, NodeType, Permission );
@@ -499,7 +501,9 @@ namespace ChemSW.Nbt.Security
 
         }//catTab() 
 
-
+        /// <summary>
+        /// Determines if the Role has permission on this Tab (and only this Tab)
+        /// </summary>
         public bool canTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtObjClassRole Role )
         {
             _initPermissionInfo( Role, null, NodeType, Permission );
@@ -529,8 +533,9 @@ namespace ChemSW.Nbt.Security
 
         }//catTab() 
 
-
-
+        /// <summary>
+        /// Private logic behind canTab
+        /// </summary>
         private bool _canTabImpl( CswNbtMetaDataNodeTypeTab NodeTypeTab )
         {
 
@@ -559,7 +564,9 @@ namespace ChemSW.Nbt.Security
 
         }//_canTablImpl()
 
-
+        /// <summary>
+        /// Determines if the User has permission on the NodeType or any Tab on the NodeType
+        /// </summary>
         public bool canAnyTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null )
         {
             _initPermissionInfo( null, User, NodeType, Permission );
@@ -568,7 +575,9 @@ namespace ChemSW.Nbt.Security
 
         }//canAnyTab() 
 
-
+        /// <summary>
+        /// Determines if the Role has permission on the NodeType or any Tab on the NodeType
+        /// </summary>
         public bool canAnyTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role )
         {
             _initPermissionInfo( Role, null, NodeType, Permission );
@@ -577,7 +586,9 @@ namespace ChemSW.Nbt.Security
 
         }//canAnyTab() 
 
-
+        /// <summary>
+        /// Private logic behind canAnyTab
+        /// </summary>
         private bool _canAnyTabImpl()
         {
             bool ret = _CswNbtPermitInfo.IsUberUser;
@@ -622,7 +633,9 @@ namespace ChemSW.Nbt.Security
 
         }//_canAnyTab()
 
-
+        /// <summary>
+        /// Determines if the Property is editable
+        /// </summary>
         public bool isPropWritable( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeTab MetaDataTab, CswNbtNodePropWrapper NodePropWrapper = null, ICswNbtUser User = null )
         {
             bool ret = ( null != MetaDataProp );
@@ -653,6 +666,9 @@ namespace ChemSW.Nbt.Security
 
         }//isPropWritable
 
+        /// <summary>
+        /// Determines if the Property is editable
+        /// </summary>
         public bool isPropWritable( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeTab MetaDataTab, CswNbtNodePropWrapper NodePropWrapper, CswNbtObjClassRole Role )
         {
             bool ret = ( null != MetaDataProp );
