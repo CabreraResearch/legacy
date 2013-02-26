@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Button click event for derived classes to implement
         /// </summary>
-        public abstract bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData );
+        public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
 
         /// <summary>
         /// Status change event for derived classes to implement
@@ -359,10 +359,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if ( null != ButtonData.NodeTypeProp && null != OCP )
+            if ( null != ButtonData.NodeTypeProp )
             {
-                switch ( OCP.PropName )
+                switch ( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:
                         switch ( ButtonData.SelectedText )
@@ -382,7 +381,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                 }
-                Ret = onPropertySetButtonClick( OCP, ButtonData );
+                Ret = onPropertySetButtonClick( ButtonData );
                 postChanges( ForceUpdate: false );
             }
 

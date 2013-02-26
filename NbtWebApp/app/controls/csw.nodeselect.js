@@ -55,6 +55,7 @@
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
                 cswPrivate.isClickable = cswPrivate.isClickable; // ||true;
                 cswPrivate.useSearch = cswPrivate.useSearch;
+                cswPrivate.usePreview = cswPrivate.usePreview;
                 cswPrivate.options = cswPrivate.options || [];
 
                 cswPublic = cswParent.div();
@@ -462,21 +463,23 @@
                     }
                 } // if-else (o.ReadOnly) {
 
-                cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
-                cswPublic.$.hover(
-                   function(event) {
-                        Csw.nodeHoverIn(event, {
-                            nodeid: cswPrivate.selectedNodeId,
-                            nodename: cswPrivate.selectedName,
-                            parentDiv: cswPrivate.table.cell(1,cswPrivate.previewCellCol),
-                            useAbsolutePosition: false,
-                            rightpad: 0
-                        });
-                    },
-                    function(event) {
-                        Csw.nodeHoverOut();
-                    }
-                );
+                if (false !== cswPrivate.usePreview) {
+                    cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
+                    cswPublic.$.hover(
+                        function(event) {
+                            Csw.nodeHoverIn(event, {
+                                nodeid: cswPrivate.selectedNodeId,
+                                nodename: cswPrivate.selectedName,
+                                parentDiv: cswPrivate.table.cell(1, cswPrivate.previewCellCol),
+                                useAbsolutePosition: false,
+                                rightpad: 0
+                            });
+                        },
+                        function(event) {
+                            Csw.nodeHoverOut();
+                        }
+                    );
+                }
             } ());
 
             return cswPublic;

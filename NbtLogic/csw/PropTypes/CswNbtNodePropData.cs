@@ -535,7 +535,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool PendingUpdate
         {
             get { return _getRowBoolVal( CswNbtSubField.PropColumn.PendingUpdate ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.PendingUpdate, value ); }
+            set { SetPropRowValue( CswNbtSubField.PropColumn.PendingUpdate, value, IsNonModifying: true ); }
         }
 
         public string Gestalt
@@ -569,7 +569,7 @@ namespace ChemSW.Nbt.PropTypes
         public void copy( CswNbtNodePropData Source )
         {
             //Implementing FieldType specific behavior here. Blame Steve.
-            if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
+            if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
             {
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
                 CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );

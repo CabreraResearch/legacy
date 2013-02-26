@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeType LabSafetyLatest = LabSafetyCheckListNt.getNodeTypeLatestVersion();
                 foreach ( CswNbtMetaDataNodeTypeProp NodeTypeProp in LabSafetyLatest.getNodeTypeProps() )
                 {
-                    if(NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question)
+                    if(NodeTypeProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Question)
                     {
                         CswCommaDelimitedString AllowedAnswers = new CswCommaDelimitedString();
                         AllowedAnswers.FromString(NodeTypeProp.ListOptions);
