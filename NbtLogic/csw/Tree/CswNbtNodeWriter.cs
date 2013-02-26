@@ -142,7 +142,7 @@ namespace ChemSW.Nbt
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
-                CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldType().FieldType;
+                CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
                 if( FT == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                 {
                     Prop.AsBarcode.setBarcodeValue();  // does not overwrite
