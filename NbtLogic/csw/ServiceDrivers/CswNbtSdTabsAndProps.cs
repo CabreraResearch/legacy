@@ -678,12 +678,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                             if( null != Node )
                             {
                                 bool CanEdit = (
-                                                   _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
                                                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
                                                    _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
                                                    _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, Node.NodeId )
-
-
                                                );
                                 if( CanEdit )
                                 {
