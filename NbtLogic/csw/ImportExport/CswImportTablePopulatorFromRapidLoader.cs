@@ -387,7 +387,6 @@ namespace ChemSW.Nbt.ImportExport
 
 
             // Updaters for the import nodes we just created
-            Int32 CurrentArbitraryImportId = 0;
             CswTableUpdate ImportNodesUpdater = _CswNbtResources.makeCswTableUpdate( "importer_update_" + CswImporterDbTables.TblName_ImportNodes, CswImporterDbTables.TblName_ImportNodes );
             CswTableUpdate ImportPropsUpdater = _CswNbtResources.makeCswTableUpdate( "importer_update_" + CswImporterDbTables.TblName_ImportProps, CswImporterDbTables.TblName_ImportProps );
 
@@ -482,7 +481,6 @@ namespace ChemSW.Nbt.ImportExport
             DataRow CurrentMaterialRow = null;
             DataRow CurrentContainerRow = null;
             DataRow CurrentSizeRow = null;
-            DataRow ImportUserRow = null;
             Dictionary<string, DataRow> SizesRowsByCompoundId = new Dictionary<string, DataRow>();
 
 
