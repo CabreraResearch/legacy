@@ -50,6 +50,8 @@ namespace ChemSW.Nbt.Schema
                         UnCodeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, HazardsTab.TabId );
                     }//if we have a hazards tab
 
+                    UnCodeProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+
                 }//if we have a uncode 
 
                 //Add the LQNo prop on Chemical
@@ -64,6 +66,8 @@ namespace ChemSW.Nbt.Schema
                     } 
 
                     LQNoProp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), LQNoNodeType.NodeTypeId );
+
+                    LQNoProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
                 }
 
