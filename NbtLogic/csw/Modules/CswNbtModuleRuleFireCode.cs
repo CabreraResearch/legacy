@@ -1,15 +1,10 @@
-using System;
-using System.Data;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.DB;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
     /// <summary>
-    /// Represents the Container Module
+    /// Represents the FireCode Module
     /// </summary>
     public class CswNbtModuleRuleFireCode : CswNbtModuleRule
     {
