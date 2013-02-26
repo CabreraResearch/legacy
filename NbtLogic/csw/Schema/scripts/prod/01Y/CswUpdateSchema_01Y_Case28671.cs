@@ -52,6 +52,8 @@ namespace ChemSW.Nbt.Schema
 
                     UnCodeProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
+                    UnCodeProp.Attribute3 = "UN[0-9]{4}"; //set regex attribute
+
                 }//if we have a uncode 
 
                 //Add the LQNo prop on Chemical
