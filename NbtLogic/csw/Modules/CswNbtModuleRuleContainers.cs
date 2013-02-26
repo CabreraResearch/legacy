@@ -97,6 +97,10 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
             }
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.FireCode );
+            }
 
             //Hide the following Location properties...
             //   Containers
