@@ -10,7 +10,9 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: Modules";
 
-        private void _acceptBlame(CswDeveloper BlameMe, Int32 BlameCaseNo)
+        #region Blame Logic
+
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -29,27 +31,43 @@ namespace ChemSW.Nbt.Schema
             get { return _Author; }
         }
 
-        private Int32 _CaseNo = 0;
+        private Int32 _CaseNo;
 
         public override int CaseNo
         {
             get { return _CaseNo; }
         }
 
+        #endregion Blame Logic
+
         public override void update()
         {
-            // This script is for adding Modules, 
-            // which often become required by other business logic and can cause prior scripts to fail.
+            // This script is for adding Modules, which often become required by other business logic and can cause prior scripts to fail.
 
             #region WILLIAM
 
+            //WILLIAM modules go here.
 
             #endregion WILLIAM
+
+            #region YORICK
+
+            _makeContainersModule( CswDeveloper.MB, 28902 );
+
+            #endregion YORICK
+
+        }//Update()
+
+        private void _makeContainersModule( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( CswDeveloper.MB, 28902 );
+            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.Containers );
+            if( Int32.MinValue == moduleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString(), true );
+            }
+            _resetBlame();
         }
-
-
-
-        //Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01M
 

@@ -906,7 +906,7 @@ namespace ChemSW.Nbt.WebPages
                     //    DisplayColumn: DisplayColumn, 
                     //    TabGroup: TabGroup, 
                     //    DoMove: false );
-                    
+
                     //if( SetValueOnAdd )
                     //{
                     //    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, DisplayRow: DisplayRowAdd, DisplayColumn: DisplayColAdd, DoMove: false );
@@ -2745,6 +2745,23 @@ namespace ChemSW.Nbt.WebPages
                             if( CswConvert.ToInt32( SelectedNodeTypeProp.Attribute2 ) != Int32.MinValue )
                                 MaxLenValue.Text = SelectedNodeTypeProp.Attribute2.ToString();
                             MaxLenRow.Cells[1].Controls.Add( MaxLenValue );
+
+                            TableRow RegExRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) RegExRow.Cells[0].Controls[0] ).Text = "Validation Regex:";
+                            TextBox RegExValue = new TextBox();
+                            RegExValue.CssClass = "textinput";
+                            RegExValue.ID = "EditProp_Attribute3" + SelectedNodeTypeProp.PropId.ToString();
+                            RegExValue.Text = SelectedNodeTypeProp.Attribute3.ToString();
+                            RegExRow.Cells[1].Controls.Add( RegExValue );
+
+                            TableRow RegExMsgRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) RegExMsgRow.Cells[0].Controls[0] ).Text = "Regex Message:";
+                            TextBox RegExMsgValue = new TextBox();
+                            RegExMsgValue.CssClass = "textinput";
+                            RegExMsgValue.ID = "EditProp_Attribute4" + SelectedNodeTypeProp.PropId.ToString();
+                            RegExMsgValue.Text = SelectedNodeTypeProp.Attribute4.ToString();
+                            RegExMsgRow.Cells[1].Controls.Add( RegExMsgValue );
+
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
