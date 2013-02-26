@@ -327,9 +327,9 @@ namespace ChemSW.Nbt.ServiceDrivers
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
         {
             //Case 24023: Exclude buttons on Add
-            return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add || 
-                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) && 
-                Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) && 
+            return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
+                Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) &&
                 ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
         }
 
@@ -625,6 +625,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject PropsObj, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab, bool RemoveTempStatus = true )
         {
+
+
             JObject ret = new JObject();
             if( PropsObj.HasValues )
             {
@@ -737,14 +739,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["nodeid"] = Node.NodeId.ToString();
                     ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
 
-                    //This is used in the Create Material Wizard to determine whether to reinit Step 3 --
-                    //  --If the Physical State was changed, then we reinit
-                    CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-                    if( NodeType.ObjectClassId == MaterialOC.ObjectClassId )
-                    {
-                        CswNbtObjClassMaterial MaterialNode = Node;
-                        ret["physicalstatemodified"] = MaterialNode.PhysicalState.WasModified;
-                    }
                 }
             }
             return ret;

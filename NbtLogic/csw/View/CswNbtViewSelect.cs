@@ -168,7 +168,7 @@ namespace ChemSW.Nbt
 
         } // getSessionView()
 
-        
+
 
         /// <summary>
         /// Save a view to the session view collection.  Sets the SessionViewId on the view.
@@ -248,7 +248,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all enabled views in the database
         /// </summary>
-        public DataTable getAllEnabledViews(out Dictionary<CswNbtViewId, CswNbtView> AllEnabledViews )
+        public DataTable getAllEnabledViews( out Dictionary<CswNbtViewId, CswNbtView> AllEnabledViews )
         {
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getAllViews_select", "getAllViewInfo" );
             Dictionary<CswNbtViewId, CswNbtView> OutEnabledViews = new Dictionary<CswNbtViewId, CswNbtView>();
@@ -408,21 +408,21 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool isVisible( CswNbtView View, ICswNbtUser User, bool IncludeEmptyViews, bool SearchableOnly )
         {
-            return ((View.Root.ChildRelationships.Count > 0 &&
+            return ( ( View.Root.ChildRelationships.Count > 0 &&
                      (
-                         View.Root.ChildRelationships.Any(R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
+                         View.Root.ChildRelationships.Any( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
                                                                _CswNbtResources.Permit.canNodeType(
                                                                    CswNbtPermit.NodeTypePermission.View,
-                                                                   _CswNbtResources.MetaData.getNodeType(R.SecondId),
-                                                                   User) ||
+                                                                   _CswNbtResources.MetaData.getNodeType( R.SecondId ),
+                                                                   User ) ||
                                                                _CswNbtResources.Permit.canAnyTab(
                                                                    CswNbtPermit.NodeTypePermission.View,
-                                                                   _CswNbtResources.MetaData.getNodeType(R.SecondId),
-                                                                   User)))
-                    ) || IncludeEmptyViews) &&
+                                                                   _CswNbtResources.MetaData.getNodeType( R.SecondId ),
+                                                                   User ) ) )
+                    ) || IncludeEmptyViews ) &&
                    View.IsFullyEnabled() &&
-                   (IncludeEmptyViews || View.ViewMode != NbtViewRenderingMode.Grid || null != View.findFirstProperty()) &&
-                   (!SearchableOnly || View.IsSearchable());
+                   ( IncludeEmptyViews || View.ViewMode != NbtViewRenderingMode.Grid || null != View.findFirstProperty() ) &&
+                   ( !SearchableOnly || View.IsSearchable() );
         }
 
         /// <summary>
@@ -456,5 +456,28 @@ namespace ChemSW.Nbt
 
             return Ret;
         }
+
+        public void deleteViewsByRoleId( CswPrimaryKey RoleNodeId )
+        {
+            CswTableUpdate viewsUpdate = _CswNbtResources.makeCswTableUpdate( "getRoleViews_select", "node_views" );
+            DataTable node_views = viewsUpdate.getTable( "where roleid = " + RoleNodeId.PrimaryKey.ToString() );
+            foreach( DataRow Row in node_views.Rows )
+            {
+                Row.Delete();
+            }
+            viewsUpdate.update( node_views );
+        }
+
+        public void deleteViewsByUserId( CswPrimaryKey UserNodeId )
+        {
+            CswTableUpdate viewsUpdate = _CswNbtResources.makeCswTableUpdate( "getUserViews_select", "node_views" );
+            DataTable node_views = viewsUpdate.getTable( "where userid = " + UserNodeId.PrimaryKey.ToString() );
+            foreach( DataRow Row in node_views.Rows )
+            {
+                Row.Delete();
+            }
+            viewsUpdate.update( node_views );
+        }
+
     }
 }

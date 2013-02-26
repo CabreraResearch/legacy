@@ -22,7 +22,7 @@
                 cswParent.empty();
             } ());
 
-            cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
+            cswPrivate.requestName = "";
             cswPrivate.gridOpts = {};
             cswPrivate.ajaxii = {};
 
@@ -127,7 +127,7 @@
                                 text: 'New Create Material Request',
                                 nodetypeid: data.NodeTypeId,
                                 onAddNode: function () {
-                                    grid.reload();
+                                    grid.reload(true);
                                     cswPrivate.getCartCounts();
                                 }
                             });
@@ -246,49 +246,10 @@
                 }
             };
 
-            cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];
-
-            cswPrivate.tryParseTabName = function (tabName, elTarget, eventObjText) {
-                var tab = '', ret = '';
-                if (tabName) {
-                    tab = tabName.split(' ')[0].trim();
-                    if (cswPrivate.tabNames.indexOf(tab) === -1) {
-                        if (eventObjText) {
-                            tab = cswPrivate.tryParseTabName(eventObjText, elTarget);
-                            if (cswPrivate.tabNames.indexOf(tab) === -1) {
-                                tab = cswPrivate.tryParseTabName(elTarget);
-                                if (cswPrivate.tabNames.indexOf(tab) !== -1) {
-                                    ret = tab;
-                                }
-                            } else {
-                                ret = tab;
-                            }
-                        }
-                    } else {
-                        ret = tab;
-                    }
-                }
-                return ret;
-            };
+            cswPrivate.tabNames = ['Pending', 'Submitted', 'Recurring', 'Favorites'];          
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
-                var tgtTxt = null, evtTxt;
-                if (tabName.indexOf('<') === 0 &&
-                    tabName.lastIndexOf('>') === tabName.length - 1) {
-                    if (el) {
-                        tgtTxt = el.target.innerText;
-                    }
-
-                    if (eventObj) {
-                        evtTxt = eventObj.innerText;
-                    }
-                } else {
-                    if (tabName.length > 20) {
-                        // yuck. Clicking anywhere inside the tab fires this event. That includes clicking a grid row whose nodename is "Recurring event".
-                        tabName = '';
-                    }
-                }
-                var newTabName = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
+                var newTabName = tabName.split(' ')[0].trim(); //remove the '(#)' part from name
                 if (newTabName.length > 0) {
                     cswPrivate.currentTab = newTabName;
                     cswPrivate.destroyOtherTabs(cswPrivate.currentTab);
@@ -418,6 +379,15 @@
                         if (opts.showCheckboxes) {
                             Csw.tryExec(opts.onSelectChange, rowCount);
                         }
+                    },
+                    onPreview: function (o, nodeObj, event) {
+                        var preview = Csw.nbt.nodePreview(Csw.main.body, {
+                            nodeid: nodeObj.nodeid,
+                            nodekey: nodeObj.nodekey,
+                            nodename: nodeObj.nodename,
+                            event: event
+                        });
+                        preview.open();
                     }
                 });
             };

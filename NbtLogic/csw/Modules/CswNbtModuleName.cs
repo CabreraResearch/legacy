@@ -57,6 +57,10 @@ namespace ChemSW.Nbt
         /// ChemCatCentral
         /// </summary>
         public static readonly CswNbtModuleName C3 = new CswNbtModuleName( "C3" );
+        /// <summary>
+        /// Containers
+        /// </summary>
+        public static readonly CswNbtModuleName Containers = new CswNbtModuleName( "Containers" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt

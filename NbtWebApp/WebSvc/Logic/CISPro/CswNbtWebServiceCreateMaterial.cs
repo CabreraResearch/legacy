@@ -40,6 +40,11 @@ namespace ChemSW.Nbt.WebServices
             return _CswNbtActCreateMaterial.createMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
         }
 
+        public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        {
+            return _CswNbtActCreateMaterial.saveMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
+        }
+
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
         {
             return CswNbtActCreateMaterial.getSizeNodeProps( CswNbtResources, SizeNodeTypeId, SizeDefinition, WriteNode );
@@ -77,20 +82,6 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
-
-                // Material sizes (if exist)
-                ICswNbtTree SizesTree = CreateMaterialAction.getMaterialSizes( NbtResources, NodePk );
-                for( int i = 0; i < SizesTree.getChildNodeCount(); i++ )
-                {
-                    SizesTree.goToNthChild( i );
-                    Response.Data.SizeNodes.Add( new CswNbtNode.Node( null )
-                    {
-                        NodeId = SizesTree.getNodeIdForCurrentPosition(),
-                        NodeName = SizesTree.getNodeNameForCurrentPosition()
-                    } );
-                    SizesTree.goToParentNode();
-                }
-
             }
         }
 
@@ -106,11 +97,6 @@ namespace ChemSW.Nbt.WebServices
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
             }
-        }
-
-        public JObject saveMaterial( string state )
-        {
-            return _CswNbtActCreateMaterial.saveMaterial(_CswNbtResources, state);
         }
 
         /// <summary>
@@ -129,9 +115,9 @@ namespace ChemSW.Nbt.WebServices
             return CswNbtActCreateMaterial.getLandingPageData( NbtResources, MaterialNode, MaterialNodeView );
         }
 
-        public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
+        public static JObject getMaterialUnitsOfMeasure( string PhysicalStateValue, CswNbtResources CswNbtResources )
         {
-            return CswNbtActCreateMaterial.getMaterialUnitsOfMeasure( MaterialId, CswNbtResources );
+            return CswNbtActCreateMaterial.getMaterialUnitsOfMeasure( PhysicalStateValue, CswNbtResources );
         }
 
         public JObject getSizeLogicalsVisibility( int SizeNodeTypeId )
