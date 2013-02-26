@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Security
 
         private Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo> _PermitInfoItems = new Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo>();
 
-        public class CswNbtPermitInfoKey : IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
+        public class CswNbtPermitInfoKey: IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
         {
             private readonly Int32 HashMultiplier = 1;
             public CswNbtPermitInfoKey( CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn )
@@ -564,25 +564,7 @@ namespace ChemSW.Nbt.Security
         {
             _initPermissionInfo( null, User, NodeType, Permission );
 
-            bool ret = _CswNbtPermitInfo.IsUberUser;
-            if( false == ret )
-            {
-                if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
-                {
-
-                    if( true == _CswNbtPermitInfo.NoExceptionCases )
-                    {
-
-                        ret = _canAnyTabImpl();
-                    }
-                    else
-                    {
-                        ret = true;
-                    }
-                }//if pre-reqs are in order
-            }
-
-            return ( ret );
+            return _canAnyTabImpl();
 
         }//canAnyTab() 
 
@@ -591,17 +573,43 @@ namespace ChemSW.Nbt.Security
         {
             _initPermissionInfo( Role, null, NodeType, Permission );
 
+            return _canAnyTabImpl();
+
+        }//canAnyTab() 
+
+
+        private bool _canAnyTabImpl()
+        {
             bool ret = _CswNbtPermitInfo.IsUberUser;
             if( false == ret )
             {
-
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
-
                     if( true == _CswNbtPermitInfo.NoExceptionCases )
                     {
+                        ret = _CanNodeTypeImpl();
+                        if( false == ret )
+                        {
+                            //NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), _CswNbtPermitInfo.NodeTypePermission.ToString() );
+                            foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
+                            {
+                                string Permission = CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
+                                    _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId,
+                                    _CswNbtPermitInfo.NodeTypeTabPermission );
+                                ret = ret ||
+                                      _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( Permission );
 
-                        ret = _canAnyTabImpl();
+                                if( _CswNbtPermitInfo.NodeTypeTabPermission == NodeTypeTabPermission.View )
+                                {
+                                    // Having 'Edit' grants 'View' automatically
+                                    string EditPermission = CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
+                                        _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId,
+                                        NodeTypeTabPermission.Edit );
+                                    ret = ret ||
+                                          _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( EditPermission );
+                                }
+                            } //iterate tabs
+                        }
                     }
                     else
                     {
@@ -610,39 +618,6 @@ namespace ChemSW.Nbt.Security
 
                 }//if pre-reqs are in order
             }
-
-            return ( ret );
-
-        }//canAnyTab() 
-
-
-        private bool _canAnyTabImpl()
-        {
-            bool ret = false;
-
-
-            //NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), _CswNbtPermitInfo.NodeTypePermission.ToString() );
-            foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
-            {
-                ret = ret ||
-                      _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue(
-                          CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
-                              _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId,
-                              _CswNbtPermitInfo.NodeTypeTabPermission ) );
-
-                if( _CswNbtPermitInfo.NodeTypeTabPermission == NodeTypeTabPermission.View )
-                {
-                    // Having 'Edit' grants 'View' automatically
-                    ret = ret ||
-                          _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue(
-                              CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
-                                  _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId,
-                                  NodeTypeTabPermission.Edit ) );
-                }
-
-            } //iterate tabs
-
-
             return ( ret );
 
         }//_canAnyTab()
