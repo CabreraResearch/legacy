@@ -246,13 +246,10 @@ namespace ChemSW.Nbt.Security
                         CswNbtObjClassUser CswNbtObjClassUser = _CswNbtResources.Nodes[_CswNbtUser.UserId];
                         if( null != CswNbtObjClassUser )
                         {
-                            CswNbtMetaDataObjectClassProp CswNbtMetaDataObjectClassProp = PropType.getObjectClassProp();
-                            if( null != CswNbtMetaDataObjectClassProp )
+                            if( PropType.getObjectClassPropName() == CswNbtObjClassUser.PropertyName.Password &&
+                                false == CswNbtObjClassUser.IsPasswordReadyOnly )
                             {
-                                if( ( CswNbtMetaDataObjectClassProp.PropName == CswNbtObjClassUser.PropertyName.Password ) && ( false == CswNbtObjClassUser.IsPasswordReadyOnly ) )
-                                {
-                                    ReturnVal = false;
-                                }
+                                ReturnVal = false;
                             }
                         }
 

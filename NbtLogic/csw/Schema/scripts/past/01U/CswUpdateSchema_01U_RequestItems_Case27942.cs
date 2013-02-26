@@ -521,7 +521,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp RequestsGridNtp = ContainerNt.getNodeTypeProp( "Submitted Requests" );
                 if( null != RequestsGridNtp )
                 {
-                    if( CswNbtMetaDataFieldType.NbtFieldType.Grid != RequestsGridNtp.getFieldType().FieldType )
+                    if( CswNbtMetaDataFieldType.NbtFieldType.Grid != RequestsGridNtp.getFieldTypeValue() )
                     {
                         RequestsGridNtp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ContainerNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, "CISPro Submitted Requests", RequestsTab.TabId );
                     }

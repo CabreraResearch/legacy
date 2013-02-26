@@ -102,7 +102,7 @@
                 cswPrivate.div = Csw.domNode({
                     el: cswPrivate.extWindow.items.items[0].getEl().dom,
                     ID: cswPrivate.extWindow.items.items[0].getEl().id
-                });
+                }).css({ overflow: 'auto' });
 
                 cswPrivate.loadingDiv = cswPrivate.div.div({
                     text: '&nbsp;&nbsp;&nbsp;Loading...',

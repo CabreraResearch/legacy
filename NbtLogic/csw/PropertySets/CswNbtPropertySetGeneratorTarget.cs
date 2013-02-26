@@ -117,15 +117,14 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public abstract bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData );
+        public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
-                Ret = onPropertySetButtonClick( OCP, ButtonData );
+                Ret = onPropertySetButtonClick( ButtonData );
             }
             return Ret;
         }

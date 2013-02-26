@@ -70,15 +70,15 @@ namespace NbtWebAppServices.Response
                     IEnumerable<CswNbtMetaDataNodeTypeProp> TypeProps = NodeTypeProps as CswNbtMetaDataNodeTypeProp[] ?? NodeTypeProps.ToArray();
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in TypeProps
-                                                                        where _NodeTypeProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question &&
-                                                                              _propIsSupportedInMobile( _NodeTypeProp.getFieldType().FieldType )
+                                                                        where _NodeTypeProp.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                              _propIsSupportedInMobile( _NodeTypeProp.getFieldTypeValue() )
                                                                         select _NodeTypeProp )
                     {
 
                         ResponseSection.Properties.Add( new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
                         {
                             HelpText = NodeTypeProp.HelpText,
-                            Type = NodeTypeProp.getFieldType().FieldType.ToString(),
+                            Type = NodeTypeProp.getFieldTypeValue().ToString(),
                             QuestionId = NodeTypeProp.PropId,
                             Text = NodeTypeProp.PropName,
                             Choices = null,
@@ -89,7 +89,7 @@ namespace NbtWebAppServices.Response
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in TypeProps
                                                                         orderby _NodeTypeProp.QuestionNo
-                                                                        where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                        where _NodeTypeProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                                                                               false == _NodeTypeProp.ReadOnly &&
                                                                               _CswNbtWcfSessionResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, _NodeTypeProp, null )
                                                                         select _NodeTypeProp )
@@ -176,7 +176,7 @@ namespace NbtWebAppServices.Response
 
                 foreach( CswNbtNodePropWrapper Prop in InspectionNode.Properties )
                 {
-                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         false == Prop.ReadOnly &&
                         _CswNbtWcfSessionResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
                     {
