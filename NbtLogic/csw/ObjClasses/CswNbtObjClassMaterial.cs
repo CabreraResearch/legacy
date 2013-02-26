@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
             }
 
-            if( CasNo.WasModified )
+            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
             {
                 CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
                 getParentMaterials( ref ParentMaterials );
@@ -214,9 +214,9 @@ namespace ChemSW.Nbt.ObjClasses
                                 foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
                                 {
                                     JToken name = child.First.SelectToken( "name" );
-                                    if (null != name)
+                                    if( null != name )
                                     {
-                                        if (name.ToString() == "Expiration Date")
+                                        if( name.ToString() == "Expiration Date" )
                                         {
                                             ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
                                         }
