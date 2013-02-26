@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.Schema
             #region YORICK
 
             _makeContainersModule( CswDeveloper.MB, 28902 );
+            _makeFireCodeModule( CswDeveloper.BV, 28903 );
 
             #endregion YORICK
 
@@ -65,6 +66,17 @@ namespace ChemSW.Nbt.Schema
             if( Int32.MinValue == moduleId )
             {
                 _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString(), true );
+            }
+            _resetBlame();
+        }
+
+        private void _makeFireCodeModule( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.FireCode );
+            if( Int32.MinValue == ModuleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Fire Code reporting add-on for CISPro", CswNbtModuleName.FireCode.ToString(), true );
             }
             _resetBlame();
         }

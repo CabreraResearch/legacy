@@ -61,6 +61,10 @@ namespace ChemSW.Nbt
         /// Containers
         /// </summary>
         public static readonly CswNbtModuleName Containers = new CswNbtModuleName( "Containers" );
+        /// <summary>
+        /// Module that allows fire and hazard reporting on containers
+        /// </summary>
+        public static readonly CswNbtModuleName FireCode = new CswNbtModuleName( "Fire Code" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt
