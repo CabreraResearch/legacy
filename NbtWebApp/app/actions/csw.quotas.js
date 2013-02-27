@@ -89,7 +89,7 @@
                         name: o.name + rowid + 'quota',
                         type: Csw.enums.inputTypes.text,
                         value: quota,
-                        width: '50px'
+                        size: '15px'
                     });
 
                     cell5 = table.cell(qRow, 5);
