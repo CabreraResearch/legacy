@@ -230,7 +230,6 @@ namespace ChemSW.Nbt.Actions
             if( UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                NodeType.ExcludeInQuotaBar = ExcludeInQuotaBar;
                 if( NodeType != null )
                 {
                     Int32 OldQuota = NodeType.Quota;
