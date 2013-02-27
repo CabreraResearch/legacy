@@ -1071,6 +1071,36 @@ namespace ChemSW.Nbt.Schema
 
             //YORICK OC changes go here.
 
+            //case 28671
+            _acceptBlame( CswDeveloper.PG, 28671 );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+
+            if( null != MaterialOC )
+            {
+
+                //first remove existing prop which is of type relationship
+                CswNbtMetaDataObjectClassProp UNCodeOCPOld = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PropertyName.UNCode );
+                if( null != UNCodeOCPOld )
+                {
+
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( UNCodeOCPOld, true );
+
+                }//if we have a un ocp
+
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
+                    {
+                        PropName = CswNbtObjClassMaterial.PropertyName.UNCode,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        IsRequired = false
+                    } );
+
+                //now add new prop which is of type text
+
+            }//if we have a material oc
+
+            _resetBlame();
+
             #endregion YORICK
 
             //THIS GOES LAST!
