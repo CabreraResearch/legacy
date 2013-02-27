@@ -331,7 +331,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         Materials := GET_MATERIALS(Locations(loc).LocationId);
         if Materials.exists(Materials.first) then
           for mat in Materials.first..Materials.last loop
-            if Materials.exists(mat) then
+            if Materials.exists(mat) and Materials(mat).materialid is not null then
               insert
                 into TIER2
                 (
