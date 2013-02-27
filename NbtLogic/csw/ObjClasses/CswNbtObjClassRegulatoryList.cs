@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( CASNumbers.WasModified || Name.WasModified )
             {
                 //Case 28838 - remove newline char from CASNos
-                CASNumbers.Text = CASNumbers.Text.Replace( "\n", "" );
+                CASNumbers.Text = CASNumbers.Text.Replace( "\n", "" ).Replace( "\r", "" );
 
                 //remove this list from all material nodes
                 _removeListFromMaterials();
