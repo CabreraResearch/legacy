@@ -73,6 +73,10 @@ namespace ChemSW.WebSvc
             }
 
             Display = true;
+            Type = newEx.Type;
+            Message = newEx.MsgFriendly;
+            Detail = newEx.MsgEscoteric + "; ";
+            
             if( CswNbtResources != null )
             {
                 if( newEx.Type == ErrorType.Warning )
@@ -83,12 +87,12 @@ namespace ChemSW.WebSvc
                 {
                     Display = ( CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" );
                 }
+
+                if( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswSetupVariableNames.ShowFullExceptions] ) )
+                {
+                    Detail += ex.StackTrace;
+                }
             }
-
-            Type = newEx.Type;
-            Message = newEx.MsgFriendly;
-            Detail = newEx.MsgEscoteric + "; " + ex.StackTrace;
-
         } // _error()
 
         public static CswNbtView getView( CswNbtResources CswNbResources, string ViewId )
