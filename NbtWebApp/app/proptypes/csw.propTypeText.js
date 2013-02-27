@@ -21,6 +21,8 @@
                     cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
                     cswPrivate.maxlength = Csw.number(cswPrivate.propVals.maxlength, 14);
+                    cswPrivate.regex = cswPrivate.propVals.regex;
+                    cswPrivate.regexmsg = cswPrivate.propVals.regexmsg;
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
@@ -29,20 +31,35 @@
                             name: cswPublic.data.name,
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.value,
-                            cssclass: 'textinput',
                             size: cswPrivate.size,
-                            onChange: function() {
-                                var val = cswPublic.control.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ text: val });
+                            cssclass: 'textinput text_regex_validate',
+                            onChange: function () {
+                                cswPrivate.value = cswPublic.control.val();
+                                Csw.tryExec(cswPublic.data.onChange, cswPrivate.value);
+                                cswPublic.data.onPropChange({ text: cswPrivate.value });
                             },
                             isRequired: cswPublic.data.isRequired(),
                             maxlength: cswPrivate.maxlength
                         });
-                        
+
                         cswPublic.control.required(cswPublic.data.isRequired());
                         cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
+
                     }
+
+                    if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
+
+                        var Message = "invalid value";
+                        if (false === Csw.isNullOrEmpty(cswPrivate.regexmsg)) {
+                            Message = cswPrivate.regexmsg;
+                        }
+
+                        $.validator.addMethod("text_regex_validate", function () {
+                            var regex_obj = new RegExp(cswPrivate.regex);
+                            return ( true ==  regex_obj.test(cswPrivate.value) );
+                        }, Message);
+                    }
+
 
                 };
 
@@ -55,4 +72,4 @@
                 return cswPublic;
             }));
 
-}());
+} ());
