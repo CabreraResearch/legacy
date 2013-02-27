@@ -315,7 +315,7 @@ namespace ChemSW.Nbt.ImportExport
                                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in DestNodeType.getNodeTypeProps() )
                                 {
                                     if( MetaDataProp.PropName.ToLower() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString().ToLower() &&
-                                        MetaDataProp.getFieldType().FieldType.ToString() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() )
+                                        MetaDataProp.getFieldTypeValue().ToString() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() )
                                     {
                                         ThisProp = MetaDataProp;
                                         break;

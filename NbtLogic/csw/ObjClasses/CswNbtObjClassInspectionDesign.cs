@@ -435,13 +435,11 @@ namespace ChemSW.Nbt.ObjClasses
             Status.SetOnPropChange( OnStatusPropChange );
         } //afterPopulateProps()
 
-        public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp Prop, NbtButtonData ButtonData )
+        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
-                CswNbtMetaDataObjectClassProp ButtonOCP = ButtonData.NodeTypeProp.getObjectClassProp();
-
-                switch( ButtonOCP.PropName )
+                switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Finish:
                         if( _InspectionState.AllAnswered )

@@ -164,11 +164,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
                 bool HasPermission = false;
-                switch( OCP.PropName )
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
                 {
                     case PropertyName.Request:
                         if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActRequesting.RequestItem( CswNbtActRequesting.RequestItem.Material ), NodeId, ButtonData );
                             NodeAsPropSet.postChanges( false );
 
-                            ButtonData.Data["requestaction"] = OCP.PropName;
+                            ButtonData.Data["requestaction"] = OCPPropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
                             ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == HasPermission )
                 {
-                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCP.PropName + " action.", "You do not have permission to the " + OCP.PropName + " action." );
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
                 }
             }
 
@@ -486,27 +486,23 @@ namespace ChemSW.Nbt.ObjClasses
                         foreach( CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode() )
                         {
                             CswNbtMetaDataNodeTypeProp docNTP = _CswNbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
-                            CswNbtMetaDataObjectClassProp docOCP = docNTP.getObjectClassProp();
-                            if( null != docOCP )
+                            switch( docNTP.getObjectClassPropName() )
                             {
-                                switch( docOCP.PropName )
-                                {
-                                    case CswNbtObjClassDocument.PropertyName.Format:
-                                        format = prop.Field1.ToString();
-                                        break;
-                                    case CswNbtObjClassDocument.PropertyName.Language:
-                                        language = prop.Field1.ToString();
-                                        break;
-                                    case CswNbtObjClassDocument.PropertyName.FileType:
-                                        fileType = prop.Field1.ToString();
-                                        break;
-                                    case CswNbtObjClassDocument.PropertyName.File:
-                                        fileProp = prop;
-                                        break;
-                                    case CswNbtObjClassDocument.PropertyName.Link:
-                                        linkProp = prop;
-                                        break;
-                                }
+                                case CswNbtObjClassDocument.PropertyName.Format:
+                                    format = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.Language:
+                                    language = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.FileType:
+                                    fileType = prop.Field1.ToString();
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.File:
+                                    fileProp = prop;
+                                    break;
+                                case CswNbtObjClassDocument.PropertyName.Link:
+                                    linkProp = prop;
+                                    break;
                             }
                         }
 

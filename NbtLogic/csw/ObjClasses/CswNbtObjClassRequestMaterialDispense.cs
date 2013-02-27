@@ -267,11 +267,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// 
         /// </summary>
-        public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData )
+        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
-                switch( OCP.PropName )
+                switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:
                         switch( ButtonData.SelectedText )

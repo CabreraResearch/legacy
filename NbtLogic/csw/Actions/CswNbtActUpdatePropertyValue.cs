@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Actions
             {
                 if( PropWrapper.PendingUpdate || Node.PendingUpdate || ForceUpdate )
                 {
-                    switch( PropWrapper.getFieldType().FieldType )
+                    switch( PropWrapper.getFieldTypeValue() )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                             CswNbtNodePropComposite CompositeProp = PropWrapper.AsComposite;

@@ -49,7 +49,7 @@ namespace ChemSW.Nbt
                     _NodeTypePropId = value;
                     //CswNbtMetaDataNodeTypeProp thisNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
                     //if( thisNodeTypeProp != null )
-                    //    FieldType = thisNodeTypeProp.getFieldType().FieldType;
+                    //    FieldType = thisNodeTypeProp.getFieldTypeValue();
                     FieldType = _CswNbtResources.MetaData.getFieldTypeValueForNodeTypePropId( value );
                 }
             }
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt
                     //// case 20031
                     //if( ThisObjectClassProp != null )
                     //{
-                    //    FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldType().FieldType;
+                    //    FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldTypeValue();
                     //}
                     FieldType = _CswNbtResources.MetaData.getFieldTypeValueForObjectClassPropId( value );
                 }
@@ -176,7 +176,7 @@ namespace ChemSW.Nbt
                 this.Type = NbtViewPropType.ObjectClassPropId;
                 this.ObjectClassPropId = ( (CswNbtMetaDataObjectClassProp) Prop ).PropId;
             }
-            this.FieldType = Prop.getFieldType().FieldType;
+            this.FieldType = Prop.getFieldTypeValue();
             this.Name = Prop.PropName;
         }
 
@@ -579,7 +579,7 @@ namespace ChemSW.Nbt
         //}
         //private void _setProp( ICswNbtMetaDataProp Prop )
         //{
-        //    this.FieldType = Prop.getFieldType().FieldType;
+        //    this.FieldType = Prop.getFieldTypeValue();
         //    this.Name = Prop.PropNameWithQuestionNo;
         //}
 

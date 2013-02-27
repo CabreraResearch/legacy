@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 2. mark property references attached to relationships whose values changed as pending update
-                    if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
                         foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
                         {
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 4. For locations, if this node's location changed, we need to update the pathname on the children
-                    if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location &&
+                    if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location &&
                         CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
                     {
                         _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
