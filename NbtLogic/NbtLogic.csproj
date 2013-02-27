@@ -135,6 +135,7 @@
     <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleMultiInventoryGroup.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleMultiSite.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />

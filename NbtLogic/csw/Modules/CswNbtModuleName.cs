@@ -69,6 +69,10 @@ namespace ChemSW.Nbt
         /// Multiple Site NodeTypes
         /// </summary>
         public static readonly CswNbtModuleName MultiSite = new CswNbtModuleName( "Multi Site" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiInventoryGroup = new CswNbtModuleName( "Multi Inventory Group" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt

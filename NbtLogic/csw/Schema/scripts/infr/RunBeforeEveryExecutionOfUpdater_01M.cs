@@ -55,6 +55,7 @@ namespace ChemSW.Nbt.Schema
             _makeContainersModule( CswDeveloper.MB, 28902 );
             _makeRegulatoryListsModule( CswDeveloper.MB, 28904 );
             _makeMultiSiteModule( CswDeveloper.MB, 28899 );
+            _makeMultiInventoryGroupModule( CswDeveloper.MB, 28901 );
 
             #endregion YORICK
 
@@ -91,6 +92,17 @@ namespace ChemSW.Nbt.Schema
             if( Int32.MinValue == moduleId )
             {
                 _CswNbtSchemaModTrnsctn.createModule( "Allow multiple Sites", CswNbtModuleName.MultiSite.ToString(), false );
+            }
+            _resetBlame();
+        }
+
+        private void _makeMultiInventoryGroupModule( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.MultiInventoryGroup );
+            if( Int32.MinValue == moduleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Allow multiple Inventory Groups", CswNbtModuleName.MultiInventoryGroup.ToString(), false );
             }
             _resetBlame();
         }
