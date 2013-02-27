@@ -179,17 +179,18 @@ namespace ChemSW.Nbt.Actions
             if( UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) )
             {
                 CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-                ObjectClass.ExcludeInQuotaBar = ExcludeInQuotaBar;
                 if( ObjectClass != null )
                 {
                     Int32 OldQuota = ObjectClass.Quota;
-                    if( OldQuota != NewQuota )
+                    bool OldEx = ObjectClass.ExcludeInQuotaBar;
+                    if( OldQuota != NewQuota || OldEx != ExcludeInQuotaBar )
                     {
                         CswTableUpdate OCUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtActQuotas_UpdateOC", "object_class" );
                         DataTable OCTable = OCUpdate.getTable( "objectclassid", ObjectClassId );
                         if( OCTable.Rows.Count > 0 )
                         {
                             OCTable.Rows[0]["quota"] = CswConvert.ToDbVal( NewQuota );
+                            OCTable.Rows[0]["excludeinquotabar"] = CswConvert.ToDbVal( ExcludeInQuotaBar );
                             OCUpdate.update( OCTable );
 
                             if( NewQuota == Int32.MinValue )
@@ -233,13 +234,15 @@ namespace ChemSW.Nbt.Actions
                 if( NodeType != null )
                 {
                     Int32 OldQuota = NodeType.Quota;
-                    if( OldQuota != NewQuota )
+                    bool OldEx = NodeType.ExcludeInQuotaBar;
+                    if( OldQuota != NewQuota || OldEx != ExcludeInQuotaBar )
                     {
                         CswTableUpdate NTUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtActQuotas_UpdateNT", "nodetypes" );
                         DataTable NTTable = NTUpdate.getTable( "nodetypeid", NodeType.FirstVersionNodeTypeId );
                         if( NTTable.Rows.Count > 0 )
                         {
                             NTTable.Rows[0]["quota"] = CswConvert.ToDbVal( NewQuota );
+                            NTTable.Rows[0]["excludeinquotabar"] = CswConvert.ToDbVal( ExcludeInQuotaBar );
                             NTUpdate.update( NTTable );
 
                             if( NewQuota == Int32.MinValue )
@@ -342,7 +345,7 @@ namespace ChemSW.Nbt.Actions
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
-                if( ObjectClass.Quota > 0 && ObjectClass.ExcludeInQuotaBar )
+                if( ObjectClass.Quota > 0 && false == ObjectClass.ExcludeInQuotaBar )
                 {
                     TotalQuota += ObjectClass.Quota;
 
@@ -356,7 +359,7 @@ namespace ChemSW.Nbt.Actions
 
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
-                if( NodeType.Quota > 0 && NodeType.ExcludeInQuotaBar )
+                if( NodeType.Quota > 0 && false == NodeType.ExcludeInQuotaBar )
                 {
                     TotalQuota += NodeType.Quota;
 
@@ -388,7 +391,7 @@ namespace ChemSW.Nbt.Actions
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
-                if( ObjectClass.Quota > 0 )
+                if( ObjectClass.Quota > 0 && false == ObjectClass.ExcludeInQuotaBar )
                 {
                     Double ThisPercent = 0;
                     if( NodeCountsForObjectClass.ContainsKey( ObjectClass.ObjectClassId ) &&
@@ -405,7 +408,7 @@ namespace ChemSW.Nbt.Actions
 
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
-                if( NodeType.Quota > 0 )
+                if( NodeType.Quota > 0 && false == NodeType.ExcludeInQuotaBar )
                 {
                     Double ThisPercent = 0;
                     if( NodeCountsForNodeType.ContainsKey( NodeType.NodeTypeId ) &&
