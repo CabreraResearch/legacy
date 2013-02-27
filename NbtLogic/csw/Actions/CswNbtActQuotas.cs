@@ -8,6 +8,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -31,7 +32,7 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public bool UserCanEditQuotas( ICswNbtUser User )
         {
-            return ( User.Username == CswNbtObjClassUser.ChemSWAdminUsername );
+            return ( User.Username == CswNbtObjClassUser.ChemSWAdminUsername || User.Username == CswSystemUserNames.SysUsr_SchemaUpdt );
         }
 
         /// <summary>
