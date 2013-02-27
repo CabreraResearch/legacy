@@ -1065,14 +1065,17 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <returns></returns>
         public JObject getLocationView( string SelectedNodeId )
         {
-            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null, IgnoreAllowInventory: true );
+            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView(_CswNbtResources, null, IgnoreAllowInventory: true);
             LocationView.SaveToCache(false);
             JObject LocationViewId = new JObject();
             LocationViewId["viewid"] = LocationView.SessionViewId.ToString();
-            CswPrimaryKey LocationId = String.IsNullOrEmpty( SelectedNodeId )
+            CswPrimaryKey LocationId = String.IsNullOrEmpty(SelectedNodeId)
                                            ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
-                                           : CswConvert.ToPrimaryKey( SelectedNodeId );
-            LocationViewId["nodeid"] = LocationId.ToString();
+                                           : CswConvert.ToPrimaryKey(SelectedNodeId);
+            if( null != LocationId )
+            {
+                LocationViewId["nodeid"] = LocationId.ToString();
+            }
             return LocationViewId;
         }
 
