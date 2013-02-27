@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Sched
                         CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.password_length.ToString(), "16" );
                         CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.passwordexpiry_days.ToString(), "30" );
                     }
-                    ChemSWAdminUserNode.postChanges( true );
+                    ChemSWAdminUserNode.postChanges( ForceUpdate: true );
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line

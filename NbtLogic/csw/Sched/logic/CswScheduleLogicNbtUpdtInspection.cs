@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Sched
                             Tristate.True != CurrentInspectionDesign.IsFuture.Checked )
                         {
                             CurrentInspectionDesign.Status.Value = _Overdue;
-                            CurrentInspectionDesign.postChanges( true );
+                            CurrentInspectionDesign.postChanges( ForceUpdate: true );
 
                             TotalProcessed++;
                             Names += CurrentInspectionDesign.Name + "; ";
