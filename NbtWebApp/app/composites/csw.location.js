@@ -47,6 +47,7 @@
                             success: function (data) {
                                 cswPrivate.viewid = data.viewid;
                                 cswPrivate.nodeid = data.nodeid;
+                                cswPrivate.path = data.path;
                             }
                         });
                     }

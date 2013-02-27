@@ -1075,6 +1075,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( null != LocationId )
             {
                 LocationViewId["nodeid"] = LocationId.ToString();
+                CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes[LocationId];
+                if( LocNode.ObjectClass.ObjectClass == NbtObjectClass.LocationClass )
+                {
+                    LocationViewId["path"] = LocNode.Location.CachedPath + " > " + LocNode.Name.Text;
+                }
             }
             return LocationViewId;
         }
