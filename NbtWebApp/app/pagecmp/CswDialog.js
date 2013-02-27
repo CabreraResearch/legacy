@@ -1454,7 +1454,7 @@
                 isMulti: false,
                 selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
                 onSuccess: function () {
-                    if (printerSel.optionsCount === 0) {
+                    if (printerSel.optionsCount() === 0) {
                         printerSel.hide();
                         printBtn.hide();
                         labelSelDiv.span({ cssclass: 'warning', text: 'No printers have been registered!' });

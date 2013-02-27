@@ -65,6 +65,10 @@
                                                     Password: inpPassword.val(),
                                                     ForMobile: false,
                                                     onAuthenticate: function (userName) {
+                                                        // Case 28670
+                                                        // This is really stupid. So dumb. 
+                                                        window.Mousetrap.reset();
+
                                                         parent.empty();
                                                         Csw.tryExec(o.onAuthenticate, userName);
                                                     },

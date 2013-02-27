@@ -69,16 +69,22 @@
                     cswPrivate.viewid = Csw.string(cswPrivate.viewid).trim();
                     cswPrivate.value = cswPrivate.nodeid;
                     cswPublic.table = cswParent.table();
-                    cswPublic.table.cell(1, 1).text(cswPrivate.path);
 
-                    cswPrivate.selectDiv = cswPublic.table.cell(2, 1).div({
+                    cswPrivate.pathCell = cswPublic.table.cell(1, 1);
+                    cswPrivate.selectCell = cswPublic.table.cell(1, 2);
+                    cswPrivate.editCell = cswPublic.table.cell(1, 3);
+                    cswPrivate.previewCell = cswPublic.table.cell(1, 4);
+
+                    cswPrivate.pathCell.text(cswPrivate.path);
+
+                    cswPrivate.selectDiv = cswPrivate.selectCell.div({
                         cssclass: 'locationselect',
                         value: cswPrivate.nodeid,
                         onChange: function () {
                             cswPrivate.selectDiv.val();
                         }
                     });
-                    cswPublic.table.cell(2, 1).hide();
+                    cswPrivate.selectCell.hide();
                 } ());
                 //#endregion init ctor
 
@@ -108,9 +114,9 @@
                 };
 
                 cswPrivate.makeLocationCombo = function () {
-                    cswPublic.table.cell(1, 1).hide();
-                    cswPublic.table.cell(1, 2).hide();
-                    cswPublic.table.cell(2, 1).show();
+                    cswPrivate.pathCell.hide();
+                    cswPrivate.editCell.hide();
+                    cswPrivate.selectCell.show();
 
                     cswPublic.comboBox = cswPrivate.selectDiv.comboBox({
                         name: cswPrivate.name + '_combo',
@@ -156,7 +162,7 @@
                         if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
                             cswPrivate.makeLocationCombo();
                         } else {
-                            cswPublic.table.cell(1, 2).icon({
+                            cswPrivate.editCell.icon({
                                 name: cswPrivate.name + '_toggle',
                                 iconType: Csw.enums.iconType.pencil,
                                 hovertext: 'Edit',
@@ -166,14 +172,14 @@
                             }); // imageButton
                         }
 
+                        cswPrivate.previewCell.css({ width: '24px' });
                         cswParent.$.hover(function (event) {
                             Csw.nodeHoverIn(event, {
                                 nodeid: cswPrivate.value,
-                                nodekey: '',
                                 nodename: cswPrivate.selectedName,
-                                parentDiv: cswParent,
-                                buttonHoverIn: null,
-                                buttonHoverOut: null
+                                parentDiv: cswPrivate.previewCell,
+                                useAbsolutePosition: false,
+                                rightpad: 0
                             });
                         },
                         function (event) { Csw.nodeHoverOut(event, cswPrivate.value); });

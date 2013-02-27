@@ -97,18 +97,21 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28873() ) );              //01W-075
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28833() ) );              //01W-076
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28843() ) );              //01W-077
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case28968() ) );              //01W-078
 
             #endregion WILLIAM
 
             #region YORICK
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_CaseXXXXX() ) );  //01W-000   //01Y-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28669() ) );              //01W-077  //01Y-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28711() ) );              //01W-078  //01Y-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28122B() ) );             //01W-079  //01Y-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28663() ) );              //01W-080  //01Y-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28709() ) );              //01W-081  //01Y-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28902() ) );              //01W-082  //01Y-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28669() ) );              //01W-079  //01Y-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28711() ) );              //01W-080  //01Y-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28122B() ) );             //01W-081  //01Y-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28663() ) );              //01W-082  //01Y-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28709() ) );              //01W-083  //01Y-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28902() ) );              //01W-084  //01Y-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28671() ) );  		  //01W-085  //01Y-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28732() ) );  		  //01W-086  //01Y-008
 
             #endregion YORICK
 
