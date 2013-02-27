@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -12,7 +11,7 @@ using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
+    public class CswNbtObjClassUser: CswNbtObjClass, ICswNbtUser
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
@@ -182,7 +181,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.setReadOnly( value: true, SaveToDb: true ); // BZ 5906
+                UsernameProperty.setReadOnly( value : true, SaveToDb : true ); // BZ 5906
             }
 
             // case 22512
@@ -310,8 +309,8 @@ namespace ChemSW.Nbt.ObjClasses
             //BZ 9933
             if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
-                this.AccountLocked.setHidden( value: true, SaveToDb: false );
+                this.FailedLoginCount.setHidden( value : true, SaveToDb : false );
+                this.AccountLocked.setHidden( value : true, SaveToDb : false );
             }
 
 
@@ -334,6 +333,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             Role.SetOnPropChange( onRolePropChange );
+            DateFormatProperty.SetOnPropChange( onDateFormatPropChange );
+            TimeFormatProperty.SetOnPropChange( onTimeFormatPropChange );
 
             _CswNbtObjClassDefault.afterPopulateProps();
 
@@ -364,7 +365,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : Tristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -462,6 +463,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.DateFormat] ); } }
+        private void onDateFormatPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( CswDateTime.DateFormat.Unknown == (CswDateTime.DateFormat) DateFormatProperty.Value )
+            {
+                string SupportedFormats = "'" + CswDateTime.DateFormat.Mdyyyy + "', ";
+                SupportedFormats += "'" + CswDateTime.DateFormat.dMyyyy + "', ";
+                SupportedFormats += "'" + CswDateTime.DateFormat.yyyyMMdd_Dashes + "', ";
+                SupportedFormats += "'" + CswDateTime.DateFormat.yyyyMd + "'";
+                throw new CswDniException( "Cannot use '" + DateFormatProperty.Value + "' as a value for Date Format. The only supported formats are: " + SupportedFormats );
+            }
+        }
         public string TimeFormat
         {
             get
@@ -475,6 +487,15 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.TimeFormat] ); } }
+        private void onTimeFormatPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( CswDateTime.TimeFormat.Unknown == (CswDateTime.TimeFormat) TimeFormatProperty.Value )
+            {
+                string SupportedFormats = "'" + CswDateTime.TimeFormat.Hmmss + "', ";
+                SupportedFormats += "'" + CswDateTime.TimeFormat.hmmsstt + "'";
+                throw new CswDniException( "Cannot use '" + TimeFormatProperty.Value + "' as a value for Time Format. The only supported formats are: " + SupportedFormats );
+            }
+        }
 
         public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 
