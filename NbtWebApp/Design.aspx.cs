@@ -1677,15 +1677,6 @@ namespace ChemSW.Nbt.WebPages
                                 ButtonTextValue.Text = SelectedNodeTypeProp.StaticText.ToString();
                             ButtonTextRow.Cells[1].Controls.Add( ButtonTextValue );
 
-                            TableRow ButtonModeRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) ButtonModeRow.Cells[0].Controls[0] ).Text = "Mode:";
-                            DropDownList ButtonModeValue = new DropDownList();
-                            ButtonModeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
-                            ButtonModeValue.Items.Add( new ListItem( "Button", CswNbtNodePropButton.ButtonMode.button.ToString() ) );
-                            ButtonModeValue.Items.Add( new ListItem( "Link", CswNbtNodePropButton.ButtonMode.link.ToString() ) );
-                            ButtonModeValue.SelectedValue = SelectedNodeTypeProp.Extended;
-                            ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
-
                             TableRow ConfirmationDialogMessageRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ConfirmationDialogMessageRow.Cells[0].Controls[0] ).Text = "Confirmation Dialog Message:";
                             TextBox ConfirmationDialogMessageValue = new TextBox();
