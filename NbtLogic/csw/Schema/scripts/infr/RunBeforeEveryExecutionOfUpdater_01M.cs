@@ -54,6 +54,7 @@ namespace ChemSW.Nbt.Schema
 
             _makeContainersModule( CswDeveloper.MB, 28902 );
             _makeRegulatoryListsModule( CswDeveloper.MB, 28904 );
+            _makeMultiSiteModule( CswDeveloper.MB, 28899 );
 
             #endregion YORICK
 
@@ -79,6 +80,17 @@ namespace ChemSW.Nbt.Schema
             if( Int32.MinValue == moduleId )
             {
                 _CswNbtSchemaModTrnsctn.createModule( "Regulatory lists add-on for CISPro", CswNbtModuleName.RegulatoryLists.ToString(), true );
+            }
+            _resetBlame();
+        }
+
+        private void _makeMultiSiteModule( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.MultiSite );
+            if( Int32.MinValue == moduleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Allow multiple Sites", CswNbtModuleName.MultiSite.ToString(), false );
             }
             _resetBlame();
         }

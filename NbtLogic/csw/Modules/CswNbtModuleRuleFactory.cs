@@ -58,6 +58,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleRegulatoryLists( CswNbtResources );
             }
+            else if( CswNbtModuleName.MultiSite == ModuleName )
+            {
+                ret = new CswNbtModuleRuleMultiSite( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( ErrorType.Error,

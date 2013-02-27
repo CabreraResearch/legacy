@@ -65,6 +65,10 @@ namespace ChemSW.Nbt
         /// Regulatory Lists
         /// </summary>
         public static readonly CswNbtModuleName RegulatoryLists = new CswNbtModuleName( "Regulatory Lists" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiSite = new CswNbtModuleName( "Multi Site" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt
