@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Set the quota for an object class
         /// </summary>
-        public void SetQuotaForObjectClass( Int32 ObjectClassId, Int32 NewQuota )
+        public void SetQuotaForObjectClass( Int32 ObjectClassId, Int32 NewQuota, bool ExcludeInQuotaBar )
         {
             if( NewQuota < 0 )
             {
@@ -179,6 +179,7 @@ namespace ChemSW.Nbt.Actions
             if( UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) )
             {
                 CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+                ObjectClass.ExcludeInQuotaBar = ExcludeInQuotaBar;
                 if( ObjectClass != null )
                 {
                     Int32 OldQuota = ObjectClass.Quota;
@@ -218,7 +219,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Set the quota for an object class
         /// </summary>
-        public void SetQuotaForNodeType( Int32 NodeTypeId, Int32 NewQuota )
+        public void SetQuotaForNodeType( Int32 NodeTypeId, Int32 NewQuota, bool ExcludeInQuotaBar )
         {
             if( NewQuota < 0 )
             {
@@ -228,6 +229,7 @@ namespace ChemSW.Nbt.Actions
             if( UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                NodeType.ExcludeInQuotaBar = ExcludeInQuotaBar;
                 if( NodeType != null )
                 {
                     Int32 OldQuota = NodeType.Quota;
@@ -340,7 +342,7 @@ namespace ChemSW.Nbt.Actions
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
-                if( ObjectClass.Quota > 0 )
+                if( ObjectClass.Quota > 0 && ObjectClass.ExcludeInQuotaBar )
                 {
                     TotalQuota += ObjectClass.Quota;
 
@@ -354,7 +356,7 @@ namespace ChemSW.Nbt.Actions
 
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
-                if( NodeType.Quota > 0 )
+                if( NodeType.Quota > 0 && NodeType.ExcludeInQuotaBar )
                 {
                     TotalQuota += NodeType.Quota;
 
@@ -440,7 +442,7 @@ namespace ChemSW.Nbt.Actions
             {
                 throw new CswDniException( ErrorType.Warning, "Could not check the quota of the provided object.", "The supplied NodeType was null." );
             }
-            
+
             Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
             if( Quota > 0 )
             {
