@@ -1,18 +1,18 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -456,7 +456,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 if( string.IsNullOrEmpty( LocationNtp.FKType ) || Int32.MinValue == LocationNtp.FKValue )
                 {
-                    LocationNtp.SetFK( inFKValue: FkValue, inFKType: NbtViewRelatedIdType.ObjectClassId.ToString() );
+                    LocationNtp.SetFK( inFKValue : FkValue, inFKType : NbtViewRelatedIdType.ObjectClassId.ToString() );
                 }
 
             }
@@ -529,8 +529,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtView View = _CswNbtSchemaModTrnsctn.restoreView( LfNtp.ViewId );
                 View.Root.ChildRelationships.Clear();
 
-                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters: false );
-                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                CswNbtViewRelationship LabelVr = View.AddViewRelationship( PrintLabelOc, IncludeDefaultFilters : false );
+                View.AddViewPropertyAndFilter( LabelVr, NodeTypeOcp, "Container", FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
                 LabelViewXml = LabelViewXml ?? View.ToXml().ToString();
                 View.save();
             }
@@ -1035,6 +1035,33 @@ namespace ChemSW.Nbt.Schema
 
         #endregion WILLIAM Methods
 
+        #region Yorick Metods
+
+        private void _updateUserFormats( CswDeveloper Dev, Int32 Case )
+        {
+            _acceptBlame( Dev, Case );
+
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp DateFormatOcp = UserOc.getObjectClassProp( CswNbtObjClassUser.PropertyName.DateFormat );
+            string ValidFormats = CswDateTime.DateFormat.Mdyyyy + "," + CswDateTime.DateFormat.dMyyyy + "," + CswDateTime.DateFormat.yyyyMMdd_Dashes + "," + CswDateTime.DateFormat.yyyyMd;
+            if( DateFormatOcp.ListOptions != ValidFormats )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DateFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, ValidFormats );
+                foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit : true, includeSystemNodes : false, IncludeDefaultFilters : false ) )
+                {
+                    if( false == string.IsNullOrEmpty( User.DateFormatProperty.Value ) &&
+                        CswDateTime.DateFormat.Unknown == (CswDateTime.DateFormat) User.DateFormatProperty.Value )
+                    {
+                        User.DateFormatProperty.Value = CswDateTime.DefaultDateFormat.ToString();
+                    }
+                }
+            }
+
+            _resetBlame();
+        }
+
+        #endregion Yorick Metods
+
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -1100,6 +1127,8 @@ namespace ChemSW.Nbt.Schema
             }//if we have a material oc
 
             _resetBlame();
+
+            _updateUserFormats( CswDeveloper.CF, 26574 );
 
             #endregion YORICK
 
