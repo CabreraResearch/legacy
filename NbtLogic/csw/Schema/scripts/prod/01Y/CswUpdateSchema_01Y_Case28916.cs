@@ -40,10 +40,12 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.DateTime ),
                     "Revision Date" )
                 );
-            CswNbtMetaDataNodeTypeProp LanguageNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+            CswNbtMetaDataNodeTypeProp LanguageNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
             LanguageNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, SDSNT.getFirstNodeTypeTab().TabId );
-            CswNbtMetaDataNodeTypeProp FormatNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+            CswNbtMetaDataNodeTypeProp FormatNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
             FormatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, SDSNT.getFirstNodeTypeTab().TabId );
+            CswNbtMetaDataNodeTypeProp DocClassNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+            DocClassNTP.removeFromAllLayouts();
             SDSNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDocument.PropertyName.Title ) );
             //Part 3 - remove docclass (OCP), language (OCP), and format(OCP), revision date (NTP) from all non-SDS types
         } //Update()
