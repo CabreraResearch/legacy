@@ -289,9 +289,32 @@
                         },
                         success: function (data) {
 
-                            function makeTabs() {
+                            function makeTabs(resetIdentity) {
                                 cswPrivate.clearTabs();
-                                cswPrivate.makeIdentityTab(data);
+
+                                // case 29017 - a little kludgey
+                                if (resetIdentity) {
+                                    cswPrivate.ajax.tabs = Csw.ajax.post({
+                                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                                        urlMethod: cswPrivate.urls.TabsUrlMethod,
+                                        data: {
+                                            EditMode: Csw.string(cswPrivate.tabState.EditMode, 'Edit'),
+                                            NodeId: cswPublic.getNodeId(),
+                                            SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.globalState.nodekeys, 0),
+                                            NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                                            PropId: '',
+                                            Date: Csw.string(cswPrivate.globalState.date, new Date().toDateString()),
+                                            filterToPropId: Csw.string(cswPrivate.globalState.filterToPropId),
+                                            Multi: Csw.bool(cswPrivate.tabState.Multi),
+                                            ConfigMode: cswPrivate.tabState.Config
+                                        },
+                                        success: function(newData) {
+                                            cswPrivate.makeIdentityTab(newData);
+                                        }
+                                    });
+                                } else {
+                                    cswPrivate.makeIdentityTab(data);
+                                }
 
                                 var tabIds = Csw.delimitedString();
                                 Csw.each(data, function (tab) {
@@ -329,17 +352,6 @@
 
                                 cswPrivate.tabcnt = tabno;
 
-                                cswPrivate.genTab = function (noChangesToPost) {
-                                    var ret = (true === noChangesToPost || Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid));
-                                    if (ret) {
-                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                        cswPrivate.form.empty();
-                                        cswPrivate.onTearDown();
-                                        makeTabs();
-                                    }
-                                    return ret;
-                                };
-
                                 Csw.each(tabdivs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
                                         selected: cswPrivate.tabState.tabNo,
@@ -349,7 +361,11 @@
                                                 var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                                 cswPrivate.tabState.tabNo = Csw.number(ui.index);
                                                 cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
-                                                cswPrivate.genTab();
+
+                                                Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                                cswPrivate.form.empty();
+                                                cswPrivate.onTearDown();
+                                                makeTabs(true);
                                             }
                                             return ret;
                                         } // select()
@@ -369,7 +385,7 @@
                                 }); // for(var t in tabdivs)
                             }
 
-                            makeTabs();
+                            makeTabs(false);
                         } // success
                     }); // ajax
                 } // if-else editmode is add or preview
