@@ -56,7 +56,9 @@ namespace ChemSW.Nbt.PropertySets
 
         public void updateNextDueDate( bool ForceUpdate, bool DeleteFuture )
         {
-            if( _Scheduler.FinalDueDate.WasModified ||
+            if( _Scheduler.DueDateInterval.WasModified || 
+                _Scheduler.FinalDueDate.WasModified ||
+                _CswNbtNode.New ||
                 DeleteFuture ||
                 ForceUpdate )
             {
