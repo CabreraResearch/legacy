@@ -2,7 +2,7 @@ using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
 using ChemSW.Exceptions;
-using ChemSW.Security;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt
             {
                 CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
                 int SitesCount = QuotasAct.GetNodeCountForNodeType( siteNT.NodeTypeId );
-                if( SitesCount > 1 && _CswNbtResources.CurrentNbtUser.Username != CswSystemUserNames.SysUsr_SchemaUpdt )
+                if( SitesCount > 1 && _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
                 {
                     throw new CswDniException( ErrorType.Warning, "Cannot disable the MultiSite Module when multiple Sites exist", SitesCount + " Site nodes exist, cannot disable the MultiSite module" );
                 }

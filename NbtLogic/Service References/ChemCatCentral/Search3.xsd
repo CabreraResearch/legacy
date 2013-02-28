@@ -122,7 +122,6 @@
       <xs:enumeration value="Name" />
       <xs:enumeration value="TradeName" />
       <xs:enumeration value="SupplierName" />
-      <xs:enumeration value="Structure" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="CswC3SearchParams.SearchFieldType" nillable="true" type="tns:CswC3SearchParams.SearchFieldType" />

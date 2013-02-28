@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public bool UserCanEditQuotas( ICswNbtUser User )
         {
-            return ( User.Username == CswNbtObjClassUser.ChemSWAdminUsername || User.Username == CswSystemUserNames.SysUsr_SchemaUpdt );
+            return ( User.Username == CswNbtObjClassUser.ChemSWAdminUsername || User is CswNbtSystemUser );
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.Actions
         } // SetQuota()
 
         /// <summary>
-        /// Set the quota for an object class
+        /// Set the quota for an object class and whether or not it counts against the quota bar
         /// </summary>
         public void SetQuotaForNodeType( Int32 NodeTypeId, Int32 NewQuota, bool ExcludeInQuotaBar )
         {
