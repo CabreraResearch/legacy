@@ -44,10 +44,13 @@ namespace ChemSW.Nbt.Schema
             LanguageNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, SDSNT.getFirstNodeTypeTab().TabId );
             CswNbtMetaDataNodeTypeProp FormatNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
             FormatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, SDSNT.getFirstNodeTypeTab().TabId );
-            CswNbtMetaDataNodeTypeProp DocClassNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
-            DocClassNTP.removeFromAllLayouts();
             SDSNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDocument.PropertyName.Title ) );
-            //Part 3 - remove docclass (OCP), language (OCP), and format(OCP), revision date (NTP) from all non-SDS types
+            
+            foreach( CswNbtMetaDataNodeType DocNT in DocumentOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp DocClassNTP = DocNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
+                DocClassNTP.removeFromAllLayouts();
+            }
         } //Update()
     }//class CswUpdateSchema_01Y_Case28916
 }//namespace ChemSW.Nbt.Schema
