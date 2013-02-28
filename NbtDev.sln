@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\..\Common\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUI", "..\..\Common\CswConfigUI\CswConfigUI.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
@@ -60,6 +60,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Test", "API.Test\API.Test.csproj", "{A05B9ACC-2992-4F9D-9E99-5734E96610F5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript.Test", "TestApps\NbtWebAppJavaScript.Test\NbtWebAppJavaScript.Test.csproj", "{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{85C18CE9-1D0F-481F-9167-8749D852C9AC}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -133,12 +138,12 @@ Global
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Release|x64.ActiveCfg = Release|x64
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Release|x64.Build.0 = Release|x64
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Release|x86.ActiveCfg = Release|x64
-		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|Any CPU.ActiveCfg = Test|x64
-		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|Mixed Platforms.ActiveCfg = Test|x64
-		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|Mixed Platforms.Build.0 = Test|x64
-		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|x64.ActiveCfg = Test|x64
-		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|x64.Build.0 = Test|x64
-		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|x86.ActiveCfg = Test|x64
+		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|Any CPU.ActiveCfg = Debug (Fast)|x64
+		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|Mixed Platforms.ActiveCfg = Debug (Fast)|x64
+		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|Mixed Platforms.Build.0 = Debug (Fast)|x64
+		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|x64.ActiveCfg = Debug (Fast)|x64
+		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|x64.Build.0 = Debug (Fast)|x64
+		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Test|x86.ActiveCfg = Debug (Fast)|x64
 		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
@@ -282,12 +287,13 @@ Global
 		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.ActiveCfg = Release|x64
 		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x64.Build.0 = Release|x64
 		{799B613A-C722-43C2-8D3F-61CE81384C74}.Release|x86.ActiveCfg = Release|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|Any CPU.ActiveCfg = Test|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|Mixed Platforms.ActiveCfg = Test|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|Mixed Platforms.Build.0 = Test|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|x64.ActiveCfg = Test|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|x64.Build.0 = Test|x64
-		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|x86.ActiveCfg = Test|x64
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|Any CPU.ActiveCfg = Debug (Fast)|Any CPU
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|Any CPU.Build.0 = Debug (Fast)|Any CPU
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|Mixed Platforms.ActiveCfg = Debug (Fast)|Any CPU
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|Mixed Platforms.Build.0 = Debug (Fast)|Any CPU
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|x64.ActiveCfg = Debug (Fast)|x64
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|x64.Build.0 = Debug (Fast)|x64
+		{799B613A-C722-43C2-8D3F-61CE81384C74}.Test|x86.ActiveCfg = Debug (Fast)|Any CPU
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug|x64.ActiveCfg = Debug|x64

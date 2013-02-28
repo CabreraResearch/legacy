@@ -1,12 +1,12 @@
 ﻿using ChemSW.Core;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace CswCommon.Test.Csw.Core
 {
-    [TestClass]
+    [TestFixture]
     public class CswTools_UnitTests
     {
-        [TestMethod]
+        [Test]
         public void CswDateFormatToPhpDateFormat_UnitTest()
         {
             foreach( CswDateFormat Format in CswDateFormat.All )
@@ -42,7 +42,7 @@ namespace CswCommon.Test.Csw.Core
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CswTimeFormatToPhpDateFormat_UnitTest()
         {
             foreach( CswTimeFormat Format in CswTimeFormat.All )
