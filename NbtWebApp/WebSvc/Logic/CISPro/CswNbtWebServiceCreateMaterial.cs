@@ -82,6 +82,47 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
+
+                //Alert wizard to active modules
+                bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers );
+                Response.Data.ContainersModuleEnabled = ContainersEnabled;
+
+                //Determine the steps
+                int StepNo = 1;
+                MaterialResponse.WizardStep TypeAndIdentity = new MaterialResponse.WizardStep()
+                {
+                    StepNo = StepNo,
+                    StepName = "Choose Type and Identity"
+                };
+                Response.Data.Steps.Add( TypeAndIdentity );
+                StepNo++;
+
+                MaterialResponse.WizardStep AdditionalProps = new MaterialResponse.WizardStep()
+                {
+                    StepNo = StepNo,
+                    StepName = "Additional Properties"
+                };
+                Response.Data.Steps.Add( AdditionalProps );
+                StepNo++;
+
+                if( ContainersEnabled )
+                {
+                    MaterialResponse.WizardStep Sizes = new MaterialResponse.WizardStep()
+                    {
+                        StepNo = StepNo,
+                        StepName = "Size(s)"
+                    };
+                    Response.Data.Steps.Add( Sizes );
+                    StepNo++;
+                }
+
+                MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep() //Will probably become dependent on a module in the near future
+                {
+                    StepNo = StepNo,
+                    StepName = "Attach SDS"
+                };
+                Response.Data.Steps.Add( AttachSDS );
+
             }
         }
 

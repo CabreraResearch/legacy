@@ -8,6 +8,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -485,9 +486,12 @@ namespace ChemSW.Nbt.Actions
                         RetObj["createdmaterial"] = true;
 
                         /* 2. Add the sizes */
-                        SizesArray = _removeDuplicateSizes( SizesArray );
-                        _addMaterialSizes( SizesArray, MaterialNode );
-                        RetObj["sizescount"] = SizesArray.Count;
+                        if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                        {
+                            SizesArray = _removeDuplicateSizes( SizesArray );
+                            _addMaterialSizes( SizesArray, MaterialNode );
+                            RetObj["sizescount"] = SizesArray.Count;
+                        }
 
                         /* 3. Add landingpage data */
                         RetObj["landingpagedata"] = _getLandingPageData( MaterialNode );

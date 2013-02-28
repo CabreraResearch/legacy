@@ -73,7 +73,8 @@
                     },
                     sizesForm: null,
                     sizeGrid: null                
-                }
+                },
+                containersModuleEnabled: true
             };
 
             var cswPublic = {};
@@ -145,6 +146,12 @@
 
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
+
+                //If the Containers module is not active, step 4 becomes step 3 but the method name is still makeStep4
+                if(false === cswPrivate.containersModuleEnabled && 3 === newStepNo){
+                        newStepNo = 4;
+                }
+
                 if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
@@ -622,7 +629,8 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
 
                     if (false === cswPrivate.stepFourComplete) {
-                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(4);
+                        var divNo = cswPrivate.containersModuleEnabled ? 4 : 3;
+                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(divNo);
                         cswPrivate.divStep4.empty();
 
                         if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
@@ -669,12 +677,12 @@
             (function () {
                 Csw.extend(cswPrivate, options);
                 cswPrivate.validateState();
-                cswPrivate.wizardSteps = {
-                    1: 'Choose Type and Identity',
-                    2: 'Additional Properties',
-                    3: 'Size(s)',
-                    4: 'Attach SDS'
-                };
+                //cswPrivate.wizardSteps = {
+                //    1: 'Choose Type and Identity',
+                //    2: 'Additional Properties',
+                //    3: 'Size(s)',
+                //    4: 'Attach SDS'
+                //};
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.finalize = function () {
@@ -727,23 +735,7 @@
                             Csw.tryExec(cswPrivate.onFinish, data.landingpagedata);
                         }
                     });
-                };//cswPrivate.finalize
-
-                cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
-                    Title: 'Create Material',
-                    StepCount: 4,
-                    Steps: cswPrivate.wizardSteps,
-                    StartingStep: cswPrivate.startingStep,
-                    FinishText: 'Finish',
-                    onNext: cswPrivate.handleStep,
-                    onPrevious: cswPrivate.handleStep,
-                    onCancel: function () {
-                        cswPrivate.clearState();
-                        Csw.tryExec(cswPrivate.onCancel);
-                    },
-                    onFinish: cswPrivate.finalize,
-                    doNextOnInit: false
-                });
+                };//cswPrivate.finalize                
 
                 // Initialize the wizard:
                 //  -Get the supplier view 
@@ -755,7 +747,33 @@
                     async: false,
                     success: function(data) {                        
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
-                        cswPrivate.state.materialId = data.TempNode.NodeId; 
+                        cswPrivate.state.materialId = data.TempNode.NodeId;
+
+                        cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
+
+                        var stepCount = 0;
+                        cswPrivate.wizardSteps = {};
+                        Csw.each(data.Steps, function(Step){
+                            cswPrivate.wizardSteps[Step.StepNo] = Step.StepName;
+                            stepCount++;
+                        });
+
+                        cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
+                            Title: 'Create Material',
+                            StepCount: stepCount,
+                            Steps: cswPrivate.wizardSteps,
+                            StartingStep: cswPrivate.startingStep,
+                            FinishText: 'Finish',
+                            onNext: cswPrivate.handleStep,
+                            onPrevious: cswPrivate.handleStep,
+                            onCancel: function () {
+                                cswPrivate.clearState();
+                                Csw.tryExec(cswPrivate.onCancel);
+                            },
+                            onFinish: cswPrivate.finalize,
+                            doNextOnInit: false
+                        });
+
                         cswPrivate.makeStep1();
                     }
                 });
