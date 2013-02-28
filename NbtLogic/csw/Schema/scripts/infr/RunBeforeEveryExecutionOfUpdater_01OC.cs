@@ -1043,14 +1043,16 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp DateFormatOcp = UserOc.getObjectClassProp( CswNbtObjClassUser.PropertyName.DateFormat );
-            string ValidFormats = CswDateTime.DateFormat.Mdyyyy + "," + CswDateTime.DateFormat.dMyyyy + "," + CswDateTime.DateFormat.yyyyMMdd_Dashes + "," + CswDateTime.DateFormat.yyyyMd;
+            string ValidFormats = CswDateFormat.Mdyyyy + "," + CswDateFormat.dMyyyy + "," + CswDateFormat.yyyyMMdd_Dashes + "," + CswDateFormat.yyyyMd;
+            ValidFormats += "," + CswDateFormat.ddMMMyyyy;
+
             if( DateFormatOcp.ListOptions != ValidFormats )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DateFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, ValidFormats );
                 foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit : true, includeSystemNodes : false, IncludeDefaultFilters : false ) )
                 {
                     if( false == string.IsNullOrEmpty( User.DateFormatProperty.Value ) &&
-                        CswDateTime.DateFormat.Unknown == (CswDateTime.DateFormat) User.DateFormatProperty.Value )
+                        CswResources.UnknownEnum == (CswDateFormat) User.DateFormatProperty.Value )
                     {
                         User.DateFormatProperty.Value = CswDateTime.DefaultDateFormat.ToString();
                     }
