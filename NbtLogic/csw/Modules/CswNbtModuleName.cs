@@ -61,6 +61,18 @@ namespace ChemSW.Nbt
         /// Containers
         /// </summary>
         public static readonly CswNbtModuleName Containers = new CswNbtModuleName( "Containers" );
+        /// <summary>
+        /// Regulatory Lists
+        /// </summary>
+        public static readonly CswNbtModuleName RegulatoryLists = new CswNbtModuleName( "Regulatory Lists" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiSite = new CswNbtModuleName( "Multi Site" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiInventoryGroup = new CswNbtModuleName( "Multi Inventory Group" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt

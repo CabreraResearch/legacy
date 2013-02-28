@@ -62,7 +62,10 @@
                                     success: function (result) {
                                         Csw.tryExec(cswPrivate.onModuleChange);
                                         cswPrivate.init();
-                                    } // success
+                                    }, // success
+                                    error: function () {
+                                        cswPrivate.init();
+                                    } // error
                                 }); // ajax
 
                             } // onClick()

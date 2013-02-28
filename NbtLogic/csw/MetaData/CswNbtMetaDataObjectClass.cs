@@ -73,6 +73,18 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
         }
 
+        public bool ExcludeInQuotaBar
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _ObjectClassRow["excludeinquotabar"] );
+            }
+            set
+            {
+                _ObjectClassRow["excludeinquotabar"] = CswConvert.ToBoolean( value );
+            }
+        }
+
         public Collection<Int32> getNodeTypeIds()
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds( ObjectClassId );

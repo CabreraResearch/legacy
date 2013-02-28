@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        private void _acceptBlame(CswDeveloper BlameMe, Int32 BlameCaseNo)
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -51,47 +51,47 @@ namespace ChemSW.Nbt.Schema
             #region WILLIAM
 
             // case 26827
-            if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("object_class", "searchdeferpropid"))
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", "searchdeferpropid" ) )
             {
-                _CswNbtSchemaModTrnsctn.addLongColumn("object_class", "searchdeferpropid",
+                _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", "searchdeferpropid",
                                                       "Defer to the target of this property in search results", false,
-                                                      false);
+                                                      false );
             }
-            if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("nodetypes", "searchdeferpropid"))
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "searchdeferpropid" ) )
             {
-                _CswNbtSchemaModTrnsctn.addLongColumn("nodetypes", "searchdeferpropid",
+                _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", "searchdeferpropid",
                                                       "Defer to the target of this property in search results", false,
-                                                      false);
+                                                      false );
             }
 
-            _createTierIITable(CswDeveloper.BV, 28247);
+            _createTierIITable( CswDeveloper.BV, 28247 );
 
 
             // case 25495
-            _acceptBlame(CswDeveloper.SS, 25495);
+            _acceptBlame( CswDeveloper.SS, 25495 );
             string SearchTableName = "search";
-            if (false == _CswNbtSchemaModTrnsctn.isTableDefined(SearchTableName))
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( SearchTableName ) )
             {
-                _CswNbtSchemaModTrnsctn.addTable(SearchTableName, "searchid");
-                _CswNbtSchemaModTrnsctn.addStringColumn(SearchTableName, "category", "category for view selector", false, false, 40);
-                _CswNbtSchemaModTrnsctn.addStringColumn(SearchTableName, "name", "name of search", false, false, 80);
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn(SearchTableName, "userid", "owner of search", false, false, "nodes", "nodeid");
-                _CswNbtSchemaModTrnsctn.addClobColumn(SearchTableName, "searchdata", "data for building this search", false, false);
+                _CswNbtSchemaModTrnsctn.addTable( SearchTableName, "searchid" );
+                _CswNbtSchemaModTrnsctn.addStringColumn( SearchTableName, "category", "category for view selector", false, false, 40 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( SearchTableName, "name", "name of search", false, false, 80 );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( SearchTableName, "userid", "owner of search", false, false, "nodes", "nodeid" );
+                _CswNbtSchemaModTrnsctn.addClobColumn( SearchTableName, "searchdata", "data for building this search", false, false );
             }
             _resetBlame();
 
 
-            _acceptBlame(CswDeveloper.SS, 28492);
-            if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("landingpage", "to_searchid"))
+            _acceptBlame( CswDeveloper.SS, 28492 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "to_searchid" ) )
             {
-                _CswNbtSchemaModTrnsctn.addLongColumn("landingpage", "to_searchid", "for search items", false, false);
+                _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "to_searchid", "for search items", false, false );
             }
             _resetBlame();
 
-            _acceptBlame(CswDeveloper.CF, 27882);
-            if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("node_views", "groupbysiblings"))
+            _acceptBlame( CswDeveloper.CF, 27882 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "node_views", "groupbysiblings" ) )
             {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn("node_views", "groupbysiblings", "Group by Siblings in Tree", true, false);
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "node_views", "groupbysiblings", "Group by Siblings in Tree", true, false );
             }
             _resetBlame();
 
@@ -132,59 +132,79 @@ namespace ChemSW.Nbt.Schema
 
             #region YORICK
 
-            //YORICK DDL changes go here.
+            _createExcludeInQuotaBarColumns( CswDeveloper.MB, 28752 );
 
             #endregion YORICK
 
         }//Update()
 
-        private void _createTierIITable(CswDeveloper Dev, Int32 CaseNum)
+        private void _createTierIITable( CswDeveloper Dev, Int32 CaseNum )
         {
-            _acceptBlame(Dev, CaseNum);
+            _acceptBlame( Dev, CaseNum );
 
-            if (false == _CswNbtSchemaModTrnsctn.isTableDefined("tier2"))
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
             {
-                _CswNbtSchemaModTrnsctn.addTable("tier2", "tier2id");
-                _CswNbtSchemaModTrnsctn.getNewPrimeKey("tier2");
+                _CswNbtSchemaModTrnsctn.addTable( "tier2", "tier2id" );
+                _CswNbtSchemaModTrnsctn.getNewPrimeKey( "tier2" );
             }
-            if (_CswNbtSchemaModTrnsctn.isTableDefined("tier2"))
+            if( _CswNbtSchemaModTrnsctn.isTableDefined( "tier2" ) )
             {
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "dateadded"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "dateadded" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addDateColumn("tier2", "dateadded", "Date added", false, false);
+                    _CswNbtSchemaModTrnsctn.addDateColumn( "tier2", "dateadded", "Date added", false, false );
                 }
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "locationid"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "locationid" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addLongColumn("tier2", "locationid", "PK of the Location", false, false);
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "locationid", "PK of the Location", false, false );
                 }
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "parentlocationid"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "parentlocationid" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addLongColumn("tier2", "parentlocationid", "PK of the parent Location", false, false);
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "parentlocationid", "PK of the parent Location", false, false );
                 }
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "materialid"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "materialid" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addLongColumn("tier2", "materialid", "PK of the Material", false, false);
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "materialid", "PK of the Material", false, false );
                 }
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "casno"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "casno" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addStringColumn("tier2", "casno", "Material's CASNo", false, false, 20);
+                    _CswNbtSchemaModTrnsctn.addStringColumn( "tier2", "casno", "Material's CASNo", false, false, 20 );
                 }
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "quantity"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "quantity" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addDoubleColumn("tier2", "quantity", "Quantity of the Material in the given Location", false, false, 6);
+                    _CswNbtSchemaModTrnsctn.addDoubleColumn( "tier2", "quantity", "Quantity of the Material in the given Location", false, false, 6 );
                 }
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "totalquantity"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "totalquantity" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addDoubleColumn("tier2", "totalquantity", "Quantity of the Material in the given Location and all child locations", false, false, 6);
+                    _CswNbtSchemaModTrnsctn.addDoubleColumn( "tier2", "totalquantity", "Quantity of the Material in the given Location and all child locations", false, false, 6 );
                 }
-                if (false == _CswNbtSchemaModTrnsctn.isColumnDefined("tier2", "unitid"))
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "tier2", "unitid" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addLongColumn("tier2", "unitid", "UnitId of the Quantity of the Material", false, false);
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "tier2", "unitid", "UnitId of the Quantity of the Material", false, false );
                 }
             }
 
             _resetBlame();
         }
+
+        private void _createExcludeInQuotaBarColumns( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            string ExcludeInQuotaBarColName = "excludeinquotabar";
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", ExcludeInQuotaBarColName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class", ExcludeInQuotaBarColName, "Whether this ObjectClass is excluded when determining the quota bar size", false, true );
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", ExcludeInQuotaBarColName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", ExcludeInQuotaBarColName, "Whether this NodeType is excluded when determining the quota bar size", false, true );
+            }
+
+            _resetBlame();
+        }
+
     }//class RunBeforeEveryExecutionOfUpdater_01
 }//namespace ChemSW.Nbt.Schema
 

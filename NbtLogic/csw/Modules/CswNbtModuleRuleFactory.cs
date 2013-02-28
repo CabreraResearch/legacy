@@ -54,6 +54,18 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleContainers( CswNbtResources );
             }
+            else if( CswNbtModuleName.RegulatoryLists == ModuleName )
+            {
+                ret = new CswNbtModuleRuleRegulatoryLists( CswNbtResources );
+            }
+            else if( CswNbtModuleName.MultiSite == ModuleName )
+            {
+                ret = new CswNbtModuleRuleMultiSite( CswNbtResources );
+            }
+            else if( CswNbtModuleName.MultiInventoryGroup == ModuleName )
+            {
+                ret = new CswNbtModuleRuleMultiInventoryGroup( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( ErrorType.Error,
