@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.WebServices
                                     foreach( CswNbtTreeNodeProp Prop in Props )
                                     {
                                         CswNbtMetaDataNodeTypeProp Ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
-                                        if( null != Ntp && null != Ntp.getObjectClassProp() && Ntp.getObjectClassProp().PropName == CswNbtObjClassGHSPhrase.PropertyName.Code )
+                                        if( null != Ntp && Ntp.getObjectClassPropName() == CswNbtObjClassGHSPhrase.PropertyName.Code )
                                         {
                                             Code = Prop.Gestalt;
                                         }

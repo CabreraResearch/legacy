@@ -87,7 +87,10 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", NbtViewVisibility.Global );
 
             // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule(NbtScheduleRuleNames.GenRequest, Disabled: false);
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: false );
+
+            //Case 28933 show report nodes
+            _CswNbtResources.Modules.ToggleReportNodes( "Containers", false );
         }
 
         public override void OnDisable()
@@ -169,7 +172,10 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", NbtViewVisibility.Global );
 
             // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled : true );
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: true );
+
+            //Case 28933 hide report nodes
+            _CswNbtResources.Modules.ToggleReportNodes( "Containers", true );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

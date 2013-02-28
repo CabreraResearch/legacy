@@ -55,6 +55,7 @@
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
                 cswPrivate.isClickable = cswPrivate.isClickable; // ||true;
                 cswPrivate.useSearch = cswPrivate.useSearch;
+                cswPrivate.usePreview = cswPrivate.usePreview;
                 cswPrivate.options = cswPrivate.options || [];
 
                 cswPublic = cswParent.div();
@@ -103,7 +104,6 @@
                         ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
-                        //cswPrivate.options = JSON.parse(data.options);
                         cswPrivate.options = [];
                         if (false === cswPrivate.isRequired) {
                             cswPrivate.options.push({ id: '', value: '' });
@@ -217,7 +217,7 @@
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                         cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });
-                    } else {
+                    } else if (cswPrivate.options.length > 0) {
                         // case 28918 - select the first option, and trigger the change event
                         handleChange();
                     }
@@ -437,7 +437,7 @@
 
             cswPublic.optionsCount = function() {
                 return cswPrivate.options.length;
-            }
+            };
 
             //#endregion Public
 
@@ -463,21 +463,23 @@
                     }
                 } // if-else (o.ReadOnly) {
 
-                cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
-                cswPublic.$.hover(
-                   function(event) {
-                        Csw.nodeHoverIn(event, {
-                            nodeid: cswPrivate.selectedNodeId,
-                            nodename: cswPrivate.selectedName,
-                            parentDiv: cswPrivate.table.cell(1,cswPrivate.previewCellCol),
-                            useAbsolutePosition: false,
-                            rightpad: 0
-                        });
-                    },
-                    function(event) {
-                        Csw.nodeHoverOut();
-                    }
-                );
+                if (false !== cswPrivate.usePreview) {
+                    cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
+                    cswPublic.$.hover(
+                        function(event) {
+                            Csw.nodeHoverIn(event, {
+                                nodeid: cswPrivate.selectedNodeId,
+                                nodename: cswPrivate.selectedName,
+                                parentDiv: cswPrivate.table.cell(1, cswPrivate.previewCellCol),
+                                useAbsolutePosition: false,
+                                rightpad: 0
+                            });
+                        },
+                        function(event) {
+                            Csw.nodeHoverOut();
+                        }
+                    );
+                }
             } ());
 
             return cswPublic;

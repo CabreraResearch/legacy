@@ -883,7 +883,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
                 {
-                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.getFieldType().FieldType == SourceProp.getFieldType().FieldType )
+                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.getFieldTypeValue() == SourceProp.getFieldTypeValue() )
                     {
                         ThisProp.copy( SourceProp );
                     } // if( ThisProp.PropName == SourceProp.PropName && ThisProp.FieldType == SourceProp.FieldType )
@@ -916,7 +916,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( Prop != null )
                         {
-                            CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldType().FieldType;
+                            CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
                             if( FT == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                             {
                                 Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;

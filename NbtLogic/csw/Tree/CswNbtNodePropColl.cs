@@ -261,7 +261,7 @@ namespace ChemSW.Nbt
             //**************** END KLUDGE ALERT
 
             //this[ NodePk ].NodeTypeId = NodeTypeId;
-            ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName, DateTime.MinValue );
+            //ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName, DateTime.MinValue );
 
             _populateProps(); // null, NodeTypeId );
 
@@ -274,16 +274,9 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
             foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
             {
-                DataRow PropRow = null;
                 ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
-                foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
-                {
-                    if( CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() )
-                    {
-                        PropRow = CurrentRow;
-                        break;
-                    }
-                }
+                DataRow PropRow = PropCollData.PropsTable.Rows.Cast<DataRow>().FirstOrDefault( CurrentRow => CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() );
+
                 CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp );
                 //if( MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
                 //    MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )

@@ -187,10 +187,11 @@ namespace ChemSW.Nbt.Actions
                         foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
                             CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
-                            CswNbtMetaDataObjectClassProp ContainerOCP = ContainerNTP.getObjectClassProp();
-                            if( null != ContainerOCP )
-                            {
-                                switch( ContainerOCP.PropName )
+                            //CswNbtMetaDataObjectClassProp ContainerOCP = ContainerNTP.getObjectClassProp();
+                            //if( null != ContainerOCP )
+                            //{
+                            //    switch( ContainerOCP.PropName )
+                                switch( ContainerNTP.getObjectClassPropName() )
                                 {
                                     case CswNbtObjClassContainer.PropertyName.Quantity:
                                         Quantity = ContainerProp.Field1_Numeric;
@@ -204,7 +205,7 @@ namespace ChemSW.Nbt.Actions
                                         UseType = ContainerProp.Field1;
                                         break;
                                 }
-                            }
+                            //}
                         }
                         if( false == String.IsNullOrEmpty( UseType ) )
                         {

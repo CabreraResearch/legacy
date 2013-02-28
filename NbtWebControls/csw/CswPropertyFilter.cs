@@ -543,7 +543,7 @@ namespace ChemSW.NbtWebControls
                     ( !_IsQuickSearch || NodeTypeProp.IsQuickSearch ) &&
                     ( FilterPropertiesToTabId == Int32.MinValue || ( NodeTypeProp.FirstEditLayout != null && NodeTypeProp.FirstEditLayout.TabId == FilterPropertiesToTabId ) ) &&
                     ( FilterOutPropertyId == Int32.MinValue || NodeTypeProp.PropId != FilterOutPropertyId ) &&
-                    ( AllowedFieldTypes.Count == 0 || AllowedFieldTypes.Contains( NodeTypeProp.getFieldType().FieldType ) ) &&
+                    ( AllowedFieldTypes.Count == 0 || AllowedFieldTypes.Contains( NodeTypeProp.getFieldTypeValue() ) ) &&
                     ( !FilterOutConditionalProperties || !NodeTypeProp.hasFilter() ) )
                 {
                     PropSelectBox.Items.Add( new ListItem( NodeTypeProp.PropName, NodeTypeProp.FirstPropVersionId.ToString() ) );
@@ -623,7 +623,7 @@ namespace ChemSW.NbtWebControls
                 if( SelectedFilterMode != CswNbtPropFilterSql.PropertyFilterMode.Null &&
                     SelectedFilterMode != CswNbtPropFilterSql.PropertyFilterMode.NotNull )
                 {
-                    switch( SelectedPropLatestVersion.getFieldType().FieldType )
+                    switch( SelectedPropLatestVersion.getFieldTypeValue() )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                             FilterValueDatePicker.Style[HtmlTextWriterStyle.Display] = "";
@@ -712,7 +712,7 @@ namespace ChemSW.NbtWebControls
                                     }
                                     if( values[OldFilterModeField.UniqueID] == null || NewFilterMode.ToString() == values[OldFilterModeField.UniqueID].ToString() )
                                     {
-                                        switch( MetaDataProp.getFieldType().FieldType )
+                                        switch( MetaDataProp.getFieldTypeValue() )
                                         {
                                             case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                                 if( FilterValueDatePicker.Today )
@@ -961,7 +961,7 @@ namespace ChemSW.NbtWebControls
             {
                 EnsureChildControls();
                 object ret = null;
-                switch( SelectedPropLatestVersion.getFieldType().FieldType )
+                switch( SelectedPropLatestVersion.getFieldTypeValue() )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                         if( FilterValueDatePicker.Today )
@@ -1072,7 +1072,7 @@ namespace ChemSW.NbtWebControls
                 return ( SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                          SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null ||
                          ( FilterValue.ToString() != string.Empty &&
-                           ( SelectedPropLatestVersion.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
+                           ( SelectedPropLatestVersion.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
                              FilterValue.ToString().Substring( 0, "today".Length ) == "today" ||
                              CswConvert.ToDateTime( FilterValue ) != DateTime.MinValue ) ) );
             }

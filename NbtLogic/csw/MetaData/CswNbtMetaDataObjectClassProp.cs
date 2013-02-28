@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.MetaData
         public ICswNbtFieldTypeRule getFieldTypeRule()
         {
             if( _FieldTypeRule == null )
-                _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldType().FieldType );
+                _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldTypeValue() );
             return _FieldTypeRule;
         }
         public Int32 FirstPropVersionId { get { return PropId; } }
@@ -135,6 +135,10 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataFieldType getFieldType()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId );
+        }
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeValue( FieldTypeId );
         }
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps()
@@ -518,7 +522,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUserRelationship()
         {
             bool ret = false;
-            if( this.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
             {
                 if( FKType != string.Empty )
                 {

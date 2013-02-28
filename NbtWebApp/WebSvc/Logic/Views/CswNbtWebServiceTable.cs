@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition(), thisNode.NodeId );
 
                         thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
-                        thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
+                        thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
                         thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNode.NodeType );
 
                         // Properties
@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
-                    thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
+                    thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
 
                     //C3 results are not nodes and hence they can't be deleted.
                     thisNode.AllowDelete = false;

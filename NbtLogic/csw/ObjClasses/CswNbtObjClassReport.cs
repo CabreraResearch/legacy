@@ -53,13 +53,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
-                if( PropertyName.BtnRun == OCP.PropName )
+                if( PropertyName.BtnRun == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     ButtonData.Action = NbtButtonAction.popup;
                     ButtonData.Data["url"] = ReportUrl;

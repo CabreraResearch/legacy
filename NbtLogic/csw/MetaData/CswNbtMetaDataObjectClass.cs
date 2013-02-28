@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 _BarcodeProp = ( from _Prop
                                      in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId )
-                                 where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                                 where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode
                                  select _Prop ).FirstOrDefault();
             }
             return _BarcodeProp;
@@ -181,7 +181,8 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass &&
                        ObjectClass != NbtObjectClass.BatchOpClass &&
                        ObjectClass != NbtObjectClass.ReceiptLotClass &&
-                       ObjectClass != NbtObjectClass.FeedbackClass
+                       ObjectClass != NbtObjectClass.FeedbackClass &&
+                       ObjectClass != NbtObjectClass.PrintJobClass
                 );
             }
         } // CanAdd

@@ -417,7 +417,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret = _CswNbtResources.ViewSelect.getSessionView( Request.SessionViewId );
                 }
             }
-            catch( CswDniException DniException )
+            catch( CswDniException )
             {
                 Ret = null;
             }
@@ -511,7 +511,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                 from _OcProp
                                                     in MetaDataObjectClass.getObjectClassProps()
                                                 where
-                                                    _OcProp.getFieldType().FieldType ==
+                                                    _OcProp.getFieldTypeValue() ==
                                                     CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
                                                     _OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                                                     _OcProp.FKValue == MetaRelatedObjectClass.ObjectClassId

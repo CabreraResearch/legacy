@@ -303,7 +303,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         for j in 1..materials.count loop
           --If a MaterialQty with the container's MaterialId already exists, 
           --add the container's Qty to both the MaterialQty's Qty and CollectiveQty value
-          if containers(i).materialid = materials(j).materialid then
+          if materials.exists(j) and containers(i).materialid = materials(j).materialid then
             materials(j).quantity := materials(j).quantity + containers(i).quantity;
             materials(j).totalquantity := materials(j).totalquantity + containers(i).totalquantity;
             found := 1;
@@ -331,7 +331,7 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
         Materials := GET_MATERIALS(Locations(loc).LocationId);
         if Materials.exists(Materials.first) then
           for mat in Materials.first..Materials.last loop
-            if Materials.exists(mat) then
+            if Materials.exists(mat) and Materials(mat).materialid is not null then
               insert
                 into TIER2
                 (

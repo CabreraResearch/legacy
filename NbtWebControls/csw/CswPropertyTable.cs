@@ -414,7 +414,7 @@ namespace ChemSW.NbtWebControls
                     // we are using the unsaved form contents to decide, rather than the DB value.
 
                     // Logical needs a special case
-                    if( FilterMetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+                    if( FilterMetaDataProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Logical )
                     {
                         if( SubField.Name == CswNbtSubField.SubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                         {
@@ -435,7 +435,7 @@ namespace ChemSW.NbtWebControls
                     {
                         string ValueToCompare = string.Empty;
 
-                        switch( FilterMetaDataProp.getFieldType().FieldType )
+                        switch( FilterMetaDataProp.getFieldTypeValue() )
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.List:
                                 ValueToCompare = ( (CswList) FilterControl ).SelectedValue;
@@ -444,7 +444,7 @@ namespace ChemSW.NbtWebControls
                                 ValueToCompare = ( (CswText) FilterControl ).Text;
                                 break;
                             default:
-                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldType().FieldType.ToString() );
+                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
                         } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                         if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
@@ -625,7 +625,7 @@ namespace ChemSW.NbtWebControls
 
                             if( _PropertyControlSetHash.ContainsKey( ParentProp.FirstPropVersionId ) )
                             {// The parent needs to use postback
-                                switch( ParentProp.getFieldType().FieldType )
+                                switch( ParentProp.getFieldTypeValue() )
                                 {
                                     case CswNbtMetaDataFieldType.NbtFieldType.Logical:
                                         ( (CswLogical) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
