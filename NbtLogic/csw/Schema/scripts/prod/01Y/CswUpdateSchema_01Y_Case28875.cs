@@ -26,49 +26,13 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass RoleMDObjC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RoleClass );
 
-            CswNbtObjClassRole cispro_receiver_role = null;
-            CswNbtObjClassRole cispro_dispenser_role = null;
-            CswNbtObjClassRole cispro_request_fulfiller_role = null;
-            CswNbtObjClassRole cispro_admin_role = null;
-
-            foreach( CswNbtObjClassRole CurrentRoleInstance in RoleMDObjC.getNodes( false, true ) )
-            {
-                switch( CurrentRoleInstance.NodeName )
-                {
-                    case "CISPro_Receiver":
-                        cispro_receiver_role = CurrentRoleInstance;
-                        break;
-
-                    case "CISPro_Dispenser":
-                        cispro_dispenser_role = CurrentRoleInstance;
-                        break;
-
-                    case "CISPro_Request_Fulfiller":
-                        cispro_request_fulfiller_role = CurrentRoleInstance;
-                        break;
-
-                    case "CISPro_Admin":
-                        cispro_admin_role = CurrentRoleInstance;
-                        break;
-
-                    default:
-                        ;//do nothing
-                        break;
-
-                }//switch on role name
-
-            }//iterate roles
+            CswNbtObjClassRole cispro_receiver_role = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Receiver" );
+            CswNbtObjClassRole cispro_dispenser_role = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Dispenser" ); ;
+            CswNbtObjClassRole cispro_request_fulfiller_role = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Request_Fulfiller" ); ;
+            CswNbtObjClassRole cispro_admin_role = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" ); ;
 
 
-            CswNbtObjClassUser cispro_dispenser_User = null;
-            CswNbtMetaDataObjectClass UserMDObjC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
-            foreach( CswNbtObjClassUser CurrentUserInstance in UserMDObjC.getNodes( false, true ) )
-            {
-                if( "cispro_dispenser" == CurrentUserInstance.NodeName )
-                {
-                    cispro_dispenser_User = CurrentUserInstance;
-                }
-            }//iterate users
+            CswNbtObjClassUser cispro_dispenser_User = _CswNbtSchemaModTrnsctn.Nodes.makeUserNodeFromUsername( "cispro_dispenser" );
 
 
             if( null != cispro_receiver_role )
