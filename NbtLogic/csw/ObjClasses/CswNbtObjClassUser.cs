@@ -465,7 +465,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.DateFormat] ); } }
         private void onDateFormatPropChange( CswNbtNodeProp NodeProp )
         {
-            if( CswDateTime.DateFormat.Unknown == (CswDateTime.DateFormat) DateFormatProperty.Value )
+            if( false == string.IsNullOrEmpty( DateFormatProperty.Value ) &&
+                CswDateTime.DateFormat.Unknown == (CswDateTime.DateFormat) DateFormatProperty.Value )
             {
                 string SupportedFormats = "'" + CswDateTime.DateFormat.Mdyyyy + "', ";
                 SupportedFormats += "'" + CswDateTime.DateFormat.dMyyyy + "', ";
@@ -489,7 +490,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.TimeFormat] ); } }
         private void onTimeFormatPropChange( CswNbtNodeProp NodeProp )
         {
-            if( CswDateTime.TimeFormat.Unknown == (CswDateTime.TimeFormat) TimeFormatProperty.Value )
+            if( false == string.IsNullOrEmpty( TimeFormatProperty.Value ) &&
+                CswDateTime.TimeFormat.Unknown == (CswDateTime.TimeFormat) TimeFormatProperty.Value )
             {
                 string SupportedFormats = "'" + CswDateTime.TimeFormat.Hmmss + "', ";
                 SupportedFormats += "'" + CswDateTime.TimeFormat.hmmsstt + "'";
