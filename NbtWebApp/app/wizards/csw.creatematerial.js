@@ -627,13 +627,13 @@
 
                         if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
                             cswPrivate.divStep4.label({
-                                text: "No Material Documents have been defined. Click Finish to complete the wizard.",
+                                text: "No SDS Documents have been defined. Click Finish to complete the wizard.",
                                 cssclass: "wizardHelpDesc"
                             });
                         } else {
 
                             cswPrivate.divStep4.label({
-                                text: "Define a Material Safety Data Sheet to attach to this material.",
+                                text: "Define a Safety Data Sheet to attach to this material.",
                                 cssclass: "wizardHelpDesc"
                             });
                             cswPrivate.divStep4.br({ number: 4 });
