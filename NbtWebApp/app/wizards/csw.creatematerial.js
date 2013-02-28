@@ -36,7 +36,6 @@
                     quantityEditableName: 'Quantity Editable',
                     unitCountName: 'Unit Count'
                 },
-                sizeHeaderAdded: false, // Case 28693
                 tabsAndProps: null,
                 documentTabsAndProps: null,
                 showQuantityEditable: false,
@@ -56,7 +55,8 @@
                     documentProperties: {},
                     useExistingTempNode: false,
                     physicalState: '',
-                    sizes: []
+                    sizes: [],
+                    sizeHeaderAdded: false, // Case 28693
                 },
                 physicalStateModified: false,
                 newSizes: {
@@ -456,10 +456,10 @@
                                 cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
                             }
                             // Case 28693: Stops header from duplicating if size(s) are provided
-                            if (cswPrivate.sizeHeaderAdded === false) {
+                            if (cswPrivate.state.sizeHeaderAdded === false) {
                                 cswPrivate.state.sizes.unshift(cswPrivate.header);
                             }
-                            cswPrivate.sizeHeaderAdded = true;
+                            cswPrivate.state.sizeHeaderAdded = true;
  
                             cswPrivate.newSizes.sizesForm = cswPrivate.divStep3.form();
                             cswPrivate.newSizes.sizeGrid = cswPrivate.newSizes.sizesForm.thinGrid({
