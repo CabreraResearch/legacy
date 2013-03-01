@@ -126,6 +126,8 @@
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
+    <Compile Include="csw\ImportExport\2D\CswNbt2DBinding.cs" />
+    <Compile Include="csw\ImportExport\2D\CswNbt2DImporter.cs" />
     <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetColReader.cs" />
     <Compile Include="csw\ImportExport\CswImporterLocationTree.cs" />
     <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetCol.cs" />
