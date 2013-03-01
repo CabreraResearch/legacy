@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.Grid
                                             DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
                                             DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
                                         {
-                                            dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.DateFormat );
+                                            dateformat += CswTools.ConvertNetToPHP( _CswNbtResources.CurrentNbtUser.DateFormat );
                                             if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
                                             {
                                                 dateformat += " ";
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.Grid
                                         if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
                                             DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
                                         {
-                                            dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.TimeFormat );
+                                            dateformat += CswTools.ConvertNetToPHP( _CswNbtResources.CurrentNbtUser.TimeFormat );
                                         }
                                         col.dateformat = dateformat;
                                         break;
@@ -334,7 +334,7 @@ namespace ChemSW.Nbt.Grid
                 {
                     string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
                     string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
-                    gridcol.dateformat = CswTools.DateFormatToExtJsDateFormat( userDateFormat ) + " " + CswTools.DateFormatToExtJsDateFormat( userTimeFormat );
+                    gridcol.dateformat = CswTools.ConvertNetToPHP( userDateFormat ) + " " + CswTools.ConvertNetToPHP( userTimeFormat );
                     
                     fld.type = "date";
                     gridcol.xtype = extJsXType.datecolumn;

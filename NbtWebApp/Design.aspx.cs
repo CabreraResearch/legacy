@@ -510,7 +510,7 @@ namespace ChemSW.Nbt.WebPages
                     //} //if( _RequiredValue != null )
 
                     // BZ 4868
-                    if( SelectedNodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                    if( SelectedNodeTypeProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
                         SelectedNodeTypeProp.FKValue == Int32.MinValue )
                     {
                         _ViewXmlRow.Visible = false;
@@ -803,7 +803,7 @@ namespace ChemSW.Nbt.WebPages
                     string MultiString = getPropAttributeValue( "EditProp_MultiValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     if( MultiString == string.Empty )
                     {
-                        if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect )
+                        if( PropToSave.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect )
                             MultiString = "Single";  // Default for NodeTypeSelect
                         else
                             MultiString = "Blank";
@@ -813,8 +813,8 @@ namespace ChemSW.Nbt.WebPages
                     //bool NewIsFk = false;
                     string NewFKType = NbtViewRelatedIdType.Unknown.ToString();
                     Int32 NewFKValue = Int32.MinValue;
-                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
-                        PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
+                    if( PropToSave.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
+                        PropToSave.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
                     {
                         string TargetValue = getPropAttributeValue( "EditProp_TargetValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                         if( TargetValue != String.Empty )
@@ -833,7 +833,7 @@ namespace ChemSW.Nbt.WebPages
                             }
                         }
                     }
-                    else if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ChildContents )
+                    else if( PropToSave.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.ChildContents )
                     {
                         string ChildRelationshipValue = getPropAttributeValue( "EditProp_FkValueValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                         if( ChildRelationshipValue != String.Empty )
@@ -866,7 +866,7 @@ namespace ChemSW.Nbt.WebPages
 
                     // Case 20297 - this should be set second
                     String ValueOptionsString = getPropAttributeValue( "EditProp_ValueOptionsValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                    if( PropToSave.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         String.Empty == ValueOptionsString )
                     {
                         throw new CswDniException( ErrorType.Warning, "Compliant Answer is a required field", "Value option string is null" );
@@ -978,7 +978,7 @@ namespace ChemSW.Nbt.WebPages
                         PropToSave.setSequence( SequencesEditor.SelectedSequenceId );
 
                     // For Relationships:
-                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    if( PropToSave.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
                         // Reload the view
                         CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( PropToSave.ViewId );
@@ -1382,8 +1382,8 @@ namespace ChemSW.Nbt.WebPages
                 SearchDeferSelect.Items.Add( new ListItem( "", "" ) );
                 SearchDeferSelect.Items.Add( new ListItem( "Not Searchable", CswNbtMetaDataObjectClass.NotSearchableValue.ToString() ) );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in SelectedNodeType.getNodeTypeProps()
-                            .Where( Prop => Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
-                                    Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location ) )
+                            .Where( Prop => Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
+                                    Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location ) )
                 {
                     SearchDeferSelect.Items.Add( new ListItem( Prop.PropName, Prop.PropId.ToString() ) );
                 }
@@ -1575,7 +1575,7 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) OrigNameRow.Cells[0].Controls[0] ).Text = "Original Name:";
                         Literal OrigNameValue = new Literal();
                         //OrigNameValue.ID = "EditProp_OrigNameValue" + SelectedNodeTypeProp.PropId.ToString();
-                        OrigNameValue.Text = SelectedNodeTypeProp.getObjectClassProp().PropName;
+                        OrigNameValue.Text = SelectedNodeTypeProp.getObjectClassPropName();
                         OrigNameRow.Cells[1].Controls.Add( OrigNameValue );
                     }
 
@@ -1676,15 +1676,6 @@ namespace ChemSW.Nbt.WebPages
                             if( SelectedNodeTypeProp.StaticText != string.Empty )
                                 ButtonTextValue.Text = SelectedNodeTypeProp.StaticText.ToString();
                             ButtonTextRow.Cells[1].Controls.Add( ButtonTextValue );
-
-                            TableRow ButtonModeRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) ButtonModeRow.Cells[0].Controls[0] ).Text = "Mode:";
-                            DropDownList ButtonModeValue = new DropDownList();
-                            ButtonModeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
-                            ButtonModeValue.Items.Add( new ListItem( "Button", CswNbtNodePropButton.ButtonMode.button.ToString() ) );
-                            ButtonModeValue.Items.Add( new ListItem( "Link", CswNbtNodePropButton.ButtonMode.link.ToString() ) );
-                            ButtonModeValue.SelectedValue = SelectedNodeTypeProp.Extended;
-                            ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
 
                             TableRow ConfirmationDialogMessageRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ConfirmationDialogMessageRow.Cells[0].Controls[0] ).Text = "Confirmation Dialog Message:";
@@ -2347,8 +2338,8 @@ namespace ChemSW.Nbt.WebPages
                             RelationshipValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
                             foreach( CswNbtMetaDataNodeTypeProp OtherProp in SelectedNodeTypeProp.getOtherNodeTypeProps() )
                             {
-                                if( OtherProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
-                                    OtherProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                                if( OtherProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
+                                    OtherProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location )
                                 {
                                     RelationshipValue.Items.Add( new ListItem( OtherProp.PropName, OtherProp.FirstPropVersionId.ToString() ) );
                                 }

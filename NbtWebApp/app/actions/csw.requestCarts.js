@@ -500,6 +500,7 @@
                     favoriteSelect = picklistCell.nodeSelect({
                         selectedNodeId: cswPrivate.lastCreatedFavorite || '',
                         showSelectOnLoad: true,
+                        usePreview: false,
                         viewid: cswPrivate.state.favoritesListViewId,
                         allowAdd: false,
                         onSelectNode: toggleCopyButtons,

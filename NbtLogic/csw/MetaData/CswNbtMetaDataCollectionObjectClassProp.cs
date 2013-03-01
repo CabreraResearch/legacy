@@ -43,6 +43,12 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataObjectClassProp) _CollImpl.getByPk( ObjectClassPropId );
         }
+        public string getObjectClassPropName( Int32 ObjectClassPropId )
+        {
+            // This fetches all of them at once.  This was done on purpose.
+            // This will actually perform better in any case where you need more than one.
+            return getObjectClassPropNames()[ObjectClassPropId];
+        }
         public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassId, string ObjectClassPropName )
         {
             return (CswNbtMetaDataObjectClassProp) _CollImpl.getWhereFirst( "where objectclassid = " + ObjectClassId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam(ObjectClassPropName.ToLower()) + "'" );
@@ -55,6 +61,11 @@ namespace ChemSW.Nbt.MetaData
         public Collection<Int32> getObjectClassPropIds()
         {
             return _CollImpl.getPks();
+        }
+
+        public Dictionary<Int32, string> getObjectClassPropNames()
+        {
+            return _CollImpl.getPkDict();
         }
 
         public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps()

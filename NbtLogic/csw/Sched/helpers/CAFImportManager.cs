@@ -718,7 +718,7 @@ namespace ChemSW.Nbt
                     CAFMapping mapping = _Mappings[PropName];
                     if( null != Node.Properties[ntp] )
                     {
-                        switch( Node.Properties[ntp].getFieldType().FieldType )
+                        switch (Node.Properties[ntp].getFieldTypeValue())
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.MOL:
                                 foreach( CAFSubfieldMapping subfield in mapping.Subfields )

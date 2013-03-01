@@ -704,7 +704,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Node.Properties[NTP] && _Mappings.ContainsKey( NTP.PropName ) )
                     {
                         C3Mapping C3Mapping = _Mappings[NTP.PropName];
-                        switch( Node.Properties[NTP].getFieldType().FieldType )
+                        switch( Node.Properties[NTP].getFieldTypeValue() )
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
                                 CswNbtObjClassUnitOfMeasure unitOfMeasure = _getUnitOfMeasure( _ProductToImport.ProductSize[CurrentIndex].pkg_qty_uom );

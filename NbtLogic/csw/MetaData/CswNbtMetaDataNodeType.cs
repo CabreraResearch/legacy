@@ -582,7 +582,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {
                         if( _BarcodeProperty != null )
                             throw new CswDniException( ErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
@@ -600,7 +600,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL )
+                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.MOL )
                     {
                         if( _MolProperty != null )
                             throw new CswDniException( ErrorType.Warning, "Multiple Mol Props Found", "Nodetype " + NodeTypeName + " has more than one Mol property" );
@@ -620,7 +620,7 @@ namespace ChemSW.Nbt.MetaData
                     from _Ntp
                         in getNodeTypeProps()
                     orderby _Ntp.PropName
-                    where _Ntp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button
+                    where _Ntp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Button
                     select _Ntp )
                 {
                     yield return ButtonNtp;
@@ -642,7 +642,7 @@ namespace ChemSW.Nbt.MetaData
             if( _LocationProperty == null )
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in from _Prop in getNodeTypeProps()
-                                                            where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location
+                                                            where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location
                                                             select _Prop )
                 {
                     if( _LocationProperty != null )

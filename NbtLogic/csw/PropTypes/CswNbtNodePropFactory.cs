@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtNodePropWrapper ReturnVal = null;
 
             CswNbtNodeProp InnerProperty = null;
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataNodeTypeProp.getFieldType().FieldType;
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataNodeTypeProp.getFieldTypeValue();
             switch( FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:

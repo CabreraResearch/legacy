@@ -123,6 +123,9 @@
     <Compile Include="Services\LegacyMobile.svc.cs">
       <DependentUpon>LegacyMobile.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Testing.svc.cs">
+      <DependentUpon>Testing.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Trees.svc.cs">
       <DependentUpon>Trees.svc</DependentUpon>
     </Compile>
@@ -622,6 +625,7 @@
     <Content Include="Services\NbtPublic.svc" />
     <Content Include="Services\Scheduler.svc" />
     <Content Include="Services\KioskMode.svc" />
+    <Content Include="Services\Testing.svc" />
     <Content Include="Services\Trees.svc" />
     <Content Include="Services\ChemCatCentral.svc" />
     <Content Include="Services\LegacyMobile.svc" />

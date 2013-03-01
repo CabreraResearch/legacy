@@ -411,10 +411,6 @@ namespace ChemSW.Nbt
             return ( ( View.Root.ChildRelationships.Count > 0 &&
                      (
                          View.Root.ChildRelationships.Any( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                                                               _CswNbtResources.Permit.canNodeType(
-                                                                   CswNbtPermit.NodeTypePermission.View,
-                                                                   _CswNbtResources.MetaData.getNodeType( R.SecondId ),
-                                                                   User ) ||
                                                                _CswNbtResources.Permit.canAnyTab(
                                                                    CswNbtPermit.NodeTypePermission.View,
                                                                    _CswNbtResources.MetaData.getNodeType( R.SecondId ),
