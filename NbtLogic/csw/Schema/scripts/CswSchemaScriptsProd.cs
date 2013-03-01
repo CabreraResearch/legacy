@@ -136,9 +136,9 @@ namespace ChemSW.Nbt.Schema
         {
             int SuperCycle = _MinimumVersion.CycleIteration;
             char ReleaseIdentifier = _MinimumVersion.ReleaseIdentifier;
-            if( 'Z' != ReleaseIdentifier )
+            if( 'Y' != ReleaseIdentifier )
             {
-                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUWXYZ".ToCharArray(); //No V for Viola
+                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWY".ToCharArray(); //No X or Z
                 List<char> Chars = new List<char>( alpha );
                 int ReleaseIdInt = Chars.IndexOf( ReleaseIdentifier );
                 ReleaseIdInt++;
