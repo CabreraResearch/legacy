@@ -280,6 +280,8 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="PlainIncludes.html" />
+    <Content Include="PlainHeader.html" />
     <Content Include="PrintingLabels.html" />
     <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
@@ -331,7 +333,6 @@
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
     <Content Include="Template.html" />
-    <Content Include="TEST.html" />
     <Content Include="vendor\loggly-0.1.0.min.js" />
     <Content Include="vendor\es6-shim.min.js" />
     <Content Include="vendor\es5-sham.min.js" />
