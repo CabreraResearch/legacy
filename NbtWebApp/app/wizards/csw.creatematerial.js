@@ -11,7 +11,6 @@
 
             //#region Properties
 
-
             var cswPrivate = {
                 name: 'cswCreateMaterialWizard',
                 exitFunc: null,
