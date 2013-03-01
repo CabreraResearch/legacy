@@ -106,20 +106,23 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
-            CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
-            if( null != ChemicalHazardClassesNTP )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
             {
-                CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
-                CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
-                if( null != FireClassExemptAmountNT )
+                //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
+                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp(NodeTypeId, "Hazard Classes");
+                if (null != ChemicalHazardClassesNTP)
                 {
-                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
-                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
-                    String FLComb = "FL-Comb";
-                    int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
-                    String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
-                    ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                    CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass(NbtObjectClass.FireClassExemptAmountClass);
+                    CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
+                    if (null != FireClassExemptAmountNT)
+                    {
+                        CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
+                            _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp(FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass);
+                        String FLComb = "FL-Comb";
+                        int index = FireClassHazardTypesNTP.ListOptions.IndexOf(FLComb);
+                        String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove(index, FLComb.Length);
+                        ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                    }
                 }
             }
 
@@ -224,7 +227,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
-                            Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, this );
+                            Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources, this );
                             if( Int32.MinValue != DocumentNodeTypeId )
                             {
                                 ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
@@ -421,40 +424,36 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void GetMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
-            CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-            CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
-            CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-            CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-            CswNbtMetaDataObjectClassProp fileTypeOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
-            CswNbtMetaDataObjectClassProp fileOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
-            CswNbtMetaDataObjectClassProp linkOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
-            CswNbtMetaDataObjectClassProp ownerOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+            Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources, this );
+            CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( SDSDocumentNTId );
+            CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+            CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+            CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+            CswNbtMetaDataNodeTypeProp fileTypeNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
+            CswNbtMetaDataNodeTypeProp fileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
+            CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
+            CswNbtMetaDataNodeTypeProp ownerNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
 
             CswNbtView docView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship parent = docView.AddViewRelationship( documentOC, true );
-            docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: docClassOCP,
-                Value: CswNbtObjClassDocument.DocumentClasses.SDS,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            CswNbtViewRelationship parent = docView.AddViewRelationship( SDSDocumentNT, true );
 
             docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: archivedOCP,
+                MetaDataProp: archivedNTP,
                 SubFieldName: CswNbtSubField.SubFieldName.Checked,
                 Value: false.ToString(),
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: ownerOCP,
+                MetaDataProp: ownerNTP,
                 SubFieldName: CswNbtSubField.SubFieldName.NodeID,
                 Value: NodeId.PrimaryKey.ToString(),
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
-            docView.AddViewProperty( parent, formatOCP );
-            docView.AddViewProperty( parent, languageOCP );
-            docView.AddViewProperty( parent, fileOCP );
-            docView.AddViewProperty( parent, linkOCP );
-            docView.AddViewProperty( parent, fileTypeOCP );
+            docView.AddViewProperty( parent, formatNTP );
+            docView.AddViewProperty( parent, languageNTP );
+            docView.AddViewProperty( parent, fileNTP );
+            docView.AddViewProperty( parent, linkNTP );
+            docView.AddViewProperty( parent, fileTypeNTP );
 
             CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
             CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
@@ -489,13 +488,13 @@ namespace ChemSW.Nbt.ObjClasses
                             switch( docNTP.getObjectClassPropName() )
                             {
                                 case CswNbtObjClassDocument.PropertyName.Format:
-                                    format = prop.Field1.ToString();
+                                    format = prop.Field1;
                                     break;
                                 case CswNbtObjClassDocument.PropertyName.Language:
-                                    language = prop.Field1.ToString();
+                                    language = prop.Field1;
                                     break;
                                 case CswNbtObjClassDocument.PropertyName.FileType:
-                                    fileType = prop.Field1.ToString();
+                                    fileType = prop.Field1;
                                     break;
                                 case CswNbtObjClassDocument.PropertyName.File:
                                     fileProp = prop;
@@ -553,7 +552,7 @@ namespace ChemSW.Nbt.ObjClasses
                             url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId, nodetypepropid );
                             break;
                         case CswNbtObjClassDocument.FileTypes.Link:
-                            CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );
+                            //CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );
                             url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2 );
                             break;
                     }
