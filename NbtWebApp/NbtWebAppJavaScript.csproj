@@ -186,16 +186,6 @@
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <Content Include="perf.html" />
-    <Content Include="Scripts\es5-shim.js" />
-    <Content Include="Scripts\es5-shim.min.js" />
-    <Content Include="Scripts\ES5.js" />
-    <Content Include="Scripts\ES5.min.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
-    <Content Include="Scripts\jquery.cookie.js" />
-    <Content Include="Scripts\jquery.cookie.min.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\json2.min.js" />
-    <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Template.html" />
     <Content Include="TEST.html" />
     <Content Include="vendor\es5-shim.min.js" />
@@ -874,8 +864,8 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\themes\base\images\" />
-    <Folder Include="Content\themes\base\minified\images\" />
+    <Folder Include="Content\" />
+    <Folder Include="Scripts\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
