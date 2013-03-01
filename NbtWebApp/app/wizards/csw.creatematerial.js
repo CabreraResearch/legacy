@@ -11,6 +11,7 @@
 
             //#region Properties
 
+
             var cswPrivate = {
                 name: 'cswCreateMaterialWizard',
                 exitFunc: null,
@@ -56,7 +57,7 @@
                     useExistingTempNode: false,
                     physicalState: '',
                     sizes: [],
-                    sizeHeaderAdded: false, // Case 28693
+                    sizeHeaderAdded: false // Case 28693
                 },
                 physicalStateModified: false,
                 newSizes: {
@@ -687,7 +688,7 @@
             //#region ctor
 
             (function () {
-                Csw.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options, true);
                 cswPrivate.validateState();
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 

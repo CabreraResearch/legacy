@@ -176,10 +176,13 @@
                         if (Csw.isArray(cellVal)) {
                             cswPublic.addRows(cellVal, cswPrivate.rowCount, col);
                             cswPrivate.rowCount += 1;
+                            console.log('rowCount + 1 = ' + cswPrivate.rowCount);
                         } else {
                             col += 1;
                             cswPublic.addCell(cellVal, row, col);
+                            console.log('col + 1 = ' + col);
                         }
+                        console.log(cellVal);
                     });
                     if (false === cswPrivate.isHeaderRow(row) && cswPrivate.allowDelete) {
                         col += 1;

@@ -33,6 +33,7 @@
                 cswPrivate.isMulti = cswPrivate.isMulti || false;
                 cswPrivate.isRequired = cswPrivate.isRequired || false;
                 cswPrivate.isReadOnly = cswPrivate.isReadOnly || false;
+                cswPrivate.isUnitReadOnly = cswPrivate.isUnitReadOnly || false;
 
                 cswPrivate.onChange = cswPrivate.onChange || function () { };
                 cswPrivate.onPropChange = cswPrivate.onPropChange || function () { };
@@ -79,7 +80,8 @@
                     cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.unit, frac: cswPrivate.fractional });
                 }
 
-                cswPrivate.selectBox = cswPrivate.table.cell(1, cswPrivate.cellCol).select({
+                var unitCell = cswPrivate.table.cell(1, cswPrivate.cellCol);
+                cswPrivate.selectBox = unitCell.select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: cswPrivate.onQuantityChange,
@@ -95,6 +97,11 @@
                 cswPrivate.selectBox.required(cswPrivate.isRequired);
 
                 cswPrivate.addValidators();
+
+                if (cswPrivate.isUnitReadOnly) {
+                    cswPrivate.selectBox.hide();
+                    unitCell.span({ text: cswPrivate.selectBox.selectedText() }).css('padding-left', '10px');
+                }
             };
 
             cswPrivate.addValidators = function () {
@@ -132,7 +139,7 @@
                 }
                 return cswPrivate.unit;
             };
-            
+
             cswPublic.selectedUnitText = function () {
                 if (cswPrivate && cswPrivate.selectBox && cswPrivate.selectBox.val) {
                     cswPrivate.unitText = cswPrivate.selectBox.selectedText();

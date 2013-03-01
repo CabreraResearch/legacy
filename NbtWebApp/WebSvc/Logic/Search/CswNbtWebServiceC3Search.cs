@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.WebServices
                     _Mappings.Add( PhysicalState, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
-                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Solid,
+                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Liquid,
                         NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( PhysicalState ),
                         NBTSubFieldPropColName = "field1"
                     } );
@@ -534,7 +534,7 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
                     //Translate the name if necessary
-                    string TranslatedUnitOfMeasure = _uomTranslator(unitOfMeasurementName);
+                    string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
 
                     CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
