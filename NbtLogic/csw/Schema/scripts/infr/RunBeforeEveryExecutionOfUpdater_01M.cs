@@ -52,6 +52,10 @@ namespace ChemSW.Nbt.Schema
             _makeMultiInventoryGroupModule( CswDeveloper.MB, 28901 );
 
             #endregion YORICK
+            
+            #region ASPEN
+
+            #endregion ASPEN
 
         }//Update()
 

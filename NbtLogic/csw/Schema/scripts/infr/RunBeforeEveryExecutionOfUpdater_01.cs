@@ -54,6 +54,11 @@ namespace ChemSW.Nbt.Schema
 
             #endregion YORICK
 
+            #region ASPEN
+
+
+            #endregion ASPEN
+
         }//Update()
 
         #region Yorick
@@ -78,6 +83,10 @@ namespace ChemSW.Nbt.Schema
         }
         
         #endregion Yorick
+
+        #region ASPEN
+
+        #endregion ASPEN
 
     }//class RunBeforeEveryExecutionOfUpdater_01
 }//namespace ChemSW.Nbt.Schema

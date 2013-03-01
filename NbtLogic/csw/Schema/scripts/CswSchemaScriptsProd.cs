@@ -34,6 +34,13 @@ namespace ChemSW.Nbt.Schema
 
             #endregion YORICK
 
+            #region ASPEN
+
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_CaseXXXXX() ) );   //01Y-000  02A-000
+
+            #endregion ASPEN
+
+
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||

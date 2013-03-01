@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Schema
             return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
 
-        #region Yorick Metods
+        #region Yorick Methods
 
         private void _updateUserFormats( CswDeveloper Dev, Int32 Case )
         {
@@ -102,7 +102,11 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        #endregion Yorick Metods
+        #endregion Yorick Methods
+
+        #region ASPEN Methods
+        
+        #endregion ASPEN Methods
 
         /// <summary>
         /// The actual update call
@@ -149,6 +153,10 @@ namespace ChemSW.Nbt.Schema
             _updateUserFormats( CswDeveloper.CF, 26574 );
 
             #endregion YORICK
+
+            #region ASPEN
+
+            #endregion ASPEN
 
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
