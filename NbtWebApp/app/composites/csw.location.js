@@ -39,14 +39,15 @@
                     Csw.extend(cswPrivate, options, true);
                     if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
                         Csw.ajax.post({
-                            urlMethod: 'getLocationTree',
+                            urlMethod: 'getLocationView',
                             async: false,
                             data: {
                                 NodeId: Csw.string(cswPrivate.nodeid)
                             },
                             success: function (data) {
-                                Csw.extend(cswPrivate, data, true);
-                                cswPrivate.selectedName = data.name;
+                                cswPrivate.viewid = data.viewid;
+                                cswPrivate.nodeid = data.nodeid;
+                                cswPrivate.path = data.path;
                             }
                         });
                     }

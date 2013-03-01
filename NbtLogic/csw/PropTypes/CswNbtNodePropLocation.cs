@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null )
+        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, bool IgnoreAllowInventory = false )
         {
             CswNbtView Ret = new CswNbtView( CswNbtResources );
 
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.PropTypes
 
             // Only Locations with null parent locations at the root
             Ret.AddViewPropertyAndFilter( LocationLevel1, LocationLocationOCP, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-            if( false == IsLocationNode )
+            if( false == IsLocationNode && false == IgnoreAllowInventory )
             {
                 Ret.AddViewPropertyAndFilter( LocationLevel1, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
             }
@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
                 }
-                if( false == IsLocationNode )
+                if( false == IsLocationNode && false == IgnoreAllowInventory )
                 {
                     Ret.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
                 }
@@ -441,7 +441,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedPath, IsNonModifying: true );
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedPath );
         }
 
     }//CswNbtNodePropLocation

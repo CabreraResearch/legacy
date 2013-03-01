@@ -273,24 +273,26 @@ namespace ChemSW.Nbt.Actions
             CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( NodeId );
             if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
             {
-                CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
-                Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
-                if( NodeTypeId != CurrentNodeTypeId )
+                CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode(CurrentTempNodePk);
+                if( null != CurrentTempNode )
                 {
-                    // Then we want to just forget about the first temp node created and create a new one with the new nodetype
-                    Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, null );
-                }
-                else
-                {
-                    // If the nodetype isn't different then we want to get the props and check if it exsits
-                    if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
+                    Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
+                    if (NodeTypeId != CurrentNodeTypeId)
                     {
-                        CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                        // Then we want to just forget about the first temp node created and create a new one with the new nodetype
+                        Ret = _tryCreateMaterial(NodeTypeId, CswConvert.ToPrimaryKey(SupplierId), Tradename, PartNo, null);
                     }
-                    Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
+                    else
+                    {
+                        // If the nodetype isn't different then we want to get the props and check if it exsits
+                        if (string.IsNullOrEmpty(CurrentTempNode.PhysicalState.Value))
+                        {
+                            CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                        }
+                        Ret = _tryCreateMaterial(NodeTypeId, CswConvert.ToPrimaryKey(SupplierId), Tradename, PartNo, CurrentTempNodePk.ToString());
+                    }
                 }
             }
-
             return Ret;
         }
 
@@ -605,7 +607,7 @@ namespace ChemSW.Nbt.Actions
         public static JObject getMaterialUnitsOfMeasure( string PhysicalStateValue, CswNbtResources CswNbtResources )
         {
             JObject ret = new JObject();
-            string PhysicalState = string.Empty;
+            string PhysicalState = "n/a";
             foreach( string CurrentPhysicalState in CswNbtObjClassMaterial.PhysicalStates.Options )
             {
                 if( PhysicalStateValue.Equals( CurrentPhysicalState ) )

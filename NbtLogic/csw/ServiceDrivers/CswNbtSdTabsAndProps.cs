@@ -1059,22 +1059,29 @@ namespace ChemSW.Nbt.ServiceDrivers
         }
 
         /// <summary>
-        /// Returns the JSON needed to build the full location tree, no nodes attached
+        /// Returns the viewid needed to build the full location tree, no nodes attached
         /// </summary>
         /// <param name="SelectedNodeId">Location tree's selected NodeId - if null, uses the User's default location</param>
         /// <returns></returns>
-        public JObject getLocationTree( string SelectedNodeId )
+        public JObject getLocationView( string SelectedNodeId )
         {
-            JObject LocationTreeJSON = new JObject();
-            CswPrimaryKey LocationId = String.IsNullOrEmpty( SelectedNodeId )
+            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView(_CswNbtResources, null, IgnoreAllowInventory: true);
+            LocationView.SaveToCache(false);
+            JObject LocationViewId = new JObject();
+            LocationViewId["viewid"] = LocationView.SessionViewId.ToString();
+            CswPrimaryKey LocationId = String.IsNullOrEmpty(SelectedNodeId)
                                            ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
-                                           : CswConvert.ToPrimaryKey( SelectedNodeId );
-            CswNbtMetaDataNodeType LocationNT = _CswNbtResources.MetaData.getNodeType( "Site" );
-            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LocationNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            LocationNode.Location.SelectedNodeId = LocationId;
-            LocationNode.Location.RefreshNodeName();
-            LocationNode.Location.ToJSON( LocationTreeJSON );
-            return LocationTreeJSON;
+                                           : CswConvert.ToPrimaryKey(SelectedNodeId);
+            if( null != LocationId )
+            {
+                LocationViewId["nodeid"] = LocationId.ToString();
+                CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes[LocationId];
+                if( LocNode.ObjectClass.ObjectClass == NbtObjectClass.LocationClass )
+                {
+                    LocationViewId["path"] = LocNode.Location.CachedPath + " > " + LocNode.Name.Text;
+                }
+            }
+            return LocationViewId;
         }
 
     } // class CswNbtSdTabsAndProps

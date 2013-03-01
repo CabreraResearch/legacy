@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Actions
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.LogicalSet:
                             CswNbtNodePropLogicalSet LogicalSetProp = PropWrapper.AsLogicalSet;
-                            LogicalSetProp.RefreshStringValue();
+                            LogicalSetProp.RefreshStringValue( SetPendingUpdate: false );
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
                             CswNbtNodePropNodeTypeSelect NodeTypeSelectProp = PropWrapper.AsNodeTypeSelect;
@@ -54,10 +54,6 @@ namespace ChemSW.Nbt.Actions
                             CswNbtNodePropRelationship RelationshipProp = PropWrapper.AsRelationship;
                             RelationshipProp.RefreshNodeName();
                             break;
-                        //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
-                        //    CswNbtNodePropMultiRelationship MultiRelationshipProp = PropWrapper.AsMultiRelationship;
-                        //    RelationshipProp.RefreshNodeNames();
-                        //    break;
                         case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
                             CswNbtNodePropViewPickList ViewPickListProp = PropWrapper.AsViewPickList;
                             ViewPickListProp.RefreshViewName();
@@ -71,8 +67,6 @@ namespace ChemSW.Nbt.Actions
                             MTBFProp.RefreshCachedValue();
                             break;
                         default:
-                            //throw new CswDniException("Invalid property type to update", "CswNbtActUpdatePropertyValues encountered a property type (" + PropWrapper.FieldType.FieldType.ToString() + ") that it did not know how to update");
-                            //_CswNbtResources.logError( new CswDniException( "Invalid property type to update", "CswNbtActUpdatePropertyValues encountered a property type (" + PropWrapper.FieldType.FieldType.ToString() + ") that it did not know how to update" ) );
                             PropWrapper.PendingUpdate = false;
                             break;
                     } // switch (PropWrapper.FieldType.FieldType)
