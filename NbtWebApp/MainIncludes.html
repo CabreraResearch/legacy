@@ -8,25 +8,6 @@
             }
         }
     }]);
-
-    if (undefined === window.JSON ||
-        null === window.JSON ||
-        false === window.JSON.hasOwnProperty('parse') ||
-        false === window.JSON.hasOwnProperty('stringify')) {
-
-        Modernizr.load([{
-            load: '//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js',
-            callback: function () {
-                if (undefined === window.JSON ||
-                    null === window.JSON ||
-                    false === window.JSON.hasOwnProperty('parse') ||
-                    false === window.JSON.hasOwnProperty('stringify')) {
-                    Modernizr.load('vendor/json2.min.js');
-                }
-            }
-        }]);
-    }
-
 </script>
 <!--[if lte IE 8]>
  <script type="text/javascript" 
