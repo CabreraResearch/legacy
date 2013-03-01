@@ -1533,7 +1533,7 @@ namespace ChemSW.Nbt.MetaData
                 if( false == Internal )
                 {
                     if( false == NodeTypeProp.IsDeletable() )
-                        throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
+                        throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + NodeTypeProp.PropName + " ; PropId = " + NodeTypeProp.PropId );
 
                     //string OriginalPropName = NodeTypeProp.PropName;
                     CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.getNodeType() );

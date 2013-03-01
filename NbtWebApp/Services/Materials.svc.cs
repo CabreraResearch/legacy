@@ -10,6 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
+using System;
 
 namespace NbtWebApp.Services
 {
@@ -37,6 +38,21 @@ namespace NbtWebApp.Services
             [DataMember]
             public CswNbtNode.Node TempNode = new CswNbtNode.Node( null );
 
+            [DataMember]
+            public Collection<WizardStep> Steps = new Collection<WizardStep>();
+
+            [DataMember]
+            public bool ContainersModuleEnabled = true;
+        }
+
+        [DataContract]
+        public class WizardStep
+        {
+            [DataMember]
+            public int StepNo = Int32.MinValue;
+
+            [DataMember]
+            public string StepName = string.Empty;
         }
     }
 

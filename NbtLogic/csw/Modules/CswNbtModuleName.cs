@@ -57,6 +57,22 @@ namespace ChemSW.Nbt
         /// ChemCatCentral
         /// </summary>
         public static readonly CswNbtModuleName C3 = new CswNbtModuleName( "C3" );
+        /// <summary>
+        /// Containers
+        /// </summary>
+        public static readonly CswNbtModuleName Containers = new CswNbtModuleName( "Containers" );
+        /// <summary>
+        /// Regulatory Lists
+        /// </summary>
+        public static readonly CswNbtModuleName RegulatoryLists = new CswNbtModuleName( "Regulatory Lists" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiSite = new CswNbtModuleName( "Multi Site" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiInventoryGroup = new CswNbtModuleName( "Multi Inventory Group" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt

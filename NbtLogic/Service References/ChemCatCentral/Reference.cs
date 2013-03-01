@@ -1221,9 +1221,6 @@ namespace ChemSW.Nbt.ChemCatCentral {
             
             [System.Runtime.Serialization.EnumMemberAttribute()]
             SupplierName = 5,
-            
-            [System.Runtime.Serialization.EnumMemberAttribute()]
-            Structure = 6,
         }
     }
     

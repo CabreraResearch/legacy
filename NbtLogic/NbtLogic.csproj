@@ -135,8 +135,13 @@
     <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleMultiInventoryGroup.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleMultiSite.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28968.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28717.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28843.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28833.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28873.cs" />
@@ -159,7 +164,6 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28725.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28724.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28395B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28717.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28713.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28655.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28684.cs" />
@@ -169,6 +173,16 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28534.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case27901.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_ScheduledRules_Case28564.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28904.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28875.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28902.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28709.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28732.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28671.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28711.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28669.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28663.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28122B.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -449,7 +463,7 @@
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28283Part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28281.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28339.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_CaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28393B.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01W_Case28363.cs" />
     <Compile Include="csw\Schema\scripts\prod\01W\CswUpdateSchema_01V_Case28331.cs" />

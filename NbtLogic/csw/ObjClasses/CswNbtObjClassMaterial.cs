@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
             }
 
-            if( CasNo.WasModified )
+            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
             {
                 CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
                 getParentMaterials( ref ParentMaterials );
@@ -214,9 +214,9 @@ namespace ChemSW.Nbt.ObjClasses
                                 foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
                                 {
                                     JToken name = child.First.SelectToken( "name" );
-                                    if (null != name)
+                                    if( null != name )
                                     {
-                                        if (name.ToString() == "Expiration Date")
+                                        if( name.ToString() == "Expiration Date" )
                                         {
                                             ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
                                         }
@@ -358,9 +358,12 @@ namespace ChemSW.Nbt.ObjClasses
             if( MaterialNode != null )
             {
                 Ret = MaterialNode.getViewOfNode();
-                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-                Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
+                if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                {
+                    CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                    Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
+                }
                 Ret.ViewName = "New Material: " + MaterialNode.NodeName;
             }
             return Ret;
@@ -391,9 +394,12 @@ namespace ChemSW.Nbt.ObjClasses
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
             Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
 
-            CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-            Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
+            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            {
+                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
+            }
 
             Ret.ViewName = "New Material: " + Tradename;
 
@@ -614,7 +620,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
         public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
         public CswNbtNodePropLogical ApprovedForReceiving { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedForReceiving] ); } }
-        public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
+        public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
 

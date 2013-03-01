@@ -497,6 +497,32 @@ namespace ChemSW.Nbt.WebServices
             }
 
             /// <summary>
+            /// Translates units of measure from C3 to the value that nbt uses.
+            /// Note: This is still in progress
+            /// </summary>
+            /// <param name="unitOfMeasure">UOM provided by C3 to be tranlated into the corresponding NBT UOM</param>
+            /// <returns></returns>
+            private string _uomTranslator( string unitOfMeasure )
+            {
+                string Ret = unitOfMeasure;
+                switch( unitOfMeasure.ToLower() )
+                {
+                    case "oz":
+                        Ret = "ounces";
+                        break;
+                    case "l":
+                        Ret = "Liters";
+                        break;
+                    default:
+                        Ret = unitOfMeasure;
+                        break;
+                }
+
+                return Ret;
+
+            }
+
+            /// <summary>
             /// 
             /// </summary>
             /// <param name="unitOfMeasurementName"></param>
@@ -505,24 +531,30 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = null;
 
-                CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
-                CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
-
-                CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
-
-                UnitsView.AddViewPropertyAndFilter( Parent,
-                    MetaDataProp: NameOCP,
-                    Value: unitOfMeasurementName,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
-                int Count = Tree.getChildNodeCount();
-                for( int i = 0; i < Count; i++ )
+                if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
-                    Tree.goToNthChild( i );
-                    UnitOfMeasureNode = Tree.getNodeForCurrentPosition();
-                    Tree.goToParentNode();
+                    //Translate the name if necessary
+                    string TranslatedUnitOfMeasure = _uomTranslator(unitOfMeasurementName);
+
+                    CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+                    CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+
+                    CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
+                    CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
+
+                    UnitsView.AddViewPropertyAndFilter( Parent,
+                                                       MetaDataProp: NameOCP,
+                                                       Value: TranslatedUnitOfMeasure,
+                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
+                    int Count = Tree.getChildNodeCount();
+                    for( int i = 0; i < Count; i++ )
+                    {
+                        Tree.goToNthChild( i );
+                        UnitOfMeasureNode = Tree.getNodeForCurrentPosition();
+                        Tree.goToParentNode();
+                    }
                 }
 
                 return UnitOfMeasureNode;
@@ -679,9 +711,9 @@ namespace ChemSW.Nbt.WebServices
                                 if( null != unitOfMeasure )
                                 {
                                     Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].pkg_qty );
-                                    Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.BaseUnit.Text );
+                                    Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.Name.Text );
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, unitOfMeasure.NodeId.PrimaryKey );
-                                    string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.BaseUnit.Text;
+                                    string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, sizeGestalt );
                                 }
                                 break;
