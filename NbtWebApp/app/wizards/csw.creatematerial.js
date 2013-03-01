@@ -194,6 +194,8 @@
                     if (cswPrivate.materialTypeSelect &&
                         Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
                         cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
+                        cswPrivate.state.physicalState = ''; //Case 29015
+                        cswPrivate.stepThreeComplete = false;
                     }
                     if (cswPrivate.supplierSelect &&
                         cswPrivate.supplierSelect.selectedText &&
@@ -375,7 +377,7 @@
                             console.log(propName);
                             console.log(propData);
                             if (propName === "Physical State") {
-                                console.log(propData.values.value);
+                                //cswPrivate.setPhysicalStateValue();
                                 cswPrivate.physicalStateModified = true;
                             }
                             console.log(arguments);
@@ -438,6 +440,18 @@
                             cssclass: "wizardHelpDesc"
                         });
                         div.br({ number: 1 });
+
+                        //Case 29015 - if the Physical State is null, go get it
+                        if(Csw.isNullOrEmpty(cswPrivate.state.physicalState)){
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Materials/getPhysicalState',
+                                data: cswPrivate.state.materialId,
+                                async: false,
+                                success: function(data) { 
+                                    cswPrivate.state.physicalState = data.PhysicalState
+                                }
+                            });
+                        }
 
                         var makeGrid = function () {
 
