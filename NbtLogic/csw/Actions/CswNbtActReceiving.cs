@@ -240,25 +240,19 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
-        /// Gets the SDS Document NodeTypeId.  If SDS doesn't exist, it gets the first Document type <see cref="CswNbtMetaDataNodeType"/> with an Owner relationship target of Material
+        /// Gets the SDS Document NodeTypeId.
         /// </summary>
         public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial )
         {
             Int32 Ret = Int32.MinValue;
             CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
-            foreach( CswNbtMetaDataNodeType DocumentNt in from
-                                                              _DocumentNt in
-                                                              DocumentOc.getLatestVersionNodeTypes()
-                                                          let OwnerNtp = _DocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner )
-                                                          where ( ( OwnerNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                                                    OwnerNtp.FKValue == NodeAsMaterial.NodeTypeId ) ||
-                                                                ( OwnerNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                                                    OwnerNtp.FKValue == NodeAsMaterial.ObjectClass.ObjectClassId ) )
-                                                          select _DocumentNt )
+            foreach( CswNbtMetaDataNodeType DocumentNt in DocumentOc.getLatestVersionNodeTypes())
             {
-                Ret = DocumentNt.NodeTypeId;
                 if( DocumentNt.NodeTypeName == "SDS Document" )
-                break;
+                {
+                    Ret = DocumentNt.NodeTypeId;
+                    break;
+                }
             }
             return Ret;
         }
