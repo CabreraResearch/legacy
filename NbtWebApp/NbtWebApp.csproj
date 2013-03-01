@@ -1225,22 +1225,6 @@
     <Content Include="Report.aspx" />
     <Content Include="Services\RegulatoryReporting.svc" />
     <Content Include="Services\Reports.svc" />
-    <Content Include="Scripts\es5-shim.js" />
-    <Content Include="Scripts\es5-shim.min.js" />
-    <Content Include="Scripts\ES5.js" />
-    <Content Include="Scripts\ES5.min.js" />
-    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.7.1.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
-    <Content Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\json2.js" />
-    <Content Include="Scripts\json2.min.js" />
-    <Content Include="Scripts\modernizr-2.5.3.js" />
-    <Content Include="Scripts\jquery.cookie.js" />
-    <Content Include="Scripts\jquery.mobile-1.0rc1.js" />
-    <Content Include="Scripts\jquery.mobile-1.0rc1.min.js" />
     <Content Include="Images\favicon.ico" />
     <Content Include="Design.aspx" />
     <Content Include="DisplayLog.aspx" />
@@ -1516,7 +1500,6 @@
     <Content Include="Images\view\viewtree.gif" />
     <Content Include="Images\vld\bad.gif" />
     <Content Include="Images\vld\good.gif" />
-    <Content Include="Scripts\jquery.cookie.min.js" />
     <Content Include="License.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Deprecated\Main.js" />
@@ -1922,7 +1905,6 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
