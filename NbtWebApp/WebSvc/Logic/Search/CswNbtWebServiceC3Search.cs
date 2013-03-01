@@ -534,7 +534,7 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
                     //Translate the name if necessary
-                    string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
+                    string TranslatedUnitOfMeasure = _uomTranslator(unitOfMeasurementName);
 
                     CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
