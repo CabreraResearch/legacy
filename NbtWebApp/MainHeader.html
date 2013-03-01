@@ -1,81 +1,122 @@
 <!DOCTYPE html>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta http-equiv="Expires" content="0">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width" />
     <link rel="shortcut icon" href="images/favicon.ico" />
     <title>ChemSW Live</title>
-    <!--#include file="MainIncludes.html" -->
-    <!--#include file="MainCswIncludes.html" -->
+    <link rel="stylesheet" type="text/css" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.0/themes/cupertino/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.filter.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/extjs-4.1.0/resources/css/ext-all-scoped.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/extjs-4.1.0/ux/TabScrollerMenu.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/extjs-4.1.0/ux/css/CheckHeader.css" />
+    
 </head>
 
 <body>
-<div id="watermark" class="watermark wmcenter wmbottom"></div>
-<form id="Form1" runat="server" onsubmit="return false;">
-    <div class="StandardMasterContentDiv">
-        <div id="OuterDiv" class="OuterDiv">
-            <table id="PageTable" class="PageTable" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                    <td id="HeaderTable_LeftBorder" class="HeaderTable_LeftBorder" rowspan="2">
-                        <img id="headerblank1" src="Images/pagelayout/blank.gif" width="18" height="1"/>
-                    </td>
-                    <td id="HeaderTable_TopBorder" class="HeaderTable_TopBorder" colspan="2"></td>
-                    <td id="HeaderTable_RightBorder" class="HeaderTable_RightBorder" rowspan="2">
-                        <img id="headerblank2" src="Images/pagelayout/blank.gif" width="20" height="1"/>
-                    </td>
-                </tr>          
-                <tr>
-                    <td id="HeaderTable_LeftCell" class="HeaderTable_LeftCell">
-                        <table cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td>
-                                <img id="LogoImage" src="Images/pagelayout/header_logo32.png" width="216" height="32" alt="logo" />
-                            </td>
-                            <td>
-                                <div id="ajaxImage" style="padding-left: 5px; display: none;">
-                                    <img src="Images/ajax/progress.gif" width="32" height="32" alt="AJAX in Progress"/>
-                                </div>
-                                <img id="ajaxSpacer" src="Images/spacer.gif" width="32" height="32" alt="" />
-                            </td>
-                        </tr>
-                        </table>
-                    </td>
-                    <td id="HeaderTable_RightTopCell" class="HeaderTable_RightTopCell">
-              
-                        <!-- HEADER: TOP RIGHT -->
-                        <table id="HeaderInnerTable" width="100%" class="HeaderInnerTable" cellpadding="0" cellspacing="0">
-                            <tr id="TableRow1" runat="server">
+    <!--[if lte IE 8]>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+            <style>
+             .chromeFrameInstallDefaultStyle {
+       
+               border: 1px solid blue;
+             }
+            </style>
+    
+            <script>
+                // The conditional ensures that this code will only execute in IE,
+                // Therefore we can use the IE-specific attachEvent without worry
+                window.attachEvent("onload", function () {
+                    CFInstall.check({
+                        //mode: "popup", // the default
+                        //url: "http://google.com/chromeframe",
+                        preventPrompt: true,
+                        onmissing: function() {
+                            if(window.confirm("You are using an unsupported version of Internet Explorer. To improve the speed and performance of this application, click OK to install Chrome Frame.")) {
+                                window.open("http://google.com/chromeframe");
+                            } else {
+                                window.internetExplorerVersionNo = 8;
+                            }
+                        }
+                    });
+                });
+            </script>
+
+            <script>
+        </script>
+    <![endif]-->
+
+    <!--[if IE 9]>
+        <script>
+            window.internetExplorerVersionNo = 9;
+        </script>
+    <![endif]-->
+    <div id="watermark" class="watermark wmcenter wmbottom"></div>
+    <form id="Form1" runat="server" onsubmit="return false;">
+        <div class="StandardMasterContentDiv">
+            <div id="OuterDiv" class="OuterDiv">
+                <table id="PageTable" class="PageTable" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td id="HeaderTable_LeftBorder" class="HeaderTable_LeftBorder" rowspan="2">
+                            <img id="headerblank1" src="Images/pagelayout/blank.gif" width="18" height="1"/>
+                        </td>
+                        <td id="HeaderTable_TopBorder" class="HeaderTable_TopBorder" colspan="2"></td>
+                        <td id="HeaderTable_RightBorder" class="HeaderTable_RightBorder" rowspan="2">
+                            <img id="headerblank2" src="Images/pagelayout/blank.gif" width="20" height="1"/>
+                        </td>
+                    </tr>          
+                    <tr>
+                        <td id="HeaderTable_LeftCell" class="HeaderTable_LeftCell">
+                            <table cellpadding="0" cellspacing="0">
+                            <tr>
                                 <td>
-                                    <img id="blank4" src="Images/pagelayout/blank.gif" width="1" height="26"/>
+                                    <img id="LogoImage" src="Images/pagelayout/header_logo32.png" width="216" height="32" alt="logo" />
                                 </td>
-                                <td id="HeaderInnerTable_LeftHeaderCell" class="HeaderInnerTable_LeftHeaderCell" align="center">
-                                        
-                                    <div id="header_dashboard"></div>
-
-                                </td>
-                                <td id="HeaderInnerTable_RightHeaderCell" class="HeaderInnerTable_RightHeaderCell" align="right">
-                                        
-                                    <table cellpadding="0" cellspacing="0">
-                                        <tr>
-                                            <td>
-                                                <div id="header_quota"></div>
-                                            </td>
-                                            <td>
-                                                <div id="header_menu" class="HeaderTable_RightMenu"></div>
-                                            </td>
-                                            <td>
-                                                <div id="header_username"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-
+                                <td>
+                                    <div id="ajaxImage" style="padding-left: 5px; display: none;">
+                                        <img src="Images/ajax/progress.gif" width="32" height="32" alt="AJAX in Progress"/>
+                                    </div>
+                                    <img id="ajaxSpacer" src="Images/spacer.gif" width="32" height="32" alt="" />
                                 </td>
                             </tr>
-                        </table>
-                        <!-- END HEADER: TOP RIGHT -->
+                            </table>
+                        </td>
+                        <td id="HeaderTable_RightTopCell" class="HeaderTable_RightTopCell">
               
-                    </td>
-                </tr>
+                            <!-- HEADER: TOP RIGHT -->
+                            <table id="HeaderInnerTable" width="100%" class="HeaderInnerTable" cellpadding="0" cellspacing="0">
+                                <tr id="TableRow1" runat="server">
+                                    <td>
+                                        <img id="blank4" src="Images/pagelayout/blank.gif" width="1" height="26"/>
+                                    </td>
+                                    <td id="HeaderInnerTable_LeftHeaderCell" class="HeaderInnerTable_LeftHeaderCell" align="center">
+                                        
+                                        <div id="header_dashboard"></div>
+
+                                    </td>
+                                    <td id="HeaderInnerTable_RightHeaderCell" class="HeaderInnerTable_RightHeaderCell" align="right">
+                                        
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td>
+                                                    <div id="header_quota"></div>
+                                                </td>
+                                                <td>
+                                                    <div id="header_menu" class="HeaderTable_RightMenu"></div>
+                                                </td>
+                                                <td>
+                                                    <div id="header_username"></div>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- END HEADER: TOP RIGHT -->
+              
+                        </td>
+                    </tr>
