@@ -186,6 +186,15 @@
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <Content Include="perf.html" />
+    <Content Include="Scripts\jquery-1.4.4-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.4.4.js" />
+    <Content Include="Scripts\jquery-1.4.4.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.intellisense.js" />
+    <Content Include="Scripts\jquery-1.9.1.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Template.html" />
     <Content Include="TEST.html" />
     <Content Include="vendor\es5-shim.min.js" />
@@ -836,6 +845,7 @@
     <Content Include="DevIncludes.html" />
     <None Include="app\_pruneMaps.bat" />
     <None Include="app\_updateIncludes.pl" />
+    <None Include="Scripts\jquery-1.9.1.min.map" />
     <None Include="vendor\extJS-4.1.0\ux\grid\README.textile" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\gae-go\app.yaml" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\gae-go\app\main.go" />
@@ -865,7 +875,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
-    <Folder Include="Scripts\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

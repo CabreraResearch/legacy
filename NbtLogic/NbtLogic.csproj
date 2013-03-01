@@ -97,7 +97,8 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
       <SpecificVersion>False</SpecificVersion>
@@ -221,6 +222,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
