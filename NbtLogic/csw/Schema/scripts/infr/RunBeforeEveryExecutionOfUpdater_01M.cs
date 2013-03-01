@@ -44,12 +44,6 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding Modules, which often become required by other business logic and can cause prior scripts to fail.
 
-            #region WILLIAM
-
-            //WILLIAM modules go here.
-
-            #endregion WILLIAM
-
             #region YORICK
 
             _makeContainersModule( CswDeveloper.MB, 28902 );
