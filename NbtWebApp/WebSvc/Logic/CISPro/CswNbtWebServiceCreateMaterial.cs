@@ -140,6 +140,20 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        public static void getPhysicalState( ICswResources CswResources, MaterialResponse Response, string NodeId )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtObjClassMaterial materialNode = NbtResources.Nodes[pk];
+                    Response.Data.PhysicalState = materialNode.PhysicalState.Value;
+                }
+            }
+        }
+
         /// <summary>
         /// Finalize the new Material
         /// </summary>

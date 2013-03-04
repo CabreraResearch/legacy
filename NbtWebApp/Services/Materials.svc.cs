@@ -43,6 +43,9 @@ namespace NbtWebApp.Services
 
             [DataMember]
             public bool ContainersModuleEnabled = true;
+
+            [DataMember]
+            public string PhysicalState = string.Empty;
         }
 
         [DataContract]
@@ -91,7 +94,7 @@ namespace NbtWebApp.Services
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "initialize" )]
         [FaultContract( typeof( FaultException ) )]
-        [Description( "Fetch the views relevant to Create Material" )]
+        [Description( "Get initialization data for the create material wizard" )]
         public MaterialResponse initializeCreateMaterial( string NodeId )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
@@ -100,6 +103,25 @@ namespace NbtWebApp.Services
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.initializeCreateMaterial,
+                ParamObj: NodeId
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "getPhysicalState" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the Physical State for a given nodeid" )]
+        public MaterialResponse getPhysicalState( string NodeId )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            MaterialResponse Ret = new MaterialResponse();
+            var GetViewDriverType = new CswWebSvcDriver<MaterialResponse, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.getPhysicalState,
                 ParamObj: NodeId
                 );
 
