@@ -236,6 +236,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
                                 }
+
+                                CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
+                                if( null != AssignedSDSProp )
+                                {
+                                    ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
+                                }
                             }
 
                             ButtonData.Action = NbtButtonAction.receive;

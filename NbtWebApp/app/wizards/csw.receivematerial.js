@@ -32,7 +32,8 @@
                     documentTypeId: '',
                     documentId: '',
                     nodetypename: '',
-                    canAddSDS: true
+                    canAddSDS: true,
+                    sdsViewId: ''
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -141,9 +142,6 @@
                         props: cswPrivate.tabsAndProps.getPropJson(),
                         documentid: cswPrivate.state.documentId
                     };
-                    if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                        container.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
-                    }
                     Csw.ajax.post({
                         urlMethod: 'receiveMaterial',
                         data: { ReceiptDefinition: Csw.serialize(container) },
@@ -362,26 +360,16 @@
                                 text: 'Define a Safety Data Sheet to attach to ' + cswPrivate.state.tradeName,
                                 cssclass: 'wizardHelpDesc'
                             });
-                            cswPrivate.divStep3.br({ number: 4 });
+                            cswPrivate.divStep3.br({ number: 2 });
 
                             div = cswPrivate.divStep3.div();
-
-                            cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                tabState: {
-                                    showSaveButton: false,
-                                    EditMode: Csw.enums.editMode.Add,
-                                    nodetypeid: cswPrivate.state.documentTypeId
-                                },
-                                globalState: {
-                                    ShowAsReport: false,
-                                    excludeOcProps: ['owner']
-                                },
-                                ReloadTabOnSave: false,
-                                onNodeIdSet: function (documentId) {
-                                    cswPrivate.state.documentId = documentId;
-                                }
+                            
+                            cswPrivate.documentGrid = Csw.wizard.nodeGrid(div, {
+                                viewid: cswPrivate.state.sdsViewId,
+                                ReadOnly: false,
+                                relatednodeid: cswPrivate.state.materialId,
+                                canSelectRow: false
                             });
-
                         }
                         cswPrivate.stepThreeComplete = true;
                     }
