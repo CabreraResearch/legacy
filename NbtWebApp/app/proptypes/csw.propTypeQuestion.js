@@ -111,7 +111,6 @@
                             commentsCell = cswPublic.table.cell(4, 1).span({ cssclass: 'CSwFieldTypeQuestion_cell' });
                         }
                         commentsCell.append('Comments: ' + cswPrivate.comments);
-                        //commentsCell.css({ 'word-wrap': 'break-word', 'border': '1px solid blue', 'width': '20px' });
 
                     } else {
                         cswPublic.control = cswPrivate.parent.table({
