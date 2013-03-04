@@ -227,10 +227,15 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
-                            Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources, this );
-                            if( Int32.MinValue != DocumentNodeTypeId )
+                            bool canAddSDS = NodeType.NodeTypeName == "Chemical";
+                            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
+                            if( canAddSDS )
                             {
-                                ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
+                                Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId(_CswNbtResources, this);
+                                if (Int32.MinValue != DocumentNodeTypeId)
+                                {
+                                    ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
+                                }
                             }
 
                             ButtonData.Action = NbtButtonAction.receive;

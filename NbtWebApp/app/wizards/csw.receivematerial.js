@@ -31,7 +31,8 @@
                     customBarcodes: false,
                     documentTypeId: '',
                     documentId: '',
-                    nodetypename: ''
+                    nodetypename: '',
+                    canAddSDS: true
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -39,7 +40,6 @@
                 printBarcodes: false,
                 amountsGrid: null,
                 saveError: false
-
             };
 
             var cswPublic = {};
@@ -94,11 +94,16 @@
                 }
                 cswPrivate.validateState();
 
+                var StepCount = 2;
+
                 cswPrivate.wizardSteps = {
                     1: 'Create Containers',
-                    2: 'Define Properties',
-                    3: 'Attach SDS'
+                    2: 'Define Properties'
                 };
+                if(cswPrivate.state.canAddSDS) {
+                    cswPrivate.wizardSteps[3] = 'Attach SDS';
+                    StepCount = 3;
+                }
                 cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
@@ -166,7 +171,7 @@
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
                     Title: 'Receive: ' + cswPrivate.state.tradeName,
-                    StepCount: 3,
+                    StepCount: StepCount,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
@@ -289,10 +294,11 @@
             cswPrivate.makeStep2 = (function () {
 
                 return function () {
+                    var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
 
                     if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
