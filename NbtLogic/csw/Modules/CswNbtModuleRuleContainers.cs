@@ -30,7 +30,6 @@ namespace ChemSW.Nbt
             //   Inventory Levels
             //   Allow Inventory
             //   Inventory Group
-            //   Control Zone
             //   Storate Compatibility
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
@@ -39,7 +38,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.AddPropToTab( NodeTypeId, "Inventory Levels", "Inventory Levels", 2 );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
-                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.ControlZone );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
             }
 
@@ -99,13 +97,16 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
             }
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.FireCode );
+            }
 
             //Hide the following Location properties...
             //   Containers
             //   Inventory Levels
             //   Allow Inventory
             //   Inventory Group
-            //   Control Zone
             //   Storate Compatibility
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
@@ -114,7 +115,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( NodeTypeId, "Inventory Levels" );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
-                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.ControlZone );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
             }
 

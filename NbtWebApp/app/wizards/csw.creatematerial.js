@@ -663,13 +663,13 @@
 
                     if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
                         cswPrivate.AttachSDSDiv.label({
-                            text: "No Material Documents have been defined. Click Finish to complete the wizard.",
+                                text: "No SDS Documents have been defined. Click Finish to complete the wizard.",
                             cssclass: "wizardHelpDesc"
                         });
                     } else {
 
                         cswPrivate.AttachSDSDiv.label({
-                            text: "Define a Material Safety Data Sheet to attach to this material.",
+                                text: "Define a Safety Data Sheet to attach to this material.",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.AttachSDSDiv.br({ number: 4 });
