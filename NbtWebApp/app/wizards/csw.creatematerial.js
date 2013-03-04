@@ -352,7 +352,7 @@
             //#endregion Step 2: Additional Properties
 
             cswPrivate.makeAdditionalPropsStep = function(){
-                var div;
+                var propsTable;
                 var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS && false === cswPrivate.containersModuleEnabled);
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
@@ -361,7 +361,7 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
                 
                 var renderProps = function() {
-                    cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                    cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1,1), {
                         globalState: {
                             excludeOcProps: ['tradename', 'supplier', 'partno'],
                             currentNodeId: cswPrivate.state.materialId,
@@ -398,7 +398,7 @@
                     });
                     cswPrivate.additionalPropsDiv.br({ number: 2 }); //Changed from 4 to 2: See Case 28655
 
-                    div = cswPrivate.additionalPropsDiv.div();
+                    propsTable = cswPrivate.additionalPropsDiv.table();
                     if (false === cswPrivate.state.useExistingTempNode) {
                         Csw.subscribe('SaveMaterialSuccess', function() {
                             renderProps();
@@ -654,7 +654,7 @@
             //#endregion Step 4: Attach SDS
 
             cswPrivate.makeAttachSDSStep = function(){
-                var div;
+                var attachSDSTable;
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -676,11 +676,19 @@
                                 text: "Define a Safety Data Sheet to attach to this material.",
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.AttachSDSDiv.br({ number: 4 });
+                        cswPrivate.AttachSDSDiv.br({ number: 2 });
+                        
+                        attachSDSTable = cswPrivate.AttachSDSDiv.table();
+                        attachSDSTable.cell(1, 1).a({
+                            text: 'Add a new SDS Document',
+                            onClick: function () {
+                                attachSDSTable.cell(1, 1).hide();
+                                attachSDSTable.cell(1, 2).show();
+                            }
+                        });
+                        attachSDSTable.cell(1, 2).hide();
 
-                        div = cswPrivate.AttachSDSDiv.div();
-
-                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
+                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             globalState: {
                                 ShowAsReport: false,
                                 excludeOcProps: ['owner']
