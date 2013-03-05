@@ -917,8 +917,8 @@
             'use strict';
             var cswPrivate = {
                 title: "Product Details",
-                node: options.nodeObj,
-                searchresults: null
+                node: options.nodeObj
+                //searchresults: null
             };
 
             if (Csw.isNullOrEmpty(options)) {
@@ -991,8 +991,8 @@
                             title: 'Sizes',
                             height: 100,
                             width: 300,
-                            fields: [{ name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'case_qty', type: 'string'}],
-                            columns: [{ header: 'Package Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Case Quantity', dataIndex: 'case_qty'}],
+                            fields: [{ name: 'case_qty', type: 'string' }, { name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'catalog_no', type: 'string'}],
+                            columns: [{ header: 'Unit Count', dataIndex: 'case_qty' }, { header: 'Initial Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Catalog No', dataIndex: 'catalog_no'}],
                             data: {
                                 items: data.ProductDetails.ProductSize,
                                 buttons: []

@@ -526,6 +526,9 @@ namespace ChemSW.Nbt.WebServices
                     case "l":
                         Ret = "Liters";
                         break;
+                    case "gm":
+                        Ret = "gal";
+                        break;
                     default:
                         Ret = unitOfMeasure;
                         break;
@@ -728,6 +731,16 @@ namespace ChemSW.Nbt.WebServices
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, unitOfMeasure.NodeId.PrimaryKey );
                                     string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, sizeGestalt );
+
+                                    // Set the Unit Count
+                                    // Note: This is a hackadoodle for now since importer is getting changed... soon...
+                                    // Assumption: We are working with a node that is of NodeType Size
+                                    if (NodeType.NodeTypeName == "Size")
+                                    {
+                                        CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp(CswNbtObjClassSize.PropertyName.UnitCount);
+                                        Node.Properties[UnitCountNTP].SetPropRowValue((CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty);
+                                        Node.Properties[UnitCountNTP].SetPropRowValue(CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty);
+                                    }
                                 }
                                 break;
                             case CswNbtMetaDataFieldType.NbtFieldType.MOL:
