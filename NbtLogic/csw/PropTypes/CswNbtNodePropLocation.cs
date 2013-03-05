@@ -207,16 +207,21 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, bool IgnoreAllowInventory = false )
+        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null )
         {
+            CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().getObjectClass().ObjectClass == NbtObjectClass.LocationClass );
+            bool IsContainerNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == ContainerOC.ObjectClassId );
+            bool IsUserNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == UserOC.ObjectClassId );
 
             CswNbtView Ret = new CswNbtView( CswNbtResources );
             Ret.ViewName = GetTopLevelName( CswNbtResources );
             Ret.Root.Included = IsLocationNode;
             CswNbtObjClassLocation.makeLocationsTreeView( ref Ret, CswNbtResources,
                                                           NodeIdToFilterOut: NodeId,
-                                                          IgnoreAllowInventory: IsLocationNode || IgnoreAllowInventory );
+                                                          RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ) );
             return Ret;
         }
 

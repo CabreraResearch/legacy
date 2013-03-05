@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
 
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool IgnoreAllowInventory = false )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false )
         {
             if( null != LocationsView )
             {
@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
                     LocationsView.setSortProperty( OrderVPn, NbtViewPropertySortMethod.Ascending, false );
 
-                    if( false == IgnoreAllowInventory )
+                    if( RequireAllowInventory )
                     {
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationAllowInventoryOCP,
                                                                 Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
