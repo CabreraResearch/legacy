@@ -75,7 +75,8 @@
                     sizesForm: null,
                     sizeGrid: null                
                 },
-                containersModuleEnabled: true
+                containersModuleEnabled: true,
+                SDSModuleEnabled: true
             };
 
             var cswPublic = {};
@@ -353,7 +354,8 @@
 
             cswPrivate.makeAdditionalPropsStep = function(){
                 var propsTable;
-                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS && false === cswPrivate.containersModuleEnabled);
+                var isLastStep = Csw.bool((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled)
+                    && false === cswPrivate.containersModuleEnabled);
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -428,7 +430,7 @@
 
             cswPrivate.makeSizesStep = function() {
                 var div, selectDiv;
-                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS);
+                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled);
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
@@ -452,7 +454,7 @@
                             data: cswPrivate.state.materialId,
                             async: false,
                             success: function(data) {
-                                cswPrivate.state.physicalState = data.PhysicalState
+                                cswPrivate.state.physicalState = data.PhysicalState;
                             }
                         });
                     }
@@ -782,6 +784,7 @@
                         cswPrivate.state.materialId = data.TempNode.NodeId;
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
+                        cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;
 
                         var stepCount = 0;
                         cswPrivate.wizardSteps = {};
