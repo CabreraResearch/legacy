@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.Schema
             _makeFireCodeModule( CswDeveloper.BV, 28903 );
             _makeMultiSiteModule( CswDeveloper.MB, 28899 );
             _makeMultiInventoryGroupModule( CswDeveloper.MB, 28901 );
+            _makeSDSModule( CswDeveloper.BV, 28898 );
 
             #endregion YORICK
 
@@ -109,6 +110,17 @@ namespace ChemSW.Nbt.Schema
             if( Int32.MinValue == moduleId )
             {
                 _CswNbtSchemaModTrnsctn.createModule( "Allow multiple Inventory Groups", CswNbtModuleName.MultiInventoryGroup.ToString(), false );
+            }
+            _resetBlame();
+        }
+
+        private void _makeSDSModule( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.SDS );
+            if( Int32.MinValue == ModuleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "SDS add-on for CISPro", CswNbtModuleName.SDS.ToString(), true );
             }
             _resetBlame();
         }
