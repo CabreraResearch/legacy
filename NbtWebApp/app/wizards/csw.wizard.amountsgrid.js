@@ -172,7 +172,7 @@
                                 cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                 updateColumnVals(true);
                             };
-                            
+
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
@@ -208,7 +208,7 @@
                                             objectClassName: 'MaterialClass',
                                             nodeId: cswPrivate.materialId
                                         },
-                                        onChange: function() {
+                                        onChange: function () {
                                             onSizeChange();
                                         },
                                         onSuccess: function () {
@@ -227,14 +227,15 @@
                                     cswPrivate.quantity.onNumberChange = function () {
                                         updateColumnVals(false);
                                     };
-                                    cswPrivate.quantity.onQuantityChange = function() {
+                                    cswPrivate.quantity.onQuantityChange = function () {
                                         updateColumnVals(false);
                                     };
                                     cswPrivate.quantity.quantity = cswPrivate.quantity.value;
                                     cswPrivate.quantity.selectedNodeId = cswPrivate.quantity.nodeid;
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
-                                    
+                                    cswPrivate.quantity.isUnitReadOnly = true;
+
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
                                     break;

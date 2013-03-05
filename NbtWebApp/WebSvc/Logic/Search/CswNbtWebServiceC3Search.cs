@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.WebServices
                     _Mappings.Add( PhysicalState, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
-                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Solid,
+                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Liquid,
                         NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( PhysicalState ),
                         NBTSubFieldPropColName = "field1"
                     } );
