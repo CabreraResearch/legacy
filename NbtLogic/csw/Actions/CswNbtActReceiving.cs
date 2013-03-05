@@ -141,7 +141,6 @@ namespace ChemSW.Nbt.Actions
                             Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
                             if( null != NodeAsMaterial )
                             {
-                                commitDocumentNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
                                 JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                                 Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                                 if( Quantities.HasValues )
@@ -242,7 +241,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Gets the SDS Document NodeTypeId.
         /// </summary>
-        public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial )
+        public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources )
         {
             Int32 Ret = Int32.MinValue;
             CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
