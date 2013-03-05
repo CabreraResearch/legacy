@@ -1453,28 +1453,32 @@
 
         function makeViewPropFilterAddSpan(propArbId, itemJson) {
             var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
-            var table = Csw.literals.table({
-                $parent: $span,
-                "name": o.name + '_' + propArbId + '_propfilttbl'
-            });
-            table.css({ 'display': 'inline-table' });
 
-            table.$.CswViewPropFilter('init', {
-                viewJson: currentViewJson,
-                name: o.name + '_' + propArbId + '_propfilttbl',
-                propsData: itemJson,
-                proparbitraryid: propArbId,
-                propRow: 1,
-                firstColumn: 1,
-                includePropertyName: false,
-                autoFocusInput: false
-            });
+            // Miserable.  See case 29024
+            Csw.defer(function () {
+                var $parentspan = $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '[arbid=' + propArbId + ']');
+                var table = Csw.literals.table({
+                    $parent: $parentspan,
+                    "name": o.name + '_' + propArbId + '_propfilttbl'
+                });
+                table.css({ 'display': 'inline-table' });
+                table.$.CswViewPropFilter('init', {
+                    viewJson: currentViewJson,
+                    name: o.name + '_' + propArbId + '_propfilttbl',
+                    propsData: itemJson,
+                    proparbitraryid: propArbId,
+                    propRow: 1,
+                    firstColumn: 1,
+                    includePropertyName: false,
+                    autoFocusInput: false
+                });
 
-            table.cell(1, 5).button({
-                name: propArbId + '_addfiltbtn',
-                enabledText: 'Add',
-                disabledText: 'Adding'
-            });
+                table.cell(1, 5).button({
+                    name: propArbId + '_addfiltbtn',
+                    enabledText: 'Add',
+                    disabledText: 'Adding'
+                });
+            }, 500);
             return $span;
         }
 
