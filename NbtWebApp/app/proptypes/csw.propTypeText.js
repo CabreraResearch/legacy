@@ -24,15 +24,23 @@
                     cswPrivate.regex = cswPrivate.propVals.regex;
                     cswPrivate.regexmsg = cswPrivate.propVals.regexmsg;
 
+
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
+
+                        var regex_name = '';
+                        if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
+                            regex_name = 'text_regex_' + cswPublic.data.propid;
+                        } 
+
+                        debugger;
                         cswPublic.control = cswPrivate.parent.input({
                             name: cswPublic.data.name,
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.value,
                             size: cswPrivate.size,
-                            cssclass: 'textinput text_regex_validate',
+                            cssclass: 'textinput ' + regex_name,
                             onChange: function () {
                                 cswPrivate.value = cswPublic.control.val();
                                 Csw.tryExec(cswPublic.data.onChange, cswPrivate.value);
@@ -54,9 +62,9 @@
                             Message = cswPrivate.regexmsg;
                         }
 
-                        $.validator.addMethod("text_regex_validate", function () {
+                        $.validator.addMethod( regex_name, function () {
                             var regex_obj = new RegExp(cswPrivate.regex);
-                            return ( true ==  regex_obj.test(cswPrivate.value) );
+                            return (true == regex_obj.test(cswPrivate.value));
                         }, Message);
                     }
 
