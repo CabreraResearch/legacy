@@ -46,8 +46,8 @@ namespace ChemSW.Nbt.Schema
 
             #region YORICK
 
-            _makeContainersModule( CswDeveloper.MB, 28902 );
-            _makeRegulatoryListsModule( CswDeveloper.MB, 28904 );
+            _makeContainersModule();
+            _makeRegulatoryListsModule();
             _makeFireCodeModule( CswDeveloper.BV, 28903 );
             _makeMultiSiteModule( CswDeveloper.MB, 28899 );
             _makeMultiInventoryGroupModule( CswDeveloper.MB, 28901 );
@@ -59,13 +59,13 @@ namespace ChemSW.Nbt.Schema
 
         #region Private Methods
 
-        private void _makeContainersModule( CswDeveloper Dev, Int32 CaseNo )
+        private void _makeContainersModule()
         {
             _acceptBlame( CswDeveloper.MB, 28902 );
             int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.Containers );
             if( Int32.MinValue == moduleId )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString(), true );
+                _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString() );
             }
             _resetBlame();
         }
@@ -81,13 +81,13 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _makeRegulatoryListsModule( CswDeveloper Dev, Int32 CaseNo )
+        private void _makeRegulatoryListsModule()
         {
             _acceptBlame( CswDeveloper.MB, 28904 );
             int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.RegulatoryLists );
             if( Int32.MinValue == moduleId )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "Regulatory lists add-on for CISPro", CswNbtModuleName.RegulatoryLists.ToString(), true );
+                _CswNbtSchemaModTrnsctn.createModule( "Regulatory lists add-on for CISPro", CswNbtModuleName.RegulatoryLists.ToString() );
             }
             _resetBlame();
         }
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.Schema
             int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.SDS );
             if( Int32.MinValue == ModuleId )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "SDS add-on for CISPro", CswNbtModuleName.SDS.ToString(), true );
+                _CswNbtSchemaModTrnsctn.createModule( "SDS add-on for CISPro", CswNbtModuleName.SDS.ToString() );
             }
             _resetBlame();
         }
