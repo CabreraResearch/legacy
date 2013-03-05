@@ -344,6 +344,14 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public int NodeCount
+        {
+            get
+            {
+                return CswConvert.ToInt32( _NodeTypeRow["nodecount"] );
+            }
+        }
+
         public Collection<Int32> getNodeTypeTabIds()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabIds( NodeTypeId );
