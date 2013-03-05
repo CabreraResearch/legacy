@@ -1121,7 +1121,7 @@
                     }
 
                     if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                        bindViewPropFilterBtns(stepno);
+                        bindViewPropFilterBtns();
                     }
 
                     if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
@@ -1169,40 +1169,9 @@
             });
         }
 
-        function bindViewPropFilterBtns(stepno) {
+        function bindViewPropFilterBtns() {
             $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name).each(function () {
                 var $span = $(this);
-                var arbitraryId = $span.CswAttrNonDom('arbid');
-
-                var $btn = $span.find('[name="' + arbitraryId + '_addfiltbtn"]');
-                $btn.bind('click', function () {
-                    var $this = $(this);
-                    $this.button({ label: $this.attr('disabledText'), disabled: true });
-                    var objHelper = Csw.object(currentViewJson);
-
-                    var propJson = objHelper.find('arbitraryid', arbitraryId);
-
-                    var $tbl = $span.find('[name="' + o.name + '_' + arbitraryId + '_propfilttbl"]');
-                    var newFiltJson = $tbl.CswViewPropFilter('getFilterJson', {
-                        name: o.name,
-                        $parent: $span,
-                        filtJson: propJson,
-                        proparbitraryid: arbitraryId,
-                        allowNullFilterValue: true
-                    });
-
-                    $tbl.CswViewPropFilter('makeFilter', {
-                        viewJson: currentViewJson,
-                        filtJson: newFiltJson,
-                        onSuccess: function (newPropJson) {
-                            if (false === propJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
-                                propJson[Csw.enums.viewChildPropNames.propfilters.name] = {};
-                            }
-                            Csw.extend(propJson[Csw.enums.viewChildPropNames.propfilters.name], newPropJson);
-                            _makeViewTree(stepno);
-                        } // onSuccess
-                    }); // CswViewPropFilter
-                });
 
                 $span.find('.ViewPropFilterLogical').each(function () {
                     //Word to the Wise: 
@@ -1422,7 +1391,7 @@
                         makeDeleteSpan(filtArbitraryId, $ret);
                     }
                 } else {
-                    $ret.append(makeViewPropFilterAddSpan(propArbId, itemJson));
+                    $ret.append(makeViewPropFilterAddSpan(stepno, propArbId, itemJson));
                 }
             }
             types.filter = { icon: { image: "Images/view/filter.gif"} };
@@ -1451,14 +1420,14 @@
             return $span;
         }
 
-        function makeViewPropFilterAddSpan(propArbId, itemJson) {
-            var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
+        function makeViewPropFilterAddSpan(stepno, propArbId, itemJson) {
+            var $ret = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
 
             // Miserable.  See case 29024
             Csw.defer(function () {
-                var $parentspan = $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '[arbid=' + propArbId + ']');
+                var $span = $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '[arbid=' + propArbId + ']');
                 var table = Csw.literals.table({
-                    $parent: $parentspan,
+                    $parent: $span,
                     "name": o.name + '_' + propArbId + '_propfilttbl'
                 });
                 table.css({ 'display': 'inline-table' });
@@ -1473,13 +1442,38 @@
                     autoFocusInput: false
                 });
 
-                table.cell(1, 5).button({
+                var addButton = table.cell(1, 6).button({
                     name: propArbId + '_addfiltbtn',
                     enabledText: 'Add',
-                    disabledText: 'Adding'
-                });
+                    disabledText: 'Adding',
+                    onClick: function () {
+                        addButton.disable();
+                        var objHelper = Csw.object(currentViewJson);
+                        var propJson = objHelper.find('arbitraryid', propArbId);
+                        
+                        var newFiltJson = table.$.CswViewPropFilter('getFilterJson', {
+                            name: o.name,
+                            $parent: $span,
+                            filtJson: propJson,
+                            proparbitraryid: propArbId,
+                            allowNullFilterValue: true
+                        });
+
+                        table.$.CswViewPropFilter('makeFilter', {
+                            viewJson: currentViewJson,
+                            filtJson: newFiltJson,
+                            onSuccess: function (newPropJson) {
+                                if (false === propJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
+                                    propJson[Csw.enums.viewChildPropNames.propfilters.name] = {};
+                                }
+                                Csw.extend(propJson[Csw.enums.viewChildPropNames.propfilters.name], newPropJson);
+                                _makeViewTree(stepno);
+                            } // onSuccess
+                        }); // CswViewPropFilter
+                    } // onClick
+                }); // button()
             }, 500);
-            return $span;
+            return $ret;
         }
 
         function makeViewListItem(arbid, linkclass, name, showDelete, stepno, propName, rel) {
