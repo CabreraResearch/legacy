@@ -797,6 +797,15 @@ namespace ChemSW.Nbt.Schema
         #region Create Schema/Meta Data
 
         /// <summary>
+        /// Convenience function for making new Module. 
+        /// Default behavior for enabled: true if master, false otherwise
+        /// </summary>
+        public Int32 createModule( string Description, string Name )
+        {
+            return createModule( Description, Name, Enabled: isMaster() );
+        }
+
+        /// <summary>
         /// Convenience function for making new Module
         /// </summary>
         public Int32 createModule( string Description, string Name, bool Enabled )
@@ -807,7 +816,7 @@ namespace ChemSW.Nbt.Schema
             ModuleRow["deleted"] = CswConvert.ToDbVal( false );
             ModuleRow["description"] = Description;
             ModuleRow["name"] = Name;
-            ModuleRow["enabled"] = CswConvert.ToDbVal( Enabled ); //Probably needs to be off by default.  Leaving on for development.
+            ModuleRow["enabled"] = CswConvert.ToDbVal( Enabled );
             ModulesDataTable.Rows.Add( ModuleRow );
             Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             ModulesTable.update( ModulesDataTable );
