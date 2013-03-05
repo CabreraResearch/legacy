@@ -76,11 +76,6 @@
                 }); // ajax()
             } // initTable()
 
-            //var IsWholeNumber = function (value) {
-            //    var regex = new RegExp(/^(?!-)\d*(?!.)/);
-            //    return regex.test(value);
-            //}
-
             function makeQuotaRow(qRow, canedit, rowid, objectclass, nodetype, currentusage, quota, excludeinquotabar) {
                 // one object class row                                
                 var cell4;
@@ -105,7 +100,6 @@
                         type: Csw.enums.inputTypes.checkbox,
                         checked: excludeinquotabar
                     });
-                    var x = 10;
 
                 } else {
                     table.cell(qRow, 4).text(quota);
