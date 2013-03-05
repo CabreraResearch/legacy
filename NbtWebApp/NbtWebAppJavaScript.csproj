@@ -249,6 +249,7 @@
     <Content Include="Content\themes\cupertino\jquery.ui.tabs.css" />
     <Content Include="Content\themes\cupertino\jquery.ui.theme.css" />
     <Content Include="Content\themes\cupertino\jquery.ui.tooltip.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery-ui-1.8.19.min.css" />
     <Content Include="Content\themes\cupertino\minified\images\animated-overlay.gif" />
     <Content Include="Content\themes\cupertino\minified\images\ui-bg_diagonals-thick_90_eeeeee_40x40.png" />
     <Content Include="Content\themes\cupertino\minified\images\ui-bg_flat_15_cd0a0a_40x100.png" />
@@ -318,13 +319,15 @@
     <Content Include="perf.html" />
     <Content Include="Scripts\additional-methods.js" />
     <Content Include="Scripts\additional-methods.min.js" />
+    <Content Include="Scripts\jquery-ui-1.8.19.min.js" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jquery-ui-1.10.0.js" />
-    <Content Include="Scripts\jquery-ui-1.10.0.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.1.js" />
+    <Content Include="Scripts\jquery-ui-1.10.1.min.js" />
     <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />

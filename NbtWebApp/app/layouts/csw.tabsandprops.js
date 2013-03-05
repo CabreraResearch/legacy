@@ -365,11 +365,11 @@
                                 
                                 Csw.each(jqTabs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
-                                        active: cswPrivate.tabState.tabNo,
-                                        beforeActivate: function (event, ui) {
+                                        selected: cswPrivate.tabState.tabNo,
+                                        select: function (event, ui) {
                                             var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
                                             if (ret) {
-                                                cswPrivate.tabState.tabNo = Csw.number(ui.newTab.index());
+                                                cswPrivate.tabState.tabNo = Csw.number(ui.index);
                                                 var selectTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
                                                 cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
                                                 Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
@@ -384,7 +384,7 @@
                                     }); // tabs
                                     var eachTabContentDiv;
                                     if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
-                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'active')) + ')');
+                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
                                         if (eachTabContentDiv.isValid) {
                                             cswPrivate.tabState.tabid = eachTabContentDiv.data('tabid');
                                         }
