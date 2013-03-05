@@ -1715,9 +1715,12 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the Property used to sort the View.  Only one property can have this setting.
         /// </summary>
-        public void setSortProperty( CswNbtViewProperty Property, NbtViewPropertySortMethod SortMethod )
+        public void setSortProperty( CswNbtViewProperty Property, NbtViewPropertySortMethod SortMethod, bool ClearExistingSort = true )
         {
-            clearSortProperty();
+            if( ClearExistingSort )
+            {
+                clearSortProperty();
+            }
             Property.SortBy = true;
             Property.SortMethod = SortMethod;
         }
