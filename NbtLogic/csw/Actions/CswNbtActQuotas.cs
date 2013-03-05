@@ -36,27 +36,15 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
-        /// Returns a dictionary of ObjectClassId=>Node-Count for all object classes
-        /// </summary>
-        public void GetNodeCounts( out Dictionary<Int32, Int32> NodeCountsForNodeType, out Dictionary<Int32, Int32> NodeCountsForObjectClass )
-        {
-            _GetNodeCounts( Int32.MinValue, out NodeCountsForNodeType, out NodeCountsForObjectClass );
-        }
-
-        /// <summary>
         /// Returns a Node Count for one object class
         /// </summary>
         public Int32 GetNodeCountForObjectClass( Int32 ObjectClassId )
         {
             Int32 ret = 0;
-
-            Dictionary<Int32, Int32> NodeCountsForNodeType;
-            Dictionary<Int32, Int32> NodeCountsForObjectClass;
-            _GetNodeCounts( ObjectClassId, out NodeCountsForNodeType, out NodeCountsForObjectClass );
-
-            if( NodeCountsForObjectClass.ContainsKey( ObjectClassId ) )
+            CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+            if( null != ObjClass )
             {
-                ret = NodeCountsForObjectClass[ObjectClassId];
+                ret = ObjClass.NodeCount;
             }
             return ret;
         } // GetNodeCountForObjectClass
@@ -70,14 +58,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             if( NodeType != null )
             {
-                Dictionary<Int32, Int32> NodeCountsForNodeType;
-                Dictionary<Int32, Int32> NodeCountsForObjectClass;
-                _GetNodeCounts( NodeType.ObjectClassId, out NodeCountsForNodeType, out NodeCountsForObjectClass );
-
-                if( NodeCountsForNodeType.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
-                {
-                    ret = NodeCountsForNodeType[NodeType.FirstVersionNodeTypeId];
-                }
+                ret = NodeType.NodeCount;
             }
             return ret;
         } // GetNodeCountForNodeType
@@ -112,59 +93,20 @@ namespace ChemSW.Nbt.Actions
             return ret;
         } // GetLockedNodeCountForNodeType()
 
-        private void _GetNodeCounts( Int32 ObjectClassId, out Dictionary<Int32, Int32> NodeCountsForNodeType, out Dictionary<Int32, Int32> NodeCountsForObjectClass )
+        public void GetNodeCounts( out Dictionary<Int32, Int32> NodeCountsForNodeType, out Dictionary<Int32, Int32> NodeCountsForObjectClass )
         {
             NodeCountsForNodeType = new Dictionary<Int32, Int32>();
             NodeCountsForObjectClass = new Dictionary<Int32, Int32>();
 
-            // Look up the object class of all nodes (deleted or no)
-            string SqlSelect = @"select count(distinct nodeid) cnt, firstversionid, objectclassid 
-                                   from (select n.nodeid, t.firstversionid, o.objectclassid, n.istemp
-                                           from nodes n
-                                           left outer join nodetypes t on n.nodetypeid = t.nodetypeid
-                                           left outer join object_class o on t.objectclassid = o.objectclassid
-                                        UNION
-                                         select n.nodeid, ta.firstversionid, o.objectclassid, n.istemp
-                                           from nodes_audit n
-                                           left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
-                                           left outer join object_class o on ta.objectclassid = o.objectclassid)";
-
-            if( ObjectClassId != Int32.MinValue )
+            foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
-                SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "' and istemp = 0";
+                NodeCountsForObjectClass[ObjClass.ObjectClassId] = ObjClass.NodeCount;
+
+                foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                {
+                    NodeCountsForNodeType[NodeType.NodeTypeId] = NodeType.NodeCount;
+                }
             }
-            else
-            {
-                SqlSelect += "where istemp = 0";
-            }
-            SqlSelect += "group by objectclassid, firstversionid";
-
-            CswArbitrarySelect NodeCountSelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtActQuotas_historicalNodeCount", SqlSelect );
-            DataTable NodeCountTable = NodeCountSelect.getTable();
-            foreach( DataRow NodeCountRow in NodeCountTable.Rows )
-            {
-                Int32 ThisObjectClassId = CswConvert.ToInt32( NodeCountRow["objectclassid"] );
-                Int32 ThisNodeTypeId = CswConvert.ToInt32( NodeCountRow["firstversionid"] );
-
-                Int32 NodeCount = CswConvert.ToInt32( NodeCountRow["cnt"] );
-                if( NodeCountsForNodeType.ContainsKey( ThisNodeTypeId ) )
-                {
-                    NodeCountsForNodeType[ThisNodeTypeId] += NodeCount;
-                }
-                else
-                {
-                    NodeCountsForNodeType.Add( ThisNodeTypeId, NodeCount );
-                }
-
-                if( NodeCountsForObjectClass.ContainsKey( ThisObjectClassId ) )
-                {
-                    NodeCountsForObjectClass[ThisObjectClassId] += NodeCount;
-                }
-                else
-                {
-                    NodeCountsForObjectClass.Add( ThisObjectClassId, NodeCount );
-                }
-            } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
         } // _getNodeCounts()
 
         /// <summary>
@@ -469,6 +411,27 @@ namespace ChemSW.Nbt.Actions
             }
             return ret;
         } // CheckQuota()
+
+        /// <summary>
+        /// Increments the Node count for the given NodeType and its corresponding ObjClass
+        /// </summary>
+        /// <param name="NodeTypeId"></param>
+        public void IncrementNodeCountForNodeType( Int32 NodeTypeId )
+        {
+            _CswNbtResources.execArbitraryPlatformNeutralSql( "update nodetypes set nodecount = nodecount + 1 where nodetypeid = " + NodeTypeId );
+
+            CswNbtMetaDataObjectClass objClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
+            IncrementNodeCountForObjClass( objClass.ObjectClassId );
+        }
+
+        /// <summary>
+        /// Increments the Node count for the given ObjClass
+        /// </summary>
+        /// <param name="ObjClassId"></param>
+        public void IncrementNodeCountForObjClass( Int32 ObjClassId )
+        {
+            _CswNbtResources.execArbitraryPlatformNeutralSql( "update object_class set nodecount = nodecount + 1 where objectclassid = " + ObjClassId );
+        }
 
     } // class CswNbtActQuotas
 }// namespace ChemSW.Nbt.Actions

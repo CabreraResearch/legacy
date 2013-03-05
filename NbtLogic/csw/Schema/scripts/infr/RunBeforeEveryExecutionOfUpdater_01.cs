@@ -56,6 +56,7 @@ namespace ChemSW.Nbt.Schema
 
             #region ASPEN
 
+            _createNodeCountColumns( CswDeveloper.MB, 28355 );
 
             #endregion ASPEN
 
@@ -81,10 +82,28 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
+
         #endregion Yorick
 
         #region ASPEN
+
+        private void _createNodeCountColumns( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            string NodeCountColName = "nodecount";
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", NodeCountColName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( "nodetypes", NodeCountColName, "The number of nodes", false, false );
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", NodeCountColName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", NodeCountColName, "The number of nodes", false, false );
+            }
+
+            _resetBlame();
+        }
 
         #endregion ASPEN
 

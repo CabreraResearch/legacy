@@ -17,7 +17,6 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 1, 'W', 78 );
 
             // This is where you add new versions.
-
             #region YORICK
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_CaseXXXXX() ) );   //01Y-000
@@ -43,9 +42,9 @@ namespace ChemSW.Nbt.Schema
             #region ASPEN
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_CaseXXXXX() ) );   //01Y-000  02A-000
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28355() ) );           //01Y-016  02A-001
 
             #endregion ASPEN
-
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
