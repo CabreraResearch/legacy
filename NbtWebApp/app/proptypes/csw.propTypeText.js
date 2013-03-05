@@ -34,7 +34,6 @@
                             regex_name = 'text_regex_' + cswPublic.data.propid;
                         } 
 
-                        debugger;
                         cswPublic.control = cswPrivate.parent.input({
                             name: cswPublic.data.name,
                             type: Csw.enums.inputTypes.text,
