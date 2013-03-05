@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -132,7 +133,8 @@ namespace ChemSW.Nbt
             {
                 initModules();
             }
-            foreach( CswNbtModuleName Module in _ModuleRules.Keys )
+            List<CswNbtModuleName> Rules = _ModuleRules.Keys.ToList();
+            foreach( CswNbtModuleName Module in Rules )
             {
                 if( _ModuleRules[Module].Enabled )
                 {
