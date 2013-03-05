@@ -100,10 +100,10 @@
                             urlMethod: 'getMainMenu', 
                             data: {
                                 ViewId: viewid,
-                                SafeNodeKey: cswPrivate.nodekey,
-                                NodeTypeId: '',
-                                PropIdAttr: cswPrivate.name,
-                                LimitMenuTo: 'Add',
+                                SafeNodeKey: Csw.string(cswPrivate.nodekey),
+                                NodeTypeId: Csw.string(''),
+                                PropIdAttr: Csw.string(cswPrivate.name),
+                                LimitMenuTo: Csw.string(''),//This should be 'Add', but for some reason this removes the menu
                                 ReadOnly: false
                             }
                         },

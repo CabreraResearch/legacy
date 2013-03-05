@@ -1065,7 +1065,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <returns></returns>
         public JObject getLocationView( string SelectedNodeId )
         {
-            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView(_CswNbtResources, null, IgnoreAllowInventory: true);
+            CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null );
             LocationView.SaveToCache(false);
             JObject LocationViewId = new JObject();
             LocationViewId["viewid"] = LocationView.SessionViewId.ToString();
