@@ -414,7 +414,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             public CswPrimaryKey NodeId = null;
 
-            [DataMember(IsRequired = true, EmitDefaultValue = true, Name = "NodeId" )]
+            [DataMember( IsRequired = true, EmitDefaultValue = true, Name = "NodeId" )]
             public string NodePk
             {
                 get
@@ -528,6 +528,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public bool IsTempModified = false;
         private bool _IsTemp = false;
         /// <summary>
         /// If true, this is a temporary node
@@ -537,6 +538,10 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _IsTemp; }
             set
             {
+                if( value != _IsTemp )
+                {
+                    IsTempModified = true;
+                }
                 _NodeModificationState = NodeModificationState.Modified;
                 if( false == value )
                 {

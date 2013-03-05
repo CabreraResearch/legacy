@@ -10,6 +10,7 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -808,6 +809,12 @@ namespace ChemSW.Nbt.MetaData
                 NodesRow["pendingupdate"] = "1";
             }
             NodesUpdate.update( NodesTable );
+        }
+
+        public void IncrementNodeCount()
+        {
+            CswNbtActQuotas ActQuotas = new CswNbtActQuotas( _CswNbtMetaDataResources.CswNbtResources );
+            ActQuotas.IncrementNodeCountForNodeType( NodeTypeId );
         }
     }
 }
