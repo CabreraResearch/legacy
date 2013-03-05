@@ -94,7 +94,13 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
+                    _incrementNodeCount( Node );
                     //setDefaultPropertyValues( Node );
+                }
+                else if( Node.IsTempModified )
+                {
+                    _incrementNodeCount( Node );
+                    Node.IsTempModified = false;
                 }
 
                 //propcoll knows whether or not he's got new 
@@ -112,6 +118,15 @@ namespace ChemSW.Nbt
             }//if node was modified
 
         }//write()
+
+        private void _incrementNodeCount( CswNbtNode Node )
+        {
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
+            if( null != NodeType )
+            {
+                NodeType.IncrementNodeCount();
+            }
+        }
 
         private string _makeDefaultNodeName( CswNbtNode Node )
         {
