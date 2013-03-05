@@ -31,7 +31,9 @@
                     customBarcodes: false,
                     documentTypeId: '',
                     documentId: '',
-                    nodetypename: ''
+                    nodetypename: '',
+                    canAddSDS: true,
+                    sdsViewId: ''
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -39,7 +41,6 @@
                 printBarcodes: false,
                 amountsGrid: null,
                 saveError: false
-
             };
 
             var cswPublic = {};
@@ -94,11 +95,16 @@
                 }
                 cswPrivate.validateState();
 
+                var StepCount = 2;
+
                 cswPrivate.wizardSteps = {
                     1: 'Create Containers',
-                    2: 'Define Properties',
-                    3: 'Attach SDS'
+                    2: 'Define Properties'
                 };
+                if(cswPrivate.state.canAddSDS) {
+                    cswPrivate.wizardSteps[3] = 'Attach SDS';
+                    StepCount = 3;
+                }
                 cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
@@ -136,9 +142,6 @@
                         props: cswPrivate.tabsAndProps.getPropJson(),
                         documentid: cswPrivate.state.documentId
                     };
-                    if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                        container.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
-                    }
                     Csw.ajax.post({
                         urlMethod: 'receiveMaterial',
                         data: { ReceiptDefinition: Csw.serialize(container) },
@@ -166,7 +169,7 @@
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
                     Title: 'Receive: ' + cswPrivate.state.tradeName,
-                    StepCount: 3,
+                    StepCount: StepCount,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
@@ -289,10 +292,11 @@
             cswPrivate.makeStep2 = (function () {
 
                 return function () {
+                    var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
 
                     if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
@@ -347,35 +351,25 @@
 
                         if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
                             cswPrivate.divStep3.span({
-                                text: 'No Material Documents have been defined. Click Finish to complete the wizard.',
+                                text: 'No Documents have been defined. Click Finish to complete the wizard.',
                                 cssclass: 'wizardHelpDesc'
                             });
                         } else {
 
                             cswPrivate.divStep3.span({
-                                text: 'Define a Material Safety Data Sheet to attach to ' + cswPrivate.state.tradeName,
+                                text: 'Define a Safety Data Sheet to attach to ' + cswPrivate.state.tradeName,
                                 cssclass: 'wizardHelpDesc'
                             });
-                            cswPrivate.divStep3.br({ number: 4 });
+                            cswPrivate.divStep3.br({ number: 2 });
 
                             div = cswPrivate.divStep3.div();
-
-                            cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                tabState: {
-                                    showSaveButton: false,
-                                    EditMode: Csw.enums.editMode.Add,
-                                    nodetypeid: cswPrivate.state.documentTypeId
-                                },
-                                globalState: {
-                                    ShowAsReport: false,
-                                    excludeOcProps: ['owner']
-                                },
-                                ReloadTabOnSave: false,
-                                onNodeIdSet: function (documentId) {
-                                    cswPrivate.state.documentId = documentId;
-                                }
+                            
+                            cswPrivate.documentGrid = Csw.wizard.nodeGrid(div, {
+                                viewid: cswPrivate.state.sdsViewId,
+                                ReadOnly: false,
+                                relatednodeid: cswPrivate.state.materialId,
+                                canSelectRow: false
                             });
-
                         }
                         cswPrivate.stepThreeComplete = true;
                     }

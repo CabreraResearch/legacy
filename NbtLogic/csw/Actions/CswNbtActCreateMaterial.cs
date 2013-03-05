@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.Actions
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
+                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
                     if( Int32.MinValue != DocumentNodeTypeId )
                     {
                         Ret["documenttypeid"] = DocumentNodeTypeId;

@@ -56,7 +56,8 @@
                     useExistingTempNode: false,
                     physicalState: '',
                     sizes: [],
-                    sizeHeaderAdded: false // Case 28693
+                    sizeHeaderAdded: false, // Case 28693
+                    canAddSDS: true
                 },
                 physicalStateModified: false,
                 newSizes: {
@@ -196,6 +197,7 @@
                         cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
+                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.name === 'Chemical');
                     }
                     if (cswPrivate.supplierSelect &&
                         cswPrivate.supplierSelect.selectedText &&
@@ -350,15 +352,16 @@
             //#endregion Step 2: Additional Properties
 
             cswPrivate.makeAdditionalPropsStep = function(){
-                var div;
+                var propsTable;
+                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS && false === cswPrivate.containersModuleEnabled);
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
+                cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
                 
                 var renderProps = function() {
-                    cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                    cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1,1), {
                         globalState: {
                             excludeOcProps: ['tradename', 'supplier', 'partno'],
                             currentNodeId: cswPrivate.state.materialId,
@@ -395,7 +398,7 @@
                     });
                     cswPrivate.additionalPropsDiv.br({ number: 2 }); //Changed from 4 to 2: See Case 28655
 
-                    div = cswPrivate.additionalPropsDiv.div();
+                    propsTable = cswPrivate.additionalPropsDiv.table();
                     if (false === cswPrivate.state.useExistingTempNode) {
                         Csw.subscribe('SaveMaterialSuccess', function() {
                             renderProps();
@@ -423,221 +426,222 @@
             }());
             //#endregion Step 3: Size(s)
 
-            cswPrivate.makeSizesStep = function(){
+            cswPrivate.makeSizesStep = function() {
                 var div, selectDiv;
-                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS);
+                cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
 
-                    if (false === cswPrivate.stepThreeComplete) {
-                        cswPrivate.sizesDiv = cswPrivate.sizesDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
-                        cswPrivate.sizesDiv.empty();
-                        div = cswPrivate.sizesDiv.div();
+                if (false === cswPrivate.stepThreeComplete) {
+                    cswPrivate.sizesDiv = cswPrivate.sizesDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.sizesDiv.empty();
+                    div = cswPrivate.sizesDiv.div();
 
-                        div.label({
-                            text: "Sizes are used to receive material inventory. You can create additional sizes for this material elsewhere.",
-                            cssclass: "wizardHelpDesc"
+                    div.label({
+                        text: "Sizes are used to receive material inventory. You can create additional sizes for this material elsewhere.",
+                        cssclass: "wizardHelpDesc"
+                    });
+                    div.br({ number: 1 });
+
+                    //Case 29015 - if the Physical State is null, go get it
+                    if (Csw.isNullOrEmpty(cswPrivate.state.physicalState)) {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Materials/getPhysicalState',
+                            data: cswPrivate.state.materialId,
+                            async: false,
+                            success: function(data) {
+                                cswPrivate.state.physicalState = data.PhysicalState
+                            }
                         });
-                        div.br({ number: 1 });
+                    }
 
-                        //Case 29015 - if the Physical State is null, go get it
-                        if(Csw.isNullOrEmpty(cswPrivate.state.physicalState)){
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Materials/getPhysicalState',
-                                data: cswPrivate.state.materialId,
-                                async: false,
-                                success: function(data) { 
-                                    cswPrivate.state.physicalState = data.PhysicalState
+                    var makeGrid = function() {
+
+                        //get Units of Measure for this Material
+                        var unitsOfMeasure = [];
+                        Csw.ajax.post({
+                            urlMethod: 'getMaterialUnitsOfMeasure',
+                            data: {
+                                PhysicalStateValue: cswPrivate.state.physicalState
+                            },
+                            async: false, //wait for this request to finish
+                            success: function(data) {
+                                unitsOfMeasure = data;
+                            }
+                        });
+
+                        var getID = function(unitType) {
+                            var ret = '';
+                            Csw.each(unitsOfMeasure, function(obj, key) {
+                                if (unitsOfMeasure[key] === unitType) {
+                                    ret = key;
                                 }
                             });
+                            return ret;
+                        };
+
+                        cswPrivate.header = [{ "value": cswPrivate.config.unitCountName, "isRequired": false },
+                            { "value": cswPrivate.config.quantityName, "isRequired": false },
+                            { "value": cswPrivate.config.numberName, "isRequired": false }];
+                        if (cswPrivate.showQuantityEditable) {
+                            cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false }]);
                         }
+                        if (cswPrivate.showDispensable) {
+                            cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
+                        }
+                        // Case 28693: Stops header from duplicating if size(s) are provided
+                        if (cswPrivate.state.sizeHeaderAdded === false) {
+                            cswPrivate.state.sizes.unshift(cswPrivate.header);
+                        }
+                        cswPrivate.state.sizeHeaderAdded = true;
 
-                        var makeGrid = function () {
-
-                            //get Units of Measure for this Material
-                            var unitsOfMeasure = [];
-                            Csw.ajax.post({
-                                urlMethod: 'getMaterialUnitsOfMeasure',
-                                data: {
-                                    PhysicalStateValue: cswPrivate.state.physicalState
-                                },
-                                async: false, //wait for this request to finish
-                                success: function (data) {
-                                    unitsOfMeasure = data;
-                                }
-                            });
-
-                            var getID = function (unitType) {
-                                var ret = '';
-                                Csw.each(unitsOfMeasure, function (obj, key) {
-                                    if (unitsOfMeasure[key] === unitType) {
-                                        ret = key;
-                                    }
-                                });
-                                return ret;
-                            };
-
-                            cswPrivate.header = [{ "value": cswPrivate.config.unitCountName, "isRequired": false },
-                                                 { "value": cswPrivate.config.quantityName, "isRequired": false },
-                                                 { "value": cswPrivate.config.numberName, "isRequired": false }];
-                            if (cswPrivate.showQuantityEditable) {
-                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false }]);
-                            }
-                            if (cswPrivate.showDispensable) {
-                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
-                            }
-                            // Case 28693: Stops header from duplicating if size(s) are provided
-                            if (cswPrivate.state.sizeHeaderAdded === false) {
-                                cswPrivate.state.sizes.unshift(cswPrivate.header);
-                            }
-                            cswPrivate.state.sizeHeaderAdded = true;
- 
-                            cswPrivate.newSizes.sizesForm = cswPrivate.sizesDiv.form();
-                            cswPrivate.newSizes.sizeGrid = cswPrivate.newSizes.sizesForm.thinGrid({
-                                linkText: '',
-                                hasHeader: true,
-                                rows: cswPrivate.state.sizes,
-                                allowDelete: true,
-                                allowAdd: true,
-                                makeAddRow: function (cswCell, columnName, rowid) {
-                                    'use strict';
-                                    switch (columnName) {
-                                        case cswPrivate.config.unitCountName:
-                                            cswPrivate.newSizes.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
-                                                name: 'sizeUnitCount',
-                                                MinValue: 1,
-                                                Precision: 0,
-                                                onChange: function (value) {
-                                                   cswPrivate.newSizes.rows[rowid].sizeValues.unitCount = cswPrivate.newSizes.rows[rowid].unitCountCtrl.val();
-                                                }
-                                            });
-                                            cswCell.span({ text: ' x' });
-                                            break;
-                                        case cswPrivate.config.quantityName:
-                                            cswPrivate.newSizes.rows[rowid].quantityCtrl = cswCell.numberTextBox({
-                                                name: 'quantityNumberBox',
-                                                MinValue: 0,
-                                                Precision: '',
-                                                excludeRangeLimits: true,
-                                                width: '60px',
-                                                onChange: function (value) {
-                                                    cswPrivate.newSizes.rows[rowid].sizeValues.quantity = cswPrivate.newSizes.rows[rowid].quantityCtrl.val();
-                                                }
-                                            });
-                                            cswPrivate.newSizes.rows[rowid].unitsCtrl = cswCell.select({
-                                                name: 'unitsOfMeasureSelect',
-                                                values: unitsOfMeasure,
-                                                onChange: function (value) {
-                                                    cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
-                                                    cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
-                                                }
-                                            });
+                        cswPrivate.newSizes.sizesForm = cswPrivate.sizesDiv.form();
+                        cswPrivate.newSizes.sizeGrid = cswPrivate.newSizes.sizesForm.thinGrid({
+                            linkText: '',
+                            hasHeader: true,
+                            rows: cswPrivate.state.sizes,
+                            allowDelete: true,
+                            allowAdd: true,
+                            makeAddRow: function(cswCell, columnName, rowid) {
+                                'use strict';
+                                switch (columnName) {
+                                case cswPrivate.config.unitCountName:
+                                    cswPrivate.newSizes.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
+                                        name: 'sizeUnitCount',
+                                        MinValue: 1,
+                                        Precision: 0,
+                                        onChange: function(value) {
+                                            cswPrivate.newSizes.rows[rowid].sizeValues.unitCount = cswPrivate.newSizes.rows[rowid].unitCountCtrl.val();
+                                        }
+                                    });
+                                    cswCell.span({ text: ' x' });
+                                    break;
+                                case cswPrivate.config.quantityName:
+                                    cswPrivate.newSizes.rows[rowid].quantityCtrl = cswCell.numberTextBox({
+                                        name: 'quantityNumberBox',
+                                        MinValue: 0,
+                                        Precision: '',
+                                        excludeRangeLimits: true,
+                                        width: '60px',
+                                        onChange: function(value) {
+                                            cswPrivate.newSizes.rows[rowid].sizeValues.quantity = cswPrivate.newSizes.rows[rowid].quantityCtrl.val();
+                                        }
+                                    });
+                                    cswPrivate.newSizes.rows[rowid].unitsCtrl = cswCell.select({
+                                        name: 'unitsOfMeasureSelect',
+                                        values: unitsOfMeasure,
+                                        onChange: function(value) {
                                             cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
                                             cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
-                                            break;
-                                        case cswPrivate.config.numberName:
-                                            cswPrivate.newSizes.rows[rowid].catalogNoCtrl = cswCell.input({
-                                                name: 'sizeCatalogNo',
-                                                width: '80px',
-                                                onChange: function (value) {
-                                                    cswPrivate.newSizes.rows[rowid].sizeValues.catalogNo = value;
-                                                }
-                                            });
-                                            break;
-                                        case cswPrivate.config.quantityEditableName:
-                                            cswPrivate.newSizes.rows[rowid].quantEditableCtrl = cswCell.checkBox({
-                                                name: 'sizeQuantEditable',
-                                                checked: true,
-                                                onChange: function (value) {
-                                                    cswPrivate.newSizes.rows[rowid].sizeValues.quantEditableChecked = cswPrivate.newSizes.rows[rowid].quantEditableCtrl.val();
-                                                }
-                                            });
-                                            break;
-                                        case cswPrivate.config.dispensibleName:
-                                            cswPrivate.newSizes.rows[rowid].dispensibleCtrl = cswCell.checkBox({
-                                                name: 'sizeDispensible',
-                                                checked: true,
-                                                onChange: function (value) {
-                                                    cswPrivate.newSizes.rows[rowid].sizeValues.dispensibleChecked = cswPrivate.newSizes.rows[rowid].dispensibleCtrl.val();
-                                                }
-                                            });
-                                            break;
-                                    }
-                                },
-                                onAdd: function(newRowid) {
-                                    var newSize = {};
-                                    //This while loop serves as a buffer to remove the +1/-1 issues when comparing the data with the table cell rows in the thingrid.
-                                    //This puts the burden on the user of thingrid to ensure their data lines up with the table cells.
-                                    //Also, undefined size values break the serverside foreach loop, so an empty one is inserted in each element (including deleted elements).
-                                    while (cswPrivate.newSizes.rows.length < newRowid) {
-                                        cswPrivate.newSizes.rows[newRowid] = { sizeValues: {} };
-                                    }
-                                    newSize = {
-                                        catalogNo: '',
-                                        quantity: '',
-                                        unit: '',
-                                        unitid: '',
-                                        unitCount: '',
-                                        quantEditableChecked: 'true',
-                                        dispensibleChecked: 'true',
-                                        nodetypeid: cswPrivate.state.sizeNodeTypeId
-                                    };
-                                    var extractNewAmount = function(object) {
-                                        var ret = Csw.extend({}, object, true);
-                                        return ret;
-                                    };
-                                    cswPrivate.newSizes.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
-                                },
-                                onDelete: function (rowid) {
-                                    delete cswPrivate.newSizes.rows[rowid];
-                                    cswPrivate.newSizes.rows[rowid] = { sizeValues: {} };
+                                        }
+                                    });
+                                    cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
+                                    cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
+                                    break;
+                                case cswPrivate.config.numberName:
+                                    cswPrivate.newSizes.rows[rowid].catalogNoCtrl = cswCell.input({
+                                        name: 'sizeCatalogNo',
+                                        width: '80px',
+                                        onChange: function(value) {
+                                            cswPrivate.newSizes.rows[rowid].sizeValues.catalogNo = value;
+                                        }
+                                    });
+                                    break;
+                                case cswPrivate.config.quantityEditableName:
+                                    cswPrivate.newSizes.rows[rowid].quantEditableCtrl = cswCell.checkBox({
+                                        name: 'sizeQuantEditable',
+                                        checked: true,
+                                        onChange: function(value) {
+                                            cswPrivate.newSizes.rows[rowid].sizeValues.quantEditableChecked = cswPrivate.newSizes.rows[rowid].quantEditableCtrl.val();
+                                        }
+                                    });
+                                    break;
+                                case cswPrivate.config.dispensibleName:
+                                    cswPrivate.newSizes.rows[rowid].dispensibleCtrl = cswCell.checkBox({
+                                        name: 'sizeDispensible',
+                                        checked: true,
+                                        onChange: function(value) {
+                                            cswPrivate.newSizes.rows[rowid].sizeValues.dispensibleChecked = cswPrivate.newSizes.rows[rowid].dispensibleCtrl.val();
+                                        }
+                                    });
+                                    break;
+                                }
+                            },
+                            onAdd: function(newRowid) {
+                                var newSize = { };
+                                //This while loop serves as a buffer to remove the +1/-1 issues when comparing the data with the table cell rows in the thingrid.
+                                //This puts the burden on the user of thingrid to ensure their data lines up with the table cells.
+                                //Also, undefined size values break the serverside foreach loop, so an empty one is inserted in each element (including deleted elements).
+                                while (cswPrivate.newSizes.rows.length < newRowid) {
+                                    cswPrivate.newSizes.rows[newRowid] = { sizeValues: { } };
+                                }
+                                newSize = {
+                                    catalogNo: '',
+                                    quantity: '',
+                                    unit: '',
+                                    unitid: '',
+                                    unitCount: '',
+                                    quantEditableChecked: 'true',
+                                    dispensibleChecked: 'true',
+                                    nodetypeid: cswPrivate.state.sizeNodeTypeId
+                                };
+                                var extractNewAmount = function(object) {
+                                    var ret = Csw.extend({ }, object, true);
+                                    return ret;
+                                };
+                                cswPrivate.newSizes.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
+                            },
+                            onDelete: function(rowid) {
+                                delete cswPrivate.newSizes.rows[rowid];
+                                cswPrivate.newSizes.rows[rowid] = { sizeValues: { } };
+                            }
+                        });
+                    };
+                    div.br();
+
+                    var sizeSelect = function(retObj, count) {
+                        cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
+                        if (count > 1) {
+                            selectDiv.show();
+                        }
+                    };
+
+                    /* Size Select (hidden if only 1 NodeType present) - to get size node type */
+                    selectDiv = div.div();
+                    cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
+                        name: 'nodeTypeSelect',
+                        useWide: true,
+                        value: cswPrivate.state.sizeNodeTypeId,
+                        labelText: 'Select a Material Size: ',
+                        objectClassName: 'SizeClass',
+                        onSelect: sizeSelect,
+                        onSuccess: function(retObj, count) {
+                            sizeSelect(retObj, count);
+                            Csw.ajax.post({
+                                urlMethod: 'getSizeLogicalsVisibility',
+                                data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
+                                async: false,
+                                success: function(data) {
+                                    cswPrivate.showDispensable = Csw.bool(data.showDispensable);
+                                    cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
                                 }
                             });
-                        };
-                        div.br();
+                            makeGrid();
+                        },
+                        relatedToNodeTypeId: cswPrivate.state.materialType.val,
+                        relatedObjectClassPropName: 'Material'
+                    });
+                    selectDiv.hide();
 
-                        var sizeSelect = function (retObj, count) {
-                            cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
-                            if (count > 1) {
-                                selectDiv.show();
-                            }
-                        };
+                    /* Populate this with onSuccess of cswPrivate.sizeSelect */
+                    cswPrivate.addSizeNode = { };
 
-                        /* Size Select (hidden if only 1 NodeType present) - to get size node type */
-                        selectDiv = div.div();
-                        cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
-                            name: 'nodeTypeSelect',
-                            useWide: true,
-                            value: cswPrivate.state.sizeNodeTypeId,
-                            labelText: 'Select a Material Size: ',
-                            objectClassName: 'SizeClass',
-                            onSelect: sizeSelect,
-                            onSuccess: function (retObj, count) {
-                                sizeSelect(retObj, count);
-                                Csw.ajax.post({
-                                    urlMethod: 'getSizeLogicalsVisibility',
-                                    data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
-                                    async: false,
-                                    success: function (data) {
-                                        cswPrivate.showDispensable = Csw.bool(data.showDispensable);
-                                        cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
-                                    }
-                                });
-                                makeGrid();
-                            },
-                            relatedToNodeTypeId: cswPrivate.state.materialType.val,
-                            relatedObjectClassPropName: 'Material'
-                        });
-                        selectDiv.hide();
+                    cswPrivate.stepThreeComplete = true;
 
-                        /* Populate this with onSuccess of cswPrivate.sizeSelect */
-                        cswPrivate.addSizeNode = {};
-
-                        cswPrivate.stepThreeComplete = true;
-                        
-                    }
-            }
+                }
+            };
 
             //#region Step 4: Attach SDS
             cswPrivate.makeStep4 = (function () {
@@ -650,7 +654,7 @@
             //#endregion Step 4: Attach SDS
 
             cswPrivate.makeAttachSDSStep = function(){
-                var div;
+                var attachSDSTable;
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -663,20 +667,28 @@
 
                     if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
                         cswPrivate.AttachSDSDiv.label({
-                            text: "No Material Documents have been defined. Click Finish to complete the wizard.",
+                                text: "No SDS Documents have been defined. Click Finish to complete the wizard.",
                             cssclass: "wizardHelpDesc"
                         });
                     } else {
 
                         cswPrivate.AttachSDSDiv.label({
-                            text: "Define a Material Safety Data Sheet to attach to this material.",
+                                text: "Define a Safety Data Sheet to attach to this material.",
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.AttachSDSDiv.br({ number: 4 });
+                        cswPrivate.AttachSDSDiv.br({ number: 2 });
+                        
+                        attachSDSTable = cswPrivate.AttachSDSDiv.table();
+                        attachSDSTable.cell(1, 1).a({
+                            text: 'Add a new SDS Document',
+                            onClick: function () {
+                                attachSDSTable.cell(1, 1).hide();
+                                attachSDSTable.cell(1, 2).show();
+                            }
+                        });
+                        attachSDSTable.cell(1, 2).hide();
 
-                        div = cswPrivate.AttachSDSDiv.div();
-
-                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
+                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             globalState: {
                                 ShowAsReport: false,
                                 excludeOcProps: ['owner']
