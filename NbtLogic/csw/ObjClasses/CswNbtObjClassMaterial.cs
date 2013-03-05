@@ -227,16 +227,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
-                            bool canAddSDS = NodeType.NodeTypeName == "Chemical";
+                            bool canAddSDS = NodeType.NodeTypeName == "Chemical" && 
+                                _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
                             ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
                             if( canAddSDS )
                             {
-                                Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId(_CswNbtResources, this);
-                                if (Int32.MinValue != DocumentNodeTypeId)
-                                {
-                                    ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
-                                }
-
                                 CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
                                 if( null != AssignedSDSProp )
                                 {
@@ -441,162 +437,166 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void GetMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
-            Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources, this );
-            CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( SDSDocumentNTId );
-            CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-            CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-            CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-            CswNbtMetaDataNodeTypeProp fileTypeNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
-            CswNbtMetaDataNodeTypeProp fileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
-            CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
-            CswNbtMetaDataNodeTypeProp ownerNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
-
-            CswNbtView docView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship parent = docView.AddViewRelationship( SDSDocumentNT, true );
-
-            docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: archivedNTP,
-                SubFieldName: CswNbtSubField.SubFieldName.Checked,
-                Value: false.ToString(),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: ownerNTP,
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                Value: NodeId.PrimaryKey.ToString(),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            docView.AddViewProperty( parent, formatNTP );
-            docView.AddViewProperty( parent, languageNTP );
-            docView.AddViewProperty( parent, fileNTP );
-            docView.AddViewProperty( parent, linkNTP );
-            docView.AddViewProperty( parent, fileTypeNTP );
-
-            CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
-            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
-
-            if( ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue ) )
             {
+                Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId(_CswNbtResources);
+                CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType(SDSDocumentNTId);
+                CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Archived);
+                CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Format);
+                CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Language);
+                CswNbtMetaDataNodeTypeProp fileTypeNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.FileType);
+                CswNbtMetaDataNodeTypeProp fileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.File);
+                CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Link);
+                CswNbtMetaDataNodeTypeProp ownerNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Owner);
 
-                ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                int childCount = docsTree.getChildNodeCount();
-                int lvlMatched = Int32.MinValue;
-                string matchedFileType = "";
-                CswNbtTreeNodeProp matchedFileProp = null;
-                CswNbtTreeNodeProp matchedLinkProp = null;
-                CswPrimaryKey matchedNodeId = null;
+                CswNbtView docView = new CswNbtView(_CswNbtResources);
+                CswNbtViewRelationship parent = docView.AddViewRelationship(SDSDocumentNT, true);
 
-                if( childCount > 0 )
+                docView.AddViewPropertyAndFilter(parent,
+                                                 MetaDataProp: archivedNTP,
+                                                 SubFieldName: CswNbtSubField.SubFieldName.Checked,
+                                                 Value: false.ToString(),
+                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals);
+
+                docView.AddViewPropertyAndFilter(parent,
+                                                 MetaDataProp: ownerNTP,
+                                                 SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                 Value: NodeId.PrimaryKey.ToString(),
+                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals);
+
+                docView.AddViewProperty(parent, formatNTP);
+                docView.AddViewProperty(parent, languageNTP);
+                docView.AddViewProperty(parent, fileNTP);
+                docView.AddViewProperty(parent, linkNTP);
+                docView.AddViewProperty(parent, fileTypeNTP);
+
+                CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
+                CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
+
+                if (ButtonData.SelectedText.Equals(PropertyName.ViewSDS))
                 {
-                    for( int i = 0; i < childCount; i++ )
+
+                    ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView(docView, false, false, false);
+                    int childCount = docsTree.getChildNodeCount();
+                    int lvlMatched = Int32.MinValue;
+                    string matchedFileType = "";
+                    CswNbtTreeNodeProp matchedFileProp = null;
+                    CswNbtTreeNodeProp matchedLinkProp = null;
+                    CswPrimaryKey matchedNodeId = null;
+
+                    if (childCount > 0)
                     {
-                        docsTree.goToNthChild( i );
-
-                        string format = "";
-                        string language = "";
-                        string fileType = "";
-                        CswNbtTreeNodeProp fileProp = null;
-                        CswNbtTreeNodeProp linkProp = null;
-                        CswPrimaryKey nodeId = docsTree.getNodeIdForCurrentPosition();
-
-                        foreach( CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode() )
+                        for (int i = 0; i < childCount; i++)
                         {
-                            CswNbtMetaDataNodeTypeProp docNTP = _CswNbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
-                            switch( docNTP.getObjectClassPropName() )
+                            docsTree.goToNthChild(i);
+
+                            string format = "";
+                            string language = "";
+                            string fileType = "";
+                            CswNbtTreeNodeProp fileProp = null;
+                            CswNbtTreeNodeProp linkProp = null;
+                            CswPrimaryKey nodeId = docsTree.getNodeIdForCurrentPosition();
+
+                            foreach (CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode())
                             {
-                                case CswNbtObjClassDocument.PropertyName.Format:
-                                    format = prop.Field1;
-                                    break;
-                                case CswNbtObjClassDocument.PropertyName.Language:
-                                    language = prop.Field1;
-                                    break;
-                                case CswNbtObjClassDocument.PropertyName.FileType:
-                                    fileType = prop.Field1;
-                                    break;
-                                case CswNbtObjClassDocument.PropertyName.File:
-                                    fileProp = prop;
-                                    break;
-                                case CswNbtObjClassDocument.PropertyName.Link:
-                                    linkProp = prop;
-                                    break;
+                                CswNbtMetaDataNodeTypeProp docNTP = _CswNbtResources.MetaData.getNodeTypeProp(prop.NodeTypePropId);
+                                switch (docNTP.getObjectClassPropName())
+                                {
+                                    case CswNbtObjClassDocument.PropertyName.Format:
+                                        format = prop.Field1;
+                                        break;
+                                    case CswNbtObjClassDocument.PropertyName.Language:
+                                        language = prop.Field1;
+                                        break;
+                                    case CswNbtObjClassDocument.PropertyName.FileType:
+                                        fileType = prop.Field1;
+                                        break;
+                                    case CswNbtObjClassDocument.PropertyName.File:
+                                        fileProp = prop;
+                                        break;
+                                    case CswNbtObjClassDocument.PropertyName.Link:
+                                        linkProp = prop;
+                                        break;
+                                }
                             }
-                        }
 
-                        if( lvlMatched < 0 )
-                        {
-                            matchedFileType = fileType;
-                            matchedFileProp = fileProp;
-                            matchedLinkProp = linkProp;
-                            matchedNodeId = nodeId;
-                            lvlMatched = 0;
-                        }
-                        if( null != userJurisdictionNode )
-                        {
-                            if( lvlMatched < 1 && format.Equals( userJurisdictionNode.Format.Value ) )
+                            if (lvlMatched < 0)
                             {
                                 matchedFileType = fileType;
                                 matchedFileProp = fileProp;
                                 matchedLinkProp = linkProp;
                                 matchedNodeId = nodeId;
-                                lvlMatched = 1;
+                                lvlMatched = 0;
                             }
-                            if( lvlMatched < 2 && language.Equals( currentUserNode.Language ) )
+                            if (null != userJurisdictionNode)
                             {
-                                matchedFileType = fileType;
-                                matchedFileProp = fileProp;
-                                matchedLinkProp = linkProp;
-                                matchedNodeId = nodeId;
-                                lvlMatched = 2;
+                                if (lvlMatched < 1 && format.Equals(userJurisdictionNode.Format.Value))
+                                {
+                                    matchedFileType = fileType;
+                                    matchedFileProp = fileProp;
+                                    matchedLinkProp = linkProp;
+                                    matchedNodeId = nodeId;
+                                    lvlMatched = 1;
+                                }
+                                if (lvlMatched < 2 && language.Equals(currentUserNode.Language))
+                                {
+                                    matchedFileType = fileType;
+                                    matchedFileProp = fileProp;
+                                    matchedLinkProp = linkProp;
+                                    matchedNodeId = nodeId;
+                                    lvlMatched = 2;
+                                }
+                                if (lvlMatched < 3 && format.Equals(userJurisdictionNode.Format.Value) && language.Equals(currentUserNode.Language))
+                                {
+                                    matchedFileType = fileType;
+                                    matchedFileProp = fileProp;
+                                    matchedLinkProp = linkProp;
+                                    matchedNodeId = nodeId;
+                                    lvlMatched = 3;
+                                }
                             }
-                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( currentUserNode.Language ) )
-                            {
-                                matchedFileType = fileType;
-                                matchedFileProp = fileProp;
-                                matchedLinkProp = linkProp;
-                                matchedNodeId = nodeId;
-                                lvlMatched = 3;
-                            }
+                            docsTree.goToParentNode();
                         }
-                        docsTree.goToParentNode();
+
+                        string url = "";
+                        switch (matchedFileType)
+                        {
+                            case CswNbtObjClassDocument.FileTypes.File:
+                                int jctnodepropid = CswConvert.ToInt32(matchedFileProp.JctNodePropId);
+                                int nodetypepropid = CswConvert.ToInt32(matchedFileProp.NodeTypePropId);
+                                url = CswNbtNodePropBlob.getLink(jctnodepropid, matchedNodeId, nodetypepropid);
+                                break;
+                            case CswNbtObjClassDocument.FileTypes.Link:
+                                //CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );
+                                url = CswNbtNodePropLink.GetFullURL(linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2);
+                                break;
+                        }
+                        ButtonData.Data["url"] = url;
+                        ButtonData.Action = NbtButtonAction.popup;
                     }
-
-                    string url = "";
-                    switch( matchedFileType )
+                    else
                     {
-                        case CswNbtObjClassDocument.FileTypes.File:
-                            int jctnodepropid = CswConvert.ToInt32( matchedFileProp.JctNodePropId );
-                            int nodetypepropid = CswConvert.ToInt32( matchedFileProp.NodeTypePropId );
-                            url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId, nodetypepropid );
-                            break;
-                        case CswNbtObjClassDocument.FileTypes.Link:
-                            //CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );
-                            url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2 );
-                            break;
+                        ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
+                        ButtonData.Action = NbtButtonAction.nothing;
                     }
-                    ButtonData.Data["url"] = url;
-                    ButtonData.Action = NbtButtonAction.popup;
                 }
-                else
+                else //load Assigned SDS grid dialog
                 {
-                    ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
-                    ButtonData.Action = NbtButtonAction.nothing;
-                }
-            }
-            else //load Assigned SDS grid dialog
-            {
-                CswNbtMetaDataNodeTypeProp assignedSDSNTP = NodeType.getNodeTypeProp( "Assigned SDS" );
-                if( null != assignedSDSNTP )
-                {
-                    ButtonData.Data["viewid"] = assignedSDSNTP.ViewId.ToString();
-                    ButtonData.Data["title"] = assignedSDSNTP.PropName;
-                    ButtonData.Data["nodeid"] = NodeId.ToString();
-                    ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
-                    ButtonData.Action = NbtButtonAction.griddialog;
-                }
-                else
-                {
-                    ButtonData.Message = "Could not find the Assigned SDS prop";
-                    ButtonData.Action = NbtButtonAction.nothing;
+                    CswNbtMetaDataNodeTypeProp assignedSDSNTP = NodeType.getNodeTypeProp("Assigned SDS");
+                    if (null != assignedSDSNTP)
+                    {
+                        ButtonData.Data["viewid"] = assignedSDSNTP.ViewId.ToString();
+                        ButtonData.Data["title"] = assignedSDSNTP.PropName;
+                        ButtonData.Data["nodeid"] = NodeId.ToString();
+                        ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
+                        ButtonData.Action = NbtButtonAction.griddialog;
+                    }
+                    else
+                    {
+                        ButtonData.Message = "Could not find the Assigned SDS prop";
+                        ButtonData.Action = NbtButtonAction.nothing;
+                    }
                 }
             }
         }
