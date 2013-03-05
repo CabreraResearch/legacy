@@ -31,6 +31,7 @@ namespace ChemSW.Nbt
             //   Allow Inventory
             //   Inventory Group
             //   Storate Compatibility
+            //   Allow Inventory
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
@@ -39,6 +40,7 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
+                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
             }
 
             //Show the following Material properties...
@@ -108,6 +110,7 @@ namespace ChemSW.Nbt
             //   Allow Inventory
             //   Inventory Group
             //   Storate Compatibility
+            //   Allow Inventory
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
@@ -116,6 +119,7 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
+                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
             }
 
             //Hide the following Material properties...
