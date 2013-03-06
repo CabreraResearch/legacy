@@ -33,13 +33,14 @@
                     Csw.extend(cswPrivate, options);
                 }
 
+                cswParent.empty();
                 cswPrivate.table = cswParent.table(cswPrivate);
                 cswPublic = Csw.dom({}, cswPrivate.table);
             } ());
 
             (function () {
                 var strLinkText = cswPrivate.linkText;
-                if (cswPrivate.rowCount < 1 ) {
+                if (cswPrivate.rowCount < 1) {
                     strLinkText += ' (none defined)';
                 }
                 else {
