@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using ChemSW;
-using ChemSW.Config;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ImportExport;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
-using ChemSW.Security;
+using ChemSW.Core;
 
 namespace Nbt2DImporterTester
 {
     public partial class Form1 : Form
     {
-        private readonly CswNbtResources _CswNbtResources;
-        private readonly CswNbt2DImporter _Importer;
         private readonly WorkerThread _WorkerThread;
 
         public Form1()
@@ -73,17 +64,18 @@ namespace Nbt2DImporterTester
             setButtonsEnabled( false );
             log( "Storing data..." );
             ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtDataFilePath.Text, null, null );
-            //_Importer.storeData( txtDataFilePath.Text );
-            //txtImportDataTableName.Text = _Importer.ImportDataTableName;
         }
 
         private void button2_Click( object sender, EventArgs e )
         {
             setButtonsEnabled( false );
             log( "Importing rows..." );
-            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( txtImportDataTableName.Text, 10, null, null );
-            //_Importer.ImportDataTableName = txtImportDataTableName.Text;
-            //_Importer.ImportRows( 10 );
+            Int32 rows = CswConvert.ToInt32( txtRows.Text );
+            if( rows < 0 )
+            {
+                rows = 1;
+            }
+            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( txtImportDataTableName.Text, rows, null, null );
         }
 
         private void button3_Click( object sender, EventArgs e )
@@ -91,7 +83,6 @@ namespace Nbt2DImporterTester
             setButtonsEnabled( false );
             log( "Reading bindings..." );
             ( (WorkerThread.readBindingsHandler) _WorkerThread.readBindings).BeginInvoke( txtBindingsFilePath.Text, null, null );
-            //_Importer.readBindings( txtBindingsFilePath.Text );
         }
     }
 }

@@ -38,11 +38,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.txtRows = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(80, 52);
+            this.button1.Enabled = false;
+            this.button1.Location = new System.Drawing.Point(15, 139);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(90, 27);
             this.button1.TabIndex = 0;
@@ -52,7 +55,8 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(80, 239);
+            this.button2.Enabled = false;
+            this.button2.Location = new System.Drawing.Point(15, 238);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(90, 27);
             this.button2.TabIndex = 1;
@@ -64,29 +68,29 @@
             // 
             this.txtImportDataTableName.Location = new System.Drawing.Point(12, 213);
             this.txtImportDataTableName.Name = "txtImportDataTableName";
-            this.txtImportDataTableName.Size = new System.Drawing.Size(260, 20);
+            this.txtImportDataTableName.Size = new System.Drawing.Size(384, 20);
             this.txtImportDataTableName.TabIndex = 2;
             // 
             // txtDataFilePath
             // 
-            this.txtDataFilePath.Location = new System.Drawing.Point(12, 25);
+            this.txtDataFilePath.Location = new System.Drawing.Point(12, 113);
             this.txtDataFilePath.Name = "txtDataFilePath";
-            this.txtDataFilePath.Size = new System.Drawing.Size(260, 20);
+            this.txtDataFilePath.Size = new System.Drawing.Size(384, 20);
             this.txtDataFilePath.TabIndex = 3;
-            this.txtDataFilePath.Text = "z:\\D\\temp\\rapidloaderdata.xlsx";
+            this.txtDataFilePath.Text = "Z:\\D\\temp\\Ardea_Ripperv201\\imcsexport_equip.xlsx";
             // 
             // txtBindingsFilePath
             // 
-            this.txtBindingsFilePath.Location = new System.Drawing.Point(12, 115);
+            this.txtBindingsFilePath.Location = new System.Drawing.Point(12, 25);
             this.txtBindingsFilePath.Name = "txtBindingsFilePath";
-            this.txtBindingsFilePath.Size = new System.Drawing.Size(260, 20);
+            this.txtBindingsFilePath.Size = new System.Drawing.Size(384, 20);
             this.txtBindingsFilePath.TabIndex = 4;
-            this.txtBindingsFilePath.Text = "z:\\D\\temp\\rapidloaderbindings.xlsx";
+            this.txtBindingsFilePath.Text = "Z:\\D\\temp\\Ardea_Ripperv201\\imcsexport_equip_bindings.xlsx";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(12, 97);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(49, 13);
             this.label1.TabIndex = 5;
@@ -95,7 +99,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 99);
+            this.label2.Location = new System.Drawing.Point(12, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 6;
@@ -115,15 +119,16 @@
             this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Location = new System.Drawing.Point(282, 12);
+            this.txtLog.Location = new System.Drawing.Point(402, 12);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
-            this.txtLog.Size = new System.Drawing.Size(288, 254);
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtLog.Size = new System.Drawing.Size(352, 276);
             this.txtLog.TabIndex = 8;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(80, 141);
+            this.button3.Location = new System.Drawing.Point(15, 50);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(90, 27);
             this.button3.TabIndex = 9;
@@ -131,11 +136,30 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // txtRows
+            // 
+            this.txtRows.Location = new System.Drawing.Point(125, 242);
+            this.txtRows.Name = "txtRows";
+            this.txtRows.Size = new System.Drawing.Size(30, 20);
+            this.txtRows.TabIndex = 10;
+            this.txtRows.Text = "10";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(161, 245);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(34, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Rows";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 278);
+            this.ClientSize = new System.Drawing.Size(766, 300);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.txtRows);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.label3);
@@ -165,6 +189,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox txtRows;
+        private System.Windows.Forms.Label label4;
     }
 }
 
