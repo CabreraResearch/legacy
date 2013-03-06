@@ -191,6 +191,7 @@ namespace ChemSW.Nbt.Actions
                 Ret.TradeName.Text = TradeName;
                 Ret.PartNumber.Text = PartNo;
                 Ret.Supplier.RelatedNodeId = SupplierId;
+                Ret.ApprovedForReceiving.Checked = CswConvert.ToTristate( _NbtResources.Permit.can( CswNbtActionName.Material_Approval ) );
 
                 Ret.IsTemp = ( false == RemoveTempStatus );
                 Ret.postChanges( ForceUpdate: false );
