@@ -83,9 +83,9 @@ namespace ChemSW.Nbt.Batch
             CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
             CswNbtViewRelationship BatchVR = NextBatchOpView.AddViewRelationship( BatchOpOC, false );
             CswNbtViewProperty StatusVP = NextBatchOpView.AddViewProperty( BatchVR, StatusOCP );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Completed.ToString() );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Error.ToString() );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Unknown.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : NbtBatchOpStatus.Completed.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : NbtBatchOpStatus.Error.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : NbtBatchOpStatus.Unknown.ToString() );
             CswNbtViewProperty PriorityVP = NextBatchOpView.AddViewProperty( BatchVR, PriorityOCP );
             NextBatchOpView.setSortProperty( PriorityVP, NbtViewPropertySortMethod.Descending );
 
@@ -164,8 +164,10 @@ namespace ChemSW.Nbt.Batch
                             CswNbtResources.AuditUsername = UserOC.Username;
                         }
                     }
-
+                    
                     op.runBatchOp( BatchNode );
+
+                    throw new Exception( "Fuck you." );
                 }
             }
         }
