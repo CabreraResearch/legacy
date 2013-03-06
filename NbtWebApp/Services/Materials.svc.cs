@@ -45,6 +45,9 @@ namespace NbtWebApp.Services
             public bool ContainersModuleEnabled = true;
 
             [DataMember]
+            public bool SDSModuleEnabled = true;
+
+            [DataMember]
             public string PhysicalState = string.Empty;
         }
 

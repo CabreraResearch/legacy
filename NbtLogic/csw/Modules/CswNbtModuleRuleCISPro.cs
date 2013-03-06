@@ -47,6 +47,10 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.Containers );
             }
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.SDS );
+            }
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.RegulatoryLists );

@@ -52,7 +52,6 @@
                     supplier: { name: '', val: '' }, 
                     partNo: '',
                     properties: {},
-                    documentProperties: {},
                     useExistingTempNode: false,
                     physicalState: '',
                     sizes: [],
@@ -75,7 +74,8 @@
                     sizesForm: null,
                     sizeGrid: null                
                 },
-                containersModuleEnabled: true
+                containersModuleEnabled: true,
+                SDSModuleEnabled: true
             };
 
             var cswPublic = {};
@@ -353,7 +353,8 @@
 
             cswPrivate.makeAdditionalPropsStep = function(){
                 var propsTable;
-                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS && false === cswPrivate.containersModuleEnabled);
+                var isLastStep = Csw.bool((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled)
+                    && false === cswPrivate.containersModuleEnabled);
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -428,7 +429,7 @@
 
             cswPrivate.makeSizesStep = function() {
                 var div, selectDiv;
-                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS);
+                var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled);
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
@@ -452,7 +453,7 @@
                             data: cswPrivate.state.materialId,
                             async: false,
                             success: function(data) {
-                                cswPrivate.state.physicalState = data.PhysicalState
+                                cswPrivate.state.physicalState = data.PhysicalState;
                             }
                         });
                     }
@@ -665,46 +666,37 @@
                     cswPrivate.AttachSDSDiv = cswPrivate.AttachSDSDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.AttachSDSDiv.empty();
 
-                    if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
-                        cswPrivate.AttachSDSDiv.label({
-                                text: "No SDS Documents have been defined. Click Finish to complete the wizard.",
-                            cssclass: "wizardHelpDesc"
-                        });
-                    } else {
-
-                        cswPrivate.AttachSDSDiv.label({
-                                text: "Define a Safety Data Sheet to attach to this material.",
-                            cssclass: "wizardHelpDesc"
-                        });
-                        cswPrivate.AttachSDSDiv.br({ number: 2 });
+                    cswPrivate.AttachSDSDiv.label({
+                            text: "Define a Safety Data Sheet to attach to this material.",
+                        cssclass: "wizardHelpDesc"
+                    });
+                    cswPrivate.AttachSDSDiv.br({ number: 2 });
                         
-                        attachSDSTable = cswPrivate.AttachSDSDiv.table();
-                        attachSDSTable.cell(1, 1).a({
-                            text: 'Add a new SDS Document',
-                            onClick: function () {
-                                attachSDSTable.cell(1, 1).hide();
-                                attachSDSTable.cell(1, 2).show();
-                            }
-                        });
-                        attachSDSTable.cell(1, 2).hide();
+                    attachSDSTable = cswPrivate.AttachSDSDiv.table();
+                    attachSDSTable.cell(1, 1).a({
+                        text: 'Add a new SDS Document',
+                        onClick: function () {
+                            attachSDSTable.cell(1, 1).hide();
+                            attachSDSTable.cell(1, 2).show();
+                        }
+                    });
+                    attachSDSTable.cell(1, 2).hide();
 
-                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                            globalState: {
-                                ShowAsReport: false,
-                                excludeOcProps: ['owner']
-                            },
-                            tabState: {
-                                nodetypeid: cswPrivate.state.documentTypeId,
-                                showSaveButton: false,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onNodeIdSet: function (documentId) {
-                                cswPrivate.state.documentId = documentId;
-                            }
-                        });
-
-                    }
+                    cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                        globalState: {
+                            ShowAsReport: false,
+                            excludeOcProps: ['owner']
+                        },
+                        tabState: {
+                            nodetypeid: cswPrivate.state.documentTypeId,
+                            showSaveButton: false,
+                            EditMode: Csw.enums.editMode.Add
+                        },
+                        ReloadTabOnSave: false,
+                        onNodeIdSet: function (documentId) {
+                            cswPrivate.state.documentId = documentId;
+                        }
+                    });
 
                     cswPrivate.stepFourComplete = true;
                 }
@@ -782,6 +774,7 @@
                         cswPrivate.state.materialId = data.TempNode.NodeId;
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
+                        cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;
 
                         var stepCount = 0;
                         cswPrivate.wizardSteps = {};
