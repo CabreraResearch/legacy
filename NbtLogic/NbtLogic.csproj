@@ -53,24 +53,6 @@
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug %28Fast%29\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
-    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Test\</OutputPath>
@@ -186,6 +168,7 @@
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28669.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28663.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28122B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29039_Generators.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
