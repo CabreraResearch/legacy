@@ -22,5 +22,7 @@ call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtSchemaUpdater\bin
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtWebApp
 call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\NbtWcfServices
+call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\TestApps\SchedulerGuiTest\bin
+call %1\Nbt\Nbt\Scripts\Links\clear_one_link %1 \Nbt\Nbt\TestApps\SchedulerGuiTestMt\bin
 
 :End
