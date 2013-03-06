@@ -29,8 +29,6 @@
                     tradeName: '',
                     selectedSizeId: '',
                     customBarcodes: false,
-                    documentTypeId: '',
-                    documentId: '',
                     nodetypename: '',
                     canAddSDS: true,
                     sdsViewId: ''
@@ -139,8 +137,7 @@
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
                         quantities: cswPrivate.amountsGrid.quantities(),
                         sizeid: cswPrivate.state.selectedSizeId,
-                        props: cswPrivate.tabsAndProps.getPropJson(),
-                        documentid: cswPrivate.state.documentId
+                        props: cswPrivate.tabsAndProps.getPropJson()
                     };
                     Csw.ajax.post({
                         urlMethod: 'receiveMaterial',
@@ -349,28 +346,21 @@
                         cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                         cswPrivate.divStep3.empty();
 
-                        if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
-                            cswPrivate.divStep3.span({
-                                text: 'No Documents have been defined. Click Finish to complete the wizard.',
-                                cssclass: 'wizardHelpDesc'
-                            });
-                        } else {
+                        cswPrivate.divStep3.span({
+                            text: 'Define a Safety Data Sheet to attach to ' + cswPrivate.state.tradeName,
+                            cssclass: 'wizardHelpDesc'
+                        });
+                        cswPrivate.divStep3.br({ number: 2 });
 
-                            cswPrivate.divStep3.span({
-                                text: 'Define a Safety Data Sheet to attach to ' + cswPrivate.state.tradeName,
-                                cssclass: 'wizardHelpDesc'
-                            });
-                            cswPrivate.divStep3.br({ number: 2 });
-
-                            div = cswPrivate.divStep3.div();
+                        div = cswPrivate.divStep3.div();
                             
-                            cswPrivate.documentGrid = Csw.wizard.nodeGrid(div, {
-                                viewid: cswPrivate.state.sdsViewId,
-                                ReadOnly: false,
-                                relatednodeid: cswPrivate.state.materialId,
-                                canSelectRow: false
-                            });
-                        }
+                        cswPrivate.documentGrid = Csw.wizard.nodeGrid(div, {
+                            viewid: cswPrivate.state.sdsViewId,
+                            ReadOnly: false,
+                            relatednodeid: cswPrivate.state.materialId,
+                            canSelectRow: false
+                        });
+                        
                         cswPrivate.stepThreeComplete = true;
                     }
                 };

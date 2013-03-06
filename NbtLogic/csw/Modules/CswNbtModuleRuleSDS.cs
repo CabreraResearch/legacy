@@ -48,6 +48,8 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View SDS", ContainerNT.getIdentityTab(), 2, 1 );
                 }
             }
+
+            _CswNbtResources.Modules.ToggleView( false, "SDS Expiring Next Month", NbtViewVisibility.Global );
         }
 
         public override void OnDisable()
@@ -74,6 +76,8 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Modules.HideProp( ContainerNTId, "View SDS" );
                 }
             }
+
+            _CswNbtResources.Modules.ToggleView( true, "SDS Expiring Next Month", NbtViewVisibility.Global );
         } // OnDisable()
     } // class CswNbtModuleSDS
 }// namespace ChemSW.Nbt
