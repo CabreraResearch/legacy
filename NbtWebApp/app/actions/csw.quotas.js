@@ -17,13 +17,16 @@
             }
 
             var div = cswParent.div();
+            var form;
             var table;
             var row;
             var quotaJson;
+            var saveBtn;
 
             function initTable() {
                 div.empty();
-                table = div.table({
+                form = div.form();
+                table = form.table({
                     suffix: 'tbl',
                     border: 1,
                     cellpadding: 5
@@ -62,7 +65,7 @@
                         }, false); // Csw.eachRecursive()
 
                         if (canedit) {
-                            div.button({
+                            saveBtn = div.button({
                                 name: 'Save',
                                 enabledText: 'Save',
                                 disabledText: 'Saving',
@@ -71,9 +74,7 @@
                         }
                     } // success
                 }); // ajax()
-            }
-
-            // initTable()
+            } // initTable()
 
             function makeQuotaRow(qRow, canedit, rowid, objectclass, nodetype, currentusage, quota, excludeinquotabar) {
                 // one object class row                                
@@ -85,11 +86,12 @@
 
                 if (canedit) {
                     cell4 = table.cell(qRow, 4);
-                    cell4.input({
+                    var numBox = cell4.numberTextBox({
                         name: o.name + rowid + 'quota',
-                        type: Csw.enums.inputTypes.text,
+                        width: '15px',
                         value: quota,
-                        size: '15px'
+                        MinValue: 0,
+                        Precision: 0
                     });
 
                     cell5 = table.cell(qRow, 5);
@@ -98,32 +100,37 @@
                         type: Csw.enums.inputTypes.checkbox,
                         checked: excludeinquotabar
                     });
+
                 } else {
                     table.cell(qRow, 4).text(quota);
                     table.cell(qRow, 5).text(excludeinquotabar);
                 }
-            }
-
-            // makeQuotaRow()
+            } // makeQuotaRow()
 
             function handleSave() {
-                Csw.eachRecursive(quotaJson.objectclasses, function (childObj) {
-                    childObj.quota = $('[name="' + o.name + 'OC' + childObj.objectclassid + 'quota"]').val();
-                    childObj.excludeinquotabar = $('[name="' + o.name + 'OC' + childObj.objectclassid + 'excludeinquotabar"]').is(':checked');
-                    Csw.eachRecursive(childObj.nodetypes, function (childObjNt) {
-                        childObjNt.quota = $('[name="' + o.name + 'NT' + childObjNt.nodetypeid + 'quota"]').val();
-                        childObjNt.excludeinquotabar = $('[name="' + o.name + 'NT' + childObjNt.nodetypeid + 'excludeinquotabar"]').is(':checked');
-                    }, false);
-                }, false);
 
-                Csw.ajax.post({
-                    urlMethod: o.saveUrlMethod,
-                    data: { Quotas: JSON.stringify(quotaJson) },
-                    success: function () {
-                        initTable();
-                        Csw.tryExec(o.onQuotaChange);
-                    }
-                });
+                if (form.isFormValid()) {
+                    Csw.eachRecursive(quotaJson.objectclasses, function (childObj) {
+                        childObj.quota = $('[name="' + o.name + 'OC' + childObj.objectclassid + 'quota"]').val();
+                        childObj.excludeinquotabar = $('[name="' + o.name + 'OC' + childObj.objectclassid + 'excludeinquotabar"]').is(':checked');
+                        Csw.eachRecursive(childObj.nodetypes, function (childObjNt) {
+                            childObjNt.quota = $('[name="' + o.name + 'NT' + childObjNt.nodetypeid + 'quota"]').val();
+                            childObjNt.excludeinquotabar = $('[name="' + o.name + 'NT' + childObjNt.nodetypeid + 'excludeinquotabar"]').is(':checked');
+                        }, false);
+                    }, false);
+
+                    Csw.ajax.post({
+                        urlMethod: o.saveUrlMethod,
+                        data: { Quotas: JSON.stringify(quotaJson) },
+                        success: function () {
+                            initTable();
+                            Csw.tryExec(o.onQuotaChange);
+                        }
+                    });
+                } else {
+                    saveBtn.quickTip({ html: 'One or more of the set quotas are invalid' });
+                    saveBtn.enable();
+                }
             }
 
             // handleSave()
