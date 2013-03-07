@@ -23,7 +23,10 @@ call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtSchemaUpdaterCmdLn\bi
 call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtWebApp
 call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtWcfServices
 call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\TestApps\SchedulerGuiTestMt\bin
-call %1\Nbt\Nbt\Scripts\Links\make_one_link "C:\Program Files (x86)\Microsoft Visual Studio 11.0" \Common7\IDE\CommonExtensions\Microsoft
-call %1\Nbt\Nbt\Scripts\Links\make_one_link "C:\Program Files (x86)" \JetBrains\ReSharper\v7.0
+
+@REM Symbolic links won't work for these paths. Manually copy the files you need.
+@REM call %1\Nbt\Nbt\Scripts\Links\make_one_link "C:\Program Files (x86)\Microsoft Visual Studio 11.0" \Common7\IDE\CommonExtensions\Microsoft
+@REM call %1\Nbt\Nbt\Scripts\Links\make_one_link "C:\Program Files (x86)" \JetBrains\ReSharper\v7.1
+
 
 :End
