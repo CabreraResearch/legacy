@@ -802,6 +802,18 @@ namespace ChemSW.Nbt
         /// <returns>Number of rows affected</returns>
         public Int32 execArbitraryPlatformNeutralSql( string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSql( SqlText ) ); }
 
+        /// <summary>
+        /// This method executes the sql passed into it in a transaction that is separate from the 
+        /// one that is controlled by the beginTransaction() and commitTransaction() methods.
+        /// Moreover, the connection it uses is returned to the connection pool immediately. 
+        /// It should be used only when you have a need to perform a sql operation that 
+        /// is separate from the main transaction. This is almost always _not_ 
+        /// what you want to do. Caveat emptor!
+        /// </summary>
+        /// <param name="SqlText">The SQL to be executed</param>
+        /// <returns></returns>
+        public Int32 execArbitraryPlatformNeutralSqlInItsOwnTransaction( string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( SqlText ) ); }
+
 
         public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswResources.execStoredProc( StoredProcName, Params ); }
         public DataTable getStoredProcResult( string StoredProcName, List<CswStoredProcParam> Params ) { return ( _CswResources.getStoredProcResult( StoredProcName, Params ) ); }
