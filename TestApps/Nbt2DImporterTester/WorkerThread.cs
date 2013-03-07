@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using ChemSW;
 using ChemSW.Config;
 using ChemSW.Nbt;
@@ -16,8 +17,11 @@ namespace Nbt2DImporterTester
         public delegate void FinishEvent();
         public FinishEvent OnFinish;
 
-        public delegate void StoreDataFinishEvent( string ImportDataTableName );
+        public delegate void StoreDataFinishEvent( StringCollection ImportDataTableNames );
         public StoreDataFinishEvent OnStoreDataFinish;
+
+        public delegate void getCountsFinishEvent( Int32 PendingRows, Int32 ErrorRows );
+        public getCountsFinishEvent OnGetCountsFinish;
 
         public WorkerThread()
         {
@@ -47,7 +51,7 @@ namespace Nbt2DImporterTester
         public void storeData( string DataFilePath )
         {
             _Importer.storeData( DataFilePath );
-            OnStoreDataFinish( _Importer.ImportDataTableName );
+            OnStoreDataFinish( _Importer.ImportDataTableNames );
 
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
@@ -57,8 +61,7 @@ namespace Nbt2DImporterTester
         public delegate void importRowsHandler( string ImportDataTableName, Int32 rows );
         public void importRows( string ImportDataTableName, Int32 rows )
         {
-            _Importer.ImportDataTableName = ImportDataTableName;
-            _Importer.ImportRows( rows );
+            _Importer.ImportRows( rows, ImportDataTableName );
             
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
@@ -69,6 +72,19 @@ namespace Nbt2DImporterTester
         public void readBindings( string BindingsFilePath )
         {
             _Importer.readBindings( BindingsFilePath );
+
+            _CswNbtResources.commitTransaction();
+            _CswNbtResources.beginTransaction();
+            OnFinish();
+        }
+
+        public delegate void getCountsHandler( string ImportDataTableName );
+        public void getCounts( string ImportDataTableName )
+        {
+            Int32 PendingRows;
+            Int32 ErrorRows;
+            _Importer.getCounts( ImportDataTableName, out PendingRows, out ErrorRows );
+            OnGetCountsFinish( PendingRows, ErrorRows );
 
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Windows.Forms;
 using ChemSW.Core;
 
@@ -13,17 +14,22 @@ namespace Nbt2DImporterTester
             InitializeComponent();
 
             _WorkerThread = new WorkerThread();
-            _WorkerThread.OnError = handleMessage;
+            _WorkerThread.OnError = handleError;
             _WorkerThread.OnMessage = handleMessage;
             _WorkerThread.OnFinish = finish;
             _WorkerThread.OnStoreDataFinish = StoreDataFinished;
+            _WorkerThread.OnGetCountsFinish = GetCountsFinished;
         }
 
         #region NON-UI THREAD 
 
         private void handleMessage( string Msg )
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] {Msg} );
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { Msg } );
+        }
+        private void handleError( string Msg )
+        {
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { "ERROR: " + Msg } );
         }
 
         private void finish()
@@ -32,9 +38,14 @@ namespace Nbt2DImporterTester
             button1.BeginInvoke( new setButtonsEnabledHandler( setButtonsEnabled ), new object[] { true } );
         }
 
-        private void StoreDataFinished( string ImportDataTableName )
+        private void StoreDataFinished( StringCollection ImportDataTableNames )
         {
-            txtImportDataTableName.BeginInvoke( new setImportDataTableNameHandler( setImportDataTableName ), new object[] { ImportDataTableName } );
+            cbxImportDataTableName.BeginInvoke( new setImportDataTableNameHandler( setImportDataTableName ), new object[] { ImportDataTableNames } );
+        }
+        
+        private void GetCountsFinished( Int32 PendingCount, Int32 ErrorCount )
+        {
+            lblPending.BeginInvoke( new setCountsHandler( setCounts ), new object[] {PendingCount, ErrorCount} );
         }
 
         #endregion NON-UI THREAD
@@ -53,11 +64,37 @@ namespace Nbt2DImporterTester
             button3.Enabled = enabled;
         }
 
-        private delegate void setImportDataTableNameHandler( string ImportDataTableName );
-        private void setImportDataTableName( string ImportDataTableName )
+        private delegate void setImportDataTableNameHandler( StringCollection ImportDataTableNames );
+        private void setImportDataTableName( StringCollection ImportDataTableNames )
         {
-            txtImportDataTableName.Text = ImportDataTableName;
+            cbxImportDataTableName.Items.Clear();
+            foreach( string ImportDataTableName in ImportDataTableNames )
+            {
+                cbxImportDataTableName.Items.Add( ImportDataTableName );
+            }
+            cbxImportDataTableName.SelectedIndex = 0;
         }
+
+        private delegate void setCountsHandler( Int32 PendingCount, Int32 ErrorCount );
+        private void setCounts( Int32 PendingCount, Int32 ErrorCount )
+        {
+            if( PendingCount != Int32.MinValue )
+            {
+                lblPending.Text = PendingCount.ToString();
+            }
+            else
+            {
+                lblPending.Text = "???";
+            }
+            if( ErrorCount != Int32.MinValue )
+            {
+                lblError.Text = ErrorCount.ToString();
+            }
+            else
+            {
+                lblError.Text = "???";
+            }
+        } // setCounts()
 
         private void button1_Click( object sender, EventArgs e )
         {
@@ -75,7 +112,7 @@ namespace Nbt2DImporterTester
             {
                 rows = 1;
             }
-            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( txtImportDataTableName.Text, rows, null, null );
+            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( cbxImportDataTableName.Text, rows, null, null );
         }
 
         private void button3_Click( object sender, EventArgs e )
@@ -83,6 +120,11 @@ namespace Nbt2DImporterTester
             setButtonsEnabled( false );
             log( "Reading bindings..." );
             ( (WorkerThread.readBindingsHandler) _WorkerThread.readBindings).BeginInvoke( txtBindingsFilePath.Text, null, null );
+        }
+
+        private void cbxImportDataTableName_TextChanged( object sender, EventArgs e )
+        {
+            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( cbxImportDataTableName.Text, null, null );
         }
     }
 }
