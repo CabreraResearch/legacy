@@ -94,12 +94,15 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
-                    _incrementNodeCount( Node );
+                    if( false == Node.IsTemp )
+                    {
+                        _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );
+                    }
                     //setDefaultPropertyValues( Node );
                 }
-                else if( Node.IsTempModified )
+                else if( Node.IsTempModified && false == Node.IsTemp )
                 {
-                    _incrementNodeCount( Node );
+                    _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );
                     Node.IsTempModified = false;
                 }
 
@@ -118,15 +121,6 @@ namespace ChemSW.Nbt
             }//if node was modified
 
         }//write()
-
-        private void _incrementNodeCount( CswNbtNode Node )
-        {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
-            if( null != NodeType )
-            {
-                NodeType.IncrementNodeCount();
-            }
-        }
 
         private string _makeDefaultNodeName( CswNbtNode Node )
         {

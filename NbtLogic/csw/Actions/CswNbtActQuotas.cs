@@ -418,10 +418,10 @@ namespace ChemSW.Nbt.Actions
         /// <param name="NodeTypeId"></param>
         public void IncrementNodeCountForNodeType( Int32 NodeTypeId )
         {
-            _CswNbtResources.execArbitraryPlatformNeutralSql( "update nodetypes set nodecount = nodecount + 1 where nodetypeid = " + NodeTypeId );
+            //_CswNbtResources.execArbitraryPlatformNeutralSql( "update nodetypes set nodecount = nodecount + 1 where nodetypeid = " + NodeTypeId );
 
-            CswNbtMetaDataObjectClass objClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
-            IncrementNodeCountForObjClass( objClass.ObjectClassId );
+            //CswNbtMetaDataObjectClass objClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
+            //IncrementNodeCountForObjClass( objClass.ObjectClassId );
         }
 
         /// <summary>
@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.Actions
         /// <param name="ObjClassId"></param>
         public void IncrementNodeCountForObjClass( Int32 ObjClassId )
         {
-            _CswNbtResources.execArbitraryPlatformNeutralSql( "update object_class set nodecount = nodecount + 1 where objectclassid = " + ObjClassId );
+            //_CswNbtResources.execArbitraryPlatformNeutralSql( "update object_class set nodecount = nodecount + 1 where objectclassid = " + ObjClassId );
         }
 
     } // class CswNbtActQuotas

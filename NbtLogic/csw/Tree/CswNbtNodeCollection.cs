@@ -23,6 +23,9 @@ namespace ChemSW.Nbt
         //private CswNbtNodeReader _CswNbtNodeReader;
         //private CswNbtNodeWriter _CswNbtNodeWriter;
 
+        private Dictionary<Int32, Int32> NodeTypeCounts = new Dictionary<Int32, Int32>();
+        private Dictionary<Int32, Int32> ObjClassCounts = new Dictionary<Int32, Int32>();
+
         public CswNbtNodeFactory CswNbtNodeFactory { get { return _CswNbtNodeFactory; } }
 
         /// <summary>
@@ -35,6 +38,7 @@ namespace ChemSW.Nbt
             //_ICswNbtObjClassFactory = ICswNbtObjClassFactory;
             //_CswNbtNodeReader = new CswNbtNodeReader( _CswNbtResources );
             //_CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
+
             NodeHash = new Hashtable();
         }
 
@@ -750,11 +754,78 @@ namespace ChemSW.Nbt
             //    //}
             //}
 
+            //TODO: this is where we will execute an independent transaction to update the NodeCount column in nodetypes and object_class
+            _updateNodeCounts();
+
             _clear(); //bz # 6653
 
         }//finalize()
 
         #endregion Database
+
+        #region Node Counts
+
+        public void IncrementNodeCounts( Int32 NodeTypeId )
+        {
+            if( NodeTypeCounts.ContainsKey( NodeTypeId ) )
+            {
+                NodeTypeCounts[NodeTypeId] += 1;
+            }
+            else
+            {
+                NodeTypeCounts.Add( NodeTypeId, 1 );
+            }
+
+            CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
+            if( null != ObjClass )
+            {
+                if( ObjClassCounts.ContainsKey( ObjClass.ObjectClassId ) )
+                {
+                    ObjClassCounts[ObjClass.ObjectClassId] += 1;
+                }
+                else
+                {
+                    ObjClassCounts.Add( ObjClass.ObjectClassId, 1 );
+                }
+            }
+        }
+
+        private void _updateNodeCounts()
+        {
+            string nodetypeSQL = "update nodetypes set nodecount = nodecount + case";
+            bool DoUpdateNT = false;
+            foreach( var Pair in NodeTypeCounts )
+            {
+                DoUpdateNT = true;
+                nodetypeSQL += " when nodetypeid =  " + Pair.Key + " then " + Pair.Value;
+            }
+            nodetypeSQL += " else + 0 end ";
+
+            string objclassSQL = "update object_class set nodecount = nodecount + case";
+            bool DoUpdateOC = false;
+            foreach( var Pair in ObjClassCounts )
+            {
+                DoUpdateOC = true;
+                objclassSQL += " when objectclassid =  " + Pair.Key + " then " + Pair.Value;
+            }
+            objclassSQL += "else + 0 end ";
+
+            NodeTypeCounts.Clear();
+            ObjClassCounts.Clear();
+
+            if( DoUpdateNT )
+            {
+                _CswNbtResources.execArbitraryPlatformNeutralSql( nodetypeSQL );
+            }
+
+            if( DoUpdateOC )
+            {
+                _CswNbtResources.execArbitraryPlatformNeutralSql( objclassSQL );
+            }
+
+        }
+
+        #endregion
 
     } // CswNbtNodeCollection()
 } // namespace ChemSW.Nbt
