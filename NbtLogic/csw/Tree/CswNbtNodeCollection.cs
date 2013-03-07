@@ -815,12 +815,12 @@ namespace ChemSW.Nbt
 
             if( DoUpdateNT )
             {
-                _CswNbtResources.execArbitraryPlatformNeutralSql( nodetypeSQL );
+                _CswNbtResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( nodetypeSQL );
             }
 
             if( DoUpdateOC )
             {
-                _CswNbtResources.execArbitraryPlatformNeutralSql( objclassSQL );
+                _CswNbtResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( objclassSQL );
             }
 
         }
