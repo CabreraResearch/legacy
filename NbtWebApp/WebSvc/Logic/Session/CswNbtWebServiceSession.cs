@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
 using ChemSW.WebSvc;
@@ -33,6 +34,20 @@ namespace ChemSW.Nbt.WebServices
             }
             [DataMember]
             public CswNbtUserDefaultsData Data;
+        }
+
+        /// <summary>
+        /// Return Object for Login Data
+        /// </summary>
+        [DataContract]
+        public class LoginDataReturn : CswWebSvcReturn
+        {
+            public LoginDataReturn()
+            {
+                Data = new LoginData();
+            }
+            [DataMember]
+            public LoginData Data;
         }
 
         [DataContract]
@@ -115,6 +130,24 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret.addException( Ex );
             }
+        }
+
+        /// <summary>
+        /// Gets all login data for the current accessid in the given timeframe
+        /// </summary>
+        public static void getLoginData( ICswResources CswResources, LoginDataReturn Return, LoginData.LoginDataRequest Request )
+        {
+            CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActLoginData.getLoginData( Request );
+        }
+
+        /// <summary>
+        /// Adds a new login record
+        /// </summary>
+        public static void postLoginData( ICswResources CswResources, LoginDataReturn Return, LoginData.Login Request )
+        {
+            CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( (CswNbtResources) CswResources );
+            _CswNbtActLoginData.postLoginData( Request );
         }
     } // class CswNbtWebServiceSession
 
