@@ -666,7 +666,7 @@ namespace ChemSW.Nbt
             CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, RoleName, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );//third flase == include hiidden nodes
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes: true );
 
             // get user node
             UserTree.goToRoot();
