@@ -23,7 +23,7 @@
                 windowHeight: function () {
                     return document.documentElement.clientHeight;
                 }
-            };
+            };c
         };
     } ());
     var cswPrivate = cswPrivateInit();
@@ -951,6 +951,20 @@
                     data: CswC3SearchParams,
                     success: function (data) {
 
+                        // Before rendering the size(s) grid, remove any sizes that vary only by unit count
+                        // since they violate the uniqueness of sizes in NBT and wouldn't be imported anyways
+                        var OriginalProductSizes = data.ProductDetails.ProductSize;
+
+                        var UniqueProductSizes = [];
+                        var unique = {};
+
+                        for (var i = 0; i < OriginalProductSizes.length; i++) {
+                            if (!unique[(OriginalProductSizes[i].pkg_qty + OriginalProductSizes[i].pkg_qty_uom + OriginalProductSizes[i].catalog_no)]) {
+                                UniqueProductSizes.push(OriginalProductSizes[i]);
+                                unique[(OriginalProductSizes[i].pkg_qty + OriginalProductSizes[i].pkg_qty_uom + OriginalProductSizes[i].catalog_no)] = OriginalProductSizes[i];
+                            }
+                        }
+
                         //Create the table
                         var table1 = div.table({ cellspacing: '5px', align: 'left', width: '100%' });
 
@@ -994,7 +1008,7 @@
                             fields: [{ name: 'case_qty', type: 'string' }, { name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'catalog_no', type: 'string'}],
                             columns: [{ header: 'Unit Count', dataIndex: 'case_qty' }, { header: 'Initial Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Catalog No', dataIndex: 'catalog_no'}],
                             data: {
-                                items: data.ProductDetails.ProductSize,
+                                items: UniqueProductSizes,
                                 buttons: []
                             },
                             usePaging: false,
