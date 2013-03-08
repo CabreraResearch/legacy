@@ -1,12 +1,13 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link rel="shortcut icon" href="images/favicon.ico" />
-    <title>ChemSW Live</title>
-</head>
-<body>
+<!--#include file="PlainHeader.html" -->
+    <style type="text/css">
+        
+        .propertylabel
+        {
+            font-weight: bold;
+        }
+
+    </style>
+
     <div id="spinner" width="100%" style="text-align: center; display: none;">
         <img src="images/ajax/progress.gif" /></div>
     <div id="rptDiv">
@@ -15,8 +16,8 @@
     </div>
     <div id="DialogErrorDiv"></div>
     
-    <!--#include file="MainIncludes.html" -->
-    <!--#include file="DevIncludes.html" -->
+    <!--#include file="PlainIncludes.html" -->
+
     <script type="text/javascript">
 
         $(document).ready(
@@ -49,5 +50,6 @@
             })
         );
     </script>
+
 </body>
 </html>
