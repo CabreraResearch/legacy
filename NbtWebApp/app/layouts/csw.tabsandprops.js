@@ -101,30 +101,34 @@
             };
 
             Object.defineProperty(cswPrivate, 'initAtLeastOne', {
-                value: function _initAtLeastOne(resetState) {
+                value: function _initAtLeastOne() {
 
-                    var saveable = false || true === resetState,
-                        property = false || true === resetState;
-
-                    if (!cswPrivate.atLeastOne) {
-                        cswPrivate.atLeastOne = {
-                            get Saveable() {
-                                return saveable;
-                            },
-                            set Saveable(val) {
-                                if (true === val) {
-                                    saveable = true;
-                                }
-                            },
-                            get Property() {
-                                return property;
-                            },
-                            set Property(val) {
-                                if (true === val) {
-                                    property = true;
+                    if (cswPrivate.atLeastOne) {
+                        cswPrivate.atLeastOne.saveable = false;
+                        cswPrivate.atLeastOne.property = false;
+                    } else {
+                        Object.defineProperty(cswPrivate, 'atLeastOne', {
+                            value: {
+                                saveable: false,
+                                get Saveable() {
+                                    return cswPrivate.atLeastOne.saveable;
+                                },
+                                set Saveable(val) {
+                                    if (true === val) {
+                                        cswPrivate.atLeastOne.saveable = true;
+                                    }
+                                },
+                                property: false,
+                                get Property() {
+                                    return cswPrivate.atLeastOne.property;
+                                },
+                                set Property(val) {
+                                    if (true === val) {
+                                        cswPrivate.atLeastOne.property = true;
+                                    }
                                 }
                             }
-                        };
+                        });
                     }
                 }
             });
@@ -149,7 +153,7 @@
                     cswPrivate.tabcnt = 0;
                 };
                 cswPrivate.init();
-            } ());
+            }());
 
             //#region Events
 
@@ -333,7 +337,7 @@
                                             Multi: Csw.bool(cswPrivate.tabState.Multi),
                                             ConfigMode: cswPrivate.tabState.Config
                                         },
-                                        success: function(newData) {
+                                        success: function (newData) {
                                             cswPrivate.makeIdentityTab(newData);
                                         }
                                     });
@@ -387,7 +391,7 @@
                                 Csw.eachRecursive(data, tabFunc, false);
 
                                 cswPrivate.tabcnt = tabno;
-                                
+
                                 Csw.each(jqTabs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
                                         selected: cswPrivate.tabState.tabNo,
@@ -404,8 +408,8 @@
                                             }
                                             return ret;
 
-                                                
-                                        } 
+
+                                        }
                                     }); // tabs
                                     var eachTabContentDiv;
                                     if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
@@ -798,7 +802,7 @@
                             Csw.isNullOrEmpty(cswPrivate.globalState.date) &&
                                 cswPrivate.globalState.filterToPropId === '' &&
                                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
-                                        Csw.bool(tabContentDiv.data('canEditLayout'))) {
+                                       Csw.bool(tabContentDiv.data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
@@ -1322,9 +1326,8 @@
             (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
                 cswPrivate.refreshLinkDiv();
-            } ());
+            }());
 
             return cswPublic;
         });
-} ());
-
+}());
