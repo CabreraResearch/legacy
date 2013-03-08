@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
             if( null != ControlZoneNT )
             {
                 _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.FireCode, ControlZoneNT.NodeTypeId );
-                _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswNbtModuleName.CISPro, ControlZoneNT.NodeTypeId );
+                _CswNbtSchemaModTrnsctn.deleteModuleNodeTypeJunction( CswNbtModuleName.CISPro, ControlZoneNT.NodeTypeId );
             }
 
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.FireCode, CswNbtActionName.Tier_II_Reporting );
