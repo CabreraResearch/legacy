@@ -712,9 +712,39 @@ namespace ChemSW.Nbt.Security
                   (
                       ( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
                       (
-                          ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) )
+                          ( ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) ) ) ||
+                          //This was removed as part of Case 27984, and I think it was a mistake
+                          ( MetaDataProp.ReadOnly && MetaDataProp.IsRequired && _CswNbtResources.EditMode == NodeEditMode.Add && null != MetaDataProp.getAddLayout() )
                       )
                   );
+
+            
+             
+            //     public bool AllowReadOnlyAdd
+            //{
+            //    get
+            //    {
+            //        bool ret = false;
+
+            //        if( false == ServerManaged )
+            //        {
+            //            ret = _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add && null != AddLayout;
+            //        }
+
+            //        return ( ret );
+            //    }
+            //}
+
+            //public bool SetValueOnAddEnabled
+            //{
+            //    get
+            //    {
+            //        // Case 20480
+            //        return ( !( IsRequired && DefaultValue.Empty ) ); //&& !hasFilter() );
+            //    }
+            //}
+             
+            
 
             //if( ret &&
             //        (

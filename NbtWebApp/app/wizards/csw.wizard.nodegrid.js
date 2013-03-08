@@ -100,7 +100,8 @@
                             urlMethod: 'getMainMenu', 
                             data: {
                                 ViewId: viewid,
-                                SafeNodeKey: Csw.string(cswPrivate.nodekey, cswPrivate.relatednodeid),
+                                SafeNodeKey: Csw.string(cswPrivate.nodekey),
+                                NodeId: Csw.string(cswPrivate.relatednodeid),
                                 NodeTypeId: Csw.string(''),
                                 PropIdAttr: Csw.string(cswPrivate.name),
                                 LimitMenuTo: Csw.string(''),//This should be 'Add', but for some reason this removes the menu
