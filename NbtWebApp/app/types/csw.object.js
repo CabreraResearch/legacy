@@ -180,6 +180,27 @@
             return ret;
         });
 
+    Csw.iterate = Csw.iterate ||
+        Csw.register('iterate', function(obj, onSuccess, recursive) {
+            /// <summary>
+            /// Safely iterates an Object or an Array
+            /// </summary>
+            if (obj) {
+                Object.keys(obj).forEach(function(key) {
+                    var val = obj[key];
+                    if (onSuccess) {
+                        var quit = onSuccess(val);
+                        if (false === quit) {
+                            return false;
+                        }
+                    }
+                    if (true === recursive) {
+                        Csw.iterate(val, onSuccess, true);
+                    }
+                });
+            }
+        });
+
     Csw.each = Csw.each ||
         Csw.register('each', function (thisObj, onSuccess) {
             /// <summary>Iterates an Object or an Array and handles length property</summary>
@@ -342,9 +363,9 @@
             var ret = {};
             Csw.tryExec(function () { ret = window.$.parseJSON(data); });
             if(Csw.isNullOrEmpty(ret)) {
-				ret = {};
-			}
-			return ret;
+                ret = {};
+            }
+            return ret;
         });
     
     Csw.params = Csw.params ||
