@@ -37,24 +37,14 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28757() ) );           //01Y-015
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case28898() ) );           //01Y-016
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29039_Generators() ) );//01Y-017
-
-
-
+            
             #endregion YORICK
 
             #region ASPEN
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_CaseXXXXX() ) );   //01Y-000  02A-000
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28355() ) );           //01Y-016  02A-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01W_Case27923_Save() ) );      //01W-058   01Y-01
-            
-
-
-            #endregion ASPEN
-
-            #region ASPEN
-
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_CaseXXXXX() ) );   //01Y-000  02A-000
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case27923_Save() ) );      //01W-058   01Y-01
 
             #endregion ASPEN
 

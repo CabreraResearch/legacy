@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case XXXXX
     /// </summary>
-    public class CswUpdateSchema_01W_Case27923_Save: CswUpdateSchemaTo
+    public class CswUpdateSchema_02A_Case27923_Save: CswUpdateSchemaTo
     {
         public override CswDeveloper Author
         {
