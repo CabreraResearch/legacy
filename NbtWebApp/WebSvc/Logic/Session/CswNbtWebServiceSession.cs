@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Session;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
 
@@ -139,15 +138,6 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( (CswNbtResources) CswResources );
             Return.Data = _CswNbtActLoginData.getLoginData( Request );
-        }
-
-        /// <summary>
-        /// Adds a new login record
-        /// </summary>
-        public static void postLoginData( ICswResources CswResources, LoginDataReturn Return, LoginData.Login Request )
-        {
-            CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( (CswNbtResources) CswResources );
-            _CswNbtActLoginData.postLoginData( Request );
         }
     } // class CswNbtWebServiceSession
 

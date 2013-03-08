@@ -129,9 +129,7 @@ namespace ChemSW.Nbt.Actions
 
         private DataTable _getLoginRecords( LoginData.LoginDataRequest Request )
         {
-            String WhereClauseTemplate = @"where l.username = {0} 
-                                    and l.logindate >= {1} 
-                                    and l.logindate < {2} + 1";
+            String WhereClauseTemplate = @"where logindate >= {1} and logindate < {2} + 1";
             String WhereClause = String.Format( WhereClauseTemplate,
                 Request.Username,
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
