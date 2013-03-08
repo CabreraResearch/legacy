@@ -72,7 +72,6 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                atLeastOne: {},
                 saveBtn: {},
                 properties: [],
                 async: true
@@ -101,6 +100,36 @@
                 return isMulti;
             };
 
+            Object.defineProperty(cswPrivate, 'initAtLeastOne', {
+                value: function _initAtLeastOne(resetState) {
+
+                    var saveable = false || true === resetState,
+                        property = false || true === resetState;
+
+                    if (!cswPrivate.atLeastOne) {
+                        cswPrivate.atLeastOne = {
+                            get Saveable() {
+                                return saveable;
+                            },
+                            set Saveable(val) {
+                                if (true === val) {
+                                    saveable = true;
+                                }
+                            },
+                            get Property() {
+                                return property;
+                            },
+                            set Property(val) {
+                                if (true === val) {
+                                    property = true;
+                                }
+                            }
+                        };
+                    }
+                }
+            });
+            cswPrivate.initAtLeastOne(true);
+
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.init = function () {
@@ -120,9 +149,6 @@
                     cswPrivate.tabcnt = 0;
                 };
                 cswPrivate.init();
-
-
-
             } ());
 
             //#region Events
@@ -134,8 +160,6 @@
             cswPrivate.onTearDownProps = function () {
                 Csw.unsubscribe('onPropChange_' + cswPrivate.propid);
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
-
-
             };
 
             cswPrivate.onTearDown = function () {
@@ -146,6 +170,7 @@
                     call.ajax.abort();
                     delete cswPrivate.ajax[name];
                 });
+                cswPrivate.initAtLeastOne(true);
             };
 
             cswPublic.tearDown = function () {
@@ -759,7 +784,7 @@
                             onClick: function () { cswPublic.save(tabContentDiv, tabid); }
                         });
                     }
-                    cswPrivate.atLeastOne = cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
+                    cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
                     if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
                             false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
@@ -864,7 +889,6 @@
             cswPrivate.handleProperties = function (layoutTable, tabContentDiv, tabid, configMode, tabPropData) {
                 'use strict';
                 layoutTable = layoutTable || cswPrivate.layoutTable;
-                cswPrivate.atLeastOne = { Property: false, Saveable: false };
                 var handleSuccess = function (propObj) {
                     cswPrivate.atLeastOne.Property = true;
                     cswPrivate.handleProp(layoutTable, propObj, tabContentDiv, tabid, configMode);
@@ -881,7 +905,6 @@
                     }
                 }
                 cswPrivate.onRenderProps();
-                return cswPrivate.atLeastOne;
             }; // _handleProperties()
 
 
