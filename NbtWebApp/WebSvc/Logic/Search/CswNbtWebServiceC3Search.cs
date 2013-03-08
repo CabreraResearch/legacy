@@ -483,14 +483,14 @@ namespace ChemSW.Nbt.WebServices
                         NBTSubFieldPropColName2 = "field1"
                     } );
 
-                    const string CatalogNo = CswNbtObjClassSize.PropertyName.CatalogNo;
-                    _Mappings.Add( CatalogNo, new C3Mapping
-                    {
-                        NBTNodeTypeId = SizeNT.NodeTypeId,
-                        C3ProductPropertyValue = _ProductToImport.CatalogNo,
-                        NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( CatalogNo ),
-                        NBTSubFieldPropColName = "field1"
-                    } );
+                    //const string CatalogNo = CswNbtObjClassSize.PropertyName.CatalogNo;
+                    //_Mappings.Add( CatalogNo, new C3Mapping
+                    //{
+                    //    NBTNodeTypeId = SizeNT.NodeTypeId,
+                    //    C3ProductPropertyValue = _ProductToImport.CatalogNo,
+                    //    NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( CatalogNo ),
+                    //    NBTSubFieldPropColName = "field1"
+                    //} );
                 }
 
                 #endregion
@@ -515,28 +515,28 @@ namespace ChemSW.Nbt.WebServices
             /// </summary>
             /// <param name="unitOfMeasure">UOM provided by C3 to be tranlated into the corresponding NBT UOM</param>
             /// <returns></returns>
-            private string _uomTranslator( string unitOfMeasure )
-            {
-                string Ret = unitOfMeasure;
-                switch( unitOfMeasure.ToLower() )
-                {
-                    case "oz":
-                        Ret = "ounces";
-                        break;
-                    case "l":
-                        Ret = "Liters";
-                        break;
-                    case "gm":
-                        Ret = "gal";
-                        break;
-                    default:
-                        Ret = unitOfMeasure;
-                        break;
-                }
+            //private string _uomTranslator( string unitOfMeasure )
+            //{
+            //    string Ret = unitOfMeasure;
+            //    switch( unitOfMeasure.ToLower() )
+            //    {
+            //        case "oz":
+            //            Ret = "ounces";
+            //            break;
+            //        case "l":
+            //            Ret = "Liters";
+            //            break;
+            //        case "gm":
+            //            Ret = "gal";
+            //            break;
+            //        default:
+            //            Ret = unitOfMeasure;
+            //            break;
+            //    }
 
-                return Ret;
+            //    return Ret;
 
-            }
+            //}
 
             /// <summary>
             /// 
@@ -550,7 +550,7 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
                     //Translate the name if necessary
-                    string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
+                    //string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
 
                     CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
@@ -560,7 +560,7 @@ namespace ChemSW.Nbt.WebServices
 
                     UnitsView.AddViewPropertyAndFilter( Parent,
                                                        MetaDataProp: NameOCP,
-                                                       Value: TranslatedUnitOfMeasure,
+                                                       Value: unitOfMeasurementName,
                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
@@ -732,14 +732,20 @@ namespace ChemSW.Nbt.WebServices
                                     string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, sizeGestalt );
 
-                                    // Set the Unit Count
                                     // Note: This is a hackadoodle for now since importer is getting changed... soon...
                                     // Assumption: We are working with a node that is of NodeType Size
                                     if (NodeType.NodeTypeName == "Size")
                                     {
+                                        // Set the Unit Count
                                         CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp(CswNbtObjClassSize.PropertyName.UnitCount);
                                         Node.Properties[UnitCountNTP].SetPropRowValue((CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty);
                                         Node.Properties[UnitCountNTP].SetPropRowValue(CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty);
+
+                                        // Set the Catalog No
+                                        // This needs to be here because each size has a unique catalogno
+                                        CswNbtMetaDataNodeTypeProp CatalogNoNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
                                     }
                                 }
                                 break;
