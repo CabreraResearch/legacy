@@ -62,6 +62,7 @@
                 showTitle: true,
                 onNodeIdSet: null,
                 onSave: null,
+                onSaveError: null,
                 ReloadTabOnSave: true,
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
@@ -319,14 +320,32 @@
                         },
                         success: function (data) {
 
-                            function makeTabs() {
+                            function makeTabs(resetIdentity) {
                                 cswPrivate.clearTabs();
-                                cswPrivate.makeIdentityTab({
-                                    IdentityTab: data.IdentityTab,
-                                    nodename: data.nodename,
-                                    nodetypeid: data.nodetypeid
-                                });
-                                delete data.IdentityTab;
+
+                                // case 29017 - a little kludgey
+                                if (resetIdentity) {
+                                    cswPrivate.ajax.tabs = Csw.ajax.post({
+                                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                                        urlMethod: cswPrivate.urls.TabsUrlMethod,
+                                        data: {
+                                            EditMode: Csw.string(cswPrivate.tabState.EditMode, 'Edit'),
+                                            NodeId: cswPublic.getNodeId(),
+                                            SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.globalState.nodekeys, 0),
+                                            NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                                            PropId: '',
+                                            Date: Csw.string(cswPrivate.globalState.date, new Date().toDateString()),
+                                            filterToPropId: Csw.string(cswPrivate.globalState.filterToPropId),
+                                            Multi: Csw.bool(cswPrivate.tabState.Multi),
+                                            ConfigMode: cswPrivate.tabState.Config
+                                        },
+                                        success: function(newData) {
+                                            cswPrivate.makeIdentityTab(newData);
+                                        }
+                                    });
+                                } else {
+                                    cswPrivate.makeIdentityTab(data);
+                                }
                                 
                                 var tabIds = Csw.delimitedString();
                                 Csw.each(data.tabs, function (tab) {
@@ -383,29 +402,21 @@
                                     return ret;
                                 };
 
-                                cswPrivate.genTab = function (noChangesToPost, tabidx) {
-                                    var ret = false;
-                                    var div = cswPrivate.getTabDivFromIndex(tabidx);
-                                    if (div) {
-                                        cswPrivate.tabState.tabid = div.data('tabid');
-                                        ret = (true === noChangesToPost || Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid));
-                                        if (ret) {
-                                            Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                            cswPrivate.form.empty();
-                                            cswPrivate.onTearDown();
-                                            makeTabs();
-                                        }
-                                    }
-                                    return ret;
-                                };
-
+                                
                                 Csw.each(tabdivs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
                                         selected: cswPrivate.tabState.tabNo,
                                         select: function (event, ui) {
                                             var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
                                             if (ret) {
-                                                cswPrivate.genTab(null, Csw.number(ui.index));
+                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
+                                                cswPrivate.tabState.tabNo = Csw.number(ui.index);
+                                                cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
+
+                                                Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                                cswPrivate.form.empty();
+                                                cswPrivate.onTearDown();
+                                                makeTabs(true);
                                             }
                                             return ret;
                                         } // select()
@@ -416,7 +427,7 @@
                                 }); // for(var t in tabdivs)
                             }
 
-                            makeTabs();
+                            makeTabs(false);
                         } // success
                     }); // ajax
                 } // if-else editmode is add or preview
@@ -1022,7 +1033,7 @@
                             if (Csw.bool(propData.hassubprops)) {
                                 Csw.tryExec(cswPrivate.updateSubProps, propData, propCell, tabid, false, layoutTable);
                             }
-                            Csw.tryExec(cswPrivate.onPropertyChange, fieldOpt.propid, propName);
+                            Csw.tryExec(cswPrivate.onPropertyChange, fieldOpt.propid, propName, propData);
                         },
                         doSave: function (saveopts) {
                             var s = {
@@ -1220,7 +1231,6 @@
 
             cswPublic.save = Csw.method(function (tabid, onSuccess, async, reloadTabOnSave) {
                 'use strict';
-
                 tabid = tabid || cswPrivate.tabState.tabid;
                 // This basically sets a default for reloadOnTabSave:
                 // if there is no value, we default to cswPrivate.ReloadTabOnSave
@@ -1269,14 +1279,18 @@
                             } else {
                                 cswPublic.copy(onSaveSuccess);
                             }
-
                         }, // success
-                        //error: cswPrivate.enableSaveBtn
+                        error: function (errorData) {
+                            cswPrivate.enableSaveBtn();
+                            Csw.tryExec(cswPrivate.onSaveError, errorData);
+                        }
                     }); // ajax
                 } // if(cswPrivate.isValid())
                 else {
                     //cswPrivate.enableSaveBtn();
                 }
+
+                //return ret;
             }); // Save()
 
             //#endregion commit

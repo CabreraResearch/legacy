@@ -10,12 +10,13 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
+using System;
 
 namespace NbtWebApp.Services
 {
 
     [DataContract]
-    public class MaterialResponse: CswWebSvcReturn
+    public class MaterialResponse : CswWebSvcReturn
     {
         public MaterialResponse()
         {
@@ -31,19 +32,33 @@ namespace NbtWebApp.Services
             [DataMember]
             public View SuppliersView = new View();
 
-            //[DataMember]
-            //public View SizesView = new View();
-
             [DataMember]
             public Collection<CswNbtNode.Node> SizeNodes = new Collection<CswNbtNode.Node>();
 
             [DataMember]
             public CswNbtNode.Node TempNode = new CswNbtNode.Node( null );
 
-            [DataMember] 
-            public string Data = string.Empty;
+            [DataMember]
+            public Collection<WizardStep> Steps = new Collection<WizardStep>();
 
+            [DataMember]
+            public bool ContainersModuleEnabled = true;
 
+            [DataMember]
+            public bool SDSModuleEnabled = true;
+
+            [DataMember]
+            public string PhysicalState = string.Empty;
+        }
+
+        [DataContract]
+        public class WizardStep
+        {
+            [DataMember]
+            public int StepNo = Int32.MinValue;
+
+            [DataMember]
+            public string StepName = string.Empty;
         }
     }
 
@@ -69,24 +84,21 @@ namespace NbtWebApp.Services
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             MaterialResponse Ret = new MaterialResponse();
             var GetViewDriverType = new CswWebSvcDriver<MaterialResponse, object>(
-                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceCreateMaterial.getCreateMaterialViews,
-                ParamObj : ""
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.getCreateMaterialViews,
+                ParamObj: ""
                 );
 
             GetViewDriverType.run();
             return ( Ret );
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "initialize")]
+        [WebInvoke( Method = "POST", UriTemplate = "initialize" )]
         [FaultContract( typeof( FaultException ) )]
-        [Description( "Fetch the views relevant to Create Material" )]
-        public MaterialResponse initializeCreateMaterial(string NodeId)
+        [Description( "Get initialization data for the create material wizard" )]
+        public MaterialResponse initializeCreateMaterial( string NodeId )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             MaterialResponse Ret = new MaterialResponse();
@@ -101,28 +113,23 @@ namespace NbtWebApp.Services
             return ( Ret );
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //[OperationContract]
-        //[WebInvoke( Method = "POST", UriTemplate = "saveMaterial", ResponseFormat = WebMessageFormat.Json)]
-        //[FaultContract( typeof( FaultException ) )]
-        //[Description( "Fetch the views relevant to Create Material" )]
-        //public MaterialResponse saveStep1Props( string state )
-        //{
-        //    //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-        //    MaterialResponse Ret = new MaterialResponse();
-        //    var GetViewDriverType = new CswWebSvcDriver<MaterialResponse, string>(
-        //        CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-        //        ReturnObj: Ret,
-        //        WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.saveMaterial,
-        //        ParamObj: state
-        //        );
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "getPhysicalState" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the Physical State for a given nodeid" )]
+        public MaterialResponse getPhysicalState( string NodeId )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            MaterialResponse Ret = new MaterialResponse();
+            var GetViewDriverType = new CswWebSvcDriver<MaterialResponse, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.getPhysicalState,
+                ParamObj: NodeId
+                );
 
-        //    GetViewDriverType.run();
-        //    return ( Ret );
-        //}
-
-
+            GetViewDriverType.run();
+            return ( Ret );
+        }
     }
 }

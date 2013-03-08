@@ -40,6 +40,11 @@ namespace ChemSW.Nbt.WebServices
             return _CswNbtActCreateMaterial.createMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
         }
 
+        public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        {
+            return _CswNbtActCreateMaterial.saveMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
+        }
+
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
         {
             return CswNbtActCreateMaterial.getSizeNodeProps( CswNbtResources, SizeNodeTypeId, SizeDefinition, WriteNode );
@@ -78,19 +83,50 @@ namespace ChemSW.Nbt.WebServices
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
 
-                // Material sizes (if exist)
-                ICswNbtTree SizesTree = CreateMaterialAction.getMaterialSizes( NbtResources, NodePk );
-                for( int i = 0; i < SizesTree.getChildNodeCount(); i++ )
-                {
-                    SizesTree.goToNthChild( i );
-                    Response.Data.SizeNodes.Add( new CswNbtNode.Node( null )
-                    {
-                        NodeId = SizesTree.getNodeIdForCurrentPosition(),
-                        NodeName = SizesTree.getNodeNameForCurrentPosition()
-                    } );
-                    SizesTree.goToParentNode();
-                }
+                //Alert wizard to active modules
+                bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers );
+                Response.Data.ContainersModuleEnabled = ContainersEnabled;
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                    ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
+                Response.Data.SDSModuleEnabled = SDSEnabled;
 
+                //Determine the steps
+                int StepNo = 1;
+                MaterialResponse.WizardStep TypeAndIdentity = new MaterialResponse.WizardStep()
+                {
+                    StepNo = StepNo,
+                    StepName = "Choose Type and Identity"
+                };
+                Response.Data.Steps.Add( TypeAndIdentity );
+                StepNo++;
+
+                MaterialResponse.WizardStep AdditionalProps = new MaterialResponse.WizardStep()
+                {
+                    StepNo = StepNo,
+                    StepName = "Additional Properties"
+                };
+                Response.Data.Steps.Add( AdditionalProps );
+                StepNo++;
+
+                if( ContainersEnabled )
+                {
+                    MaterialResponse.WizardStep Sizes = new MaterialResponse.WizardStep()
+                    {
+                        StepNo = StepNo,
+                        StepName = "Size(s)"
+                    };
+                    Response.Data.Steps.Add( Sizes );
+                    StepNo++;
+                }
+                if( SDSEnabled )
+                {
+                    MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep()
+                    {
+                        StepNo = StepNo,
+                        StepName = "Attach SDS"
+                    };
+                    Response.Data.Steps.Add( AttachSDS );
+                }
             }
         }
 
@@ -108,9 +144,18 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public JObject saveMaterial( string state )
+        public static void getPhysicalState( ICswResources CswResources, MaterialResponse Response, string NodeId )
         {
-            return _CswNbtActCreateMaterial.saveMaterial(_CswNbtResources, state);
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtObjClassMaterial materialNode = NbtResources.Nodes[pk];
+                    Response.Data.PhysicalState = materialNode.PhysicalState.Value;
+                }
+            }
         }
 
         /// <summary>
@@ -129,9 +174,9 @@ namespace ChemSW.Nbt.WebServices
             return CswNbtActCreateMaterial.getLandingPageData( NbtResources, MaterialNode, MaterialNodeView );
         }
 
-        public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
+        public static JObject getMaterialUnitsOfMeasure( string PhysicalStateValue, CswNbtResources CswNbtResources )
         {
-            return CswNbtActCreateMaterial.getMaterialUnitsOfMeasure( MaterialId, CswNbtResources );
+            return CswNbtActCreateMaterial.getMaterialUnitsOfMeasure( PhysicalStateValue, CswNbtResources );
         }
 
         public JObject getSizeLogicalsVisibility( int SizeNodeTypeId )

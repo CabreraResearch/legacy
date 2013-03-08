@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CswPrintClient1")]
+[assembly: AssemblyTitle( "NbtPrintClient" )]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("csw")]
+[assembly: AssemblyCompany( "ChemSW" )]
 [assembly: AssemblyProduct("CswPrintClient1")]
 [assembly: AssemblyCopyright("Copyright © csw 2012")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion( "2013.2.22.1" )]
-[assembly: AssemblyFileVersion( "2013.2.22.1" )]
+[assembly: AssemblyVersion( "2013.3.8.1" )]
+[assembly: AssemblyFileVersion( "2013.3.8.1" )]

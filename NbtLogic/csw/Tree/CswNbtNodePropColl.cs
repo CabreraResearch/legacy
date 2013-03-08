@@ -15,7 +15,8 @@ namespace ChemSW.Nbt
     public class CswNbtNodePropColl : IEnumerable, IEnumerable<CswNbtNodePropWrapper>
     {
         private ArrayList _Props = new ArrayList();
-        private Hashtable _PropsIndexByFirstVersionPropId = new Hashtable();
+        private Dictionary<Int32, Int32> _PropsIndexByFirstVersionPropId = new Dictionary<Int32, Int32>();
+        private Dictionary<Int32,Int32> _PropsIndexByNodeTypePropId = new Dictionary<Int32, Int32>(); 
         private CswNbtMetaDataNodeType _NodeType { get { return _CswNbtResources.MetaData.getNodeType( _NodeTypeId ); } }
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _CswNbtNode = null;
@@ -157,6 +158,8 @@ namespace ChemSW.Nbt
             _Props.Clear();
 
             _PropsIndexByFirstVersionPropId.Clear();
+            _PropsIndexByNodeTypePropId.Clear();
+
             if( _CswNbtNodePropCollDataNative != null )
                 _CswNbtNodePropCollDataNative.PropsTable.Clear();
             if( _CswNbtNodePropCollDataRelational != null )
@@ -258,7 +261,7 @@ namespace ChemSW.Nbt
             //**************** END KLUDGE ALERT
 
             //this[ NodePk ].NodeTypeId = NodeTypeId;
-            ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName, DateTime.MinValue );
+            //ICswNbtNodePropCollData PropCollData = getPropCollData( _CswNbtResources.MetaData.getNodeType( NodeTypeId ).TableName, DateTime.MinValue );
 
             _populateProps(); // null, NodeTypeId );
 
@@ -271,16 +274,9 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
             foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
             {
-                DataRow PropRow = null;
                 ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
-                foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
-                {
-                    if( CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() )
-                    {
-                        PropRow = CurrentRow;
-                        break;
-                    }
-                }
+                DataRow PropRow = PropCollData.PropsTable.Rows.Cast<DataRow>().FirstOrDefault( CurrentRow => CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() );
+
                 CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp );
                 //if( MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
                 //    MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
@@ -290,6 +286,7 @@ namespace ChemSW.Nbt
 
                 int PropsIdx = _Props.Add( AddedProp );
                 _PropsIndexByFirstVersionPropId.Add( MetaDataProp.FirstPropVersionId, PropsIdx );
+                _PropsIndexByNodeTypePropId.Add( MetaDataProp.PropId, PropsIdx );
                 AddedProp.onNodePropRowFilled();
             }
 
@@ -317,8 +314,8 @@ namespace ChemSW.Nbt
 
             foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
             {
-                CswNbtMetaDataNodeTypeProp CurrentMetaDataProp = MetaDataNodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
-                Int32 PropsIdx = CswConvert.ToInt32( _PropsIndexByFirstVersionPropId[CurrentMetaDataProp.FirstPropVersionId] );
+                //CswNbtMetaDataNodeTypeProp CurrentMetaDataProp = MetaDataNodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                Int32 PropsIdx = _PropsIndexByNodeTypePropId[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )];
                 CswNbtNodePropWrapper CurrentPropWrapper = (CswNbtNodePropWrapper) _Props[PropsIdx];
                 CurrentPropWrapper.refresh( CurrentRow );
 
@@ -336,10 +333,11 @@ namespace ChemSW.Nbt
                 if( CurrentRow.IsNull( "nodetypepropid" ) )
                     throw ( new CswDniException( "A node prop row is missing its nodetypepropid" ) );
                 //bz # 6542
-                CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                //CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
 
-                if( null != CswNbtMetaDataNodeTypeProp )
-                    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+                //if( null != CswNbtMetaDataNodeTypeProp )
+                //    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+                this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
             }
 
             // Do the Update
@@ -374,13 +372,23 @@ namespace ChemSW.Nbt
                     throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] was passed a null CswNbtMetaDataNodeTypeProp object" );
                 if( NodeTypeProp.getNodeType().FirstVersionNodeTypeId != _NodeType.FirstVersionNodeTypeId )
                     throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] on nodetype " + _NodeType.NodeTypeName + " (" + _NodeType.NodeTypeId + ") was passed a CswNbtMetaDataNodeTypeProp: " + NodeTypeProp.PropName + " (" + NodeTypeProp.PropId + ") of the wrong nodetype: " + NodeTypeProp.getNodeType().NodeTypeName + " (" + NodeTypeProp.NodeTypeId + ")" );
-                if( false == _PropsIndexByFirstVersionPropId.Contains( NodeTypeProp.FirstPropVersionId ) )
+                if( false == _PropsIndexByFirstVersionPropId.ContainsKey( NodeTypeProp.FirstPropVersionId ) )
                     throw new CswDniException( ErrorType.Error, "Invalid Property", "There is no property with this firstpropversionid " + NodeTypeProp.FirstPropVersionId.ToString() + " on nodetypeid " + _NodeTypeId.ToString() );
 
                 return ( _Props[CswConvert.ToInt32( _PropsIndexByFirstVersionPropId[NodeTypeProp.FirstPropVersionId] )] as CswNbtNodePropWrapper );
             }//get
 
         }//this[NodeTypeProp]
+
+        public CswNbtNodePropWrapper this[Int32 NodeTypePropId]
+        {
+            get
+            {
+                return ( _Props[_PropsIndexByNodeTypePropId[NodeTypePropId]] as CswNbtNodePropWrapper );
+            }//get
+
+        }//this[NodeTypeProp]
+
 
         public CswNbtPropEnmrtrFiltered this[CswNbtMetaDataFieldType.NbtFieldType FieldType]
         {

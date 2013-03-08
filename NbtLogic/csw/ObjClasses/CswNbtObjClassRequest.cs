@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }
 
-//ctor()
+        //ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -56,6 +56,13 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _setDefaultValues();
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+        }
+
+        //beforeWriteNode()
+
+        public override void afterWriteNode()
+        {
             if( SubmittedDate.WasModified && DateTime.MinValue != SubmittedDate.DateTimeValue )
             {
                 ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByPending: true );
@@ -67,22 +74,17 @@ namespace ChemSW.Nbt.ObjClasses
                         Tree.goToNthChild( N );
                         CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes.GetNode( Tree.getNodeIdForCurrentPosition() );
                         NodeAsPropSet.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
+                        NodeAsPropSet.Request.RefreshNodeName();
+                        NodeAsPropSet.Request.SyncGestalt();
                         NodeAsPropSet.postChanges( true );
                         Tree.goToParentNode();
                     }
                 }
             }
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }
-
-//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
             _CswNbtObjClassDefault.afterWriteNode();
         }
 
-//afterWriteNode()
+        //afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
@@ -90,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
-//beforeDeleteNode()
+        //beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
@@ -110,7 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Value: Tristate.False.ToString(), ShowInGrid: false );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, Value : Tristate.False.ToString(), ShowInGrid : false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, Value: Tristate.False.ToString(), ShowInGrid: false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -228,16 +230,16 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( _IsFakeNode )
             {
-                SubmittedDate.setHidden( value : true, SaveToDb : true );
-                CompletedDate.setHidden( value : true, SaveToDb : true );
+                SubmittedDate.setHidden( value: true, SaveToDb: true );
+                CompletedDate.setHidden( value: true, SaveToDb: true );
             }
             else
             {
-                SubmittedDate.setHidden( value : false, SaveToDb : true );
-                CompletedDate.setHidden( value : false, SaveToDb : true );
-            }            
+                SubmittedDate.setHidden( value: false, SaveToDb: true );
+                CompletedDate.setHidden( value: false, SaveToDb: true );
+            }
         }
-    
+
 
         private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
         {

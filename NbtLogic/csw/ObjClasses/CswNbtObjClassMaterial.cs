@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Liquid = "liquid";
             public const string Solid = "solid";
             public const string Gas = "gas";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, NA };
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, Gas, NA };
         }
 
         public sealed class Requests
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
             }
 
-            if( CasNo.WasModified )
+            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
             {
                 CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
                 getParentMaterials( ref ParentMaterials );
@@ -106,20 +106,23 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
-            CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
-            if( null != ChemicalHazardClassesNTP )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
             {
-                CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
-                CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
-                if( null != FireClassExemptAmountNT )
+                //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
+                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp(NodeTypeId, "Hazard Classes");
+                if (null != ChemicalHazardClassesNTP)
                 {
-                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
-                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
-                    String FLComb = "FL-Comb";
-                    int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
-                    String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
-                    ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                    CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass(NbtObjectClass.FireClassExemptAmountClass);
+                    CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
+                    if (null != FireClassExemptAmountNT)
+                    {
+                        CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
+                            _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp(FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass);
+                        String FLComb = "FL-Comb";
+                        int index = FireClassHazardTypesNTP.ListOptions.IndexOf(FLComb);
+                        String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove(index, FLComb.Length);
+                        ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                    }
                 }
             }
 
@@ -164,11 +167,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
                 bool HasPermission = false;
-                switch( OCP.PropName )
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
                 {
                     case PropertyName.Request:
                         if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
@@ -179,7 +182,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActRequesting.RequestItem( CswNbtActRequesting.RequestItem.Material ), NodeId, ButtonData );
                             NodeAsPropSet.postChanges( false );
 
-                            ButtonData.Data["requestaction"] = OCP.PropName;
+                            ButtonData.Data["requestaction"] = OCPPropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
                             ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
@@ -214,9 +217,9 @@ namespace ChemSW.Nbt.ObjClasses
                                 foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
                                 {
                                     JToken name = child.First.SelectToken( "name" );
-                                    if (null != name)
+                                    if( null != name )
                                     {
-                                        if (name.ToString() == "Expiration Date")
+                                        if( name.ToString() == "Expiration Date" )
                                         {
                                             ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
                                         }
@@ -224,10 +227,17 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
-                            Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, this );
-                            if( Int32.MinValue != DocumentNodeTypeId )
+                            bool canAddSDS = NodeType.NodeTypeName == "Chemical" && 
+                                _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
+                            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
+                            if( canAddSDS )
                             {
-                                ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
+                                CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
+                                if( null != AssignedSDSProp )
+                                {
+                                    ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
+                                }
                             }
 
                             ButtonData.Action = NbtButtonAction.receive;
@@ -243,7 +253,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == HasPermission )
                 {
-                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCP.PropName + " action.", "You do not have permission to the " + OCP.PropName + " action." );
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
                 }
             }
 
@@ -358,9 +368,12 @@ namespace ChemSW.Nbt.ObjClasses
             if( MaterialNode != null )
             {
                 Ret = MaterialNode.getViewOfNode();
-                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-                Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
+                if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                {
+                    CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                    Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
+                }
                 Ret.ViewName = "New Material: " + MaterialNode.NodeName;
             }
             return Ret;
@@ -391,9 +404,12 @@ namespace ChemSW.Nbt.ObjClasses
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
             Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
 
-            CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-            Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
+            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            {
+                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
+            }
 
             Ret.ViewName = "New Material: " + Tradename;
 
@@ -421,84 +437,80 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void GetMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClass documentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
-            CswNbtMetaDataObjectClassProp archivedOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-            CswNbtMetaDataObjectClassProp docClassOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
-            CswNbtMetaDataObjectClassProp formatOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-            CswNbtMetaDataObjectClassProp languageOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-            CswNbtMetaDataObjectClassProp fileTypeOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
-            CswNbtMetaDataObjectClassProp fileOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
-            CswNbtMetaDataObjectClassProp linkOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
-            CswNbtMetaDataObjectClassProp ownerOCP = documentOC.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
-
-            CswNbtView docView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship parent = docView.AddViewRelationship( documentOC, true );
-            docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: docClassOCP,
-                Value: CswNbtObjClassDocument.DocumentClasses.SDS,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: archivedOCP,
-                SubFieldName: CswNbtSubField.SubFieldName.Checked,
-                Value: false.ToString(),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            docView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: ownerOCP,
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                Value: NodeId.PrimaryKey.ToString(),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            docView.AddViewProperty( parent, formatOCP );
-            docView.AddViewProperty( parent, languageOCP );
-            docView.AddViewProperty( parent, fileOCP );
-            docView.AddViewProperty( parent, linkOCP );
-            docView.AddViewProperty( parent, fileTypeOCP );
-
-            CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
-            CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
-
-            if( ButtonData.SelectedText.Equals( PropertyName.ViewSDS ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue ) )
             {
+                Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId(_CswNbtResources);
+                CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType(SDSDocumentNTId);
+                CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Archived);
+                CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Format);
+                CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Language);
+                CswNbtMetaDataNodeTypeProp fileTypeNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.FileType);
+                CswNbtMetaDataNodeTypeProp fileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.File);
+                CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Link);
+                CswNbtMetaDataNodeTypeProp ownerNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Owner);
 
-                ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
-                int childCount = docsTree.getChildNodeCount();
-                int lvlMatched = Int32.MinValue;
-                string matchedFileType = "";
-                CswNbtTreeNodeProp matchedFileProp = null;
-                CswNbtTreeNodeProp matchedLinkProp = null;
-                CswPrimaryKey matchedNodeId = null;
+                CswNbtView docView = new CswNbtView(_CswNbtResources);
+                CswNbtViewRelationship parent = docView.AddViewRelationship(SDSDocumentNT, true);
 
-                if( childCount > 0 )
+                docView.AddViewPropertyAndFilter(parent,
+                                                 MetaDataProp: archivedNTP,
+                                                 SubFieldName: CswNbtSubField.SubFieldName.Checked,
+                                                 Value: false.ToString(),
+                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals);
+
+                docView.AddViewPropertyAndFilter(parent,
+                                                 MetaDataProp: ownerNTP,
+                                                 SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                 Value: NodeId.PrimaryKey.ToString(),
+                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals);
+
+                docView.AddViewProperty(parent, formatNTP);
+                docView.AddViewProperty(parent, languageNTP);
+                docView.AddViewProperty(parent, fileNTP);
+                docView.AddViewProperty(parent, linkNTP);
+                docView.AddViewProperty(parent, fileTypeNTP);
+
+                CswNbtObjClassUser currentUserNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.UserId];
+                CswNbtObjClassJurisdiction userJurisdictionNode = _CswNbtResources.Nodes[currentUserNode.JurisdictionProperty.RelatedNodeId];
+
+                if (ButtonData.SelectedText.Equals(PropertyName.ViewSDS))
                 {
-                    for( int i = 0; i < childCount; i++ )
+
+                    ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView(docView, false, false, false);
+                    int childCount = docsTree.getChildNodeCount();
+                    int lvlMatched = Int32.MinValue;
+                    string matchedFileType = "";
+                    CswNbtTreeNodeProp matchedFileProp = null;
+                    CswNbtTreeNodeProp matchedLinkProp = null;
+                    CswPrimaryKey matchedNodeId = null;
+
+                    if (childCount > 0)
                     {
-                        docsTree.goToNthChild( i );
-
-                        string format = "";
-                        string language = "";
-                        string fileType = "";
-                        CswNbtTreeNodeProp fileProp = null;
-                        CswNbtTreeNodeProp linkProp = null;
-                        CswPrimaryKey nodeId = docsTree.getNodeIdForCurrentPosition();
-
-                        foreach( CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode() )
+                        for (int i = 0; i < childCount; i++)
                         {
-                            CswNbtMetaDataNodeTypeProp docNTP = _CswNbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
-                            CswNbtMetaDataObjectClassProp docOCP = docNTP.getObjectClassProp();
-                            if( null != docOCP )
+                            docsTree.goToNthChild(i);
+
+                            string format = "";
+                            string language = "";
+                            string fileType = "";
+                            CswNbtTreeNodeProp fileProp = null;
+                            CswNbtTreeNodeProp linkProp = null;
+                            CswPrimaryKey nodeId = docsTree.getNodeIdForCurrentPosition();
+
+                            foreach (CswNbtTreeNodeProp prop in docsTree.getChildNodePropsOfNode())
                             {
-                                switch( docOCP.PropName )
+                                CswNbtMetaDataNodeTypeProp docNTP = _CswNbtResources.MetaData.getNodeTypeProp(prop.NodeTypePropId);
+                                switch (docNTP.getObjectClassPropName())
                                 {
                                     case CswNbtObjClassDocument.PropertyName.Format:
-                                        format = prop.Field1.ToString();
+                                        format = prop.Field1;
                                         break;
                                     case CswNbtObjClassDocument.PropertyName.Language:
-                                        language = prop.Field1.ToString();
+                                        language = prop.Field1;
                                         break;
                                     case CswNbtObjClassDocument.PropertyName.FileType:
-                                        fileType = prop.Field1.ToString();
+                                        fileType = prop.Field1;
                                         break;
                                     case CswNbtObjClassDocument.PropertyName.File:
                                         fileProp = prop;
@@ -508,83 +520,83 @@ namespace ChemSW.Nbt.ObjClasses
                                         break;
                                 }
                             }
+
+                            if (lvlMatched < 0)
+                            {
+                                matchedFileType = fileType;
+                                matchedFileProp = fileProp;
+                                matchedLinkProp = linkProp;
+                                matchedNodeId = nodeId;
+                                lvlMatched = 0;
+                            }
+                            if (null != userJurisdictionNode)
+                            {
+                                if (lvlMatched < 1 && format.Equals(userJurisdictionNode.Format.Value))
+                                {
+                                    matchedFileType = fileType;
+                                    matchedFileProp = fileProp;
+                                    matchedLinkProp = linkProp;
+                                    matchedNodeId = nodeId;
+                                    lvlMatched = 1;
+                                }
+                                if (lvlMatched < 2 && language.Equals(currentUserNode.Language))
+                                {
+                                    matchedFileType = fileType;
+                                    matchedFileProp = fileProp;
+                                    matchedLinkProp = linkProp;
+                                    matchedNodeId = nodeId;
+                                    lvlMatched = 2;
+                                }
+                                if (lvlMatched < 3 && format.Equals(userJurisdictionNode.Format.Value) && language.Equals(currentUserNode.Language))
+                                {
+                                    matchedFileType = fileType;
+                                    matchedFileProp = fileProp;
+                                    matchedLinkProp = linkProp;
+                                    matchedNodeId = nodeId;
+                                    lvlMatched = 3;
+                                }
+                            }
+                            docsTree.goToParentNode();
                         }
 
-                        if( lvlMatched < 0 )
+                        string url = "";
+                        switch (matchedFileType)
                         {
-                            matchedFileType = fileType;
-                            matchedFileProp = fileProp;
-                            matchedLinkProp = linkProp;
-                            matchedNodeId = nodeId;
-                            lvlMatched = 0;
+                            case CswNbtObjClassDocument.FileTypes.File:
+                                int jctnodepropid = CswConvert.ToInt32(matchedFileProp.JctNodePropId);
+                                int nodetypepropid = CswConvert.ToInt32(matchedFileProp.NodeTypePropId);
+                                url = CswNbtNodePropBlob.getLink(jctnodepropid, matchedNodeId, nodetypepropid);
+                                break;
+                            case CswNbtObjClassDocument.FileTypes.Link:
+                                //CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );
+                                url = CswNbtNodePropLink.GetFullURL(linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2);
+                                break;
                         }
-                        if( null != userJurisdictionNode )
-                        {
-                            if( lvlMatched < 1 && format.Equals( userJurisdictionNode.Format.Value ) )
-                            {
-                                matchedFileType = fileType;
-                                matchedFileProp = fileProp;
-                                matchedLinkProp = linkProp;
-                                matchedNodeId = nodeId;
-                                lvlMatched = 1;
-                            }
-                            if( lvlMatched < 2 && language.Equals( currentUserNode.Language ) )
-                            {
-                                matchedFileType = fileType;
-                                matchedFileProp = fileProp;
-                                matchedLinkProp = linkProp;
-                                matchedNodeId = nodeId;
-                                lvlMatched = 2;
-                            }
-                            if( lvlMatched < 3 && format.Equals( userJurisdictionNode.Format.Value ) && language.Equals( currentUserNode.Language ) )
-                            {
-                                matchedFileType = fileType;
-                                matchedFileProp = fileProp;
-                                matchedLinkProp = linkProp;
-                                matchedNodeId = nodeId;
-                                lvlMatched = 3;
-                            }
-                        }
-                        docsTree.goToParentNode();
+                        ButtonData.Data["url"] = url;
+                        ButtonData.Action = NbtButtonAction.popup;
                     }
-
-                    string url = "";
-                    switch( matchedFileType )
+                    else
                     {
-                        case CswNbtObjClassDocument.FileTypes.File:
-                            int jctnodepropid = CswConvert.ToInt32( matchedFileProp.JctNodePropId );
-                            int nodetypepropid = CswConvert.ToInt32( matchedFileProp.NodeTypePropId );
-                            url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId, nodetypepropid );
-                            break;
-                        case CswNbtObjClassDocument.FileTypes.Link:
-                            CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );
-                            url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2 );
-                            break;
+                        ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
+                        ButtonData.Action = NbtButtonAction.nothing;
                     }
-                    ButtonData.Data["url"] = url;
-                    ButtonData.Action = NbtButtonAction.popup;
                 }
-                else
+                else //load Assigned SDS grid dialog
                 {
-                    ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
-                    ButtonData.Action = NbtButtonAction.nothing;
-                }
-            }
-            else //load Assigned SDS grid dialog
-            {
-                CswNbtMetaDataNodeTypeProp assignedSDSNTP = NodeType.getNodeTypeProp( "Assigned SDS" );
-                if( null != assignedSDSNTP )
-                {
-                    ButtonData.Data["viewid"] = assignedSDSNTP.ViewId.ToString();
-                    ButtonData.Data["title"] = assignedSDSNTP.PropName;
-                    ButtonData.Data["nodeid"] = NodeId.ToString();
-                    ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
-                    ButtonData.Action = NbtButtonAction.griddialog;
-                }
-                else
-                {
-                    ButtonData.Message = "Could not find the Assigned SDS prop";
-                    ButtonData.Action = NbtButtonAction.nothing;
+                    CswNbtMetaDataNodeTypeProp assignedSDSNTP = NodeType.getNodeTypeProp("Assigned SDS");
+                    if (null != assignedSDSNTP)
+                    {
+                        ButtonData.Data["viewid"] = assignedSDSNTP.ViewId.ToString();
+                        ButtonData.Data["title"] = assignedSDSNTP.PropName;
+                        ButtonData.Data["nodeid"] = NodeId.ToString();
+                        ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
+                        ButtonData.Action = NbtButtonAction.griddialog;
+                    }
+                    else
+                    {
+                        ButtonData.Message = "Could not find the Assigned SDS prop";
+                        ButtonData.Action = NbtButtonAction.nothing;
+                    }
                 }
             }
         }
@@ -618,7 +630,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
         public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
         public CswNbtNodePropLogical ApprovedForReceiving { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedForReceiving] ); } }
-        public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
+        public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
 

@@ -8,6 +8,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -246,7 +247,7 @@ namespace ChemSW.Nbt.Actions
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
+                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
                     if( Int32.MinValue != DocumentNodeTypeId )
                     {
                         Ret["documenttypeid"] = DocumentNodeTypeId;
@@ -263,48 +264,35 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-
         #region Public
 
-        public JObject saveMaterial( CswNbtResources CswNbtResources, string Request )
+        public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
 
-            JObject PropObj = CswConvert.ToJObject( Request );
-            if( PropObj.HasValues )
+            CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( NodeId );
+            if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
             {
-                CswPrimaryKey SupplierPk = CswConvert.ToPrimaryKey( PropObj["supplier"]["val"].ToString() );
-                Int32 NodeTypeId = CswConvert.ToInt32( PropObj["materialType"]["val"].ToString() );
-                string PartNo = PropObj["partNo"].ToString();
-                string TradeName = PropObj["tradeName"].ToString();
-
-                CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( PropObj["materialId"].ToString() );
-                if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
+                CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode(CurrentTempNodePk);
+                if( null != CurrentTempNode )
                 {
-                    CswNbtObjClassMaterial CurrentTempNode = CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
                     Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
-                    if( NodeTypeId != CurrentNodeTypeId )
+                    if (NodeTypeId != CurrentNodeTypeId)
                     {
                         // Then we want to just forget about the first temp node created and create a new one with the new nodetype
-                        Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, null );
+                        Ret = _tryCreateMaterial(NodeTypeId, CswConvert.ToPrimaryKey(SupplierId), Tradename, PartNo, null);
                     }
                     else
                     {
-                        // If the nodetype isn't different then we need to update the node
-                        CurrentTempNode.TradeName.Text = TradeName;
-                        CurrentTempNode.Supplier.RelatedNodeId = SupplierPk;
-                        CurrentTempNode.PartNumber.Text = PartNo;
+                        // If the nodetype isn't different then we want to get the props and check if it exsits
                         if (string.IsNullOrEmpty(CurrentTempNode.PhysicalState.Value))
                         {
                             CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                         }
-                        CurrentTempNode.postChanges(false);
-
-                        Ret = _tryCreateMaterial( NodeTypeId, SupplierPk, TradeName, PartNo, CurrentTempNodePk.ToString() );
+                        Ret = _tryCreateMaterial(NodeTypeId, CswConvert.ToPrimaryKey(SupplierId), Tradename, PartNo, CurrentTempNodePk.ToString());
                     }
                 }
-            }//if( PropObj.HasValues )
-
+            }
             return Ret;
         }
 
@@ -317,20 +305,29 @@ namespace ChemSW.Nbt.Actions
         /// <returns></returns>
         public CswPrimaryKey makeTemp( string NodeId )
         {
+            CswPrimaryKey Ret = new CswPrimaryKey();
+
             CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( NodeId );
 
-            if( false == CswTools.IsPrimaryKey( NodePk ) )
+            if( false == CswTools.IsPrimaryKey( NodePk ) ) //node doesn't exist
             {
                 // Default to the Chemical NodeType
                 CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Chemical" );
                 if( null != ChemicalNT )
                 {
                     CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                    NodePk = NewMaterialTempNode.Node.NodeId;
+                    if( null != NewMaterialTempNode )
+                    {
+                        Ret = NewMaterialTempNode.Node.NodeId;
+                    }
                 }
             }
+            else //node exists
+            {
+                Ret = NodePk;
+            }
 
-            return NodePk;
+            return Ret;
         }
 
         /// <summary>
@@ -491,9 +488,12 @@ namespace ChemSW.Nbt.Actions
                         RetObj["createdmaterial"] = true;
 
                         /* 2. Add the sizes */
-                        SizesArray = _removeDuplicateSizes( SizesArray );
-                        _addMaterialSizes( SizesArray, MaterialNode );
-                        RetObj["sizescount"] = SizesArray.Count;
+                        if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                        {
+                            SizesArray = _removeDuplicateSizes( SizesArray );
+                            _addMaterialSizes( SizesArray, MaterialNode );
+                            RetObj["sizescount"] = SizesArray.Count;
+                        }
 
                         /* 3. Add landingpage data */
                         RetObj["landingpagedata"] = _getLandingPageData( MaterialNode );
@@ -604,35 +604,39 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
+        public static JObject getMaterialUnitsOfMeasure( string PhysicalStateValue, CswNbtResources CswNbtResources )
         {
             JObject ret = new JObject();
-            string PhysicalState = CswNbtObjClassMaterial.PhysicalStates.Solid;
-            CswNbtObjClassMaterial Material = CswNbtResources.Nodes[MaterialId];
-            if( null != Material &&
-                false == string.IsNullOrEmpty( Material.PhysicalState.Value ) )
+            string PhysicalState = "n/a";
+            foreach( string CurrentPhysicalState in CswNbtObjClassMaterial.PhysicalStates.Options )
             {
-                PhysicalState = Material.PhysicalState.Value;
+                if( PhysicalStateValue.Equals( CurrentPhysicalState ) )
+                {
+                    PhysicalState = CurrentPhysicalState;
+                }
             }
 
-            CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder( CswNbtResources );
-
-            CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
-
-            Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
-            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, unitsView, true, false, false );
-            UnitsTree.goToRoot();
-            for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
+            if( false == string.IsNullOrEmpty( PhysicalState ) )
             {
-                UnitsTree.goToNthChild( i );
-                _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
-                UnitsTree.goToParentNode();
-            }
+                CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder( CswNbtResources );
 
-            foreach( CswNbtNode unitNode in _UnitNodes )
-            {
-                CswNbtObjClassUnitOfMeasure nodeAsUnitOfMeasure = (CswNbtObjClassUnitOfMeasure) unitNode;
-                ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
+                CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
+
+                Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
+                ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, unitsView, true, false, false );
+                UnitsTree.goToRoot();
+                for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
+                {
+                    UnitsTree.goToNthChild( i );
+                    _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
+                    UnitsTree.goToParentNode();
+                }
+
+                foreach( CswNbtNode unitNode in _UnitNodes )
+                {
+                    CswNbtObjClassUnitOfMeasure nodeAsUnitOfMeasure = (CswNbtObjClassUnitOfMeasure) unitNode;
+                    ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
+                }
             }
 
             return ret;

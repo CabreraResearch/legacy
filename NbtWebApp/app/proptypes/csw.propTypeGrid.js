@@ -70,7 +70,7 @@
                         var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
-                                cswPublic.control.reload();
+                                cswPublic.control.reload(true);
                             };
                         }());
                         Csw.nbt.viewFilters({
@@ -92,10 +92,10 @@
                             reinit: false,
                             EditMode: cswPublic.data.tabState.EditMode,
                             onEditNode: function () {
-                                cswPublic.control.reload();
+                                cswPublic.control.reload(true);
                             },
                             onDeleteNode: function () {
-                                cswPublic.control.reload();
+                                cswPublic.control.reload(true);
                             },
                             onSuccess: function (grid) {
                                 cswPrivate.makeGridMenu(grid, newDiv);

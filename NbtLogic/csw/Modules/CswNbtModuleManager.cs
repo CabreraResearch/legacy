@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt
 {
@@ -82,6 +84,24 @@ namespace ChemSW.Nbt
             return ret;
         } // IsModuleEnabled()
 
+        public Int32 GetModuleId( CswNbtModuleName Module )
+        {
+            return GetModuleId( Module.ToString() );
+        }
+
+        public Int32 GetModuleId( string ModuleName )
+        {
+            Int32 RetModuleId = Int32.MinValue;
+            CswTableSelect ModulesTable = _CswNbtResources.makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
+            string WhereClause = " where lower(name)='" + ModuleName.ToLower() + "'";
+            DataTable ModulesDataTable = ModulesTable.getTable( WhereClause, true );
+            if( ModulesDataTable.Rows.Count == 1 )
+            {
+                DataRow ModuleRow = ModulesDataTable.Rows[0];
+                RetModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
+            }
+            return RetModuleId;
+        }
 
         /// <summary>
         /// Collection of all enabled modules
@@ -113,7 +133,8 @@ namespace ChemSW.Nbt
             {
                 initModules();
             }
-            foreach( CswNbtModuleName Module in _ModuleRules.Keys )
+            List<CswNbtModuleName> Rules = _ModuleRules.Keys.ToList();
+            foreach( CswNbtModuleName Module in Rules )
             {
                 if( _ModuleRules[Module].Enabled )
                 {
@@ -189,6 +210,9 @@ namespace ChemSW.Nbt
 
             // case 26029
             _CswNbtResources.MetaData.ResetEnabledNodeTypes();
+
+            //We have to clear Session data or the view selects recent views will have non-accesible views and break
+            _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
 
             return ret;
         }
@@ -292,8 +316,13 @@ namespace ChemSW.Nbt
                 CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
                 if( null != view )
                 {
-                    view.SetVisibility( SetVisibility, null, null );
-                    view.save();
+                    // case 28964 - check for redundant existing view
+                    DataTable redundantViewDT = _CswNbtResources.ViewSelect.getView( viewName, SetVisibility, null, null );
+                    if( redundantViewDT.Rows.Count == 0 )
+                    {
+                        view.SetVisibility( SetVisibility, null, null );
+                        view.save();
+                    }
                 }
             }
         }
@@ -310,7 +339,7 @@ namespace ChemSW.Nbt
             DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );
             foreach( DataRow row in nodeviews.Rows )
             {
-                _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString(), visibility );
+                ToggleView( hidden, row["viewname"].ToString(), visibility );
             }
         }
 
@@ -324,6 +353,137 @@ namespace ChemSW.Nbt
                 row["showinlist"] = CswConvert.ToDbVal( showInList );
             }
             actionTU.update( actionsDT );
+        }
+
+        public void ToggleScheduledRule( NbtScheduleRuleNames RuleName, bool Disabled )
+        {
+            CswTableUpdate RuleUpdate = _CswNbtResources.makeCswTableUpdate( "toggleScheduledRule", "scheduledrules" );
+            DataTable RuleDt = RuleUpdate.getTable( "where lower(rulename) = '" + RuleName.ToString().ToLower() + "'" );
+            foreach( DataRow row in RuleDt.Rows )
+            {
+                row["disabled"] = CswConvert.ToDbVal( Disabled );
+            }
+            RuleUpdate.update( RuleDt );
+        }
+
+        public void TogglePrintLabels( bool Hidden, CswNbtModuleName Module )
+        {
+            CswNbtMetaDataObjectClass printLabelOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp nodetypesOCP = printLabelOC.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
+
+            CswNbtView printLabelsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = printLabelsView.AddViewRelationship( printLabelOC, false );
+
+            CswTableSelect childObjectClasses_TS = _CswNbtResources.makeCswTableSelect( "getModuleChildren", "jct_modules_objectclass" );
+
+            int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
+            DataTable childObjClasses_DT = childObjectClasses_TS.getTable( "where moduleid = " + moduleId );
+            bool first = true;
+            foreach( DataRow Row in childObjClasses_DT.Rows )
+            {
+                int ObjClassId = CswConvert.ToInt32( Row["objectclassid"] );
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes( ObjClassId ) )
+                {
+                    if( first )
+                    {
+                        printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
+                            Value: NodeType.NodeTypeName,
+                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+                        first = false;
+                    }
+                    else
+                    {
+                        printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
+                            Value: NodeType.NodeTypeName,
+                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains,
+                            Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.Or );
+                    }
+                }
+            }
+
+
+            ICswNbtTree printLabelsTree = _CswNbtResources.Trees.getTreeFromView( printLabelsView, false, true, true );
+            int childCount = printLabelsTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                printLabelsTree.goToNthChild( i );
+                CswNbtNode printLabelNode = printLabelsTree.getNodeForCurrentPosition();
+                printLabelNode.Hidden = Hidden;
+                printLabelNode.postChanges( false );
+                printLabelsTree.goToParentNode();
+            }
+        }
+
+        public void AddPropToFirstTab( int NodeTypeId, string PropName, int Row = Int32.MinValue, int Col = Int32.MinValue )
+        {
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            if( null != NodeType )
+            {
+                CswNbtMetaDataNodeTypeTab firstNTT = NodeType.getFirstNodeTypeTab();
+                AddPropToTab( NodeTypeId, PropName, firstNTT, Row, Col );
+            }
+        }
+
+        public void AddPropToTab( int NodeTypeId, string PropName, CswNbtMetaDataNodeTypeTab Tab, int Row = Int32.MinValue, int Col = Int32.MinValue, string TabGroup = "" )
+        {
+            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
+            if( null != NodeTypeProp )
+            {
+                CswNbtMetaDataNodeType locationNT = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                if( Int32.MinValue != Row && Int32.MinValue != Col )
+                {
+                    NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow: Row, DisplayColumn: Col, TabGroup: TabGroup );
+                }
+                else
+                {
+                    NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId );
+                }
+            }
+        }
+
+        public void AddPropToTab( int NodeTypeId, string PropName, string TabName, int TabOrder = 99 )
+        {
+            CswNbtMetaDataNodeTypeTab tab = _CswNbtResources.MetaData.getNodeTypeTab( NodeTypeId, TabName );
+            if( null == tab )
+            {
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                tab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabOrder );
+            }
+            AddPropToTab( NodeTypeId, PropName, tab );
+        }
+
+        public void HideProp( int NodeTypeId, string PropName )
+        {
+            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
+            if( null != NodeTypeProp )
+            {
+                NodeTypeProp.removeFromAllLayouts();
+            }
+        }
+
+
+        public void ToggleReportNodes( string Category, bool Hidden )
+        {
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClassProp categoryOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Category );
+
+            CswNbtView reportsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = reportsView.AddViewRelationship( reportOC, false );
+            reportsView.AddViewPropertyAndFilter( parent, categoryOCP,
+                Value: Category,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            ICswNbtTree reportsTree = _CswNbtResources.Trees.getTreeFromView( reportsView, false, true, true );
+            int childCount = reportsTree.getChildNodeCount();
+            for( int i = 0; i < childCount; i++ )
+            {
+                reportsTree.goToNthChild( i );
+                CswNbtNode reportNode = reportsTree.getNodeForCurrentPosition();
+                reportNode.Hidden = Hidden;
+                reportNode.postChanges( false );
+                reportsTree.goToParentNode();
+            }
         }
 
     } // class CswNbtModuleManager

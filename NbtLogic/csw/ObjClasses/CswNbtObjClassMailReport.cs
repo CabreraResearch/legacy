@@ -179,10 +179,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
-                if( PropertyName.RunNow == OCP.PropName )
+                if( PropertyName.RunNow == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
                     Node.postChanges( false );

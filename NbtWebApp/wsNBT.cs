@@ -212,110 +212,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Session and Resource Management
 
-        #region Error Handling
-
-        private void _error( Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
-        {
-            if( _CswNbtResources != null )
-            {
-                _CswNbtResources.CswLogger.reportError( ex );
-                _CswNbtResources.Rollback();
-            }
-
-            CswDniException newEx = null;
-            if( ex is CswDniException )
-            {
-                newEx = (CswDniException) ex;
-            }
-            else
-            {
-                newEx = new CswDniException( ex.Message, ex );
-            }
-
-            Display = true;
-            if( _CswNbtResources != null )
-            {
-                if( newEx.Type == ErrorType.Warning )
-                {
-                    Display = ( _CswNbtResources.ConfigVbls.getConfigVariableValue( "displaywarningsinui" ) != "0" );
-                }
-                else
-                {
-                    Display = ( _CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" );
-                }
-            }
-
-            Type = newEx.Type;
-            Message = newEx.MsgFriendly;
-            Detail = newEx.MsgEscoteric + "; " + ex.StackTrace;
-        } // _error()
-
-        //private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
-        //{
-        //    // ******************************************
-        //    // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
-        //    // since it occurs AFTER the call to _deInitResources(), and thus will leak Oracle connections 
-        //    // (see case 26273)
-        //    // ******************************************
-
-        //    if( JObj != null )
-        //    {
-        //        JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
-        //        if( false == ForMobile )
-        //        {
-        //            if( _CswSessionResources != null &&
-        //                 _CswSessionResources.CswSessionManager != null )
-        //            {
-        //                //CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-        //                //JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
-        //                JObj["timeout"] = CswDateTime.ToClientAsJavascriptString( _CswSessionResources.CswSessionManager.TimeoutDate );
-        //            }
-        //            JObj["timer"] = new JObject();
-        //            JObj["timer"]["serverinit"] = Math.Round( ServerInitTime, 3 );
-        //            if( null != _CswNbtResources )
-        //            {
-        //                JObj["timer"]["dbinit"] = Math.Round( _CswNbtResources.CswLogger.DbInitTime, 3 );
-        //                JObj["timer"]["dbquery"] = Math.Round( _CswNbtResources.CswLogger.DbQueryTime, 3 );
-        //                JObj["timer"]["dbcommit"] = Math.Round( _CswNbtResources.CswLogger.DbCommitTime, 3 );
-        //                JObj["timer"]["dbdeinit"] = Math.Round( _CswNbtResources.CswLogger.DbDeInitTime, 3 );
-        //                JObj["timer"]["treeloadersql"] = Math.Round( _CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
-        //            }
-        //            JObj["timer"]["servertotal"] = Math.Round( Timer.ElapsedDurationInMilliseconds, 3 );
-        //            JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
-        //        }
-        //    }
-        //}//_jAuthenticationStatus()
-
-        /*
-        /// <summary>
-        /// Returns error as JProperty
-        /// </summary>
-        private JObject jError( Exception ex )
-        {
-            JObject Ret = new JObject();
-            string Message = string.Empty;
-            string Detail = string.Empty;
-            ErrorType Type = ErrorType.Error;
-            bool Display = true;
-            _error( ex, out Type, out Message, out Detail, out Display );
-
-            Ret["success"] = "false";
-            Ret["error"] = new JObject();
-            Ret["error"]["display"] = Display.ToString().ToLower();
-            Ret["error"]["type"] = Type.ToString();
-            Ret["error"]["message"] = Message;
-            Ret["error"]["detail"] = Detail;
-
-            _deInitResources(); //<-- An hackadelic solution than which no greater hackadelic solution can be conceived for case 26204
-
-
-            return Ret;
-
-        }
-         */
-
-        #endregion Error Handling
-
+        
         #region Web Methods
 
         #region Authentication
@@ -2481,7 +2378,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getLocationTree( string NodeId )
+        public string getLocationView( string NodeId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2492,7 +2389,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.getLocationTree( NodeId );
+                    ReturnVal = ws.getLocationView( NodeId );
                 }
                 _deInitResources();
             }
@@ -2503,7 +2400,7 @@ namespace ChemSW.Nbt.WebServices
             }
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
             return ReturnVal.ToString();
-        } // getLocationTree()
+        } // getLocationView()
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3089,9 +2986,6 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
                 CswNbtObjClassFeedback newFeedbackNode = tabsandprops.getAddNode( feedbackNT );
 
-                newFeedbackNode.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                newFeedbackNode.DateSubmitted.DateTimeValue = System.DateTime.Now;
-
                 //if we have an action this is all we want/need/care about
                 if( false == String.IsNullOrEmpty( actionname ) )
                 {
@@ -3515,7 +3409,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMaterial( string state )
+        public string saveMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo, string NodeId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3525,7 +3419,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.saveMaterial( state );
+                ReturnVal = ws.saveMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, NodeId );
 
                 _deInitResources();
             }
@@ -3537,7 +3431,7 @@ namespace ChemSW.Nbt.WebServices
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // createMaterial()
+        } // saveMaterial()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3667,7 +3561,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMaterialUnitsOfMeasure( string MaterialId )
+        public string getMaterialUnitsOfMeasure( string PhysicalStateValue )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3676,7 +3570,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialUnitsOfMeasure( MaterialId, _CswNbtResources );
+                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialUnitsOfMeasure( PhysicalStateValue, _CswNbtResources );
 
                 _deInitResources();
             }

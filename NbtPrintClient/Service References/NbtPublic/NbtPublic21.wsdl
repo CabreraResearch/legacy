@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="NbtWebApp" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="NbtWebApp" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="NbtWebApp/Imports">
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd0" namespace="NbtWebApp" />
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel" />
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices" />
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns" />
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/System" />
+      <xsd:import schemaLocation="http://localhost/NbtTest/Services/NbtPublic.svc?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="NbtPublic_SessionInit_InputMessage">
+    <wsdl:part name="parameters" element="tns:SessionInit" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_SessionInit_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SessionInitResponse" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_SessionInit_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q1:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_SessionEnd_InputMessage">
+    <wsdl:part name="parameters" element="tns:SessionEnd" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_SessionEnd_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SessionEndResponse" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_SessionEnd_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q2:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcRegister_InputMessage">
+    <wsdl:part name="parameters" element="tns:LpcRegister" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcRegister_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LpcRegisterResponse" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcRegister_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q3:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcGetNextJob_InputMessage">
+    <wsdl:part name="parameters" element="tns:LpcGetNextJob" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcGetNextJob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LpcGetNextJobResponse" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcGetNextJob_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q4:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcGetLabel_InputMessage">
+    <wsdl:part name="parameters" element="tns:LpcGetLabel" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcGetLabel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LpcGetLabelResponse" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcGetLabel_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q5:FaultException" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcUpdateJob_InputMessage">
+    <wsdl:part name="parameters" element="tns:LpcUpdateJob" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcUpdateJob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LpcUpdateJobResponse" />
+  </wsdl:message>
+  <wsdl:message name="NbtPublic_LpcUpdateJob_FaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/System.ServiceModel" name="detail" element="q6:FaultException" />
+  </wsdl:message>
+  <wsdl:portType name="NbtPublic">
+    <wsdl:operation name="SessionInit">
+      <wsdl:input wsaw:Action="NbtWebApp/NbtPublic/SessionInit" message="tns:NbtPublic_SessionInit_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/NbtPublic/SessionInitResponse" message="tns:NbtPublic_SessionInit_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/NbtPublic/SessionInitFaultExceptionFault" name="FaultExceptionFault" message="tns:NbtPublic_SessionInit_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SessionEnd">
+      <wsdl:input wsaw:Action="NbtWebApp/NbtPublic/SessionEnd" message="tns:NbtPublic_SessionEnd_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/NbtPublic/SessionEndResponse" message="tns:NbtPublic_SessionEnd_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/NbtPublic/SessionEndFaultExceptionFault" name="FaultExceptionFault" message="tns:NbtPublic_SessionEnd_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LpcRegister">
+      <wsdl:input wsaw:Action="NbtWebApp/NbtPublic/LpcRegister" message="tns:NbtPublic_LpcRegister_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/NbtPublic/LpcRegisterResponse" message="tns:NbtPublic_LpcRegister_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/NbtPublic/LpcRegisterFaultExceptionFault" name="FaultExceptionFault" message="tns:NbtPublic_LpcRegister_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LpcGetNextJob">
+      <wsdl:input wsaw:Action="NbtWebApp/NbtPublic/LpcGetNextJob" message="tns:NbtPublic_LpcGetNextJob_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/NbtPublic/LpcGetNextJobResponse" message="tns:NbtPublic_LpcGetNextJob_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/NbtPublic/LpcGetNextJobFaultExceptionFault" name="FaultExceptionFault" message="tns:NbtPublic_LpcGetNextJob_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LpcGetLabel">
+      <wsdl:input wsaw:Action="NbtWebApp/NbtPublic/LpcGetLabel" message="tns:NbtPublic_LpcGetLabel_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/NbtPublic/LpcGetLabelResponse" message="tns:NbtPublic_LpcGetLabel_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/NbtPublic/LpcGetLabelFaultExceptionFault" name="FaultExceptionFault" message="tns:NbtPublic_LpcGetLabel_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LpcUpdateJob">
+      <wsdl:input wsaw:Action="NbtWebApp/NbtPublic/LpcUpdateJob" message="tns:NbtPublic_LpcUpdateJob_InputMessage" />
+      <wsdl:output wsaw:Action="NbtWebApp/NbtPublic/LpcUpdateJobResponse" message="tns:NbtPublic_LpcUpdateJob_OutputMessage" />
+      <wsdl:fault wsaw:Action="NbtWebApp/NbtPublic/LpcUpdateJobFaultExceptionFault" name="FaultExceptionFault" message="tns:NbtPublic_LpcUpdateJob_FaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

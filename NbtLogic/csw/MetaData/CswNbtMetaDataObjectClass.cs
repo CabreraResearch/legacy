@@ -73,6 +73,26 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
         }
 
+        public bool ExcludeInQuotaBar
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _ObjectClassRow["excludeinquotabar"] );
+            }
+            set
+            {
+                _ObjectClassRow["excludeinquotabar"] = CswConvert.ToBoolean( value );
+            }
+        }
+
+        public int NodeCount
+        {
+            get
+            {
+                return CswConvert.ToInt32( _ObjectClassRow["nodecount"] );
+            }
+        }
+
         public Collection<Int32> getNodeTypeIds()
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds( ObjectClassId );
@@ -103,7 +123,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 _BarcodeProp = ( from _Prop
                                      in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId )
-                                 where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                                 where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode
                                  select _Prop ).FirstOrDefault();
             }
             return _BarcodeProp;
@@ -177,10 +197,13 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != NbtObjectClass.RequestMaterialDispenseClass &&
                        ObjectClass != NbtObjectClass.ContainerClass &&
                        ObjectClass != NbtObjectClass.ContainerLocationClass &&
-                       //ObjectClass != NbtObjectClass.MaterialClass &&
+                    //ObjectClass != NbtObjectClass.MaterialClass &&
                        ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass &&
                        ObjectClass != NbtObjectClass.BatchOpClass &&
-                       ObjectClass != NbtObjectClass.ReceiptLotClass );
+                       ObjectClass != NbtObjectClass.ReceiptLotClass &&
+                       ObjectClass != NbtObjectClass.FeedbackClass &&
+                       ObjectClass != NbtObjectClass.PrintJobClass
+                );
             }
         } // CanAdd
 

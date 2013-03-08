@@ -327,8 +327,8 @@ namespace ChemSW.Nbt.WebServices
 
                         thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition(), thisNode.NodeId );
 
-                        thisNode.AllowView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
-                        thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
+                        thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
+                        thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
                         thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNode.NodeType );
 
                         // Properties
@@ -420,8 +420,8 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.ThumbnailUrl = "Images/icons/300/_placeholder.gif";
                     }
 
-                    thisNode.AllowView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
-                    thisNode.AllowEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
+                    thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
+                    thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
 
                     //C3 results are not nodes and hence they can't be deleted.
                     thisNode.AllowDelete = false;
@@ -477,7 +477,7 @@ namespace ChemSW.Nbt.WebServices
         public JArray _dictionaryToJson()
         {
             JArray ret = new JArray();
-            foreach( CswNbtMetaDataNodeType NodeType in _TableDict.Keys.OrderByDescending( NodeType => _TableDict[NodeType].Count ) )
+            foreach( CswNbtMetaDataNodeType NodeType in _TableDict.Keys.OrderBy( NodeType => NodeType.NodeTypeName ) )
             {
                 JObject NodeTypeObj = new JObject();
                 ret.Add( NodeTypeObj );

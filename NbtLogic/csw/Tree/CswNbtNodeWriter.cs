@@ -94,7 +94,13 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
+                    _incrementNodeCount( Node );
                     //setDefaultPropertyValues( Node );
+                }
+                else if( Node.IsTempModified )
+                {
+                    _incrementNodeCount( Node );
+                    Node.IsTempModified = false;
                 }
 
                 //propcoll knows whether or not he's got new 
@@ -112,6 +118,15 @@ namespace ChemSW.Nbt
             }//if node was modified
 
         }//write()
+
+        private void _incrementNodeCount( CswNbtNode Node )
+        {
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
+            if( null != NodeType )
+            {
+                NodeType.IncrementNodeCount();
+            }
+        }
 
         private string _makeDefaultNodeName( CswNbtNode Node )
         {
@@ -142,7 +157,7 @@ namespace ChemSW.Nbt
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
-                CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldType().FieldType;
+                CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
                 if( FT == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                 {
                     Prop.AsBarcode.setBarcodeValue();  // does not overwrite

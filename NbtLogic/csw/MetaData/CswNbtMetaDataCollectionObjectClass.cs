@@ -37,19 +37,14 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataObjectClass( Resources, Row );
         }
 
-        public Dictionary<NbtObjectClass, Int32> getObjectClassIds()
+        public Dictionary<Int32, NbtObjectClass> getObjectClassIds()
         {
-            Dictionary<NbtObjectClass, Int32> ret = new Dictionary<NbtObjectClass, Int32>();
-            Dictionary<string, Int32> OCDict = _CollImpl.getPkDict();
-            foreach( string Key in OCDict.Keys )
-            {
-                if( false == ret.ContainsKey( Key ) )
-                {
-                    ret.Add( Key, OCDict[Key] );
-                }
-            }
-            return ret;
+            Dictionary<Int32, string> OCDict = _CollImpl.getPkDict();
+            return OCDict.Keys
+                         .Where( key => OCDict[key] != CswNbtResources.UnknownEnum )
+                         .ToDictionary( key => key, key => (NbtObjectClass) OCDict[key] );
         }
+
         public Int32 getObjectClassId( NbtObjectClass ObjectClass )
         {
             return _CollImpl.getPksFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );

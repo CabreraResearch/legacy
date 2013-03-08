@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public Dictionary<NbtObjectClass, Int32> getObjectClassIds()
+        public Dictionary<Int32, NbtObjectClass> getObjectClassIds()
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds();
         }
@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Field Type primary keys
         /// </summary>
-        public Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> getFieldTypeIds()
+        public Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> getFieldTypeIds()
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds();
         }
@@ -261,6 +261,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns a CswNbtMetaDataFieldType based on the Field Type primary key provided
+        /// </summary>
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue( Int32 FieldTypeId )
+        {
+            return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeValue( FieldTypeId );
+        }
+
+        /// <summary>
         /// Returns the NbtFieldType value for a property
         /// </summary>
         public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
@@ -352,6 +360,13 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataObjectClassProp getObjectClassProp( Int32 ObjectClassPropId )
         {
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassProp( ObjectClassPropId );
+        }
+        /// <summary>
+        /// Fetches an Object Class Property Name based on the primary key (all object classes)
+        /// </summary>
+        public string getObjectClassPropName( Int32 ObjectClassPropId )
+        {
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropName( ObjectClassPropId );
         }
         /// <summary>
         /// Fetches an Object Class Property based on the primary key (all object classes)
@@ -1519,7 +1534,7 @@ namespace ChemSW.Nbt.MetaData
                 if( false == Internal )
                 {
                     if( false == NodeTypeProp.IsDeletable() )
-                        throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
+                        throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + NodeTypeProp.PropName + " ; PropId = " + NodeTypeProp.PropId );
 
                     //string OriginalPropName = NodeTypeProp.PropName;
                     CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.getNodeType() );

@@ -1036,7 +1036,7 @@ namespace ChemSW.Nbt
          */
         private void _onConfigVblChange( string VariableName, string NewValue )
         {
-            if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )  //TODO: this should not be a hardcoded string here
+            if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
             {
                 CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
                 if( null != locationOC )
@@ -1057,7 +1057,16 @@ namespace ChemSW.Nbt
                      */
                     _CswResources.execArbitraryPlatformNeutralSql( sql );
                 }
-            }
+            } // if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
+
+            // case 28895
+            if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
+            {
+                // Keep 'Locations' view up to date
+                CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", NbtViewVisibility.Global );
+                CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( NewValue ) );
+                LocationsView.save();
+            } // if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
         }
 
         #endregion

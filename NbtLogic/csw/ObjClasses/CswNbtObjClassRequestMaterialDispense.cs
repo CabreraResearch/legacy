@@ -267,11 +267,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// 
         /// </summary>
-        public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData )
+        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
-                switch( OCP.PropName )
+                switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:
                         switch( ButtonData.SelectedText )
@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.ObjClasses
                                         NbtButtonData ReceiveData = new NbtButtonData( NodeAsMaterial.Receive.NodeTypeProp );
                                         NodeAsMaterial.triggerOnButtonClick( ReceiveData );
                                         ButtonData.clone( ReceiveData );
-                                        Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
+                                        Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
                                         if( Int32.MinValue != DocumentNodeTypeId )
                                         {
                                             ButtonData.Data["documenttypeid"] = DocumentNodeTypeId;

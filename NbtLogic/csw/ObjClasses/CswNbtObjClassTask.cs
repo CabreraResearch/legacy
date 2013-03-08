@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( Owner.RelatedNodeId != null )
         }//afterPopulateProps()
 
-        public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData )
+        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;

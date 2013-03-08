@@ -230,7 +230,8 @@
                                     Csw.tryExec(saveoptions.onSuccess);
                                 };
 
-                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': propObj.name.length * 7 + 8 });
+                                var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14)
+                                var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': width });
                                 var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
 
                                 cswPrivate.properties[propObj.propid] = Csw.nbt.property(fieldOpt);
@@ -604,4 +605,4 @@
 
             return cswPublic;
         }); // register
-})();               // (function
+})();                  // (function

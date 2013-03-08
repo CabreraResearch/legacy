@@ -480,7 +480,6 @@ namespace ChemSW.Nbt.ImportExport
             DataRow CurrentMaterialRow = null;
             DataRow CurrentContainerRow = null;
             DataRow CurrentSizeRow = null;
-            
             Dictionary<string, DataRow> SizesRowsByCompoundId = new Dictionary<string, DataRow>();
 
 
@@ -743,8 +742,7 @@ namespace ChemSW.Nbt.ImportExport
                             {
                                 string FieldTypeColumnName = CurrentColMetaData.FieldTypeColNames[0];
                                 // Special case for Physical State remapping
-                                if( null != CurrentColMetaData.CswNbtMetaDataNodeTypeProp.getObjectClassProp() &&
-                                    CurrentColMetaData.CswNbtMetaDataNodeTypeProp.getObjectClassProp().PropName == CswNbtObjClassMaterial.PropertyName.PhysicalState &&
+                                if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.getObjectClassPropName() == CswNbtObjClassMaterial.PropertyName.PhysicalState &&
                                     _PhysicalStateMap.ContainsKey( CurrentRlXlsCellVal ) )
                                 {
                                     CurrentImportPropsUpdateRow[FieldTypeColumnName] = _PhysicalStateMap[CurrentRlXlsCellVal];

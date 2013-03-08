@@ -265,13 +265,9 @@
                     ret = value;
                     if (cswPublic[0] && cswPublic[0].dataset) {
                         cswPublic[0].dataset[propName] = value;
-                        //keep it in memory too, in case we lose a handle on the DOM
-                        cswPrivate.data[propName] = value;
-                    } else {
-                        //No HTML5 for us, keep it in memory
-                        cswPrivate.data[propName] = value;
-                        cswPublic.$.data(propName, value);
                     }
+                    cswPrivate.data[propName] = value;  // these are important when the value is actually empty
+                    cswPublic.$.data(propName, value);  // these are important when the value is actually empty
                 }
                 return ret;
             };

@@ -21,30 +21,53 @@
                     cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
                     cswPrivate.maxlength = Csw.number(cswPrivate.propVals.maxlength, 14);
+                    cswPrivate.regex = cswPrivate.propVals.regex;
+                    cswPrivate.regexmsg = cswPrivate.propVals.regexmsg;
+
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
+
+                        var regex_name = '';
+                        if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
+                            regex_name = 'text_regex_' + cswPublic.data.propid;
+                        } 
+
                         cswPublic.control = cswPrivate.parent.input({
                             name: cswPublic.data.name,
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.value,
-                            cssclass: 'textinput',
                             size: cswPrivate.size,
-                            onChange: function() {
-                                var val = cswPublic.control.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ text: val });
+                            cssclass: 'textinput ' + regex_name,
+                            onChange: function () {
+                                cswPrivate.value = cswPublic.control.val();
+                                Csw.tryExec(cswPublic.data.onChange, cswPrivate.value);
+                                cswPublic.data.onPropChange({ text: cswPrivate.value });
                             },
                             isRequired: cswPublic.data.isRequired(),
                             maxlength: cswPrivate.maxlength
                         });
-                        
+
                         cswPublic.control.required(cswPublic.data.isRequired());
-                        cswPublic.control.clickOnEnter(function () {
+//                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
+                         cswPublic.control.clickOnEnter(function () {
                             cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
                         });
+
+                    if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
+
+                        var Message = "invalid value";
+                        if (false === Csw.isNullOrEmpty(cswPrivate.regexmsg)) {
+                            Message = cswPrivate.regexmsg;
+                        }
+
+                        $.validator.addMethod( regex_name, function () {
+                            var regex_obj = new RegExp(cswPrivate.regex);
+                            return (true == regex_obj.test(cswPrivate.value));
+                        }, Message);
                     }
+
 
                 };
 
@@ -57,4 +80,4 @@
                 return cswPublic;
             }));
 
-}());
+} ());

@@ -103,7 +103,8 @@ namespace ChemSW.Nbt.Sched
                             {
                                 CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( CswNbtResources );
                                 CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
-                                Node.postChanges( false );
+                                // Case 28997: 
+                                Node.postChanges( ForceUpdate: true );
                             }
                         }
                         else

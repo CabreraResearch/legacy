@@ -70,6 +70,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            DateSubmitted.DateTimeValue = DateTime.Now;
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -107,10 +110,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
-                CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-                if( PropertyName.LoadUserContext == OCP.PropName )
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                if( PropertyName.LoadUserContext == OCPPropName )
                 {
-                    ButtonData.Data["action"] = OCP.PropName;
+                    ButtonData.Data["action"] = OCPPropName;
 
                     ButtonData.Data["type"] = "view"; //assume it's a view unless it's an action
                     CswNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( Action.Text );

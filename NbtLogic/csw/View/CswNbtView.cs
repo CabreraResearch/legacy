@@ -340,11 +340,15 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new <see cref="CswNbtViewProperty"/> for this view
         /// </summary>
-        public CswNbtViewProperty AddViewProperty( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp Prop )
+        public CswNbtViewProperty AddViewProperty( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp Prop, Int32 Order = Int32.MinValue )
         {
             CswNbtViewProperty NewProperty = new CswNbtViewProperty( _CswNbtResources, this, Prop );
             if( ParentViewRelationship != null )
                 ParentViewRelationship.addProperty( NewProperty );
+            if( Int32.MinValue != Order )
+            {
+                NewProperty.Order = Order;
+            }
             return NewProperty;
         }
 
@@ -1125,7 +1129,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        
+
 
         #region Find ViewNode
 
@@ -1711,9 +1715,12 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the Property used to sort the View.  Only one property can have this setting.
         /// </summary>
-        public void setSortProperty( CswNbtViewProperty Property, NbtViewPropertySortMethod SortMethod )
+        public void setSortProperty( CswNbtViewProperty Property, NbtViewPropertySortMethod SortMethod, bool ClearExistingSort = true )
         {
-            clearSortProperty();
+            if( ClearExistingSort )
+            {
+                clearSortProperty();
+            }
             Property.SortBy = true;
             Property.SortMethod = SortMethod;
         }

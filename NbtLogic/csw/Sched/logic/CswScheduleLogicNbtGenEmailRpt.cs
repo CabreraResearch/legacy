@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Sched
 
                     //Review K4566: limit iteration and always increment https://fogbugz.chemswlive.com/kiln/Review/K4566
                     Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
-                    if( Int32.MinValue == MailReportLimit )
+                    if( MailReportLimit < 1 )
                     {
                         MailReportLimit = 1;
                     }
@@ -76,79 +76,95 @@ namespace ChemSW.Nbt.Sched
                     Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
                     Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
 
-                    for( Int32 idx = 0; ( idx < MailReports.Count && TotalMailReportsProcessed <= MailReportLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < MailReports.Count && TotalMailReportsProcessed < MailReportLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
                         if( null != CurrentMailReport )
                         {
                             try
                             {
-                                if( CurrentMailReport.Enabled.Checked == Tristate.True &&
-                                    CurrentMailReport.Recipients.SelectedUserIds.Count > 0 &&
-                                    ( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView || // for notifications, 
-                                      CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() || // make sure at least one
-                                      false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) ) ) // node has changed
-                                {
-                                    if( false == CurrentMailReport.Type.Empty )
+                                // The query already checks if the reports are enabled
+                                //if( CurrentMailReport.Enabled.Checked == Tristate.True )
+                                //{
+                                    if( CurrentMailReport.Recipients.SelectedUserIds.Count > 0 )
                                     {
-                                        DateTime ThisDueDateValue = CurrentMailReport.NextDueDate.DateTimeValue;
-                                        DateTime InitialDueDateValue = CurrentMailReport.DueDateInterval.getStartDate();
-                                        DateTime FinalDueDateValue = CurrentMailReport.FinalDueDate.DateTimeValue;
-                                        DateTime NowDateValue = DateTime.Now;
-                                        DateTime MinDateValue = DateTime.MinValue;
-
-                                        // BZ 7866
-                                        if( DateTime.MinValue != ThisDueDateValue )
+                                        // for notifications, make sure at least one node has changed
+                                        if( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView ||
+                                            CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() ||
+                                            false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) )
                                         {
-                                            if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly reports
+                                            if( false == CurrentMailReport.Type.Empty )
                                             {
-                                                // Trim times
-                                                ThisDueDateValue = ThisDueDateValue.Date;
-                                                InitialDueDateValue = InitialDueDateValue.Date;
-                                                FinalDueDateValue = FinalDueDateValue.Date;
-                                                //NowDateValue = NowDateValue.Date;
-                                                MinDateValue = MinDateValue.Date;
+                                                DateTime ThisDueDateValue = CurrentMailReport.NextDueDate.DateTimeValue;
+                                                DateTime InitialDueDateValue = CurrentMailReport.DueDateInterval.getStartDate();
+                                                DateTime FinalDueDateValue = CurrentMailReport.FinalDueDate.DateTimeValue;
+                                                DateTime NowDateValue = DateTime.Now;
+                                                DateTime MinDateValue = DateTime.MinValue;
 
-                                                // BZ 7124 - set runtime
-                                                if( CurrentMailReport.RunTime.DateTimeValue != DateTime.MinValue )
+                                                // BZ 7866
+                                                if( DateTime.MinValue != ThisDueDateValue )
                                                 {
-                                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.DateTimeValue.TimeOfDay.Ticks );
-                                                }
-                                            }
+                                                    if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly reports
+                                                    {
+                                                        // Trim times
+                                                        ThisDueDateValue = ThisDueDateValue.Date;
+                                                        InitialDueDateValue = InitialDueDateValue.Date;
+                                                        FinalDueDateValue = FinalDueDateValue.Date;
+                                                        //NowDateValue = NowDateValue.Date;
+                                                        MinDateValue = MinDateValue.Date;
 
-                                            // Note: Warning days makes no sense for mail reports
+                                                        // BZ 7124 - set runtime
+                                                        if( CurrentMailReport.RunTime.DateTimeValue != DateTime.MinValue )
+                                                        {
+                                                            ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                                        }
+                                                    }
 
-                                            // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                                            if( ( NowDateValue >= InitialDueDateValue ) &&
-                                                ( NowDateValue <= FinalDueDateValue || MinDateValue == FinalDueDateValue ) &&
-                                                ( NowDateValue >= ThisDueDateValue ) )
+                                                    // Note: Warning days makes no sense for mail reports
+
+                                                    // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                                                    if( ( NowDateValue >= InitialDueDateValue ) &&
+                                                        ( NowDateValue <= FinalDueDateValue || MinDateValue == FinalDueDateValue ) &&
+                                                        ( NowDateValue >= ThisDueDateValue ) )
+                                                    {
+                                                        // Add to batch operation
+                                                        MailReportIdsToRun.Add( CurrentMailReport.NodeId );
+
+                                                        // Cycle the next due date so we don't make another batch op while this one is running
+                                                        CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                                                        CurrentMailReport.postChanges( false );
+                                                    }
+                                                } // if( ThisDueDateValue != DateTime.MinValue )
+
+                                            } // if( false == CurrentMailReport.Type.Empty )
+                                            else
                                             {
-                                                // Add to batch operation
-                                                MailReportIdsToRun.Add( CurrentMailReport.NodeId );
-
-                                                // Cycle the next due date so we don't make another batch op while this one is running
-                                                CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
-                                                CurrentMailReport.postChanges( false );
+                                                // might be redundant with CswNbtDbBasedSchdEvents.handleOnSchdItemWasRun()
+                                                CurrentMailReport.RunStatus.AddComment( "Report type is not specified" );
+                                                CurrentMailReport.Enabled.Checked = Tristate.False;
+                                                CurrentMailReport.postChanges( true );
                                             }
-                                        } // if( ThisDueDateValue != DateTime.MinValue )
-
-                                    } // if( false == CurrentMailReport.Type.Empty )
+                                        } // if there's something to report
+                                        else
+                                        {
+                                            CurrentMailReport.RunStatus.AddComment( "No reportable changes made" );
+                                            CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false ); 
+                                            CurrentMailReport.postChanges( false );
+                                        }
+                                    } // if( CurrentMailReport.Recipients.SelectedUserIds.Count > 0 )
                                     else
                                     {
-                                        //if the report type is specified 
-
-                                        // might be redundant with CswNbtDbBasedSchdEvents.handleOnSchdItemWasRun()
-                                        InnerErrorMessage = "Report type is not specified";
-                                        CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
-                                        CurrentMailReport.postChanges( true );
+                                        CurrentMailReport.RunStatus.AddComment( "No recipients selected" );
+                                        CurrentMailReport.Enabled.Checked = Tristate.False;
+                                        CurrentMailReport.postChanges( false );
                                     }
-                                } // if( CurrentMailReport.Enabled.Checked == Tristate.True )
-
+                                //} // if( CurrentMailReport.Enabled.Checked == Tristate.True )
                             } //try 
 
                             catch( Exception Exception )
                             {
                                 InnerErrorMessage += "An exception occurred: " + Exception.Message + "; ";
+                                CurrentMailReport.Enabled.Checked = Tristate.False; 
                                 CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                 CurrentMailReport.postChanges( true );
                             }
@@ -162,6 +178,10 @@ namespace ChemSW.Nbt.Sched
                     if( false == String.IsNullOrEmpty( InnerErrorMessage ) )
                     {
                         _CswScheduleLogicDetail.StatusMessage = "The following errors occurred during processing: " + InnerErrorMessage;
+                    }
+                    else
+                    {
+                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     }
 
                     if( MailReportIdsToRun.Count > 0 )

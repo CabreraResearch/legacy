@@ -7,7 +7,6 @@ using System.Threading;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -367,7 +366,7 @@ namespace ChemSW.Nbt.Actions
             //Inspection Target has a tab to host a grid view of Inspections
             CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( RetInspectionTargetNt, InspectionDesignName, 2 );
             CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewProp( RetInspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionDesignName, ItInspectionsTab.TabId );
-            CswNbtView ItInspectionsGridView = _createInspectionsGridView( ItInspectionsNtp, InspectionDesignNt, string.Empty, NbtViewRenderingMode.Grid, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
+            CswNbtView ItInspectionsGridView = _createInspectionsGridView( string.Empty, NbtViewRenderingMode.Grid, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
             ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
             ItInspectionsNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             #endregion Set new InspectionTarget Props and Tabs
@@ -620,10 +619,8 @@ namespace ChemSW.Nbt.Actions
             return RetView;
         }
 
-        private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeTypeProp InspectionsGridProp, CswNbtMetaDataNodeType InspectionDesignNt, string Category, NbtViewRenderingMode ViewMode,
-             bool AllInspections, DateTime DueDate, string InspectionsViewName )
+        private CswNbtView _createInspectionsGridView( string Category, NbtViewRenderingMode ViewMode, bool AllInspections, DateTime DueDate, string InspectionsViewName )
         {
-            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
             if( string.IsNullOrEmpty( InspectionsViewName ) )
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot create an Inspections view without a name.", "View name was null or empty." );
@@ -636,25 +633,25 @@ namespace ChemSW.Nbt.Actions
                 RetView.ViewMode = ViewMode;
                 RetView.Category = Category;
 
-                CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( InspectionsGridProp.getNodeType(), true );
-                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), true );
-                CswNbtMetaDataNodeTypeProp DueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate );
-                CswNbtViewProperty DueDateVp = RetView.AddViewProperty( InspectionVr, DueDateNtp );
-                CswNbtMetaDataNodeTypeProp StatusNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status );
-                CswNbtViewProperty StatusVp = RetView.AddViewProperty( InspectionVr, StatusNtp );
+                CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass );
+                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+
+                CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( InspectionTargetOc, true );
+                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), true );
+                CswNbtViewProperty DueDateVp = RetView.AddViewProperty( InspectionVr, InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate ) );
+                CswNbtViewProperty StatusVp = RetView.AddViewProperty( InspectionVr, InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status ) );
 
                 if( false == AllInspections )
                 {
-                    ICswNbtFieldTypeRule FTRule = StatusNtp.getFieldTypeRule();
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled, false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Completed, false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate, false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Missed, false );
+                    RetView.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled );
+                    RetView.AddViewPropertyFilter( StatusVp, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : CswNbtObjClassInspectionDesign.InspectionStatus.Completed );
+                    RetView.AddViewPropertyFilter( StatusVp, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate );
+                    RetView.AddViewPropertyFilter( StatusVp, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : CswNbtObjClassInspectionDesign.InspectionStatus.Missed );
                 }
 
                 if( DateTime.MinValue != DueDate )
                 {
-                    RetView.AddViewPropertyFilter( DueDateVp, DueDateNtp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, DateTime.Today.ToString(), false );
+                    RetView.AddViewPropertyFilter( DueDateVp, Value: DateTime.Today.ToString() );
                 }
 
                 RetView.save();

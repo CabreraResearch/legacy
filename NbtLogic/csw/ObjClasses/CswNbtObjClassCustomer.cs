@@ -237,13 +237,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
-                if( PropertyName.Login == OCP.PropName )
+                if( PropertyName.Login == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     ButtonData.Action = NbtButtonAction.reauthenticate;
                 }

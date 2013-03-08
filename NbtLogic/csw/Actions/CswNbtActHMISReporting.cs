@@ -187,10 +187,11 @@ namespace ChemSW.Nbt.Actions
                         foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
                             CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
-                            CswNbtMetaDataObjectClassProp ContainerOCP = ContainerNTP.getObjectClassProp();
-                            if( null != ContainerOCP )
-                            {
-                                switch( ContainerOCP.PropName )
+                            //CswNbtMetaDataObjectClassProp ContainerOCP = ContainerNTP.getObjectClassProp();
+                            //if( null != ContainerOCP )
+                            //{
+                            //    switch( ContainerOCP.PropName )
+                                switch( ContainerNTP.getObjectClassPropName() )
                                 {
                                     case CswNbtObjClassContainer.PropertyName.Quantity:
                                         Quantity = ContainerProp.Field1_Numeric;
@@ -204,7 +205,7 @@ namespace ChemSW.Nbt.Actions
                                         UseType = ContainerProp.Field1;
                                         break;
                                 }
-                            }
+                            //}
                         }
                         if( false == String.IsNullOrEmpty( UseType ) )
                         {
@@ -272,6 +273,13 @@ namespace ChemSW.Nbt.Actions
         private void _setFireClasses()
         {
             CswNbtNode ControlZone = _CswNbtResources.Nodes.GetNode( ControlZoneId );
+            Double MAQOffset = Double.NaN;
+            CswNbtMetaDataNodeTypeProp MAQOffsetNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZone.NodeTypeId, "MAQ Offset %" );
+            if( null != MAQOffsetNTP )
+            {
+                MAQOffset = ControlZone.Properties[MAQOffsetNTP].AsNumber.Value;
+            }
+            MAQOffset = Double.IsNaN( MAQOffset ) ? 100.0 : MAQOffset;
             CswNbtMetaDataNodeTypeProp FireClassSetNameNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZone.NodeTypeId, "Fire Class Set Name" );
             CswPrimaryKey FCEASId = ControlZone.Properties[FireClassSetNameNTP].AsRelationship.RelatedNodeId;
             Data.FireClassExemptAmountSet = ControlZone.Properties[FireClassSetNameNTP].AsRelationship.CachedNodeName;
@@ -290,7 +298,7 @@ namespace ChemSW.Nbt.Actions
                             Class = FCEANode.Class.Text,
                             SortOrder = FCEANode.SortOrder.Value
                         };
-                        _setFireClassMAQData( EmptyHazardClass, FCEANode );
+                        _setFireClassMAQData( EmptyHazardClass, FCEANode, MAQOffset );
                         HazardClassList.Add( EmptyHazardClass );
                     }
                 }
@@ -299,16 +307,45 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
-        private void _setFireClassMAQData( HMISData.HMISMaterial Hazard, CswNbtObjClassFireClassExemptAmount FireClass )
+        private void _setFireClassMAQData( HMISData.HMISMaterial Hazard, CswNbtObjClassFireClassExemptAmount FireClass, Double MAQOffset )
         {
-            Hazard.Storage.Solid.MAQ = FireClass.StorageSolidExemptAmount.Text;
-            Hazard.Storage.Liquid.MAQ = FireClass.StorageLiquidExemptAmount.Text;
-            Hazard.Storage.Gas.MAQ = FireClass.StorageGasExemptAmount.Text;
-            Hazard.Closed.Solid.MAQ = FireClass.ClosedSolidExemptAmount.Text;
-            Hazard.Closed.Liquid.MAQ = FireClass.ClosedLiquidExemptAmount.Text;
-            Hazard.Closed.Gas.MAQ = FireClass.ClosedGasExemptAmount.Text;
-            Hazard.Open.Solid.MAQ = FireClass.OpenSolidExemptAmount.Text;
-            Hazard.Open.Liquid.MAQ = FireClass.OpenLiquidExemptAmount.Text;
+            Hazard.Storage.Solid.MAQ = _calculateMAQOffsetPercentage( FireClass.StorageSolidExemptAmount.Text, MAQOffset );
+            Hazard.Storage.Liquid.MAQ = _calculateMAQOffsetPercentage( FireClass.StorageLiquidExemptAmount.Text, MAQOffset );
+            Hazard.Storage.Gas.MAQ = _calculateMAQOffsetPercentage( FireClass.StorageGasExemptAmount.Text, MAQOffset );
+            Hazard.Closed.Solid.MAQ = _calculateMAQOffsetPercentage( FireClass.ClosedSolidExemptAmount.Text, MAQOffset );
+            Hazard.Closed.Liquid.MAQ = _calculateMAQOffsetPercentage( FireClass.ClosedLiquidExemptAmount.Text, MAQOffset );
+            Hazard.Closed.Gas.MAQ = _calculateMAQOffsetPercentage( FireClass.ClosedGasExemptAmount.Text, MAQOffset );
+            Hazard.Open.Solid.MAQ = _calculateMAQOffsetPercentage( FireClass.OpenSolidExemptAmount.Text, MAQOffset );
+            Hazard.Open.Liquid.MAQ = _calculateMAQOffsetPercentage( FireClass.OpenLiquidExemptAmount.Text, MAQOffset );
+        }
+
+        private String _calculateMAQOffsetPercentage( String ExemptAmountText, Double MAQOffset )
+        {
+            String OffsetText = ExemptAmountText;
+            if( false == string.IsNullOrEmpty( OffsetText ) && false == OffsetText.Contains( "NL" ) && MAQOffset < 100.0 )
+            {
+                String FormatText = "{0}";
+                if( OffsetText.StartsWith("(") )
+                {
+                    FormatText = "({0})";
+                    OffsetText = OffsetText.Replace( "(", "" );
+                    OffsetText = OffsetText.Replace( ")", "" );
+                }
+                else if( OffsetText.EndsWith( "mCi" ) )
+                {
+                    FormatText = "{0} mCi";
+                    OffsetText = OffsetText.Replace( " mCi", "" );
+                }
+                else if( OffsetText.EndsWith( "Ci" ) )
+                {
+                    FormatText = "{0} Ci";
+                    OffsetText = OffsetText.Replace( " Ci", "" );
+                }
+                Double ExemptAmount = Double.Parse( OffsetText );
+                Double OffsetAmount = ExemptAmount * ( MAQOffset / 100.0 );
+                OffsetText = String.Format( FormatText, OffsetAmount );
+            }
+            return OffsetText;
         }
 
         private CswNbtView _getHMISView()

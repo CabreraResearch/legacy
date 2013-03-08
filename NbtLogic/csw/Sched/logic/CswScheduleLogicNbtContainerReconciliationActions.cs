@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
                     {
                         makeReconciliationActionBatchProcess( CswNbtResources );
                     }

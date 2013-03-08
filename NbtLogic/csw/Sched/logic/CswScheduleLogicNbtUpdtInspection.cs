@@ -3,21 +3,17 @@ using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {
-
     public class CswScheduleLogicNbtUpdtInspection : ICswScheduleLogic
     {
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
 
-
-
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.UpdtInspection.ToString() ); }
+            get { return ( NbtScheduleRuleNames.UpdtInspection ); }
         }
 
         public bool hasLoad( ICswResources CswResources )
@@ -33,40 +29,30 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
+        private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }
         }
-
-
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
 
         public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
         }
 
-
-        //private CswNbtNode _CswNbtNodeGenerator;
         private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatus.Pending;
         private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatus.Overdue;
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
-
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
-            //CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
-
                 try
                 {
-
                     Int32 TotalProcessed = 0;
                     string Names = string.Empty;
 
@@ -77,14 +63,12 @@ namespace ChemSW.Nbt.Sched
                         CswNbtObjClassInspectionDesign CurrentInspectionDesign = InspectionDesigns[idx];
 
                         DateTime DueDate = CurrentInspectionDesign.DueDate.DateTimeValue;
-                        //CswNbtNode GeneratorNode = CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
-                        //if( null != GeneratorNode &&
                         if( _Pending == CurrentInspectionDesign.Status.Value &&
-                            DateTime.Today >= DueDate &&
+                            DateTime.Today > DueDate &&
                             Tristate.True != CurrentInspectionDesign.IsFuture.Checked )
                         {
                             CurrentInspectionDesign.Status.Value = _Overdue;
-                            CurrentInspectionDesign.postChanges( true );
+                            CurrentInspectionDesign.postChanges( ForceUpdate: true );
 
                             TotalProcessed++;
                             Names += CurrentInspectionDesign.Name + "; ";
@@ -94,30 +78,24 @@ namespace ChemSW.Nbt.Sched
                         {
                             break;
                         }
-
                     }
 
                     _CswScheduleLogicDetail.StatusMessage = TotalProcessed.ToString() + " inspections processed: " + Names;
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
-
                 catch( Exception Exception )
                 {
-
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtInspection::threadCallBack() exception: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
-
+                    _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
 
             }//if we're not shutting down
 
             _CswScheduleLogicDetail.StatusMessage = "Completed without error";
 
-
         }//threadCallBack()
-
 
         public void stop()
         {
@@ -126,9 +104,8 @@ namespace ChemSW.Nbt.Sched
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
+            _LogicRunStatus = LogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtUpdtInspection
-
 
 }//namespace ChemSW.Nbt.Sched

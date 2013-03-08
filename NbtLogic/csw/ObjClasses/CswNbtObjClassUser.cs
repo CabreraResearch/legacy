@@ -11,7 +11,7 @@ using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
+    public class CswNbtObjClassUser: CswNbtObjClass, ICswNbtUser
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
@@ -181,28 +181,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.setReadOnly( value: true, SaveToDb: true ); // BZ 5906
-            }
-
-            if( Role.WasModified )
-            {
-                if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                {
-                    throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles",
-                                              "Current user (" + _CswNbtResources.CurrentUser.Username +
-                                              ") attempted to edit a user role." );
-                }
-                if( this.Username != ChemSWAdminUsername &&
-                    ( (CswNbtObjClassRole) _CswNbtResources.Nodes[Role.RelatedNodeId] ).Name.Text ==
-                    CswNbtObjClassRole.ChemSWAdminRoleName )
-                {
-                    throw new CswDniException( ErrorType.Warning,
-                                              "New users may not be assigned to the '" +
-                                              CswNbtObjClassRole.ChemSWAdminRoleName + "' role",
-                                              "Current user (" + _CswNbtResources.CurrentUser.Username +
-                                              ") attempted to assign a new user to the '" +
-                                              CswNbtObjClassRole.ChemSWAdminRoleName + "' role." );
-                }
+                UsernameProperty.setReadOnly( value : true, SaveToDb : true ); // BZ 5906
             }
 
             // case 22512
@@ -284,6 +263,10 @@ namespace ChemSW.Nbt.ObjClasses
                                                _CswNbtResources.CurrentUser.Username + ") is not an administrator." ) );
                 }
             }
+
+            //case 28010 - delete all view assigned to this user
+            _CswNbtResources.ViewSelect.deleteViewsByUserId( NodeId );
+
         }
 
         //beforeDeleteNode()
@@ -326,8 +309,8 @@ namespace ChemSW.Nbt.ObjClasses
             //BZ 9933
             if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
-                this.AccountLocked.setHidden( value: true, SaveToDb: false );
+                this.FailedLoginCount.setHidden( value : true, SaveToDb : false );
+                this.AccountLocked.setHidden( value : true, SaveToDb : false );
             }
 
 
@@ -349,7 +332,14 @@ namespace ChemSW.Nbt.ObjClasses
                 this.PasswordProperty.setReadOnly( false, false );
             }
 
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
+            Role.SetOnPropChange( onRolePropChange );
+            DateFormatProperty.SetOnPropChange( onDateFormatPropChange );
+            TimeFormatProperty.SetOnPropChange( onTimeFormatPropChange );
+
+           //_CswNbtObjClassDefault.afterPopulateProps();
+
+           _CswNbtObjClassDefault.triggerAfterPopulateProps();
+
 
         }
 
@@ -378,7 +368,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : Tristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -427,6 +417,30 @@ namespace ChemSW.Nbt.ObjClasses
         public Int32 RoleTimeout { get { return CswConvert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
 
         public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[PropertyName.Role] ); } }
+        private void onRolePropChange( CswNbtNodeProp NodeProp )
+        {
+            if( Role.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( Role.GetOriginalPropRowValue( CswNbtSubField.PropColumn.Field1_FK ) ) )
+            {
+                if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles",
+                                               "Current user (" + _CswNbtResources.CurrentUser.Username +
+                                               ") attempted to edit a user role." );
+                }
+                if( this.Username != ChemSWAdminUsername &&
+                    ( (CswNbtObjClassRole) _CswNbtResources.Nodes[Role.RelatedNodeId] ).Name.Text ==
+                    CswNbtObjClassRole.ChemSWAdminRoleName )
+                {
+                    throw new CswDniException( ErrorType.Warning,
+                                               "New users may not be assigned to the '" +
+                                               CswNbtObjClassRole.ChemSWAdminRoleName + "' role",
+                                               "Current user (" + _CswNbtResources.CurrentUser.Username +
+                                               ") attempted to assign a new user to the '" +
+                                               CswNbtObjClassRole.ChemSWAdminRoleName + "' role." );
+                }
+            }
+        }
+
         public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[PropertyName.AccountLocked] ); } }
         public CswNbtNodePropNumber FailedLoginCount { get { return ( _CswNbtNode.Properties[PropertyName.FailedLoginCount] ); } }
         public CswNbtNodePropPassword PasswordProperty { get { return ( _CswNbtNode.Properties[PropertyName.Password] ); } }
@@ -454,6 +468,19 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.DateFormat] ); } }
+        private void onDateFormatPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( false == string.IsNullOrEmpty( DateFormatProperty.Value ) &&
+                CswResources.UnknownEnum == (CswDateFormat) DateFormatProperty.Value )
+            {
+                string SupportedFormats = "'" + CswDateFormat.Mdyyyy + "', ";
+                SupportedFormats += "'" + CswDateFormat.dMyyyy + "', ";
+                SupportedFormats += "'" + CswDateFormat.yyyyMMdd_Dashes + "', ";
+                SupportedFormats += "'" + CswDateFormat.yyyyMd + "', ";
+                SupportedFormats += "'" + CswDateFormat.ddMMMyyyy + "'";
+                throw new CswDniException( "Cannot use '" + DateFormatProperty.Value + "' as a value for Date Format. The only supported formats are: " + SupportedFormats );
+            }
+        }
         public string TimeFormat
         {
             get
@@ -467,6 +494,16 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.TimeFormat] ); } }
+        private void onTimeFormatPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( false == string.IsNullOrEmpty( TimeFormatProperty.Value ) &&
+                CswResources.UnknownEnum == (CswTimeFormat) TimeFormatProperty.Value )
+            {
+                string SupportedFormats = "'" + CswTimeFormat.Hmmss + "', ";
+                SupportedFormats += "'" + CswTimeFormat.hmmsstt + "'";
+                throw new CswDniException( "Cannot use '" + TimeFormatProperty.Value + "' as a value for Time Format. The only supported formats are: " + SupportedFormats );
+            }
+        }
 
         public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 

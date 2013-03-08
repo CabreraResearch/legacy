@@ -540,7 +540,7 @@ namespace ChemSW.Nbt.Logic
 
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            FieldType = NodeTypeProp.getFieldType().FieldType;
+            FieldType = NodeTypeProp.getFieldTypeValue();
             ListOptions.FromString( NodeTypeProp.ListOptions );
             RelatedIdType = NbtViewRelatedIdType.NodeTypeId;
             MetaDataPropNameWithQuestionNo = NodeTypeProp.PropNameWithQuestionNo;
@@ -559,7 +559,7 @@ namespace ChemSW.Nbt.Logic
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
         {
-            FieldType = ObjectClassProp.getFieldType().FieldType;
+            FieldType = ObjectClassProp.getFieldTypeValue();
             setObjectClassPropListOptions( ObjectClassProp );
             RelatedIdType = NbtViewRelatedIdType.NodeTypeId;
             MetaDataPropNameWithQuestionNo = ObjectClassProp.PropNameWithQuestionNo;
@@ -577,7 +577,7 @@ namespace ChemSW.Nbt.Logic
             if( ViewProperty.Type == NbtViewPropType.NodeTypePropId &&
                 null != ViewProperty.NodeTypeProp )
             {
-                FieldType = ViewProperty.NodeTypeProp.getFieldType().FieldType;
+                FieldType = ViewProperty.NodeTypeProp.getFieldTypeValue();
                 ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
                 RelatedIdType = NbtViewRelatedIdType.NodeTypeId;
                 MetaDataPropNameWithQuestionNo = ViewProperty.NodeTypeProp.PropNameWithQuestionNo;
@@ -594,7 +594,7 @@ namespace ChemSW.Nbt.Logic
             else if( ViewProperty.Type == NbtViewPropType.ObjectClassPropId &&
                 null != ViewProperty.ObjectClassProp )
             {
-                FieldType = ViewProperty.ObjectClassProp.getFieldType().FieldType;
+                FieldType = ViewProperty.ObjectClassProp.getFieldTypeValue();
                 setObjectClassPropListOptions( ViewProperty.ObjectClassProp );
                 RelatedIdType = NbtViewRelatedIdType.ObjectClassId;
                 MetaDataPropNameWithQuestionNo = ViewProperty.ObjectClassProp.PropNameWithQuestionNo;

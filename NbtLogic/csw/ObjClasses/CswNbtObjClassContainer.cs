@@ -273,11 +273,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-            if( null != ButtonData.NodeTypeProp && null != OCP )
+            if( null != ButtonData.NodeTypeProp )
             {
                 bool HasPermission = false;
-                switch( OCP.PropName )
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
                 {
                     case PropertyName.Dispose:
                         if( canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
@@ -342,7 +342,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == HasPermission )
                 {
-                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCP.PropName + " action.", "You do not have permission to the " + OCP.PropName + " action." );
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
                 }
             }
             return true;
@@ -849,6 +849,31 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // _setDisposedReadOnly()
 
+        private bool _checkStorageCompatibility()
+        {
+            bool Ret = true;
+
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( MaterialNode != null )
+            {
+                // case 24488 - When Location is modified, verify that:
+                //  the Material's Storage Compatibility is null,
+                //  or the Material's Storage Compatibility is one the selected values in the new Location.
+                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
+                CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
+                if( null != locationNode ) //what if the user didn't specify a location?
+                {
+                    CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatibility];
+                    if( false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
+                    {
+                        Ret = false;
+                    }
+                }
+            }
+
+            return Ret;
+        }
+
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
             //if storage compatibility on the material is null, it can go anywhere
@@ -956,26 +981,13 @@ namespace ChemSW.Nbt.ObjClasses
             // This method is being called multiple times so this was added
             if (CswTools.IsPrimaryKey(Location.SelectedNodeId) && (Location.GetOriginalPropRowValue() != Location.SelectedNodeId.ToString()))
             {
-
-                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode(Material.RelatedNodeId);
-                if (MaterialNode != null)
+                if (false == _checkStorageCompatibility())
                 {
-                    // case 24488 - When Location is modified, verify that:
-                    //  the Material's Storage Compatibility is null,
-                    //  or the Material's Storage Compatibility is one the selected values in the new Location.
-                    CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
-                    CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode(Location.SelectedNodeId);
-                    if (null != locationNode) //what if the user didn't specify a location?
-                    {
-                        CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatibility];
-                        if (false == _isStorageCompatible(materialStorageCompatibilty.Value, locationStorageCompatibility.Value))
-                        {
-                            throw new CswDniException(ErrorType.Warning,
-                                                      "Storage compatibilities do not match, cannot move this container to specified location",
-                                                      "Storage compatibilities do not match, cannot move this container to specified location");
-                        }
-                    }
+                    throw new CswDniException( ErrorType.Warning,
+                                              "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location.",
+                                              "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location." );
                 }
+
                 if (CswTools.IsPrimaryKey(Location.SelectedNodeId) &&
                     false == string.IsNullOrEmpty(Location.CachedNodeName) &&
                     Location.CachedNodeName != CswNbtNodePropLocation.GetTopLevelName(_CswNbtResources))
@@ -984,7 +996,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswConvert.ToInt32(Quantity.Quantity) != 0)
                     {
                         CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr(_CswNbtResources);
-                        CswNbtSubField NodeId = ((CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule(Location.getFieldType().FieldType)).NodeIdSubField;
+                        CswNbtSubField NodeId = ((CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule(Location.getFieldTypeValue())).NodeIdSubField;
                         Int32 PrevLocationId = CswConvert.ToInt32(Node.Properties[PropertyName.Location].GetOriginalPropRowValue(NodeId.Column));
                         string Reason = "Container " + Barcode.Barcode + " moved to new location: " + Location.CachedNodeName;
                         if (Int32.MinValue != PrevLocationId)
@@ -1071,7 +1083,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == _InventoryLevelModified )
             {
                 CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                double PrevQuantity = CswConvert.ToDouble( Node.Properties[PropertyName.Quantity].GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( Quantity.getFieldType().FieldType ) ).QuantitySubField.Column ) );
+                double PrevQuantity = CswConvert.ToDouble( Node.Properties[PropertyName.Quantity].GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( Quantity.getFieldTypeValue() ) ).QuantitySubField.Column ) );
                 if( false == CswTools.IsDouble( PrevQuantity ) )
                 {
                     PrevQuantity = 0;

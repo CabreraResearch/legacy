@@ -55,6 +55,7 @@
                 cswPrivate.showSelectOnLoad = cswPrivate.showSelectOnLoad; // || true;
                 cswPrivate.isClickable = cswPrivate.isClickable; // ||true;
                 cswPrivate.useSearch = cswPrivate.useSearch;
+                cswPrivate.usePreview = cswPrivate.usePreview;
                 cswPrivate.options = cswPrivate.options || [];
 
                 cswPublic = cswParent.div();
@@ -103,7 +104,6 @@
                         ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
-                        //cswPrivate.options = JSON.parse(data.options);
                         cswPrivate.options = [];
                         if (false === cswPrivate.isRequired) {
                             cswPrivate.options.push({ id: '', value: '' });
@@ -176,27 +176,37 @@
                 cswPublic.option = cswPrivate.select.option;
             };
 
-            cswPrivate.makeSelect = function () {
-                
+            cswPrivate.makeSelect = function() {
+
+                var handleChange = function () {
+                    var val = cswPrivate.select.val();
+                    cswPrivate.selectedNodeId = val;
+                    cswPrivate.selectedName = cswPrivate.select.selectedText();
+                    Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
+
+                    cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
+                    Csw.tryExec(cswPrivate.onSelectNode, {
+                         nodeid: val, 
+                         name: cswPrivate.select.selectedText(), 
+                         selectedNodeId: val, 
+                         relatednodelink: cswPrivate.select.selectedData('link')
+                    });
+                }; // handleChange()
+
+
                 //Normally, we would assign the select to cswPublic, as it's the primary control; 
                 //however, to assign now would be decoupled from the return. The caller would not receive this reference.
                 //Instead, we'll assign the select as a member and we'll reassign key methods to cswPublic.
                 cswPrivate.select = cswPrivate.table.cell(1, cswPrivate.selectCellCol).select({
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
-                    onChange: function () {
-                        cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
-                        var val = cswPrivate.select.selectedVal();
-                        var name = cswPrivate.select.selectedText();
-                        var link = cswPrivate.select.selectedData('link');
-                        Csw.tryExec(cswPrivate.onSelectNode, { nodeid: val, name: name, selectedNodeId: val, relatednodelink: link });
-                    },
+                    onChange: handleChange,
                     width: cswPrivate.width
                 });
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
-                Csw.each(cswPrivate.options, function (relatedObj) {
+                Csw.each(cswPrivate.options, function(relatedObj) {
                     if (false === Csw.bool(cswPrivate.isMulti) && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.nodelink });
@@ -204,19 +214,18 @@
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.nodelink });
                     }
                 });
-                if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
-                    cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, selected: true }).data({ link: cswPrivate.selectedNodeLink });
+                if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
+                        cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });
+                    } else if (cswPrivate.options.length > 0) {
+                        // case 28918 - select the first option, and trigger the change event
+                        handleChange();
+                    }
                 }
 
                 cswPrivate.bindSelectMethods();
 
-                cswPrivate.select.bind('change', function () {
-                    var val = cswPrivate.select.val();
-                    cswPrivate.selectedNodeId = val;
-                    cswPrivate.selectedName = cswPrivate.select.selectedText();
-                    Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
-                    Csw.tryExec(cswPrivate.onSelect, val);
-                });
+                //cswPrivate.select.bind('change', handleChange);
 
                 cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.textCellCol);
 
@@ -426,6 +435,10 @@
                 return cswPrivate.selectedName;
             }; // selectedName
 
+            cswPublic.optionsCount = function() {
+                return cswPrivate.options.length;
+            };
+
             //#endregion Public
 
             //#region _postCtor
@@ -450,21 +463,23 @@
                     }
                 } // if-else (o.ReadOnly) {
 
-                cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
-                cswPublic.$.hover(
-                   function(event) {
-                        Csw.nodeHoverIn(event, {
-                            nodeid: cswPrivate.selectedNodeId,
-                            nodename: cswPrivate.selectedName,
-                            parentDiv: cswPrivate.table.cell(1,cswPrivate.previewCellCol),
-                            useAbsolutePosition: false,
-                            rightpad: 0
-                        });
-                    },
-                    function(event) {
-                        Csw.nodeHoverOut();
-                    }
-                );
+                if (false !== cswPrivate.usePreview) {
+                    cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
+                    cswPublic.$.hover(
+                        function(event) {
+                            Csw.nodeHoverIn(event, {
+                                nodeid: cswPrivate.selectedNodeId,
+                                nodename: cswPrivate.selectedName,
+                                parentDiv: cswPrivate.table.cell(1, cswPrivate.previewCellCol),
+                                useAbsolutePosition: false,
+                                rightpad: 0
+                            });
+                        },
+                        function(event) {
+                            Csw.nodeHoverOut();
+                        }
+                    );
+                }
             } ());
 
             return cswPublic;

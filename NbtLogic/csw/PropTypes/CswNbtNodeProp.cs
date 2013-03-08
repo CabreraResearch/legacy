@@ -146,6 +146,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtMetaDataNodeTypeProp.getFieldType() ); }
         /// <summary>
+        /// Reference to FieldType Meta Data object for this property
+        /// </summary>
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue() { return ( _CswNbtMetaDataNodeTypeProp.getFieldTypeValue() ); }
+        /// <summary>
         /// If the property derives from an Object Class Property, the Object Class Property's Primary Key
         /// </summary>
         public Int32 ObjectClassPropId
@@ -162,11 +166,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                CswNbtMetaDataObjectClassProp OCP = _CswNbtMetaDataNodeTypeProp.getObjectClassProp();
-                if( OCP != null )
-                    return OCP.PropName;
-                else
-                    return string.Empty;
+                return _CswNbtMetaDataNodeTypeProp.getObjectClassPropName();
             }
         }
         //public bool IsPropRow( DataRow DataRow ) { return ( _CswNbtNodePropData.Row == DataRow ); }

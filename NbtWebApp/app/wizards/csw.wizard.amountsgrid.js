@@ -153,6 +153,7 @@
                                 }
                                 Csw.tryExec(cswPrivate.onChange, cswPublic.quantities());
                             };
+
                             var updateBarcodes = function (value) {
                                 var parseBarcodes = function (anArray) {
                                     if (anArray.length > cswPublic.rows[rowid].quantityValues.containerNo) {
@@ -164,6 +165,14 @@
                                 parseBarcodes(barcodeToParse);
                                 cswPublic.rows[rowid].quantityValues.barcodes = value;
                             };
+
+                            var onSizeChange = function () {
+                                updateSizeVals();
+                                cswPrivate.getQuantity();
+                                cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
+                                updateColumnVals(true);
+                            };
+
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
@@ -199,17 +208,14 @@
                                             objectClassName: 'MaterialClass',
                                             nodeId: cswPrivate.materialId
                                         },
-                                        onSelect: function () {
-                                            updateSizeVals();
-                                            cswPrivate.getQuantity();
-                                            cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
-                                            updateColumnVals(true);
+                                        onChange: function () {
+                                            onSizeChange();
                                         },
                                         onSuccess: function () {
-                                            updateSizeVals();
-                                            cswPrivate.getQuantity();
-                                            cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
-                                            updateColumnVals(true);
+                                            onSizeChange();
+                                        },
+                                        onAfterAdd: function () {
+                                            onSizeChange();
                                         },
                                         allowAdd: true
                                     });
@@ -221,14 +227,15 @@
                                     cswPrivate.quantity.onNumberChange = function () {
                                         updateColumnVals(false);
                                     };
-                                    cswPrivate.quantity.onQuantityChange = function() {
+                                    cswPrivate.quantity.onQuantityChange = function () {
                                         updateColumnVals(false);
                                     };
                                     cswPrivate.quantity.quantity = cswPrivate.quantity.value;
                                     cswPrivate.quantity.selectedNodeId = cswPrivate.quantity.nodeid;
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
-                                    
+                                    cswPrivate.quantity.isUnitReadOnly = true;
+
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
                                     break;

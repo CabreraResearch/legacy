@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
             // case 22512
             // also case 22557 - use the original name, not the new one
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[PropertyName.Name];
-            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule( NamePropWrapper.getFieldType().FieldType ).SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule( NamePropWrapper.getFieldTypeValue() ).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 // case 25444 - was it *really* modified?
                 CswNbtNodePropWrapper ActionPermissionsPropWrapper = Node.Properties[PropertyName.ActionPermissions];
-                string ActionPermissionsOriginalValueStr = ActionPermissionsPropWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleMultiList) _CswNbtResources.MetaData.getFieldTypeRule( ActionPermissionsPropWrapper.getFieldType().FieldType ) ).ValueSubField.Column );
+                string ActionPermissionsOriginalValueStr = ActionPermissionsPropWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleMultiList) _CswNbtResources.MetaData.getFieldTypeRule( ActionPermissionsPropWrapper.getFieldTypeValue() ) ).ValueSubField.Column );
                 CswCommaDelimitedString ActionPermissionsOriginalValue = new CswCommaDelimitedString();
                 ActionPermissionsOriginalValue.FromString( ActionPermissionsOriginalValueStr );
 
@@ -179,11 +179,15 @@ namespace ChemSW.Nbt.ObjClasses
 
             // case 22635 - prevent deleting the chemsw admin role
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[PropertyName.Name];
-            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule( NamePropWrapper.getFieldType().FieldType ).SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule( NamePropWrapper.getFieldTypeValue() ).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
             }
+
+            //case 28010 - delete all view assigned to this role
+            _CswNbtResources.ViewSelect.deleteViewsByRoleId( NodeId );
+
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()

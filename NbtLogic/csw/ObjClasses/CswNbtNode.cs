@@ -414,7 +414,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             public CswPrimaryKey NodeId = null;
 
-            [DataMember(IsRequired = true, EmitDefaultValue = true, Name = "NodeId" )]
+            [DataMember( IsRequired = true, EmitDefaultValue = true, Name = "NodeId" )]
             public string NodePk
             {
                 get
@@ -528,6 +528,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public bool IsTempModified = false;
         private bool _IsTemp = false;
         /// <summary>
         /// If true, this is a temporary node
@@ -537,6 +538,10 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _IsTemp; }
             set
             {
+                if( value != _IsTemp )
+                {
+                    IsTempModified = true;
+                }
                 _NodeModificationState = NodeModificationState.Modified;
                 if( false == value )
                 {
@@ -883,7 +888,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
                 {
-                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.getFieldType().FieldType == SourceProp.getFieldType().FieldType )
+                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.getFieldTypeValue() == SourceProp.getFieldTypeValue() )
                     {
                         ThisProp.copy( SourceProp );
                     } // if( ThisProp.PropName == SourceProp.PropName && ThisProp.FieldType == SourceProp.FieldType )
@@ -916,7 +921,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( Prop != null )
                         {
-                            CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldType().FieldType;
+                            CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
                             if( FT == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                             {
                                 Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
