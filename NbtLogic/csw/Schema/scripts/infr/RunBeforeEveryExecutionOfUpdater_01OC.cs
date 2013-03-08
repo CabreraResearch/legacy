@@ -169,8 +169,6 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 29039
 
-        #endregion Yorick Metods
-
         /// <summary>
         /// The actual update call
         /// </summary>
