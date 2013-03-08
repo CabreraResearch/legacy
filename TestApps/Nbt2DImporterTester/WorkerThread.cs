@@ -22,6 +22,9 @@ namespace Nbt2DImporterTester
 
         public delegate void getCountsFinishEvent( Int32 PendingRows, Int32 ErrorRows );
         public getCountsFinishEvent OnGetCountsFinish;
+        
+        public delegate void importFinishEvent();
+        public importFinishEvent OnImportFinish;
 
         public WorkerThread()
         {
@@ -65,7 +68,9 @@ namespace Nbt2DImporterTester
             
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
+            
             OnFinish();
+            OnImportFinish();
         }
 
         public delegate void readBindingsHandler( string BindingsFilePath );

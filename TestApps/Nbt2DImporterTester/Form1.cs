@@ -19,13 +19,17 @@ namespace Nbt2DImporterTester
             _WorkerThread.OnFinish = finish;
             _WorkerThread.OnStoreDataFinish = StoreDataFinished;
             _WorkerThread.OnGetCountsFinish = GetCountsFinished;
+            _WorkerThread.OnImportFinish = ImportFinish;
         }
 
         #region NON-UI THREAD 
 
         private void handleMessage( string Msg )
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] { Msg } );
+            if( cbVerbose.Checked )
+            {
+                txtLog.BeginInvoke( new logHandler( log ), new object[] {Msg} );
+            }
         }
         private void handleError( string Msg )
         {
@@ -35,17 +39,25 @@ namespace Nbt2DImporterTester
         private void finish()
         {
             txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished." } );
-            button1.BeginInvoke( new setButtonsEnabledHandler( setButtonsEnabled ), new object[] { true } );
+            btnLoadData.BeginInvoke( new setButtonsEnabledHandler( setButtonsEnabled ), new object[] { true } );
         }
 
         private void StoreDataFinished( StringCollection ImportDataTableNames )
         {
             cbxImportDataTableName.BeginInvoke( new setImportDataTableNameHandler( setImportDataTableName ), new object[] { ImportDataTableNames } );
         }
-        
+
         private void GetCountsFinished( Int32 PendingCount, Int32 ErrorCount )
         {
-            lblPending.BeginInvoke( new setCountsHandler( setCounts ), new object[] {PendingCount, ErrorCount} );
+            lblPending.BeginInvoke( new setCountsHandler( setCounts ), new object[] { PendingCount, ErrorCount } );
+        }
+
+        private void ImportFinish()
+        {
+            if( cbContinuous.Checked )
+            {
+                btnRunImport.BeginInvoke( new buttonClickHandler( btnRunImport_Click ), new object[] {null, null} );
+            }
         }
 
         #endregion NON-UI THREAD
@@ -59,9 +71,13 @@ namespace Nbt2DImporterTester
         private delegate void setButtonsEnabledHandler( bool enabled );
         private void setButtonsEnabled( bool enabled )
         {
-            button1.Enabled = enabled;
-            button2.Enabled = enabled;
-            button3.Enabled = enabled;
+            btnLoadData.Enabled = enabled;
+            btnRunImport.Enabled = enabled;
+            btnReadBindings.Enabled = enabled;
+            if( string.Empty != cbxImportDataTableName.Text )
+            {
+                btnRefreshCounts.Enabled = enabled;
+            }
         }
 
         private delegate void setImportDataTableNameHandler( StringCollection ImportDataTableNames );
@@ -96,14 +112,14 @@ namespace Nbt2DImporterTester
             }
         } // setCounts()
 
-        private void button1_Click( object sender, EventArgs e )
+        private void btnLoadData_Click( object sender, EventArgs e )
         {
             setButtonsEnabled( false );
             log( "Storing data..." );
             ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtDataFilePath.Text, null, null );
         }
 
-        private void button2_Click( object sender, EventArgs e )
+        private void btnRunImport_Click( object sender, EventArgs e )
         {
             setButtonsEnabled( false );
             log( "Importing rows..." );
@@ -115,7 +131,7 @@ namespace Nbt2DImporterTester
             ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( cbxImportDataTableName.Text, rows, null, null );
         }
 
-        private void button3_Click( object sender, EventArgs e )
+        private void btnReadBindings_Click( object sender, EventArgs e )
         {
             setButtonsEnabled( false );
             log( "Reading bindings..." );
@@ -124,6 +140,14 @@ namespace Nbt2DImporterTester
 
         private void cbxImportDataTableName_TextChanged( object sender, EventArgs e )
         {
+            log( "Refreshing row counts..." );
+            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( cbxImportDataTableName.Text, null, null );
+        }
+
+        private delegate void buttonClickHandler( object sender, EventArgs e );
+        private void btnRefreshCounts_Click( object sender, EventArgs e )
+        {
+            log( "Refreshing row counts..." );
             ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( cbxImportDataTableName.Text, null, null );
         }
     }

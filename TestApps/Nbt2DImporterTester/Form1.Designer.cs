@@ -28,15 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            this.btnLoadData = new System.Windows.Forms.Button();
+            this.btnRunImport = new System.Windows.Forms.Button();
             this.txtDataFilePath = new System.Windows.Forms.TextBox();
             this.txtBindingsFilePath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtLog = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnReadBindings = new System.Windows.Forms.Button();
             this.txtRows = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cbxImportDataTableName = new System.Windows.Forms.ComboBox();
@@ -44,29 +45,32 @@
             this.lblPending = new System.Windows.Forms.Label();
             this.lblError = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.cbVerbose = new System.Windows.Forms.CheckBox();
+            this.cbContinuous = new System.Windows.Forms.CheckBox();
+            this.btnRefreshCounts = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button1
+            // btnLoadData
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(15, 139);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(90, 27);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Load Data";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnLoadData.Enabled = false;
+            this.btnLoadData.Location = new System.Drawing.Point(15, 139);
+            this.btnLoadData.Name = "btnLoadData";
+            this.btnLoadData.Size = new System.Drawing.Size(90, 27);
+            this.btnLoadData.TabIndex = 0;
+            this.btnLoadData.Text = "Load Data";
+            this.btnLoadData.UseVisualStyleBackColor = true;
+            this.btnLoadData.Click += new System.EventHandler( this.btnLoadData_Click );
             // 
-            // button2
+            // btnRunImport
             // 
-            this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(15, 238);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(90, 27);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Run Import";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnRunImport.Enabled = false;
+            this.btnRunImport.Location = new System.Drawing.Point(15, 238);
+            this.btnRunImport.Name = "btnRunImport";
+            this.btnRunImport.Size = new System.Drawing.Size(90, 27);
+            this.btnRunImport.TabIndex = 1;
+            this.btnRunImport.Text = "Run Import";
+            this.btnRunImport.UseVisualStyleBackColor = true;
+            this.btnRunImport.Click += new System.EventHandler( this.btnRunImport_Click );
             // 
             // txtDataFilePath
             // 
@@ -120,18 +124,18 @@
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(362, 326);
+            this.txtLog.Size = new System.Drawing.Size(482, 300);
             this.txtLog.TabIndex = 8;
             // 
-            // button3
+            // btnReadBindings
             // 
-            this.button3.Location = new System.Drawing.Point(15, 50);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(90, 27);
-            this.button3.TabIndex = 9;
-            this.button3.Text = "Read Bindings";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnReadBindings.Location = new System.Drawing.Point(15, 50);
+            this.btnReadBindings.Name = "btnReadBindings";
+            this.btnReadBindings.Size = new System.Drawing.Size(90, 27);
+            this.btnReadBindings.TabIndex = 9;
+            this.btnReadBindings.Text = "Read Bindings";
+            this.btnReadBindings.UseVisualStyleBackColor = true;
+            this.btnReadBindings.Click += new System.EventHandler( this.btnReadBindings_Click );
             // 
             // txtRows
             // 
@@ -157,7 +161,7 @@
             this.cbxImportDataTableName.Name = "cbxImportDataTableName";
             this.cbxImportDataTableName.Size = new System.Drawing.Size(384, 21);
             this.cbxImportDataTableName.TabIndex = 12;
-            this.cbxImportDataTableName.TextChanged += new System.EventHandler( this.cbxImportDataTableName_TextChanged );
+            this.cbxImportDataTableName.TextChanged += new System.EventHandler(this.cbxImportDataTableName_TextChanged);
             // 
             // label5
             // 
@@ -195,11 +199,48 @@
             this.label8.TabIndex = 15;
             this.label8.Text = "Error Rows:";
             // 
+            // cbVerbose
+            // 
+            this.cbVerbose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbVerbose.AutoSize = true;
+            this.cbVerbose.Checked = true;
+            this.cbVerbose.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbVerbose.Location = new System.Drawing.Point(819, 318);
+            this.cbVerbose.Name = "cbVerbose";
+            this.cbVerbose.Size = new System.Drawing.Size(65, 17);
+            this.cbVerbose.TabIndex = 17;
+            this.cbVerbose.Text = "Verbose";
+            this.cbVerbose.UseVisualStyleBackColor = true;
+            // 
+            // cbContinuous
+            // 
+            this.cbContinuous.AutoSize = true;
+            this.cbContinuous.Location = new System.Drawing.Point(248, 244);
+            this.cbContinuous.Name = "cbContinuous";
+            this.cbContinuous.Size = new System.Drawing.Size(79, 17);
+            this.cbContinuous.TabIndex = 18;
+            this.cbContinuous.Text = "Continuous";
+            this.cbContinuous.UseVisualStyleBackColor = true;
+            // 
+            // btnRefreshCounts
+            // 
+            this.btnRefreshCounts.Enabled = false;
+            this.btnRefreshCounts.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshCounts.Image")));
+            this.btnRefreshCounts.Location = new System.Drawing.Point(248, 279);
+            this.btnRefreshCounts.Name = "btnRefreshCounts";
+            this.btnRefreshCounts.Size = new System.Drawing.Size(41, 35);
+            this.btnRefreshCounts.TabIndex = 19;
+            this.btnRefreshCounts.UseVisualStyleBackColor = true;
+            this.btnRefreshCounts.Click += new System.EventHandler( this.btnRefreshCounts_Click );
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(776, 350);
+            this.ClientSize = new System.Drawing.Size(896, 340);
+            this.Controls.Add(this.btnRefreshCounts);
+            this.Controls.Add(this.cbContinuous);
+            this.Controls.Add(this.cbVerbose);
             this.Controls.Add(this.lblError);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.lblPending);
@@ -207,15 +248,15 @@
             this.Controls.Add(this.cbxImportDataTableName);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtRows);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnReadBindings);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtBindingsFilePath);
             this.Controls.Add(this.txtDataFilePath);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnRunImport);
+            this.Controls.Add(this.btnLoadData);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -225,15 +266,15 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnLoadData;
+        private System.Windows.Forms.Button btnRunImport;
         private System.Windows.Forms.TextBox txtDataFilePath;
         private System.Windows.Forms.TextBox txtBindingsFilePath;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtLog;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnReadBindings;
         private System.Windows.Forms.TextBox txtRows;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cbxImportDataTableName;
@@ -241,6 +282,9 @@
         private System.Windows.Forms.Label lblPending;
         private System.Windows.Forms.Label lblError;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.CheckBox cbVerbose;
+        private System.Windows.Forms.CheckBox cbContinuous;
+        private System.Windows.Forms.Button btnRefreshCounts;
     }
 }
 
