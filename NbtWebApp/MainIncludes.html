@@ -1,108 +1,61 @@
-<script type="text/javascript" src="vendor/modernizr.custom.06564.js"></script>
+<script type="text/javascript" src="Scripts/modernizr-2.6.2.js"></script>
+<script type="text/javascript" src="//d3eyf2cx8mbems.cloudfront.net/js/loggly-0.1.0.js"></script>
 <script type="text/javascript">
-    Modernizr.load([{
-        load: '//d3eyf2cx8mbems.cloudfront.net/js/loggly-0.1.0.js',
-        callback: function () {
-            if (!window.loggly) {
-                Modernizr.load('vendor/loggly-0.1.0.js');
-            }
-        }
-    }]);
-
-    if (undefined === window.JSON ||
-        null === window.JSON ||
-        false === window.JSON.hasOwnProperty('parse') ||
-        false === window.JSON.hasOwnProperty('stringify')) {
-
-        Modernizr.load([{
-            load: '//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js',
-            callback: function () {
-                if (undefined === window.JSON ||
-                    null === window.JSON ||
-                    false === window.JSON.hasOwnProperty('parse') ||
-                    false === window.JSON.hasOwnProperty('stringify')) {
-                    Modernizr.load('vendor/json2.min.js');
-                }
-            }
-        }]);
+    if (typeof loggly === 'undefined' || typeof window.loggly === 'undefined') {
+        document.write('<script src="vendor/loggly-0.1.0.min.js">\x3C/script>');
     }
+</script>  
 
-</script>
-<!--[if lte IE 8]>
- <script type="text/javascript" 
-     src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+<script src="Scripts/es5-shim.min.js" type="text/javascript"></script>
+<script src="vendor/es5-sham.min.js" type="text/javascript"></script>
+<script src="vendor/es6-shim.min.js" type="text/javascript"></script>
 
-    <style>
-     .chromeFrameInstallDefaultStyle {
-       
-       border: 1px solid blue;
-     }
-    </style>
-    
-    <script>
-        // The conditional ensures that this code will only execute in IE,
-        // Therefore we can use the IE-specific attachEvent without worry
-        window.attachEvent("onload", function () {
-            CFInstall.check({
-                //mode: "popup", // the default
-                //url: "http://google.com/chromeframe",
-                preventPrompt: true,
-                onmissing: function() {
-                    if(window.confirm("You are using an unsupported version of Internet Explorer. To improve the speed and performance of this application, click OK to install Chrome Frame.")) {
-                        window.open("http://google.com/chromeframe");
-                    } else {
-                        window.internetExplorerVersionNo = 8;
-                    }
-                }
-            });
-        });
-    </script>
+<script type="text/javascript" src="Scripts/mousetrap.min.js"></script>
 
-    <script>
-</script>
-<![endif]-->
-
-<!--[if IE 9]>
-<script>
-window.internetExplorerVersionNo = 9;
-</script>
-<![endif]-->
-
-<!-- http://www.cdnjs.com -->
-<!-- <script src="Scripts/es5-shim.js" type="text/javascript"></script> -->
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/1.2.4/es5-shim.min.js"></script>
-
-<!-- <link rel="stylesheet" type="text/css" href="Content/themes/base/minified/jquery-ui.min.css" /> -->
-<link rel="stylesheet" type="text/css" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/cupertino/jquery-ui.css" />
-
-<link defer rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.css" />
-<link defer rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.filter.css" />
-
-<script type="text/javascript" src="vendor/mousetrap.min.js"></script>
-
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="vendor/jquery-1.7.1.min.js">\x3C/script>')</script>
-
-<script type="text/javascript" src="vendor/harmony-collections.browser.min.js"></script>
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+    if (typeof jQuery === 'undefined' || typeof window.jQuery === 'undefined') {
+        document.write('<script src="Scripts/jquery-1.7.1.min.js">\x3C/script>');
+    }
+</script>  
 
 <script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"></script>
-<script>window.jQuery.ui || document.write('<script src="vendor/jquery-ui.min.js">\x3C/script>')</script>
+<script type="text/javascript">
+    if (typeof jQuery.ui === 'undefined' || typeof window.jQuery.ui === 'undefined') {
+        document.write('<script src="Scripts/jquery-ui-1.8.19.min.js">\x3C/script>');
+        document.write('<link rel="stylesheet" type="text/css" href="Content/themes/cupertino/jquery-ui-1.8.19.css" />');
+    }
+</script> 
 
-<script defer type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
-<script>window.jQuery.validate || document.write('<script src="vendor/jquery.validate.min.js">\x3C/script>')</script>
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.0/jquery.validate.min.js"></script>
+<script type="text/javascript">
+    if (typeof jQuery.validator === 'undefined' || typeof window.jQuery.validator === 'undefined') {
+        document.write('<script src="Scripts/jquery.validate.min.js">\x3C/script>');
+    }
+</script> 
+
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.0/additional-methods.min.js"></script>
+<script type="text/javascript">
+    if (typeof jQuery.validator.maxWords === 'undefined' || typeof window.jQuery.validator.maxWords === 'undefined') {
+        document.write('<script src="Scripts/additional-methods.min.js">\x3C/script>');
+    }
+</script> 
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
+<script type="text/javascript">
+    if (typeof jQuery.cookie === 'undefined' || typeof window.jQuery.validator.cookie === 'undefined') {
+        document.write('<script src="Scripts/jquery.cookie.js">\x3C/script>');
+    }
+</script> 
 
 <script defer type="text/javascript" src="vendor/jsTree.v.1.0rc2/jquery.jstree.js"></script>
-
-<script type="text/javascript" src="vendor/jquery.cookie.min.js"></script>
-
 <script defer type="text/javascript" src="vendor/multiselect/jquery.multiselect.min.js"></script>
 <script defer type="text/javascript" src="vendor/multiselect/jquery.multiselect.filter.min.js"></script>
-
 <script defer type="text/javascript" src="vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js"></script>
 <script defer type="text/javascript" src="vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js"></script>
 
 <!-- ExtJS -->
-<script language="javascript">
+<script type="text/javascript">
 
     // from: http://stackoverflow.com/questions/6435833/how-to-scope-the-reset-css-so-that-is-applied-to-ext-components-using-scopereset
     // Here we define Ext for the first time
@@ -116,12 +69,7 @@ window.internetExplorerVersionNo = 9;
 
 <script type="text/javascript" charset="utf-8" src="vendor/extjs-4.1.0/ext-all.js"></script>
 
-
-<link rel="stylesheet" type="text/css" href="vendor/extjs-4.1.0/resources/css/ext-all-scoped.css">
-<link rel="stylesheet" type="text/css" href="vendor/extjs-4.1.0/ux/TabScrollerMenu.css">
-<link rel="stylesheet" type="text/css" href="vendor/extjs-4.1.0/ux/css/CheckHeader.css">
-
-<script language="javascript">
+<script type="text/javascript">
 
     window.Ext.Loader.setConfig({ enabled: true });
 

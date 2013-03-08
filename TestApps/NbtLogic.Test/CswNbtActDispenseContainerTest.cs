@@ -8,7 +8,7 @@ using ChemSW.Nbt.ObjClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSw.Nbt.Test
+namespace ChemSW.Nbt.Test
 {
     [TestClass]
     public class CswNbtActDispenseContainerTest
