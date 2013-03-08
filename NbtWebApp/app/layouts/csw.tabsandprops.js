@@ -596,12 +596,6 @@
                 return nodekey;
             };
 
-            //cswPrivate.enableSaveBtn = function () {
-            //    if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
-            //        cswPrivate.saveBtn.enable();
-            //    }
-            //};
-
             cswPublic.getPropJson = function () {
                 cswPrivate.updatePropJsonFromLayoutTable();
                 return cswPrivate.globalState.propertyData;
@@ -817,19 +811,6 @@
                         Csw.eachRecursive(cswPrivate.globalState.propertyData, updOnSuccess, false);
                     }
 
-                    //if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Preview &&
-                    //    cswPrivate.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup &&
-                    //    cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
-                    //    Csw.bool(cswPrivate.tabState.showSaveButton)) {
-
-                    //    cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
-                    //        name: 'SaveTab',
-                    //        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
-                    //        enabledText: 'Save Changes',
-                    //        disabledText: 'Saving...',
-                    //        onClick: function () { cswPublic.save(tabContentDiv, tabid); }
-                    //    });
-                    //}
                     cswPrivate.handleProperties(null, tabid, false);
                     if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
                             false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
@@ -943,13 +924,6 @@
                 tabPropData = tabPropData || cswPrivate.globalState.propertyData;
                 Csw.eachRecursive(tabPropData, handleSuccess, false);
 
-                //if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
-                //    if (cswPrivate.tabState.Config || (cswPrivate.atLeastOne.Saveable === false && cswPrivate.tabState.EditMode != Csw.enums.editMode.Add)) {
-                //        cswPrivate.saveBtn.hide();
-                //    } else {
-                //        cswPrivate.saveBtn.show();
-                //    }
-                //}
                 cswPrivate.onRenderProps();
             }; // _handleProperties()
 
@@ -1061,7 +1035,6 @@
                         fieldtype: propData.fieldtype,
                         tabState: tabState,
                         propid: propData.id,
-                        //saveBtn: cswPrivate.saveBtn,
                         propData: propData,
                         Required: Csw.bool(propData.required),
                         onReload: function (afterReload) {
@@ -1143,7 +1116,6 @@
                 /// <param name="$tabcontentdiv" type="JQuery"> A tab element </param>
                 /// <param name="tabid" type="String"> TabId </param>
                 /// <param name="configMode" type="Boolean"> True if config mode </param>
-                /// <param name="$savebtn" type="JQuery"> A save button </param>
                 /// <returns type="void"></returns>
                 'use strict';
 
@@ -1319,16 +1291,10 @@
                             }
                         }, // success
                         error: function (errorData) {
-                            cswPrivate.enableSaveBtn();
                             Csw.tryExec(cswPrivate.onSaveError, errorData);
                         }
                     }); // ajax
                 } // if(cswPrivate.isValid())
-                else {
-                    //cswPrivate.enableSaveBtn();
-                }
-
-                //return ret;
             }); // Save()
 
             //#endregion commit
