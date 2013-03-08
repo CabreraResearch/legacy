@@ -28,6 +28,7 @@
                 onSessions: null, // function () { },
                 onSubscriptions: null,
                 onImpersonate: null,
+                onLoginData: null,
                 nodeTreeCheck: null,
                 Multi: false
             };
@@ -273,6 +274,12 @@
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
                                     Csw.tryExec(cswPrivate.onSubmitRequest);
+                                }
+                                break;
+                            case 'Login_Data':
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onLoginData);
                                 }
                                 break;
                             default:

@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Encryption;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 
@@ -16,9 +17,6 @@ namespace ChemSW.Nbt.Security
         private ICswUser _User = null;
         public ICswUser getUser( string UserName )
         {
-            //if( _User == null || _User.Username != UserName )
-            //    _User = (CswNbtObjClassUser) _CswNbtResources.Nodes.makeUserNodeFromUsername( UserName, false ) ) as ICswUser;    // can't require permissions if we are fetching the current user context
-            //return _User;
             return new CswNbtUser( _CswNbtResources, UserName );
         }
 
@@ -27,32 +25,40 @@ namespace ChemSW.Nbt.Security
             AuthenticationStatus ReturnVal = AuthenticationStatus.Failed;
             _User = null;
 
-            CswNbtNode UserAsNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, false );   // can't require permissions if we aren't authenticated yet
-            if( UserAsNode != null )
+            LoginData.Login LoginRecord = new LoginData.Login
             {
-                CswNbtObjClassUser UserObjClass = (CswNbtObjClassUser) UserAsNode;
-                if( false == UserObjClass.IsArchived() )
+                Username = username,
+                IPAddress = IPAddress,
+                LoginDate = DateTime.Now.ToString(),
+                LoginStatus = "Failed",
+                FailureReason = "",
+                FailedLoginCount = 0
+            };
+
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, false );   // can't require permissions if we aren't authenticated yet
+            if( UserNode != null )
+            {
+                if( false == UserNode.IsArchived() )
                 {
-                    if( false == UserObjClass.IsAccountLocked() )
+                    if( false == UserNode.IsAccountLocked() )
                     {
                         string encryptedpassword = CswEncryption.getMd5Hash( password );
-                        if( UserObjClass.EncryptedPassword == encryptedpassword )
+                        if( UserNode.EncryptedPassword == encryptedpassword )
                         {
-                            UserObjClass.clearFailedLoginCount();
-                            UserObjClass.LastLogin.DateTimeValue = DateTime.Now;
-                            _User = UserObjClass;
+                            UserNode.clearFailedLoginCount();
+                            UserNode.LastLogin.DateTimeValue = DateTime.Now;
+                            _User = UserNode;
                             ReturnVal = AuthenticationStatus.Authenticated;
+                            LoginRecord.LoginStatus = "Success";
                         }
                         else
                         {
-                            UserObjClass.incFailedLoginCount();
-                            UserObjClass = null;
+                            UserNode.incFailedLoginCount();
                             ReturnVal = AuthenticationStatus.Failed;
                         }
-
-                        //bz # 6555
-                        UserAsNode.postChanges( false );
-                    } // if (!User.IsAccountLocked())
+                        LoginRecord.FailedLoginCount = UserNode.getFailedLoginCount();
+                        UserNode.postChanges( false );
+                    }
                     else
                     {
                         ReturnVal = AuthenticationStatus.Locked;
@@ -62,14 +68,18 @@ namespace ChemSW.Nbt.Security
                 {
                     ReturnVal = AuthenticationStatus.Archived;
                 }
-
-            } // if (User != null)
+                LoginRecord.setFailureReason( ReturnVal );
+            }
+            else
+            {
+                LoginRecord.setFailureReason( AuthenticationStatus.Unknown );
+            }
+            
+            CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );
+            _CswNbtActLoginData.postLoginData( LoginRecord );
 
             AuthenticatedUser = _User;
             return ( ReturnVal );
-
         } // AuthenticateWithSchema()
-
     }//CswNbtAuthenticator
-
 }//ChemSW.Nbt

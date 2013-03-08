@@ -121,8 +121,9 @@
             onloginfail: function () {
                 Csw.clientSession.finishLogout();
             },
-            success: null,
-            error: null,
+            success: function () { },
+            error: function () { },
+            complete: function () {},
             overrideError: false,
             async: true,
             watchGlobal: true,

@@ -1,10 +1,8 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
@@ -107,21 +105,13 @@ namespace ChemSW.Nbt.Schema
         #region ASPEN Methods
         
         #endregion ASPEN Methods
-
-        /// <summary>
-        /// The actual update call
-        /// </summary>
-        public override void update()
+        
+        #region Case 28671
+        
+        private void _makeUnCode( CswDeveloper Dev, Int32 Case )
         {
-            // This script is for adding object class properties, 
-            // which often become required by other business logic and can cause prior scripts to fail.
+            _acceptBlame( Dev, Case );
 
-            #region YORICK
-
-            //YORICK OC changes go here.
-
-            //case 28671
-            _acceptBlame( CswDeveloper.PG, 28671 );
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
 
             if( null != MaterialOC )
@@ -138,19 +128,63 @@ namespace ChemSW.Nbt.Schema
 
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
-                    {
-                        PropName = CswNbtObjClassMaterial.PropertyName.UNCode,
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                        IsRequired = false
-                    } );
+                {
+                    PropName = CswNbtObjClassMaterial.PropertyName.UNCode,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsRequired = false
+                } );
 
                 //now add new prop which is of type text
 
             }//if we have a material oc
 
             _resetBlame();
+        }
 
+        #endregion Case 28671
+
+        #region Case 29039
+
+        private void _correctGeneratorTargetTypeProps( CswDeveloper Dev, Int32 Case )
+        {
+            _acceptBlame( Dev, Case );
+
+            CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClassProp TargetTypeOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.TargetType );
+            
+            //This prop is already server managed, but I think this makes the intention explicit for the reader
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+            
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, false );
+
+            //To prevent the various behaviors associated with changing Owner, make it readonly
+            CswNbtMetaDataObjectClassProp OwnerOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( OwnerOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+
+            _resetBlame();
+        }
+
+        #endregion Case 29039
+
+        /// <summary>
+        /// The actual update call
+        /// </summary>
+        public override void update()
+        {
+            // This script is for adding object class properties, 
+            // which often become required by other business logic and can cause prior scripts to fail.
+
+            #region YORICK
+
+            //YORICK OC changes go here.
+
+            
+            _makeUnCode( CswDeveloper.PG, 28671 );
             _updateUserFormats( CswDeveloper.CF, 26574 );
+            _correctGeneratorTargetTypeProps( CswDeveloper.CF, 29039 );
 
             #endregion YORICK
 

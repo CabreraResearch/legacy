@@ -132,6 +132,7 @@
             };
 
             cswPrivate.enableDrop = function (cell) {
+                if (cswPublic.isConfig()) {
                 var cellObj;
                 if (cell) {
                     cellObj = cell;
@@ -155,6 +156,7 @@
                     }, function (ev, dd) {
                         cswPrivate.onHoverOut(ev, dd, $(this));
                     });
+                }
             };
 
             cswPrivate.onCreateCell = function (cell, realRow, realCol) {

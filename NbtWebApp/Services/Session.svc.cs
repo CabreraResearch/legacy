@@ -3,10 +3,9 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.WebServices;
-using ChemSW.Session;
 using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
@@ -21,7 +20,7 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
 
         /// <summary>
-        /// 
+        /// Initiate a new session
         /// </summary>
         [OperationContract]
         [WebInvoke( Method = "POST" )]
@@ -44,21 +43,22 @@ namespace NbtWebApp
         }
 
         /// <summary>
-        /// 
+        /// Terminate the current session
         /// </summary>
         [OperationContract]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
-        public void End()
+        public bool End()
         {
             CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
             Resource.initResources();
             Resource.deauthenticate();
             Resource.deInitResources();
+            return true;
         }
 
         /// <summary>
-        /// 
+        /// Reset a user's password
         /// </summary>
         [OperationContract]
         [WebInvoke( Method = "POST" )]
@@ -78,7 +78,23 @@ namespace NbtWebApp
 
             InitDriverType.run();
             return ( Ret );
+        }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get all login data for the current accessid in the given timeframe" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceSession.LoginDataReturn getLoginData( LoginData.LoginDataRequest Request )
+        {
+            CswNbtWebServiceSession.LoginDataReturn Ret = new CswNbtWebServiceSession.LoginDataReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceSession.LoginDataReturn, LoginData.LoginDataRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceSession.getLoginData,
+                ParamObj: Request
+                );
+            SvcDriver.run();
+            return ( Ret );
         }
     }
 }

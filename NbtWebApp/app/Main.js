@@ -210,6 +210,9 @@ window.initMain = window.initMain || function (undefined) {
                     onSubscriptions: function() {
                         Csw.main.handleAction({ 'actionname': 'Subscriptions' });
                     },
+                    onLoginData: function () {
+                        Csw.main.handleAction({ 'actionname': 'Login_Data' });
+                    },
                     onImpersonate: function(userid, username) {
                         handleImpersonation(userid, username, function() {
                             Csw.goHome();
@@ -651,7 +654,8 @@ window.initMain = window.initMain || function (undefined) {
                             NodeTypeId: o.nodetypeid,
                             PropIdAttr: o.propid,
                             LimitMenuTo: o.limitMenuTo,
-                            ReadOnly: o.readonly
+                            ReadOnly: o.readonly,
+                            NodeId: o.nodeid
                         }
                     },
                     onAlterNode: function(nodeid, nodekey) {
@@ -1380,11 +1384,16 @@ window.initMain = window.initMain || function (undefined) {
                                 refreshSelected();
                             }
                         });
-                    break;
-                    //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
-                    //				break;                                                                                                 
-                    //			case 'Inspection_Design':                                                                                                 
-                    //				break;                                                                                                 
+                        break;
+                    case 'login data':
+                        Csw.actions.logindata(Csw.main.centerTopDiv, {
+                            onCancel: function () {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
+                        break;
                     case 'quotas':
                         Csw.actions.quotas(Csw.main.centerTopDiv, {
                             onQuotaChange: function() {

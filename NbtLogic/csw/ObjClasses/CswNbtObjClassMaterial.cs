@@ -149,6 +149,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswNbtActionName.Material_Approval ), SaveToDb: false );
             _toggleButtonVisibility();
             PhysicalState.SetOnPropChange( _physicalStatePropChangeHandler );
             _CswNbtObjClassDefault.afterPopulateProps();
