@@ -32,7 +32,7 @@
                         var regex_name = '';
                         if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
                             regex_name = 'text_regex_' + cswPublic.data.propid;
-                        } 
+                        }
 
                         cswPublic.control = cswPrivate.parent.input({
                             name: cswPublic.data.name,
@@ -40,7 +40,7 @@
                             value: cswPrivate.value,
                             size: cswPrivate.size,
                             cssclass: 'textinput ' + regex_name,
-                            onChange: function () {
+                            onChange: function() {
                                 cswPrivate.value = cswPublic.control.val();
                                 Csw.tryExec(cswPublic.data.onChange, cswPrivate.value);
                                 cswPublic.data.onPropChange({ text: cswPrivate.value });
@@ -50,11 +50,12 @@
                         });
 
                         cswPublic.control.required(cswPublic.data.isRequired());
-//                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
-                         cswPublic.control.clickOnEnter(function () {
+                        //                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
+                        cswPublic.control.clickOnEnter(function() {
                             cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
                         });
-
+                    }
+                    
                     if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
 
                         var Message = "invalid value";
@@ -67,8 +68,6 @@
                             return (true == regex_obj.test(cswPrivate.value));
                         }, Message);
                     }
-
-
                 };
 
                 //Bind the callback to the render event
