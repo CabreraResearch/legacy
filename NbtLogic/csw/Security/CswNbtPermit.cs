@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Security
 
         private Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo> _PermitInfoItems = new Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo>();
 
-        public class CswNbtPermitInfoKey: IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
+        public class CswNbtPermitInfoKey : IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
         {
             private readonly Int32 HashMultiplier = 1;
             public CswNbtPermitInfoKey( CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn )
@@ -470,7 +470,7 @@ namespace ChemSW.Nbt.Security
             return ( ret );
 
         } // _CanNodeTypeImpl()
-        
+
         /// <summary>
         /// Determines if the User has permission on this Tab (and only this Tab)
         /// </summary>
@@ -999,7 +999,7 @@ namespace ChemSW.Nbt.Security
         public bool can( CswNbtAction Action, CswNbtObjClassRole Role )
         {
             bool ret = false;
-            if( Role != null )
+            if( null != Role && null != Action )
             {
                 ret = Role.ActionPermissions.CheckValue( CswNbtObjClassRole.MakeActionPermissionValue( Action ) );
             }
