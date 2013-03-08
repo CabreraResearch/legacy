@@ -621,7 +621,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true, IncludeHiddenNodes: false );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true, IncludeHiddenNodes: true );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 3", Timer );
 
@@ -660,13 +660,13 @@ namespace ChemSW.Nbt
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.ViewName = "CswNbtNodes.makeUserNodeFromUsername(" + RoleName + ")";
+            View.ViewName = "CswNbtNodes.makeRoleNodeFromRoleName(" + RoleName + ")";
             CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( Role_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( RoleRelationship, RoleName_ObjectClassProp );
             CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, RoleName, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );//third flase == include hiidden nodes
 
             // get user node
             UserTree.goToRoot();
