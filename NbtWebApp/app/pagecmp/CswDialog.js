@@ -23,7 +23,7 @@
                 windowHeight: function () {
                     return document.documentElement.clientHeight;
                 }
-            };c
+            };
         };
     } ());
     var cswPrivate = cswPrivateInit();
