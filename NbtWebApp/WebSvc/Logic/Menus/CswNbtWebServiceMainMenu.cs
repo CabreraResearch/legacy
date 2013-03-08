@@ -83,6 +83,10 @@ namespace ChemSW.Nbt.WebServices
             if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
                 CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( SafeNodeKey );
+                if( null == NbtNodeKey.NodeId )
+                {
+                    NbtNodeKey.NodeId = CswConvert.ToPrimaryKey( SafeNodeKey );
+                }
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {
@@ -297,9 +301,10 @@ namespace ChemSW.Nbt.WebServices
                     _CswNbtResources.Permit.can( CswNbtActionName.Multi_Edit ) &&
                     // Per discussion with David, for the short term eliminate the need to validate the selection of nodes across different nodetypes in Grid views.
                     // Case 21701: for Grid Properties, we need to look one level deeper
+                    // Case 29032: furthermore (for Grids), we need to exclude ObjectClass relationships (which can also produce the multi-nodetype no-no
                     ( View.ViewMode != NbtViewRenderingMode.Grid ||
-                    ( View.Root.ChildRelationships.Count == 1 &&
-                    ( View.Visibility != NbtViewVisibility.Property || View.Root.ChildRelationships[0].ChildRelationships.Count == 1 ) ) )
+                    ( ( View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) && 
+                    ( View.Visibility != NbtViewVisibility.Property || ( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) ) ) )
                     )
                 {
                     MoreObj["Multi-Edit"] = new JObject();

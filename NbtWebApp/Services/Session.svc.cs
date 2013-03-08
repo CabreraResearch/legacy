@@ -4,9 +4,7 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
-using ChemSW.Session;
 using ChemSW.WebSvc;
-using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp
 {
@@ -49,12 +47,13 @@ namespace NbtWebApp
         [OperationContract]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
-        public void End()
+        public bool End()
         {
             CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
             Resource.initResources();
             Resource.deauthenticate();
             Resource.deInitResources();
+            return true;
         }
 
         /// <summary>

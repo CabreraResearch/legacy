@@ -92,6 +92,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.mocks">
+      <HintPath>..\..\packages\NUnit.Mocks.2.6.2\lib\nunit.mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -106,6 +109,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CswNbtObjClassReportTest.cs" />
+    <Compile Include="csw\Security\CswPermit_UnitTest.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdResourcesMgr.cs" />
     <Compile Include="Reconciliation\CswNbtBatchOpContainerReconciliationActionsTest.cs" />
     <Compile Include="Reconciliation\CswNbtActionReconciliationTest.cs" />
     <Compile Include="CswNbtNodePropMultiListTest.cs" />
@@ -139,6 +144,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

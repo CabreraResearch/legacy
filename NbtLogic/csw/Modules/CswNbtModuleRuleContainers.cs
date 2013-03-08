@@ -72,17 +72,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.StorageCompatibility, "Hazards" );
             }
 
-            //Show the following SDS Module properties...
-            //   View SDS
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) )
-            {
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-                foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
-                {
-                    _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View SDS", ContainerNT.getIdentityTab(), 2, 1 );
-                }
-            }
-
             //Show the following User props...
             //   Work Unit
             int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.UserClass );

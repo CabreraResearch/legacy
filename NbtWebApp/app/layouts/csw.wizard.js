@@ -178,6 +178,16 @@
                 cswPrivate.selectStep(stepno);
             };
             
+            cswPublic.toggleStepVisibility = function (stepno, show) {
+                if (false === Csw.isNullOrEmpty(cswPrivate.stepDivLinks[stepno])) {
+                    if (show) {
+                        cswPrivate.stepDivLinks[stepno].show();
+                    } else {
+                        cswPrivate.stepDivLinks[stepno].hide();
+                    }
+                }
+            };
+            
             return cswPublic;
         });
 } ());
