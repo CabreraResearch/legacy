@@ -21,15 +21,21 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataNodeType SDSNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SDS Document" );
-            if( null != SDSNT )
+            _updateDocumentProps( "SDS Document" );
+            _updateDocumentProps( "Material Document" );
+        } //Update()
+
+        private void _updateDocumentProps( string NodeTypeName )
+        {
+            CswNbtMetaDataNodeType DocNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( NodeTypeName );
+            if( null != DocNT )
             {
-                CswNbtMetaDataNodeTypeProp OwnerNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+                CswNbtMetaDataNodeTypeProp OwnerNTP = DocNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
                 OwnerNTP.PropName = "Material";
                 OwnerNTP.ReadOnly = true;
-                CswNbtMetaDataNodeTypeProp TitleNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
+                CswNbtMetaDataNodeTypeProp TitleNTP = DocNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
                 TitleNTP.TextAreaColumns = 40;
             }
-        } //Update()
+        }
     }//class CswUpdateSchema_01Y_Case28757
 }//namespace ChemSW.Nbt.Schema
