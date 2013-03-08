@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\..\Common\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUI", "..\..\Common\CswConfigUI\CswConfigUI.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
@@ -334,6 +334,7 @@ Global
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Debug|x64.ActiveCfg = Debug|x64
+		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Debug|x64.Build.0 = Debug|x64
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Debug|x86.ActiveCfg = Debug|x64
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Release|Any CPU.ActiveCfg = Release|x64
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Release|Mixed Platforms.ActiveCfg = Release|x64
@@ -530,6 +531,7 @@ Global
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x64.ActiveCfg = Debug|x64
+		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x64.Build.0 = Debug|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x86.ActiveCfg = Debug|x86
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x86.Build.0 = Debug|x86
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Release|Any CPU.ActiveCfg = Release|x86
