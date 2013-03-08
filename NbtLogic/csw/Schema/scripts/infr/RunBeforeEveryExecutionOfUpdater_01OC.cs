@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
@@ -108,8 +109,8 @@ namespace ChemSW.Nbt.Schema
 
 
 
-       
-        
+
+
         private void _makeUnCode( CswDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
@@ -150,10 +151,10 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
             CswNbtMetaDataObjectClassProp TargetTypeOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.TargetType );
-            
+
             //This prop is already server managed, but I think this makes the intention explicit for the reader
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
-            
+
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, false );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, false );
 
@@ -166,14 +167,12 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        
-        
+
+
         #endregion Yorick
-        
- #region ASPEN Methods
-        
 
-
+        #region ASPEN Methods
+        
         private void _addSaveProperty( UnitOfBlame Blamne )
         {
             _acceptBlame( Blamne );
@@ -191,20 +190,12 @@ namespace ChemSW.Nbt.Schema
                         } );
                 }
             }
-            
+
             _resetBlame();
         }
-
-       
-
-
- 
-        #endregion ASPEN Methods
-
-
-
         
-
+        #endregion ASPEN Methods
+        
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -213,15 +204,15 @@ namespace ChemSW.Nbt.Schema
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
 
-  //This has to be first
-           _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
+            //This ASPEN method has to be first
+            _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
 
-            
+
             #region YORICK
 
             //YORICK OC changes go here.
 
-            
+
             _makeUnCode( CswDeveloper.PG, 28671 );
             _updateUserFormats( CswDeveloper.CF, 26574 );
             _correctGeneratorTargetTypeProps( CswDeveloper.CF, 29039 );
@@ -229,7 +220,7 @@ namespace ChemSW.Nbt.Schema
             #endregion YORICK
 
             #region ASPEN
-            
+
             #endregion ASPEN
 
             //THIS GOES LAST!

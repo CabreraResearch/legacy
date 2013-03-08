@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             //Case 24023: Exclude buttons on Add
             return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
                 Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
-                Prop.ShowProp( LayoutType, Node, _ThisUser, TabId ) ) &&
+                Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) ) &&
                        ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
         }
 
