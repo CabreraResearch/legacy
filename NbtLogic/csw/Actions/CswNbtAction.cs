@@ -26,7 +26,8 @@ namespace ChemSW.Nbt.Actions
         HMIS_Reporting,
         KioskMode,
         Tier_II_Reporting,
-        Material_Approval
+        Material_Approval,
+        Login_Data
     }
 
     public class CswNbtAction
