@@ -66,6 +66,14 @@ namespace ChemSW.Nbt
         /// </summary>
         public static readonly CswNbtModuleName RegulatoryLists = new CswNbtModuleName( "Regulatory Lists" );
         /// <summary>
+        /// Module that allows fire and hazard reporting on containers
+        /// </summary>
+        public static readonly CswNbtModuleName FireCode = new CswNbtModuleName( "Fire Code" );
+        /// <summary>
+        /// Module that allows safety data sheets on materials
+        /// </summary>
+        public static readonly CswNbtModuleName SDS = new CswNbtModuleName( "SDS" );
+        /// <summary>
         /// Multiple Site NodeTypes
         /// </summary>
         public static readonly CswNbtModuleName MultiSite = new CswNbtModuleName( "Multi Site" );

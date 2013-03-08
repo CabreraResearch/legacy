@@ -65,7 +65,7 @@
                 cswPrivate.gridOpts = {
                     name: cswPrivate.name + '_grid',
                     viewid: viewid,
-                    nodeid: cswPrivate.nodeid,
+                    nodeid: Csw.string(cswPrivate.nodeid, cswPrivate.relatednodeid),
                     nodekey: cswPrivate.nodekey,
                     readonly: cswPrivate.readonly,
                     canSelectRow: cswPrivate.canSelectRow,
@@ -100,10 +100,10 @@
                             urlMethod: 'getMainMenu', 
                             data: {
                                 ViewId: viewid,
-                                SafeNodeKey: cswPrivate.nodekey,
-                                NodeTypeId: '',
-                                PropIdAttr: cswPrivate.name,
-                                LimitMenuTo: 'Add',
+                                SafeNodeKey: Csw.string(cswPrivate.nodekey, cswPrivate.relatednodeid),
+                                NodeTypeId: Csw.string(''),
+                                PropIdAttr: Csw.string(cswPrivate.name),
+                                LimitMenuTo: Csw.string(''),//This should be 'Add', but for some reason this removes the menu
                                 ReadOnly: false
                             }
                         },

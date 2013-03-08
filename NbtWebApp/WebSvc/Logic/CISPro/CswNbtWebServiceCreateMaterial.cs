@@ -86,6 +86,9 @@ namespace ChemSW.Nbt.WebServices
                 //Alert wizard to active modules
                 bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers );
                 Response.Data.ContainersModuleEnabled = ContainersEnabled;
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                    ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
+                Response.Data.SDSModuleEnabled = SDSEnabled;
 
                 //Determine the steps
                 int StepNo = 1;
@@ -115,14 +118,15 @@ namespace ChemSW.Nbt.WebServices
                     Response.Data.Steps.Add( Sizes );
                     StepNo++;
                 }
-
-                MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep() //Will probably become dependent on a module in the near future
+                if( SDSEnabled )
                 {
-                    StepNo = StepNo,
-                    StepName = "Attach SDS"
-                };
-                Response.Data.Steps.Add( AttachSDS );
-
+                    MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep()
+                    {
+                        StepNo = StepNo,
+                        StepName = "Attach SDS"
+                    };
+                    Response.Data.Steps.Add( AttachSDS );
+                }
             }
         }
 
@@ -136,6 +140,20 @@ namespace ChemSW.Nbt.WebServices
                 if( null != SupplierView )
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
+                }
+            }
+        }
+
+        public static void getPhysicalState( ICswResources CswResources, MaterialResponse Response, string NodeId )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtObjClassMaterial materialNode = NbtResources.Nodes[pk];
+                    Response.Data.PhysicalState = materialNode.PhysicalState.Value;
                 }
             }
         }

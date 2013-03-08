@@ -54,6 +54,14 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleContainers( CswNbtResources );
             }
+            else if( CswNbtModuleName.FireCode == ModuleName )
+            {
+                ret = new CswNbtModuleRuleFireCode( CswNbtResources );
+            }
+            else if( CswNbtModuleName.SDS == ModuleName )
+            {
+                ret = new CswNbtModuleRuleSDS( CswNbtResources );
+            }
             else if( CswNbtModuleName.RegulatoryLists == ModuleName )
             {
                 ret = new CswNbtModuleRuleRegulatoryLists( CswNbtResources );

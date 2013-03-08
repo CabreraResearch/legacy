@@ -83,6 +83,10 @@ namespace ChemSW.Nbt.WebServices
             if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
                 CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( SafeNodeKey );
+                if( null == NbtNodeKey.NodeId )
+                {
+                    NbtNodeKey.NodeId = CswConvert.ToPrimaryKey( SafeNodeKey );
+                }
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {
@@ -106,7 +110,7 @@ namespace ChemSW.Nbt.WebServices
                         JObject AddObj = new JObject();
 
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        if( null != NodeType )
+                        if( null != NodeType && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) && NodeType.getObjectClass().CanAdd )
                         {
                             AddObj[NodeType.NodeTypeName] = makeAddMenuItem( NodeType, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId );
                             AddObj["haschildren"] = true;

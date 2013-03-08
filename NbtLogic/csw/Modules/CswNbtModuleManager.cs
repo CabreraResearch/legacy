@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -132,7 +133,8 @@ namespace ChemSW.Nbt
             {
                 initModules();
             }
-            foreach( CswNbtModuleName Module in _ModuleRules.Keys )
+            List<CswNbtModuleName> Rules = _ModuleRules.Keys.ToList();
+            foreach( CswNbtModuleName Module in Rules )
             {
                 if( _ModuleRules[Module].Enabled )
                 {
@@ -423,7 +425,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public void AddPropToTab( int NodeTypeId, string PropName, CswNbtMetaDataNodeTypeTab Tab, int Row = Int32.MinValue, int Col = Int32.MinValue )
+        public void AddPropToTab( int NodeTypeId, string PropName, CswNbtMetaDataNodeTypeTab Tab, int Row = Int32.MinValue, int Col = Int32.MinValue, string TabGroup = "" )
         {
             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, PropName );
             if( null != NodeTypeProp )
@@ -431,7 +433,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeType locationNT = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( Int32.MinValue != Row && Int32.MinValue != Col )
                 {
-                    NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow: Row, DisplayColumn: Col );
+                    NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow: Row, DisplayColumn: Col, TabGroup: TabGroup );
                 }
                 else
                 {
@@ -445,8 +447,8 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeTypeTab tab = _CswNbtResources.MetaData.getNodeTypeTab( NodeTypeId, TabName );
             if( null == tab )
             {
-                CswNbtMetaDataNodeType locationNT = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                tab = _CswNbtResources.MetaData.makeNewTab( locationNT, TabName, TabOrder );
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                tab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabOrder );
             }
             AddPropToTab( NodeTypeId, PropName, tab );
         }
