@@ -52,7 +52,6 @@
                     supplier: { name: '', val: '' }, 
                     partNo: '',
                     properties: {},
-                    documentProperties: {},
                     useExistingTempNode: false,
                     physicalState: '',
                     sizes: [],
@@ -199,6 +198,7 @@
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
                         cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.name === 'Chemical');
+                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     }
                     if (cswPrivate.supplierSelect &&
                         cswPrivate.supplierSelect.selectedText &&
@@ -667,46 +667,37 @@
                     cswPrivate.AttachSDSDiv = cswPrivate.AttachSDSDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.AttachSDSDiv.empty();
 
-                    if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
-                        cswPrivate.AttachSDSDiv.label({
-                                text: "No SDS Documents have been defined. Click Finish to complete the wizard.",
-                            cssclass: "wizardHelpDesc"
-                        });
-                    } else {
-
-                        cswPrivate.AttachSDSDiv.label({
-                                text: "Define a Safety Data Sheet to attach to this material.",
-                            cssclass: "wizardHelpDesc"
-                        });
-                        cswPrivate.AttachSDSDiv.br({ number: 2 });
+                    cswPrivate.AttachSDSDiv.label({
+                            text: "Define a Safety Data Sheet to attach to this material.",
+                        cssclass: "wizardHelpDesc"
+                    });
+                    cswPrivate.AttachSDSDiv.br({ number: 2 });
                         
-                        attachSDSTable = cswPrivate.AttachSDSDiv.table();
-                        attachSDSTable.cell(1, 1).a({
-                            text: 'Add a new SDS Document',
-                            onClick: function () {
-                                attachSDSTable.cell(1, 1).hide();
-                                attachSDSTable.cell(1, 2).show();
-                            }
-                        });
-                        attachSDSTable.cell(1, 2).hide();
+                    attachSDSTable = cswPrivate.AttachSDSDiv.table();
+                    attachSDSTable.cell(1, 1).a({
+                        text: 'Add a new SDS Document',
+                        onClick: function () {
+                            attachSDSTable.cell(1, 1).hide();
+                            attachSDSTable.cell(1, 2).show();
+                        }
+                    });
+                    attachSDSTable.cell(1, 2).hide();
 
-                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                            globalState: {
-                                ShowAsReport: false,
-                                excludeOcProps: ['owner']
-                            },
-                            tabState: {
-                                nodetypeid: cswPrivate.state.documentTypeId,
-                                showSaveButton: false,
-                                EditMode: Csw.enums.editMode.Add
-                            },
-                            ReloadTabOnSave: false,
-                            onNodeIdSet: function (documentId) {
-                                cswPrivate.state.documentId = documentId;
-                            }
-                        });
-
-                    }
+                    cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                        globalState: {
+                            ShowAsReport: false,
+                            excludeOcProps: ['owner']
+                        },
+                        tabState: {
+                            nodetypeid: cswPrivate.state.documentTypeId,
+                            showSaveButton: false,
+                            EditMode: Csw.enums.editMode.Add
+                        },
+                        ReloadTabOnSave: false,
+                        onNodeIdSet: function (documentId) {
+                            cswPrivate.state.documentId = documentId;
+                        }
+                    });
 
                     cswPrivate.stepFourComplete = true;
                 }

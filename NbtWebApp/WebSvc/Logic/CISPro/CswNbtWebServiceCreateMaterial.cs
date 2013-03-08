@@ -86,7 +86,8 @@ namespace ChemSW.Nbt.WebServices
                 //Alert wizard to active modules
                 bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers );
                 Response.Data.ContainersModuleEnabled = ContainersEnabled;
-                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS );
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                    ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
                 Response.Data.SDSModuleEnabled = SDSEnabled;
 
                 //Determine the steps

@@ -651,7 +651,8 @@ window.initMain = window.initMain || function (undefined) {
                             NodeTypeId: o.nodetypeid,
                             PropIdAttr: o.propid,
                             LimitMenuTo: o.limitMenuTo,
-                            ReadOnly: o.readonly
+                            ReadOnly: o.readonly,
+                            NodeId: o.nodeid
                         }
                     },
                     onAlterNode: function(nodeid, nodekey) {

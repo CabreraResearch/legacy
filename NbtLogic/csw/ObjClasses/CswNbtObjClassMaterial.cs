@@ -227,16 +227,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
-                            bool canAddSDS = NodeType.NodeTypeName == "Chemical" && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS );
+                            bool canAddSDS = NodeType.NodeTypeName == "Chemical" && 
+                                _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
                             ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
                             if( canAddSDS )
                             {
-                                Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId(_CswNbtResources, this);
-                                if (Int32.MinValue != DocumentNodeTypeId)
-                                {
-                                    ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
-                                }
-
                                 CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
                                 if( null != AssignedSDSProp )
                                 {
@@ -441,9 +437,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void GetMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue ) )
             {
-                Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId(_CswNbtResources, this);
+                Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId(_CswNbtResources);
                 CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType(SDSDocumentNTId);
                 CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Archived);
                 CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp(CswNbtObjClassDocument.PropertyName.Format);

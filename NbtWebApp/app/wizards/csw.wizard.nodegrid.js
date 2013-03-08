@@ -65,7 +65,7 @@
                 cswPrivate.gridOpts = {
                     name: cswPrivate.name + '_grid',
                     viewid: viewid,
-                    nodeid: cswPrivate.nodeid,
+                    nodeid: Csw.string(cswPrivate.nodeid, cswPrivate.relatednodeid),
                     nodekey: cswPrivate.nodekey,
                     readonly: cswPrivate.readonly,
                     canSelectRow: cswPrivate.canSelectRow,
@@ -101,6 +101,7 @@
                             data: {
                                 ViewId: viewid,
                                 SafeNodeKey: Csw.string(cswPrivate.nodekey),
+                                NodeId: Csw.string(cswPrivate.relatednodeid),
                                 NodeTypeId: Csw.string(''),
                                 PropIdAttr: Csw.string(cswPrivate.name),
                                 LimitMenuTo: Csw.string(''),//This should be 'Add', but for some reason this removes the menu
