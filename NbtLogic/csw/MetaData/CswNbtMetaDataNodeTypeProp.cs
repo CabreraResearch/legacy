@@ -21,20 +21,11 @@ namespace ChemSW.Nbt.MetaData
             append,
             auditlevel,
             datetoday,
-            //display_col,
-            //display_row,
             fieldtypeid,
-            //fkvalue, 
             isbatchentry,
-            //isfk, 
             isrequired,
             isunique,
             iscompoundunique,
-            //length,
-            //nodetypeid, 
-            //nodetypepropid, 
-            //nodetypetabsetid, 
-            //objectclasspropid, 
             servermanaged,
             textareacols,
             textarearows,
@@ -46,15 +37,11 @@ namespace ChemSW.Nbt.MetaData
             numberprecision,
             listoptions,
             compositetemplate,
-            //fktype, 
             valueproptype,
             statictext,
             multi,
             nodeviewid,
             readOnly,
-            //display_col_add,
-            //display_row_add,
-            //setvalonadd,
             numberminvalue,
             numbermaxvalue,
             usenumbering,
@@ -62,13 +49,9 @@ namespace ChemSW.Nbt.MetaData
             subquestionno,
             filter,
             filterpropid,
-            //firstpropversionid, 
-            //priorpropversionid, 
             valueoptions,
-            //defaultvalue, 
             helptext,
             propname,
-            //defaultvalueid, 
             isquicksearch,
             extended,
             attribute1,
@@ -355,11 +338,6 @@ namespace ChemSW.Nbt.MetaData
                 return name;
             }
         }
-
-        //public delegate void EditPropEventHandler( CswNbtMetaDataNodeTypeProp EditedProp );
-        //public event EditPropEventHandler OnEditNodeTypePropName = null;
-        //public event EditPropEventHandler OnBeforeEditNodeTypePropOrder = null;
-        //public event EditPropEventHandler OnAfterEditNodeTypePropOrder = null;
 
         /// <summary>
         /// Set the ViewId for Relationships.  Editing this does not cause versioning.
@@ -710,11 +688,6 @@ namespace ChemSW.Nbt.MetaData
             get { return _NodeTypePropRow["extended"].ToString(); }
             set { _setAttribute( "extended", value, false ); }
         }
-        //public string DefaultValue
-        //{
-        //    get { return _NodeTypePropRow["defaultvalue"].ToString(); }
-        //    set { _setAttribute( "defaultvalue", value, false ); }
-        //}
 
         public string AuditLevel
         {
@@ -907,25 +880,6 @@ namespace ChemSW.Nbt.MetaData
             } // foreach( DataColumn PropColumn in NewPropRow.Table.Columns )
         } // CopyPropToNewNodeTypePropRow()
 
-        //public Int32 DisplayColumn
-        //{
-        //    get { return CswConvert.ToInt32( _NodeTypePropRow["display_col"] ); }
-        //    set
-        //    {
-        //        if( _setAttribute( "display_col", value, true ) )
-        //            _CswNbtMetaDataResources.RecalculateQuestionNumbers( NodeType );
-        //    }
-        //}
-        //public Int32 DisplayRow
-        //{
-        //    get { return CswConvert.ToInt32( _NodeTypePropRow["display_row"] ); }
-        //    set
-        //    {
-        //        if( _setAttribute( "display_row", value, true ) )
-        //            _CswNbtMetaDataResources.RecalculateQuestionNumbers( NodeType );
-        //    }
-        //}
-
         public string FullQuestionNo
         {
             get
@@ -972,57 +926,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }//UseNumbering
-
-        //public Int32 DisplayColAdd
-        //{
-        //    get { return CswConvert.ToInt32( _NodeTypePropRow["display_col_add"] ); }
-        //    set { _setAttribute( "display_col_add", value, true ); }
-        //}
-
-        //public Int32 DisplayRowAdd
-        //{
-        //    get { return CswConvert.ToInt32( _NodeTypePropRow["display_row_add"] ); }
-        //    set { _setAttribute( "display_row_add", value, true ); }
-        //}
-
-
-        //public bool SetValueOnAdd
-        //{
-        //    get { return CswConvert.ToBoolean( _NodeTypePropRow["setvalonadd"] ); }
-        //    set
-        //    {
-        //        if( IsRequired && !value && this.DefaultValue.Empty )
-        //            throw new CswDniException( ErrorType.Warning, "Required properties must have 'set value on add' enabled unless a default value is present", "User attempted to set SetValueOnAdd = false on a required property with an empty default value" );
-        //        if( hasFilter() && value )
-        //            throw new CswDniException( ErrorType.Warning, "Conditional properties cannot have 'set value on add' enabled", "User attempted to set SetValueOnAdd = true on a conditional property" );
-
-        //        _setAttribute( "setvalonadd", value, true );
-        //    }
-        //}
-        public bool AllowReadOnlyAdd
-        {
-            get
-            {
-                bool ret = false;
-
-                if( false == ServerManaged )
-                {
-                    ret = _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add && null != AddLayout;
-                }
-
-                return ( ret );
-            }
-        }
-
-        public bool SetValueOnAddEnabled
-        {
-            get
-            {
-                // Case 20480
-                return ( !( IsRequired && DefaultValue.Empty ) ); //&& !hasFilter() );
-            }
-        }
-
+        
         public string Attribute1
         {
             get

@@ -48,12 +48,13 @@ namespace NbtWebApp
         [OperationContract]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
-        public void End()
+        public bool End()
         {
             CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
             Resource.initResources();
             Resource.deauthenticate();
             Resource.deInitResources();
+            return true;
         }
 
         /// <summary>

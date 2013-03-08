@@ -11,7 +11,9 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js|\CswNbt.min.js|\CswCommon.min.js</JSLintSkip>
+    <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js|\CswNbt.min.js|\CswCommon.min.js|\vendor\</JSLintSkip>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>NbtJavaScript</RootNamespace>
@@ -58,21 +60,6 @@
     <WarningLevel>0</WarningLevel>
     <NoWarn>1591</NoWarn>
     <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug %28Fast%29\</OutputPath>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\NbtJavaScript.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -153,6 +140,135 @@
     <Content Include="app\types\csw.casno.js" />
     <Content Include="app\wizards\_template.js" />
     <Content Include="ConnectTest.html" />
+    <Content Include="Content\themes\base\images\animated-overlay.gif" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery.ui.accordion.css" />
+    <Content Include="Content\themes\base\jquery.ui.all.css" />
+    <Content Include="Content\themes\base\jquery.ui.autocomplete.css" />
+    <Content Include="Content\themes\base\jquery.ui.base.css" />
+    <Content Include="Content\themes\base\jquery.ui.button.css" />
+    <Content Include="Content\themes\base\jquery.ui.core.css" />
+    <Content Include="Content\themes\base\jquery.ui.datepicker.css" />
+    <Content Include="Content\themes\base\jquery.ui.dialog.css" />
+    <Content Include="Content\themes\base\jquery.ui.menu.css" />
+    <Content Include="Content\themes\base\jquery.ui.progressbar.css" />
+    <Content Include="Content\themes\base\jquery.ui.resizable.css" />
+    <Content Include="Content\themes\base\jquery.ui.selectable.css" />
+    <Content Include="Content\themes\base\jquery.ui.slider.css" />
+    <Content Include="Content\themes\base\jquery.ui.spinner.css" />
+    <Content Include="Content\themes\base\jquery.ui.tabs.css" />
+    <Content Include="Content\themes\base\jquery.ui.theme.css" />
+    <Content Include="Content\themes\base\jquery.ui.tooltip.css" />
+    <Content Include="Content\themes\base\minified\images\animated-overlay.gif" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\minified\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.accordion.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.autocomplete.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.button.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.core.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.datepicker.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.dialog.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.menu.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.progressbar.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.resizable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.selectable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.spinner.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="Content\themes\cupertino\images\animated-overlay.gif" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_diagonals-thick_90_eeeeee_40x40.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_flat_15_cd0a0a_40x100.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_glass_100_e4f1fb_1x400.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_glass_50_3baae3_1x400.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_glass_80_d7ebf9_1x400.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_highlight-hard_100_f2f5f7_1x100.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_highlight-hard_70_000000_1x100.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_highlight-soft_100_deedf7_1x100.png" />
+    <Content Include="Content\themes\cupertino\images\ui-bg_highlight-soft_25_ffef8f_1x100.png" />
+    <Content Include="Content\themes\cupertino\images\ui-icons_2694e8_256x240.png" />
+    <Content Include="Content\themes\cupertino\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\cupertino\images\ui-icons_3d80b3_256x240.png" />
+    <Content Include="Content\themes\cupertino\images\ui-icons_72a7cf_256x240.png" />
+    <Content Include="Content\themes\cupertino\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\themes\cupertino\jquery-ui.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.accordion.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.all.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.autocomplete.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.base.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.button.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.core.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.datepicker.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.dialog.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.menu.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.progressbar.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.resizable.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.selectable.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.slider.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.spinner.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.tabs.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.theme.css" />
+    <Content Include="Content\themes\cupertino\jquery.ui.tooltip.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery-ui-1.8.19.min.css" />
+    <Content Include="Content\themes\cupertino\minified\images\animated-overlay.gif" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_diagonals-thick_90_eeeeee_40x40.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_flat_15_cd0a0a_40x100.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_glass_100_e4f1fb_1x400.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_glass_50_3baae3_1x400.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_glass_80_d7ebf9_1x400.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_highlight-hard_100_f2f5f7_1x100.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_highlight-hard_70_000000_1x100.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_highlight-soft_100_deedf7_1x100.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-bg_highlight-soft_25_ffef8f_1x100.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-icons_2694e8_256x240.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-icons_3d80b3_256x240.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-icons_72a7cf_256x240.png" />
+    <Content Include="Content\themes\cupertino\minified\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\themes\cupertino\minified\jquery-ui.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.accordion.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.autocomplete.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.button.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.core.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.datepicker.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.dialog.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.menu.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.progressbar.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.resizable.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.selectable.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.slider.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.spinner.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
+    <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="PlainIncludes.html" />
+    <Content Include="PlainHeader.html" />
     <Content Include="PrintingLabels.html" />
     <Content Include="css\csw.dom.css" />
     <Content Include="css\csw.tabs.css" />
@@ -167,7 +283,7 @@
     <Content Include="app\composites\csw.quantity.js" />
     <Content Include="app\controls\csw.nodebutton.js" />
     <Content Include="app\controls\csw.node.link.js" />
-    <Content Include="DevHeader.html" />
+    <Content Include="DevFooter.html" />
     <Content Include="Dev.html" />
     <Content Include="app\controls\csw.icon.js" />
     <Content Include="app\composites\csw.linkgrid.js" />
@@ -187,10 +303,30 @@
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <Content Include="perf.html" />
+    <Content Include="Scripts\additional-methods.js" />
+    <Content Include="Scripts\additional-methods.min.js" />
+    <Content Include="Scripts\jquery-ui-1.8.19.min.js" />
+    <Content Include="Scripts\es5-shim.js" />
+    <Content Include="Scripts\es5-shim.min.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.intellisense.js" />
+    <Content Include="Scripts\jquery-1.9.1.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.1.js" />
+    <Content Include="Scripts\jquery-ui-1.10.1.min.js" />
+    <Content Include="Scripts\jquery.cookie.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\mousetrap.js" />
+    <Content Include="Scripts\mousetrap.min.js" />
     <Content Include="Template.html" />
-    <Content Include="TEST.html" />
-    <Content Include="vendor\es5-shim.min.js" />
-    <Content Include="vendor\ES5.min.js" />
+    <Content Include="vendor\loggly-0.1.0.min.js" />
+    <Content Include="vendor\es6-shim.min.js" />
+    <Content Include="vendor\es5-sham.min.js" />
+    <Content Include="vendor\es5-sham.js" />
+    <Content Include="vendor\es6-shim.js" />
     <Content Include="vendor\extJS-4.1.0\ext-all-debug.js" />
     <Content Include="vendor\extJS-4.1.0\ext-all.js" />
     <Content Include="vendor\extJS-4.1.0\resources\css\ext-all-scoped-debug.css" />
@@ -654,12 +790,6 @@
     <Content Include="vendor\extJS-4.1.0\ux\TabScrollerMenu.js" />
     <Content Include="vendor\extJS-4.1.0\ux\ToolbarDroppable.js" />
     <Content Include="vendor\extJS-4.1.0\ux\TreePicker.js" />
-    <Content Include="vendor\harmony-collections.browser.min.js" />
-    <Content Include="vendor\harmony-collections.js" />
-    <Content Include="vendor\jquery-1.7.1.min.js" />
-    <Content Include="vendor\jquery-ui.min.js" />
-    <Content Include="vendor\jquery.cookie.min.js" />
-    <Content Include="vendor\jquery.validate.min.js" />
     <Content Include="vendor\jQueryFileUpload_2011.12.15\application.js" />
     <Content Include="vendor\jQueryFileUpload_2011.12.15\gae-go\static\favicon.ico" />
     <Content Include="vendor\jQueryFileUpload_2011.12.15\gae-go\static\robots.txt" />
@@ -680,7 +810,6 @@
     <Content Include="vendor\jQueryFileUpload_2011.12.15\test\index.html" />
     <Content Include="vendor\jQueryFileUpload_2011.12.15\test\test.js" />
     <Content Include="vendor\jQueryFileUpload_2011.12.15\vendor\jquery.ui.widget.js" />
-    <Content Include="vendor\json2.min.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\jquery.jstree.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\jquery.jstree.min.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\themes\apple\bg.jpg" />
@@ -706,8 +835,6 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
     <Content Include="vendor\less-1.3.1.min.js" />
     <Content Include="vendor\loggly-0.1.0.js" />
-    <Content Include="vendor\modernizr.custom.06564.js" />
-    <Content Include="vendor\mousetrap.min.js" />
     <Content Include="vendor\multiselect\jquery.multiselect.css" />
     <Content Include="vendor\multiselect\jquery.multiselect.filter.css" />
     <Content Include="vendor\multiselect\jquery.multiselect.filter.js" />
@@ -837,6 +964,13 @@
     <Content Include="DevIncludes.html" />
     <None Include="app\_pruneMaps.bat" />
     <None Include="app\_updateIncludes.pl" />
+    <None Include="Scripts\jquery-1.9.1.min.map" />
+    <None Include="vendor\es5-sham.min.js.map">
+      <DependentUpon>es5-sham.js</DependentUpon>
+    </None>
+    <None Include="vendor\es6-shim.min.js.map">
+      <DependentUpon>es6-shim.js</DependentUpon>
+    </None>
     <None Include="vendor\extJS-4.1.0\ux\grid\README.textile" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\gae-go\app.yaml" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\gae-go\app\main.go" />
@@ -847,6 +981,9 @@
     <None Include="vendor\jQueryFileUpload_2011.12.15\php\index.php" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\php\thumbnails\.htaccess" />
     <None Include="vendor\jQueryFileUpload_2011.12.15\README.md" />
+    <None Include="vendor\loggly-0.1.0.min.js.map">
+      <DependentUpon>loggly-0.1.0.js</DependentUpon>
+    </None>
     <None Include="vendor\xstats\doc\parse.php" />
     <None Include="vendor\xstats\doc\README.md" />
     <None Include="vendor\xstats\README.md" />
