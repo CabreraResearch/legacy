@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.MetaData
             CswNbtResources = Resources;
             CswNbtMetaData = MetaData;
             CswNbtFieldResources = new CswNbtFieldResources( Resources );
-            
+
             _ExcludeDisabledModules = ExcludeDisabledModules;
 
             ObjectClassTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_ObjectClass_Select", "object_class" );
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.MetaData
             FieldTypeTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_FieldType_Select", "field_types" );
             NodeTypePropTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeProp_Select", "nodetype_props" );
             NodeTypeTabTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeTab_Select", "nodetype_tabset" );
-            
+
             ObjectClassTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClass_update", "object_class" );
             ObjectClassPropTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClassProp_update", "object_class_props" );
             NodeTypeTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_NodeType_update", "nodetypes" );
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.MetaData
         //    }
         //}
 
-        
+
         public void refreshAll()// bool ExcludeDisabledModules )
         {
             ObjectClassesCollection.clearCache();
@@ -148,239 +148,239 @@ namespace ChemSW.Nbt.MetaData
         }//refreshAll()
 
 
-//        private void RefreshAllObjectClasses( bool ExcludeDisabledModules )
-//        {
-//            string WhereClause = string.Empty;
-//            if( ExcludeDisabledModules )
-//            {
-//                WhereClause = @"where (exists (select j.jctmoduleobjectclassid
-//                                                 from jct_modules_objectclass j
-//                                                 join modules m on j.moduleid = m.moduleid
-//                                                where j.objectclassid = object_class.objectclassid
-//                                                  and m.enabled = '1')
-//                                       or not exists (select j.jctmoduleobjectclassid
-//                                                        from jct_modules_objectclass j
-//                                                        join modules m on j.moduleid = m.moduleid
-//                                                       where j.objectclassid = object_class.objectclassid))";
-//            }
+        //        private void RefreshAllObjectClasses( bool ExcludeDisabledModules )
+        //        {
+        //            string WhereClause = string.Empty;
+        //            if( ExcludeDisabledModules )
+        //            {
+        //                WhereClause = @"where (exists (select j.jctmoduleobjectclassid
+        //                                                 from jct_modules_objectclass j
+        //                                                 join modules m on j.moduleid = m.moduleid
+        //                                                where j.objectclassid = object_class.objectclassid
+        //                                                  and m.enabled = '1')
+        //                                       or not exists (select j.jctmoduleobjectclassid
+        //                                                        from jct_modules_objectclass j
+        //                                                        join modules m on j.moduleid = m.moduleid
+        //                                                       where j.objectclassid = object_class.objectclassid))";
+        //            }
 
 
-//            DataTable ObjectClassesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.ObjectClass );
-//            if( null == ObjectClassesTable )
-//            {
-//                ObjectClassesTable = ObjectClassTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "objectclass", OrderByType.Ascending ) } );
-//                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClass, ObjectClassesTable );
-//            }
+        //            DataTable ObjectClassesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.ObjectClass );
+        //            if( null == ObjectClassesTable )
+        //            {
+        //                ObjectClassesTable = ObjectClassTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "objectclass", OrderByType.Ascending ) } );
+        //                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClass, ObjectClassesTable );
+        //            }
 
-//            RefreshMetaDataObject( ObjectClassesCollection, ObjectClassesTable );
-//        }
+        //            RefreshMetaDataObject( ObjectClassesCollection, ObjectClassesTable );
+        //        }
 
-//        private void RefreshAllObjectClassProps( bool ExcludeDisabledModules )
-//        {
-//            string WhereClause = string.Empty;
-//            if( ExcludeDisabledModules )
-//            {
-//                WhereClause = @"where (exists (select j.jctmoduleobjectclassid
-//                                                 from jct_modules_objectclass j
-//                                                 join modules m on j.moduleid = m.moduleid
-//                                                where j.objectclassid = object_class_props.objectclassid
-//                                                  and m.enabled = '1')
-//                                       or not exists (select j.jctmoduleobjectclassid
-//                                                        from jct_modules_objectclass j
-//                                                        join modules m on j.moduleid = m.moduleid
-//                                                       where j.objectclassid = object_class_props.objectclassid))";
-//            }
+        //        private void RefreshAllObjectClassProps( bool ExcludeDisabledModules )
+        //        {
+        //            string WhereClause = string.Empty;
+        //            if( ExcludeDisabledModules )
+        //            {
+        //                WhereClause = @"where (exists (select j.jctmoduleobjectclassid
+        //                                                 from jct_modules_objectclass j
+        //                                                 join modules m on j.moduleid = m.moduleid
+        //                                                where j.objectclassid = object_class_props.objectclassid
+        //                                                  and m.enabled = '1')
+        //                                       or not exists (select j.jctmoduleobjectclassid
+        //                                                        from jct_modules_objectclass j
+        //                                                        join modules m on j.moduleid = m.moduleid
+        //                                                       where j.objectclassid = object_class_props.objectclassid))";
+        //            }
 
-//            DataTable ObjectClasPropsTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp );
-//            if( null == ObjectClasPropsTable )
-//            {
-//                ObjectClasPropsTable = ObjectClassPropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
-//                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp, ObjectClasPropsTable );
-//            }
+        //            DataTable ObjectClasPropsTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp );
+        //            if( null == ObjectClasPropsTable )
+        //            {
+        //                ObjectClasPropsTable = ObjectClassPropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
+        //                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.ObjectClassProp, ObjectClasPropsTable );
+        //            }
 
-//            RefreshMetaDataObject( ObjectClassPropsCollection, ObjectClasPropsTable );
-//        }
+        //            RefreshMetaDataObject( ObjectClassPropsCollection, ObjectClasPropsTable );
+        //        }
 
-//        private void RefreshAllNodeTypes( bool ExcludeDisabledModules )
-//        {
-//            string WhereClause = string.Empty;
-//            if( ExcludeDisabledModules )
-//            {
-//                WhereClause = @"where ( ( exists (select j.jctmoduleobjectclassid
-//                                                    from jct_modules_objectclass j
-//                                                    join modules m on j.moduleid = m.moduleid
-//                                                   where j.objectclassid = nodetypes.objectclassid
-//                                                     and m.enabled = '1')
-//                                          or not exists (select j.jctmoduleobjectclassid
-//                                                           from jct_modules_objectclass j
-//                                                           join modules m on j.moduleid = m.moduleid
-//                                                          where j.objectclassid = nodetypes.objectclassid) )
-//                                    and ( exists (select j.jctmodulenodetypeid
-//                                                  from jct_modules_nodetypes j
-//                                                  join modules m on j.moduleid = m.moduleid
-//                                                 where j.nodetypeid = nodetypes.nodetypeid
-//                                                   and m.enabled = '1')
-//                                          or not exists (select j.jctmodulenodetypeid
-//                                                           from jct_modules_nodetypes j
-//                                                           join modules m on j.moduleid = m.moduleid
-//                                                          where j.nodetypeid = nodetypes.nodetypeid) ) )";
-//            }
-
-
-//            DataTable NodeTypesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeType );
-//            if( null == NodeTypesTable )
-//            {
-//                NodeTypesTable = NodeTypeTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "nodetypeid", OrderByType.Ascending ) } );
-//                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeType, NodeTypesTable );
-//            }
-
-//            RefreshMetaDataObject( NodeTypesCollection, NodeTypesTable );
-//        }
+        //        private void RefreshAllNodeTypes( bool ExcludeDisabledModules )
+        //        {
+        //            string WhereClause = string.Empty;
+        //            if( ExcludeDisabledModules )
+        //            {
+        //                WhereClause = @"where ( ( exists (select j.jctmoduleobjectclassid
+        //                                                    from jct_modules_objectclass j
+        //                                                    join modules m on j.moduleid = m.moduleid
+        //                                                   where j.objectclassid = nodetypes.objectclassid
+        //                                                     and m.enabled = '1')
+        //                                          or not exists (select j.jctmoduleobjectclassid
+        //                                                           from jct_modules_objectclass j
+        //                                                           join modules m on j.moduleid = m.moduleid
+        //                                                          where j.objectclassid = nodetypes.objectclassid) )
+        //                                    and ( exists (select j.jctmodulenodetypeid
+        //                                                  from jct_modules_nodetypes j
+        //                                                  join modules m on j.moduleid = m.moduleid
+        //                                                 where j.nodetypeid = nodetypes.nodetypeid
+        //                                                   and m.enabled = '1')
+        //                                          or not exists (select j.jctmodulenodetypeid
+        //                                                           from jct_modules_nodetypes j
+        //                                                           join modules m on j.moduleid = m.moduleid
+        //                                                          where j.nodetypeid = nodetypes.nodetypeid) ) )";
+        //            }
 
 
-//        private void RefreshAllFieldTypes( bool ExcludeDisabledModules )
-//        {
-//            DataTable FieldTypesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.FieldType );
-//            if( null == FieldTypesTable )
-//            {
-//                FieldTypesTable = FieldTypeTableUpdate.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "fieldtype", OrderByType.Ascending ) } );
-//                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.FieldType, FieldTypesTable );
-//            }
+        //            DataTable NodeTypesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeType );
+        //            if( null == NodeTypesTable )
+        //            {
+        //                NodeTypesTable = NodeTypeTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "nodetypeid", OrderByType.Ascending ) } );
+        //                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeType, NodeTypesTable );
+        //            }
+
+        //            RefreshMetaDataObject( NodeTypesCollection, NodeTypesTable );
+        //        }
 
 
-//            RefreshMetaDataObject( FieldTypesCollection, FieldTypesTable );
-//        }
-
-//        private void RefreshAllNodeTypeProps( bool ExcludeDisabledModules )
-//        {
-//            string WhereClause = string.Empty;
-//            if( ExcludeDisabledModules )
-//            {
-//                WhereClause = @"where ( ( exists (select j.jctmoduleobjectclassid
-//                                                    from jct_modules_objectclass j
-//                                                    join modules m on j.moduleid = m.moduleid
-//                                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)
-//                                                     and m.enabled = '1')
-//                                          or not exists (select j.jctmoduleobjectclassid
-//                                                           from jct_modules_objectclass j
-//                                                           join modules m on j.moduleid = m.moduleid
-//                                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)) )
-//                                    and ( exists (select j.jctmodulenodetypeid
-//                                                  from jct_modules_nodetypes j
-//                                                  join modules m on j.moduleid = m.moduleid
-//                                                 where j.nodetypeid = nodetype_props.nodetypeid
-//                                                   and m.enabled = '1')
-//                                          or not exists (select j.jctmodulenodetypeid
-//                                                           from jct_modules_nodetypes j
-//                                                           join modules m on j.moduleid = m.moduleid
-//                                                          where j.nodetypeid = nodetype_props.nodetypeid) ) )";
-//            }
-
-//            DataTable NodeTypePropTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp );
-//            if( null == NodeTypePropTable )
-//            {
-//                NodeTypePropTable = NodeTypePropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
-//                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp, NodeTypePropTable );
-//            }
-
-//            RefreshMetaDataObject( NodeTypePropsCollection, NodeTypePropTable );
-
-//            // BZ 9139 - Fill in the relational TableName/ColumnName on the subfield here, so that it's cached
-//            CswTableSelect JctDdNtpSelect = CswNbtResources.makeCswTableSelect( "JctDdNtp_select", "jct_dd_ntp" );
-//            DataTable JctDdNtpTable = JctDdNtpSelect.getTable();
-//            foreach( DataRow JctDdNtpRow in JctDdNtpTable.Rows )
-//            {
-//                CswNbtMetaDataNodeTypeProp ThisProp = NodeTypePropsCollection.getNodeTypeProp( CswConvert.ToInt32( JctDdNtpRow["nodetypepropid"] ) );
-//                if( ThisProp != null )
-//                {
-//                    CswNbtSubField.SubFieldName ThisSubFieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), JctDdNtpRow["subfieldname"].ToString(), true );
-//                    CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( JctDdNtpRow["datadictionaryid"] ) );
-//                    ThisProp.FieldTypeRule.SubFields[ThisSubFieldName].RelationalTable = CswNbtResources.DataDictionary.TableName;
-//                    ThisProp.FieldTypeRule.SubFields[ThisSubFieldName].RelationalColumn = CswNbtResources.DataDictionary.ColumnName;
-//                }
-//            }
-//        } // RefreshAllNodeTypeProps()
+        //        private void RefreshAllFieldTypes( bool ExcludeDisabledModules )
+        //        {
+        //            DataTable FieldTypesTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.FieldType );
+        //            if( null == FieldTypesTable )
+        //            {
+        //                FieldTypesTable = FieldTypeTableUpdate.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "fieldtype", OrderByType.Ascending ) } );
+        //                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.FieldType, FieldTypesTable );
+        //            }
 
 
+        //            RefreshMetaDataObject( FieldTypesCollection, FieldTypesTable );
+        //        }
 
-//        private void RefreshAllNodeTypeTabs( bool ExcludeDisabledModules )
-//        {
-//            string WhereClause = string.Empty;
-//            if( ExcludeDisabledModules )
-//            {
-//                WhereClause = @"where ( ( exists (select j.jctmoduleobjectclassid
-//                                                    from jct_modules_objectclass j
-//                                                    join modules m on j.moduleid = m.moduleid
-//                                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)
-//                                                     and m.enabled = '1')
-//                                          or not exists (select j.jctmoduleobjectclassid
-//                                                           from jct_modules_objectclass j
-//                                                           join modules m on j.moduleid = m.moduleid
-//                                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)) )
-//                                    and ( exists (select j.jctmodulenodetypeid
-//                                                  from jct_modules_nodetypes j
-//                                                  join modules m on j.moduleid = m.moduleid
-//                                                 where j.nodetypeid = nodetype_tabset.nodetypeid
-//                                                   and m.enabled = '1')
-//                                          or not exists (select j.jctmodulenodetypeid
-//                                                           from jct_modules_nodetypes j
-//                                                           join modules m on j.moduleid = m.moduleid
-//                                                          where j.nodetypeid = nodetype_tabset.nodetypeid) ) )";
-//            }
+        //        private void RefreshAllNodeTypeProps( bool ExcludeDisabledModules )
+        //        {
+        //            string WhereClause = string.Empty;
+        //            if( ExcludeDisabledModules )
+        //            {
+        //                WhereClause = @"where ( ( exists (select j.jctmoduleobjectclassid
+        //                                                    from jct_modules_objectclass j
+        //                                                    join modules m on j.moduleid = m.moduleid
+        //                                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)
+        //                                                     and m.enabled = '1')
+        //                                          or not exists (select j.jctmoduleobjectclassid
+        //                                                           from jct_modules_objectclass j
+        //                                                           join modules m on j.moduleid = m.moduleid
+        //                                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)) )
+        //                                    and ( exists (select j.jctmodulenodetypeid
+        //                                                  from jct_modules_nodetypes j
+        //                                                  join modules m on j.moduleid = m.moduleid
+        //                                                 where j.nodetypeid = nodetype_props.nodetypeid
+        //                                                   and m.enabled = '1')
+        //                                          or not exists (select j.jctmodulenodetypeid
+        //                                                           from jct_modules_nodetypes j
+        //                                                           join modules m on j.moduleid = m.moduleid
+        //                                                          where j.nodetypeid = nodetype_props.nodetypeid) ) )";
+        //            }
 
-//            DataTable NodeTypeTabsTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab );
-//            if( null == NodeTypeTabsTable )
-//            {
-//                NodeTypeTabsTable = NodeTypeTabTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "taborder", OrderByType.Ascending ) } );
-//                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab, NodeTypeTabsTable );
-//            }
+        //            DataTable NodeTypePropTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp );
+        //            if( null == NodeTypePropTable )
+        //            {
+        //                NodeTypePropTable = NodeTypePropTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "propname", OrderByType.Ascending ) } );
+        //                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeProp, NodeTypePropTable );
+        //            }
 
-//            RefreshMetaDataObject( NodeTypeTabsCollection, NodeTypeTabsTable );
-//        }
+        //            RefreshMetaDataObject( NodeTypePropsCollection, NodeTypePropTable );
+
+        //            // BZ 9139 - Fill in the relational TableName/ColumnName on the subfield here, so that it's cached
+        //            CswTableSelect JctDdNtpSelect = CswNbtResources.makeCswTableSelect( "JctDdNtp_select", "jct_dd_ntp" );
+        //            DataTable JctDdNtpTable = JctDdNtpSelect.getTable();
+        //            foreach( DataRow JctDdNtpRow in JctDdNtpTable.Rows )
+        //            {
+        //                CswNbtMetaDataNodeTypeProp ThisProp = NodeTypePropsCollection.getNodeTypeProp( CswConvert.ToInt32( JctDdNtpRow["nodetypepropid"] ) );
+        //                if( ThisProp != null )
+        //                {
+        //                    CswNbtSubField.SubFieldName ThisSubFieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), JctDdNtpRow["subfieldname"].ToString(), true );
+        //                    CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( JctDdNtpRow["datadictionaryid"] ) );
+        //                    ThisProp.FieldTypeRule.SubFields[ThisSubFieldName].RelationalTable = CswNbtResources.DataDictionary.TableName;
+        //                    ThisProp.FieldTypeRule.SubFields[ThisSubFieldName].RelationalColumn = CswNbtResources.DataDictionary.ColumnName;
+        //                }
+        //            }
+        //        } // RefreshAllNodeTypeProps()
 
 
 
-//        // BZ 8205 - Refresh the data row assignment but leave the existing object intact
-//        private void RefreshMetaDataObject( ICswNbtMetaDataObjectCollection ObjectCollection, DataTable UpdatedTable )
-//        {
-//            ObjectCollection.ClearKeys();
+        //        private void RefreshAllNodeTypeTabs( bool ExcludeDisabledModules )
+        //        {
+        //            string WhereClause = string.Empty;
+        //            if( ExcludeDisabledModules )
+        //            {
+        //                WhereClause = @"where ( ( exists (select j.jctmoduleobjectclassid
+        //                                                    from jct_modules_objectclass j
+        //                                                    join modules m on j.moduleid = m.moduleid
+        //                                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)
+        //                                                     and m.enabled = '1')
+        //                                          or not exists (select j.jctmoduleobjectclassid
+        //                                                           from jct_modules_objectclass j
+        //                                                           join modules m on j.moduleid = m.moduleid
+        //                                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)) )
+        //                                    and ( exists (select j.jctmodulenodetypeid
+        //                                                  from jct_modules_nodetypes j
+        //                                                  join modules m on j.moduleid = m.moduleid
+        //                                                 where j.nodetypeid = nodetype_tabset.nodetypeid
+        //                                                   and m.enabled = '1')
+        //                                          or not exists (select j.jctmodulenodetypeid
+        //                                                           from jct_modules_nodetypes j
+        //                                                           join modules m on j.moduleid = m.moduleid
+        //                                                          where j.nodetypeid = nodetype_tabset.nodetypeid) ) )";
+        //            }
 
-//            Collection<ICswNbtMetaDataObject> Objects = new Collection<ICswNbtMetaDataObject>();
-//            foreach( ICswNbtMetaDataObject ThisObject in ObjectCollection.All )
-//                Objects.Add( ThisObject );
+        //            DataTable NodeTypeTabsTable = _CswNbtMetaDataTableCache.get( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab );
+        //            if( null == NodeTypeTabsTable )
+        //            {
+        //                NodeTypeTabsTable = NodeTypeTabTableUpdate.getTable( WhereClause, new Collection<OrderByClause> { new OrderByClause( "taborder", OrderByType.Ascending ) } );
+        //                _CswNbtMetaDataTableCache.put( CswNbtMetaDataTableCache.MetaDataTable.NodeTypeTab, NodeTypeTabsTable );
+        //            }
 
-//            foreach( DataRow ThisRow in UpdatedTable.Rows )
-//            {
-//                ICswNbtMetaDataObject MatchingObject = null;
-//                foreach( ICswNbtMetaDataObject ThisObject in Objects )
-//                {
-//                    if( ThisObject.UniqueId == CswConvert.ToInt32( ThisRow[ThisObject.UniqueIdFieldName] ) )
-//                    {
-//                        // Reassign the match to the new DataRow
-//                        ThisObject.Reassign( ThisRow );   // won't change the uniqueid, since they match
-//                        ObjectCollection.RegisterExisting( ThisObject );
-//                        MatchingObject = ThisObject;
-//                        break;
-//                    }
-//                }
-//                if( MatchingObject == null )
-//                {
-//                    // Make New
-//                    ObjectCollection.RegisterNew( ThisRow );
-//                }
-//                else
-//                {
-//                    // Take match out of the collection
-//                    Objects.Remove( MatchingObject );
-//                }
-//            }
+        //            RefreshMetaDataObject( NodeTypeTabsCollection, NodeTypeTabsTable );
+        //        }
 
-//            // Get rid of the leftovers
-//            foreach( ICswNbtMetaDataObject ThisObject in Objects )
-//            {
-//                ObjectCollection.Remove( ThisObject );
-//            }
-//        } // RefreshMetaDataObject()
+
+
+        //        // BZ 8205 - Refresh the data row assignment but leave the existing object intact
+        //        private void RefreshMetaDataObject( ICswNbtMetaDataObjectCollection ObjectCollection, DataTable UpdatedTable )
+        //        {
+        //            ObjectCollection.ClearKeys();
+
+        //            Collection<ICswNbtMetaDataObject> Objects = new Collection<ICswNbtMetaDataObject>();
+        //            foreach( ICswNbtMetaDataObject ThisObject in ObjectCollection.All )
+        //                Objects.Add( ThisObject );
+
+        //            foreach( DataRow ThisRow in UpdatedTable.Rows )
+        //            {
+        //                ICswNbtMetaDataObject MatchingObject = null;
+        //                foreach( ICswNbtMetaDataObject ThisObject in Objects )
+        //                {
+        //                    if( ThisObject.UniqueId == CswConvert.ToInt32( ThisRow[ThisObject.UniqueIdFieldName] ) )
+        //                    {
+        //                        // Reassign the match to the new DataRow
+        //                        ThisObject.Reassign( ThisRow );   // won't change the uniqueid, since they match
+        //                        ObjectCollection.RegisterExisting( ThisObject );
+        //                        MatchingObject = ThisObject;
+        //                        break;
+        //                    }
+        //                }
+        //                if( MatchingObject == null )
+        //                {
+        //                    // Make New
+        //                    ObjectCollection.RegisterNew( ThisRow );
+        //                }
+        //                else
+        //                {
+        //                    // Take match out of the collection
+        //                    Objects.Remove( MatchingObject );
+        //                }
+        //            }
+
+        //            // Get rid of the leftovers
+        //            foreach( ICswNbtMetaDataObject ThisObject in Objects )
+        //            {
+        //                ObjectCollection.Remove( ThisObject );
+        //            }
+        //        } // RefreshMetaDataObject()
 
 
         /// <summary>
@@ -437,20 +437,20 @@ namespace ChemSW.Nbt.MetaData
             if( NodeTypeTableUpdate != null )
                 ChangesMade = NodeTypeTableUpdate.updateAll() || ChangesMade;
             if( NodeTypeTabTableUpdate != null )
-                ChangesMade = NodeTypeTabTableUpdate.updateAll() || ChangesMade;    
+                ChangesMade = NodeTypeTabTableUpdate.updateAll() || ChangesMade;
             if( NodeTypePropTableUpdate != null )
                 ChangesMade = NodeTypePropTableUpdate.updateAll() || ChangesMade;
             if( JctNodesPropsTableUpdate != null )
                 ChangesMade = JctNodesPropsTableUpdate.updateAll() || ChangesMade;
 
             if( ChangesMade )
-            {   
+            {
                 CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
                 //_CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
             }
         }
 
-        public ICswNbtFieldTypeRule makeFieldTypeRule(CswNbtMetaDataFieldType.NbtFieldType FieldType)
+        public ICswNbtFieldTypeRule makeFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             return CswNbtFieldTypeRuleFactory.makeRule( CswNbtFieldResources, FieldType );
         }

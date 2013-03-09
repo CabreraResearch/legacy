@@ -745,6 +745,7 @@ namespace ChemSW.Nbt.Actions
 
 
 
+
         #endregion Sets
 
 
@@ -759,9 +760,19 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( SizeViewId );
             SizeView.Root.ChildRelationships.Clear();
+
             CswNbtViewRelationship SizeVr = SizeView.AddViewRelationship( SizeOc, false );
+
             SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
             SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ), "false", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+
+            SizeView.AddViewPropertyAndFilter( SizeVr,
+                MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ),
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            SizeView.AddViewPropertyAndFilter( SizeVr,
+                MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount ),
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+
             SizeView.save();
         }
 

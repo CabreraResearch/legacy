@@ -25,7 +25,9 @@ namespace ChemSW.Nbt.Actions
         Upload_Legacy_Mobile_Data,
         HMIS_Reporting,
         KioskMode,
-        Tier_II_Reporting
+        Tier_II_Reporting,
+        Material_Approval,
+        Login_Data
     }
 
     public class CswNbtAction

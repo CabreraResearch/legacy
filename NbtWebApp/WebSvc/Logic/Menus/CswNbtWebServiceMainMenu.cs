@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        public JObject getMenu( CswNbtView View, string SafeNodeKey, Int32 NodeTypeId, string PropIdAttr, bool ReadOnly )
+        public JObject getMenu( CswNbtView View, string SafeNodeKey, Int32 NodeTypeId, string PropIdAttr, bool ReadOnly, string NodeId )
         {
 
             CswTimer MainMenuTimer = new CswTimer();
@@ -80,21 +80,22 @@ namespace ChemSW.Nbt.WebServices
             string RelatedObjectClassId = string.Empty;
             CswNbtNode Node = null;
 
-            if( false == string.IsNullOrEmpty( SafeNodeKey ) )
+            if( false == String.IsNullOrEmpty( SafeNodeKey ) )
             {
                 CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( SafeNodeKey );
-                if( null == NbtNodeKey.NodeId )
-                {
-                    NbtNodeKey.NodeId = CswConvert.ToPrimaryKey( SafeNodeKey );
-                }
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
-                if( null != Node )
-                {
-                    RelatedNodeId = Node.NodeId;
-                    RelatedNodeName = Node.NodeName;
-                    RelatedNodeTypeId = Node.NodeTypeId.ToString();
-                    RelatedObjectClassId = Node.getObjectClassId().ToString();
-                }
+            }
+            else if( false == String.IsNullOrEmpty( NodeId ) )
+            {
+                CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( NodeId );
+                Node = _CswNbtResources.Nodes[NodePk];
+            }
+            if( null != Node )
+            {
+                RelatedNodeId = Node.NodeId;
+                RelatedNodeName = Node.NodeName;
+                RelatedNodeTypeId = Node.NodeTypeId.ToString();
+                RelatedObjectClassId = Node.getObjectClassId().ToString();
             }
 
             // MORE

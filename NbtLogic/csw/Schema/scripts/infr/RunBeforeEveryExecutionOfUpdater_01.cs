@@ -57,6 +57,7 @@ namespace ChemSW.Nbt.Schema
             #region ASPEN
 
             _createNodeCountColumns( CswDeveloper.MB, 28355 );
+            _createLoginDataTable( CswDeveloper.BV, 27906 );
 
             #endregion ASPEN
 
@@ -100,6 +101,48 @@ namespace ChemSW.Nbt.Schema
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", NodeCountColName ) )
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "object_class", NodeCountColName, "The number of nodes", false, false );
+            }
+
+            _resetBlame();
+        }
+
+        private void _createLoginDataTable( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            const string LoginDataTableName = "login_data";
+
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( LoginDataTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( LoginDataTableName, "loginid" );
+                _CswNbtSchemaModTrnsctn.getNewPrimeKey( LoginDataTableName );
+            }
+            if( _CswNbtSchemaModTrnsctn.isTableDefined( LoginDataTableName ) )
+            {
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( LoginDataTableName, "username" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( LoginDataTableName, "username", "User's Username", false, false, 50 );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( LoginDataTableName, "ipaddress" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( LoginDataTableName, "ipaddress", "User's IP Address", false, false, 30 );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( LoginDataTableName, "logindate" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addDateColumn( LoginDataTableName, "logindate", "Date of Login Attempt", false, false );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( LoginDataTableName, "loginstatus" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( LoginDataTableName, "loginstatus", "Status of Login Attempt", false, false, 50 );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( LoginDataTableName, "failurereason" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( LoginDataTableName, "failurereason", "Reason for Login Failure", false, false, 100 );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( LoginDataTableName, "failedlogincount" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( LoginDataTableName, "failedlogincount", "Number of times user login has failed this session", false, false );
+                }
             }
 
             _resetBlame();

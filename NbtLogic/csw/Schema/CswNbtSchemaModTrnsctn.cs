@@ -202,11 +202,28 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         /// <returns>Number of rows affected</returns>
         public Int32 execArbitraryPlatformNeutralSql( string SqlText ) { return _CswNbtResources.CswResources.execArbitraryPlatformNeutralSql( SqlText ); }
+
+
+        /// <summary>
+        /// This method executes the sql passed into it in a transaction that is separate from the 
+        /// one that is controlled by the beginTransaction() and commitTransaction() methods.
+        /// Moreover, the connection it uses is returned to the connection pool immediately. 
+        /// It should be used only when you have a need to perform a sql operation that 
+        /// is separate from the main transaction. This is almost always _not_ 
+        /// what you want to do. Caveat emptor!
+        /// </summary>
+        /// <param name="SqlText">The SQL to be executed</param>
+        /// <returns></returns>
+        public Int32 execArbitraryPlatformNeutralSqlInItsOwnTransaction( string SqlText ) { return ( _CswNbtResources.CswResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( SqlText ) ); }
+
+        
+        
         /// <summary>
         /// Executes arbitrary sql.  It's your job to make sure it's platform neutral.
         /// You should *strongly* consider using CswArbitrarySelect, CswTableSelect, or CswTableUpdate instead of this.
         /// </summary>
         /// <returns>DataTable of results</returns>
+        /// 
         public DataTable execArbitraryPlatformNeutralSqlSelect( string UniqueName, string SqlText ) { return _CswNbtResources.CswResources.execArbitraryPlatformNeutralSqlSelect( UniqueName, SqlText ); }
 
         //limit usage of CswDbResources public interfaces as per bz # 9136

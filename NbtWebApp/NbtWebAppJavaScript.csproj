@@ -62,6 +62,7 @@
     <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\actions\csw.logindata.js" />
     <Content Include="app\actions\csw.scheduledRules.js" />
     <Content Include="app\actions\csw.tierIIReporting.js" />
     <Content Include="app\actions\csw.hmisReporting.js" />

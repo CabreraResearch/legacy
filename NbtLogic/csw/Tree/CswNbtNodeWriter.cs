@@ -94,8 +94,16 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
-                    _incrementNodeCount( Node );
+                    if( false == Node.IsTemp )
+                    {
+                        _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );
+                    }
                     //setDefaultPropertyValues( Node );
+                }
+                else if( Node.IsTempModified && false == Node.IsTemp )
+                {
+                    _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );
+                    Node.IsTempModified = false;
                 }
                 else if( Node.IsTempModified )
                 {

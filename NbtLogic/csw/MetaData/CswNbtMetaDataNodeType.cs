@@ -824,5 +824,6 @@ namespace ChemSW.Nbt.MetaData
             CswNbtActQuotas ActQuotas = new CswNbtActQuotas( _CswNbtMetaDataResources.CswNbtResources );
             ActQuotas.IncrementNodeCountForNodeType( NodeTypeId );
         }
+
     }
 }
