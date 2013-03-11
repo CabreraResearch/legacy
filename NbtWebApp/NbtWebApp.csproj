@@ -1947,6 +1947,7 @@
     <None Include="Images\newicons\icons.pspimage" />
     <None Include="NbtPrintClient\NbtPrintClientInstall.msi" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
+    <Content Include="setupEnvironment.ps1" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
     <None Include="SkinPrint\Grid\Thumbs.db" />
