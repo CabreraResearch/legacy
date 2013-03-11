@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -16,7 +18,7 @@ namespace ChemSW.Nbt.Test
     {
         private CswNbtResources _CswNbtResources;
         private ICswDbCfgInfo _CswDbCfgInfoNbt;
-        private CswPrimaryKey _NodeIdHighWaterMark;
+        private Int32 _NodeIdHighWaterMark;
         private Int32 _NodeTypeHighWaterMark;
 
         //TODO - refactor the way we're handling NTP states
@@ -53,31 +55,23 @@ namespace ChemSW.Nbt.Test
 
         private void _setHighWaterMark()
         {
-            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Dispense Transaction" ), CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-            _NodeIdHighWaterMark = PlaceHolderNode.NodeId;
+            DataTable MaxNodeTable = CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getHWM", "select max(nodeid) as hwm from nodes" );
+            _NodeIdHighWaterMark = CswConvert.ToInt32(MaxNodeTable.Rows[0]["hwm"]);
             _NodeTypeHighWaterMark = _CswNbtResources.MetaData.getNodeTypeIds().Max();
         }
 
         internal bool isTestNode( CswPrimaryKey NodeId )
         {
-            return NodeId.PrimaryKey > _NodeIdHighWaterMark.PrimaryKey;
+            return NodeId.PrimaryKey > _NodeIdHighWaterMark;
         }
 
         private List<Int32> _getNodesAboveHighWaterMark()
         {
             List<Int32> TestNodeIds = new List<Int32>();
-            TestNodeIds.Add( _NodeIdHighWaterMark.PrimaryKey );
 
-            IEnumerator CurrentNodes = _CswNbtResources.Nodes.GetEnumerator();
-            while( CurrentNodes.MoveNext() )
-            {
-                DictionaryEntry dentry = (DictionaryEntry) CurrentNodes.Current;
-                CswNbtNode CurrentNode = (CswNbtNode) dentry.Value;
-                if( CurrentNode.NodeId.PrimaryKey > _NodeIdHighWaterMark.PrimaryKey )
-                {
-                    TestNodeIds.Add( CurrentNode.NodeId.PrimaryKey );
-                }
-            }
+            CswTableSelect  NodesSelect = _CswNbtResources.makeCswTableSelect( "NodesAboveHWM", "nodes" );
+            DataTable TestNodesTable = NodesSelect.getTable( "where nodeid > " + _NodeIdHighWaterMark );
+            TestNodeIds.AddRange( from DataRow Row in TestNodesTable.Rows select CswConvert.ToInt32( Row["nodeid"] ) );
 
             return TestNodeIds;
         }
@@ -219,20 +213,6 @@ namespace ChemSW.Nbt.Test
                     PPENTP.MaxValue = HideThreshold;
                 }
             }
-        }
-
-        #endregion
-
-        #region Private Helper Functions
-
-        private int _getNodeTypeId( string NodeTypeName )
-        {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
-            if( NodeType == null )
-            {
-                throw new Exception( "Expected NodeType not found: " + NodeTypeName );
-            }
-            return NodeType.NodeTypeId;
         }
 
         #endregion
