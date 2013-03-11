@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Int32 FailedLoginCount = 0;
 
-            public void setFailureReason( AuthenticationStatus Status )
+            public void setStatus( AuthenticationStatus Status )
             {
                 switch( Status )
                 {
@@ -52,6 +52,9 @@ namespace ChemSW.Nbt.Actions
                         break;
                     case AuthenticationStatus.Unknown:
                         FailureReason = "Unknown Username";
+                        break;
+                    case AuthenticationStatus.Authenticated:
+                        LoginStatus = "Success";
                         break;
                 }
             }
