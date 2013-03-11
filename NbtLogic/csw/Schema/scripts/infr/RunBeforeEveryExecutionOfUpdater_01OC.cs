@@ -107,14 +107,6 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        #endregion Yorick Methods
-
-
-        #region ASPEN Methods
-        
-        #endregion ASPEN Methods
-        
-
         private void _makeUnCode( CswDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
@@ -147,8 +139,7 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-
-
+        
         private void _correctGeneratorTargetTypeProps( CswDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
@@ -171,10 +162,8 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-
-
-        #endregion Yorick
-
+        #endregion Yorick Methods
+        
         #region ASPEN Methods
         
         private void _addSaveProperty( UnitOfBlame Blamne )
