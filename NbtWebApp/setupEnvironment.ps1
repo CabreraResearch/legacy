@@ -64,23 +64,23 @@ if (Install-NeededFor 'Grunt' $false) {
 
 Write-Host "Checking for/installing required frameworks"
 if (Install-NeededFor '.NET Runtimes up to 4.5' $false) {
-	cinst netframework2 -source webpi
-	cinst NETFramework35 -source webpi
-	cinst NETFramework4 -source webpi
-	cinst NETFramework4Update402 -source webpi
-	cinst NETFramework4Update402_KB2544514_Only -source webpi
-	cinst WindowsInstaller31 -source webpi
-	cinst WindowsInstaller45 -source webpi
+    cinst netframework2 -source webpi
+    cinst NETFramework35 -source webpi
+    cinst NETFramework4 -source webpi
+    cinst NETFramework4Update402 -source webpi
+    cinst NETFramework4Update402_KB2544514_Only -source webpi
+    cinst WindowsInstaller31 -source webpi
+    cinst WindowsInstaller45 -source webpi
 }
 
 if (Install-NeededFor 'Tortoise' $false) {
-	cinst tortoisehg -source webpi
+    cinst tortoisehg -source webpi
 }
 
 Write-Host "Checking for/installing PowerShell"
 if (Install-NeededFor 'PowerShell 3.0' $false) {
-	cinst PowerShell
-	cinst PowerGUI
+    cinst PowerShell
+    cinst PowerGUI
 }
 
 Write-Host "Checking for/installing Visual Studio Items..."
