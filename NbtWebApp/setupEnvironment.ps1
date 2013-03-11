@@ -52,6 +52,7 @@ if (Install-NeededFor 'autosave' $false) {
 
 if (Install-NeededFor 'Grunt' $false) {
   cinstm nodejs.install
+  cinst PhantomJS
   $nodePath = Join-Path $env:programfiles 'nodejs'
    $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
   if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
