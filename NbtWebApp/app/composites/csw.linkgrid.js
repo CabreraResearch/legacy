@@ -33,7 +33,6 @@
                     Csw.extend(cswPrivate, options);
                 }
 
-                cswParent.empty();
                 cswPrivate.table = cswParent.table(cswPrivate);
                 cswPublic = Csw.dom({}, cswPrivate.table);
             } ());
