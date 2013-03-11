@@ -608,8 +608,9 @@
                                     Csw.each(cswPrivate.state.sizes[rowid - 1], function (objVal) {
                                         arrayOfSizeInfo.push(objVal.value);
                                     });
+                                    cswPrivate.sizesToDelete.push(arrayOfSizeInfo);
                                 }
-                                cswPrivate.sizesToDelete.push(arrayOfSizeInfo);
+                                
                                
                             }
                         });

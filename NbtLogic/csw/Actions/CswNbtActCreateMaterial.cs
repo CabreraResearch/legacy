@@ -432,13 +432,16 @@ namespace ChemSW.Nbt.Actions
                         JArray SizesToDelete = (JArray) MaterialObj["sizesToDelete"];
                         for( int i = 0; i < SizesToDelete.Count; i++ )
                         {
-                            CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey( SizesToDelete[i].Last.ToString() );
-                            if( CswTools.IsPrimaryKey( SizeNodePK ) )
+                            if (SizesToDelete[i].HasValues)
                             {
-                                CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode( SizeNodePK );
-                                if (null != SizeNodeToDelete)
+                                CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey(SizesToDelete[i].Last.ToString());
+                                if (CswTools.IsPrimaryKey(SizeNodePK))
                                 {
-                                    SizeNodeToDelete.delete();
+                                    CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode(SizeNodePK);
+                                    if (null != SizeNodeToDelete)
+                                    {
+                                        SizeNodeToDelete.delete();
+                                    }
                                 }
                             }
                         }
