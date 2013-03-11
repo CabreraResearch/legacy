@@ -1,30 +1,28 @@
 ﻿using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ChemSW.Nbt.Test
 {
-    [TestClass]
+    [TestFixture]
     public class CswNbtBatchOpContainerReconciliationActionsTest
     {
         #region Setup and Teardown
 
         private TestData TestData;
 
-        [TestInitialize()]
+        [SetUp]
         public void MyTestInitialize()
         {
             TestData = new TestData();
         }
 
-        [TestCleanup()]
+        [TearDown]
         public void MyTestCleanup()
         {
-            TestData.DeleteTestNodes();
-            TestData.RevertNodeProps();
+            TestData.Destroy();
         }
 
         #endregion
@@ -36,7 +34,7 @@ namespace ChemSW.Nbt.Test
         /// (i.e. - a newer ContainerLocation exists for the related Container),
         /// assert that the ContainerLocation is marked ActionApplied and the related Container is unchanged.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void runBatchOpTestMoreRecentExists()
         {
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
@@ -44,7 +42,7 @@ namespace ChemSW.Nbt.Test
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
             _runReconciliationBatchOp( FirstContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, FirstContainerLocationNode.ActionApplied.Checked );
-            Assert.AreNotEqual( Tristate.False, ContainerNode.Missing.Checked );
+            Assert.AreEqual( Tristate.False, ContainerNode.Missing.Checked );
         }
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace ChemSW.Nbt.Test
         /// assert that the Contianer has Disposed and Missing set to false, 
         /// and that the ContainerLocation is marked ActionApplied.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void runBatchOpTestUndispose()
         {
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
@@ -74,7 +72,7 @@ namespace ChemSW.Nbt.Test
         /// assert that the Container has Missing set to false, 
         /// assert that the ContainerLocation is marked ActionApplied,
         /// </summary>
-        [TestMethod]
+        [Test]
         public void runBatchOpTestWrongLocationMoveToLocation()
         {
             CswPrimaryKey ContainerLocId, ContainerLocationLocId;
@@ -87,7 +85,7 @@ namespace ChemSW.Nbt.Test
                 LocationId: ContainerLocationLocId,
                 Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.WrongLocation, ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.WrongLocation.ToString(), ContainerLocationNode.Status.Value );
 
             _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
@@ -102,7 +100,7 @@ namespace ChemSW.Nbt.Test
         /// assert that the Container has Missing set to false,
         /// assert that the ContainerLocation is marked ActionApplied,
         /// </summary>
-        [TestMethod]
+        [Test]
         public void runBatchOpTestDisposedAtWrongLocationMoveToLocation()
         {
             CswPrimaryKey ContainerLocId, ContainerLocationLocId;
@@ -117,7 +115,7 @@ namespace ChemSW.Nbt.Test
                 LocationId: ContainerLocationLocId,
                 Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
 
             _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
@@ -133,7 +131,7 @@ namespace ChemSW.Nbt.Test
         /// assert that the Container has Disposed and Missing set to false,
         /// assert that the ContainerLocation is marked ActionApplied,
         /// </summary>
-        [TestMethod]
+        [Test]
         public void runBatchOpTestUndisposeAndMove()
         {
             CswPrimaryKey ContainerLocId, ContainerLocationLocId;
@@ -148,7 +146,7 @@ namespace ChemSW.Nbt.Test
                 LocationId: ContainerLocationLocId,
                 Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
 
             _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
@@ -163,7 +161,7 @@ namespace ChemSW.Nbt.Test
         /// assert that the Contianer has Missing set to true, 
         /// and that the ContainerLocation is marked ActionApplied.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void runBatchOpTestMarkMissing()
         {
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();

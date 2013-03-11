@@ -2,27 +2,27 @@
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.ObjClasses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ChemSW.Nbt.Test
 {
-    [TestClass]
+    [TestFixture]
     public class CswNbtUnitConversionTest
     {
         #region Setup and Teardown
 
-        private TestData TestData = null;
+        private TestData TestData;
 
-        [TestInitialize()]
+        [SetUp]
         public void MyTestInitialize()
         {
             TestData = new TestData();
         }
 
-        [TestCleanup()]
+        [TearDown]
         public void MyTestCleanup()
         {
-            TestData.DeleteTestNodes();
+            TestData.Destroy();
         }
 
         #endregion
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Test
         /// <summary>
         /// See W1005
         /// </summary>
-        [TestMethod]
+        [Test]
         public void convertUnitTestWikiExample()
         {
             Double ValueToConvert = 3;
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.Test
         /// Given a numeric value and two UnitOfMeasure Nodes of the Same Unit Type, when unit conversion is applied, 
         /// the returning number should be the product of the given value and the quotient of the old and new conversion factors.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void convertUnitTestSameUnitType()
         {
             Double ValueToConvert = 4;
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Test
         /// the returning number should be the product of the given value and the interconversion of the old and new conversion factors 
         /// with respect to the material's specific gravity.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void convertUnitTestVolumeToWeightUnitTypes()
         {
             Double ValueToConvert = 4;
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.Test
         /// the returning number should be the product of the given value and the interconversion of the old and new conversion factors 
         /// with respect to the material's specific gravity.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void convertUnitTestWeightToVolumeUnitTypes()
         {
             Double ValueToConvert = 4;
@@ -105,22 +105,20 @@ namespace ChemSW.Nbt.Test
         /// <summary>
         /// Given a null UnitOfMeasure, Unit Conversion cannot be applied.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void convertUnitTestNullUnitOfMeasure()
         {
             Double ValueToConvert = 4;
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            Double Actual = 0;
-
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, null, LiterNode.NodeId );
-            Actual = ConversionObj.convertUnit( ValueToConvert );
+            double Actual = ConversionObj.convertUnit( ValueToConvert );
             Assert.AreEqual( ValueToConvert, Actual );
         }
 
         /// <summary>
         /// Given a null Quantity, Unit Conversion cannot be applied.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void convertUnitTestNullQuantity()
         {
             Double ValueToConvert = Double.NaN;
@@ -135,7 +133,7 @@ namespace ChemSW.Nbt.Test
         /// <summary>
         /// Given two null Units of Measure, Unit Conversion cannot be applied.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void convertUnitTestNullUnitIds()
         {
             double convertedValue = Double.NaN;
