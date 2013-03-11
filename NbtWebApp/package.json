@@ -27,6 +27,7 @@
     "grunt-contrib" : "~0.5.0",
     
     "grunt-growl": "latest",
+    "grunt-jsdoc": "latest",
     "grunt-mocha-cli": "latest",
     "grunt-tmplmin": "latest",
     "grunt-qunit-cov": "latest",

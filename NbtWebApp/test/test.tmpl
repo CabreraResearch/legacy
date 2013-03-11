@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" href="images/favicon.ico" />
+    <title>ChemSW Live: QUnit Test Results</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="../node_modules/grunt-contrib-qunit/test/libs/qunit.css">
+        <link rel="stylesheet" href="../vendor/vendor.css">
+
+    </head>
+    <body>
+        <h1 id="qunit-header">QUnit example</h1>
+        <h2 id="qunit-banner"></h2>
+        <h2 id="qunit-userAgent"></h2>
+        <ol id="qunit-tests"></ol>
+        <div id="qunit-fixture">test markup, will be hidden</div>
+                
+        <script src="../vendor/vendor.min.js"></script>
+        <script src="../node_modules/grunt-contrib-qunit/test/libs/qunit.js"></script>
+
+        <%
+            
+            var jsFiles = grunt.file.expand(grunt.config('CswAppJsFiles')),
+                testJsFiles = grunt.file.expand(grunt.config('CswTestJsFiles'));
+
+                for(var i = 0, len = jsFiles.length; i < len; i += 1) {
+                    print('        <script type="text/javascript" src="../' + jsFiles[i] + '"></script>\n');
+                }
+                for(var i = 0, len = testJsFiles.length; i < len; i += 1) {
+                    print('        <script type="text/javascript" src="../' + testJsFiles[i] + '"></script>\n');
+                }
+        %>
+        <div id="CswTestingDiv" style-"display: none;"></div>
+    </body>
+</html>
