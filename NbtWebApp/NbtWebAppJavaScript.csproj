@@ -257,6 +257,7 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="Gruntfile.js" />
     <Content Include="PlainIncludes.html" />
     <Content Include="PlainHeader.html" />
     <Content Include="PrintingLabels.html" />
@@ -954,6 +955,8 @@
     <Content Include="DevIncludes.html" />
     <None Include="app\_pruneMaps.bat" />
     <None Include="app\_updateIncludes.pl" />
+    <None Include="package.json" />
+    <None Include="README.md" />
     <None Include="Scripts\jquery-1.9.1.min.map" />
     <None Include="vendor\es5-sham.min.js.map">
       <DependentUpon>es5-sham.js</DependentUpon>

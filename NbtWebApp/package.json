@@ -1,0 +1,45 @@
+﻿{
+  "name": "Csw",
+  "title": "ChemSW Nbt Client-Side Framework",
+  "description": "NBT JavaScript Project",
+  "version": "0.1.0",
+  "homepage": "https://daily.chemswlive.com",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "repository": {
+    "type": "hg",
+    "url": "https://fogbugz.chemswlive.com/kiln/Code/NbtDev/Nbt/Nbt"
+  },
+  "bugs": {
+    "url": "https://fogbugz.chemswlive.coms"
+  },
+  "licenses": [
+    {
+      "type": "none",
+      "url": ""
+    }
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.0",
+        
+    "grunt-contrib" : "~0.5.0",
+    
+    "grunt-growl": "latest",
+    "grunt-mocha-cli": "latest",
+    "grunt-tmplmin": "latest",
+    "grunt-qunit-cov": "latest",
+        
+    "clean-css": "latest",
+    "express": "latest",
+    "jscoverage": "latest",
+    "node-phantom": "latest"
+  },
+  "bundledDependencies": [],
+  "keywords": [],
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  }
+}
