@@ -1,5 +1,3 @@
-/// <reference path="~/app/CswApp-vsdoc.js" />
-/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 
 (function ($) {
     "use strict";
@@ -44,86 +42,81 @@
                 cswPrivate.onButtonClick = function () {
                     cswPublic.button.disable();
                     
-                    var doNodeButtonClick = function() {
-
-                        if (Csw.isNullOrEmpty(cswPrivate.propId)) {
-                            Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
-                            cswPublic.button.enable();
-                        } else {
-                            // Case 27263: prompt to save instead
-
-                            var performOnObjectClassButtonClick = function() {
-                                Csw.ajax.post({
-                                    urlMethod: 'onObjectClassButtonClick',
-                                    data: {
-                                        NodeTypePropAttr: cswPrivate.propId,
-                                        SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
-                                        TabId: cswPrivate.tabId,
-                                        Props: cswPrivate.propertiesForSave
-                                    },
-                                    success: function(data) {
-                                        cswPublic.button.enable();
-
-                                        var actionData = {
-                                            data: data,
-                                            propid: cswPrivate.propId,
-                                            button: cswPublic.button,
-                                            selectedOption: Csw.string(cswPublic.button.selectedOption),
-                                            messagediv: cswPrivate.messageDiv,
-                                            context: cswPrivate,
-                                            onSuccess: cswPrivate.onAfterButtonClick
-                                        };
-
-                                        if (false === Csw.isNullOrEmpty(data.message)) {
-                                            if (false === cswPrivate.useToolTip) {
-                                                cswPublic.messageDiv.text(data.message);
-                                            } else {
-                                                cswPrivate.btnCell.quickTip({ html: data.message });
-                                            }
-                                        }
-                                        if (Csw.bool(data.success)) {
-                                            Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
-                                        }
-                                    }, // ajax success()
-                                    error: function() {
-                                        cswPublic.button.enable();
-                                    }
-                                }); // ajax.post()
-                            };
-
-                            if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
-                                $.CswDialog('GenericDialog', {
-                                    name: 'ButtonConfirmationDialog',
-                                    title: 'Confirm ' + Csw.string(cswPrivate.value),
-                                    height: 150,
-                                    width: 400,
-                                    div: Csw.literals.div({ text: cswPrivate.confirmmessage, align: 'center' }),
-                                    onOk: function(selectedOption) {
-                                        performOnObjectClassButtonClick();
-                                    },
-                                    onCancel: function() {
-                                        cswPublic.button.enable();
-                                    },
-                                    onClose: function() {
-                                        cswPublic.button.enable();
-                                    }
-                                });
-                            } else {
-                                performOnObjectClassButtonClick();
-                            }
-                        } // if-else (Csw.isNullOrEmpty(propAttr)) {
-
-                    };
-                    
                     if (options.saveTheCurrentTab) {
-                        options.saveTheCurrentTab(null, cswPrivate.tabId, function _onSuccess() {
-                            doNodeButtonClick();
-                        });
-                    } else {
-                        doNodeButtonClick();
+                        options.saveTheCurrentTab(cswPrivate.tabId);
                     }
+                    
+                    if (Csw.isNullOrEmpty(cswPrivate.propId)) {
+                        Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
+                        cswPublic.button.enable();
+                    } else {
+                        // Case 27263: prompt to save instead
 
+                        var performOnObjectClassButtonClick = function() {
+                            Csw.ajax.post({
+                                urlMethod: 'onObjectClassButtonClick',
+                                data: {
+                                    NodeTypePropAttr: cswPrivate.propId,
+                                    SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
+                                    TabId: cswPrivate.tabId,
+                                    Props: cswPrivate.propertiesForSave || ''
+                                },
+                                success: function(data) {
+                                    cswPublic.button.enable();
 
+                                    var actionData = {
+                                        data: data,
+                                        propid: cswPrivate.propId,
+                                        button: cswPublic.button,
+                                        selectedOption: Csw.string(cswPublic.button.selectedOption),
+                                        messagediv: cswPrivate.messageDiv,
+                                        context: cswPrivate,
+                                        onSuccess: cswPrivate.onAfterButtonClick
+                                    };
+
+                                    if (false === Csw.isNullOrEmpty(data.message)) {
+                                        if (false === cswPrivate.useToolTip) {
+                                            cswPublic.messageDiv.text(data.message);
+                                        } else {
+                                            cswPrivate.btnCell.quickTip({ html: data.message });
+                                        }
+                                    }
+                                    if (Csw.bool(data.success)) {
+                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
+                                    }
+                                }, // ajax success()
+                                error: function() {
+                                    cswPublic.button.enable();
+                                }
+                            }); // ajax.post()
+                        }; //performOnObjectClassButtonClick
+
+                        if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
+                            $.CswDialog('GenericDialog', {
+                                name: 'ButtonConfirmationDialog',
+                                title: 'Confirm ' + Csw.string(cswPrivate.value),
+                                height: 150,
+                                width: 400,
+                                div: Csw.literals.div({ text: cswPrivate.confirmmessage, align: 'center' }),
+                                onOk: function(selectedOption) {
+                                    performOnObjectClassButtonClick();
+                                },
+                                onCancel: function() {
+                                    cswPublic.button.enable();
+                                },
+                                onClose: function() {
+                                    cswPublic.button.enable();
+                                }
+                            });
+                        } else {
+                            performOnObjectClassButtonClick();
+                        }
+                    } // if-else (Csw.isNullOrEmpty(propAttr)) {
+
+                    
+                        
+                        
+                    
                 }; // onButtonClick()
 
                 (function _post() {
