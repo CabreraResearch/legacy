@@ -108,6 +108,7 @@
                         if (false === cswPrivate.isRequired) {
                             cswPrivate.options.push({ id: '', value: '' });
                         }
+                        
                         data.Nodes.forEach(function (obj) {
                             cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                         });
@@ -182,6 +183,7 @@
                     var val = cswPrivate.select.val();
                     cswPrivate.selectedNodeId = val;
                     cswPrivate.selectedName = cswPrivate.select.selectedText();
+
                     Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
 
                     cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
@@ -209,9 +211,9 @@
                 Csw.each(cswPrivate.options, function(relatedObj) {
                     if (false === Csw.bool(cswPrivate.isMulti) && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
-                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.nodelink });
+                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.link });
                     } else {
-                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.nodelink });
+                        cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.link });
                     }
                 });
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
