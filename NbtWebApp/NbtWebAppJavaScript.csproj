@@ -257,6 +257,7 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="Gruntfile.js" />
     <Content Include="PlainIncludes.html" />
     <Content Include="PlainHeader.html" />
     <Content Include="PrintingLabels.html" />
@@ -312,6 +313,9 @@
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
     <Content Include="Template.html" />
+    <Content Include="test\csw-test.js" />
+    <Content Include="vendor\ext-done.js" />
+    <Content Include="vendor\ext-init.js" />
     <Content Include="vendor\loggly-0.1.0.min.js" />
     <Content Include="vendor\es6-shim.min.js" />
     <Content Include="vendor\es5-sham.min.js" />
@@ -954,7 +958,10 @@
     <Content Include="DevIncludes.html" />
     <None Include="app\_pruneMaps.bat" />
     <None Include="app\_updateIncludes.pl" />
+    <None Include="package.json" />
+    <None Include="README.md" />
     <None Include="Scripts\jquery-1.9.1.min.map" />
+    <None Include="test\test.tmpl" />
     <None Include="vendor\es5-sham.min.js.map">
       <DependentUpon>es5-sham.js</DependentUpon>
     </None>
@@ -991,7 +998,9 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="test\core\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
