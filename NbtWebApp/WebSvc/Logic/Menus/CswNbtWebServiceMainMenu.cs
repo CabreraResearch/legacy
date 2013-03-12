@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.WebServices
                         bool LimitToFirstLevelRelationships = ( View.ViewMode == NbtViewRenderingMode.Grid );
                         if( LimitToFirstLevelRelationships && View.Visibility == NbtViewVisibility.Property )
                         {
-                            if( string.IsNullOrEmpty( SafeNodeKey ) )
+                            if( null == Node )
                             {
                                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
                                 if( Tree.getChildNodeCount() > 0 )

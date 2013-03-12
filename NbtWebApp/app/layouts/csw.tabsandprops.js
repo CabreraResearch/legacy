@@ -34,7 +34,8 @@
                     ShowAsReport: true,
                     viewid: '',
                     checkBoxes: {},
-                    removeTempStatus: true
+                    removeTempStatus: true,
+                    selectedTabId: ''
                 },
                 tabState: {
                     nodename: '',
@@ -93,7 +94,7 @@
                                 chk.hide();
                             }
                         });
-                        cswPrivate.onRenderProps();
+                        cswPrivate.onRenderProps(cswPrivate.globalState.selectedTabId);
                         cswPrivate.refreshLinkDiv();
                     }
                 }
@@ -157,8 +158,8 @@
 
             //#region Events
 
-            cswPrivate.onRenderProps = function () {
-                Csw.publish('render_' + cswPublic.getNodeId());
+            cswPrivate.onRenderProps = function (tabid) {
+                Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
             cswPrivate.onTearDownProps = function () {
@@ -401,6 +402,7 @@
                                                 cswPrivate.tabState.tabNo = Csw.number(ui.index);
                                                 var selectTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
                                                 cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
+                                                cswPrivate.globalState.selectedTabId = cswPrivate.tabState.tabid;
                                                 Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                                 cswPrivate.form.empty();
                                                 cswPrivate.onTearDown();
@@ -908,7 +910,7 @@
                         cswPrivate.saveBtn.show();
                     }
                 }
-                cswPrivate.onRenderProps();
+                cswPrivate.onRenderProps(tabid);
             }; // _handleProperties()
 
 
@@ -1120,7 +1122,7 @@
 
                                 // keep the fact that the parent property was modified
                                 cswPrivate.makeProp(propCell, singlePropData, tabContentDiv, tabid, configMode, layoutTable);
-                                cswPrivate.onRenderProps();
+                                cswPrivate.onRenderProps(tabid);
                             }
                         });
                     }
