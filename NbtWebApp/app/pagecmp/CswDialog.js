@@ -1868,6 +1868,7 @@
             open: function () {
                 dialogsCount++;
                 Csw.tryExec(onOpen, div);
+                div.$.parent().find(' :button').blur();
             }
         });
         posX += incrPosBy;

@@ -444,13 +444,12 @@
                                 Csw.each(jqTabs, function (thisTabDiv) {
 
                                     thisTabDiv.$.tabs({
-                                        selected: cswPrivate.tabState.tabNo,
-                                        select: function (event, ui) {
+                                        active: cswPrivate.tabState.tabNo,
+                                        beforeActivate: function (event, ui) {
                                             var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
                                             if (ret) {
-                                                cswPrivate.tabState.tabNo = Csw.number(ui.index);
-                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
-                                                cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
+                                                cswPrivate.tabState.tabNo = ui.newTab.index();
+                                                cswPrivate.tabState.tabid = ui.newTab.data('tabid');
                                                 Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                                 cswPrivate.form.empty();
                                                 cswPrivate.onTearDown();

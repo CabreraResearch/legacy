@@ -23,17 +23,17 @@ module.exports = function (grunt) {
         concat: {
             
             vendorCoreJs: {
-                src: ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js', 'Scripts/mousetrap.min.js', 'Scripts/jquery-1.7.1.min.js',
-                    'Scripts/jquery-ui-1.8.19.min.js', 'Scripts/jquery.validate.min.js', 'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js',
-                    'vendor/multiselect/jquery.multiselect.min.js', 'vendor/multiselect/jquery.multiselect.filter.min.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
+                src: ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
+                    'Scripts/mousetrap.min.js', 'Scripts/jquery-1.9.1.min.js', 'Scripts/jquery-ui-1.10.1.min.js', 'Scripts/jquery.validate.min.js',
+                    'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/multiselect/jquery.multiselect.min.js',                         'vendor/multiselect/jquery.multiselect.filter.min.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
                     'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js'
                 ],
                 dest: 'vendor/vendor.min.js',
                 separator: ';/* next JS  */\n'
             },
             vendorCss: {
-                src: ['Content/themes/cupertino/jquery-ui-1.8.19.css', 'vendor/multiselect/jquery.multiselect.css', 'vendor/multiselect/jquery.multiselect.filter.css', 'vendor/extjs-4.1.0/resources/css/ext-all-scoped.css',
-                      'vendor/extjs-4.1.0/ux/TabScrollerMenu.css', 'vendor/extjs-4.1.0/ux/css/CheckHeader.css'
+                src: ['Content/themes/cupertino/jquery-ui.min.css', 'vendor/multiselect/jquery.multiselect.css', 'vendor/multiselect/jquery.multiselect.filter.css',
+                      'vendor/extjs-4.1.0/resources/css/ext-all-scoped.css', 'vendor/extjs-4.1.0/ux/TabScrollerMenu.css', 'vendor/extjs-4.1.0/ux/css/CheckHeader.css'
                 ],
                 dest: 'vendor/vendor.min.css',
                 separator: '/*  next CSS  */'

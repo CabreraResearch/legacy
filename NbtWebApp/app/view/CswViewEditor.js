@@ -67,6 +67,7 @@
 
         // Step 1 - Choose a View
         var $div1 = $($wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.viewselect.step));
+        $div1.parent().show();
         var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  " +
             "Views are useful for defining a user's workflow or for creating elaborate search criteria. " +
                 "This wizard will take you step by step through the process of creating a new View or " +
