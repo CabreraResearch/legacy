@@ -1,7 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -12,7 +10,7 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public abstract class CswNbtPropertySetGeneratorTarget : CswNbtObjClass
     {
-        public class PropertyName
+        public new class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Generator = "Generator";
             public const string DueDate = "Due Date";
@@ -105,11 +103,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public abstract void afterPropertySetPopulateProps();
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
 
-            CswNbtObjClassDefault.afterPopulateProps();
+            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -119,7 +117,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
             if( null != ButtonData.NodeTypeProp )

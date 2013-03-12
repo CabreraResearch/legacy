@@ -20,29 +20,34 @@
                     cswPrivate.propDiv = cswPublic.data.propDiv;
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name);
-                    cswPrivate.mode = Csw.string(cswPrivate.propVals.mode, 'button');
-                    cswPrivate.menuoptions = '';
                     if (cswPrivate.propVals.menuoptions.length > 0) {
                         cswPrivate.menuoptions = cswPrivate.propVals.menuoptions.split(',');
                     }
-                    cswPrivate.state = cswPrivate.propVals.state;
-                    cswPrivate.text = cswPrivate.propVals.text;
-                    cswPrivate.selectedText = cswPrivate.propVals.selectedText;
+                    cswPrivate.propVals.displayText = cswPrivate.propVals.displayText || Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name);
 
-                    cswPublic.control = cswPrivate.propDiv.nodeButton({
-                        name: cswPrivate.text,
-                        value: cswPrivate.value,
+                    var buttonOpts = {
+                        displayName: cswPrivate.propVals.displayText,
+                        icon: cswPrivate.propVals.icon,
+                        value: Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name),
                         size: cswPublic.data.size,
-                        mode: cswPrivate.mode,
-                        state: cswPrivate.state,
+                        mode: Csw.string(cswPrivate.propVals.mode, 'button'),
+                        state: cswPrivate.propVals.state,
                         menuOptions: cswPrivate.menuoptions,
-                        selectedText: cswPrivate.selectedText,
+                        selectedText: cswPrivate.propVals.selectedText,
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
+                        tabId: cswPublic.data.tabState.tabId,
+                        nodeId: cswPublic.data.tabState.nodeId,
                         onClickSuccess: cswPrivate.onClickSuccess,
                         disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
-                    });
+                        
+                    };
+
+                    if (cswPublic.data.saveTheCurrentTab) {
+                        Object.defineProperty(buttonOpts, 'saveTheCurrentTab', { value: cswPublic.data.saveTheCurrentTab });
+                    }
+
+                    cswPublic.control = cswPrivate.propDiv.nodeButton(buttonOpts);
                 };
 
                 //Bind the callback to the render event

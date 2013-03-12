@@ -682,7 +682,7 @@ namespace ChemSW.Nbt.MetaData
 
                 NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
 
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, FirstTab.TabId, DisplayRow, 1 );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, DisplayRow, 1 );
                 if( OCProp.getFieldType().IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) &&
                     ( ( OCProp.IsRequired &&
                     false == OCProp.HasDefaultValue() ) ||
@@ -690,7 +690,7 @@ namespace ChemSW.Nbt.MetaData
                     ( Int32.MinValue != OCProp.DisplayColAdd &&
                     Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
                 }
                 DisplayRow++;
             }//iterate object class props
@@ -983,10 +983,10 @@ namespace ChemSW.Nbt.MetaData
             else //if( NodeTypeTabs.Rows.Count > 0 )
             {
                 Int32 TabId = ( Tab != null ) ? Tab.TabId : Int32.MinValue;
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, TabId, Int32.MinValue, Int32.MinValue );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp, true, TabId, Int32.MinValue, Int32.MinValue );
                 if( NtpModel.FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                 }
             }
 
@@ -1309,7 +1309,8 @@ namespace ChemSW.Nbt.MetaData
                             {
                                 NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
                             }
-                            NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, NewPropId, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
+                            CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
+                            NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, Prop, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
                         }
                     }
                 }

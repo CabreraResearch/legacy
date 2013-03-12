@@ -17,7 +17,8 @@
                 onClick: null,
                 state: '',
                 width: '100px',
-                disabled: false
+                disabled: false,
+                icon: ''
             };
             var cswPublic = {};
 
@@ -46,6 +47,7 @@
                         cswPublic.menu = window.Ext.create('Ext.button.Split', {
                             id: cswPublic.getId() + 'splitmenu',
                             renderTo: cswPublic.getId(),
+                            icon: cswPrivate.icon,
                             text: cswPrivate.selectedText,
                             handler: cswPrivate.handleMenuItemClick,
                             scale: Csw.string(cswPrivate.size, 'medium'),

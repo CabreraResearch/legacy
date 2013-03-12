@@ -819,5 +819,11 @@ namespace ChemSW.Nbt.MetaData
             NodesUpdate.update( NodesTable );
         }
 
+        public void IncrementNodeCount()
+        {
+            CswNbtActQuotas ActQuotas = new CswNbtActQuotas( _CswNbtMetaDataResources.CswNbtResources );
+            ActQuotas.IncrementNodeCountForNodeType( NodeTypeId );
+        }
+
     }
 }

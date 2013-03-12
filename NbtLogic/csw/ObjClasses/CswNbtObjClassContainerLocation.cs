@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         #region Static Properties
 
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Container = "Container";
             public const string Location = "Location";
@@ -140,11 +140,11 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             ContainerScan.SetOnPropChange( OnContainerScanPropChange );
             LocationScan.SetOnPropChange( OnLocationScanPropChange );
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;

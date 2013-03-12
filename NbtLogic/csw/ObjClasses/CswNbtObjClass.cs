@@ -4,6 +4,9 @@ using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -13,6 +16,40 @@ namespace ChemSW.Nbt.ObjClasses
         //protected CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
+
+        private bool canSave(Int32 TabId)
+        {
+            bool Ret = false;
+            if( null != this.Node )
+            {
+                switch( _CswNbtResources.EditMode )
+                {
+                    case NodeEditMode.Temp:
+                    case NodeEditMode.Add:
+                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, this.NodeType ) )
+                        {
+                            Ret = true;
+                        }
+                        break;
+                    case NodeEditMode.EditInPopup:
+                    case NodeEditMode.Edit:
+                        if( TabId > 0 )
+                        {
+                            CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );
+                            if( null != Tab )
+                            {
+                                Ret = _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType, Tab );
+                            }
+                        }
+                        else
+                        {
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType );
+                        }
+                        break;
+                }
+            }
+            return Ret;
+        }
 
         /// <summary>
         /// Constructor for when we have a node instance
@@ -37,8 +74,33 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterWriteNode();
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
-        public abstract void afterPopulateProps();
-        public abstract bool onButtonClick( NbtButtonData ButtonData );
+        
+        public void triggerAfterPopulateProps()
+        {
+            //We don't have a context for which Tab is going to render, but we can eliminate the base conditions for displaying the Save button here.
+            //if( null != this.Node && false == canSave( TabId : Int32.MinValue ) )
+            //{
+            //    Save.setHidden( value : true, SaveToDb : false );
+            //}
+            afterPopulateProps();
+        }
+        protected abstract void afterPopulateProps();
+        
+        public bool triggerOnButtonClick( NbtButtonData ButtonData )
+        {
+            if( ButtonData.TabId > 0 && null != ButtonData.SavedProps && ButtonData.SavedProps.HasValues )
+            {
+                if( canSave( ButtonData.TabId ) )
+                {
+                    CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
+                    Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.SavedProps, this.NodeTypeId, null, false );
+                }
+            }
+            return onButtonClick( ButtonData );
+        }
+
+        protected abstract bool onButtonClick( NbtButtonData ButtonData );
+        
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         public virtual CswNbtNode CopyNode()
         {
@@ -46,6 +108,21 @@ namespace ChemSW.Nbt.ObjClasses
             CopiedNode.copyPropertyValues( Node );
             CopiedNode.postChanges( true, true );
             return CopiedNode;
+        }
+
+        public abstract class PropertyName
+        {
+            public const string Save = "Save";
+        }
+
+        public virtual CswNbtNodePropButton Save 
+        {
+            get
+            {
+                CswNbtNodePropButton Ret = Node.Properties[PropertyName.Save];
+                
+                return Ret;
+            } 
         }
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
@@ -96,6 +173,8 @@ namespace ChemSW.Nbt.ObjClasses
             public string SelectedText;
             public CswNbtMetaDataNodeTypeProp NodeTypeProp;
             public JObject Data;
+            public JObject SavedProps;
+            public Int32 TabId;
             public string Message;
 
         }

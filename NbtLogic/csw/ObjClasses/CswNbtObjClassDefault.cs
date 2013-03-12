@@ -308,7 +308,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
         }
 
@@ -344,7 +344,7 @@ namespace ChemSW.Nbt.ObjClasses
         //    }
         //}
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
 
 

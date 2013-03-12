@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public const string ChemSWAdminRoleName = CswAuthenticator.ChemSWAdminRoleName;
 
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Administrator = "Administrator";
             public const string Description = "Description";
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ActionOptions;
         } // InitActionPermissionOptions()
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             NodeTypePermissions.InitOptions = InitNodeTypePermissionOptions;
             ActionPermissions.InitOptions = InitActionPermissionOptions;
@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
 
 
