@@ -109,6 +109,11 @@
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
+    <Compile Include="csw\ImportExport\2D\CswNbt2DBindingCollection.cs" />
+    <Compile Include="csw\ImportExport\2D\CswNbt2DRowRelationship.cs" />
+    <Compile Include="csw\ImportExport\2D\CswNbt2DDefinitionCollection.cs" />
+    <Compile Include="csw\ImportExport\2D\CswNbt2DDefinition.cs" />
+    <Compile Include="csw\ImportExport\2D\CswNbt2DOrder.cs" />
     <Compile Include="csw\ImportExport\2D\CswNbt2DBinding.cs" />
     <Compile Include="csw\ImportExport\2D\CswNbt2DImporter.cs" />
     <Compile Include="csw\ImportExport\CswNbtMetaDataForSpreadSheetColReader.cs" />
@@ -160,6 +165,7 @@
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28534.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case27901.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_ScheduledRules_Case28564.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28958.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28898.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28757.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28916C.cs" />
@@ -1081,7 +1087,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
-      <Project>{434091fb-f487-4787-8bdb-58c2336b73c2}</Project>
+      <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
