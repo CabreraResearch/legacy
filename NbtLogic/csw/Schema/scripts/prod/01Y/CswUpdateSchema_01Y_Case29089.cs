@@ -1,4 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -28,6 +30,11 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.Containers, CswNbtModuleName.MultiInventoryGroup );
             _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.Containers, CswNbtModuleName.MLM );
             _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.Containers, CswNbtModuleName.FireCode );
+
+            //Make the Customer NT.modules property read-only
+            CswNbtMetaDataObjectClass customerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CustomerClass );
+            CswNbtMetaDataObjectClassProp modulesOCP = customerOC.getObjectClassProp( CswNbtObjClassCustomer.PropertyName.ModulesEnabled );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( modulesOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
 
         } //Update()
 
