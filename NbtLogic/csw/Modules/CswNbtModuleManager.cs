@@ -492,12 +492,38 @@ namespace ChemSW.Nbt
             int childId = GetModuleId( ChildModule );
 
             CswTableUpdate modulesTU = _CswNbtResources.makeCswTableUpdate( "createChildModule", "modules" );
-            DataTable modulesDT = modulesTU.getTable( "where moduleid = " + parentId );
+            DataTable modulesDT = modulesTU.getTable( "where moduleid = " + childId );
             foreach( DataRow row in modulesDT.Rows )
             {
                 row["prereq"] = parentId;
             }
             modulesTU.update( modulesDT );
+        }
+
+        public CswNbtModuleName GetModulePrereq( CswNbtModuleName Module )
+        {
+            int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
+            string sql = @"select m2.name from modules m1
+                                join modules m2 on m2.moduleid = m1.prereq
+                           where m1.moduleid = " + moduleId;
+            CswArbitrarySelect modulesAS = _CswNbtResources.makeCswArbitrarySelect( "getPrereq", sql );
+            DataTable modulesDT = modulesAS.getTable();
+
+            string PrereqName = "";
+            foreach( DataRow row in modulesDT.Rows )
+            {
+                PrereqName = row["name"].ToString();
+            }
+
+            return PrereqName;
+        }
+
+        public bool ModuleHasPrereq( CswNbtModuleName Module )
+        {
+            int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
+            CswTableSelect modulesTS = _CswNbtResources.makeCswTableSelect( "modulehasparent", "modules" );
+            DataTable modulesDT = modulesTS.getTable( "where prereq is not null and moduleid = " + moduleId );
+            return modulesDT.Rows.Count > 0;
         }
 
     } // class CswNbtModuleManager
