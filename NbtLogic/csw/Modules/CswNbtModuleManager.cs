@@ -181,7 +181,6 @@ namespace ChemSW.Nbt
             foreach( DataRow ModuleRow in ModulesTable.Rows )
             {
                 CswNbtModuleName Module = ModuleRow["name"].ToString();
-                //Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
                 ModulesToEnable = ModulesToEnable ?? new Collection<CswNbtModuleName>();
                 bool Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                 if( ModulesToEnable.Contains( Module ) )
@@ -203,13 +202,14 @@ namespace ChemSW.Nbt
                         _ModuleRules[Module].OnDisable();
                     }
                 }
+                ret = ModulesUpdate.update( ModulesTable );
+
+                _CswNbtResources.MetaData.ResetEnabledNodeTypes();
+                _CswNbtResources.finalize();
+                _CswNbtResources.MetaData.refreshAll();
             }
-            ret = ModulesUpdate.update( ModulesTable );
 
             initModules();
-
-            // case 26029
-            _CswNbtResources.MetaData.ResetEnabledNodeTypes();
 
             //We have to clear Session data or the view selects recent views will have non-accesible views and break
             _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
