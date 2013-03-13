@@ -486,6 +486,20 @@ namespace ChemSW.Nbt
             }
         }
 
+        public void CreateModuleDependency( CswNbtModuleName ParentModule, CswNbtModuleName ChildModule )
+        {
+            int parentId = GetModuleId( ParentModule );
+            int childId = GetModuleId( ChildModule );
+
+            CswTableUpdate modulesTU = _CswNbtResources.makeCswTableUpdate( "createChildModule", "modules" );
+            DataTable modulesDT = modulesTU.getTable( "where moduleid = " + parentId );
+            foreach( DataRow row in modulesDT.Rows )
+            {
+                row["prereq"] = parentId;
+            }
+            modulesTU.update( modulesDT );
+        }
+
     } // class CswNbtModuleManager
 
 }// namespace ChemSW.Nbt
