@@ -103,6 +103,10 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.FireCode );
             }
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MultiInventoryGroup ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MultiInventoryGroup );
+            }
 
             //Hide the following Location properties...
             //   Containers
