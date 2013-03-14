@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.Schema
             int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.FireCode );
             if( Int32.MinValue == ModuleId )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "Fire Code reporting add-on for CISPro", CswNbtModuleName.FireCode.ToString(), true );
+                _CswNbtSchemaModTrnsctn.createModule( "Fire Code reporting add-on for CISPro", CswNbtModuleName.FireCode.ToString() );
             }
             _resetBlame();
         }

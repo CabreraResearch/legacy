@@ -1577,6 +1577,11 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
+        /// Reading of values located in the configuration_variables table
+        /// </summary>
+        public CswConfigurationVariables ConfigVbls { get { return ( _CswNbtResources.ConfigVbls ); } }
+
+        /// <summary>
         /// Convenience function for setting value of a configuration variable
         /// </summary>
         public void setConfigVariableValue( String VariableName, String VariableValue )

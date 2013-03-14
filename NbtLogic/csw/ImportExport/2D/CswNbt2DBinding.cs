@@ -23,5 +23,6 @@ namespace ChemSW.Nbt.ImportExport
         public CswNbtSubField DestSubfield;
         public CswNbtMetaDataNodeTypeProp DestProperty;
         public CswNbtMetaDataNodeType DestNodeType;
+        public string Instance;
     }
 }

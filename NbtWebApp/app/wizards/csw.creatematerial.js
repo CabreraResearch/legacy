@@ -74,6 +74,7 @@
                     sizesForm: null,
                     sizeGrid: null                
                 },
+                sizesToDelete: [],
                 containersModuleEnabled: true,
                 SDSModuleEnabled: true
             };
@@ -596,8 +597,21 @@
                                 cswPrivate.newSizes.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
                             },
                             onDelete: function(rowid) {
+                                
                                 delete cswPrivate.newSizes.rows[rowid];
                                 cswPrivate.newSizes.rows[rowid] = { sizeValues: { } };
+                                
+                                // For ChemCatCentral imports:
+                                // Add information of size to be deleted to cswPrivate.sizesToDelete
+                                var arrayOfSizeInfo = [];
+                                if (Csw.isArray(cswPrivate.state.sizes[rowid - 1])) {
+                                    Csw.each(cswPrivate.state.sizes[rowid - 1], function (objVal) {
+                                        arrayOfSizeInfo.push(objVal.value);
+                                    });
+                                    cswPrivate.sizesToDelete.push(arrayOfSizeInfo);
+                                }
+                                
+                               
                             }
                         });
                     };
@@ -714,7 +728,7 @@
                     function getMaterialDefinition() {
                         var createMaterialDef = {
                             useexistingmaterial: cswPrivate.state.useExistingTempNode,
-                            sizes: cswPrivate.sizeNodes,
+                            sizesToDelete: cswPrivate.sizesToDelete,
                             sizeNodes: []
                         };
                         
