@@ -659,9 +659,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
                     var ws = new CswNbtWebServiceMainMenu( _CswNbtResources, LimitMenuTo );
-                    CswNbtView View = _getView( ViewId );
+                    CswNbtView View = _getViewPreferSession( ViewId );
                     ReturnVal = ws.getMenu( View, SafeNodeKey, CswConvert.ToInt32( NodeTypeId ), PropIdAttr, CswConvert.ToBoolean( ReadOnly ), NodeId );
                 }
 
@@ -762,7 +761,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtView View = _getView( ViewId );
+                    CswNbtView View = _getViewPreferSession( ViewId );
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
                     ReturnVal = ws.getRuntimeViewFilters( View );
                 }
@@ -792,7 +791,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtView View = _getView( ViewId );
+                    CswNbtView View = _getViewPreferSession( ViewId );
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
                     ReturnVal = ws.updateRuntimeViewFilters( View, JObject.Parse( FiltersJson ) );
                 }
@@ -828,7 +827,7 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtView _prepGridView( string ViewId, ref CswNbtNodeKey RealNodeKey, ref bool IsQuickLaunch, string CswNbtNodeKey = "", string NbtPrimaryKey = "" )
         {
-            CswNbtView RetView = _getView( ViewId );
+            CswNbtView RetView = _getViewPreferSession( ViewId );
             if( null != RetView )
             {
                 if( RetView.Visibility == NbtViewVisibility.Property )
@@ -4118,6 +4117,14 @@ namespace ChemSW.Nbt.WebServices
         private void _setEditMode( NodeEditMode EditMode )
         {
             _CswNbtResources.EditMode = EditMode;
+        }
+
+        private CswNbtView _getViewPreferSession( string ViewId )
+        {
+            //Case 29107 - Override viewId with sessionViewId if it exists
+            CswNbtSessionDataMgr SessionData = new CswNbtSessionDataMgr( _CswNbtResources );
+            String SessionViewId = SessionData.getSessionViewIdForView( ViewId );
+            return _getView( SessionViewId );
         }
 
         private CswNbtView _getView( string ViewId )
