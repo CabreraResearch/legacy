@@ -82,7 +82,6 @@
                             } // if (false === Csw.isNullOrEmpty(fileName)) {
                         };
 
-                        //Case 24389: IE interprets height and width absolutely, better not to use them at all.
                         cswPrivate.makeImg = function (imgData) {
                             cswPrivate.cell11.empty();
                             cswPrivate.cell21.empty();
@@ -94,7 +93,9 @@
                                 })
                                     .img({
                                         src: imgData.href,
-                                        alt: imgData.fileName
+                                        alt: imgData.fileName,
+                                        height: cswPrivate.propVals.height,
+                                        width: cswPrivate.propVals.width
                                     });
                                 cswPrivate.cell21.a({
                                     href: imgData.href,
