@@ -34,17 +34,36 @@
                         cswPrivate.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
                         row++;
 
-                        var checkboxes = [];
+                        var checkboxes = {};
 
-                        Csw.each(result, function (thisValue, thisModule) {
-                            checkboxes.push(cswPrivate.table.cell(row, 1).input({
+                        var resetEnabled = function () {
+                            Csw.each(checkboxes, function (thisCheckbox, thisModule) {
+                                var prereq = thisCheckbox.data('prereq');
+                                if (prereq !== '' && false === checkboxes[prereq].checked()) {
+                                    thisCheckbox.disable();
+                                    thisCheckbox.checked(false);
+                                    var row = thisCheckbox.data('row');
+                                    cswPrivate.table.cell(row, 3).span({ text: 'Requires: ' + prereq }).css({ 'font-style': 'italic', 'color': '#787878' });
+                                }
+                            });
+                        };
+
+                        Csw.each(result, function (thisModuleInfo, thisModule) {
+                            var input = cswPrivate.table.cell(row, 1).input({
                                 name: thisModule,
                                 type: Csw.enums.inputTypes.checkbox,
-                                checked: Csw.bool(thisValue)
-                            }));
+                                checked: Csw.bool(thisModuleInfo.enabled)
+                            });
+                            input.data('prereq', thisModuleInfo.prereq);
+                            input.data('row', row);
+
+                            checkboxes[thisModule] = input;
+
                             cswPrivate.table.cell(row, 2).append(thisModule);
                             row++;
                         }); //each()
+
+                        resetEnabled();
 
                         cswPrivate.table.cell(row, 2).button({
                             name: 'savebtn',
@@ -52,8 +71,8 @@
                             disabledText: 'Saving...',
                             onClick: function () {
                                 var changes = result;
-                                Csw.each(checkboxes, function (thisCheckbox) {
-                                    changes[thisCheckbox.propDom('name')] = thisCheckbox.checked();
+                                Csw.each(checkboxes, function (thisCheckbox, thisModule) {
+                                    changes[thisModule] = thisCheckbox.checked();
                                 }); // each
 
                                 Csw.ajax.post({
