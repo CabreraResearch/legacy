@@ -6,16 +6,17 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     /// <summary>
     /// Inspection Design Object Class
     /// </summary>
-    public class CswNbtObjClassInspectionDesign : CswNbtPropertySetGeneratorTarget
+    public class CswNbtObjClassInspectionDesign: CswNbtPropertySetGeneratorTarget
     {
         #region Enums
-        public new sealed class PropertyName : CswNbtPropertySetGeneratorTarget.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetGeneratorTarget.PropertyName
         {
             /// <summary>
             /// Target == Parent
@@ -63,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        public sealed class InspectionStatus : IEquatable<InspectionStatus>
+        public sealed class InspectionStatus: IEquatable<InspectionStatus>
         {
             #region Internals
             private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
@@ -387,6 +388,13 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            if( false == _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) )
+            {
+                Finish.setHidden( value : true, SaveToDb : false );
+                Cancel.setHidden( value : true, SaveToDb : false );
+                SetPreferred.setHidden( value : true, SaveToDb : false );
+            }
+
             // !!!
             // Don't clear IsFuture here, like we do with Tasks.  See case 28317.
             // !!!
@@ -426,9 +434,9 @@ namespace ChemSW.Nbt.ObjClasses
                 QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired ); // case 25035
             }
 
-            SetPreferred.setReadOnly( value: _InspectionState.AllAnswered, SaveToDb: true );
+            SetPreferred.setReadOnly( value : _InspectionState.AllAnswered, SaveToDb : true );
             // case 26584, 28155
-            Status.setReadOnly( value: false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb: false );
+            Status.setReadOnly( value : false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb : false );
 
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
@@ -482,7 +490,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
-                        SetPreferred.setReadOnly( value: true, SaveToDb: true );
+                        SetPreferred.setReadOnly( value : true, SaveToDb : true );
                         ButtonData.Action = NbtButtonAction.nothing;
                         break;
                 }
@@ -643,7 +651,7 @@ namespace ChemSW.Nbt.ObjClasses
                         Finish.setReadOnly( true, true );
                         SetPreferred.setReadOnly( true, true );
                         Cancel.setReadOnly( true, true );
-                        Node.setReadOnly( value: true, SaveToDb: true );
+                        Node.setReadOnly( value : true, SaveToDb : true );
                     }
                     break;
 
@@ -653,7 +661,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Finish.setReadOnly( true, true );
                     SetPreferred.setReadOnly( true, true );
                     Cancel.setReadOnly( true, true );
-                    Node.setReadOnly( value: true, SaveToDb: true );
+                    Node.setReadOnly( value : true, SaveToDb : true );
                     break;
 
                 case InspectionStatus.Overdue:
@@ -662,7 +670,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Finish.setReadOnly( false, true );
                     SetPreferred.setReadOnly( false, true );
                     Cancel.setReadOnly( false, true );
-                    Node.setReadOnly( value: false, SaveToDb: true );
+                    Node.setReadOnly( value : false, SaveToDb : true );
                     break;
 
             } // switch( Status.Value )
