@@ -616,6 +616,21 @@ namespace ChemSW.Nbt.Schema
             ConfigVarTable.update( ConfigVarDataTable );
         }
 
+        /// <summary>
+        /// Convenience function for deleting a Configuration Variable
+        /// </summary>
+        /// <param name="Name"></param>
+        public void deleteConfigurationVariable( String Name )
+        {
+            CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
+            DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where lower(variablename)='" + Name.ToLower() + "'", true );
+            if( ConfigVarDataTable.Rows.Count == 1 )
+            {
+                ConfigVarDataTable.Rows[0].Delete();
+            }
+            ConfigVarTable.update( ConfigVarDataTable );
+        }
+
         public Int32 getActionId( CswNbtActionName ActionName )
         {
             Int32 RetActionId = Int32.MinValue;
