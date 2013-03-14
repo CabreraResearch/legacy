@@ -60,30 +60,6 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        /// <summary>
-        /// Retrieves a sessionViewId for a given ViewId.  If none exists, returns the current ViewId.
-        /// <param name="ViewIdString"></param>
-        /// </summary>
-        public string getSessionViewIdForView( string ViewIdString )
-        {
-            String SessionViewIdString = ViewIdString;
-            if( false == CswNbtSessionDataId.isSessionDataIdString( ViewIdString ) )
-            {
-                CswNbtViewId ViewId = new CswNbtViewId( ViewIdString );
-                CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getSessionViewId_select", "session_data" );
-                string WhereClause = @"where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and "
-                                     + SessionDataColumn_ViewId + " = " + ViewId.get();
-                DataTable SessionDataTable = SessionDataSelect.getTable( WhereClause );
-                if( SessionDataTable.Rows.Count > 0 )
-                {
-                    int SessionViewId = CswConvert.ToInt32( SessionDataTable.Rows[0][SessionDataColumn_PrimaryKey] );
-                    CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( SessionViewId );
-                    SessionViewIdString = SessionDataId.ToString();
-                }
-            }
-            return SessionViewIdString;
-        }
-
         #endregion Get Session Data
 
         #region QuickLaunch
@@ -222,22 +198,29 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save a view to the session data collection.  Sets the SessionViewId on the view.
         /// </summary>
-        public CswNbtSessionDataId saveSessionData( CswNbtView View, bool IncludeInQuickLaunch, bool ForceNewSessionId = false, bool KeepInQuickLaunch = false )
+        public CswNbtSessionDataId saveSessionData( CswNbtView View, bool IncludeInQuickLaunch, bool KeepInQuickLaunch = false, bool UpdateCache = false )
         {
             CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "saveSessionView_update", SessionDataTableName );
-            DataTable SessionViewTable = null;
-            if( View.SessionViewId != null && View.SessionViewId.isSet() )
+            DataTable SessionViewTable;
+            if( View.SessionViewId != null && View.SessionViewId.isSet() ) //Get existing session view by SessionViewId
                 SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_PrimaryKey, View.SessionViewId.get(), "where sessionid = '" + SessionId + "'", false );
-            else if( !ForceNewSessionId && View.ViewId != null && View.ViewId.isSet() )
+            else if( View.ViewId != null && View.ViewId.isSet() ) //Get existing session view by ViewId
                 SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ViewId, View.ViewId.get(), "where sessionid = '" + SessionId + "'", false );
-            else
+            else //Save new Session View
                 SessionViewTable = SessionViewsUpdate.getEmptyTable();
+            if( SessionViewTable.Rows.Count == 0 )
+            {
+                UpdateCache = true;
+            }
 
             DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, View.ViewName, CswNbtSessionDataItem.SessionDataType.View, IncludeInQuickLaunch, KeepInQuickLaunch );
-            SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal( View.ViewId.get() );
-            SessionViewRow[SessionDataColumn_ViewMode] = View.ViewMode.ToString();
-            SessionViewRow[SessionDataColumn_ViewXml] = View.ToString();
-            SessionViewsUpdate.update( SessionViewTable );
+            if( UpdateCache )//Overwrite
+            {
+                SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal( View.ViewId.get() );
+                SessionViewRow[SessionDataColumn_ViewMode] = View.ViewMode.ToString();
+                SessionViewRow[SessionDataColumn_ViewXml] = View.ToString();
+                SessionViewsUpdate.update( SessionViewTable );
+            }
 
             return new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewRow[SessionDataColumn_PrimaryKey] ) );
 
