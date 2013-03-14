@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.TogglePrintLabels( false, CswNbtModuleName.Containers );
 
             //Show the request fulfiller Role
-            _CswNbtResources.Modules.ToggleRoleNodes( false, "request" );
+            _CswNbtResources.Modules.ToggleRoleNodes( false, "request_fulfiller" );
         }
 
         public override void OnDisable()
