@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                                     select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
-                                    Ret.postChanges( ForceUpdate: false );
+                                    Ret.postChanges( ForceUpdate : false );
                                 }
                             }
                         }
@@ -493,10 +493,12 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( PropWrapper != null )
             {
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
-                if( _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
+                if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible
+                    FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button || (
+                    _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
                     _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
                     ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) )
+                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ) )
                     )
                 {
 
@@ -824,7 +826,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                                 }
 
-                                CopyToNode.postChanges( ForceUpdate: false );
+                                CopyToNode.postChanges( ForceUpdate : false );
 
                             } // foreach( string NodeIdStr in CopyNodeIds )
                             ret["result"] = "true";
@@ -1018,7 +1020,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
                     _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
                 }
-                Node.postChanges( ForceUpdate: false );
+                Node.postChanges( ForceUpdate : false );
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;
@@ -1066,12 +1068,12 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject getLocationView( string SelectedNodeId )
         {
             CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null );
-            LocationView.SaveToCache(false);
+            LocationView.SaveToCache( false );
             JObject LocationViewId = new JObject();
             LocationViewId["viewid"] = LocationView.SessionViewId.ToString();
-            CswPrimaryKey LocationId = String.IsNullOrEmpty(SelectedNodeId)
+            CswPrimaryKey LocationId = String.IsNullOrEmpty( SelectedNodeId )
                                            ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
-                                           : CswConvert.ToPrimaryKey(SelectedNodeId);
+                                           : CswConvert.ToPrimaryKey( SelectedNodeId );
             if( null != LocationId )
             {
                 LocationViewId["nodeid"] = LocationId.ToString();
