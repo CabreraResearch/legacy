@@ -139,6 +139,25 @@ namespace ChemSW.Nbt.WebServices
                     [DataMember]
                     public Collection<CswExtTree.TreeNode> Tree;
 
+                    public Int32 treecount()
+                    {
+                        return _treecount( Tree );
+                    }
+
+                    private Int32 _treecount(Collection<CswExtTree.TreeNode> Coll)
+                    {
+                        Int32 ret = 0;
+                        foreach( CswExtTree.TreeNode t in Coll )
+                        {
+                            ret++;
+                            if( t.Children != null && t.Children.Count > 0 )
+                            {
+                                ret += _treecount( t.Children );
+                            }
+                        }
+                        return ret;
+                    }
+
                     [DataMember]
                     public Collection<CswExtJsGridColumn> Columns;
 
@@ -222,7 +241,6 @@ namespace ChemSW.Nbt.WebServices
                     _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, useCheckboxes );
                 }
                 Tree.goToParentNode();
-                // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
 
                 if( Tree.getCurrentNodeChildrenTruncated() )
                 {
@@ -332,10 +350,13 @@ namespace ChemSW.Nbt.WebServices
                 Ret.ParentId = "root";
                 Ret.Path = "|root";
             }
-            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            if( false == Tree.isCurrentPositionRoot() )
             {
-                Ret.ParentId = ParentKey.ToString();
+                CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
+                if( ParentKey.NodeSpecies != NodeSpecies.Root )
+                {
+                    Ret.ParentId = ParentKey.ToString();
+                }
             }
 
             Ret.Path += "|" + Ret.Id;
