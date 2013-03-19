@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using ChemSW;
+using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
-namespace ChemSw.Nbt.Test
+namespace ChemSW.Nbt.Test
 {
-    internal class TestData
+    public class TestData: IDisposable
     {
         private CswNbtResources _CswNbtResources;
         private ICswDbCfgInfo _CswDbCfgInfoNbt;
         private CswPrimaryKey _NodeIdHighWaterMark;
+        private Int32 _NodeTypeHighWaterMark;
+
         //TODO - refactor the way we're handling NTP states
         private Dictionary<int, string> _ChangedNodeTypePropListOptions = new Dictionary<int, string>();
         private Dictionary<int, string> _ChangedNodeTypePropExtended = new Dictionary<int, string>();
         private Dictionary<int, int> _ChangedNodeTypePropMaxValue = new Dictionary<int, int>();
+
 
         private Dictionary<CswPrimaryKey, String> _ContainerLocationNodeActions = new Dictionary<CswPrimaryKey, String>();
 
@@ -31,7 +32,7 @@ namespace ChemSw.Nbt.Test
         internal TestData()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.TestProject, true, false );
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile : false );
             _CswNbtResources.InitCurrentUser = _InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
             Nodes = new TestDataNodes( _CswNbtResources );
@@ -54,6 +55,7 @@ namespace ChemSw.Nbt.Test
         {
             CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Dispense Transaction" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             _NodeIdHighWaterMark = PlaceHolderNode.NodeId;
+            _NodeTypeHighWaterMark = _CswNbtResources.MetaData.getNodeTypeIds().Max();
         }
 
         internal bool isTestNode( CswPrimaryKey NodeId )
@@ -88,8 +90,11 @@ namespace ChemSw.Nbt.Test
             foreach( Int32 NodePK in TestNodePKs )
             {
                 CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", NodePK );
-                CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId );
-                Node.delete();
+                CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
+                if( null != Node )
+                {
+                    Node.delete( DeleteAllRequiredRelatedNodes: true, OverridePermissions: true );
+                }
             }
         }
 
@@ -98,17 +103,26 @@ namespace ChemSw.Nbt.Test
             foreach( KeyValuePair<int, string> OriginalNodeTypePropId in _ChangedNodeTypePropListOptions )
             {
                 CswNbtMetaDataNodeTypeProp OriginalNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( OriginalNodeTypePropId.Key );
-                OriginalNodeTypeProp.ListOptions = OriginalNodeTypePropId.Value;
+                if( null != OriginalNodeTypeProp )
+                {
+                    OriginalNodeTypeProp.ListOptions = OriginalNodeTypePropId.Value;
+                }
             }
             foreach( KeyValuePair<int, string> OriginalNodeTypePropId in _ChangedNodeTypePropExtended )
             {
                 CswNbtMetaDataNodeTypeProp OriginalNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( OriginalNodeTypePropId.Key );
-                OriginalNodeTypeProp.Extended = OriginalNodeTypePropId.Value;
+                if( null != OriginalNodeTypeProp )
+                {
+                    OriginalNodeTypeProp.Extended = OriginalNodeTypePropId.Value;
+                }
             }
             foreach( KeyValuePair<int, int> OriginalNodeTypePropId in _ChangedNodeTypePropMaxValue )
             {
                 CswNbtMetaDataNodeTypeProp OriginalNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( OriginalNodeTypePropId.Key );
-                OriginalNodeTypeProp.MaxValue = OriginalNodeTypePropId.Value;
+                if( null != OriginalNodeTypeProp )
+                {
+                    OriginalNodeTypeProp.MaxValue = OriginalNodeTypePropId.Value;
+                }
             }
         }
 
@@ -119,6 +133,35 @@ namespace ChemSw.Nbt.Test
                 CswNbtObjClassContainerLocation ContainerLocationNode = CswNbtResources.Nodes[ContainerLocationNodeId.Key];
                 ContainerLocationNode.Action.Value = ContainerLocationNodeId.Value;
                 ContainerLocationNode.postChanges( false );
+            }
+        }
+
+        internal void DeleteTestNodeTypes()
+        {
+            if( null != _CswNbtResources )
+            {
+                foreach( CswNbtMetaDataNodeType NodeType in from NodeTypeId
+                                                                in _CswNbtResources.MetaData.getNodeTypeIds()
+                                                            where NodeTypeId > _NodeTypeHighWaterMark
+                                                            select _CswNbtResources.MetaData.getNodeType( NodeTypeId )
+                                                                into NodeType
+                                                                where null != NodeType
+                                                                select NodeType )
+                {
+                    _CswNbtResources.MetaData.DeleteNodeType( NodeType );
+                }
+            }
+        }
+
+        internal void Destroy()
+        {
+            if( null != _CswNbtResources )
+            {
+                DeleteTestNodeTypes();
+                DeleteTestNodes();
+                RevertNodeProps();
+                RevertNodeTypePropAttributes();
+                RevertNodeProps();
             }
         }
 
@@ -194,5 +237,13 @@ namespace ChemSw.Nbt.Test
 
         #endregion
 
+        #region IDisposable
+        
+        public void Dispose()
+        {
+            Destroy();
+        }
+
+        #endregion IDisposable
     }
 }

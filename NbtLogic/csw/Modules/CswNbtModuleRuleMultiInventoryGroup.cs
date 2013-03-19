@@ -35,7 +35,7 @@ namespace ChemSW.Nbt
             int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
             int InvGroupsCount = QuotasAct.GetNodeCountForObjectClass( invGrpOC_Id );
-            if( InvGroupsCount > 1 && _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
+            if( InvGroupsCount > 1 && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot disable the MultiInventoryGroup Module when multiple Inventory Groups exist", InvGroupsCount + " Inventory Group nodes exist, cannot disable the MultiInventoryGroup module" );
             }

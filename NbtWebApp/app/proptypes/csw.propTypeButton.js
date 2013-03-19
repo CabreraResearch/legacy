@@ -40,8 +40,8 @@
                         selectedText: cswPrivate.selectedText,
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
-                        onClickSuccess: cswPrivate.onClickSuccess,
-                        disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
+                        onClickSuccess: cswPrivate.onClickSuccess
+                        //Case 29142: the server decides whether the button is visible. disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
                     });
                 };
 

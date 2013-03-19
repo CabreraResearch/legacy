@@ -95,13 +95,6 @@ namespace ChemSW.Nbt.WebServices
             public bool success;
 
             [DataContract]
-            public class SizeColumnValue
-            {
-                [DataMember]
-                public string value { get; set; }
-            }
-
-            [DataContract]
             public class State
             {
                 [DataMember]
@@ -132,7 +125,6 @@ namespace ChemSW.Nbt.WebServices
                     public string name = string.Empty;
 
                     [DataMember]
-                    //public string val = "";
                     public Int32 val = Int32.MinValue;
                 }
 
@@ -144,6 +136,16 @@ namespace ChemSW.Nbt.WebServices
 
                     [DataMember]
                     public string val = string.Empty;
+                }
+
+                [DataContract]
+                public class SizeColumnValue
+                {
+                    [DataMember]
+                    public string value { get; set; }
+
+                    [DataMember]
+                    public bool hidden { get; set; }
                 }
 
             }
@@ -291,7 +293,7 @@ namespace ChemSW.Nbt.WebServices
                 C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
 
                 // Create size node(s)
-                Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
+                Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
 
                 // Create synonyms node(s)
                 C3Import.createMaterialSynonyms( C3ProductTempNode );
@@ -483,14 +485,14 @@ namespace ChemSW.Nbt.WebServices
                         NBTSubFieldPropColName2 = "field1"
                     } );
 
-                    const string CatalogNo = CswNbtObjClassSize.PropertyName.CatalogNo;
-                    _Mappings.Add( CatalogNo, new C3Mapping
-                    {
-                        NBTNodeTypeId = SizeNT.NodeTypeId,
-                        C3ProductPropertyValue = _ProductToImport.CatalogNo,
-                        NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( CatalogNo ),
-                        NBTSubFieldPropColName = "field1"
-                    } );
+                    //const string CatalogNo = CswNbtObjClassSize.PropertyName.CatalogNo;
+                    //_Mappings.Add( CatalogNo, new C3Mapping
+                    //{
+                    //    NBTNodeTypeId = SizeNT.NodeTypeId,
+                    //    C3ProductPropertyValue = _ProductToImport.CatalogNo,
+                    //    NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( CatalogNo ),
+                    //    NBTSubFieldPropColName = "field1"
+                    //} );
                 }
 
                 #endregion
@@ -510,32 +512,6 @@ namespace ChemSW.Nbt.WebServices
             }
 
             /// <summary>
-            /// Translates units of measure from C3 to the value that nbt uses.
-            /// Note: This is still in progress
-            /// </summary>
-            /// <param name="unitOfMeasure">UOM provided by C3 to be tranlated into the corresponding NBT UOM</param>
-            /// <returns></returns>
-            private string _uomTranslator( string unitOfMeasure )
-            {
-                string Ret = unitOfMeasure;
-                switch( unitOfMeasure.ToLower() )
-                {
-                    case "oz":
-                        Ret = "ounces";
-                        break;
-                    case "l":
-                        Ret = "Liters";
-                        break;
-                    default:
-                        Ret = unitOfMeasure;
-                        break;
-                }
-
-                return Ret;
-
-            }
-
-            /// <summary>
             /// 
             /// </summary>
             /// <param name="unitOfMeasurementName"></param>
@@ -547,7 +523,7 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
                     //Translate the name if necessary
-                    string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
+                    //string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
 
                     CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
@@ -557,7 +533,7 @@ namespace ChemSW.Nbt.WebServices
 
                     UnitsView.AddViewPropertyAndFilter( Parent,
                                                        MetaDataProp: NameOCP,
-                                                       Value: TranslatedUnitOfMeasure,
+                                                       Value: unitOfMeasurementName,
                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
@@ -633,10 +609,10 @@ namespace ChemSW.Nbt.WebServices
                 return Supplier;
             }//createVendorNode()
 
-            public Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> createSizeNodes( CswNbtObjClassMaterial ChemicalNode )
+            public Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> createSizeNodes( CswNbtObjClassMaterial ChemicalNode )
             {
                 // Return object
-                Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> ProductSizes = new Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>>();
+                Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> ProductSizes = new Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>>();
 
                 CswNbtMetaDataNodeType SizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
                 if( null != SizeNT )
@@ -666,19 +642,27 @@ namespace ChemSW.Nbt.WebServices
                             sizeNode.postChanges( true );
 
                             //Set the return object
-                            Collection<C3CreateMaterialResponse.SizeColumnValue> Size = new Collection<C3CreateMaterialResponse.SizeColumnValue>();
+                            Collection<C3CreateMaterialResponse.State.SizeColumnValue> Size = new Collection<C3CreateMaterialResponse.State.SizeColumnValue>();
 
-                            C3CreateMaterialResponse.SizeColumnValue UnitCount = new C3CreateMaterialResponse.SizeColumnValue();
+                            C3CreateMaterialResponse.State.SizeColumnValue UnitCount = new C3CreateMaterialResponse.State.SizeColumnValue();
                             UnitCount.value = CswConvert.ToString( sizeNode.UnitCount.Value );
+                            UnitCount.hidden = false;
                             Size.Add( UnitCount );
 
-                            C3CreateMaterialResponse.SizeColumnValue InitialQuantity = new C3CreateMaterialResponse.SizeColumnValue();
+                            C3CreateMaterialResponse.State.SizeColumnValue InitialQuantity = new C3CreateMaterialResponse.State.SizeColumnValue();
                             InitialQuantity.value = sizeNode.InitialQuantity.Gestalt;
+                            InitialQuantity.hidden = false;
                             Size.Add( InitialQuantity );
 
-                            C3CreateMaterialResponse.SizeColumnValue CatalogNo = new C3CreateMaterialResponse.SizeColumnValue();
+                            C3CreateMaterialResponse.State.SizeColumnValue CatalogNo = new C3CreateMaterialResponse.State.SizeColumnValue();
                             CatalogNo.value = sizeNode.CatalogNo.Text;
+                            CatalogNo.hidden = false;
                             Size.Add( CatalogNo );
+
+                            C3CreateMaterialResponse.State.SizeColumnValue NodeId = new C3CreateMaterialResponse.State.SizeColumnValue();
+                            NodeId.value = sizeNode.NodeId.ToString();
+                            NodeId.hidden = true;
+                            Size.Add( NodeId );
 
                             ProductSizes.Add( Size );
                         }
@@ -728,6 +712,22 @@ namespace ChemSW.Nbt.WebServices
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, unitOfMeasure.NodeId.PrimaryKey );
                                     string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, sizeGestalt );
+
+                                    // Note: This is a hackadoodle for now since importer is getting changed... soon...
+                                    // Assumption: We are working with a node that is of NodeType Size
+                                    if( NodeType.NodeTypeName == "Size" )
+                                    {
+                                        // Set the Unit Count
+                                        CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty );
+
+                                        // Set the Catalog No
+                                        // This needs to be here because each size has a unique catalogno
+                                        CswNbtMetaDataNodeTypeProp CatalogNoNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
+                                    }
                                 }
                                 break;
                             case CswNbtMetaDataFieldType.NbtFieldType.MOL:
@@ -792,7 +792,7 @@ namespace ChemSW.Nbt.WebServices
         {
             if( null != C3SearchClient )
             {
-                string C3_UrlStem = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_UrlStem );
+                string C3_UrlStem = CswNbtResources.SetupVbls[CswSetupVariableNames.C3UrlStem];
                 EndpointAddress URI = new EndpointAddress( C3_UrlStem );
                 C3SearchClient.Endpoint.Address = URI;
             }
