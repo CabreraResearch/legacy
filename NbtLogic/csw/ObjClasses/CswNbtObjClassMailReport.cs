@@ -181,6 +181,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData.NodeTypeProp )
             {
+                //Remember: Save is an OCP too
                 if( PropertyName.RunNow == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;

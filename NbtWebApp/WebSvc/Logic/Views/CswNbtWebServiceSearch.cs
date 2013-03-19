@@ -47,10 +47,16 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject doUniversalSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
         {
+            CswNbtSearch Search = getSearch( SearchTerm, NodeTypeId, ObjectClassId );
+            return _finishUniversalSearch( Search );
+        }
+
+        public CswNbtSearch getSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
+        {
             CswNbtSearch Search = new CswNbtSearch( _CswNbtResources )
-                                      {
-                                          SearchTerm = SearchTerm
-                                      };
+            {
+                SearchTerm = SearchTerm
+            };
             if( Int32.MinValue != NodeTypeId )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
@@ -67,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
                     Search.addFilter( ObjectClass, false );
                 }
             }
-            return _finishUniversalSearch( Search );
+            return Search;
         }
 
         public JObject restoreUniversalSearch( CswPrimaryKey SearchId )

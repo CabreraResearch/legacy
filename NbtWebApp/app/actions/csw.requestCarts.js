@@ -37,6 +37,7 @@
                     recurringItemsViewId: '',
                     submittedItemsViewId: '',
                     pendingCartId: '',
+                    copyableId: 0,
                     cartCounts: {
                         PendingRequestItems: 0,
                         SubmittedRequestItems: 0,
@@ -70,6 +71,7 @@
                         cswPrivate.state.recurringItemsViewId = data.RecurringItemsView.SessionViewId;
                         cswPrivate.state.submittedItemsViewId = data.SubmittedItemsView.SessionViewId;
                         cswPrivate.state.pendingCartId = data.CurrentRequest.NodeId;
+                        cswPrivate.state.copyableId = data.CopyableObjectClassId;
 
                         cswPrivate.saveState();
 
@@ -316,6 +318,7 @@
                     showMultiEditToolbar: false,
                     showActionColumn: true,
                     canSelectRow: false,
+                    reapplyViewReadyOnLayout: opts.reapplyViewReadyOnLayout,
                     groupField: opts.groupField || '',
                     onLoad: function (grid, json) {
                         Csw.tryExec(opts.onSuccess);
@@ -375,6 +378,7 @@
                             publishDeleteEvent: false
                         });
                     }, // onDelete
+                    onBeforeSelect: opts.onBeforeSelect,
                     onSelectChange: function (rowCount) {
                         if (opts.showCheckboxes) {
                             Csw.tryExec(opts.onSelectChange, rowCount);
@@ -458,17 +462,30 @@
                     }
                 };
 
-                opts = opts || {
-                    onSuccess: function () { }
-                };
+                opts = opts || {};
                 opts.sessionViewId = cswPrivate.state.pendingItemsViewId;
                 opts.parent = ol.li();
                 opts.gridId = cswPrivate.name + '_pendingGrid';
                 opts.showCheckboxes = true;
                 opts.title = 'Select any Pending items to save to a Favorite list or to copy to a new Recurring request.';
+                opts.onBeforeSelect = function(record, node) {
+                    var ret = true;
+                    if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                        ret = false;
+                    }
+                    return ret;
+                };
                 opts.onSelectChange = function (rowCount) {
                     hasOneRowSelected = rowCount > 0;
                     toggleCopyButtons();
+                };
+                opts.reapplyViewReadyOnLayout = true;
+                opts.onSuccess = function() {
+                    cswPublic.pendingGrid.iterateRows(function (record, node) {
+                        if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                            $(node).find('.x-grid-row-checker').remove();
+                        }
+                    });
                 };
                 opts.onEditNode = cswPrivate.makePendingTab;
 
@@ -562,6 +579,21 @@
                     toggleCopyBtn();
                 };
                 opts.onEditNode = cswPrivate.makeSubmittedTab;
+                opts.onBeforeSelect = function (record, node) {
+                    var ret = true;
+                    if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                        ret = false;
+                    }
+                    return ret;
+                };
+                opts.reapplyViewReadyOnLayout = true;
+                opts.onSuccess = function () {
+                    cswPublic.submittedGrid.iterateRows(function (record, node) {
+                        if (record.raw.objectclassid != cswPrivate.state.copyableId) {
+                            $(node).find('.x-grid-row-checker').remove();
+                        }
+                    });
+                };
 
                 cswPublic.submittedGrid = cswPrivate.makeGridForTab(opts);
 
@@ -679,8 +711,8 @@
 
                 if (hasFinish) {
                     tbl.cell(1, 1).buttonExt({
-                        enabledText: 'Place Request',
-                        disabledText: 'Place Request',
+                        enabledText: 'Submit these Requests',
+                        disabledText: 'Submit these Requests',
                         disableOnClick: true,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                         onClick: function () {

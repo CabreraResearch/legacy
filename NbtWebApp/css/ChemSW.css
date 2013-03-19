@@ -1,17 +1,17 @@
 ﻿body
 {
-    color: &cswtextcolor;
-    background-color: &cswpagebgcolor;
+    color: #000000;
+    background-color: #ebebeb;
 
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     margin: 0px 0px 0px 0px;
 }
 body a
 {
-    color: &cswtextcolor;
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    color: #000000;
+    font-family: verdana;
+    font-size: 12px;
 }
 
 /* This keeps bullets aligned with list items */
@@ -35,7 +35,7 @@ ul li div {
 .PageTable
 {
     text-align: left;
-    background-color: &cswpageinnerbgcolor;
+    background-color: #f8f9fb;
     margin: 10px 10px 5px 10px;
 }
 
@@ -61,8 +61,8 @@ ul li div {
 }
 .HeaderTable_LeftCell
 {
-    background-color: &cswheaderbgcolor;
-    border-bottom: 1px solid &cswheaderbordercolor;
+    background-color: #d8e9fa;
+    border-bottom: 1px solid #cddded;
     padding: 0px 10px 0px 0px;
     height: 32px;
     width: 270px;
@@ -73,10 +73,10 @@ ul li div {
 }
 .HeaderTable_RightTopCell
 {
-    background-color: &cswheaderbgcolor;
+    background-color: #d8e9fa;
     height: 30px;
     width: 100%;
-    border-bottom: 1px solid &cswheaderbordercolor;
+    border-bottom: 1px solid #cddded;
 }
 
 .HeaderTable_RightMenu
@@ -86,7 +86,7 @@ ul li div {
 
 .HeaderTable_BottomMenu
 {
-    background-color: &cswpageinnerbgcolor;
+    background-color: #f8f9fb;
     height: 36px;
 }
 
@@ -284,47 +284,47 @@ ul li div {
 
 .selectinput
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     background-color: #ffffff;
     border-top: 2px solid #7f9db9;
     border-left: 2px solid #7f9db9;
     border-right: 2px solid #7f9db9;
     border-bottom: 2px solid #7f9db9;
-    color: &cswtextcolor;
+    color: #000000;
 }
 .selectinput_invalid
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     background-color: #ffcccc;
     border-top: 2px solid #7f9db9;
     border-left: 2px solid #7f9db9;
     border-right: 2px solid #7f9db9;
     border-bottom: 2px solid #7f9db9;
-    color: &cswtextcolor;
+    color: #000000;
 }
 .textinput
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     background-color: #ffffff;
     border-top: 1px solid #7f9db9;
     border-left: 1px solid #7f9db9;
     border-right: 1px solid #7f9db9;
     border-bottom: 1px solid #7f9db9;
-    color: &cswtextcolor;
+    color: #000000;
 }
 .textinput_invalid
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     background-color: #ffcccc;
     border-top: 1px solid #7f9db9;
     border-left: 1px solid #7f9db9;
     border-right: 1px solid #7f9db9;
     border-bottom: 1px solid #7f9db9;
-    color: &cswtextcolor;
+    color: #000000;
 }
 
 .staticvalue
@@ -333,11 +333,11 @@ ul li div {
     top: -3px;
     padding: 0px 20px 0px 0px;
     margin: 0px 20px 0px 0px;
-    border-top: 1px solid &cswpagebgcolor;
-    border-left: 1px solid &cswpagebgcolor;
-    border-right: 1px solid &cswpagebgcolor;
-    border-bottom: 1px solid &cswpagebgcolor;
-    color: &cswtextcolor;
+    border-top: 1px solid #ebebeb;
+    border-left: 1px solid #ebebeb;
+    border-right: 1px solid #ebebeb;
+    border-bottom: 1px solid #ebebeb;
+    color: #000000;
 }
 
 .propertylabelcell
@@ -362,29 +362,29 @@ ul li div {
 .ErrorContent
 {
     padding: 1px 3px 1px 3px;
-    background-color: &cswbgcolorhilite;
-    color: &cswtextcolor;
+    background-color: #ffff00;
+    color: #000000;
 }
 
 .ErrorMessage
 {
-    color: &cswtextcolor;
+    color: #000000;
 }
 
 .Button
 {
-    font-size: &cswtextfontsize;
-    color: &cswtextcolor;
+    font-size: 12px;
+    color: #000000;
 }
 
 .Login
 {
     text-align: center;
-    color: &cswtextcolor;
+    color: #000000;
 }
 .Login a
 {
-    color: &cswtextcolor;
+    color: #000000;
 }
 .Login a:hover
 {
@@ -493,8 +493,8 @@ ul li div {
 .MenuGroup
 {
   color: #ddeeff;
-  font-family:&cswtextfontfamily;
-  font-size: &cswtextfontsize;
+  font-family:verdana;
+  font-size: 12px;
   font-weight: bold;
   background-color:#336699;
   cursor:hand;
@@ -521,7 +521,7 @@ ul li div {
 .WizardTopCell
 {
     background-color: #bbddff;
-    color: &cswtextcolor;	
+    color: #000000;	
     font-weight: bold;
     font-size: 1.2em;
 }
@@ -540,7 +540,7 @@ ul li div {
 }
 .WizardSelectedStep
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
 }
 .WizardStepTitleCell
 {
@@ -604,8 +604,8 @@ ul li div {
 {
     background-color: #ddeeff;
     color: #003366;
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     cursor: pointer;
     width: 140px;
     border-top: 2px solid #6699cc;
@@ -617,8 +617,8 @@ ul li div {
 {
     background-color: #ffcccc;
     color: #003366;
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     cursor: pointer;
     width: 140px;
     border-top: 2px solid #6699cc;
@@ -655,7 +655,7 @@ ul li div {
 }
 .DateSelectedDay
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
     color: #003366;
     cursor: pointer;
 }
@@ -673,7 +673,7 @@ ul li div {
 }
 .DateSelectedDayHover
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
     color: #ff0000;
     cursor: pointer;
 }
@@ -773,7 +773,7 @@ ul li div {
 }
 .GridRowSelected
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
     font-weight: bold;
 }
 
@@ -794,7 +794,7 @@ ul li div {
 }
 .LocationTextSelected
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
     color: #003366;
 }
 .LocationTitleText
@@ -804,14 +804,14 @@ ul li div {
 }
 .LocationTitleTextSelected
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
     color: #003366;
     font-size: large;
 }
 
 .LoginTitle
 {
-    color: &cswtextcolor;
+    color: #000000;
     font-size: large;
     font-weight: bold;
 }
@@ -909,8 +909,8 @@ ul li div {
 
 .fileupload
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     background-color: #ddeeff;
     color: #003366;
 }
@@ -921,20 +921,20 @@ ul li div {
 
 .GridPager
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     color: #ffffff;
 }
 .GridPager a
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     color: #ddeeff;
 }
 .GridPager a:hover
 {
-    font-family: &cswtextfontfamily;
-    font-size: &cswtextfontsize;
+    font-family: verdana;
+    font-size: 12px;
     color: #ffffff;
 }
 
@@ -1053,7 +1053,7 @@ ul li div {
 
 .ContextSensitiveMessage
 {
-    color: &cswtextcolor;	
+    color: #000000;	
 }
 
 .QuickLaunchDiv
@@ -1230,7 +1230,7 @@ ul li div {
 }
 .ListRowSelected
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
 }
 .CswLayoutTable
 {
@@ -1275,7 +1275,7 @@ ul li div {
 
 .buttonmessage
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
     padding-left: 5px;
 }
 
@@ -1309,12 +1309,12 @@ ul li div {
                 
 .ui-state-highlight
 {
-        background-color: &cswbgcolorhilite !important;
+        background-color: #ffff00 !important;
         font-weight: bold !important;
 }
 .ui-state-highlight td
 {
-        background-color: &cswbgcolorhilite !important;
+        background-color: #ffff00 !important;
         font-weight: bold !important;
 }
 .cswprop_helplink
@@ -1357,14 +1357,14 @@ ul li div {
 }
 .viewselectitemhover
 {
-    background-color: &cswbgcolorhilite;
+    background-color: #ffff00;
     cursor: pointer;
 }
 
 .viewfilters
 {
-    border: 1px solid &cswheaderbordercolor;
-    background-color: &cswheaderbgcolor;
+    border: 1px solid #cddded;
+    background-color: #d8e9fa;
     text-align: left;
     width: 270px;
 }
@@ -1397,7 +1397,7 @@ ul li div {
 {
     color: #3e73be !Important;
     font-family: verdana !Important;
-    font-size: &cswtextfontsize !Important;
+    font-size: 12px !Important;
 }
 
 

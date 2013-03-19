@@ -53,7 +53,7 @@
                             onClick: function () {
                                 var changes = result;
                                 Csw.each(checkboxes, function (thisCheckbox) {
-                                    changes[thisCheckbox.propDom('name')] = thisCheckbox.checked();
+                                    changes[thisCheckbox.$.attr('name')] = thisCheckbox.checked();
                                 }); // each
 
                                 Csw.ajax.post({

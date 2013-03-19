@@ -8,7 +8,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using ChemSW.Security;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -211,8 +210,6 @@ namespace ChemSW.Nbt.Actions
             }
         } // SetQuota()
 
-
-
         /// <summary>
         /// Unlocks all nodes of an object class
         /// </summary>
@@ -389,7 +386,7 @@ namespace ChemSW.Nbt.Actions
             }
 
             Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
-            if( Quota > 0 )
+            if( Quota >= 0 )
             {
                 ret = ( GetNodeCountForNodeType( NodeType.NodeTypeId ) < Quota );
             }
@@ -405,33 +402,12 @@ namespace ChemSW.Nbt.Actions
         {
             bool ret = true;
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            if( ObjectClass.Quota > 0 )
+            if( ObjectClass.Quota >= 0 )
             {
                 ret = ( GetNodeCountForObjectClass( ObjectClassId ) < ObjectClass.Quota );
             }
             return ret;
         } // CheckQuota()
-
-        /// <summary>
-        /// Increments the Node count for the given NodeType and its corresponding ObjClass
-        /// </summary>
-        /// <param name="NodeTypeId"></param>
-        public void IncrementNodeCountForNodeType( Int32 NodeTypeId )
-        {
-            _CswNbtResources.execArbitraryPlatformNeutralSql( "update nodetypes set nodecount = nodecount + 1 where nodetypeid = " + NodeTypeId );
-
-            CswNbtMetaDataObjectClass objClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
-            IncrementNodeCountForObjClass( objClass.ObjectClassId );
-        }
-
-        /// <summary>
-        /// Increments the Node count for the given ObjClass
-        /// </summary>
-        /// <param name="ObjClassId"></param>
-        public void IncrementNodeCountForObjClass( Int32 ObjClassId )
-        {
-            _CswNbtResources.execArbitraryPlatformNeutralSql( "update object_class set nodecount = nodecount + 1 where objectclassid = " + ObjClassId );
-        }
 
     } // class CswNbtActQuotas
 }// namespace ChemSW.Nbt.Actions

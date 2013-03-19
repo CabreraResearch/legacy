@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ServiceDrivers
     {
 
         private readonly CswNbtResources _CswNbtResources;
-        
+
         private readonly bool _IsMultiEdit;
         private readonly bool _ConfigMode;
         private string HistoryTabPrefix = "history_";
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public CswNbtSdTabsAndProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents = null, bool Multi = false, bool ConfigMode = false )
         {
             _CswNbtResources = CswNbtResources;
-            
+
             _IsMultiEdit = Multi;
             _ConfigMode = ConfigMode;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
@@ -105,19 +105,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                         }
                     }
                     Ret["nodename"] = Node.NodeName;
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
-                    if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
-                    {
-                        CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
-                        JObject Props = new JObject();
-                        if( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, IdentityTab ) )
-                        {
-                            Props = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
-                            Props.Remove( "nodeid" );
-                        }
-                        Ret["IdentityTab"] = Props;
-                        Ret["IdentityTab"]["tabid"] = IdentityTab.TabId;
-                    }
                 } // if-else( filterToPropId != string.Empty )
                 Ret["nodetypeid"] = NodeTypeId;
             }
@@ -217,7 +204,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                                     select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
-                                    Ret.postChanges( ForceUpdate : false );
+                                    Ret.postChanges( ForceUpdate: false );
                                 }
                             }
                         }
@@ -268,6 +255,22 @@ namespace ChemSW.Nbt.ServiceDrivers
         } // getProps()
 
         /// <summary>
+        /// Fetch or create a node, and return a JObject for all properties in the identity tab
+        /// </summary>
+        public JObject getIdentityTabProps( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        {
+            JObject Ret = new JObject();
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            if( null != NodeType )
+            {
+                CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
+                Ret["tabid"] = IdentityTab.TabId;
+                Ret = getProps( NodeId, NodeKey, IdentityTab.TabId.ToString(), NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+            }
+            return Ret;
+        } // getIdentityTabProps()
+
+        /// <summary>
         /// Get props of a Node instance
         /// </summary>
         public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
@@ -279,6 +282,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     Ret["nodeid"] = Node.NodeId.ToString();
                     Ret["nodelink"] = Node.NodeLink;
+                    Ret["nodename"] = Node.NodeName;
+                    Ret["nodetypeid"] = Node.NodeTypeId;
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
@@ -319,13 +324,15 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node, bool HasEditableProps )
         {
-            //bool Ret = Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) &&
-            
-            //Case 24023: Exclude buttons on Add
-            return ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
+            bool Ret = ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
+                Prop.IsSaveProp ||
+                //Case 24023: Exclude buttons on Add (Except the Save button)
+                Prop.IsSaveProp ||
                 Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
                 Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) ) &&
                        ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            
+            return Ret;
         }
 
         /// <summary>
@@ -824,7 +831,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                                 }
 
-                                CopyToNode.postChanges( ForceUpdate : false );
+                                CopyToNode.postChanges( ForceUpdate: false );
 
                             } // foreach( string NodeIdStr in CopyNodeIds )
                             ret["result"] = "true";
@@ -1018,7 +1025,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
                     _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
                 }
-                Node.postChanges( ForceUpdate : false );
+                Node.postChanges( ForceUpdate: false );
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;
@@ -1066,12 +1073,12 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject getLocationView( string SelectedNodeId )
         {
             CswNbtView LocationView = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, null );
-            LocationView.SaveToCache(false);
+            LocationView.SaveToCache( false );
             JObject LocationViewId = new JObject();
             LocationViewId["viewid"] = LocationView.SessionViewId.ToString();
-            CswPrimaryKey LocationId = String.IsNullOrEmpty(SelectedNodeId)
+            CswPrimaryKey LocationId = String.IsNullOrEmpty( SelectedNodeId )
                                            ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
-                                           : CswConvert.ToPrimaryKey(SelectedNodeId);
+                                           : CswConvert.ToPrimaryKey( SelectedNodeId );
             if( null != LocationId )
             {
                 LocationViewId["nodeid"] = LocationId.ToString();

@@ -38,6 +38,11 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.getProps( NodeId, NodeKey, TabId, NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
         } // getProps()
 
+        public JObject getIdentityTabProps( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        {
+            return _TabsPropsSd.getIdentityTabProps( NodeId, NodeKey, NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+        } // getProps()
+
         /// <summary>
         /// Returns JObject for a single property and its conditional properties
         /// </summary>
@@ -74,7 +79,7 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.addNode( NodeType, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject NewPropsJson, Int32 NodeTypeId, CswNbtView View,  bool IsIdentityTab, bool RemoveTempStatus )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, JObject NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab, bool RemoveTempStatus )
         {
             return _TabsPropsSd.saveProps( NodePk, TabId, NewPropsJson, NodeTypeId, View, IsIdentityTab, RemoveTempStatus );
         } // saveProps()

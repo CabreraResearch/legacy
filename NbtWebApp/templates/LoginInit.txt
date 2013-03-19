@@ -1,0 +1,57 @@
+   <script type="text/javascript">
+        var formHtml = '<p>This Page Tests the External Login functionality of NBT</p>';
+        formHtml += '<label>AccessId: <input type="text" name="accessid" id="accessid" value="1" /></label><br/>';
+        formHtml += '<label>Username: <input type="text" name="username" id="username" value="admin" /></label><br/>';
+        formHtml += '<label>Password: <input type="password" name="password" id="password" value="admin" /></label><br/>';
+        formHtml += '<label>LogoutPath: <input type="logoutpath" name="logoutpath" id="logoutpath" value="http://www.chemsw.com/live-login.aspx" /></label><br/>';
+        formHtml += '<input type="button" value="Submit Query" onclick="postToExternalLogin()"/>';
+        var iterations = 0;
+        function exec() {
+            if(window.$) {
+                $('#CenterBottomDiv').append(formHtml);
+
+                function postToExternalLogin() {
+                    var form = document.createElement("form");
+                    form.setAttribute("method", "post");
+                    form.setAttribute("action", "ExternalLogin.aspx");
+
+                    var accessIdField = document.createElement("input");
+                    accessIdField.setAttribute("type", "text");
+                    accessIdField.setAttribute("name", "accessid");
+                    accessIdField.setAttribute("value", $("#accessid").val());
+
+                    var usernameField = document.createElement("input");
+                    usernameField.setAttribute("type", "text");
+                    usernameField.setAttribute("name", "username");
+                    usernameField.setAttribute("value", $("#username").val());
+
+                    var passwordField = document.createElement("input");
+                    passwordField.setAttribute("type", "password");
+                    passwordField.setAttribute("name", "password");
+                    passwordField.setAttribute("value", $("#password").val());
+
+                    var logoutpathField = document.createElement("input");
+                    logoutpathField.setAttribute("type", "text");
+                    logoutpathField.setAttribute("name", "logoutpath");
+                    logoutpathField.setAttribute("value", $("#logoutpath").val());
+
+                    form.appendChild(accessIdField);
+                    form.appendChild(usernameField);
+                    form.appendChild(passwordField);
+                    form.appendChild(logoutpathField);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                    document.body.removeChild(form); //remove it immediatly after posting so it doesn't show up in the broswer
+                }
+            } else {
+                iterations += 1;
+                if(iterations > 10) {
+                    throw new Error('Could not load thirdparty.');
+                }
+                window.setTimeout(exec, 500);
+            }
+        }
+        exec();
+    </script>
+    

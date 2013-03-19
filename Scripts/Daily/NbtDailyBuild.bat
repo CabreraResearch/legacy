@@ -79,9 +79,9 @@ timeout /T 30
 >>%LogFile% echo ====================================================================
 >>%LogFile% net start "ChemSW Log Service"
 
->>%LogFile% echo Running Unit Tests
+>>%LogFile% echo Compiling JavaScript and HTML
 >>%LogFile% echo ====================================================================
->>%LogFile% cd %KilnPath%\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd test -force
+>>%LogFile% cd %KilnPath%\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:dev -force
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Starting Mobile Build

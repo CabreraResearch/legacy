@@ -99,6 +99,12 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Inspections.svc.cs">
+      <DependentUpon>Inspections.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Locations.svc.cs">
+      <DependentUpon>Locations.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\NbtPublic.svc.cs">
       <DependentUpon>NbtPublic.svc</DependentUpon>
     </Compile>
@@ -182,6 +188,8 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceBinaryData.cs" />
     <Compile Include="WebSvc\Logic\NbtManager\CswNbtWebServiceNbtManager.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceQuotas.cs" />
+    <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspections.cs" />
+    <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceLocations.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbSdView.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTable.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
@@ -669,6 +677,12 @@
     <Content Include="NbtPrintClient\install8.jpg" />
     <Content Include="NbtPrintClient\install9.jpg" />
     <Content Include="NbtPrintClient\setup.exe" />
+    <Content Include="Scripts\additional-methods.min.js.map">
+      <DependentUpon>additional-methods.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\es5-shim.min.js.map">
+      <DependentUpon>es5-shim.js</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-1.9.1-vsdoc.js" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\additional-methods.js" />
@@ -678,6 +692,12 @@
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js.map">
+      <DependentUpon>jquery-1.9.1.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery-ui-1.10.1.min.js.map">
+      <DependentUpon>jquery-ui-1.10.1.js</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.min.js" />
@@ -687,6 +707,8 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Inspections.svc" />
+    <Content Include="Services\Locations.svc" />
     <Content Include="Services\NbtPublic.svc" />
     <Content Include="Services\Scheduler.svc" />
     <Content Include="Services\KioskMode.svc" />
@@ -1948,6 +1970,12 @@
     <None Include="NbtPrintClient\NbtPrintClientInstall.msi" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
     <Content Include="setupEnvironment.ps1" />
+    <Content Include="Scripts\jquery.validate.min.js.map">
+      <DependentUpon>jquery.validate.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\mousetrap.min.js.map">
+      <DependentUpon>mousetrap.js</DependentUpon>
+    </Content>
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
     <None Include="SkinPrint\Grid\Thumbs.db" />

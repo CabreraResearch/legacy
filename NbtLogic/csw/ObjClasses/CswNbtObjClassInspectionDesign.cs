@@ -485,6 +485,9 @@ namespace ChemSW.Nbt.ObjClasses
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
                         ButtonData.Action = NbtButtonAction.nothing;
                         break;
+                    case CswNbtObjClass.PropertyName.Save:
+                        break;
+
                 }
                 this.postChanges( false );
             } // if( null != NodeTypeProp )

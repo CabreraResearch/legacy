@@ -23,19 +23,13 @@
   ],
   "devDependencies": {
     "grunt": "~0.4.0",
-        
-    "grunt-contrib" : "~0.5.0",
-    
-    "grunt-growl": "latest",
-    "grunt-jsdoc": "latest",
+    "grunt-contrib": "~0.5.0",
     "grunt-mocha-cli": "latest",
     "grunt-tmplmin": "latest",
     "grunt-qunit-cov": "latest",
-        
-    "clean-css": "latest",
-    "express": "latest",
     "jscoverage": "latest",
-    "node-phantom": "latest"
+    "node-phantom": "latest",
+	"phantom": "latest"
   },
   "bundledDependencies": [],
   "keywords": [],

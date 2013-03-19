@@ -38,7 +38,8 @@
                     showDelete: true,
 
                     canSelectRow: false,
-
+                    reapplyViewReadyOnLayout: false, //This is not normal. See Requesting for the specific use case.
+                    
                     onLoad: function (grid, ajaxResult) { },
                     onEdit: function (rows) { },
                     onPreview: function (rows) { },
@@ -220,6 +221,11 @@
                         //of the methods we're listening to here, called 4th. Will also trigger afterlayout.
                         Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                     },
+                    afterlayout: function() {
+                        if (cswPrivate.reapplyViewReadyOnLayout) {
+                            Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
+                        }
+                    }
                     //sortchange: function () { debugFunc(); },
                     //                    render: function () {
                     //                        //of the methods we're listening to here, called 1st
@@ -628,7 +634,7 @@
                 } else {
                     cswPublic.extGrid = window.Ext.create('Ext.panel.Panel');
                 }
-
+                
                 return cswPublic.extGrid;
             }); // makeGrid()
 
@@ -671,6 +677,9 @@
 
                 if (cswPrivate.grid) {
                     cswPrivate.grid.on({
+                        beforeSelect: function (rowModel, record, index, eOpts) {
+                            return Csw.tryExec(cswPrivate.onBeforeSelect, record);
+                        },
                         select: function (rowModel, record, index, eOpts) {
                             Csw.tryExec(cswPrivate.onSelect, record.data);
                         },
@@ -679,12 +688,6 @@
                         },
                         selectionchange: function (rowModel, selected, eOpts) {
                             Csw.tryExec(cswPrivate.onSelectChange, cswPublic.getSelectedRowCount());
-                        },
-                        afterrender: function (component) {
-                            //debugger;
-                        },
-                        viewready: function () {
-                            //debugger;
                         }
                     }); // init()
 
@@ -884,6 +887,19 @@
                 }
 
                 return return_val;
+            };
+
+            cswPublic.iterateRows = function(callBack) {
+                /// <summary>
+                /// Iterate each row in the grid and execute a callback with the row record and node as the parameters
+                /// </summary>
+                if (cswPrivate.grid && cswPrivate.store) {
+                    var view = cswPrivate.grid.getView();
+                    Csw.iterate(cswPrivate.store.getRange(), function _callback(row) {
+                        var node = view.getNode(row);
+                        callBack(row, node);
+                    });
+                }
             };
 
             cswPublic.print = Csw.method(function () {

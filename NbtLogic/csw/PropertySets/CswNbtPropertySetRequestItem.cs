@@ -361,6 +361,7 @@ namespace ChemSW.Nbt.ObjClasses
             bool Ret = false;
             if ( null != ButtonData.NodeTypeProp )
             {
+                //Remember: Save is an OCP too
                 switch ( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:

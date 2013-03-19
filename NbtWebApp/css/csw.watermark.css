@@ -1,0 +1,39 @@
+﻿/* 
+ * Adapted from: http://www.andypemberton.com/css/print-watermarks-with-css/ 
+ */
+
+body{
+	margin:0;
+}
+div.watermark{
+	display:block;
+	position:fixed;
+	z-index:1000;
+	font-size: 200px;
+	color: #000000;
+	opacity: 0.05;
+	pointer-events:none;
+}
+	div.content > *:first-child,x:-moz-any-link{margin-top:0;}/* ff only */
+	div.watermark,x:-moz-any-link{z-index:auto;}/* ff only */
+	div.watermark,x:-moz-any-link,x:default{z-index:-1;}/* ff3 only */
+
+	@media all and (min-width: 0px){div.watermark{width:8.5in;}} /* opera only */
+
+	div.watermark {
+		position:absolute;
+		left:0;
+		width:99%;
+	}
+
+/* watermark position */
+/* horizontal */
+div.wmleft{text-align:left;}
+div.wmcenter{text-align:center;}
+div.wmright{text-align:right;}
+	body:last-child:not(:root:root) div.wmright {left:-160px;}/* safari only */
+
+/* vertical */
+div.wmtop {top:0;}
+div.wmmiddle {top:50%;margin-top:-80px;}
+div.wmbottom {bottom:2px;}

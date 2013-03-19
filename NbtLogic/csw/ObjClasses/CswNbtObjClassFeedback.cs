@@ -111,6 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
                 string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                //Remember: Save is an OCP too
                 if( PropertyName.LoadUserContext == OCPPropName )
                 {
                     ButtonData.Data["action"] = OCPPropName;

@@ -64,8 +64,6 @@ namespace ChemSW.Nbt.Actions
         public class LoginDataRequest
         {
             [DataMember]
-            public String Username = String.Empty;//Do we need this?
-            [DataMember]
             public String StartDate = String.Empty;
             [DataMember]
             public String EndDate = String.Empty;
@@ -132,9 +130,8 @@ namespace ChemSW.Nbt.Actions
 
         private DataTable _getLoginRecords( LoginData.LoginDataRequest Request )
         {
-            String WhereClauseTemplate = @"where logindate >= {1} and logindate < {2} + 1";
+            String WhereClauseTemplate = @"where logindate >= {0} and logindate < {1} + 1";
             String WhereClause = String.Format( WhereClauseTemplate,
-                Request.Username,
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) )
             );

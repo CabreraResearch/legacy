@@ -74,29 +74,38 @@ if (Install-NeededFor '.NET Runtimes up to 4.5' $false) {
     cinst WindowsInstaller45 -source webpi
 }
 
+Write-Host "Checking for/installing required compilers"
+if (Install-NeededFor 'C++ Libraries' $false) {
+    cinst vcredist2005 -source webpi
+    cinst vcredist2008 -source webpi
+    cinst vcredist2010 -source webpi
+}
+
 if (Install-NeededFor 'Tortoise' $false) {
     cinst tortoisehg -source webpi
 }
 
 Write-Host "Checking for/installing PowerShell"
 if (Install-NeededFor 'PowerShell 3.0' $false) {
-    cinst PowerShell
-    cinst PowerGUI
+    cinst PowerShell -source webpi
+    cinst PowerGUI -source webpi
 }
 
 Write-Host "Checking for/installing Visual Studio Items..."
 if (Install-NeededFor 'VS2012 Premium' $false) {
  cinst VisualStudio2012Premium -source webpi
  cinst resharper -source webpi
+ cinst MVC3 -source webpi
+ cinst MVC3Loc -source webpi
 }
 
 if (Install-NeededFor 'VS2010 Full Edition SP1' $false) {
  cinst VS2010SP1Pack -source webpi
  cinst resharper -source webpi
+ cinst MVC3 -source webpi
+ cinst MVC3Loc -source webpi
 }
 
-cinst MVC3 -source webpi
-cinst MVC3Loc -source webpi
 Write-Host "Finished checking for/installing Visual Studio Items."
 
 Write-Host "Checking for/installing Other language support"
@@ -113,8 +122,6 @@ if (Install-NeededFor 'Java' $false) {
  cinst javaruntime.x64 -source webpi
 }
 Write-Host "Finished checking for/installing Other language support"
-
-
 
 Write-Host "Checking for/installing IIS Items..."
 if (Install-NeededFor 'IIS' $false) {
@@ -138,8 +145,11 @@ if (Install-NeededFor 'IIS' $false) {
 }
 
 Write-Host "Checking for/installing Project NPM..."
-if (Install-NeededFor 'This Project NPM package' $false) {
+if (Install-NeededFor 'This Web App Project NPM package' $false) {
   npm install
+  
+  Write-Host 'This step has worked inconsistenly for some people. If needed, cd into the project folder and execute `npm install`'
+  Write-Host 'You still need to open the project folder in a command prompt and execute `grunt.cmd build:{mode}` to build the project.'
 }
 
 $projectName = 'ProjectName'

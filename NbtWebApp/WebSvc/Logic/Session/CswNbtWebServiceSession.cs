@@ -136,8 +136,12 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public static void getLoginData( ICswResources CswResources, LoginDataReturn Return, LoginData.LoginDataRequest Request )
         {
-            CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( (CswNbtResources) CswResources );
-            Return.Data = _CswNbtActLoginData.getLoginData( Request );
+            CswNbtResources _CswNbtResources = ( CswNbtResources ) CswResources;
+            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );
+                Return.Data = _CswNbtActLoginData.getLoginData( Request );
+            }
         }
     } // class CswNbtWebServiceSession
 

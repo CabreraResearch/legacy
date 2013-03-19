@@ -7,12 +7,14 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassEquipment : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Assembly = "Assembly";
             public const string Type = "Type";
             public const string Parts = "Parts";
             public const string Status = "Status";
+            public const string EquipmentId = "Equipment Id";
+            public const string Location = "Location";
         }
 
         public static string PartsXValueName { get { return "Uses"; } }
@@ -115,11 +117,11 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship GeneratorRelationship = GeneratorView.AddViewRelationship( GeneratorObjectClass, false );
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
-            CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter( 
-                OwnerProperty, 
-                CswNbtSubField.SubFieldName.NodeID, 
-                CswNbtPropFilterSql.PropertyFilterMode.Equals, 
-                NodeId.PrimaryKey.ToString());
+            CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter(
+                OwnerProperty,
+                CswNbtSubField.SubFieldName.NodeID,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree GeneratorTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, GeneratorView, true, false, false );
             GeneratorTree.goToRoot();
@@ -148,6 +150,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
         public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
+        public CswNbtNodePropBarcode EquipmentId { get { return ( _CswNbtNode.Properties[PropertyName.EquipmentId] ); } }
+        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
 
         #endregion
 

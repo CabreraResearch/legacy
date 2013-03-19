@@ -9,6 +9,7 @@ using ChemSW.Nbt.Security;
 using NbtWebApp.WebSvc.Returns;
 using ChemSW.Nbt.MetaData;
 using System.Collections.ObjectModel;
+using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -28,9 +29,10 @@ namespace ChemSW.Nbt.WebServices
             public const string Transfer = "transfer";
             public const string Dispense = "dispense";
             public const string Dispose = "dispose";
+            public const string Status = "status";
             public static readonly CswCommaDelimitedString All = new CswCommaDelimitedString()
             {
-                Move, Owner, Transfer, Dispense, Dispose
+                Move, Owner, Transfer, Dispense, Dispose, Status
             };
         }
 
@@ -108,11 +110,80 @@ namespace ChemSW.Nbt.WebServices
             public bool ServerValidated = false;
             [DataMember]
             public string SecondValue = string.Empty;
+            [DataMember]
+            public string FoundObjClass;
 
-            public NbtObjectClass ExpectedObjClass( string OpMode, int FieldNumber )
+            public NbtObjectClass GetBarcodeExpectedOC( CswNbtResources NbtResources, ref OperationData OpData )
             {
-                NbtObjectClass Ret = NbtObjectClass.LocationClass;
-                OpMode = OpMode.ToLower();
+                NbtObjectClass Ret = null;
+
+                CswNbtWebServiceSearch searchSvc = new CswNbtWebServiceSearch( NbtResources, null );
+                CswNbtSearch search = searchSvc.getSearch( Value, Int32.MinValue, Int32.MinValue );
+                ICswNbtTree tree = search.Results();
+                int childCount = tree.getChildNodeCount();
+                for( int i = 0; i < childCount; i++ )
+                {
+                    tree.goToNthChild( i );
+                    CswNbtNode node = tree.getNodeForCurrentPosition();
+                    string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
+
+                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                    {
+                        if( ObjClass == NbtObjectClass.ContainerClass )
+                        {
+                            Ret = NbtObjectClass.ContainerClass;
+                            FoundObjClass = Ret;
+                        }
+                    }
+
+                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+                    {
+                        if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
+                        {
+                            Ret = NbtObjectClass.EquipmentAssemblyClass;
+                            FoundObjClass = Ret;
+                        }
+
+                        if( ObjClass == NbtObjectClass.EquipmentClass )
+                        {
+                            Ret = NbtObjectClass.EquipmentClass;
+                            FoundObjClass = Ret;
+                        }
+                    }
+                    tree.goToParentNode();
+                }
+
+                if( null == Ret ) //Now is a good time to validate the field since we know what we just searched for
+                {
+                    bool first = true;
+                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                    {
+                        StatusMsg = NbtObjectClass.ContainerClass.Replace( "Class", "" );
+                        first = false;
+                    }
+                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+                    {
+                        if( first )
+                        {
+                            StatusMsg = NbtObjectClass.EquipmentClass.Replace( "Class", "" );
+                        }
+                        else
+                        {
+                            StatusMsg += ", " + NbtObjectClass.EquipmentClass.Replace( "Class", "" );
+                        }
+                        StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" );
+                    }
+                    StatusMsg = "Could not find " + StatusMsg;
+                    OpData.Log.Add( DateTime.Now + " - ERROR: " + StatusMsg );
+                }
+
+                return Ret;
+            }
+
+            public NbtObjectClass ExpectedObjClass( CswNbtResources NbtResources, int FieldNumber, ref OperationData OpData )
+            {
+                NbtObjectClass Ret = null;
+                string OpMode = OpData.Mode.ToLower();
                 switch( OpMode )
                 {
                     case Modes.Move:
@@ -122,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         else
                         {
-                            Ret = NbtObjectClass.ContainerClass;
+                            Ret = GetBarcodeExpectedOC( NbtResources, ref OpData );
                         }
                         break;
                     case Modes.Owner:
@@ -150,13 +221,15 @@ namespace ChemSW.Nbt.WebServices
                         {
                             Ret = NbtObjectClass.ContainerClass;
                         }
-                        else
-                        {
-                            Ret = null; //for Dispense we are expecting a number
-                        }
                         break;
                     case Modes.Dispose:
                         Ret = NbtObjectClass.ContainerClass;
+                        break;
+                    case Modes.Status:
+                        if( FieldNumber == 2 )
+                        {
+                            Ret = GetBarcodeExpectedOC( NbtResources, ref OpData );
+                        }
                         break;
                 }
                 return Ret;
@@ -177,31 +250,44 @@ namespace ChemSW.Nbt.WebServices
                 name = CswTools.UppercaseFirst( Modes.Move ),
                 imgUrl = "Images/newicons/KioskMode/Move_code39.png"
             } );
-            kioskModeData.AvailableModes.Add( new Mode
-            {
-                name = CswTools.UppercaseFirst( Modes.Owner ),
-                imgUrl = "Images/newicons/KioskMode/Owner_code39.png"
-            } );
-            kioskModeData.AvailableModes.Add( new Mode
-            {
-                name = CswTools.UppercaseFirst( Modes.Transfer ),
-                imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
-            } );
-            CswNbtPermit permissions = new CswNbtPermit( NbtResources );
-            if( permissions.can( CswNbtActionName.DispenseContainer ) )
+
+            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( Modes.Dispense ),
-                    imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
+                    name = CswTools.UppercaseFirst( Modes.Owner ),
+                    imgUrl = "Images/newicons/KioskMode/Owner_code39.png"
                 } );
+                kioskModeData.AvailableModes.Add( new Mode
+                {
+                    name = CswTools.UppercaseFirst( Modes.Transfer ),
+                    imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
+                } );
+                CswNbtPermit permissions = new CswNbtPermit( NbtResources );
+                if( permissions.can( CswNbtActionName.DispenseContainer ) )
+                {
+                    kioskModeData.AvailableModes.Add( new Mode
+                    {
+                        name = CswTools.UppercaseFirst( Modes.Dispense ),
+                        imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
+                    } );
+                }
+                if( permissions.can( CswNbtActionName.DisposeContainer ) )
+                {
+                    kioskModeData.AvailableModes.Add( new Mode
+                    {
+                        name = CswTools.UppercaseFirst( Modes.Dispose ),
+                        imgUrl = "Images/newicons/KioskMode/Dispose_code39.png"
+                    } );
+                }
             }
-            if( permissions.can( CswNbtActionName.DisposeContainer ) )
+
+            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( Modes.Dispose ),
-                    imgUrl = "Images/newicons/KioskMode/Dispose_code39.png"
+                    name = CswTools.UppercaseFirst( Modes.Status ),
+                    imgUrl = "Images/newicons/KioskMode/Status_code39.png"
                 } );
             }
 
@@ -226,12 +312,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
                 {
-                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( KioskModeData.OperationData.Mode, 2 );
+                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( NbtResources, 2, ref KioskModeData.OperationData );
                     KioskModeData.OperationData.Field2 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field2, ref KioskModeData.OperationData );
                 }
                 else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
                 {
-                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field1.ExpectedObjClass( KioskModeData.OperationData.Mode, 1 );
+                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field1.ExpectedObjClass( NbtResources, 1, ref KioskModeData.OperationData );
                     KioskModeData.OperationData.Field1 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field1, ref KioskModeData.OperationData );
                 }
                 else
@@ -252,11 +338,26 @@ namespace ChemSW.Nbt.WebServices
             switch( mode )
             {
                 case Modes.Move:
-                    CswNbtObjClassContainer containerToMove = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+                    CswNbtNode itemToMove = _getNodeByBarcode( NbtResources, OpData.Field2.FoundObjClass, OpData.Field2.Value, true );
                     CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value, true );
-                    containerToMove.MoveContainer( locationToMoveTo.NodeId );
-                    containerToMove.postChanges( false );
-                    OpData.Log.Add( DateTime.Now + " - Moved container " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
+
+                    string locationPropName = "Location";
+                    switch( OpData.Field2.FoundObjClass )
+                    {
+                        case NbtObjectClass.EquipmentClass:
+                            locationPropName = CswNbtObjClassEquipment.PropertyName.Location;
+                            break;
+                        case NbtObjectClass.EquipmentAssemblyClass:
+                            locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location;
+                            break;
+                        case NbtObjectClass.ContainerClass:
+                            locationPropName = CswNbtObjClassContainer.PropertyName.Location;
+                            break;
+                    }
+                    itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
+                    itemToMove.postChanges( false );
+
+                    OpData.Log.Add( DateTime.Now + " - Moved " + OpData.Field2.FoundObjClass.Replace( "Class", "" ) + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
                     break;
                 case Modes.Owner:
                     CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
@@ -305,12 +406,33 @@ namespace ChemSW.Nbt.WebServices
                     {
                         containerToDispose.DisposeContainer();
                         containerToDispose.postChanges( false );
-                        OpData.Log.Add( DateTime.Now + " - Diposed container " + OpData.Field1.Value );
+                        OpData.Log.Add( DateTime.Now + " - Disposed container " + OpData.Field1.Value );
                         OpData.Field1.Value = string.Empty;
                     }
                     OpData.Field1.SecondValue = string.Empty;
                     OpData.Field1.ServerValidated = false;
                     resetField2 = false;
+                    break;
+                case Modes.Status:
+
+                    CswNbtNode item = _getNodeByBarcode( NbtResources, OpData.Field2.FoundObjClass, OpData.Field2.Value, false );
+
+                    string statusPropName = "Status";
+                    switch( OpData.Field2.FoundObjClass )
+                    {
+                        case NbtObjectClass.EquipmentClass:
+                            locationPropName = CswNbtObjClassEquipment.PropertyName.Status;
+                            break;
+                        case NbtObjectClass.EquipmentAssemblyClass:
+                            locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status;
+                            break;
+                    }
+
+                    item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
+                    item.postChanges( false );
+
+                    OpData.Log.Add( DateTime.Now + " - Status of " + OpData.Field2.FoundObjClass.Replace( "Class", "" ) + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
+                    resetField2 = true;
                     break;
             }
             if( resetField2 )
@@ -355,6 +477,10 @@ namespace ChemSW.Nbt.WebServices
                     OpData.Field1.Name = "Container:";
                     OpData.Field2.ServerValidated = true;
                     break;
+                case Modes.Status:
+                    OpData.Field1.Name = "Status:";
+                    OpData.Field2.Name = "Equipment:";
+                    break;
                 default:
                     OpData.ModeStatusMsg = "Error: Scanned mode does not exist or is unavailable";
                     OpData.ModeServerValidated = false;
@@ -365,62 +491,56 @@ namespace ChemSW.Nbt.WebServices
         private static Field _validateField( CswNbtResources NbtResources, NbtObjectClass ObjClass, Field Field, ref OperationData OpData )
         {
             bool IsValid = false;
+            string loweredMode = OpData.Mode.ToLower();
+
             if( null != ObjClass )
             {
                 ICswNbtTree tree = _getTree( NbtResources, ObjClass, Field.Value, false );
-                int childCount = tree.getChildNodeCount();
-                string loweredMode = OpData.Mode.ToLower();
-                if( childCount > 0 )
+                if( null != tree )
                 {
-                    if( false == loweredMode.Equals( Modes.Dispose ) )
+                    int childCount = tree.getChildNodeCount();
+                    if( childCount > 0 )
                     {
-                        IsValid = true;
-                        tree.goToNthChild( 0 );
-                        foreach( CswNbtTreeNodeProp treeNodeProp in tree.getChildNodePropsOfNode() )
+                        if( false == loweredMode.Equals( Modes.Dispose ) && ObjClass == NbtObjectClass.ContainerClass )
                         {
-                            if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
-                            {
-                                if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Disposed ) )
-                                {
-                                    bool disposed = CswConvert.ToBoolean( treeNodeProp.Field1 );
-                                    if( disposed )
-                                    {
-                                        Field.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ) + " " + Field.Value;
-                                        OpData.Log.Add( DateTime.Now + " - ERROR: " + Field.StatusMsg );
-                                    }
-                                    IsValid = ( false == disposed );
-                                }
-                                else if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Quantity ) )
-                                {
-                                    if( loweredMode.Equals( Modes.Dispense ) )
-                                    {
-                                        Field.SecondValue = " (current quantity: " + treeNodeProp.Gestalt + ")";
-                                        OpData.ScanTextLabel = "Enter a quantity (" + treeNodeProp.Field1 + ") :";
-                                    }
-                                }
-                            }
+                            IsValid = _validateContainer( loweredMode, tree, Field, ObjClass, ref OpData );
+                        }
+                        else
+                        {
+                            IsValid = true;
                         }
                     }
                     else
                     {
-                        IsValid = true;
+                        Field.StatusMsg = "Could not find " + ObjClass.ToString().Replace( "Class", "" );
+                        OpData.Log.Add( DateTime.Now + " - ERROR: " + Field.StatusMsg );
                     }
-                }
-                else
-                {
-                    Field.StatusMsg = ObjClass.Value.Replace( "Class", "" ) + " " + Field.Value + " does not exist";
-                    OpData.Log.Add( DateTime.Now + " - ERROR: " + Field.StatusMsg );
                 }
             }
             else
             {
-                if( CswTools.IsDouble( Field.Value ) )
+                if( loweredMode.Equals( Modes.Dispense ) )
                 {
-                    IsValid = true;
+                    if( CswTools.IsDouble( Field.Value ) )
+                    {
+                        IsValid = true;
+                    }
+                    else
+                    {
+                        Field.StatusMsg = "Error: " + Field.Value + " is not a number";
+                    }
                 }
-                else
+
+                if( loweredMode.Equals( Modes.Status ) )
                 {
-                    Field.StatusMsg = "Error: " + Field.Value + " is not a number";
+                    if( _matchingStatusFound( OpData.Field1.Value ) )
+                    {
+                        IsValid = true;
+                    }
+                    else
+                    {
+                        Field.StatusMsg = "Could not find a matching status of: " + OpData.Field1.Value;
+                    }
                 }
             }
 
@@ -430,13 +550,42 @@ namespace ChemSW.Nbt.WebServices
                 Field.StatusMsg = "";
                 if( NbtObjectClass.LocationClass.Equals( ObjClass ) )
                 {
-                    CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, ObjClass, Field.Value, true );
+                    CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, Field.Value, true );
                     Field.SecondValue = " (" + scannedLocation.Name.Text + ")";
                 }
             }
 
             return Field;
         }
+
+        private static bool _validateContainer( string loweredMode, ICswNbtTree tree, Field Field, NbtObjectClass ObjClass, ref OperationData OpData )
+        {
+            bool IsValid = true;
+            tree.goToNthChild( 0 );
+            foreach( CswNbtTreeNodeProp treeNodeProp in tree.getChildNodePropsOfNode() )
+            {
+                if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Disposed ) )
+                {
+                    bool disposed = CswConvert.ToBoolean( treeNodeProp.Field1 );
+                    if( disposed )
+                    {
+                        Field.StatusMsg = "Cannot perform " + OpData.Mode + " operation on disposed " + ObjClass.Value.Replace( "Class", "" ) + " " + Field.Value;
+                        OpData.Log.Add( DateTime.Now + " - ERROR: " + Field.StatusMsg );
+                    }
+                    IsValid = ( false == disposed );
+                }
+                else if( treeNodeProp.PropName.Equals( CswNbtObjClassContainer.PropertyName.Quantity ) )
+                {
+                    if( loweredMode.Equals( Modes.Dispense ) )
+                    {
+                        Field.SecondValue = " (current quantity: " + treeNodeProp.Gestalt + ")";
+                        OpData.ScanTextLabel = "Enter a quantity (" + treeNodeProp.Field1 + ") :";
+                    }
+                }
+            }
+            return IsValid;
+        }
+
 
         private static CswNbtNode _getNodeByBarcode( CswNbtResources NbtResources, NbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
         {
@@ -466,27 +615,31 @@ namespace ChemSW.Nbt.WebServices
 
         private static ICswNbtTree _getTree( CswNbtResources NbtResources, NbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
         {
+            ICswNbtTree tree = null;
             CswNbtMetaDataObjectClass metaDataOC = NbtResources.MetaData.getObjectClass( ObjClass );
             CswNbtMetaDataObjectClassProp barcodeOCP = metaDataOC.getBarcodeProp();
-            CswNbtView view = new CswNbtView( NbtResources );
-            CswNbtViewRelationship parent = view.AddViewRelationship( metaDataOC, IncludeDefaultFilters );
-            view.AddViewPropertyAndFilter( parent,
-                MetaDataProp: barcodeOCP,
-                Value: Barcode,
-                SubFieldName: CswNbtSubField.SubFieldName.Barcode,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals
-            );
-
-            if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
+            if( null != barcodeOCP )
             {
-                CswNbtMetaDataObjectClassProp disposedOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
-                view.AddViewProperty( parent, disposedOCP );
+                CswNbtView view = new CswNbtView( NbtResources );
+                CswNbtViewRelationship parent = view.AddViewRelationship( metaDataOC, IncludeDefaultFilters );
+                view.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: barcodeOCP,
+                    Value: Barcode,
+                    SubFieldName: CswNbtSubField.SubFieldName.Barcode,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals
+                );
 
-                CswNbtMetaDataObjectClassProp quantityOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
-                view.AddViewProperty( parent, quantityOCP );
+                if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
+                {
+                    CswNbtMetaDataObjectClassProp disposedOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
+                    view.AddViewProperty( parent, disposedOCP );
+
+                    CswNbtMetaDataObjectClassProp quantityOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
+                    view.AddViewProperty( parent, quantityOCP );
+                }
+
+                tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
             }
-
-            ICswNbtTree tree = NbtResources.Trees.getTreeFromView( view, true, false, false );
             return tree;
         }
 
@@ -501,6 +654,12 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
             return Ret;
+        }
+
+        private static bool _matchingStatusFound( string status )
+        {
+            //TODO: match a status loosely to an equipment/assembly status
+            return true;
         }
 
         #endregion

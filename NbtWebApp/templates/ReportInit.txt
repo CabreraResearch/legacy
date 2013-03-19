@@ -1,0 +1,117 @@
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            function stopSpinner() {
+                $('#spinner').hide();
+            }
+            Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
+
+            var qs = Csw.queryString();
+
+            Csw.ajaxWcf.post({
+                urlMethod: 'Reports/getReportInfo',
+                async: false,
+                data: { nodeId: qs.reportid },
+                success: function (data) {
+                    var params = [];
+                    if (data.doesSupportCrystal) {
+                        $('#btnCrystal').css('display', '');
+                    }
+
+                    var parent = Csw.domNode({ ID: 'paramsDiv' });
+                    var table = parent.table().css('margin', '5px');
+                    var i = 0;
+                    Csw.each(data.reportParams, function (param) {
+                        (function () {
+                            var paramName = param.name;
+                            var spanCell = table.cell(i + 1, 1).span({ text: paramName }).css('margin', '5px');
+                            params[paramName] = '';
+
+                            var OnChange = function (text) {
+                                params[paramName] = text;
+                            };
+
+                            var inputCell = table.cell(i + 1, 2).input({
+                                value: param.value,
+                                onChange: OnChange,
+                                isRequired: true
+                            }).css('margin', '5px');
+                            i++;
+                            params[paramName] = param.value;
+                        })();
+                    });
+
+                    if (false == Csw.isNullOrEmpty(qs.reportid)) {
+                        $('#btnGrid').click(function () {
+                            runReport(qs.reportid, 'grid', params);
+                        });
+                        $('#btnCsv').click(function () { runReport(qs.reportid, 'csv', params); });
+                        $('#btnCrystal').click(function () { runReport(qs.reportid, 'crystal', params) });
+                    }
+                }
+            });
+        });
+
+        var postForm = function(reportid, params, action) {
+
+            var $form = $('<form method="POST" action="' + action + '"></form>').appendTo($('body'));
+            var form = Csw.literals.factory($form);
+
+            for (var param in params) {
+                form.input({
+                    name: param,
+                    value: params[param]
+                });
+            }
+
+            form.input({
+                name: 'reportid',
+                value: reportid
+            });
+            form.$.submit();
+            form.remove();
+        };
+
+        function runReport(reportid, rformat, params) {
+
+            function startSpinner() {
+                $('#spinner').show();
+            }
+
+            var reportParams = [];
+            for (var item in params) {
+                reportParams.push({ name: item, value: params[item] });
+            }
+
+            if ('csv' == rformat.toLowerCase()) {
+                postForm(reportid, params, 'Services/Reports/reportCSV');
+            } else if ('crystal' == rformat.toLowerCase()) {
+                postForm(reportid, params, 'report.aspx');
+            } else {
+
+                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Reports/report',
+                    data: {
+                        reportFormat: rformat,
+                        nodeId: reportid,
+                        reportParams: reportParams
+                    },
+                    success: function (data) {
+                        var parent = Csw.domNode({ ID: 'rptDiv' });
+                        parent.empty();
+
+                        var gridData = JSON.parse(data.gridJSON);
+                        gridData.grid.showActionColumn = false;
+                        gridData.grid.storeid = reportid;
+                        gridData.grid.usePaging = false;
+                        parent.grid(gridData.grid).css('margin', '20px');
+                    }
+                });
+            }
+        }
+
+        
+    </script>

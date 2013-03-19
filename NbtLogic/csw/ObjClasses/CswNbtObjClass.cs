@@ -88,6 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
         
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
+            bool Ret = false;
             if( ButtonData.TabId > 0 && null != ButtonData.SavedProps && ButtonData.SavedProps.HasValues )
             {
                 if( canSave( ButtonData.TabId ) )
@@ -96,7 +97,15 @@ namespace ChemSW.Nbt.ObjClasses
                     Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.SavedProps, this.NodeTypeId, null, false );
                 }
             }
-            return onButtonClick( ButtonData );
+            if( ButtonData.NodeTypeProp.IsSaveProp )
+            {
+                Ret = true;
+            }
+            else
+            {
+                Ret = onButtonClick( ButtonData );
+            }
+            return Ret;
         }
 
         protected abstract bool onButtonClick( NbtButtonData ButtonData );

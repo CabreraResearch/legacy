@@ -44,7 +44,15 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp PhysicalStateProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.PhysicalState );
             CswNbtMetaDataObjectClassProp ApprovedForReceivingProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
 
-            CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.makeNewView( "Unapproved Materials", NbtViewVisibility.Global );
+            CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", NbtViewVisibility.Global );
+            if( null == UnapprovedMaterialsView )
+            {
+                UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.makeNewView( "Unapproved Materials", NbtViewVisibility.Global );
+            }
+            else
+            {
+                UnapprovedMaterialsView.Root.ChildRelationships.Clear();
+            }
             UnapprovedMaterialsView.ViewMode = NbtViewRenderingMode.Grid;
             UnapprovedMaterialsView.Category = "Materials";
 
@@ -62,8 +70,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewProperty PhysicalStateVP = UnapprovedMaterialsView.AddViewProperty( MatRel, PhysicalStateProp );
             PhysicalStateVP.Order = 6;
             UnapprovedMaterialsView.AddViewPropertyAndFilter( MatRel, ApprovedForReceivingProp, Tristate.False.ToString(),
-                                                             FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                             ShowInGrid: false );
+                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                                ShowInGrid: false );
             UnapprovedMaterialsView.save();
         } // update()
     }//class CswUpdateSchema_02A_Case28907

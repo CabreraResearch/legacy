@@ -45,6 +45,8 @@ namespace ChemSW.Nbt.Test
                 LocationNode.ControlZone.RelatedNodeId = ControlZoneId;
             }
             LocationNode.postChanges( true );
+            CswNbtResources.finalize();
+
             return LocationNode.Node;
         }
 
@@ -67,6 +69,8 @@ namespace ChemSW.Nbt.Test
             }
             ContainerLocationNode.ContainerScan.Text = ContainerScan;
             ContainerLocationNode.postChanges( true );
+            CswNbtResources.finalize();
+
             return ContainerLocationNode.Node;
         }
 
@@ -92,6 +96,7 @@ namespace ChemSW.Nbt.Test
                 ContainerNode.Location.RefreshNodeName();
             }
             ContainerNode.postChanges( true );
+            CswNbtResources.finalize();
 
             return ContainerNode.Node;
         }
@@ -107,11 +112,13 @@ namespace ChemSW.Nbt.Test
             UnitOfMeasureNode.Fractional.Checked = Fractional;
             UnitOfMeasureNode.UnitType.Value = NodeTypeName;
             UnitOfMeasureNode.postChanges( true );
+            CswNbtResources.finalize();
 
             return UnitOfMeasureNode.Node;
         }
 
-        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, string PPE = "", string Hazards = "", string SpecialFlags = "" )
+        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
+            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", Tristate IsTierII = Tristate.True )
         {
             CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
@@ -129,8 +136,13 @@ namespace ChemSW.Nbt.Test
                 }
                 MaterialNode.postChanges( true );
                 _setMultiListValue( MaterialNode.Node, SpecialFlags, "Special Flags" );
+
+                MaterialNode.CasNo.Text = CASNo;
+                MaterialNode.IsTierII.Checked = IsTierII;
             }
             MaterialNode.postChanges( true );
+            CswNbtResources.finalize();
+
             return MaterialNode.Node;
         }
 
@@ -150,6 +162,7 @@ namespace ChemSW.Nbt.Test
                 }
             }
             ControlZoneNode.postChanges( true );
+            CswNbtResources.finalize();
 
             return ControlZoneNode;
         }

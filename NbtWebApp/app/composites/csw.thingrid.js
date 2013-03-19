@@ -169,6 +169,7 @@
                 /// <param name="row"></param>
                 /// <param name="col"></param>
                 /// <returns></returns>
+                var hidden = false;
                 col = col || 0;
                 row = row || cswPrivate.rowCount;
                 if (Csw.isArray(dataRows)) {
@@ -178,7 +179,12 @@
                             cswPrivate.rowCount += 1;
                         } else {
                             col += 1;
-                            cswPublic.addCell(cellVal, row, col);
+                            if (cellVal.hidden) {
+                                hidden = true;
+                            }
+                            if (false === hidden) {
+                                cswPublic.addCell(cellVal, row, col);
+                            }
                         }
                     });
                     if (false === cswPrivate.isHeaderRow(row) && cswPrivate.allowDelete) {

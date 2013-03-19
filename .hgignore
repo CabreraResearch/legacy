@@ -30,6 +30,11 @@ glob:TestResults/*
 *.xsd
 NbtWebApp/node_modules*
 NbtWebApp/test/Test.html
+NbtWebApp/vendor/vendor.min.css
+NbtWebApp/vendor/vendor.min.js
+*.tmpl
+NbtWebApp/*.html
+NbtWebApp/release/*
 syntax: regexp
 NbtLogic/csw/Batch/CswNbtBatchOpUpdateRegulatoryLists.cs.orig
 .*\.orig

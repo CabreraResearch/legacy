@@ -33,7 +33,7 @@ ul.topnav li ul.subnav {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--* /
 	left: 0; top: 22px;
-	background: &cswheaderbgcolor;
+	background: #d8e9fa;
 	margin: 0; padding: 0;
 	display: none;
 	float: left;

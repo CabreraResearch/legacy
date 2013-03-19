@@ -339,6 +339,10 @@ namespace ChemSW.Nbt.ObjClasses
                             material.GetMatchingSDSForCurrentUser( ButtonData );
                         }
                         break;
+                    case CswNbtObjClass.PropertyName.Save:
+                        HasPermission = true;
+                        break;
+
                 }
                 if( false == HasPermission )
                 {

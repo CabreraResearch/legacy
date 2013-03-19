@@ -625,6 +625,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["tablename"] = "nodes";
             InsertedNodeTypesRow["enabled"] = CswConvert.ToDbVal( true );
             InsertedNodeTypesRow["searchdeferpropid"] = CswConvert.ToDbVal( NtModel.SearchDeferNodeTypePropId );    // see below for inheritance from object classes
+            InsertedNodeTypesRow["nodecount"] = 0;
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
 
             Int32 NodeTypeId = CswConvert.ToInt32( InsertedNodeTypesRow["nodetypeid"] );
@@ -1188,6 +1189,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["category"] = NodeType.Category;
             InsertedNodeTypeRow["islocked"] = CswConvert.ToDbVal( false );
             InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
+            InsertedNodeTypeRow["nodecount"] = 0;
 
             NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
             Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
@@ -1424,7 +1426,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
             {
-                DeleteNodeTypeProp( Prop, Internal: true );
+                DeleteNodeTypeProp( Prop, Internal : true );
             }
 
             // Delete Tabs
@@ -1435,7 +1437,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
             {
-                DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
+                DeleteNodeTypeTab( Tab, CauseVersioning : false, IsNodeTypeDelete : true );
             }
 
             // Delete Nodes

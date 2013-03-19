@@ -10,8 +10,11 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
 
-        <link rel="stylesheet" href="../node_modules/grunt-contrib-qunit/test/libs/qunit.css">
+        <link rel="stylesheet" href="../node_modules/grunt-contrib/node_modules/grunt-contrib-qunit/test/libs/qunit.css">
         <link rel="stylesheet" href="../vendor/vendor.min.css">
+        <link rel="stylesheet" href="../vendor/extJS-4.1.0/resources/css/ext-all-scoped.css" />
+        <link rel="stylesheet" href="../vendor/extJS-4.1.0/ux/TabScrollerMenu.css" />
+        <link rel="stylesheet" href="../vendor/extJS-4.1.0/ux/css/CheckHeader.css" />
 
     </head>
     <body>
@@ -22,7 +25,7 @@
         <div id="qunit-fixture">test markup, will be hidden</div>
                 
         <script src="../vendor/vendor.min.js"></script>
-        <script src="../node_modules/grunt-contrib-qunit/test/libs/qunit.js"></script>
+        <script src="../node_modules/grunt-contrib/node_modules/grunt-contrib-qunit/test/libs/qunit.js"></script>
 
         <%
             
@@ -36,6 +39,6 @@
                     print('        <script type="text/javascript" src="../' + testJsFiles[i] + '"></script>\n');
                 }
         %>
-        <div id="CswTestingDiv" style-"display: none;"></div>
+        <div id="CswTestingDiv" style-"display: none;">Use this div to test Csw DOM methods</div>
     </body>
 </html>

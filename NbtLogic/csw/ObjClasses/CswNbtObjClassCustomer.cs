@@ -239,6 +239,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData.NodeTypeProp )
             {
+                //Remember: Save is an OCP too
                 if( PropertyName.Login == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     ButtonData.Action = NbtButtonAction.reauthenticate;

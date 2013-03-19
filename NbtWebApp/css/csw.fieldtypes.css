@@ -6,7 +6,7 @@
 
 .CswFieldTypeQuestion_Deficient
 {
-	background-color: &cswbgcolorhilite;
+	background-color: #ffff00;
 }
 
 .CswFieldTypeNFPA_table
@@ -39,7 +39,7 @@
 }
 .CswFieldTypeNFPA_yellowDiamond
 {
-	background-color: &cswbgcolorhilite;
+	background-color: #ffff00;
 	border-top: 2px solid #000000;
 	border-right: 2px solid #000000;
 	border-bottom: 1px solid #000000;
@@ -65,7 +65,7 @@
 .CswFieldTypeNFPA_text
 {
 	font-size: 2em;
-	color: &cswtextcolor;
+	color: #000000;
 	padding: 10px !important;
 	font-weight: bold;
 }
@@ -93,7 +93,7 @@
 }
 .CswFieldTypeNFPA_yellowLinear
 {
-	background-color: &cswbgcolorhilite;
+	background-color: #ffff00;
 	border-top: 1px solid #000000;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;

@@ -105,11 +105,6 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );
                     Node.IsTempModified = false;
                 }
-                else if( Node.IsTempModified )
-                {
-                    _incrementNodeCount( Node );
-                    Node.IsTempModified = false;
-                }
 
                 //propcoll knows whether or not he's got new 
                 //values to update (presumably)
@@ -126,15 +121,6 @@ namespace ChemSW.Nbt
             }//if node was modified
 
         }//write()
-
-        private void _incrementNodeCount( CswNbtNode Node )
-        {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
-            if( null != NodeType )
-            {
-                NodeType.IncrementNodeCount();
-            }
-        }
 
         private string _makeDefaultNodeName( CswNbtNode Node )
         {

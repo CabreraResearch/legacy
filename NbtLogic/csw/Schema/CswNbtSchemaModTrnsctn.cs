@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using ChemSW.Audit;
@@ -890,6 +889,7 @@ namespace ChemSW.Nbt.Schema
                 NewOCRow["objectclass"] = ObjectClass.ToString();
                 NewOCRow["iconfilename"] = IconFileName;
                 NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
+                NewOCRow["nodecount"] = 0;
                 NewObjectClassTable.Rows.Add( NewOCRow );
                 Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
                 ObjectClassTableUpdate.update( NewObjectClassTable );
@@ -1512,6 +1512,11 @@ namespace ChemSW.Nbt.Schema
             // Clear cached S4s
             _CswNbtResources.CswResources.ClearCache();
         }
+
+        /// <summary>
+        /// Reading of values located in the configuration_variables table
+        /// </summary>
+        public CswConfigurationVariables ConfigVbls { get { return ( _CswNbtResources.ConfigVbls ); } }
 
         /// <summary>
         /// Convenience function for setting value of a configuration variable

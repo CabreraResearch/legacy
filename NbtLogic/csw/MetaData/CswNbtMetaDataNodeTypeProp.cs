@@ -598,7 +598,7 @@ namespace ChemSW.Nbt.MetaData
                             Node.Properties[this].TemporarilyRequired ||
                             AddLayout != null );
             }
-            else if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
             {
                 CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout( TabId );
                 if( EditLayout != null )
@@ -606,7 +606,9 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            else if(LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview)
+            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview || 
+                _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.PrintReport ||
+                _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup )
             {
                 ret = ret && ( getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
             }
@@ -634,30 +636,6 @@ namespace ChemSW.Nbt.MetaData
 
 
             return ret;
-            
-            //CF version
-
-            //CswNbtMetaDataNodeTypeTab Tab = null;
-            //if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
-            //{
-            //    CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout( TabId );
-            //    if( EditLayout != null )
-            //    {
-            //        Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
-            //    }
-            //}
-            //var ret = ( (
-            //             ( false == hasFilter() &&
-            //                false == Node.Properties[this].Hidden ) ||
-            //             ShowSaveProp( LayoutType ) ) &&
-            //            (
-            //               _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
-            //               _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
-            //               _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
-            //            )
-            //          );
-            //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
-            
         }
 
         private void _doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )

@@ -34,10 +34,10 @@ namespace NbtWebAppServices.WebServices
                 _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
                 if( Ret.SessionAuthenticationStatus.AuthenticationStatus == AuthenticationStatus.Authenticated.ToString() )
                 {
-                    CswNbtResources NbtResources = _CswNbtWcfSessionResources.CswNbtResources;
-                    CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( NbtResources, SystemViewName.SILocationsList, null );
+                    CswNbtResources _CswNbtResources = _CswNbtWcfSessionResources.CswNbtResources;
+                    CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( _CswNbtResources, SystemViewName.SILocationsList, null );
                     CswNbtView LocationsListView = LocationSystemView.SystemView;
-                    ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( LocationsListView, true, false, false );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationsListView, true, false, false );
                     Int32 LocationCount = Tree.getChildNodeCount();
                     CswNbtWcfLocationsDataModel WcfLocationModel = new CswNbtWcfLocationsDataModel();
 
