@@ -116,7 +116,7 @@ namespace Nbt2DImporterTester
         {
             setButtonsEnabled( false );
             log( "Storing data..." );
-            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtDataFilePath.Text, null, null );
+            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtAccessId.Text, txtDataFilePath.Text, null, null );
         }
 
         private void btnRunImport_Click( object sender, EventArgs e )
@@ -128,27 +128,27 @@ namespace Nbt2DImporterTester
             {
                 rows = 1;
             }
-            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( cbxImportDataTableName.Text, rows, null, null );
+            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, rows, null, null );
         }
 
         private void btnReadBindings_Click( object sender, EventArgs e )
         {
             setButtonsEnabled( false );
             log( "Reading bindings..." );
-            ( (WorkerThread.readBindingsHandler) _WorkerThread.readBindings).BeginInvoke( txtBindingsFilePath.Text, null, null );
+            ( (WorkerThread.readBindingsHandler) _WorkerThread.readBindings ).BeginInvoke( txtAccessId.Text, txtBindingsFilePath.Text, null, null );
         }
 
         private void cbxImportDataTableName_TextChanged( object sender, EventArgs e )
         {
             log( "Refreshing row counts..." );
-            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( cbxImportDataTableName.Text, null, null );
+            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, null, null );
         }
 
         private delegate void buttonClickHandler( object sender, EventArgs e );
         private void btnRefreshCounts_Click( object sender, EventArgs e )
         {
             log( "Refreshing row counts..." );
-            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( cbxImportDataTableName.Text, null, null );
+            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, null, null );
         }
     }
 }
