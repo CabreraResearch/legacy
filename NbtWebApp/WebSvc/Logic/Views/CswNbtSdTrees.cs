@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.WebServices
         private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree, CswExtTree.TreeNode Parent, bool useCheckboxes )
         {
             CswExtTree.TreeNode Ret;
-            if( useCheckboxes )
+            if (useCheckboxes)
             {
                 Ret = new CswExtTree.TreeNodeWithCheckbox();
             }
@@ -261,8 +261,8 @@ namespace ChemSW.Nbt.WebServices
 
             bool ThisNodeLocked = false;
             bool ThisNodeDisabled = false;
-            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
-            switch( ThisNodeKey.NodeSpecies )
+            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType(ThisNodeKey.NodeTypeId);
+            switch (ThisNodeKey.NodeSpecies)
             {
                 case NodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisNodeTypeId = ThisNodeType.FirstVersionNodeTypeId;
                     ThisObjectClassId = ThisNodeType.ObjectClassId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-                    ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
+                    ThisNodeDisabled = (false == Tree.getNodeIncludedForCurrentPosition());
                     //if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
                     //{
                     //    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
@@ -282,13 +282,13 @@ namespace ChemSW.Nbt.WebServices
                     break;
             }
 
-            CswNbtViewNode ThisNodeViewNode = _View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
+            CswNbtViewNode ThisNodeViewNode = _View.FindViewNodeByUniqueId(ThisNodeKey.ViewNodeUniqueId);
 
             string ThisNodeState = "closed";
-            if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+            if (ThisNodeKey.NodeSpecies == NodeSpecies.More ||
                 _View.ViewMode == NbtViewRenderingMode.List ||
-                ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
-                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+                (Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0) ||
+                (ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType(NbtViewNodeType.CswNbtViewRelationship).Count == 0))
             {
                 ThisNodeState = "leaf";
             }
@@ -296,7 +296,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.Name = ThisNodeName;
             Ret.Icon = ThisNodeIcon;
             Ret.Id = ThisNodeKeyString;
-            switch( ThisNodeState )
+            switch (ThisNodeState)
             {
                 case "closed":
                     Ret.Expanded = false;
@@ -305,11 +305,11 @@ namespace ChemSW.Nbt.WebServices
                     Ret.IsLeaf = true;
                     break;
             }
-            if( int.MinValue != ThisNodeTypeId )
+            if (int.MinValue != ThisNodeTypeId)
             {
                 Ret.NodeTypeId = ThisNodeTypeId.ToString();
             }
-            if( int.MinValue != ThisObjectClassId )
+            if (int.MinValue != ThisObjectClassId)
             {
                 Ret.ObjectClassId = ThisObjectClassId.ToString();
             }
@@ -317,13 +317,13 @@ namespace ChemSW.Nbt.WebServices
             Ret.NodeSpecies = ThisNodeKey.NodeSpecies.ToString();
             Ret.NodeId = ThisNodeId;
             Ret.IsLocked = ThisNodeLocked;
-            if( ThisNodeDisabled )
+            if (ThisNodeDisabled)
             {
                 Ret.IsDisabled = true;
                 Ret.CssClass = "disabled";
             }
 
-            if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
+            if (null != Parent && false == string.IsNullOrEmpty(Parent.Path))
             {
                 Ret.Path = Parent.Path;
             }
@@ -332,10 +332,13 @@ namespace ChemSW.Nbt.WebServices
                 Ret.ParentId = "root";
                 Ret.Path = "|root";
             }
-            CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            if (false == Tree.isCurrentPositionRoot())
             {
-                Ret.ParentId = ParentKey.ToString();
+                CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
+                if (ParentKey.NodeSpecies != NodeSpecies.Root)
+                {
+                    Ret.ParentId = ParentKey.ToString();
+                }
             }
 
             Ret.Path += "|" + Ret.Id;
