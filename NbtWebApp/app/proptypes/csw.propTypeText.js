@@ -32,7 +32,7 @@
                         var regex_name = '';
                         if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
                             regex_name = 'text_regex_' + cswPublic.data.propid;
-                        } 
+                        }
 
                         cswPublic.control = cswPrivate.parent.input({
                             name: cswPublic.data.name,
@@ -51,7 +51,6 @@
 
                         cswPublic.control.required(cswPublic.data.isRequired());
                         cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
-
                     }
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
@@ -61,9 +60,17 @@
                             Message = cswPrivate.regexmsg;
                         }
 
-                        $.validator.addMethod( regex_name, function () {
-                            var regex_obj = new RegExp(cswPrivate.regex);
-                            return (true == regex_obj.test(cswPrivate.value));
+                        $.validator.addMethod(regex_name, function () {
+
+                            var return_val = true;
+
+                            if ( (false === cswPrivate.isRequired ) && '' != cswPrivate.value) {
+                                var regex_obj = new RegExp(cswPrivate.regex);
+                                return_val = regex_obj.test(cswPrivate.value);
+                            }
+
+                            return ( return_val );
+
                         }, Message);
                     }
 
