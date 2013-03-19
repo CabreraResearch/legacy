@@ -299,7 +299,7 @@ namespace ChemSW.Nbt.WebServices
                 C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
 
                 // Create size node(s)
-                Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode);
+                Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
 
                 // Create synonyms node(s)
                 C3Import.createMaterialSynonyms( C3ProductTempNode );
@@ -715,12 +715,12 @@ namespace ChemSW.Nbt.WebServices
 
                                     // Note: This is a hackadoodle for now since importer is getting changed... soon...
                                     // Assumption: We are working with a node that is of NodeType Size
-                                    if (NodeType.NodeTypeName == "Size")
+                                    if( NodeType.NodeTypeName == "Size" )
                                     {
                                         // Set the Unit Count
-                                        CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp(CswNbtObjClassSize.PropertyName.UnitCount);
-                                        Node.Properties[UnitCountNTP].SetPropRowValue((CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty);
-                                        Node.Properties[UnitCountNTP].SetPropRowValue(CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty);
+                                        CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty );
 
                                         // Set the Catalog No
                                         // This needs to be here because each size has a unique catalogno
@@ -792,7 +792,7 @@ namespace ChemSW.Nbt.WebServices
         {
             if( null != C3SearchClient )
             {
-                string C3_UrlStem = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_UrlStem );
+                string C3_UrlStem = CswNbtResources.SetupVbls[CswSetupVariableNames.C3UrlStem];
                 EndpointAddress URI = new EndpointAddress( C3_UrlStem );
                 C3SearchClient.Endpoint.Address = URI;
             }

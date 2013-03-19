@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.Schema
             #region YORICK
 
             _createExcludeInQuotaBarColumns( CswDeveloper.MB, 28752 );
+            _createPrereqColumn( CswDeveloper.MB, 29089 );
 
             #endregion YORICK
 
@@ -79,6 +80,20 @@ namespace ChemSW.Nbt.Schema
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", ExcludeInQuotaBarColName ) )
             {
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", ExcludeInQuotaBarColName, "Whether this NodeType is excluded when determining the quota bar size", false, true );
+            }
+
+            _resetBlame();
+        }
+
+        private void _createPrereqColumn( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            string PrereqColName = "prereq";
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "modules", PrereqColName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( "modules", PrereqColName, "Prerequisite for this module to be activated", false, false );
             }
 
             _resetBlame();

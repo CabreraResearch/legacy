@@ -295,6 +295,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _setDefaultValues();
+            
             Description.StaticText = setRequestDescription();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()

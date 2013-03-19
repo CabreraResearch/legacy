@@ -444,6 +444,7 @@
                                                 cswPrivate.tabState.tabNo = ui.newTab.index();
                                                 cswPrivate.tabState.tabid = ui.newTab.data('tabid');
                                                 cswPrivate.globalState.selectedTabId = cswPrivate.tabState.tabid;
+                                                cswPrivate.globalState.selectedTabId = cswPrivate.tabState.tabid;
                                                 Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                                 cswPrivate.form.empty();
                                                 cswPrivate.onTearDown();
@@ -918,6 +919,7 @@
                 Csw.eachRecursive(tabPropData, handleSuccess, false);
 
                 cswPrivate.onRenderProps(tabid);
+
             }; // _handleProperties()
 
 

@@ -78,6 +78,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        private bool _canReceive()
+        {
+            return ApprovedForReceiving.Checked == Tristate.True && _CswNbtResources.Permit.can( CswNbtActionName.Receiving );
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             Request.MenuOptions = Requests.Options.ToString();
@@ -88,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ApprovedForReceiving.WasModified )
             {
-                Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
+                Receive.setHidden( value : ApprovedForReceiving.Checked != Tristate.True, SaveToDb : true );
             }
 
             if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
@@ -158,7 +163,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _toggleButtonVisibility()
         {
-            Receive.setHidden( value: false == _CswNbtResources.Permit.can( CswNbtActionName.Receiving ), SaveToDb: false );
+            Receive.setHidden( value: false == _canReceive(), SaveToDb: false );
             Request.setHidden( value: false == _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ), SaveToDb: false );
         }
 

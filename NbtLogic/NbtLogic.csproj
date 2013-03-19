@@ -156,6 +156,11 @@
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28534.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case27901.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_ScheduledRules_Case28564.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29114.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29117_PendingRequests.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29059.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29089.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28958.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28950.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28958.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108B.cs" />

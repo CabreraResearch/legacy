@@ -38,8 +38,8 @@
                         propId: cswPublic.data.propid,
                         tabId: cswPublic.data.tabState.tabId,
                         nodeId: cswPublic.data.tabState.nodeId,
-                        onClickSuccess: cswPrivate.onClickSuccess,
-                        disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
+                        onClickSuccess: cswPrivate.onClickSuccess
+                        //Case 29142: the server decides whether the button is visible. disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
                         
                     };
 
