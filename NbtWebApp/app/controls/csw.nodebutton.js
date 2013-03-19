@@ -126,6 +126,7 @@
                     }
                     switch (cswPrivate.mode) {
                         case 'button':
+                            
                             cswPublic.button = cswPrivate.btnCell.buttonExt({
                                 size: cswPrivate.size,
                                 icon: cswPrivate.icon,

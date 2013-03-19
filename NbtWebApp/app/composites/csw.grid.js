@@ -567,7 +567,7 @@
                                     if (Csw.isElementInDom(id)) {
                                         var div = Csw.domNode({ ID: id });
                                         div.nodeButton({
-                                            value: colObj.header,
+                                            displayName: colObj.header,
                                             size: 'small',
                                             propId: thisBtn[0].propattr
                                         });
