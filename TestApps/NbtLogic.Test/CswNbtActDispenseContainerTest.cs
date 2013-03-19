@@ -5,35 +5,35 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Test
 {
-    [TestClass]
+    [TestFixture]
     public class CswNbtActDispenseContainerTest
     {
         #region Setup and Teardown
 
-        private TestData TestData = null;
+        private TestData TestData;
 
-        [TestInitialize()]
+        [SetUp]
         public void MyTestInitialize()
         {
             TestData = new TestData();
         }
 
-        [TestCleanup()]
+        [TearDown]
         public void MyTestCleanup()
         {
-            TestData.DeleteTestNodes();
+            TestData.Destroy();
         }
 
         #endregion
 
         #region dispenseSourceContainer Test
 
-        [TestMethod]
+        [Test]
         public void dispenseSourceContainerTestInvalidDispenseType()
         {
             CswNbtNode LiterNode = TestData.Nodes.createUnitOfMeasureNode( "Volume", "gal", 2.64172052, -1, Tristate.True );
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.Test
             }
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseSourceContainerTestAdd()
         {
             double Expected = 1.0;
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseSourceContainerTestAddBasicConversion()
         {
             double Expected = 1.0;
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseSourceContainerTestAddWeightToVolumeConversion()
         {
             double Expected = 1.0;
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseSourceContainerTestAddVolumeToWeightConversion()
         {
             double Expected = 1.0;
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseSourceContainerTestWaste()
         {
             double Expected = 1.0;
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseSourceContainerTestDispenseForUse()
         {
             double Expected = 1.0;
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.Test
 
         #region dispenseIntoChildContainers Tests
 
-        [TestMethod]
+        [Test]
         public void dispenseIntoChildContainersTestWasteOne()
         {
             double Expected = 1.0;
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseIntoChildContainersTestWasteTwo()
         {
             double Expected = 1.0;
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseIntoChildContainersTestDispenseOne()
         {
             double Expected = 1.0;
@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( 1, _getNewContainerCount( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseIntoChildContainersTestDispenseTwo()
         {
             double Expected = 1.0;
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseIntoChildContainersTestDispenseOneWasteOne()
         {
             double Expected = 1.0;
@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.Test
             Assert.AreEqual( 1, _getNewContainerCount( ContainerNode.NodeId ) );
         }
 
-        [TestMethod]
+        [Test]
         public void dispenseIntoChildContainersTestDispenseMany()
         {
             double Expected = 1.0;

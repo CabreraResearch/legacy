@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -153,6 +152,23 @@ namespace ChemSW.Nbt.Test
             ControlZoneNode.postChanges( true );
 
             return ControlZoneNode;
+        }
+
+        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", Tristate isLocked = Tristate.False, Tristate isArchived = Tristate.False )
+        {
+            CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswPrimaryKey RoleId = RoleOc.getNodeIdAndNames( false, false ).Select( RoleIds => RoleIds.Key ).FirstOrDefault();
+
+            CswNbtObjClassUser NewUser = CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "User" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
+            NewUser.UsernameProperty.Text = Username;
+            NewUser.Role.RelatedNodeId = RoleId;
+            NewUser.PasswordProperty.Password = Password;
+            NewUser.AccountLocked.Checked = isLocked;
+            NewUser.Archived.Checked = isArchived;
+            NewUser.postChanges( ForceUpdate: false );
+            CswNbtResources.finalize();
+
+            return NewUser.Node;
         }
 
         #endregion

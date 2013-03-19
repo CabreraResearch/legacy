@@ -9,12 +9,12 @@ namespace ChemSW.Nbt.Security
     public class CswNbtSchemaAuthenticator : ICswSchemaAuthenticater
     {
         private CswNbtResources _CswNbtResources;
+
         public CswNbtSchemaAuthenticator( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
         }
 
-        private ICswUser _User = null;
         public ICswUser getUser( string UserName )
         {
             return new CswNbtUser( _CswNbtResources, UserName );
@@ -22,9 +22,60 @@ namespace ChemSW.Nbt.Security
 
         public AuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, string username, string password, string IPAddress, out ICswUser AuthenticatedUser )
         {
-            AuthenticationStatus ReturnVal = AuthenticationStatus.Failed;
-            _User = null;
+            CswNbtObjClassUser UserNode = _authorizeUser( CswEncryption, username, password );
+            AuthenticationStatus AuthStatus = _getAuthStatus( UserNode );
+            _logAuthenticationAttempt( username, IPAddress,
+                //This one-line hack is used to determine if AuthenticationStatus.Failed means bad username or bad password (for logging).
+                //We should probably have separate AuthenticationStatus types to handle this discrepancy (since we already do for everything else)
+                AuthStatus == AuthenticationStatus.Failed && UserNode == null ? ( AuthenticationStatus ) AuthenticationStatus.Unknown : AuthStatus );
+            AuthenticatedUser = UserNode;
+            return AuthStatus;
+        }
 
+        private CswNbtObjClassUser _authorizeUser( CswEncryption CswEncryption, string username, string password )
+        {
+            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, RequireViewPermissions: false );
+            if( UserNode != null && false == UserNode.IsArchived() && false == UserNode.IsAccountLocked() )
+            {
+                string encryptedpassword = CswEncryption.getMd5Hash( password );
+                if( UserNode.EncryptedPassword == encryptedpassword )
+                {
+                    UserNode.clearFailedLoginCount();
+                    UserNode.LastLogin.DateTimeValue = DateTime.Now;
+                }
+                else
+                {
+                    UserNode.incFailedLoginCount();
+                }
+                UserNode.postChanges( false );
+            }
+            return UserNode;
+        }
+
+        private AuthenticationStatus _getAuthStatus( CswNbtObjClassUser UserNode )
+        {
+            AuthenticationStatus AuthStatus = AuthenticationStatus.Failed;
+            if( UserNode == null )
+            {
+                AuthStatus = AuthenticationStatus.Failed;
+            }
+            else if( UserNode.IsArchived() )
+            {
+                AuthStatus = AuthenticationStatus.Archived;
+            }
+            else if( UserNode.IsAccountLocked() )
+            {
+                AuthStatus = AuthenticationStatus.Locked;
+            }
+            else if( UserNode.getFailedLoginCount() == 0 )
+            {
+                AuthStatus = AuthenticationStatus.Authenticated;
+            }
+            return AuthStatus;
+        }
+
+        private void _logAuthenticationAttempt( String username, String IPAddress, AuthenticationStatus AuthStatus )
+        {
             LoginData.Login LoginRecord = new LoginData.Login
             {
                 Username = username,
@@ -35,51 +86,11 @@ namespace ChemSW.Nbt.Security
                 FailedLoginCount = 0
             };
 
-            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, false );   // can't require permissions if we aren't authenticated yet
-            if( UserNode != null )
-            {
-                if( false == UserNode.IsArchived() )
-                {
-                    if( false == UserNode.IsAccountLocked() )
-                    {
-                        string encryptedpassword = CswEncryption.getMd5Hash( password );
-                        if( UserNode.EncryptedPassword == encryptedpassword )
-                        {
-                            UserNode.clearFailedLoginCount();
-                            UserNode.LastLogin.DateTimeValue = DateTime.Now;
-                            _User = UserNode;
-                            ReturnVal = AuthenticationStatus.Authenticated;
-                            LoginRecord.LoginStatus = "Success";
-                        }
-                        else
-                        {
-                            UserNode.incFailedLoginCount();
-                            ReturnVal = AuthenticationStatus.Failed;
-                        }
-                        LoginRecord.FailedLoginCount = UserNode.getFailedLoginCount();
-                        UserNode.postChanges( false );
-                    }
-                    else
-                    {
-                        ReturnVal = AuthenticationStatus.Locked;
-                    }
-                }
-                else
-                {
-                    ReturnVal = AuthenticationStatus.Archived;
-                }
-                LoginRecord.setFailureReason( ReturnVal );
-            }
-            else
-            {
-                LoginRecord.setFailureReason( AuthenticationStatus.Unknown );
-            }
-            
+            LoginRecord.setStatus( AuthStatus );
+
             CswNbtActLoginData _CswNbtActLoginData = new CswNbtActLoginData( _CswNbtResources );
             _CswNbtActLoginData.postLoginData( LoginRecord );
+        }
 
-            AuthenticatedUser = _User;
-            return ( ReturnVal );
-        } // AuthenticateWithSchema()
     }//CswNbtAuthenticator
 }//ChemSW.Nbt

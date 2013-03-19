@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CswNbtObjClassReportTest.cs" />
+    <Compile Include="csw\Security\CswNbtSchemaAuthenticatorTest.cs" />
     <Compile Include="csw\Security\CswPermit_UnitTest.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdResourcesMgr.cs" />
     <Compile Include="Reconciliation\CswNbtBatchOpContainerReconciliationActionsTest.cs" />

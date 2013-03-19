@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, true ) )
             {
                 bool CanViewLoginData = ( RoleNode.NodeName == "Administrator" || RoleNode.NodeName == "chemsw_admin_role" );
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Material_Approval, RoleNode, CanViewLoginData );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Login_Data, RoleNode, CanViewLoginData );
             }
         } // update()
     }//class CswUpdateSchema_02A_Case27906

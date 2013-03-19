@@ -1,33 +1,31 @@
 ﻿using System;
 using ChemSW.Core;
 using ChemSW.MtSched.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.ObjClasses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ChemSW.Nbt.Test
 {
-    [TestClass]
+    [TestFixture]
     public class CswScheduleLogicNbtContainerReconciliationActionsTest
     {
         #region Setup and Teardown
 
         private TestData TestData;
 
-        [TestInitialize()]
+        [SetUp]
         public void MyTestInitialize()
         {
             TestData = new TestData();
         }
 
-        [TestCleanup()]
+        [TearDown]
         public void MyTestCleanup()
         {
-            TestData.DeleteTestNodes();
-            TestData.RevertNodeProps();
+            TestData.Destroy();
         }
 
         #endregion
@@ -38,7 +36,7 @@ namespace ChemSW.Nbt.Test
         /// Given that no ContainerLocation nodes with a not-null action exist in the data,
         /// assert that no BatchOp nodes are created.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void makeReconciliationActionBatchProcessTestNoNodes()
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
@@ -58,7 +56,7 @@ namespace ChemSW.Nbt.Test
         /// Given that at least one ContainerLocation node with a not-null action exists in the data,
         /// assert that a BatchOp node of type ContainerReconciliationActions is created.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void makeReconciliationActionBatchProcessTestHasNodes()
         {
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
@@ -80,7 +78,7 @@ namespace ChemSW.Nbt.Test
         /// Given that no ContainerLocation nodes with a not-null action exist in the data,
         /// assert that the returned view contains 0 nodes.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getOutstandingContainerLocationsTestNoNodes()
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
@@ -94,7 +92,7 @@ namespace ChemSW.Nbt.Test
         /// Given that at least one ContainerLocation node with a not-null action exists in the data,
         /// assert that the returned view contains at least 1 node.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getOutstandingContainerLocationsTestHasNodes()
         {
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
@@ -108,7 +106,7 @@ namespace ChemSW.Nbt.Test
         /// Given one ContainerLocation node with an action of No Action in the data,
         /// assert that the returned view contains 0 nodes.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getOutstandingContainerLocationsTestNoActionFilteredOut()
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
@@ -123,7 +121,7 @@ namespace ChemSW.Nbt.Test
         /// Given a view that contains no ContainerLocation nodes,
         /// assert that the returned string is empty
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerLocationIdsTestNoNodes()
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
@@ -137,7 +135,7 @@ namespace ChemSW.Nbt.Test
         /// Given a view that contains at least one ContainerLocation node,
         /// assert that the returned CommaDelimitedString contains all of the prmary keys of the nodes in the view
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerLocationIdsTestHasNodes()
         {
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );

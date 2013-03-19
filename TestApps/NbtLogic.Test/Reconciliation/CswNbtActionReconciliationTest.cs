@@ -3,15 +3,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ChemSW.Nbt.Test
 {
-    [TestClass]
+    [TestFixture]
     public class CswNbtActionReconciliationTest
     {
         #region Setup and Teardown
@@ -19,18 +18,17 @@ namespace ChemSW.Nbt.Test
         private TestData TestData;
         private CswNbtActReconciliation ReconciliationAction;
 
-        [TestInitialize()]
+        [SetUp]
         public void MyTestInitialize()
         {
             TestData = new TestData();
             ReconciliationAction = new CswNbtActReconciliation( TestData.CswNbtResources );
         }
 
-        [TestCleanup()]
+        [TearDown]
         public void MyTestCleanup()
         {
-            TestData.DeleteTestNodes();
-            TestData.RevertNodeProps();
+            TestData.Destroy();
         }
 
         #endregion
@@ -41,7 +39,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has no Containers,
         /// assert that the returned ContainerStatus data is empty
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatusesTestNoResults()
         {
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
@@ -60,7 +58,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has one Container and no ContainerLocations in the given timeframe,
         /// assert that the returned ContainerStatus data has a ContainerStatus value of NotScanned
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatusesTestNotScanned()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -82,7 +80,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has one Container that did not exist in the given timeframe,
         /// assert that the no ContainerStatus data is returned
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatusesTestContainerDidNotExist()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -103,7 +101,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has one Container and a ContainerLocation in the given timeframe with a Correct status,
         /// assert that the returned ContainerStatus data has a ContainerStatus value of Correct
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatusesTestCorrect()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -125,7 +123,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has more than one Container with ContainerLocations in the given timeframe with a Correct status,
         /// assert that the returned ContainerStatus data contains more than one row.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatusesTestMultipleContainers()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -151,7 +149,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has more than one child locations with a Container that has a Correct ContainerLocation in the given timeframe,
         /// assert that the returned ContainerStatus data includes these Containers.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatusesTestIncludeChildLocations()
         {
             CswNbtObjClassLocation Location1 = TestData.Nodes.createLocationNode();
@@ -174,12 +172,13 @@ namespace ChemSW.Nbt.Test
             }
         }
 
+        /* TODO - Sometimes this passes, some times it doesn't - figure out this race condition and abolish it */
         /// <summary>
         /// Given a location that has one Container with two ContainerLocations in the given timeframe,
         /// given that the first ContainerLocation is of Type Scan and the second is not,
         /// assert that the returned ContainerStatus data has a ContainerStatus value of ScannedCorrect
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatusesTestScanTrumpsTouch()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -213,7 +212,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has no Containers,
         /// assert that each row of the returned ContainerStatistics data has their ContainerAmount value set to 0
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatisticsTestNoResults()
         {
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
@@ -235,7 +234,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has one Container and no ContainerLocations in the given timeframe,
         /// assert that the returned ContainerStatistics data's NotScanned ContainerStatus row's ContainerCount value > 1.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatisticsTestNotScanned()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -266,7 +265,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has more than one Container with ContainerLocations in the given timeframe with a Correct status,
         /// assert that the returned ContainerStatus data's Correct ContainerStatus row's ContainerCount value > 1.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatisticsTestMultipleContainers()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -300,7 +299,7 @@ namespace ChemSW.Nbt.Test
         /// assert that the returned ContainerStatus data's Correct ContainerStatus row's PercentScanned value = 0
         /// and that ScannedCorrect ContainerStatus row's PercentScanned value = 100
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatisticsTestPercentScanned()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -332,13 +331,14 @@ namespace ChemSW.Nbt.Test
             }
         }
 
+        /* TODO - Sometimes this passes, some times it doesn't - figure out this race condition and abolish it */
         /// <summary>
         /// Given a location that has one Container with two ContainerLocations in the given timeframe,
         /// given that the first ContainerLocation is of Type Scan and the second is not,
         /// assert that both the returned data's NotScanned and Received/Dispensed/Disposed/etc 
         /// ContainerStatus row's ContainerCount value = 0
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getContainerStatisticsTestScanTrumpsTouch()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -381,7 +381,7 @@ namespace ChemSW.Nbt.Test
         /// Given a location that has more than one Container with ContainerLocations in the given timeframe with a Correct status,
         /// assert that both expected ContainerStatus and ContainerStatistics data is returned.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getReconciliationDataTest()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -433,7 +433,7 @@ namespace ChemSW.Nbt.Test
         /// Given that no ContainerLocation actions have changed,
         /// assert that no exception is thrown
         /// </summary>
-        [TestMethod]
+        [Test]
         public void saveContainerActionsTestNoResults()
         {
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
@@ -458,7 +458,7 @@ namespace ChemSW.Nbt.Test
         /// Given a ContainerLocation whose action has been set to MarkMissing,
         /// assert that a new ContainerLocation node has been created with an action of MarkMissing
         /// </summary>
-        [TestMethod]
+        [Test]
         public void saveContainerActionsTestMarkMissing()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
@@ -493,7 +493,7 @@ namespace ChemSW.Nbt.Test
         /// Given a ContainerLocation whose action has been set to NoAction,
         /// assert that the selected ContainerLocation has its action set to NoAction
         /// </summary>
-        [TestMethod]
+        [Test]
         public void saveContainerActionsTestNoAction()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;

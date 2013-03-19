@@ -2,11 +2,11 @@
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ChemSW.Nbt.Test
 {
-    [TestClass]
+    [TestFixture]
     public class CswNbtActionHMISReportingTest
     {
         #region Setup and Teardown
@@ -15,17 +15,17 @@ namespace ChemSW.Nbt.Test
         private CswNbtActHMISReporting HMISAction;
         private const Int32 HazardClassCount = 48;
 
-        [TestInitialize()]
+        [SetUp]
         public void MyTestInitialize()
         {
             TestData = new TestData();
             HMISAction = new CswNbtActHMISReporting( TestData.CswNbtResources );
         }
 
-        [TestCleanup()]
+        [TearDown]
         public void MyTestCleanup()
         {
-            TestData.DeleteTestNodes();
+            TestData.Destroy();
         }
 
         #endregion
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Test
         /// Given a Control Zone that has no Locations,
         /// assert that the returned HMIS data is empty
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestNoLocations()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.Test
         /// Given a Control Zone that has a Location with no Containers,
         /// assert that the returned HMIS data is empty
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestNoContainers()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.Test
         /// Given a Control Zone that has a Location with a Container whose Material is Not Reportable,
         /// assert that the returned HMIS data is empty
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestNotReportable()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Test
         /// Given a Control Zone that has a Location with a Container whose Material has no hazards,
         /// assert that the returned HMIS data is empty
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestNotHazardous()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Test
         /// Given a Control Zone that has a Location with a Container whose Material has 1 hazard,
         /// assert that the returned HMIS data contains 1 row with the expected hazard class info
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestOneHazard()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.Test
         /// Given a Container whose Material has 2 hazards,
         /// assert that the returned HMIS data contains 2 rows, each with the given material and container qty
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestTwoHazards()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
@@ -175,7 +175,7 @@ namespace ChemSW.Nbt.Test
         /// Given 2 Containers, each with the same 1 hazard Material,
         /// assert that the returned HMIS data contains 1 row with the combined qty of both containers
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestTwoContainersSameMaterial()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.Test
         /// Given 2 Containers, each with different Materials (but with the same hazard),
         /// assert that the returned HMIS data contains 2 rows with the combined qty of both containers
         /// </summary>
-        [TestMethod]
+        [Test]
         public void getHMISDataTestTwoContainersDifferentMaterial()
         {
             CswPrimaryKey ControlZoneId = TestData.Nodes.createControlZoneNode().NodeId;
