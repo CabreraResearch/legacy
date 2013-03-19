@@ -293,11 +293,11 @@
                         tbl.cell(3, 3).empty();
                         tbl.cell(3, 1).span().setLabelText('Supplier: ', true, false);
 
-                        var allowAdd = true;
+                        var allowAddButton = true;
 
                         if (cswPrivate.state.addNewC3Supplier) {
                             cswPrivate.makeNewC3SupplierInput(true);
-                            allowAdd = false;
+                            allowAddButton = false;
                         }
 
                         var ajaxData = {};
@@ -314,7 +314,7 @@
                             width: '200px',
                             ajaxData: ajaxData,
                             showSelectOnLoad: true,
-                            allowAdd: allowAdd,
+                            allowAdd: allowAddButton,
                             onAfterAdd: changeMaterial,
                             addNodeDialogTitle: 'Vendor',
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
