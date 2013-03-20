@@ -1,18 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -106,16 +103,16 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember]
                 public string tradeName = string.Empty;
 
-                [DataMember]
-                public bool useExistingTempNode;
+                //[DataMember]
+                //public bool useExistingTempNode;
 
                 [DataMember]
                 public Collection<Collection<SizeColumnValue>> sizes;
-                
+
                 [DataMember]
                 public Supplier supplier = null;
 
-                [DataMember] 
+                [DataMember]
                 public bool addNewC3Supplier = false;
 
                 [DataMember]
@@ -317,9 +314,9 @@ namespace ChemSW.Nbt.WebServices
                 State.materialId = C3ProductTempNode.NodeId.ToString();
                 State.tradeName = C3ProductTempNode.TradeName.Text;
                 State.partNo = C3ProductTempNode.PartNumber.Text;
-                State.useExistingTempNode = true;
+                //State.useExistingTempNode = true;
                 State.supplier = Supplier;
-                if (string.IsNullOrEmpty(State.supplier.val))
+                if( string.IsNullOrEmpty( State.supplier.val ) )
                 {
                     State.addNewC3Supplier = true;
                 }
