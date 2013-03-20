@@ -1,15 +1,14 @@
 using System;
-using System.Globalization;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Threading;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using NbtWebApp.WebSvc.Returns;
-using ChemSW.Nbt.MetaData;
-using System.Collections.ObjectModel;
-using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -533,7 +532,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( loweredMode.Equals( Modes.Status ) )
                 {
-                    if( _matchingStatusFound( OpData.Field1.Value ) )
+                    if( _validateStatus( NbtResources, OpData.Field1.Value, ref OpData ) )
                     {
                         IsValid = true;
                     }
@@ -547,7 +546,6 @@ namespace ChemSW.Nbt.WebServices
             if( IsValid )
             {
                 Field.ServerValidated = true;
-                Field.StatusMsg = "";
                 if( NbtObjectClass.LocationClass.Equals( ObjClass ) )
                 {
                     CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, Field.Value, true );
@@ -656,10 +654,49 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        private static bool _matchingStatusFound( string status )
+        private static bool _validateStatus( CswNbtResources NbtResources, string status, ref OperationData OpData )
         {
-            //TODO: match a status loosely to an equipment/assembly status
-            return true;
+            bool ret = false;
+            string foundMatch = "";
+
+            Regex alphNums = new Regex("[^a-zA-Z0-9]" );
+            string strippedStatus = alphNums.Replace( status, "" );
+
+            CswNbtMetaDataObjectClass equipmentOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClassProp statusOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Status );
+            foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusOCP.getNodeTypeProps() )
+            {
+                CswCommaDelimitedString statusOptCDS = new CswCommaDelimitedString();
+                statusOptCDS.FromString(statusNTP.ListOptions);
+
+                foreach( string candidateStatus in statusOptCDS )
+                {
+                    if( candidateStatus.Equals( status ) )
+                    {
+                        foundMatch = candidateStatus;
+                        ret = true;
+                    }
+                    else
+                    {
+                        string strippedCandidateStatus = alphNums.Replace( candidateStatus, "" );
+                        if( strippedStatus.Equals( strippedCandidateStatus ) )
+                        {
+                            foundMatch = candidateStatus;
+                            ret = true;
+                            OpData.Field1.Value = candidateStatus;
+                            OpData.Field1.SecondValue = "(entered: \"" + status +"\")";
+                        }
+                    }
+                }
+            }
+
+            if( String.IsNullOrEmpty( foundMatch ) )
+            {
+                OpData.Field1.ServerValidated = false;
+                OpData.Field1.StatusMsg = status + " is not a valid option for a Status Mode scan.";
+            }
+
+            return ret;
         }
 
         #endregion
