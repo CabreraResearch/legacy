@@ -3,7 +3,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.ObjClasses
 {
     [TestFixture]
     public class CswNbtObjClassReportTest

@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Test.Security
         [SetUp]
         public void MyTestInitialize()
         {
-            TestData = new TestData();
+            TestData = new TestData { FinalizeNodes = true };
             _SchemaAuthenticator = new CswNbtSchemaAuthenticator( TestData.CswNbtResources );
             _CswEncryption = new CswEncryption( TestData.CswNbtResources.MD5Seed );
             DataTable MaxNodeTable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getHWM", "select max(loginid) as hwm from login_data" );

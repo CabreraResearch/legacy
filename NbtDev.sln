@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\..\Common\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUI", "..\..\Common\CswConfigUI\CswConfigUI.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
@@ -35,8 +35,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebApp", "NbtWebApp\NbtWebApp.csproj", "{DB33D180-B7CC-407B-8611-52DEB49363A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript", "NbtWebApp\NbtWebAppJavaScript.csproj", "{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWcfServices", "NbtWcfServices\NbtWcfServices.csproj", "{22B27336-428C-4A59-9909-38BE803C9161}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}"
 EndProject
@@ -202,14 +200,6 @@ Global
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Release|Mixed Platforms.Build.0 = Release|x64
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Release|x64.ActiveCfg = Release|x64
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Release|x64.Build.0 = Release|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Debug|Mixed Platforms.Build.0 = Debug|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Debug|x64.ActiveCfg = Debug|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Debug|x64.Build.0 = Debug|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Release|Mixed Platforms.Build.0 = Release|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Release|x64.ActiveCfg = Release|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Release|x64.Build.0 = Release|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|x64.ActiveCfg = Debug|x64
@@ -251,10 +241,6 @@ Global
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Release|Mixed Platforms.ActiveCfg = Release|x64
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Release|x64.ActiveCfg = Release|x64
-		{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}.Debug|Mixed Platforms.Build.0 = Debug|x64
-		{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}.Release|Mixed Platforms.Build.0 = Release|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|Mixed Platforms.Build.0 = Debug|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x64.ActiveCfg = Debug|x64

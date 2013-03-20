@@ -4,7 +4,7 @@ using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.Batch
 {
     [TestFixture]
     public class CswNbtBatchOpContainerReconciliationActionsTest

@@ -4,42 +4,44 @@
 (function () {
     "use strict";
     Csw.composites.quantity = Csw.composites.quantity ||
-        Csw.composites.register('quantity', function (cswParent, cswPrivate) {
+        Csw.composites.register('quantity', function (cswParent, options) {
 
             //#region _preCtor
-            var cswPublic = {};
+            var cswPublic = {},
+                cswPrivate = {};
 
             (function _preCtor() {
-                cswPrivate.$parent = cswPrivate.$parent || cswParent.$;
-                cswPrivate.name = cswPrivate.name || '';
-                cswPrivate.precision = cswPrivate.precision || 6;
-                cswPrivate.ceilingVal = cswPrivate.ceilingVal || 999999;
+                Csw.extend(cswPrivate, options);
+                //cswPrivate.$parent = cswPrivate.$parent || cswParent.$;
+                cswPrivate.name = options.name || '';
+                cswPrivate.precision = options.precision || 6;
+                cswPrivate.ceilingVal = options.ceilingVal || 999999;
 
-                cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
-                cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
-                cswPrivate.objectClassId = cswPrivate.objectClassId || '';
+                cswPrivate.selectedNodeId = options.selectedNodeId || '';
+                cswPrivate.nodeTypeId = options.nodeTypeId || '';
+                cswPrivate.objectClassId = options.objectClassId || '';
 
-                cswPrivate.options = cswPrivate.options || [];
-                cswPrivate.relationships = cswPrivate.relationships || [];
-                cswPrivate.quantity = cswPrivate.quantity || '';
-                cswPrivate.unit = cswPrivate.unit || '';
-                cswPrivate.unitText = cswPrivate.unitText || '';
-                cswPrivate.minvalue = cswPrivate.minvalue || '';
-                cswPrivate.maxvalue = cswPrivate.maxvalue || '';
-                cswPrivate.excludeRangeLimits = cswPrivate.excludeRangeLimits || false;
-                cswPrivate.fractional = cswPrivate.fractional || false;
-                cswPrivate.quantityoptional = cswPrivate.quantityoptional || false;
-                cswPrivate.cellCol = cswPrivate.cellCol || 1;
-                cswPrivate.isMulti = cswPrivate.isMulti || false;
-                cswPrivate.isRequired = cswPrivate.isRequired || false;
-                cswPrivate.isReadOnly = cswPrivate.isReadOnly || false;
-                cswPrivate.isUnitReadOnly = cswPrivate.isUnitReadOnly || false;
+                cswPrivate.options = options.options || [];
+                cswPrivate.relationships = options.relationships || [];
+                cswPrivate.quantity = options.quantity || '';
+                cswPrivate.unit = options.unit || '';
+                cswPrivate.unitText = options.unitText || '';
+                cswPrivate.minvalue = options.minvalue || '';
+                cswPrivate.maxvalue = options.maxvalue || '';
+                cswPrivate.excludeRangeLimits = options.excludeRangeLimits || false;
+                cswPrivate.fractional = options.fractional || false;
+                cswPrivate.quantityoptional = options.quantityoptional || false;
+                cswPrivate.cellCol = options.cellCol || 1;
+                cswPrivate.isMulti = options.isMulti || false;
+                cswPrivate.isRequired = options.isRequired || false;
+                cswPrivate.isReadOnly = options.isReadOnly || false;
+                cswPrivate.isUnitReadOnly = options.isUnitReadOnly || false;
 
-                cswPrivate.onChange = cswPrivate.onChange || function () { };
-                cswPrivate.onPropChange = cswPrivate.onPropChange || function () { };
-                cswPrivate.doPropChangeDataBind = cswPrivate.doPropChangeDataBind || function () { };
-                cswPrivate.onNumberChange = cswPrivate.onNumberChange || function () { };
-                cswPrivate.onQuantityChange = cswPrivate.onQuantityChange || function () { };
+                cswPrivate.onChange = options.onChange || function () { };
+                cswPrivate.onPropChange = options.onPropChange || function () { };
+                cswPrivate.doPropChangeDataBind = options.doPropChangeDataBind || function () { };
+                cswPrivate.onNumberChange = options.onNumberChange || function () { };
+                cswPrivate.onQuantityChange = options.onQuantityChange || function () { };
 
                 cswPublic = cswParent.div();
                 cswPrivate.table = cswPublic.table();

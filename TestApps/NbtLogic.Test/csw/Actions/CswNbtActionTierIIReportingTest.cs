@@ -7,7 +7,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.RscAdo;
 using NUnit.Framework;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.Actions
 {
     [TestFixture]
     public class CswNbtActionTierIIReportingTest
@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Test
         [SetUp]
         public void MyTestInitialize()
         {
-            TestData = new TestData();
+            TestData = new TestData { FinalizeNodes = true };
             TierIIAction = new CswNbtActTierIIReporting( TestData.CswNbtResources );
             DataTable MaxTierIITable = TestData.CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getHWM", "select max(tier2id) as hwm from tier2" );
             _TierIIHWM = CswConvert.ToInt32( MaxTierIITable.Rows[0]["hwm"] );

@@ -4,7 +4,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.Actions
 {
     [TestFixture]
     public class CswNbtActionHMISReportingTest

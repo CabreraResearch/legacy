@@ -64,7 +64,6 @@ namespace ChemSW.Nbt.Actions
                                                              ContainerLocationNode.Status.Value,
                                                              ContainerLocationNode.Type.Value );
                                 }
-                                ContainersTree.goToParentNode();
                             }
                             else
                             {
@@ -122,7 +121,6 @@ namespace ChemSW.Nbt.Actions
                                     ContainerStatus.ActionApplied = ContainerLocationNode.ActionApplied.Checked.ToString();
                                     isEnabled = true;
                                 }
-                                ContainersTree.goToParentNode();
                             }
                             else
                             {
@@ -262,7 +260,8 @@ namespace ChemSW.Nbt.Actions
         private CswNbtObjClassContainerLocation _getMostRelevantContainerLocation()
         {
             CswNbtObjClassContainerLocation ContainerLocationNode = null;
-            for( int k = 0; k < ContainersTree.getChildNodeCount(); k++ )
+            Int32 NumOfContainerLocationRecords = ContainersTree.getChildNodeCount();
+            for( int k = 0; k < NumOfContainerLocationRecords; k++ )
             {
                 ContainersTree.goToNthChild( k );
                 if( null == ContainerLocationNode )
@@ -270,6 +269,7 @@ namespace ChemSW.Nbt.Actions
                     ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
                     if( ContainerLocationNode.Type.Value == CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() )
                     {
+                        ContainersTree.goToParentNode();
                         break;
                     }
                 }
@@ -280,9 +280,11 @@ namespace ChemSW.Nbt.Actions
                         ContainerLocationNode.Type.Value != CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() )
                     {
                         ContainerLocationNode = TempContainerLocationNode;
+                        ContainersTree.goToParentNode();
                         break;
                     }
                 }
+                ContainersTree.goToParentNode();
             }
             return ContainerLocationNode;
         }
