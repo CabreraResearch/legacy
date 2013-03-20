@@ -703,61 +703,26 @@ namespace ChemSW.Nbt.Security
             bool ret = _CswNbtPermitInfo.NoExceptionCases;
 
             ret = ret || ( null == MetaDataTab || canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
-
-            // Anyone but an admin cannot write to read-only props
-            // Even admins cannot write to servermanaged props
+            
             ret = ret &&
+                  // We've requested an Editable state
                   ( _CswNbtPermitInfo.NodeTypePermission != NodeTypePermission.View ) &&
+                  // No one can write to servermanaged props
                   ( false == MetaDataProp.ServerManaged ) &&
                   (
-                      ( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
+                    // Anyone but an admin cannot write to read-only props  
+                    ( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
+                      //Buttons are always "writable"  
+                      MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
                       (
+                          //This prop is not readonly OR
                           ( ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) ) ) ||
+                          //The prop is required AND readonly AND we're creating a new node
                           //This was removed as part of Case 27984, and I think it was a mistake
                           ( MetaDataProp.ReadOnly && MetaDataProp.IsRequired && _CswNbtResources.EditMode == NodeEditMode.Add && null != MetaDataProp.getAddLayout() )
                       )
                   );
-
             
-             
-            //     public bool AllowReadOnlyAdd
-            //{
-            //    get
-            //    {
-            //        bool ret = false;
-
-            //        if( false == ServerManaged )
-            //        {
-            //            ret = _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add && null != AddLayout;
-            //        }
-
-            //        return ( ret );
-            //    }
-            //}
-
-            //public bool SetValueOnAddEnabled
-            //{
-            //    get
-            //    {
-            //        // Case 20480
-            //        return ( !( IsRequired && DefaultValue.Empty ) ); //&& !hasFilter() );
-            //    }
-            //}
-             
-            
-
-            //if( ret &&
-            //        (
-            //            ( _CswNbtPermitInfo.NodeTypePermission != NodeTypePermission.View ) &&
-            //            ( false == MetaDataProp.ServerManaged ) &&
-            //            (  MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
-            //            ( false == MetaDataProp.AllowReadOnlyAdd )
-            //        )
-            //    )/* Case 24514. Conditionally Permit edit on create. */
-            //{
-            //    ret = false;
-            //}
-
             return ( ret );
 
         }//_isPropWritableImpl()
