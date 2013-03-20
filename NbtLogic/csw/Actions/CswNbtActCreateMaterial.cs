@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -8,7 +7,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -273,9 +271,10 @@ namespace ChemSW.Nbt.Actions
             JObject Ret = new JObject();
 
             //Check if the vendor needs to be created
-            if (false == CswTools.IsPrimaryKey(CswConvert.ToPrimaryKey(SupplierId)))
+            if( false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( SupplierId ) ) )
             {
-                CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
+                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
                 if( null != VendorNT )
                 {
                     CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
@@ -312,7 +311,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                         }
-                        
+
                         Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
                     }
                 }
@@ -456,13 +455,13 @@ namespace ChemSW.Nbt.Actions
                         JArray SizesToDelete = (JArray) MaterialObj["sizesToDelete"];
                         for( int i = 0; i < SizesToDelete.Count; i++ )
                         {
-                            if (SizesToDelete[i].HasValues)
+                            if( SizesToDelete[i].HasValues )
                             {
-                                CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey(SizesToDelete[i].Last.ToString());
-                                if (CswTools.IsPrimaryKey(SizeNodePK))
+                                CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey( SizesToDelete[i].Last.ToString() );
+                                if( CswTools.IsPrimaryKey( SizeNodePK ) )
                                 {
-                                    CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode(SizeNodePK);
-                                    if (null != SizeNodeToDelete)
+                                    CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode( SizeNodePK );
+                                    if( null != SizeNodeToDelete )
                                     {
                                         SizeNodeToDelete.delete();
                                     }
