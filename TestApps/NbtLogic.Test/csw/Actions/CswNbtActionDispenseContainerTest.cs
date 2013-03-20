@@ -8,10 +8,10 @@ using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.Actions
 {
     [TestFixture]
-    public class CswNbtActDispenseContainerTest
+    public class CswNbtActionDispenseContainerTest
     {
         #region Setup and Teardown
 

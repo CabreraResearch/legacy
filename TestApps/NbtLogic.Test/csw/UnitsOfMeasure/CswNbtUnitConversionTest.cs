@@ -4,7 +4,7 @@ using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.UnitsOfMeasure
 {
     [TestFixture]
     public class CswNbtUnitConversionTest

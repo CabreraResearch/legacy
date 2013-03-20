@@ -4,7 +4,7 @@ using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.PropTypes
 {
     [TestFixture]
     public class CswNbtNodePropMultiListTest

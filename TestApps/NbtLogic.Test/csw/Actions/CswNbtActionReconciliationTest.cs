@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.Actions
 {
     [TestFixture]
     public class CswNbtActionReconciliationTest
@@ -172,7 +171,6 @@ namespace ChemSW.Nbt.Test
             }
         }
 
-        /* TODO - Sometimes this passes, some times it doesn't - figure out this race condition and abolish it */
         /// <summary>
         /// Given a location that has one Container with two ContainerLocations in the given timeframe,
         /// given that the first ContainerLocation is of Type Scan and the second is not,
@@ -198,7 +196,6 @@ namespace ChemSW.Nbt.Test
                 IncludeChildLocations = false,
                 ContainerLocationTypes = _getTypes()
             };
-            Thread.Sleep( 1000 );//Running into a race condition
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString(), Data.ContainerStatuses[0].ContainerStatus );
@@ -331,7 +328,6 @@ namespace ChemSW.Nbt.Test
             }
         }
 
-        /* TODO - Sometimes this passes, some times it doesn't - figure out this race condition and abolish it */
         /// <summary>
         /// Given a location that has one Container with two ContainerLocations in the given timeframe,
         /// given that the first ContainerLocation is of Type Scan and the second is not,
@@ -479,9 +475,6 @@ namespace ChemSW.Nbt.Test
                 IncludeChildLocations = false,
                 ContainerActions = Actions
             };
-            Thread.Sleep( 1000 );//Running into two race conditions:
-            //The Missing ContainerLocation is created before the Container onCreate's Move ContainerLocation
-            //The new ContainerLocation doesn't exist when trying to retreive it
             ReconciliationAction.saveContainerActions( Request );
             CswNbtObjClassContainerLocation NewContLocNode = _getNewContianerLocation( ContainerNode.NodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString(), NewContLocNode.Type.Value );

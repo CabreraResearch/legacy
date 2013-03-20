@@ -21,6 +21,17 @@ namespace ChemSW.Nbt.Test
         private Int32 _NodeIdHighWaterMark;
         private Int32 _NodeTypeHighWaterMark;
 
+        /// <summary>
+        /// When set to true, all nodes that are created during the test will be committed to the database.
+        /// </summary>
+        internal bool FinalizeNodes 
+        {
+            set 
+            { 
+                Nodes.FinalizeNodes = value;
+            }
+        }
+
         //TODO - refactor the way we're handling NTP states
         private Dictionary<int, string> _ChangedNodeTypePropListOptions = new Dictionary<int, string>();
         private Dictionary<int, string> _ChangedNodeTypePropExtended = new Dictionary<int, string>();
