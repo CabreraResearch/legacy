@@ -270,9 +270,8 @@ namespace ChemSW.Nbt.Test
 
         private double _getNewSourceContainerQuantity( CswPrimaryKey SourceContainerId )
         {
-            CswNbtNode UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( SourceContainerId );
-            CswNbtObjClassContainer NodeAsContianer = UpdatedContainerNode;
-            return NodeAsContianer.Quantity.Quantity;
+            CswNbtObjClassContainer UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( SourceContainerId );
+            return UpdatedContainerNode.Quantity.Quantity;
         }
 
         private int _getNewContainerCount( CswPrimaryKey SourceContainerId )

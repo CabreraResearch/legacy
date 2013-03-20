@@ -19,6 +19,8 @@ namespace ChemSW.Nbt.Test
             }
         }
 
+        internal bool FinalizeNodes = false;
+
         internal TestDataNodes( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -45,7 +47,7 @@ namespace ChemSW.Nbt.Test
                 LocationNode.ControlZone.RelatedNodeId = ControlZoneId;
             }
             LocationNode.postChanges( true );
-            CswNbtResources.finalize();
+            _finalize();
 
             return LocationNode.Node;
         }
@@ -69,7 +71,7 @@ namespace ChemSW.Nbt.Test
             }
             ContainerLocationNode.ContainerScan.Text = ContainerScan;
             ContainerLocationNode.postChanges( true );
-            CswNbtResources.finalize();
+            _finalize();
 
             return ContainerLocationNode.Node;
         }
@@ -96,7 +98,7 @@ namespace ChemSW.Nbt.Test
                 ContainerNode.Location.RefreshNodeName();
             }
             ContainerNode.postChanges( true );
-            CswNbtResources.finalize();
+            _finalize();
 
             return ContainerNode.Node;
         }
@@ -112,7 +114,7 @@ namespace ChemSW.Nbt.Test
             UnitOfMeasureNode.Fractional.Checked = Fractional;
             UnitOfMeasureNode.UnitType.Value = NodeTypeName;
             UnitOfMeasureNode.postChanges( true );
-            CswNbtResources.finalize();
+            _finalize();
 
             return UnitOfMeasureNode.Node;
         }
@@ -141,7 +143,7 @@ namespace ChemSW.Nbt.Test
                 MaterialNode.IsTierII.Checked = IsTierII;
             }
             MaterialNode.postChanges( true );
-            CswNbtResources.finalize();
+            _finalize();
 
             return MaterialNode.Node;
         }
@@ -162,7 +164,7 @@ namespace ChemSW.Nbt.Test
                 }
             }
             ControlZoneNode.postChanges( true );
-            CswNbtResources.finalize();
+            _finalize();
 
             return ControlZoneNode;
         }
@@ -179,7 +181,7 @@ namespace ChemSW.Nbt.Test
             NewUser.AccountLocked.Checked = isLocked;
             NewUser.Archived.Checked = isArchived;
             NewUser.postChanges( ForceUpdate: false );
-            CswNbtResources.finalize();
+            _finalize();
 
             return NewUser.Node;
         }
@@ -187,6 +189,14 @@ namespace ChemSW.Nbt.Test
         #endregion
 
         #region Private Helper Functions
+
+        private void _finalize()
+        {
+            if( FinalizeNodes )
+            {
+                CswNbtResources.finalize();
+            }
+        }
 
         private int _getNodeTypeId( string NodeTypeName )
         {
