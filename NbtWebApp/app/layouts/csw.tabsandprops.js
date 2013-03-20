@@ -269,7 +269,7 @@
             };
 
             cswPrivate.makeIdentityTab = function () {
-                
+
                 cswPrivate.ajax.tabs = Csw.ajax.post({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: 'getIdentityTabProps',
@@ -416,7 +416,7 @@
                                 };
 
                                 Csw.iterate(data.tabs, tabFunc);
-                                
+
                                 cswPrivate.tabcnt = tabno;
 
                                 cswPrivate.getTabDivFromIndex = function (idx) {
@@ -952,9 +952,8 @@
                                 onClick: function () {
                                     return false;
                                 },
-                                value: propName
-                            });
-
+                                value: "" //Case 29100 - the prop name will be set by setLabelText()
+                            }).setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
                         } else {
                             labelCell.setLabelText(propName, propData.required, propData.readonly || cswPrivate.tabState.ReadOnly);
                         }
