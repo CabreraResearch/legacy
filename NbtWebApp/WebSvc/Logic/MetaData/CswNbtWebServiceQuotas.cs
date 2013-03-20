@@ -63,6 +63,7 @@ namespace ChemSW.Nbt.WebServices
                     ret["objectclasses"][OCId]["quota"] = "";
                 }
                 ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.getNodeTypes().Count().ToString();
+                ret["objectclasses"][OCId]["excludeinquotabar"] = ObjectClass.ExcludeInQuotaBar;
 
                 ret["objectclasses"][OCId]["nodetypes"] = new JObject();
                 foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
@@ -77,6 +78,7 @@ namespace ChemSW.Nbt.WebServices
                         ret["objectclasses"][OCId]["nodetypes"][NTId] = new JObject();
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypename"] = NodeTypeName;
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypeid"] = NodeTypeId;
+                        ret["objectclasses"][OCId]["nodetypes"][NTId]["excludeinquotabar"] = NodeType.ExcludeInQuotaBar;
 
                         if( NodeCountsForNodeType.ContainsKey( NodeTypeId ) )
                         {
@@ -111,13 +113,15 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Int32 ObjectClassId = CswConvert.ToInt32( JObjClass["objectclassid"] );
                     Int32 NewOCQuota = CswConvert.ToInt32( JObjClass["quota"] );
-                    _CswNbtActQuotas.SetQuotaForObjectClass( ObjectClassId, NewOCQuota );
+                    bool ExcludeInQuotaBarOC = CswConvert.ToBoolean( JObjClass["excludeinquotabar"] );
+                    _CswNbtActQuotas.SetQuotaForObjectClass( ObjectClassId, NewOCQuota, ExcludeInQuotaBarOC );
 
                     foreach( JObject JNodeType in JObjClass["nodetypes"].Children().Values() )
                     {
                         Int32 NodeTypeId = CswConvert.ToInt32( JNodeType["nodetypeid"] );
                         Int32 NewNTQuota = CswConvert.ToInt32( JNodeType["quota"] );
-                        _CswNbtActQuotas.SetQuotaForNodeType( NodeTypeId, NewNTQuota );
+                        bool ExcludeInQuotaBarNT = CswConvert.ToBoolean( JNodeType["excludeinquotabar"] );
+                        _CswNbtActQuotas.SetQuotaForNodeType( NodeTypeId, NewNTQuota, ExcludeInQuotaBarNT );
                     } // foreach( DataRow OCRow in OCTable.Rows )
 
                 } // foreach( DataRow OCRow in OCTable.Rows )

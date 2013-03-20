@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
                     {
                         CswNbtView expiredContainersView = new CswNbtView( CswNbtResources );
                         CswNbtMetaDataObjectClass containerOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );

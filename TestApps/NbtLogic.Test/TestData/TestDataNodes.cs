@@ -5,7 +5,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
-namespace ChemSw.Nbt.Test
+namespace ChemSW.Nbt.Test
 {
     internal class TestDataNodes
     {

@@ -319,7 +319,7 @@
                     if (data && data.view.TreeView) {
                         currentViewJson = data.view.TreeView;
 
-                    o.viewmode = currentViewJson.mode;
+                        o.viewmode = currentViewJson.mode;
 
                         viewNameTextBox.val(currentViewJson.viewname);
                         categoryTextBox.val(currentViewJson.category);
@@ -360,11 +360,11 @@
 
                         step2CopyFromSelectCell.empty();
                         step2CopyFromButtonCell.empty();
-                        
+
                         var copyViewSel = step2CopyFromSelectCell.select();
 
                         if (data.viewlist && data.viewlist.length > 0) {
-                            data.viewlist.forEach(function(val) {
+                            data.viewlist.forEach(function (val) {
                                 copyViewSel.option({ value: val.id, display: val.name });
                             });
 
@@ -383,10 +383,10 @@
                                                     ViewId: copyViewSel.val(),
                                                     CopyToViewId: o.viewid
                                                 },
-                                                success: function() {
+                                                success: function () {
                                                     _initStepTwo($nextWizard);
                                                 },
-                                                error: function() {
+                                                error: function () {
                                                     btn.enable();
                                                 }
                                             });
@@ -398,7 +398,7 @@
                                 }
                             });
                         }
-                        
+
                         $nextWizard.CswWizard('button', 'next', 'enable');
                     }
                 } // success
@@ -662,7 +662,7 @@
                         type: Csw.enums.inputTypes.checkbox,
                         onChange: function () {
                             var $this = $(this);
-                            if (isFunction(onChange)) {
+                            if (Csw.isFunction(onChange)) {
                                 onChange($this.is(':checked'));
                             }
                         }
@@ -673,6 +673,8 @@
                     }
                 } // makeAllowCB()
 
+                _makeAllowCB(row, 'editrel_view', 'Add', Csw.bool(viewnodejson.allowaddchildren), function (checked) { viewnodejson.allowaddchildren = checked; });
+                row += 1;
                 _makeAllowCB(row, 'editrel_view', 'View', Csw.bool(viewnodejson.allowview), function (checked) { viewnodejson.allowview = checked; });
                 row += 1;
                 _makeAllowCB(row, 'editrel_edit', 'Edit', Csw.bool(viewnodejson.allowedit), function (checked) { viewnodejson.allowedit = checked; });
@@ -897,7 +899,7 @@
                 var listResultMode = filterTable.cell(3, 2)
                     .select({
                         name: o.name + '_resultmode',
-                        values: ['Hide', { value: 'Disabled', display: 'Show Disabled' }],
+                        values: ['Hide', { value: 'Disabled', display: 'Show Disabled'}],
                         onChange: function () {
                             //var $this = $(this);
                             viewNodeData.resultmode = listResultMode.val();
@@ -1119,7 +1121,7 @@
                     }
 
                     if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                        bindViewPropFilterBtns(stepno);
+                        bindViewPropFilterBtns();
                     }
 
                     if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
@@ -1167,40 +1169,9 @@
             });
         }
 
-        function bindViewPropFilterBtns(stepno) {
+        function bindViewPropFilterBtns() {
             $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name).each(function () {
                 var $span = $(this);
-                var arbitraryId = $span.CswAttrNonDom('arbid');
-
-                var $btn = $span.find('[name="' + arbitraryId + '_addfiltbtn"]');
-                $btn.bind('click', function () {
-                    var $this = $(this);
-                    $this.button({ label: $this.attr('disabledText'), disabled: true });
-                    var objHelper = Csw.object(currentViewJson);
-
-                    var propJson = objHelper.find('arbitraryid', arbitraryId);
-
-                    var $tbl = $span.find('[name="' + o.name + '_' + arbitraryId + '_propfilttbl"]');
-                    var newFiltJson = $tbl.CswViewPropFilter('getFilterJson', {
-                        name: o.name,
-                        $parent: $span,
-                        filtJson: propJson,
-                        proparbitraryid: arbitraryId,
-                        allowNullFilterValue: true
-                    });
-
-                    $tbl.CswViewPropFilter('makeFilter', {
-                        viewJson: currentViewJson,
-                        filtJson: newFiltJson,
-                        onSuccess: function (newPropJson) {
-                            if (false === propJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
-                                propJson[Csw.enums.viewChildPropNames.propfilters.name] = {};
-                            }
-                            Csw.extend(propJson[Csw.enums.viewChildPropNames.propfilters.name], newPropJson);
-                            _makeViewTree(stepno);
-                        } // onSuccess
-                    }); // CswViewPropFilter
-                });
 
                 $span.find('.ViewPropFilterLogical').each(function () {
                     //Word to the Wise: 
@@ -1252,7 +1223,7 @@
             var arbid = 'root';
             var name = itemJson.viewname;
             var rel = 'root';
-            types.root = { icon: { image: Csw.string(itemJson.iconfilename) } };
+            types.root = { icon: { image: Csw.string(itemJson.iconfilename)} };
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, Csw.enums.viewChildPropNames.root, rel);
@@ -1286,7 +1257,7 @@
             var skipchildoptions = (stepno <= Csw.enums.wizardSteps_ViewEditor.relationships.step);
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
             var showDelete = (stepno === Csw.enums.wizardSteps_ViewEditor.relationships.step);
-            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename) } };
+            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename)} };
 
             var $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, Csw.enums.viewChildPropNames.childrelationships, rel);
 
@@ -1394,7 +1365,7 @@
                     $ret.append($filtUl);
                 }
             }
-            types.property = { icon: { image: "Images/view/property.gif" } };
+            types.property = { icon: { image: "Images/view/property.gif"} };
             return $ret;
         }
 
@@ -1420,10 +1391,10 @@
                         makeDeleteSpan(filtArbitraryId, $ret);
                     }
                 } else {
-                    $ret.append(makeViewPropFilterAddSpan(propArbId, itemJson));
+                    $ret.append(makeViewPropFilterAddSpan(stepno, propArbId, itemJson));
                 }
             }
-            types.filter = { icon: { image: "Images/view/filter.gif" } };
+            types.filter = { icon: { image: "Images/view/filter.gif"} };
             return $ret;
         }
 
@@ -1449,31 +1420,60 @@
             return $span;
         }
 
-        function makeViewPropFilterAddSpan(propArbId, itemJson) {
-            var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
-            var table = Csw.literals.table({
-                $parent: $span,
-                "name": o.name + '_' + propArbId + '_propfilttbl'
-            });
-            table.css({ 'display': 'inline-table' });
+        function makeViewPropFilterAddSpan(stepno, propArbId, itemJson) {
+            var $ret = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
 
-            table.$.CswViewPropFilter('init', {
-                viewJson: currentViewJson,
-                name: o.name + '_' + propArbId + '_propfilttbl',
-                propsData: itemJson,
-                proparbitraryid: propArbId,
-                propRow: 1,
-                firstColumn: 1,
-                includePropertyName: false,
-                autoFocusInput: false
-            });
+            // Miserable.  See case 29024
+            Csw.defer(function () {
+                var $span = $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '[arbid=' + propArbId + ']');
+                var table = Csw.literals.table({
+                    $parent: $span,
+                    "name": o.name + '_' + propArbId + '_propfilttbl'
+                });
+                table.css({ 'display': 'inline-table' });
+                table.$.CswViewPropFilter('init', {
+                    viewJson: currentViewJson,
+                    name: o.name + '_' + propArbId + '_propfilttbl',
+                    propsData: itemJson,
+                    proparbitraryid: propArbId,
+                    propRow: 1,
+                    firstColumn: 1,
+                    includePropertyName: false,
+                    autoFocusInput: false
+                });
 
-            table.cell(1, 5).button({
-                name: propArbId + '_addfiltbtn',
-                enabledText: 'Add',
-                disabledText: 'Adding'
-            });
-            return $span;
+                var addButton = table.cell(1, 6).button({
+                    name: propArbId + '_addfiltbtn',
+                    enabledText: 'Add',
+                    disabledText: 'Adding',
+                    onClick: function () {
+                        addButton.disable();
+                        var objHelper = Csw.object(currentViewJson);
+                        var propJson = objHelper.find('arbitraryid', propArbId);
+                        
+                        var newFiltJson = table.$.CswViewPropFilter('getFilterJson', {
+                            name: o.name,
+                            $parent: $span,
+                            filtJson: propJson,
+                            proparbitraryid: propArbId,
+                            allowNullFilterValue: true
+                        });
+
+                        table.$.CswViewPropFilter('makeFilter', {
+                            viewJson: currentViewJson,
+                            filtJson: newFiltJson,
+                            onSuccess: function (newPropJson) {
+                                if (false === propJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
+                                    propJson[Csw.enums.viewChildPropNames.propfilters.name] = {};
+                                }
+                                Csw.extend(propJson[Csw.enums.viewChildPropNames.propfilters.name], newPropJson);
+                                _makeViewTree(stepno);
+                            } // onSuccess
+                        }); // CswViewPropFilter
+                    } // onClick
+                }); // button()
+            }, 500);
+            return $ret;
         }
 
         function makeViewListItem(arbid, linkclass, name, showDelete, stepno, propName, rel) {

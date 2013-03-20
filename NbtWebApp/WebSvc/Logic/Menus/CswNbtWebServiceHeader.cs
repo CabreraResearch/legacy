@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.WebServices
                                     ) )
                                 );
 
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
                 CswNbtActRequesting RequestAction = new CswNbtActRequesting( _CswNbtResources );
                 Int32 CartCount = RequestAction.getCartContentCount();

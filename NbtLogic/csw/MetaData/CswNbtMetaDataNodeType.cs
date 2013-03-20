@@ -331,6 +331,18 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public bool ExcludeInQuotaBar
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _NodeTypeRow["excludeinquotabar"] );
+            }
+            set
+            {
+                _NodeTypeRow["excludeinquotabar"] = CswConvert.ToDbVal( value );
+            }
+        }
+
         public Collection<Int32> getNodeTypeTabIds()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabIds( NodeTypeId );

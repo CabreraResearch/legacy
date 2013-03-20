@@ -74,6 +74,9 @@ timeout /T 30
 >>%LogFile% time /T
 
 >>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /v:q
+
+>>%LogFile% echo Finished Quiet Build 
+>>%LogFile% echo ====================================================================
 >>%LogFile% net start "ChemSW Log Service"
 
 >>%LogFile% echo ====================================================================
@@ -82,6 +85,7 @@ timeout /T 30
 >>%LogFile% time /T
 
 >>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:web:%env%
+>>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:web:%env%
 
 :SchemaReset
 IF "%ResetSchema%" NEQ "Y" GOTO Continue

@@ -27,7 +27,7 @@
                             name: cswPublic.data.name,
                             Date: cswPrivate.date,
                             Time: cswPrivate.time,
-                            DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propVals.value.dateformat),
+                            DateFormat: cswPrivate.propVals.value.dateformat, //dateTimePicker does the format conversion for us
                             TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propVals.value.timeformat),
                             DisplayMode: cswPrivate.propVals.displaymode,
                             ReadOnly: cswPublic.data.isReadOnly(),

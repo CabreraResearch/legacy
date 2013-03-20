@@ -23,6 +23,8 @@
                         locationobjectclassid: cswPrivate.propVals.locationobjectclassid,
                         locationnodetypeids: cswPrivate.propVals.locationnodetypeids,
                         relatedmatch: (cswPublic.data.tabState.relatedobjectclassid === cswPrivate.locationobjectclassid),
+                        relatednodeid: cswPublic.data.tabState.relatednodeid,
+                        relatednodename: cswPublic.data.tabState.relatednodename,
                         relatedobjectclassid: cswPublic.data.tabState.relatedobjectclassid,
                         nodeid: cswPrivate.propVals.nodeid,
                         viewid: cswPrivate.propVals.viewid,

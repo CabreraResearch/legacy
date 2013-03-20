@@ -60,7 +60,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // The user cannot change his or her own Administrator privileges.
-            if( Administrator.WasModified && _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
+            if( Administrator.WasModified && 
+                Administrator.Checked != CswConvert.ToTristate(Administrator.GetOriginalPropRowValue()) &&
+                _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
             {
                 _CswNbtNode.Properties.clearModifiedFlag();  // prevents multiple error messages from appearing if we attempt to write() again
                 throw new CswDniException( ErrorType.Warning, "You may not change your own administrator status", "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit the Administrator property of their own Role" );
@@ -184,6 +186,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
             }
+
+            //case 28010 - delete all view assigned to this role
+            _CswNbtResources.ViewSelect.deleteViewsByRoleId( NodeId );
+
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()

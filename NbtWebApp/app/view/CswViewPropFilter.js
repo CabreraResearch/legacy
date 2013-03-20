@@ -390,7 +390,7 @@
             if (false === Csw.isNullOrEmpty(filterValue) || o.allowNullFilterValue) {
                 $subField = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name);
                 if ($subField.length > 1) {
-                    $subField = $subField.filter('#' + o.filtarbitraryid)
+                    $subField = $subField.filter('#' + o.filtarbitraryid);
                 }
                 subFieldText = $subField.find(':selected').text();
 
@@ -399,7 +399,7 @@
 
                 $filter = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name);
                 if ($filter.length > 1) {
-                    $filter = $filter.filter('#' + o.filtarbitraryid)
+                    $filter = $filter.filter('#' + o.filtarbitraryid);
                 }
                 filterText = $filter.find(':selected').val();
                 nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Csw.Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;

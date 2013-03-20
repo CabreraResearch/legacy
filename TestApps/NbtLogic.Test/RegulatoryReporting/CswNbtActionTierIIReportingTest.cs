@@ -6,7 +6,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.RscAdo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ChemSw.Nbt.Test
+namespace ChemSW.Nbt.Test
 {
     [TestClass]
     public class CswNbtActionTierIIReportingTest

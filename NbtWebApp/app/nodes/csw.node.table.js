@@ -213,6 +213,7 @@
                         });
                         var btncol = 1;
                         var row = 1;
+                        var tabid = window.Ext.id();
                         // Props
                         Csw.eachRecursive(nodeObj.props, function (propObj) {
                             if (propObj.fieldtype === "Button") {
@@ -222,6 +223,7 @@
                                 propObj.nodeid = nodeid;
                                 propObj.tabState = propObj.tabState || {};
                                 propObj.tabState.nodeid = nodeid;
+                                propObj.tabState.tabid = tabid;
                                 propObj.name = propObj.propname;
                                 propObj.EditMode = Csw.enums.editMode.Table;
                                 propObj.doSave = function (saveoptions) {
@@ -253,7 +255,7 @@
                                 //maintextcell.br();
                             }
                         });
-                        Csw.publish('render_' + nodeid);
+                        Csw.publish('render_' + nodeid + '_' + tabid);
                         // System Buttons
                         if (Csw.bool(cswPrivate.compactResults)) {
                             btnTable.cell(1, btncol).buttonExt({

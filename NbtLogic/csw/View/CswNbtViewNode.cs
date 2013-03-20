@@ -252,8 +252,9 @@ namespace ChemSW.Nbt
             foreach( CswNbtViewRelationship ChildRelationship in ChildRelationships )
             {
 
-                if( ChildRelationship.ShowInTree &&                   // BZ 8296
-                    ChildRelationship.NodeIdsToFilterIn.Count == 0 )  // BZ 8022
+                if( ChildRelationship.ShowInTree &&                                          // BZ 8296
+                    ChildRelationship.NodeIdsToFilterIn.Count == 0 &&                        // BZ 8022
+                    ChildRelationship.AllowAdd )                                             // 28663
                 {
                     Collection<CswNbtMetaDataNodeType> PotentialNodeTypes = new Collection<CswNbtMetaDataNodeType>();
                     if( ChildRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId )

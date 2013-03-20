@@ -59,9 +59,9 @@
                     });
 
                     if (cswPrivate.relatedmatch) {
-                        cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, cswPrivate.relatednodeid).trim();
-                        cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.relatednodename).trim();
-                        cswPrivate.path = Csw.string(cswPrivate.path, cswPrivate.relatednodename).trim();
+                        cswPrivate.nodeid = Csw.string(cswPrivate.relatednodeid, cswPrivate.nodeid).trim();
+                        cswPrivate.name = Csw.string(cswPrivate.relatednodename, cswPrivate.name).trim();
+                        cswPrivate.path = Csw.string(cswPrivate.relatednodename, cswPrivate.path).trim();
                     } else {
                         cswPrivate.nodeid = Csw.string(cswPrivate.nodeid).trim();
                         cswPrivate.name = Csw.string(cswPrivate.name).trim();

@@ -141,7 +141,6 @@ namespace ChemSW.Nbt.Actions
                             Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
                             if( null != NodeAsMaterial )
                             {
-                                commitDocumentNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
                                 JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                                 Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                                 if( Quantities.HasValues )
@@ -240,24 +239,19 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
-        /// Gets the first Document <see cref="CswNbtMetaDataNodeType"/> with an Owner relationship target of Material
+        /// Gets the SDS Document NodeTypeId.
         /// </summary>
-        public static Int32 getMaterialDocumentNodeTypeId( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial )
+        public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources )
         {
             Int32 Ret = Int32.MinValue;
             CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
-            foreach( CswNbtMetaDataNodeType DocumentNt in from
-                                                              _DocumentNt in
-                                                              DocumentOc.getLatestVersionNodeTypes()
-                                                          let OwnerNtp = _DocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner )
-                                                          where ( ( OwnerNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                                                    OwnerNtp.FKValue == NodeAsMaterial.NodeTypeId ) ||
-                                                                ( OwnerNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                                                    OwnerNtp.FKValue == NodeAsMaterial.ObjectClass.ObjectClassId ) )
-                                                          select _DocumentNt )
+            foreach( CswNbtMetaDataNodeType DocumentNt in DocumentOc.getLatestVersionNodeTypes())
             {
-                Ret = DocumentNt.NodeTypeId;
-                break;
+                if( DocumentNt.NodeTypeName == "SDS Document" )
+                {
+                    Ret = DocumentNt.NodeTypeId;
+                    break;
+                }
             }
             return Ret;
         }

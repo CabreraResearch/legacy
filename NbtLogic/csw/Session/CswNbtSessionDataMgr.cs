@@ -43,6 +43,8 @@ namespace ChemSW.Nbt
             }
         }
 
+        #region Get Session Data
+
         /// <summary>
         /// Retrieve a session data item
         /// </summary>
@@ -57,6 +59,10 @@ namespace ChemSW.Nbt
             }
             return ret;
         }
+
+        #endregion Get Session Data
+
+        #region QuickLaunch
 
         public void getQuickLaunchJson( ref ViewSelect.Response.Category Category )
         {
@@ -144,6 +150,9 @@ namespace ChemSW.Nbt
                 } );
         }
 
+        #endregion QuickLaunch
+
+        #region Save Session Data
 
         /// <summary>
         /// Save an action to the session data collection.
@@ -189,22 +198,29 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save a view to the session data collection.  Sets the SessionViewId on the view.
         /// </summary>
-        public CswNbtSessionDataId saveSessionData( CswNbtView View, bool IncludeInQuickLaunch, bool ForceNewSessionId = false, bool KeepInQuickLaunch = false )
+        public CswNbtSessionDataId saveSessionData( CswNbtView View, bool IncludeInQuickLaunch, bool KeepInQuickLaunch = false, bool UpdateCache = false )
         {
             CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "saveSessionView_update", SessionDataTableName );
-            DataTable SessionViewTable = null;
-            if( View.SessionViewId != null && View.SessionViewId.isSet() )
+            DataTable SessionViewTable;
+            if( View.SessionViewId != null && View.SessionViewId.isSet() ) //Get existing session view by SessionViewId
                 SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_PrimaryKey, View.SessionViewId.get(), "where sessionid = '" + SessionId + "'", false );
-            else if( !ForceNewSessionId && View.ViewId != null && View.ViewId.isSet() )
+            else if( View.ViewId != null && View.ViewId.isSet() ) //Get existing session view by ViewId
                 SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ViewId, View.ViewId.get(), "where sessionid = '" + SessionId + "'", false );
-            else
+            else //Save new Session View
                 SessionViewTable = SessionViewsUpdate.getEmptyTable();
+            if( SessionViewTable.Rows.Count == 0 )
+            {
+                UpdateCache = true;
+            }
 
             DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, View.ViewName, CswNbtSessionDataItem.SessionDataType.View, IncludeInQuickLaunch, KeepInQuickLaunch );
-            SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal( View.ViewId.get() );
-            SessionViewRow[SessionDataColumn_ViewMode] = View.ViewMode.ToString();
-            SessionViewRow[SessionDataColumn_ViewXml] = View.ToString();
-            SessionViewsUpdate.update( SessionViewTable );
+            if( UpdateCache )//Overwrite
+            {
+                SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal( View.ViewId.get() );
+                SessionViewRow[SessionDataColumn_ViewMode] = View.ViewMode.ToString();
+                SessionViewRow[SessionDataColumn_ViewXml] = View.ToString();
+                SessionViewsUpdate.update( SessionViewTable );
+            }
 
             return new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewRow[SessionDataColumn_PrimaryKey] ) );
 
@@ -235,6 +251,10 @@ namespace ChemSW.Nbt
 
             return SessionViewRow;
         } // _getSessionViewRow()
+
+        #endregion Save Session Data
+
+        #region Remove Session Data
 
         /// <summary>
         /// Remove a view from the session view cache
@@ -321,12 +341,8 @@ namespace ChemSW.Nbt
             }
         } // removeSessionData()
 
-
+        #endregion Remove Session Data
 
     } // class CswNbtSessionViewMgr
 
-
 } // namespace ChemSW.Nbt
-
-
-

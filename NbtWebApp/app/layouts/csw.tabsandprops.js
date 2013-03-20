@@ -34,7 +34,8 @@
                     ShowAsReport: true,
                     viewid: '',
                     checkBoxes: {},
-                    removeTempStatus: true
+                    removeTempStatus: true,
+                    selectedTabId: ''
                 },
                 tabState: {
                     nodename: '',
@@ -72,7 +73,6 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                atLeastOne: {},
                 saveBtn: {},
                 properties: [],
                 async: true
@@ -94,12 +94,46 @@
                                 chk.hide();
                             }
                         });
-                        cswPrivate.onRenderProps();
+                        cswPrivate.onRenderProps(cswPrivate.globalState.selectedTabId);
                         cswPrivate.refreshLinkDiv();
                     }
                 }
                 return isMulti;
             };
+
+            Object.defineProperty(cswPrivate, 'initAtLeastOne', {
+                value: function _initAtLeastOne() {
+
+                    if (cswPrivate.atLeastOne) {
+                        cswPrivate.atLeastOne.saveable = false;
+                        cswPrivate.atLeastOne.property = false;
+                    } else {
+                        Object.defineProperty(cswPrivate, 'atLeastOne', {
+                            value: {
+                                saveable: false,
+                                get Saveable() {
+                                    return cswPrivate.atLeastOne.saveable;
+                                },
+                                set Saveable(val) {
+                                    if (true === val) {
+                                        cswPrivate.atLeastOne.saveable = true;
+                                    }
+                                },
+                                property: false,
+                                get Property() {
+                                    return cswPrivate.atLeastOne.property;
+                                },
+                                set Property(val) {
+                                    if (true === val) {
+                                        cswPrivate.atLeastOne.property = true;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            cswPrivate.initAtLeastOne(true);
 
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
@@ -120,22 +154,17 @@
                     cswPrivate.tabcnt = 0;
                 };
                 cswPrivate.init();
-
-
-
-            } ());
+            }());
 
             //#region Events
 
-            cswPrivate.onRenderProps = function () {
-                Csw.publish('render_' + cswPublic.getNodeId());
+            cswPrivate.onRenderProps = function (tabid) {
+                Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
             cswPrivate.onTearDownProps = function () {
                 Csw.unsubscribe('onPropChange_' + cswPrivate.propid);
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
-
-
             };
 
             cswPrivate.onTearDown = function () {
@@ -146,6 +175,7 @@
                     call.ajax.abort();
                     delete cswPrivate.ajax[name];
                 });
+                cswPrivate.initAtLeastOne(true);
             };
 
             cswPublic.tearDown = function () {
@@ -289,9 +319,32 @@
                         },
                         success: function (data) {
 
-                            function makeTabs() {
+                            function makeTabs(resetIdentity) {
                                 cswPrivate.clearTabs();
-                                cswPrivate.makeIdentityTab(data);
+
+                                // case 29017 - a little kludgey
+                                if (resetIdentity) {
+                                    cswPrivate.ajax.tabs = Csw.ajax.post({
+                                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                                        urlMethod: cswPrivate.urls.TabsUrlMethod,
+                                        data: {
+                                            EditMode: Csw.string(cswPrivate.tabState.EditMode, 'Edit'),
+                                            NodeId: cswPublic.getNodeId(),
+                                            SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.globalState.nodekeys, 0),
+                                            NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                                            PropId: '',
+                                            Date: Csw.string(cswPrivate.globalState.date, new Date().toDateString()),
+                                            filterToPropId: Csw.string(cswPrivate.globalState.filterToPropId),
+                                            Multi: Csw.bool(cswPrivate.tabState.Multi),
+                                            ConfigMode: cswPrivate.tabState.Config
+                                        },
+                                        success: function (newData) {
+                                            cswPrivate.makeIdentityTab(newData);
+                                        }
+                                    });
+                                } else {
+                                    cswPrivate.makeIdentityTab(data);
+                                }
 
                                 var tabIds = Csw.delimitedString();
                                 Csw.each(data, function (tab) {
@@ -301,24 +354,35 @@
                                     cswPrivate.tabState.tabid = '';
                                 }
 
-                                var tabdivs = [];
                                 var tabno = 0;
-                                var tabDiv, tabUl;
+                                var jqTabs = [];
+                                var tabUls = [];
+                                var tabLis = [];
 
                                 var tabFunc = function (thisTab) {
+                                    var tabStrip, tabUl;
                                     var thisTabId = thisTab.id;
 
-                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
-                                        // For PrintReports, we're going to make a separate tabstrip for each tab
-                                        tabDiv = cswPrivate.outerTabDiv.tabDiv();
-                                        tabUl = tabDiv.ul();
-                                        tabdivs[tabdivs.length] = tabDiv;
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || jqTabs.length === 0) {
+                                        tabStrip = cswPrivate.outerTabDiv.tabDiv();
+                                        tabUl = tabStrip.ul();
+                                        jqTabs[jqTabs.length] = tabStrip;
+                                        tabUls[tabUls.length] = tabUl;
+                                    } else {
+                                        tabStrip = jqTabs[jqTabs.length - 1];
+                                        tabUl = tabUls[tabUls.length - 1];
                                     }
-                                    tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
 
-                                    tabUl = tabUl || tabDiv.ul();
-                                    tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name }).data('tabid', thisTabId);
-                                    cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
+                                    var tabLi = tabUl.li();
+                                    tabLis.push(tabLi);
+                                    tabLi.data({
+                                        tabid: thisTabId,
+                                        tabno: tabLis.length
+                                    });
+                                    tabLi.a({ href: '#' + thisTabId, text: thisTab.name });
+
+                                    cswPrivate.makeTabContentDiv(tabStrip, thisTabId, thisTab.canEditLayout);
+
                                     if (Csw.string(thisTabId) === Csw.string(cswPrivate.tabState.tabid)) {
                                         cswPrivate.tabState.tabNo = tabno;
                                     }
@@ -329,30 +393,25 @@
 
                                 cswPrivate.tabcnt = tabno;
 
-                                cswPrivate.genTab = function (noChangesToPost) {
-                                    var ret = (true === noChangesToPost || Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid));
-                                    if (ret) {
-                                        Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                        cswPrivate.form.empty();
-                                        cswPrivate.onTearDown();
-                                        makeTabs();
-                                    }
-                                    return ret;
-                                };
-
-                                Csw.each(tabdivs, function (thisTabDiv) {
+                                Csw.each(jqTabs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
                                         selected: cswPrivate.tabState.tabNo,
                                         select: function (event, ui) {
                                             var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
                                             if (ret) {
-                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                                 cswPrivate.tabState.tabNo = Csw.number(ui.index);
+                                                var selectTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
                                                 cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
-                                                cswPrivate.genTab();
+                                                cswPrivate.globalState.selectedTabId = cswPrivate.tabState.tabid;
+                                                Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                                cswPrivate.form.empty();
+                                                cswPrivate.onTearDown();
+                                                makeTabs(true);
                                             }
                                             return ret;
-                                        } // select()
+
+
+                                        }
                                     }); // tabs
                                     var eachTabContentDiv;
                                     if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
@@ -369,7 +428,7 @@
                                 }); // for(var t in tabdivs)
                             }
 
-                            makeTabs();
+                            makeTabs(false);
                         } // success
                     }); // ajax
                 } // if-else editmode is add or preview
@@ -731,7 +790,7 @@
                             onClick: function () { cswPublic.save(tabContentDiv, tabid); }
                         });
                     }
-                    cswPrivate.atLeastOne = cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
+                    cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
                     if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
                             false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
@@ -745,7 +804,7 @@
                             Csw.isNullOrEmpty(cswPrivate.globalState.date) &&
                                 cswPrivate.globalState.filterToPropId === '' &&
                                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
-                                        Csw.bool(tabContentDiv.data('canEditLayout'))) {
+                                       Csw.bool(tabContentDiv.data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
@@ -836,7 +895,6 @@
             cswPrivate.handleProperties = function (layoutTable, tabContentDiv, tabid, configMode, tabPropData) {
                 'use strict';
                 layoutTable = layoutTable || cswPrivate.layoutTable;
-                cswPrivate.atLeastOne = { Property: false, Saveable: false };
                 var handleSuccess = function (propObj) {
                     cswPrivate.atLeastOne.Property = true;
                     cswPrivate.handleProp(layoutTable, propObj, tabContentDiv, tabid, configMode);
@@ -852,8 +910,7 @@
                         cswPrivate.saveBtn.show();
                     }
                 }
-                cswPrivate.onRenderProps();
-                return cswPrivate.atLeastOne;
+                cswPrivate.onRenderProps(tabid);
             }; // _handleProperties()
 
 
@@ -1065,7 +1122,7 @@
 
                                 // keep the fact that the parent property was modified
                                 cswPrivate.makeProp(propCell, singlePropData, tabContentDiv, tabid, configMode, layoutTable);
-                                cswPrivate.onRenderProps();
+                                cswPrivate.onRenderProps(tabid);
                             }
                         });
                     }
@@ -1271,9 +1328,8 @@
             (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
                 cswPrivate.refreshLinkDiv();
-            } ());
+            }());
 
             return cswPublic;
         });
-} ());
-
+}());

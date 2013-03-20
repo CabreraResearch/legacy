@@ -166,6 +166,7 @@
             };
 
             (function (a) { //ctor
+                Csw.extend(cswPrivate, opts);
                 if (a.length > 1 && false === Csw.isPlainObject(opts)) {
                     Csw.each(a, function (val) {
                         if (false === Csw.isNullOrEmpty(val)) {
@@ -173,12 +174,10 @@
                         }
                     });
                 } else if(string && string.length > 0) {
-                    Csw.extend(cswPrivate, opts);
                     var delimitedString = cswPrivate.parse(string);
                     cswPrivate.initString = delimitedString;
                     cswPublic.array = delimitedString.split(cswPrivate.delimiter);
                 }
-
                 cswPrivate.deleteDuplicates();
             }(arguments));
             return cswPublic;

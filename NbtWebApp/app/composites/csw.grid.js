@@ -349,16 +349,18 @@
 
 
                     cswPrivate.toggleGroups = function (collapse) {
-                        Csw.each(cswPrivate.grid.view.features, function (feature) {
-                            if (feature.ftype === 'grouping' || feature.ftype === 'groupingsummary') {
-                                if (collapse) {
-                                    feature.collapseAll();
-                                } else {
-                                    feature.collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
-                                    feature.expandAll();
+                        if (cswPrivate.grid.view) {
+                            Csw.each(cswPrivate.grid.view.features, function(feature) {
+                                if (feature.ftype === 'grouping' || feature.ftype === 'groupingsummary') {
+                                    if (collapse) {
+                                        feature.collapseAll();
+                                    } else {
+                                        feature.collapseAll(); //for some reason expandAll() only works after collapseAll() has been called
+                                        feature.expandAll();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     };
                     if (topToolbarItems.length > 0) {
                         topToolbarItems.push({ xtype: 'tbseparator' });

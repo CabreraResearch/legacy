@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>es5-shim</id>
+    <version>2.0.5</version>
+    <title>es5-shim</title>
+    <authors>Kristopher Michael Kowal</authors>
+    <owners>Kristopher Michael Kowal</owners>
+    <licenseUrl>https://github.com/kriskowal/es5-shim/blob/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>ECMAScript 5 compatibility shims for legacy JavaScript engines.</description>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>ES5 shim</tags>
+    <references />
+  </metadata>
+</package>

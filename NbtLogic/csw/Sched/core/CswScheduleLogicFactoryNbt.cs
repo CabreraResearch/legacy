@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Sched
 {
 
     //public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin, BatchOp, ExpiredContainers, MolFingerprints, ContainerReconciliationActions, Reconciliation , TierII }
-    public sealed class NbtScheduleRuleNames: IEquatable<NbtScheduleRuleNames>
+    public sealed class NbtScheduleRuleNames : IEquatable<NbtScheduleRuleNames>
     {
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
@@ -25,7 +25,8 @@ namespace ChemSW.Nbt.Sched
                                                                        { MolFingerprints               , MolFingerprints                },
                                                                        { ContainerReconciliationActions, ContainerReconciliationActions },
                                                                        { Reconciliation                , Reconciliation                 },
-                                                                       { TierII                        , TierII                         }
+                                                                       { TierII                        , TierII                         },
+                                                                       { CAFImport                     , CAFImport                      }
                                                                    };
         /// <summary>
         /// The string value of the current instance
@@ -79,20 +80,20 @@ namespace ChemSW.Nbt.Sched
         #region Enum members
 
 
-        public const string UpdtPropVals                    = "UpdtPropVals";
-        public const string UpdtMTBF                        = "UpdtMTBF";
-        public const string UpdtInspection                  = "UpdtInspection";
-        public const string GenNode                         = "GenNode";
-        public const string GenRequest                      = "GenRequest";
-        public const string GenEmailRpt                     = "GenEmailRpt";
-        public const string DisableChemSwAdmin              = "DisableChemSwAdmin";
-        public const string BatchOp                         = "BatchOp";
-        public const string ExpiredContainers               = "ExpiredContainers";
-        public const string MolFingerprints                 = "MolFingerprints";
-        public const string ContainerReconciliationActions  = "ContainerReconciliationActions";
-        public const string Reconciliation                  = "Reconciliation";
-        public const string TierII                          = "TierII";
-        public const string CAFImport                       = "CAFImport";
+        public const string UpdtPropVals = "UpdtPropVals";
+        public const string UpdtMTBF = "UpdtMTBF";
+        public const string UpdtInspection = "UpdtInspection";
+        public const string GenNode = "GenNode";
+        public const string GenRequest = "GenRequest";
+        public const string GenEmailRpt = "GenEmailRpt";
+        public const string DisableChemSwAdmin = "DisableChemSwAdmin";
+        public const string BatchOp = "BatchOp";
+        public const string ExpiredContainers = "ExpiredContainers";
+        public const string MolFingerprints = "MolFingerprints";
+        public const string ContainerReconciliationActions = "ContainerReconciliationActions";
+        public const string Reconciliation = "Reconciliation";
+        public const string TierII = "TierII";
+        public const string CAFImport = "CAFImport";
 
         #endregion Enum members
 
@@ -149,7 +150,7 @@ namespace ChemSW.Nbt.Sched
         #endregion IEquatable (NbtScheduleRuleNames)
 
     };
-    
+
     public class CswScheduleLogicFactoryNbt : CswScheduleLogicFactoryBase
     {
 
@@ -167,7 +168,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtExpiredContainers() );
             ReturnVal.Add( new CswScheduleLogicNbtMolFingerprints() );
             ReturnVal.Add( new CswScheduleLogicNbtContainerReconciliationActions() );
-            ReturnVal.Add( new CswScheduleLogicNbtGenRequests() ); 
+            ReturnVal.Add( new CswScheduleLogicNbtGenRequests() );
             ReturnVal.Add( new CswScheduleLogicNbtTierII() );
             ReturnVal.Add( new CswScheduleLogicNbtCAFImport() );
 

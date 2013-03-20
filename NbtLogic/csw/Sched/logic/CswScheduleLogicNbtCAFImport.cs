@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
                     int NumberToProcess = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    CAFImportManager importManager = new CAFImportManager( _CswNbtResources, NumberToProcess );
+                    CAFImportManager importManager = new CAFImportManager( _CswNbtResources, 1 );
                     importManager.Import();
 
                     //CswNbtMetaDataObjectClass batchOpOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );

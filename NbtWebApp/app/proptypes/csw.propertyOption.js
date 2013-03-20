@@ -57,7 +57,7 @@
 
                 var cswPublic = {
                     name: '',
-                    isMulti: function() {},
+                    isMulti: function () { },
                     tabState: {
                         nodeid: '',
                         nodename: '',
@@ -91,21 +91,21 @@
                     onAfterButtonClick: function () {
                     }
                 };
-                
+
                 (function _preCtr() {
                     if (Csw.isNullOrEmpty(cswPrivate)) {
                         Csw.error.throwException('Cannot create a Csw propertyOption without an object to define the property control.', 'propertyOption', 'csw.propertyOption.js', 86);
                     }
                     Csw.extend(cswPublic, cswPrivate);
                     cswPublic.name = cswPublic.propData.id;
-                }());
+                } ());
 
-                cswPublic.isReport = function() {
+                cswPublic.isReport = function () {
                     return Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode;
                 };
 
                 cswPublic.isDisabled = function () {
-                    return ( cswPublic.isReport() ||
+                    return (cswPublic.isReport() ||
                             Csw.enums.editMode.Preview === cswPublic.tabState.EditMode ||
                             Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
                 };
@@ -124,12 +124,12 @@
                 cswPublic.isMulti = function () {
                     return Csw.tryExec(cswPrivate.isMulti);
                 };
-                
-                cswPublic.doPropChangeDataBind = function() {
+
+                cswPublic.doPropChangeDataBind = function () {
                     //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
                     return (false === cswPublic.isReadOnly() && false === cswPublic.tabState.Config && false === cswPublic.isDisabled());
                 };
-                 
+
                 cswPublic.onPropChange = function (attributes) {
                     /// <summary>
                     /// Update cswPublic.data as the DOM changes. Each propType is responsible for implementing a call to this method for each relevant subfield.
@@ -164,7 +164,7 @@
                         /// Unbind all properties on this node's layout from the 
                         /// </summary>
                         'use strict';
-                        Csw.unsubscribe('render_' + cswPublic.tabState.nodeid, null, cswPrivate.renderer);
+                        Csw.unsubscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabState.tabid, null, cswPrivate.renderer);
                         Csw.unsubscribe('initPropertyTearDown', null, cswPrivate.tearDown);
                         Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, null, cswPrivate.tearDown);
                         Csw.unsubscribe('onPropChange_' + cswPublic.propid, null, cswPrivate.dataBindPropChange);
@@ -188,7 +188,7 @@
                     };
 
                     //We only want to subscribe once--not on every possible publish to render
-                    Csw.subscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
+                    Csw.subscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabState.tabid, cswPrivate.renderer);
                     Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
                     Csw.subscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
                 };

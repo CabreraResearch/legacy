@@ -2,7 +2,7 @@
 using ChemSW.Nbt.ObjClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ChemSw.Nbt.Test
+namespace ChemSW.Nbt.Test
 {
     [TestClass]
     public class CswNbtObjClassContainerLocationTest

@@ -202,11 +202,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _archiveMatchingDocs()
         {
-            //If the document is not already archived and ( has a Document Class which is not SDS or is SDS and has a Language and Format ), 
+            //If the document is not already archived and ( is not SDS or ( is SDS and has a Language and Format ) ), 
             //then archive existing Docs with the same property values
             if( Archived.Checked != Tristate.True &&
-                false == string.IsNullOrEmpty( DocumentClass.Value ) &&
-                ( DocumentClass.Value != DocumentClasses.SDS || (
+                ( NodeType.NodeTypeName != "SDS Document" || (
                 false == string.IsNullOrEmpty( Format.Value ) &&
                 false == string.IsNullOrEmpty( Language.Value ) ) ) )
             {
@@ -216,10 +215,8 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, DocumentClass.NodeTypeProp, DocumentClass.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-
-                    if( DocumentClass.Value == DocumentClasses.SDS )
+                    if( NodeType.NodeTypeName == "SDS Document" )
                     {
                         ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
                         ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );

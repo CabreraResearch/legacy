@@ -25,6 +25,17 @@ namespace ChemSW.Nbt
         public bool AllowEdit = true;
         public bool AllowDelete = true;
 
+        /// <summary>
+        /// Whether or not the user can add a Node of the NodeType (set using the AddChildren prop, None = false, anything else = true)
+        /// </summary>
+        public bool AllowAdd
+        {
+            get
+            {
+                return ( NbtViewAddChildrenSetting.None == AddChildren ) ? false : true; //28663 - If "None" then false, otherwise true
+            }
+        }
+
         private Int32 _PropId = Int32.MinValue;
         private NbtViewPropIdType _PropType = NbtViewPropIdType.NodeTypePropId;
         private NbtViewPropOwnerType _PropOwner = NbtViewPropOwnerType.First;
@@ -767,11 +778,14 @@ namespace ChemSW.Nbt
                     ShowInTree = CswConvert.ToBoolean( RelationshipObj[ShowInTreeAttrName] );
                 }
 
-                string _AllowAddChildrenAttrName = CswConvert.ToString( RelationshipObj[AllowAddChildrenAttrName] );
-                if( !string.IsNullOrEmpty( _AllowAddChildrenAttrName ) )
+                bool _AllowAdd = CswConvert.ToBoolean( RelationshipObj[AllowAddChildrenAttrName] );
+                if( _AllowAdd )
                 {
-                    //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddChildrenAttrName, true );
-                    AddChildren = (NbtViewAddChildrenSetting) _AllowAddChildrenAttrName;
+                    AddChildren = NbtViewAddChildrenSetting.InView;
+                }
+                else
+                {
+                    AddChildren = NbtViewAddChildrenSetting.None;
                 }
 
                 if( RelationshipObj[AllowViewAttrName] != null )
@@ -927,7 +941,7 @@ namespace ChemSW.Nbt
             ret.Add( Selectable.ToString().ToLower() );
             ret.Add( ArbitraryId.ToString() );
             ret.Add( "" ); // ShowInGrid.ToString().ToLower();
-            ret.Add( AddChildren.ToString() );
+            ret.Add( AllowAdd.ToString() );
             ret.Add( AllowDelete.ToString() );
 
             CswCommaDelimitedString FilterInString = new CswCommaDelimitedString();
@@ -1073,7 +1087,8 @@ namespace ChemSW.Nbt
             RelationshipNode.Attributes.Append( ShowInTreeAttr );
 
             XmlAttribute AllowAddChildrenAttr = XmlDoc.CreateAttribute( AllowAddChildrenAttrName );
-            AllowAddChildrenAttr.Value = AddChildren.ToString();
+
+            AllowAddChildrenAttr.Value = AllowAdd.ToString();
             RelationshipNode.Attributes.Append( AllowAddChildrenAttr );
 
             XmlAttribute AllowViewAttr = XmlDoc.CreateAttribute( AllowViewAttrName );
@@ -1183,7 +1198,7 @@ namespace ChemSW.Nbt
             RelationshipObj[SelectableAttrName] = Selectable.ToString().ToLower();
             RelationshipObj[ArbitraryIdAttrName] = ArbitraryId.ToString();
             RelationshipObj[ShowInTreeAttrName] = ShowInTree.ToString().ToLower();
-            RelationshipObj[AllowAddChildrenAttrName] = AddChildren.ToString();
+            RelationshipObj[AllowAddChildrenAttrName] = AllowAdd.ToString();
             RelationshipObj[AllowViewAttrName] = AllowView.ToString();
             RelationshipObj[AllowEditAttrName] = AllowEdit.ToString();
             RelationshipObj[AllowDeleteAttrName] = AllowDelete.ToString();

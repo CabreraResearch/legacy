@@ -80,6 +80,7 @@
   <xs:complexType name="CswC3Product.Size">
     <xs:sequence>
       <xs:element minOccurs="0" name="case_qty" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="catalog_no" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="pkg_qty" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="pkg_qty_uom" nillable="true" type="xs:string" />
     </xs:sequence>
@@ -122,7 +123,6 @@
       <xs:enumeration value="Name" />
       <xs:enumeration value="TradeName" />
       <xs:enumeration value="SupplierName" />
-      <xs:enumeration value="Structure" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="CswC3SearchParams.SearchFieldType" nillable="true" type="tns:CswC3SearchParams.SearchFieldType" />

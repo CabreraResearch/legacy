@@ -15,6 +15,20 @@
             <br />
             <br />
         
-        </form> 
-    </body> 
+</form> 
+
+
+           <!--#include file="MainIncludes.html" -->
+           <!--#include file="MainCswIncludes.html" -->    
+<script type="text/javascript">
+    'use strict';
+    //This will always be true in Production
+    if (window.initMain) {
+        initMain();
+    } else {
+        console.log('initMain() does not exist.  Probably a javascript compilation error.');
+    }
+
+</script>
+</body> 
 </html>

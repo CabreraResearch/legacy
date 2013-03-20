@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using NbtWebAppServices.Session;
 
@@ -55,7 +56,12 @@ namespace NbtWebAppServices.Core
 
             Ret.ErrorType = newEx.Type;
             Ret.ErrorMessage = newEx.MsgFriendly;
-            Ret.ErrorDetail = newEx.MsgEscoteric + "; " + ex.StackTrace;
+            string Message = newEx.MsgEscoteric + "; ";
+            if( CswConvert.ToBoolean( _CswNbtWcfSessionResources.CswNbtResources.SetupVbls[CswSetupVariableNames.ShowFullExceptions] ) )
+            {
+                Message += ex.StackTrace;
+            }
+            Ret.ErrorDetail = Message;
 
             return Ret;
         } // _error()

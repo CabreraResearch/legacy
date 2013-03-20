@@ -88,19 +88,20 @@
                             label.img({
                                 src: "Images\\newicons\\18\\warning.png"
                             });
-                            var x = 10;
                         }
                         var answerCell = cswPublic.table.cell(2, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                        answerCell.css('width', '250px');
                         answerCell.append('Answer: ' + cswPrivate.answer + ' ');
                         if (cswPrivate.dateAnswered !== '') {
                             answerCell.append(' (' + cswPrivate.dateAnswered + ')');
                         }
                         var correctiveActionPresent = false;
                         if (false == Csw.isNullOrEmpty(cswPrivate.correctiveAction)) {
-                            cswPublic.table.cell(3, 1).append('Corrective Action: ' + cswPrivate.correctiveAction);
+                            var correctiveActionCell = cswPublic.table.cell(3, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                            correctiveActionCell.append('Corrective Action: ' + cswPrivate.correctiveAction);
                             var correctiveActionPresent = true;
                             if (cswPrivate.dateCorrected !== '') {
-                                cswPublic.table.cell(3, 1).append(' (' + cswPrivate.dateCorrected + ')');
+                                correctiveActionCell.append(' (' + cswPrivate.dateCorrected + ')');
                             }
                         }
                         var commentsCell;

@@ -51,9 +51,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
             _resetBlame();
 
-            _acceptBlame( CswDeveloper.BV, 28406 );
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
-            _resetBlame();
         }//Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01

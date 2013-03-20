@@ -1059,38 +1059,53 @@ namespace ChemSW.Nbt
                 }
             } // if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
 
-            // case 28895
+
             if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
             {
-                // Keep 'Locations' view up to date
-
-                CswNbtMetaDataObjectClass LocationOC = this.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
-
-                Int32 maxDepth = CswConvert.ToInt32( NewValue );
-                if( maxDepth == Int32.MinValue )
-                {
-                    maxDepth = 5;
-                }
-
+                // case 28895 - Keep 'Locations' view up to date
                 CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", NbtViewVisibility.Global );
                 if( null != LocationsView )
                 {
-                    LocationsView.Root.ChildRelationships.Clear();
-                    CswNbtViewRelationship LocRel1 = LocationsView.AddViewRelationship( LocationOC, true );
-                    LocationsView.AddViewPropertyAndFilter( LocRel1, LocationLocationOCP,
-                                                            Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                            SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                                                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-                    CswNbtViewRelationship LocReln = LocRel1;
-                    for( Int32 i = 2; i <= maxDepth; i++ )
-                    {
-                        LocReln = LocationsView.AddViewRelationship( LocReln, NbtViewPropOwnerType.Second, LocationLocationOCP, true );
-                    }
+                    CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( NewValue ) );
                     LocationsView.save();
                 }
+
+                // case 28958 - Also fix the Equipment by Location view
+                CswNbtView EquipByLocView = this.ViewSelect.restoreView( "Equipment By Location", NbtViewVisibility.Global );
+                if( null != EquipByLocView )
+                {
+                    CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( NewValue ) );
+
+                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+                    CswNbtMetaDataNodeType EquipmentNT = EquipmentOC.FirstNodeType;
+                    CswNbtMetaDataNodeTypeProp EquipmentLocationNTP = null;
+                    if( null != EquipmentNT )
+                    {
+                        EquipmentLocationNTP = EquipmentNT.getNodeTypeProp( "Location" );
+                    }
+                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+                    CswNbtMetaDataNodeType AssemblyNT = AssemblyOC.FirstNodeType;
+                    CswNbtMetaDataNodeTypeProp AssemblyLocationNTP = null;
+                    if( null != AssemblyNT )
+                    {
+                        AssemblyLocationNTP = AssemblyNT.getNodeTypeProp( "Location" );
+                    }
+
+                    foreach( CswNbtViewRelationship LocRel in EquipByLocView.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+                    {
+                        if( null != EquipmentLocationNTP )
+                        {
+                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, EquipmentLocationNTP, true );
+                        }
+                        if( null != AssemblyLocationNTP )
+                        {
+                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, AssemblyLocationNTP, true );
+                        }
+                    }
+                    EquipByLocView.save();
+                }
             } // if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
-        }
+        } // _onConfigVblChange()
 
         #endregion
 

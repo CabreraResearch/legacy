@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -94,13 +95,6 @@ namespace ChemSW.Nbt.WebServices
             public bool success;
 
             [DataContract]
-            public class SizeColumnValue
-            {
-                [DataMember]
-                public string value { get; set; }
-            }
-
-            [DataContract]
             public class State
             {
                 [DataMember]
@@ -131,7 +125,6 @@ namespace ChemSW.Nbt.WebServices
                     public string name = string.Empty;
 
                     [DataMember]
-                    //public string val = "";
                     public Int32 val = Int32.MinValue;
                 }
 
@@ -145,6 +138,16 @@ namespace ChemSW.Nbt.WebServices
                     public string val = string.Empty;
                 }
 
+                [DataContract]
+                public class SizeColumnValue
+                {
+                    [DataMember]
+                    public string value { get; set; }
+
+                    [DataMember]
+                    public bool hidden { get; set; }
+                }
+
             }
         }
 
@@ -156,8 +159,11 @@ namespace ChemSW.Nbt.WebServices
 
             _setConfigurationVariables( CswC3Params, _CswNbtResources );
 
-            ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
-            CswRetObjSearchResults SourcesList = C3Search.getDataSources( CswC3Params );
+            //Instance a new C3 search and dynamically set the endpoint address
+            ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
+            _setEndpointAddress( _CswNbtResources, C3SearchClient );
+
+            CswRetObjSearchResults SourcesList = C3SearchClient.getDataSources( CswC3Params );
 
             //todo: catch error when SourcesList returns null
 
@@ -208,8 +214,11 @@ namespace ChemSW.Nbt.WebServices
 
             _setConfigurationVariables( CswC3SearchParams, _CswNbtResources );
 
-            ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
-            CswRetObjSearchResults SearchResults = C3Search.getProductDetails( CswC3SearchParams );
+            //Instance a new C3 search and dynamically set the endpoint address
+            ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
+            _setEndpointAddress( _CswNbtResources, C3SearchClient );
+
+            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
             if( SearchResults.CswC3SearchResults.Length > 0 )
             {
                 ChemCatCentral.CswC3Product C3ProductDetails = SearchResults.CswC3SearchResults[0];
@@ -225,8 +234,11 @@ namespace ChemSW.Nbt.WebServices
 
             JObject ret = new JObject();
 
-            ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
-            CswRetObjSearchResults SearchResults = C3Search.search( CswC3SearchParams );
+            //Instance a new C3 search and dynamically set the endpoint address
+            ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
+            _setEndpointAddress( _CswNbtResources, C3SearchClient );
+
+            CswRetObjSearchResults SearchResults = C3SearchClient.search( CswC3SearchParams );
 
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
             ret["table"] = wsTable.getTable( SearchResults );
@@ -252,9 +264,12 @@ namespace ChemSW.Nbt.WebServices
 
             _setConfigurationVariables( CswC3SearchParams, _CswNbtResources );
 
+            //Instance a new C3 search and dynamically set the endpoint address
+            ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
+            _setEndpointAddress( _CswNbtResources, C3SearchClient );
+
             // Perform C3 search to get the product details
-            ChemCatCentral.SearchClient C3Search = new ChemCatCentral.SearchClient();
-            CswRetObjSearchResults SearchResults = C3Search.getProductDetails( CswC3SearchParams );
+            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
             if( SearchResults.CswC3SearchResults.Length > 0 )
             {
                 C3ProductDetails = SearchResults.CswC3SearchResults[0];
@@ -278,7 +293,7 @@ namespace ChemSW.Nbt.WebServices
                 C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
 
                 // Create size node(s)
-                Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
+                Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> ProductSizes = C3Import.createSizeNodes( C3ProductTempNode );
 
                 // Create synonyms node(s)
                 C3Import.createMaterialSynonyms( C3ProductTempNode );
@@ -369,7 +384,7 @@ namespace ChemSW.Nbt.WebServices
                     _Mappings.Add( PhysicalState, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
-                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Solid,
+                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Liquid,
                         NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( PhysicalState ),
                         NBTSubFieldPropColName = "field1"
                     } );
@@ -470,14 +485,14 @@ namespace ChemSW.Nbt.WebServices
                         NBTSubFieldPropColName2 = "field1"
                     } );
 
-                    const string CatalogNo = CswNbtObjClassSize.PropertyName.CatalogNo;
-                    _Mappings.Add( CatalogNo, new C3Mapping
-                    {
-                        NBTNodeTypeId = SizeNT.NodeTypeId,
-                        C3ProductPropertyValue = _ProductToImport.CatalogNo,
-                        NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( CatalogNo ),
-                        NBTSubFieldPropColName = "field1"
-                    } );
+                    //const string CatalogNo = CswNbtObjClassSize.PropertyName.CatalogNo;
+                    //_Mappings.Add( CatalogNo, new C3Mapping
+                    //{
+                    //    NBTNodeTypeId = SizeNT.NodeTypeId,
+                    //    C3ProductPropertyValue = _ProductToImport.CatalogNo,
+                    //    NBTNodeTypePropId = SizeNT.getNodeTypePropIdByObjectClassProp( CatalogNo ),
+                    //    NBTSubFieldPropColName = "field1"
+                    //} );
                 }
 
                 #endregion
@@ -505,24 +520,30 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = null;
 
-                CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
-                CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
-
-                CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
-
-                UnitsView.AddViewPropertyAndFilter( Parent,
-                    MetaDataProp: NameOCP,
-                    Value: unitOfMeasurementName,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
-                int Count = Tree.getChildNodeCount();
-                for( int i = 0; i < Count; i++ )
+                if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
-                    Tree.goToNthChild( i );
-                    UnitOfMeasureNode = Tree.getNodeForCurrentPosition();
-                    Tree.goToParentNode();
+                    //Translate the name if necessary
+                    //string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
+
+                    CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+                    CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
+
+                    CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
+                    CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
+
+                    UnitsView.AddViewPropertyAndFilter( Parent,
+                                                       MetaDataProp: NameOCP,
+                                                       Value: unitOfMeasurementName,
+                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
+                    int Count = Tree.getChildNodeCount();
+                    for( int i = 0; i < Count; i++ )
+                    {
+                        Tree.goToNthChild( i );
+                        UnitOfMeasureNode = Tree.getNodeForCurrentPosition();
+                        Tree.goToParentNode();
+                    }
                 }
 
                 return UnitOfMeasureNode;
@@ -588,10 +609,10 @@ namespace ChemSW.Nbt.WebServices
                 return Supplier;
             }//createVendorNode()
 
-            public Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> createSizeNodes( CswNbtObjClassMaterial ChemicalNode )
+            public Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> createSizeNodes( CswNbtObjClassMaterial ChemicalNode )
             {
                 // Return object
-                Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>> ProductSizes = new Collection<Collection<C3CreateMaterialResponse.SizeColumnValue>>();
+                Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> ProductSizes = new Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>>();
 
                 CswNbtMetaDataNodeType SizeNT = _CswNbtResources.MetaData.getNodeType( "Size" );
                 if( null != SizeNT )
@@ -621,19 +642,27 @@ namespace ChemSW.Nbt.WebServices
                             sizeNode.postChanges( true );
 
                             //Set the return object
-                            Collection<C3CreateMaterialResponse.SizeColumnValue> Size = new Collection<C3CreateMaterialResponse.SizeColumnValue>();
+                            Collection<C3CreateMaterialResponse.State.SizeColumnValue> Size = new Collection<C3CreateMaterialResponse.State.SizeColumnValue>();
 
-                            C3CreateMaterialResponse.SizeColumnValue UnitCount = new C3CreateMaterialResponse.SizeColumnValue();
+                            C3CreateMaterialResponse.State.SizeColumnValue UnitCount = new C3CreateMaterialResponse.State.SizeColumnValue();
                             UnitCount.value = CswConvert.ToString( sizeNode.UnitCount.Value );
+                            UnitCount.hidden = false;
                             Size.Add( UnitCount );
 
-                            C3CreateMaterialResponse.SizeColumnValue InitialQuantity = new C3CreateMaterialResponse.SizeColumnValue();
+                            C3CreateMaterialResponse.State.SizeColumnValue InitialQuantity = new C3CreateMaterialResponse.State.SizeColumnValue();
                             InitialQuantity.value = sizeNode.InitialQuantity.Gestalt;
+                            InitialQuantity.hidden = false;
                             Size.Add( InitialQuantity );
 
-                            C3CreateMaterialResponse.SizeColumnValue CatalogNo = new C3CreateMaterialResponse.SizeColumnValue();
+                            C3CreateMaterialResponse.State.SizeColumnValue CatalogNo = new C3CreateMaterialResponse.State.SizeColumnValue();
                             CatalogNo.value = sizeNode.CatalogNo.Text;
+                            CatalogNo.hidden = false;
                             Size.Add( CatalogNo );
+
+                            C3CreateMaterialResponse.State.SizeColumnValue NodeId = new C3CreateMaterialResponse.State.SizeColumnValue();
+                            NodeId.value = sizeNode.NodeId.ToString();
+                            NodeId.hidden = true;
+                            Size.Add( NodeId );
 
                             ProductSizes.Add( Size );
                         }
@@ -679,10 +708,26 @@ namespace ChemSW.Nbt.WebServices
                                 if( null != unitOfMeasure )
                                 {
                                     Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].pkg_qty );
-                                    Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.BaseUnit.Text );
+                                    Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.Name.Text );
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, unitOfMeasure.NodeId.PrimaryKey );
-                                    string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.BaseUnit.Text;
+                                    string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
                                     Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, sizeGestalt );
+
+                                    // Note: This is a hackadoodle for now since importer is getting changed... soon...
+                                    // Assumption: We are working with a node that is of NodeType Size
+                                    if( NodeType.NodeTypeName == "Size" )
+                                    {
+                                        // Set the Unit Count
+                                        CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty );
+
+                                        // Set the Catalog No
+                                        // This needs to be here because each size has a unique catalogno
+                                        CswNbtMetaDataNodeTypeProp CatalogNoNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
+                                    }
                                 }
                                 break;
                             case CswNbtMetaDataFieldType.NbtFieldType.MOL:
@@ -736,6 +781,21 @@ namespace ChemSW.Nbt.WebServices
             CswC3SearchParams.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
             CswC3SearchParams.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
             CswC3SearchParams.MaxRows = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" ) );
+        }
+
+        /// <summary>
+        /// Dynamically set the endpoint address for a ChemCatCentral SearchClient.
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
+        /// <param name="C3SearchClient"></param>
+        private static void _setEndpointAddress( CswNbtResources CswNbtResources, ChemCatCentral.SearchClient C3SearchClient )
+        {
+            if( null != C3SearchClient )
+            {
+                string C3_UrlStem = CswNbtResources.SetupVbls[CswSetupVariableNames.C3UrlStem];
+                EndpointAddress URI = new EndpointAddress( C3_UrlStem );
+                C3SearchClient.Endpoint.Address = URI;
+            }
         }
 
         #endregion

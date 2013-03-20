@@ -194,7 +194,7 @@
             Csw.ajaxWcf.post({
                 urlMethod: 'Session/End',
                 data: {},
-                success: function () {
+                complete: function() {
                     Csw.clientSession.finishLogout();
                 }
             });

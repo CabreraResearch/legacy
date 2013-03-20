@@ -57,6 +57,30 @@ namespace ChemSW.Nbt
         /// ChemCatCentral
         /// </summary>
         public static readonly CswNbtModuleName C3 = new CswNbtModuleName( "C3" );
+        /// <summary>
+        /// Containers
+        /// </summary>
+        public static readonly CswNbtModuleName Containers = new CswNbtModuleName( "Containers" );
+        /// <summary>
+        /// Regulatory Lists
+        /// </summary>
+        public static readonly CswNbtModuleName RegulatoryLists = new CswNbtModuleName( "Regulatory Lists" );
+        /// <summary>
+        /// Module that allows fire and hazard reporting on containers
+        /// </summary>
+        public static readonly CswNbtModuleName FireCode = new CswNbtModuleName( "Fire Code" );
+        /// <summary>
+        /// Module that allows safety data sheets on materials
+        /// </summary>
+        public static readonly CswNbtModuleName SDS = new CswNbtModuleName( "SDS" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiSite = new CswNbtModuleName( "Multi Site" );
+        /// <summary>
+        /// Multiple Site NodeTypes
+        /// </summary>
+        public static readonly CswNbtModuleName MultiInventoryGroup = new CswNbtModuleName( "Multi Inventory Group" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt

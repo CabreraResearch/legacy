@@ -1,4 +1,4 @@
-                        <!--#include file="DevHeader.html" -->
+                        <!--#include file="MainHeader.html" -->
                         <tr>
                             <td id="Td5" class="PageTable_LeftColumn" rowspan="5">
                                 <img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450"/>
@@ -51,39 +51,6 @@
 
 
                
-<script type="text/javascript">
-    'use strict';
-    //This will always be true in Production
-    if (window.initMain) {
-        initMain();
-    } else {
-        console.log('initMain() does not exist.  Probably a javascript compilation error.');
-    }
-	if(false) {
-		//launch Chrome with cmd to enable "C:\Program Files\Google\Chrome\Application\chrome.exe" --enable-memory-info
-		var stats = new xStats({
-			'mode': 'mem',
-			'height': 130,
-			'width': 200,
-			'padding': 10,
-			'locked': false,
-			'fps': {
-				'bg': '#330000',
-				'fg': '#cc6600'
-			},
-			'ms': {
-				'bg': '#000033',
-				'fg': '#3366ff'
-			},
-			'mem': {
-				'bg': '#000033',
-				'fg': '#660099'
-			}
-		});
-		$(document).ready(function() {
-			document.getElementById('CswFooterDiv').appendChild(stats.element);
-		});
-	}
-</script>
 
-<!--#include file="MainFooter.html" -->
+
+<!--#include file="DevFooter.html" -->

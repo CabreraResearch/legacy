@@ -651,7 +651,8 @@ window.initMain = window.initMain || function (undefined) {
                             NodeTypeId: o.nodetypeid,
                             PropIdAttr: o.propid,
                             LimitMenuTo: o.limitMenuTo,
-                            ReadOnly: o.readonly
+                            ReadOnly: o.readonly,
+                            NodeId: o.nodeid
                         }
                     },
                     onAlterNode: function(nodeid, nodekey) {
@@ -1396,6 +1397,7 @@ window.initMain = window.initMain || function (undefined) {
                     case 'modules':
                         Csw.actions.modules(Csw.main.centerTopDiv, {
                             onModuleChange: function() {
+                                refreshHeaderMenu();
                                 refreshDashboard();
                                 refreshViewSelect();
                             }

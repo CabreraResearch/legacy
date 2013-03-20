@@ -82,6 +82,51 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
                 }
+
+                //Alert wizard to active modules
+                bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers );
+                Response.Data.ContainersModuleEnabled = ContainersEnabled;
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                    ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
+                Response.Data.SDSModuleEnabled = SDSEnabled;
+
+                //Determine the steps
+                int StepNo = 1;
+                MaterialResponse.WizardStep TypeAndIdentity = new MaterialResponse.WizardStep()
+                {
+                    StepNo = StepNo,
+                    StepName = "Choose Type and Identity"
+                };
+                Response.Data.Steps.Add( TypeAndIdentity );
+                StepNo++;
+
+                MaterialResponse.WizardStep AdditionalProps = new MaterialResponse.WizardStep()
+                {
+                    StepNo = StepNo,
+                    StepName = "Additional Properties"
+                };
+                Response.Data.Steps.Add( AdditionalProps );
+                StepNo++;
+
+                if( ContainersEnabled )
+                {
+                    MaterialResponse.WizardStep Sizes = new MaterialResponse.WizardStep()
+                    {
+                        StepNo = StepNo,
+                        StepName = "Size(s)"
+                    };
+                    Response.Data.Steps.Add( Sizes );
+                    StepNo++;
+                }
+                if( SDSEnabled )
+                {
+                    MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep()
+                    {
+                        StepNo = StepNo,
+                        StepName = "Attach SDS"
+                    };
+                    Response.Data.Steps.Add( AttachSDS );
+                }
             }
         }
 
@@ -95,6 +140,20 @@ namespace ChemSW.Nbt.WebServices
                 if( null != SupplierView )
                 {
                     Response.Data.SuppliersView.SessionViewId = SupplierView.SessionViewId;
+                }
+            }
+        }
+
+        public static void getPhysicalState( ICswResources CswResources, MaterialResponse Response, string NodeId )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( NodeId );
+                if( CswTools.IsPrimaryKey( pk ) )
+                {
+                    CswNbtObjClassMaterial materialNode = NbtResources.Nodes[pk];
+                    Response.Data.PhysicalState = materialNode.PhysicalState.Value;
                 }
             }
         }
