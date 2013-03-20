@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.Schema
                 InspectionGroupNTP.ReadOnly = true;
                 CswNbtMetaDataNodeTypeProp InspectionTargetTypeNTP = InspectionScheduleNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.ParentType );
                 InspectionTargetTypeNTP.ServerManaged = true;
+                InspectionTargetTypeNTP.Multi = PropertySelectMode.Single;
                 InspectionTargetTypeNTP.removeFromAllLayouts();
                 CswNbtMetaDataNodeTypeProp InspectionTargetViewNTP = InspectionScheduleNT.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.ParentView );
                 InspectionTargetViewNTP.ServerManaged = true;

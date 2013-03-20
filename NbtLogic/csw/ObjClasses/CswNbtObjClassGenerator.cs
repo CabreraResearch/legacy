@@ -121,6 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
                                                 ParentType.SelectMode != PropertySelectMode.Blank );
                 if( SetDefaultParentType )
                 {
+                    ParentType.SelectedNodeTypeIds.Clear();
                     CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass );
                     foreach( CswNbtMetaDataNodeType InspectionTargetNt in InspectionTargetOc.getNodeTypes() )
                     {
@@ -173,6 +174,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     if( MatchingInspectionTargetNts.Count > 0 )
                     {
+                        TargetType.SelectedNodeTypeIds.Clear();
                         CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
                         foreach( CswNbtMetaDataNodeType InspectionDesignNt in InspectionDesignOc.getNodeTypes() )
                         {
