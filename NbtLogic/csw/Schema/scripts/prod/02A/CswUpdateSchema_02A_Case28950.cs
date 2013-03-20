@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 28950
     /// </summary>
-    public class CswUpdateSchema_02A_Case28950 : CswUpdateSchemaTo
+    public class CswUpdateSchema_02A_Case28950: CswUpdateSchemaTo
     {
         public override CswDeveloper Author
         {
@@ -23,15 +23,27 @@ namespace ChemSW.Nbt.Schema
         {
 
             CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClassProp instructionsOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Instructions );
             CswNbtMetaDataObjectClassProp sqlOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Sql );
+
+            foreach( CswNbtMetaDataNodeTypeProp instructionsNTP in instructionsOCP.getNodeTypeProps() )
+            {
+                instructionsNTP.TextAreaColumns = 65;
+                instructionsNTP.TextAreaRows = 6;
+            }
 
             foreach( CswNbtMetaDataNodeTypeProp sqlNTP in sqlOCP.getNodeTypeProps() )
             {
-                string helpText =  "To create a parameterized sql report wrap the parameter name(s) in {} brackets. ";
-                helpText += "Enter a User property name such as 'username' to have the parameter automatically filled in with the current users value for that property. ";
-                helpText += "You may also use the keywords 'nodeid' or 'userid' to have the primary key of the current user filled in as the value for that parameter.";
+                sqlNTP.HelpText = "";
+            }
 
-                sqlNTP.HelpText = helpText;
+            string txt = "To create a parameterized sql report wrap the parameter name(s) in {} brackets.\n\n";
+            txt += "Enter a User property name such as 'username' to have the parameter automatically filled in with the current users value for that property. You may also use the keywords 'nodeid' or 'userid' to have the primary key of the current user filled in as the value for that parameter.";
+
+            foreach( CswNbtObjClassReport reportNode in reportOC.getNodes( false, true, false, true ) )
+            {
+                reportNode.Instructions.Text = txt;
+                reportNode.postChanges( false );
             }
 
         } // update()
