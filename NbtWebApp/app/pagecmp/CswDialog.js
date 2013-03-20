@@ -25,7 +25,7 @@
                 }
             };
         };
-    } ());
+    }());
     var cswPrivate = cswPrivateInit();
     cswPrivate.div = Csw.literals.div();
 
@@ -126,22 +126,23 @@
             if (options) Csw.extend(o, options);
 
             var div = Csw.literals.div();
-            var table = div.table({
+            var form = div.form();
+            var table = form.table({
                 name: 'tbl',
                 FirstCellRightAlign: true
             });
 
             var row = 1;
-            table.cell(row, 1).text('Name:');
+            table.cell(row, 1).setLabelText("Name", true, false);
             var nameTextCell = table.cell(row, 2);
             var nameTextBox = nameTextCell.input({
                 name: 'nametb',
                 type: Csw.enums.inputTypes.text,
-                cssclass: 'textinput'
-            });
+                cssclass: 'textinput',
+            }).required(true, false);
             row += 1;
 
-            table.cell(row, 1).text('Category:');
+            table.cell(row, 1).setLabelText('Category', false, false);
             var categoryTextCell = table.cell(row, 2);
             var categoryTextBox = categoryTextCell.input({
                 name: 'cattb',
@@ -153,7 +154,7 @@
 
             var displayModeSelect;
             if (Csw.isNullOrEmpty(o.viewmode)) {
-                table.cell(row, 1).text('Display Mode:');
+                table.cell(row, 1).setLabelText('Display Mode', false, false);
                 displayModeSelect = table.cell(row, 2).select({ name: o.name + '_dmsel' });
                 displayModeSelect.option({ value: 'Grid' });
                 displayModeSelect.option({ value: 'List' });
@@ -162,47 +163,50 @@
                 row += 1;
             }
 
-            var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to:');
+            var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to');
             row += 1;
-            var saveBtn = div.button({
+            var saveBtn = form.button({
                 name: o.name + '_submit',
                 enabledText: 'Create View',
                 disabledText: 'Creating View',
                 onClick: function () {
+                    if (form.$.valid()) {
+                        var createData = {
+                            Visibility: '',
+                            VisibilityRoleId: '',
+                            VisibilityUserId: ''
+                        };
+                        createData.ViewName = nameTextBox.val();
+                        createData.Category = categoryTextBox.val();
+                        createData.ViewId = o.viewid;
+                        if (Csw.isNullOrEmpty(o.viewmode)) {
+                            createData.ViewMode = displayModeSelect.val();
+                        } else {
+                            createData.ViewMode = o.viewmode;
+                        }
 
-                    var createData = {
-                        Visibility: '',
-                        VisibilityRoleId: '',
-                        VisibilityUserId: ''
-                    };
-                    createData.ViewName = nameTextBox.val();
-                    createData.Category = categoryTextBox.val();
-                    createData.ViewId = o.viewid;
-                    if (Csw.isNullOrEmpty(o.viewmode)) {
-                        createData.ViewMode = displayModeSelect.val();
+                        var visValue = visSelect.getSelected();
+                        createData.Visibility = visValue.visibility;
+                        createData.VisibilityRoleId = visValue.roleid;
+                        createData.VisibilityUserId = visValue.userid;
+
+                        Csw.ajax.post({
+                            urlMethod: 'createView',
+                            data: createData,
+                            success: function(data) {
+                                div.$.dialog('close');
+                                Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
+                            },
+                            error: saveBtn.enable
+                        });
                     } else {
-                        createData.ViewMode = o.viewmode;
+                        saveBtn.enable();
                     }
-
-                    var visValue = visSelect.getSelected();
-                    createData.Visibility = visValue.visibility;
-                    createData.VisibilityRoleId = visValue.roleid;
-                    createData.VisibilityUserId = visValue.userid;
-
-                    Csw.ajax.post({
-                        urlMethod: 'createView',
-                        data: createData,
-                        success: function (data) {
-                            div.$.dialog('close');
-                            Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
-                        },
-                        error: saveBtn.enable
-                    });
                 }
             });
 
             /* Cancel Button */
-            div.button({
+            form.button({
                 name: o.name + '_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
@@ -211,7 +215,7 @@
                 }
             });
 
-            openDialog(div, 400, 200, null, 'New View');
+            openDialog(div, 425, 210, null, 'New View');
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             'use strict';
@@ -541,7 +545,7 @@
                         urlMethod: 'getPropertiesForLayoutAdd',
                         data: ajaxdata,
                         success: function (data) {
-                            var propOpts = [{ value: '', display: 'Select...'}];
+                            var propOpts = [{ value: '', display: 'Select...' }];
                             Csw.each(data.add, function (p) {
                                 var display = p.propname;
                                 if (Csw.bool(p.hidden)) {
@@ -1005,8 +1009,8 @@
                             title: 'Sizes',
                             height: 100,
                             width: 300,
-                            fields: [{ name: 'case_qty', type: 'string' }, { name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'catalog_no', type: 'string'}],
-                            columns: [{ header: 'Unit Count', dataIndex: 'case_qty' }, { header: 'Initial Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Catalog No', dataIndex: 'catalog_no'}],
+                            fields: [{ name: 'case_qty', type: 'string' }, { name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'catalog_no', type: 'string' }],
+                            columns: [{ header: 'Unit Count', dataIndex: 'case_qty' }, { header: 'Initial Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Catalog No', dataIndex: 'catalog_no' }],
                             data: {
                                 items: UniqueProductSizes,
                                 buttons: []
@@ -1020,8 +1024,8 @@
                             title: 'Extra Attributes',
                             height: 150,
                             width: 300,
-                            fields: [{ name: 'attribute', type: 'string' }, { name: 'value', type: 'string'}],
-                            columns: [{ header: 'Attribute', dataIndex: 'attribute' }, { header: 'Value', dataIndex: 'value'}],
+                            fields: [{ name: 'attribute', type: 'string' }, { name: 'value', type: 'string' }],
+                            columns: [{ header: 'Attribute', dataIndex: 'attribute' }, { header: 'Value', dataIndex: 'value' }],
                             data: {
                                 items: data.ProductDetails.TemplateSelectedExtensionData,
                                 buttons: []

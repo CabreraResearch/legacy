@@ -22,7 +22,8 @@
                 
                 visibilitySelect: null,
                 roleSelect: null,
-                userSelect: null
+                userSelect: null,
+                required: false
             };
             Csw.extend(cswPrivate, options);
 
@@ -48,7 +49,7 @@
                 Csw.clientSession.isAdministrator({
                     'Yes': function() {
 
-                        table.cell(rownum, 1).text(label);
+                        table.cell(rownum, 1).setLabelText(label, cswPrivate.required, false);
                         var parentTbl = table.cell(rownum, 2).table();
                         //var parentId = table.getId();
 
