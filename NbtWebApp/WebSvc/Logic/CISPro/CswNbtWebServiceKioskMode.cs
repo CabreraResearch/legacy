@@ -478,7 +478,7 @@ namespace ChemSW.Nbt.WebServices
                     break;
                 case Modes.Status:
                     OpData.Field1.Name = "Status:";
-                    OpData.Field2.Name = "Equipment:";
+                    OpData.Field2.Name = "Item:";
                     break;
                 default:
                     OpData.ModeStatusMsg = "Error: Scanned mode does not exist or is unavailable";
