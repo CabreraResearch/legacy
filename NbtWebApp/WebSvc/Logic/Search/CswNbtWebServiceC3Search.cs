@@ -526,28 +526,11 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
 
-                    if( unitOfMeasurementName.Equals( "Liters" ) )
-                    {
-                        CswNbtViewProperty ViewProperty = UnitsView.AddViewProperty( Parent, NameOCP );
-                        UnitsView.AddViewPropertyFilter( ViewProperty,
-                                                         CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                         CswNbtSubField.SubFieldName.Text,
-                                                         CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                         "Liters" );
+                    UnitsView.AddViewPropertyAndFilter( Parent,
+                                                        MetaDataProp: NameOCP,
+                                                        Value: unitOfMeasurementName,
+                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
-                        UnitsView.AddViewPropertyFilter( ViewProperty,
-                                                         CswNbtPropFilterSql.PropertyFilterConjunction.Or,
-                                                         CswNbtSubField.SubFieldName.Text,
-                                                         CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                         "L" );
-                    }
-                    else
-                    {
-                        UnitsView.AddViewPropertyAndFilter( Parent,
-                                                            MetaDataProp: NameOCP,
-                                                            Value: unitOfMeasurementName,
-                                                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                    }
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
                     int Count = Tree.getChildNodeCount();
