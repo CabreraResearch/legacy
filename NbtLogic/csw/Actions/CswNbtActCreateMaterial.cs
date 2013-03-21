@@ -280,7 +280,6 @@ namespace ChemSW.Nbt.Actions
                     CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
                     NewVendorNode.VendorName.Text = Suppliername;
                     NewVendorNode.VendorName.SyncGestalt();
-                    NewVendorNode.IsTemp = false;
                     NewVendorNode.postChanges( true );
                     //Set the supplierId to the new vendor node
                     SupplierId = NewVendorNode.NodeId.ToString();
@@ -461,6 +460,18 @@ namespace ChemSW.Nbt.Actions
                                         SizeNodeToDelete.delete();
                                     }
                                 }
+                            }
+                        }
+
+                        // Set the Vendor node property isTemp = false if necessary
+                        CswPrimaryKey VendorNodePk = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
+                        if( CswTools.IsPrimaryKey( VendorNodePk ) )
+                        {
+                            CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
+                            if( null != VendorNode )
+                            {
+                                VendorNode.IsTemp = false;
+                                VendorNode.postChanges( false );
                             }
                         }
 

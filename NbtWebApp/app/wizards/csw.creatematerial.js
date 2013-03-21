@@ -36,6 +36,7 @@
                     quantityEditableName: 'Quantity Editable',
                     unitCountName: 'Unit Count'
                 },
+                newSupplierName: 'New Supplier Name >>',
                 tabsAndProps: null,
                 documentTabsAndProps: null,
                 showQuantityEditable: false,
@@ -50,6 +51,7 @@
                     materialType: { name: '', val: '' },
                     tradeName: '', 
                     supplier: { name: '', val: '' },
+                    c3supplierName: '',
                     addNewC3Supplier: false,
                     partNo: '',
                     properties: {},
@@ -223,6 +225,7 @@
                     if (cswPrivate.newC3SupplierInput && cswPrivate.supplierSelect.selectedText) {
                         if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                             cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
+                            cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
                         }
                     }
                     
@@ -273,7 +276,7 @@
                    cswPrivate.makeNewC3SupplierInput = function(visible) {
                         if (!cswPrivate.newC3SupplierInput) {
                             cswPrivate.newC3SupplierInput = tbl.cell(3, 3).input({
-                                value: cswPrivate.state.supplier.name,
+                                value: cswPrivate.state.c3SupplierName,
                                 onChange: changeMaterial
                             });
                         }
@@ -296,11 +299,11 @@
                         var allowAddButton = true;
                         var extraOptions = [];
 
+                        // If we are importing from C3 with a new supplier, always show the
+                        // 'New Supplier Name >>' option instead of the 'New+' button.
                         if (cswPrivate.state.addNewC3Supplier) {
                             allowAddButton = false;
-                            cswPrivate.newSupplierName = 'New Supplier Name >>';
                             extraOptions.push({ id: '', value: cswPrivate.newSupplierName });
-                            cswPrivate.makeNewC3SupplierInput(true);
                         }
 
                         var ajaxData = {};
@@ -323,7 +326,15 @@
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                             onChange: changeMaterial,
                             isRequired: true,
-                            extraOptions: extraOptions
+                            extraOptions: extraOptions,
+                            onSuccess: function () {
+                                if (cswPrivate.supplierSelect.selectedText) {
+                                    if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
+                                        cswPrivate.state.c3SupplierName = cswPrivate.state.supplier.name;
+                                        cswPrivate.makeNewC3SupplierInput(true);
+                                    }
+                                }
+                            }
                         });
                     };
                     cswPrivate.makeSupplierCtrl();
