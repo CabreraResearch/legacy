@@ -11,6 +11,8 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassGenerator : CswNbtObjClass, ICswNbtPropertySetScheduler
     {
+        #region Properties and ctor
+
         public const string InspectionGeneratorNodeTypeName = "Inspection Schedule";
 
         public sealed class PropertyName
@@ -37,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
+        private CswNbtObjClassDefault _CswNbtObjClassDefault;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
 
         public CswNbtObjClassGenerator( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -65,13 +67,20 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        private void _setDefaultValues()
+        private Collection<CswPrimaryKey> _TargetParents;
+        public Collection<CswPrimaryKey> TargetParents
         {
-            if( TargetType.Empty )
+            get
             {
-                Enabled.Checked = Tristate.False;
+                if( null == _TargetParents )
+                {
+                    _initTargetParents();
+                }
+                return _TargetParents;
             }
         }
+
+        #endregion Properties and ctor
 
         #region Inherited Events
 
@@ -83,11 +92,6 @@ namespace ChemSW.Nbt.ObjClasses
             //Case 24572
             updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
 
-            // BZ 7845
-            if( TargetType.Empty )
-            {
-                Enabled.Checked = Tristate.False;
-            }
             // case 28352
             Int32 max = DueDateInterval.getMaximumWarningDays();
             if( WarningDays.Value > max )
@@ -102,10 +106,113 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        {
+            _deleteFutureNodes();
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+        } //beforeDeleteNode()
+
+        public override void afterDeleteNode()
+        {
+            _CswNbtObjClassDefault.afterDeleteNode();
+        }//afterDeleteNode()        
+
+        public override void afterPopulateProps()
+        {
+            DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
+
+            if( _CswNbtResources.EditMode != NodeEditMode.Add )  // case 28352
+            {
+                // case 28146
+                WarningDays.MinValue = 0;
+                WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+            }
+            Owner.SetOnPropChange( onOwnerPropChange );
+            TargetType.SetOnPropChange( onTargetTypePropChange );
+            ParentType.SetOnPropChange( onParentTypePropChange );
+
+            _CswNbtObjClassDefault.afterPopulateProps();
+        }//afterPopulateProps()
+
+        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        {
+            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+        }
+
+        public override bool onButtonClick( NbtButtonData ButtonData )
+        {
+            if( null != ButtonData.NodeTypeProp )
+            {
+            }
+            return true;
+        }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.Node.copyPropertyValues( Node );
+            CopiedIDNode.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
+            CopiedIDNode.postChanges( true );
+            return CopiedIDNode.Node;
+        }
+
+        #endregion Inherited Events
+
+        #region Public
+
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
+        {
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
+        }
+
+        public Int32 GeneratedNodeCount( DateTime TargetDay )
+        {
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.ViewName = "Generated Node Count";
+
+            CswNbtMetaDataNodeType TargetNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
+            CswNbtMetaDataNodeTypeProp GeneratorNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
+            CswNbtMetaDataNodeTypeProp CreatedDateNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate );
+
+            CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
+            View.AddViewPropertyAndFilter( TargetRel,
+                                           GeneratorNTP,
+                                           Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                           ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                           Value: this.NodeId.PrimaryKey.ToString(),
+                                           SubFieldName: ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
+                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            if( DateTime.MinValue != TargetDay )
+            {
+                View.AddViewPropertyAndFilter( TargetRel,
+                                               CreatedDateNTP,
+                                               Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                               ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                               Value: TargetDay.Date.ToString(),
+                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            }
+
+            ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+            return TargetTree.getChildNodeCount();
+        } // GeneratedNodeCount
+
+        #endregion Public
+
+        #region Private Helper Functions
+
+        private void _setDefaultValues()
+        {
+            if( TargetType.Empty )
+            {
+                Enabled.Checked = Tristate.False;
+            }
+        }
+
         private void _trySetNodeTypeSelectDefaultValues()
         {
             //has owner and (is inspection schedule or has a view already)
-            bool RequiresParentView = CswTools.IsPrimaryKey(Owner.RelatedNodeId) &&
+            bool RequiresParentView = CswTools.IsPrimaryKey( Owner.RelatedNodeId ) &&
                             ( Node.getNodeType().getFirstVersionNodeType().NodeTypeName == InspectionGeneratorNodeTypeName ||
                             ( ParentView.ViewId != null &&
                               ParentView.ViewId.isSet() ) );
@@ -130,9 +237,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( InspectionTargetNt.IsLatestVersion() )
                         {
                             CswNbtMetaDataNodeTypeProp TargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
-                            if( TargetGroupNtp.IsFK &&
-                                NbtViewRelatedIdType.NodeTypeId.ToString() == TargetGroupNtp.FKType &&
-                                Int32.MinValue != TargetGroupNtp.FKValue )
+                            if( _fkIsValid( TargetGroupNtp ) )
                             {
                                 CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( TargetGroupNtp.FKValue ).getNodeTypeLatestVersion();
                                 if( null != InspectionTargetGroupNt &&
@@ -186,17 +291,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 CswNbtMetaDataNodeTypeProp DesignTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
                                 foreach( CswNbtMetaDataNodeType MatchingInspectionTargetNt in MatchingInspectionTargetNts )
                                 {
-                                    if( DesignTargetNtp.IsFK &&
-                                        NbtViewRelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
-                                        Int32.MinValue != DesignTargetNtp.FKValue )
+                                    if( _fkIsValid( DesignTargetNtp ) && MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )
                                     {
-                                        if( MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )
+                                        TargetType.SelectedNodeTypeIds.Add( InspectionDesignNt.NodeTypeId.ToString(), false, true );
+                                        if( TargetType.SelectMode == PropertySelectMode.Single )
                                         {
-                                            TargetType.SelectedNodeTypeIds.Add( InspectionDesignNt.NodeTypeId.ToString(), false, true );
-                                            if( TargetType.SelectMode == PropertySelectMode.Single )
-                                            {
-                                                break;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
@@ -225,9 +325,8 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
                         if( !( TargetObjClass is CswNbtPropertySetGeneratorTarget ) )
                         {
-                            throw new CswDniException( "CswNbtObjClassGenerator.beforeDeleteNode() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
+                            throw new CswDniException( "CswNbtObjClassGenerator.beforeDeleteNode() got an invalid object class: " + TargetObjectClass.ObjectClass );
                         }
-                        CswNbtPropertySetGeneratorTarget GeneratorTarget = (CswNbtPropertySetGeneratorTarget) TargetObjClass;
 
                         CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
                         CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.IsFuture );
@@ -238,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
                         GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
                         CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
                         CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
-                        View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True", false );
+                        View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True" );
 
                         ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 
@@ -264,96 +363,81 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        private void _removeTargetsNotMatchingSelectedParent()
         {
-            _deleteFutureNodes();
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-        } //beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        public override void afterPopulateProps()
-        {
-            DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
-
-            if( _CswNbtResources.EditMode != NodeEditMode.Add )  // case 28352
+            //If only one Parent NT is allowed (and selected), cycle through selected Target NTs and remove any that aren't related to the selected Parent NT
+            if( Node.getNodeType().getFirstVersionNodeType().NodeTypeName == InspectionGeneratorNodeTypeName &&
+                ParentType.SelectMode == PropertySelectMode.Single &&
+                ParentType.SelectedNodeTypeIds.Count > 0 )
             {
-                // case 28146
-                WarningDays.MinValue = 0;
-                WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+                foreach( Int32 InspectionDesignNodeTypeId in TargetType.SelectedNodeTypeIds.ToIntCollection() )
+                {
+                    CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignNodeTypeId );
+                    if( null != InspectionDesignNt )
+                    {
+                        Int32 InspectionTargetNTId = CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] );
+                        CswNbtMetaDataNodeTypeProp DesignTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
+                        if( _fkIsValid( DesignTargetNtp ) && InspectionTargetNTId != DesignTargetNtp.FKValue )
+                        {
+                            TargetType.SelectedNodeTypeIds.Remove( InspectionDesignNt.NodeTypeId.ToString() );
+                        }
+                    }
+                }
             }
-            Owner.SetOnPropChange( onOwnerPropChange );
-            TargetType.SetOnPropChange( onTargetTypePropChange );
-            ParentType.SetOnPropChange( onParentTypePropChange );
-
-            _CswNbtObjClassDefault.afterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        private bool _fkIsValid( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            if( null != ButtonData.NodeTypeProp )
+            return NodeTypeProp.IsFK &&
+                   NbtViewRelatedIdType.NodeTypeId.ToString() == NodeTypeProp.FKType &&
+                   Int32.MinValue != NodeTypeProp.FKValue;
+        }
+
+        private void _initTargetParents()
+        {
+            //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
+            CswNbtView theParentView = null;
+            if( ParentView.ViewId.isSet() )
             {
+                theParentView = _CswNbtResources.ViewSelect.restoreView( ParentView.ViewId );
             }
-            return true;
-        }
 
-        public override CswNbtNode CopyNode()
-        {
-            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            CopiedIDNode.Node.copyPropertyValues( Node );
-            CopiedIDNode.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
-            CopiedIDNode.postChanges( true );
-            return CopiedIDNode.Node;
-        }
-        #endregion
+            if( null != theParentView &&
+                false == theParentView.IsEmpty() &&
+                ParentType.SelectedNodeTypeIds.Count > 0 )
+            {
+                // Case 20482
+                ( theParentView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( NodeId );
+                ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( theParentView, false, false, false );
+                if( ParentType.SelectMode == PropertySelectMode.Single )
+                {
+                    Int32 ParentNtId = CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] );
+                    _TargetParents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
+                }
+            }
+            else
+            {
+                _TargetParents = new Collection<CswPrimaryKey> { Owner.RelatedNodeId };
+            }
+        } // getTargetParents()
+
+        #endregion Private Helper Functions
 
         #region Object class specific properties
 
         public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
         public CswNbtNodePropDateTime NextDueDate { get { return ( _CswNbtNode.Properties[PropertyName.NextDueDate] ); } }
-
         /// <summary>
         /// Node type of target, where target is the node generated by schedule
         /// </summary>
         public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
         private void onTargetTypePropChange( CswNbtNodeProp NodeProp )
         {
-            //TODO - run through the selected target nodetypes and uncheck any of them whose parent doesn't match the current parent type
-            if( Node.getNodeType().getFirstVersionNodeType().NodeTypeName == InspectionGeneratorNodeTypeName )
-            {
-                Int32 InspectionTargetNTId = CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] );
-
-                foreach( Int32 InspectionTargetNodeTypeId in TargetType.SelectedNodeTypeIds.ToIntCollection() )
-                {
-                    CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetNodeTypeId );
-                    if( null != InspectionDesignNt )
-                    {
-                        CswNbtMetaDataNodeTypeProp DesignTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
-                        if( DesignTargetNtp.IsFK &&
-                            NbtViewRelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
-                            Int32.MinValue != DesignTargetNtp.FKValue )
-                        {
-                            if( InspectionTargetNTId != DesignTargetNtp.FKValue )
-                            {
-                                TargetType.SelectedNodeTypeIds.Remove( InspectionDesignNt.NodeTypeId.ToString() );
-                            }
-                        }
-                    }
-                }
-            }
+            _removeTargetsNotMatchingSelectedParent();
         }
         public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
-
         /// <summary>
-        /// In IMCS, owner == Equipment or Assembly node, in FE owner == Location Group node
+        /// In IMCS, owner == Equipment or Assembly node, in SI owner == Location Group node
         /// </summary>
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         private void onOwnerPropChange( CswNbtNodeProp NodeProp )
@@ -363,9 +447,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _trySetNodeTypeSelectDefaultValues();
             }
         }
-
         public CswNbtNodePropComments RunStatus { get { return ( _CswNbtNode.Properties[PropertyName.RunStatus] ); } }
-
         /// <summary>
         /// Days before due date to anticipate upcoming event
         /// </summary>
@@ -382,12 +464,11 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 RunTime.setHidden( value: false, SaveToDb: true );
             }
-        } // OnDueDateIntervalChange
+        }
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
-
         /// <summary>
-        /// Node type of parent. In FE parent is node type of Fire Extinguisher or Inspection Target. In IMCS, parent type is not used.
+        /// Node type of parent. In SI parent is node type of Inspection Target. In IMCS, parent type is not used.
         /// </summary>
         public CswNbtNodePropNodeTypeSelect ParentType { get { return ( _CswNbtNode.Properties[PropertyName.ParentType] ); } }
         private void onParentTypePropChange( CswNbtNodeProp NodeProp )
@@ -397,93 +478,12 @@ namespace ChemSW.Nbt.ObjClasses
                 
             }
         }
-
         /// <summary>
-        /// View from owner to parent. In FE this is Location Group > Location > Inspection Target > Inspection. Parent view not utilized elsewhere, yet.
+        /// View from owner to parent. In SI this is Inspection Group > Inspection Target > Inspection. Parent view not utilized elsewhere, yet.
         /// </summary>
         public CswNbtNodePropViewReference ParentView { get { return ( _CswNbtNode.Properties[PropertyName.ParentView] ); } }
 
-        #endregion
-
-        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
-        {
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
-        }
-
-
-        public Int32 GeneratedNodeCount( DateTime TargetDay )
-        {
-            CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.ViewName = "Generated Node Count";
-
-            CswNbtMetaDataNodeType TargetNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
-            CswNbtMetaDataNodeTypeProp GeneratorNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
-            CswNbtMetaDataNodeTypeProp CreatedDateNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate );
-
-            CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
-            View.AddViewPropertyAndFilter( TargetRel,
-                                           GeneratorNTP,
-                                           Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                           ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
-                                           Value: this.NodeId.PrimaryKey.ToString(),
-                                           SubFieldName: ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
-                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            if( DateTime.MinValue != TargetDay )
-            {
-                View.AddViewPropertyAndFilter( TargetRel,
-                                               CreatedDateNTP,
-                                               Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                               ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
-                                               Value: TargetDay.Date.ToString(),
-                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            }
-
-            ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-            return TargetTree.getChildNodeCount();
-        } // GeneratedNodeCount
-
-        private Collection<CswPrimaryKey> _TargetParents = null;
-        public Collection<CswPrimaryKey> TargetParents
-        {
-            get
-            {
-                if( null == _TargetParents )
-                {
-                    _initTargetParents();
-                }
-                return _TargetParents;
-            }
-        }
-
-        private void _initTargetParents()
-        {
-            //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
-            CswNbtView theParentView = null;
-            if( this.ParentView.ViewId.isSet() )
-            {
-                theParentView = _CswNbtResources.ViewSelect.restoreView( this.ParentView.ViewId );
-            }
-
-            if( null != theParentView &&
-                false == theParentView.IsEmpty() &&
-                this.ParentType.SelectedNodeTypeIds.Count > 0 )
-            {
-                // Case 20482
-                ( theParentView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( this.NodeId );
-                ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( theParentView, false, false, false );
-                if( this.ParentType.SelectMode == PropertySelectMode.Single )
-                {
-                    Int32 ParentNtId = CswConvert.ToInt32( this.ParentType.SelectedNodeTypeIds[0] );
-                    _TargetParents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
-                }
-            }
-            else
-            {
-                _TargetParents = new Collection<CswPrimaryKey>();
-                _TargetParents.Add( this.Owner.RelatedNodeId );
-            }
-        } // getTargetParents()
+        #endregion Object class specific properties
 
     }//CswNbtObjClassGenerator
 
