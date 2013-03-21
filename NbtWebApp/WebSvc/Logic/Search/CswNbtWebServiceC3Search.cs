@@ -1,18 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -522,8 +519,6 @@ namespace ChemSW.Nbt.WebServices
 
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
-                    //Translate the name if necessary
-                    //string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
 
                     CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
@@ -532,18 +527,21 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
 
                     UnitsView.AddViewPropertyAndFilter( Parent,
-                                                       MetaDataProp: NameOCP,
-                                                       Value: unitOfMeasurementName,
-                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                        MetaDataProp: NameOCP,
+                                                        Value: unitOfMeasurementName,
+                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
                     int Count = Tree.getChildNodeCount();
+
                     for( int i = 0; i < Count; i++ )
                     {
                         Tree.goToNthChild( i );
                         UnitOfMeasureNode = Tree.getNodeForCurrentPosition();
                         Tree.goToParentNode();
                     }
+
                 }
 
                 return UnitOfMeasureNode;

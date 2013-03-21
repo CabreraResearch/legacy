@@ -1902,8 +1902,8 @@
             });
         };
         var unbindEvents = function () {
-            Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
-            Csw.subscribe('initGlobalEventTeardown', doClose);
+            Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            Csw.unsubscribe('initGlobalEventTeardown', doClose);
         };
         Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
         Csw.subscribe('initGlobalEventTeardown', doClose);
