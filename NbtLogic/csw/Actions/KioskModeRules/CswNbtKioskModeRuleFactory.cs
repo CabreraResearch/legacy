@@ -12,27 +12,29 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             CswNbtKioskModeRule ret = null;
 
-            if( KioskModeRuleName.Equals( CswNbtKioskModeRuleName.Move._Name ) )
+            string loweredName = KioskModeRuleName.ToLower();
+
+            if( loweredName.Equals( CswNbtKioskModeRuleName.Move._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleMove( CswNbtResources );
             }
-            else if( KioskModeRuleName.Equals( CswNbtKioskModeRuleName.Owner._Name ) )
+            else if( loweredName.Equals( CswNbtKioskModeRuleName.Owner._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleOwner( CswNbtResources );
             }
-            else if( KioskModeRuleName.Equals( CswNbtKioskModeRuleName.Transfer._Name ) )
+            else if( loweredName.Equals( CswNbtKioskModeRuleName.Transfer._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleTransfer( CswNbtResources );
             }
-            else if( KioskModeRuleName.Equals( CswNbtKioskModeRuleName.Dispense._Name ) )
+            else if( loweredName.Equals( CswNbtKioskModeRuleName.Dispense._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleDispense( CswNbtResources );
             }
-            else if( KioskModeRuleName.Equals( CswNbtKioskModeRuleName.Dispose._Name ) )
+            else if( loweredName.Equals( CswNbtKioskModeRuleName.Dispose._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleDispose( CswNbtResources );
             }
-            else if( KioskModeRuleName.Equals( CswNbtKioskModeRuleName.Status._Name ) )
+            else if( loweredName.Equals( CswNbtKioskModeRuleName.Status._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleStatus( CswNbtResources );
             }
