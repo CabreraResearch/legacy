@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.Actions
                     Ret["tradename"] = NodeAsMaterial.TradeName.Text;
                     Ret["partno"] = NodeAsMaterial.PartNumber.Text;
                     Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
-                    Ret["supplierid"] = NodeAsMaterial.Supplier.RelatedNodeId.ToString();
+                    Ret["supplierid"] = SupplierId.ToString();
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
@@ -293,11 +293,6 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
                 if( null != CurrentTempNode )
                 {
-                    if( null == CurrentTempNode.Supplier.RelatedNodeId )
-                    {
-                        CurrentTempNode.Supplier.RelatedNodeId = CswConvert.ToPrimaryKey( SupplierId );
-                    }
-
                     Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
                     if( NodeTypeId != CurrentNodeTypeId )
                     {
