@@ -3,8 +3,9 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.WebSvc;
+using ChemSW.Nbt.Actions.KioskMode;
 using ChemSW.Nbt.WebServices;
+using ChemSW.WebSvc;
 
 namespace NbtWebApp
 {
@@ -23,7 +24,7 @@ namespace NbtWebApp
         {
             CswNbtWebServiceKioskMode.KioskModeDataReturn Ret = new CswNbtWebServiceKioskMode.KioskModeDataReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, CswNbtWebServiceKioskMode.KioskModeData>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, KioskModeData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceKioskMode.GetAvailableModes,
@@ -38,11 +39,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "HandleScan" )]
         [Description( "Handle a scanned item" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceKioskMode.KioskModeDataReturn DetermineDisplayProps( CswNbtWebServiceKioskMode.KioskModeData RequestData )
+        public CswNbtWebServiceKioskMode.KioskModeDataReturn DetermineDisplayProps( KioskModeData RequestData )
         {
             CswNbtWebServiceKioskMode.KioskModeDataReturn Ret = new CswNbtWebServiceKioskMode.KioskModeDataReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, CswNbtWebServiceKioskMode.KioskModeData>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, KioskModeData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceKioskMode.HandleScan,
@@ -57,11 +58,11 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "CommitOperation" )]
         [Description( "Perform the selected operation with the given data" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceKioskMode.KioskModeDataReturn CommitOperation( CswNbtWebServiceKioskMode.KioskModeData RequestData )
+        public CswNbtWebServiceKioskMode.KioskModeDataReturn CommitOperation( KioskModeData RequestData )
         {
             CswNbtWebServiceKioskMode.KioskModeDataReturn Ret = new CswNbtWebServiceKioskMode.KioskModeDataReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, CswNbtWebServiceKioskMode.KioskModeData>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceKioskMode.KioskModeDataReturn, KioskModeData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceKioskMode.CommitOperation,

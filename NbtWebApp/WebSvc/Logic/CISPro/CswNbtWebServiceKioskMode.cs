@@ -4,9 +4,9 @@ using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Actions.KioskMode;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using NbtWebApp.WebSvc.Returns;
 
@@ -21,19 +21,19 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        private sealed class Modes
-        {
-            public const string Move = "move";
-            public const string Owner = "owner";
-            public const string Transfer = "transfer";
-            public const string Dispense = "dispense";
-            public const string Dispose = "dispose";
-            public const string Status = "status";
-            public static readonly CswCommaDelimitedString All = new CswCommaDelimitedString()
-            {
-                Move, Owner, Transfer, Dispense, Dispose, Status
-            };
-        }
+        //private sealed class Modes
+        //{
+        //    public const string Move = "move";
+        //    public const string Owner = "owner";
+        //    public const string Transfer = "transfer";
+        //    public const string Dispense = "dispense";
+        //    public const string Dispose = "dispose";
+        //    public const string Status = "status";
+        //    public static readonly CswCommaDelimitedString All = new CswCommaDelimitedString()
+        //    {
+        //        Move, Owner, Transfer, Dispense, Dispose, Status
+        //    };
+        //}
 
         #region Data Contracts
 
@@ -48,195 +48,195 @@ namespace ChemSW.Nbt.WebServices
             public KioskModeData Data;
         }
 
-        [DataContract]
-        public class KioskModeData
-        {
-            [DataMember]
-            public Collection<Mode> AvailableModes = new Collection<Mode>();
-            [DataMember]
-            public OperationData OperationData;
-        }
+        //[DataContract]
+        //public class KioskModeData
+        //{
+        //    [DataMember]
+        //    public Collection<Mode> AvailableModes = new Collection<Mode>();
+        //    [DataMember]
+        //    public OperationData OperationData;
+        //}
+        //
+        //[DataContract]
+        //public class Mode
+        //{
+        //    [DataMember]
+        //    public string name = string.Empty;
+        //    [DataMember]
+        //    public string imgUrl = string.Empty;
+        //}
+        //
+        //[DataContract]
+        //public class ActiveMode
+        //{
+        //    [DataMember]
+        //    public string field1Name = string.Empty;
+        //    [DataMember]
+        //    public string field2Name = string.Empty;
+        //}
+        //
+        //[DataContract]
+        //public class OperationData
+        //{
+        //    [DataMember]
+        //    public string Mode = string.Empty;
+        //    [DataMember]
+        //    public string ModeStatusMsg = string.Empty;
+        //    [DataMember]
+        //    public bool ModeServerValidated = false;
+        //    [DataMember]
+        //    public Collection<string> Log = new Collection<string>();
+        //    [DataMember]
+        //    public Field Field1;
+        //    [DataMember]
+        //    public Field Field2;
+        //    [DataMember]
+        //    public string LastItemScanned;
+        //    [DataMember]
+        //    public string ScanTextLabel;
+        //}
 
-        [DataContract]
-        public class Mode
-        {
-            [DataMember]
-            public string name = string.Empty;
-            [DataMember]
-            public string imgUrl = string.Empty;
-        }
-
-        [DataContract]
-        public class ActiveMode
-        {
-            [DataMember]
-            public string field1Name = string.Empty;
-            [DataMember]
-            public string field2Name = string.Empty;
-        }
-
-        [DataContract]
-        public class OperationData
-        {
-            [DataMember]
-            public string Mode = string.Empty;
-            [DataMember]
-            public string ModeStatusMsg = string.Empty;
-            [DataMember]
-            public bool ModeServerValidated = false;
-            [DataMember]
-            public Collection<string> Log = new Collection<string>();
-            [DataMember]
-            public Field Field1;
-            [DataMember]
-            public Field Field2;
-            [DataMember]
-            public string LastItemScanned;
-            [DataMember]
-            public string ScanTextLabel;
-        }
-
-        [DataContract]
-        public class Field
-        {
-            [DataMember]
-            public string Name = string.Empty;
-            [DataMember]
-            public string Value = string.Empty;
-            [DataMember]
-            public string StatusMsg = string.Empty;
-            [DataMember]
-            public bool ServerValidated = false;
-            [DataMember]
-            public string SecondValue = string.Empty;
-            [DataMember]
-            public string FoundObjClass;
-
-            public NbtObjectClass GetBarcodeExpectedOC( CswNbtResources NbtResources, ref OperationData OpData )
-            {
-                NbtObjectClass Ret = null;
-
-                CswNbtWebServiceSearch searchSvc = new CswNbtWebServiceSearch( NbtResources, null );
-                CswNbtSearch search = searchSvc.getSearch( Value, Int32.MinValue, Int32.MinValue );
-                ICswNbtTree tree = search.Results();
-                int childCount = tree.getChildNodeCount();
-                for( int i = 0; i < childCount; i++ )
-                {
-                    tree.goToNthChild( i );
-                    CswNbtNode node = tree.getNodeForCurrentPosition();
-                    string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
-
-                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
-                    {
-                        if( ObjClass == NbtObjectClass.ContainerClass )
-                        {
-                            Ret = NbtObjectClass.ContainerClass;
-                            FoundObjClass = Ret;
-                        }
-                    }
-
-                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
-                    {
-                        if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
-                        {
-                            Ret = NbtObjectClass.EquipmentAssemblyClass;
-                            FoundObjClass = Ret;
-                        }
-
-                        if( ObjClass == NbtObjectClass.EquipmentClass )
-                        {
-                            Ret = NbtObjectClass.EquipmentClass;
-                            FoundObjClass = Ret;
-                        }
-                    }
-                    tree.goToParentNode();
-                }
-
-                if( null == Ret ) //Now is a good time to validate the field since we know what we just searched for
-                {
-                    bool first = true;
-                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
-                    {
-                        StatusMsg = NbtObjectClass.ContainerClass.Replace( "Class", "" );
-                        first = false;
-                    }
-                    if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
-                    {
-                        if( first )
-                        {
-                            StatusMsg = NbtObjectClass.EquipmentClass.Replace( "Class", "" );
-                        }
-                        else
-                        {
-                            StatusMsg += ", " + NbtObjectClass.EquipmentClass.Replace( "Class", "" );
-                        }
-                        StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" );
-                    }
-                    StatusMsg = "Could not find " + StatusMsg + " with barcode " + Value;
-
-                    OpData.Field2.StatusMsg = StatusMsg;
-                    OpData.Field2.ServerValidated = false;
-                    OpData.Log.Add( DateTime.Now + " - ERROR: " + StatusMsg );
-                }
-
-                return Ret;
-            }
-
-            public NbtObjectClass ExpectedObjClass( CswNbtResources NbtResources, int FieldNumber, ref OperationData OpData )
-            {
-                NbtObjectClass Ret = null;
-                string OpMode = OpData.Mode.ToLower();
-                switch( OpMode )
-                {
-                    case Modes.Move:
-                        if( FieldNumber == 1 )
-                        {
-                            Ret = NbtObjectClass.LocationClass;
-                        }
-                        else
-                        {
-                            Ret = GetBarcodeExpectedOC( NbtResources, ref OpData );
-                        }
-                        break;
-                    case Modes.Owner:
-                        if( FieldNumber == 1 )
-                        {
-                            Ret = NbtObjectClass.UserClass;
-                        }
-                        else
-                        {
-                            Ret = NbtObjectClass.ContainerClass;
-                        }
-                        break;
-                    case Modes.Transfer:
-                        if( FieldNumber == 1 )
-                        {
-                            Ret = NbtObjectClass.UserClass;
-                        }
-                        else
-                        {
-                            Ret = NbtObjectClass.ContainerClass;
-                        }
-                        break;
-                    case Modes.Dispense:
-                        if( FieldNumber == 1 )
-                        {
-                            Ret = NbtObjectClass.ContainerClass;
-                        }
-                        break;
-                    case Modes.Dispose:
-                        Ret = NbtObjectClass.ContainerClass;
-                        break;
-                    case Modes.Status:
-                        if( FieldNumber == 2 )
-                        {
-                            Ret = GetBarcodeExpectedOC( NbtResources, ref OpData );
-                        }
-                        break;
-                }
-                return Ret;
-            }
-        }
+        //[DataContract]
+        //public class Field
+        //{
+        //    [DataMember]
+        //    public string Name = string.Empty;
+        //    [DataMember]
+        //    public string Value = string.Empty;
+        //    [DataMember]
+        //    public string StatusMsg = string.Empty;
+        //    [DataMember]
+        //    public bool ServerValidated = false;
+        //    [DataMember]
+        //    public string SecondValue = string.Empty;
+        //    [DataMember]
+        //    public string FoundObjClass;
+        //
+        //    public NbtObjectClass GetBarcodeExpectedOC( CswNbtResources NbtResources, ref OperationData OpData )
+        //    {
+        //        NbtObjectClass Ret = null;
+        //
+        //        CswNbtWebServiceSearch searchSvc = new CswNbtWebServiceSearch( NbtResources, null );
+        //        CswNbtSearch search = searchSvc.getSearch( Value, Int32.MinValue, Int32.MinValue );
+        //        ICswNbtTree tree = search.Results();
+        //        int childCount = tree.getChildNodeCount();
+        //        for( int i = 0; i < childCount; i++ )
+        //        {
+        //            tree.goToNthChild( i );
+        //            CswNbtNode node = tree.getNodeForCurrentPosition();
+        //            string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
+        //
+        //            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+        //            {
+        //                if( ObjClass == NbtObjectClass.ContainerClass )
+        //                {
+        //                    Ret = NbtObjectClass.ContainerClass;
+        //                    FoundObjClass = Ret;
+        //                }
+        //            }
+        //
+        //            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+        //            {
+        //                if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
+        //                {
+        //                    Ret = NbtObjectClass.EquipmentAssemblyClass;
+        //                    FoundObjClass = Ret;
+        //                }
+        //
+        //                if( ObjClass == NbtObjectClass.EquipmentClass )
+        //                {
+        //                    Ret = NbtObjectClass.EquipmentClass;
+        //                    FoundObjClass = Ret;
+        //                }
+        //            }
+        //            tree.goToParentNode();
+        //        }
+        //
+        //        if( null == Ret ) //Now is a good time to validate the field since we know what we just searched for
+        //        {
+        //            bool first = true;
+        //            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+        //            {
+        //                StatusMsg = NbtObjectClass.ContainerClass.Replace( "Class", "" );
+        //                first = false;
+        //            }
+        //            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+        //            {
+        //                if( first )
+        //                {
+        //                    StatusMsg = NbtObjectClass.EquipmentClass.Replace( "Class", "" );
+        //                }
+        //                else
+        //                {
+        //                    StatusMsg += ", " + NbtObjectClass.EquipmentClass.Replace( "Class", "" );
+        //                }
+        //                StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" );
+        //            }
+        //            StatusMsg = "Could not find " + StatusMsg + " with barcode " + Value;
+        //
+        //            OpData.Field2.StatusMsg = StatusMsg;
+        //            OpData.Field2.ServerValidated = false;
+        //            OpData.Log.Add( DateTime.Now + " - ERROR: " + StatusMsg );
+        //        }
+        //
+        //        return Ret;
+        //    }
+        //
+        //    public NbtObjectClass ExpectedObjClass( CswNbtResources NbtResources, int FieldNumber, ref OperationData OpData )
+        //    {
+        //        NbtObjectClass Ret = null;
+        //        string OpMode = OpData.Mode.ToLower();
+        //        switch( OpMode )
+        //        {
+        //            case Modes.Move:
+        //                if( FieldNumber == 1 )
+        //                {
+        //                    Ret = NbtObjectClass.LocationClass;
+        //                }
+        //                else
+        //                {
+        //                    Ret = GetBarcodeExpectedOC( NbtResources, ref OpData );
+        //                }
+        //                break;
+        //            case Modes.Owner:
+        //                if( FieldNumber == 1 )
+        //                {
+        //                    Ret = NbtObjectClass.UserClass;
+        //                }
+        //                else
+        //                {
+        //                    Ret = NbtObjectClass.ContainerClass;
+        //                }
+        //                break;
+        //            case Modes.Transfer:
+        //                if( FieldNumber == 1 )
+        //                {
+        //                    Ret = NbtObjectClass.UserClass;
+        //                }
+        //                else
+        //                {
+        //                    Ret = NbtObjectClass.ContainerClass;
+        //                }
+        //                break;
+        //            case Modes.Dispense:
+        //                if( FieldNumber == 1 )
+        //                {
+        //                    Ret = NbtObjectClass.ContainerClass;
+        //                }
+        //                break;
+        //            case Modes.Dispose:
+        //                Ret = NbtObjectClass.ContainerClass;
+        //                break;
+        //            case Modes.Status:
+        //                if( FieldNumber == 2 )
+        //                {
+        //                    Ret = GetBarcodeExpectedOC( NbtResources, ref OpData );
+        //                }
+        //                break;
+        //        }
+        //        return Ret;
+        //    }
+        //}
 
         #endregion
 
@@ -312,15 +312,14 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
+                CswNbtKioskModeRule rule = CswNbtKioskModeRuleFactory.Make( NbtResources, KioskModeData.OperationData.Mode );
                 if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
                 {
-                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field2.ExpectedObjClass( NbtResources, 2, ref KioskModeData.OperationData );
-                    KioskModeData.OperationData.Field2 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field2, ref KioskModeData.OperationData );
+                    rule.ValidateFieldTwo( ref KioskModeData.OperationData );
                 }
                 else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
                 {
-                    NbtObjectClass expectedOC = KioskModeData.OperationData.Field1.ExpectedObjClass( NbtResources, 1, ref KioskModeData.OperationData );
-                    KioskModeData.OperationData.Field1 = _validateField( NbtResources, expectedOC, KioskModeData.OperationData.Field1, ref KioskModeData.OperationData );
+                    rule.ValidateFieldOne( ref KioskModeData.OperationData );
                 }
                 else
                 {
@@ -333,139 +332,118 @@ namespace ChemSW.Nbt.WebServices
 
         public static void CommitOperation( ICswResources CswResources, KioskModeDataReturn Return, KioskModeData KioskModeData )
         {
-            bool resetField2 = true;
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             OperationData OpData = KioskModeData.OperationData;
-            string mode = OpData.Mode.ToLower();
-            switch( mode )
-            {
-                case Modes.Move:
-                    CswNbtNode itemToMove = _getNodeByBarcode( NbtResources, OpData.Field2.FoundObjClass, OpData.Field2.Value, true );
-                    string locationPropName = "Location";
-                    switch( OpData.Field2.FoundObjClass )
-                    {
-                        case NbtObjectClass.EquipmentClass:
-                            locationPropName = CswNbtObjClassEquipment.PropertyName.Location;
-                            break;
-                        case NbtObjectClass.EquipmentAssemblyClass:
-                            locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location;
-                            break;
-                        case NbtObjectClass.ContainerClass:
-                            locationPropName = CswNbtObjClassContainer.PropertyName.Location;
-                            break;
-                    }
-                    string itemType = itemToMove.getNodeType().NodeTypeName;
 
-                    if( NbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, itemToMove.getNodeType() ) && false == itemToMove.Properties[locationPropName].ReadOnly )
-                    {
-                        CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value, true );
-                        itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
-                        itemToMove.postChanges( false );
-                        OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
-                    }
-                    else
-                    {
-                        string statusMsg = "You do not have permission to edit " + itemType + " (" + OpData.Field2.Value + ")";
-                        OpData.Field2.StatusMsg = statusMsg;
-                        OpData.Field2.ServerValidated = false;
-                        resetField2 = false;
-                        OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
-                    }
-                    break;
-                case Modes.Owner:
-                    CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
-                    CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value, true );
-                    containerNode.Owner.RelatedNodeId = newOwnerNode.NodeId;
-                    containerNode.Owner.RefreshNodeName();
-                    containerNode.postChanges( false );
-                    OpData.Log.Add( DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.FirstName + " " + newOwnerNode.LastName + " (" + OpData.Field1.Value + ")" );
-                    break;
-                case Modes.Transfer:
-                    CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
-                    CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value, true );
-                    containerToTransfer.Owner.RelatedNodeId = newTransferOwner.NodeId;
-                    containerToTransfer.Owner.RefreshNodeName();
-                    containerToTransfer.MoveContainer( newTransferOwner.DefaultLocationId );
-                    containerToTransfer.postChanges( false );
-                    CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
-                    OpData.Log.Add( DateTime.Now + " - Transferred container " + OpData.Field2.Value + " ownership to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );
-                    break;
-                case Modes.Dispense:
-                    CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
-                    double quantityToDispense = CswConvert.ToDouble( OpData.Field2.Value );
-                    if( quantityToDispense > containerToDispense.Quantity.Quantity )
-                    {
-                        OpData.Field2.StatusMsg = "Cannot dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt;
-                        OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt );
-                        OpData.Field2.ServerValidated = false;
-                        resetField2 = false;
-                    }
-                    else
-                    {
-                        containerToDispense.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, quantityToDispense, containerToDispense.Quantity.UnitId );
-                        containerToDispense.postChanges( false );
-                        OpData.Field1.SecondValue = " (current quantity: " + containerToDispense.Quantity.Quantity + containerToDispense.Quantity.CachedUnitName + ")";
-                        OpData.Log.Add( DateTime.Now + " - Dispensed " + OpData.Field2.Value + " " + containerToDispense.Quantity.CachedUnitName + " out of container " + containerToDispense.Barcode.Barcode + ". " + containerToDispense.Quantity.Gestalt + " left in container" );
-                    }
-                    break;
-                case Modes.Dispose:
-                    CswNbtObjClassContainer containerToDispose = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
-                    if( Tristate.True == containerToDispose.Disposed.Checked )
-                    {
-                        OpData.Field1.StatusMsg = "Container " + OpData.Field1.Value + " is already disposed";
-                        OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispose already disposed container " + OpData.Field1.Value );
-                    }
-                    else
-                    {
-                        containerToDispose.DisposeContainer();
-                        containerToDispose.postChanges( false );
-                        OpData.Log.Add( DateTime.Now + " - Disposed container " + OpData.Field1.Value );
-                        OpData.Field1.Value = string.Empty;
-                    }
-                    OpData.Field1.SecondValue = string.Empty;
-                    OpData.Field1.ServerValidated = false;
-                    resetField2 = false;
-                    break;
-                case Modes.Status:
+            CswNbtKioskModeRule rule = CswNbtKioskModeRuleFactory.Make( NbtResources, OpData.Mode );
+            rule.CommitOperation( ref OpData );
 
-                    CswNbtNode item = _getNodeByBarcode( NbtResources, OpData.Field2.FoundObjClass, OpData.Field2.Value, false );
-                    string statusPropName = "Status";
-                    switch( OpData.Field2.FoundObjClass )
-                    {
-                        case NbtObjectClass.EquipmentClass:
-                            locationPropName = CswNbtObjClassEquipment.PropertyName.Status;
-                            break;
-                        case NbtObjectClass.EquipmentAssemblyClass:
-                            locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status;
-                            break;
-                    }
-                    string itemTypeName = item.getNodeType().NodeTypeName;
-
-                    if( NbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, item.getNodeType() ) && false == item.Properties[statusPropName].ReadOnly )
-                    {
-                        item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
-                        item.postChanges( false );
-
-                        OpData.Log.Add( DateTime.Now + " - Status of " + itemTypeName + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
-                    }
-                    else
-                    {
-                        string statusMsg = "You do not have permission to edit " + itemTypeName + " (" + OpData.Field2.Value + ")";
-                        OpData.Field2.StatusMsg = statusMsg;
-                        OpData.Field2.ServerValidated = false;
-                        resetField2 = false;
-                        OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
-                    }
-                    break;
-            }
-            if( resetField2 )
-            {
-                OpData.Field2.Value = string.Empty;
-                OpData.Field2.SecondValue = string.Empty;
-                OpData.Field2.ServerValidated = false;
-            }
             KioskModeData.OperationData = OpData;
             Return.Data = KioskModeData;
+
+            //string mode = OpData.Mode.ToLower();
+            //switch( mode )
+            //{
+            //    case Modes.Move:
+            //        CswNbtNode itemToMove = _getNodeByBarcode( NbtResources, OpData.Field2.FoundObjClass, OpData.Field2.Value, true );
+            //        string locationPropName = "Location";
+            //        switch( OpData.Field2.FoundObjClass )
+            //        {
+            //            case NbtObjectClass.EquipmentClass:
+            //                locationPropName = CswNbtObjClassEquipment.PropertyName.Location;
+            //                break;
+            //            case NbtObjectClass.EquipmentAssemblyClass:
+            //                locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location;
+            //                break;
+            //            case NbtObjectClass.ContainerClass:
+            //                locationPropName = CswNbtObjClassContainer.PropertyName.Location;
+            //                break;
+            //        }
+            //        string itemType = itemToMove.getNodeType().NodeTypeName;
+            //
+            //        if( NbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, itemToMove.getNodeType() ) && false == itemToMove.Properties[locationPropName].ReadOnly )
+            //        {
+            //            CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value, true );
+            //            itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
+            //            itemToMove.postChanges( false );
+            //            OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
+            //        }
+            //        else
+            //        {
+            //            string statusMsg = "You do not have permission to edit " + itemType + " (" + OpData.Field2.Value + ")";
+            //            OpData.Field2.StatusMsg = statusMsg;
+            //            OpData.Field2.ServerValidated = false;
+            //            resetField2 = false;
+            //            OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
+            //        }
+            //        break;
+            //    case Modes.Owner:
+            //        CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            //        CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value, true );
+            //        containerNode.Owner.RelatedNodeId = newOwnerNode.NodeId;
+            //        containerNode.Owner.RefreshNodeName();
+            //        containerNode.postChanges( false );
+            //        OpData.Log.Add( DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.FirstName + " " + newOwnerNode.LastName + " (" + OpData.Field1.Value + ")" );
+            //        break;
+            //    case Modes.Transfer:
+            //        CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            //        CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( NbtResources, NbtObjectClass.UserClass, OpData.Field1.Value, true );
+            //        containerToTransfer.Owner.RelatedNodeId = newTransferOwner.NodeId;
+            //        containerToTransfer.Owner.RefreshNodeName();
+            //        containerToTransfer.MoveContainer( newTransferOwner.DefaultLocationId );
+            //        containerToTransfer.postChanges( false );
+            //        CswNbtObjClassLocation newLocationNode = NbtResources.Nodes[newTransferOwner.DefaultLocationId];
+            //        OpData.Log.Add( DateTime.Now + " - Transferred container " + OpData.Field2.Value + " ownership to " + newTransferOwner.FirstName + " " + newTransferOwner.LastName + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );
+            //        break;
+            //    case Modes.Dispense:
+            //        CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            //        double quantityToDispense = CswConvert.ToDouble( OpData.Field2.Value );
+            //        if( quantityToDispense > containerToDispense.Quantity.Quantity )
+            //        {
+            //            OpData.Field2.StatusMsg = "Cannot dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt;
+            //            OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispense " + quantityToDispense + containerToDispense.Quantity.CachedUnitName + " when containter only has " + containerToDispense.Quantity.Gestalt );
+            //            OpData.Field2.ServerValidated = false;
+            //            resetField2 = false;
+            //        }
+            //        else
+            //        {
+            //            containerToDispense.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, quantityToDispense, containerToDispense.Quantity.UnitId );
+            //            containerToDispense.postChanges( false );
+            //            OpData.Field1.SecondValue = " (current quantity: " + containerToDispense.Quantity.Quantity + containerToDispense.Quantity.CachedUnitName + ")";
+            //            OpData.Log.Add( DateTime.Now + " - Dispensed " + OpData.Field2.Value + " " + containerToDispense.Quantity.CachedUnitName + " out of container " + containerToDispense.Barcode.Barcode + ". " + containerToDispense.Quantity.Gestalt + " left in container" );
+            //        }
+            //        break;
+            //    case Modes.Dispose:
+            //        CswNbtObjClassContainer containerToDispose = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            //        if( Tristate.True == containerToDispose.Disposed.Checked )
+            //        {
+            //            OpData.Field1.StatusMsg = "Container " + OpData.Field1.Value + " is already disposed";
+            //            OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispose already disposed container " + OpData.Field1.Value );
+            //        }
+            //        else
+            //        {
+            //            containerToDispose.DisposeContainer();
+            //            containerToDispose.postChanges( false );
+            //            OpData.Log.Add( DateTime.Now + " - Disposed container " + OpData.Field1.Value );
+            //            OpData.Field1.Value = string.Empty;
+            //        }
+            //        OpData.Field1.SecondValue = string.Empty;
+            //        OpData.Field1.ServerValidated = false;
+            //        resetField2 = false;
+            //        break;
+            //    case Modes.Status:
+            //
+            //        CswNbtKioskModeRuleStatus rule = new CswNbtKioskModeRuleStatus( NbtResources );
+            //        rule.CommitOperation( ref OpData );
+            //
+            //        break;
+            //}
+            //if( resetField2 )
+            //{
+            //    OpData.Field2.Value = string.Empty;
+            //    OpData.Field2.SecondValue = string.Empty;
+            //    OpData.Field2.ServerValidated = false;
+            //}
         }
 
         #region Private Methods
