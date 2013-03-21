@@ -58,9 +58,9 @@ if (Install-NeededFor 'Grunt' $false) {
   if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
   $env:Path = "$($env:Path);$nodePath"
   npm uninstall -g grunt
-  npm install -g grunt
+  npm install grunt
   npm install -g grunt-cli
-  npm install -g grunt-contrib
+  npm install grunt-contrib
   
   Write-Host 'Details at http://gruntjs.com/getting-started'
 }
