@@ -419,7 +419,6 @@ namespace ChemSW.Nbt.WebServices
                 case Modes.Status:
 
                     CswNbtNode item = _getNodeByBarcode( NbtResources, OpData.Field2.FoundObjClass, OpData.Field2.Value, false );
-
                     string statusPropName = "Status";
                     switch( OpData.Field2.FoundObjClass )
                     {
@@ -430,12 +429,23 @@ namespace ChemSW.Nbt.WebServices
                             locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status;
                             break;
                     }
-
-                    item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
-                    item.postChanges( false );
-
                     string itemTypeName = item.getNodeType().NodeTypeName;
-                    OpData.Log.Add( DateTime.Now + " - Status of " + itemTypeName + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
+
+                    if( NbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, item.getNodeType() ) && false == item.Properties[statusPropName].ReadOnly )
+                    {
+                        item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
+                        item.postChanges( false );
+
+                        OpData.Log.Add( DateTime.Now + " - Status of " + itemTypeName + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
+                    }
+                    else
+                    {
+                        string statusMsg = "You do not have permission to edit the Status of " + itemTypeName + " (" + OpData.Field2.Value + ")";
+                        OpData.Field2.StatusMsg = statusMsg;
+                        OpData.Field2.ServerValidated = false;
+                        resetField2 = false;
+                        OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
+                    }
                     break;
             }
             if( resetField2 )
