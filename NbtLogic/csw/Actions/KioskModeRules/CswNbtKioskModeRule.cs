@@ -33,6 +33,15 @@ namespace ChemSW.Nbt.Actions.KioskMode
             OpData.Field2.ServerValidated = false;
         }
 
+        public virtual void SetFields( ref OperationData OpData )
+        {
+            OpData.ModeServerValidated = true;
+            OpData.ModeStatusMsg = string.Empty;
+            OpData.Field1 = new Field();
+            OpData.Field2 = new Field();
+            OpData.ScanTextLabel = "Scan a barcode:";
+        }
+
         #region Private Functions
 
         public CswNbtNode _getNodeByBarcode( NbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )

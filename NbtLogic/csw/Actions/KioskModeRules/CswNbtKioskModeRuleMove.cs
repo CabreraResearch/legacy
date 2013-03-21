@@ -16,6 +16,13 @@ namespace ChemSW.Nbt.Actions.KioskMode
             _CswNbtResources = NbtResources;
         }
 
+        public override void SetFields( ref OperationData OpData )
+        {
+            base.SetFields( ref OpData );
+            OpData.Field1.Name = "Location:";
+            OpData.Field2.Name = "Item:";
+        }
+
         public override void ValidateFieldOne( ref OperationData OpData )
         {
             bool IsValid = _validateLocation( ref OpData );

@@ -10,12 +10,6 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceKioskMode
     {
-        private static CswNbtResources _CswNbtResources;
-
-        public CswNbtWebServiceKioskMode( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-        }
 
         #region Data Contracts
 
@@ -41,7 +35,7 @@ namespace ChemSW.Nbt.WebServices
 
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = CswTools.UppercaseFirst( Modes.Move ),
+                name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Move._Name ),
                 imgUrl = "Images/newicons/KioskMode/Move_code39.png"
             } );
 
@@ -49,12 +43,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( Modes.Owner ),
+                    name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Owner._Name ),
                     imgUrl = "Images/newicons/KioskMode/Owner_code39.png"
                 } );
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( Modes.Transfer ),
+                    name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Transfer._Name ),
                     imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
                 } );
                 CswNbtPermit permissions = new CswNbtPermit( NbtResources );
@@ -62,7 +56,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     kioskModeData.AvailableModes.Add( new Mode
                     {
-                        name = CswTools.UppercaseFirst( Modes.Dispense ),
+                        name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Dispense._Name ),
                         imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
                     } );
                 }
@@ -70,7 +64,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     kioskModeData.AvailableModes.Add( new Mode
                     {
-                        name = CswTools.UppercaseFirst( Modes.Dispose ),
+                        name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Dispose._Name ),
                         imgUrl = "Images/newicons/KioskMode/Dispose_code39.png"
                     } );
                 }
@@ -80,7 +74,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( Modes.Status ),
+                    name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Status._Name ),
                     imgUrl = "Images/newicons/KioskMode/Status_code39.png"
                 } );
             }
@@ -100,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
             if( _isModeScan( KioskModeData.OperationData.LastItemScanned ) )
             {
                 KioskModeData.OperationData.Mode = KioskModeData.OperationData.LastItemScanned;
-                _setFields( KioskModeData.OperationData );
+                _setFields( NbtResources, KioskModeData.OperationData );
             }
             else
             {
@@ -136,53 +130,18 @@ namespace ChemSW.Nbt.WebServices
 
         #region Private Methods
 
-        private static void _setFields( OperationData OpData )
+        private static void _setFields( CswNbtResources NbtResources, OperationData OpData )
         {
-            OpData.ModeServerValidated = true;
-            OpData.ModeStatusMsg = string.Empty;
-            OpData.Field1 = new Field();
-            OpData.Field2 = new Field();
-            OpData.ScanTextLabel = "Scan a barcode:";
-            string selectedOp = OpData.Mode.ToLower();
-            switch( selectedOp )
-            {
-                case Modes.Move:
-                    OpData.Field1.Name = "Location:";
-                    OpData.Field2.Name = "Item:";
-                    break;
-                case Modes.Owner:
-                    OpData.Field1.Name = "User:";
-                    OpData.Field2.Name = "Item:";
-                    break;
-                case Modes.Transfer:
-                    OpData.Field1.Name = "User:";
-                    OpData.Field2.Name = "Item:";
-                    break;
-                case Modes.Dispense:
-                    OpData.Field1.Name = "Container:";
-                    OpData.Field2.Name = "Quantity:";
-                    break;
-                case Modes.Dispose:
-                    OpData.Field1.Name = "Container:";
-                    OpData.Field2.ServerValidated = true;
-                    break;
-                case Modes.Status:
-                    OpData.Field1.Name = "Status:";
-                    OpData.Field2.Name = "Item:";
-                    break;
-                default:
-                    OpData.ModeStatusMsg = "Error: Scanned mode does not exist or is unavailable";
-                    OpData.ModeServerValidated = false;
-                    break;
-            }
+            CswNbtKioskModeRule rule = CswNbtKioskModeRuleFactory.Make( NbtResources, OpData.Mode );
+            rule.SetFields( ref OpData );
         }
 
         private static bool _isModeScan( string ScannedMode )
         {
             bool Ret = false;
-            foreach( string mode in Modes.All )
+            foreach( CswNbtKioskModeRuleName Rule in CswNbtKioskModeRuleName._All )
             {
-                if( mode.Equals( ScannedMode.ToLower() ) )
+                if( Rule._Name.ToLower().Equals( ScannedMode.ToLower() ) )
                 {
                     Ret = true;
                 }

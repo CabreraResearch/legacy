@@ -25,6 +25,13 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
         }
 
+        public override void SetFields( ref OperationData OpData )
+        {
+            base.SetFields( ref OpData );
+            OpData.Field1.Name = "Container:";
+            OpData.Field2.ServerValidated = true;
+        }
+
         public override void ValidateFieldTwo( ref OperationData OpData )
         {
             //Intentionally do nothing here - Dispense mode only has one field to work with
