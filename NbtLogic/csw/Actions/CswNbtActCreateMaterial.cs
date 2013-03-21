@@ -274,15 +274,18 @@ namespace ChemSW.Nbt.Actions
             if( false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( SupplierId ) ) )
             {
                 CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
-                CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
-                if( null != VendorNT )
+                if( null != VendorOC )
                 {
-                    CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                    NewVendorNode.VendorName.Text = Suppliername;
-                    NewVendorNode.VendorName.SyncGestalt();
-                    NewVendorNode.postChanges( true );
-                    //Set the supplierId to the new vendor node
-                    SupplierId = NewVendorNode.NodeId.ToString();
+                    CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
+                    if( null != VendorNT )
+                    {
+                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        NewVendorNode.VendorName.Text = Suppliername;
+                        NewVendorNode.VendorName.SyncGestalt();
+                        NewVendorNode.postChanges( true );
+                        //Set the supplierId to the new vendor node
+                        SupplierId = NewVendorNode.NodeId.ToString();
+                    }
                 }
             }
 
