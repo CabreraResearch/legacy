@@ -437,16 +437,12 @@ namespace ChemSW.Nbt
                 } // if( Prop.SortBy )
             } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
 
-            if( OrderByProps.Count == 0 )
-            {
-                Select += ",lower(n.nodename) mssqlorder ";
-                OrderBy = " order by lower(n.nodename)";
-            }
-            else
-            {
-                OrderBy = " order by " + OrderByProps.ToString() + " ";
-            }
-
+            // case 29193: always fall back on name sort
+            sortAlias++;
+            Select += ",lower(n.nodename) mssqlorder" + sortAlias;
+            OrderByProps.Add( "lower(n.nodename)" );
+            
+            OrderBy = " order by " + OrderByProps.ToString() + " ";
             OrderBy += ",n.nodeid "; // for property multiplexing
 
 
