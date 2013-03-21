@@ -105,6 +105,8 @@
                 }
                 cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
+                
+
 
                 cswPrivate.handleStep = function (newStepNo) {
                     cswPrivate.setState();
@@ -129,39 +131,60 @@
                     }
                 }; //cswPrivate.handleStep
 
-                cswPrivate.finalize = function () {
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    var container = {
-                        containernodeid: cswPrivate.state.containerNodeId,
-                        materialid: cswPrivate.state.materialId,
-                        containernodetypeid: cswPrivate.state.containerNodeTypeId,
-                        quantities: cswPrivate.amountsGrid.quantities(),
-                        sizeid: cswPrivate.state.selectedSizeId,
-                        props: cswPrivate.tabsAndProps.getPropJson()
-                    };
-                    Csw.ajax.post({
-                        urlMethod: 'receiveMaterial',
-                        data: { ReceiptDefinition: Csw.serialize(container) },
-                        success: function (data) {
-                            if (Csw.number(data.containerscreated) < 1) {
-                                Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
-                            } else {
-                                Csw.tryExec(cswPrivate.onFinish, data.viewid);
-                                if (cswPrivate.printBarcodes) {
-                                    if (false === Csw.isNullOrEmpty(data.barcodes) &&
-                                        data.barcodes.length > 0) {
+                cswPrivate.finalize = function() {
 
-                                        $.CswDialog('PrintLabelDialog', {
-                                            nodeids: data.barcodes,
-                                            nodetypeid: cswPrivate.state.containerNodeTypeId
-                                        });
-                                    } else {
-                                        //handle warning
-                                    }
+                    var canReceiveMaterial = true;
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+
+                    if (false === cswPrivate.state.canAddSDS) {
+                        if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                            if (cswPrivate.lastStepNo === 1) {
+                                cswPrivate.tabsAndProps.save({}, '', null, false, false);
+                                if (cswPrivate.saveError === true) {
+                                    cswPrivate.saveError = false;
+                                    canReceiveMaterial = false;
+                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true, false);
+                                    cswPrivate.reinitSteps(2);
                                 }
                             }
                         }
-                    });
+                    }
+
+                    if (canReceiveMaterial) {
+                        var container = {
+                            containernodeid: cswPrivate.state.containerNodeId,
+                            materialid: cswPrivate.state.materialId,
+                            containernodetypeid: cswPrivate.state.containerNodeTypeId,
+                            quantities: cswPrivate.amountsGrid.quantities(),
+                            sizeid: cswPrivate.state.selectedSizeId,
+                            props: cswPrivate.tabsAndProps.getPropJson()
+                        };
+                        Csw.ajax.post({
+                            urlMethod: 'receiveMaterial',
+                            data: { ReceiptDefinition: Csw.serialize(container) },
+                            success: function(data) {
+                                if (Csw.number(data.containerscreated) < 1) {
+                                    Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
+                                } else {
+                                    Csw.tryExec(cswPrivate.onFinish, data.viewid);
+                                    if (cswPrivate.printBarcodes) {
+                                        if (false === Csw.isNullOrEmpty(data.barcodes) &&
+                                            data.barcodes.length > 0) {
+
+                                            $.CswDialog('PrintLabelDialog', {
+                                                nodeids: data.barcodes,
+                                                nodetypeid: cswPrivate.state.containerNodeTypeId
+                                            });
+                                        } else {
+                                            //handle warning
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
                 };
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
