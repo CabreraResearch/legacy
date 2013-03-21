@@ -48,33 +48,35 @@
             this.cbVerbose = new System.Windows.Forms.CheckBox();
             this.cbContinuous = new System.Windows.Forms.CheckBox();
             this.btnRefreshCounts = new System.Windows.Forms.Button();
+            this.txtAccessId = new System.Windows.Forms.TextBox();
+            this.lblAccessId = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnLoadData
             // 
             this.btnLoadData.Enabled = false;
-            this.btnLoadData.Location = new System.Drawing.Point(15, 139);
+            this.btnLoadData.Location = new System.Drawing.Point(15, 203);
             this.btnLoadData.Name = "btnLoadData";
             this.btnLoadData.Size = new System.Drawing.Size(90, 27);
             this.btnLoadData.TabIndex = 0;
             this.btnLoadData.Text = "Load Data";
             this.btnLoadData.UseVisualStyleBackColor = true;
-            this.btnLoadData.Click += new System.EventHandler( this.btnLoadData_Click );
+            this.btnLoadData.Click += new System.EventHandler(this.btnLoadData_Click);
             // 
             // btnRunImport
             // 
             this.btnRunImport.Enabled = false;
-            this.btnRunImport.Location = new System.Drawing.Point(15, 238);
+            this.btnRunImport.Location = new System.Drawing.Point(15, 302);
             this.btnRunImport.Name = "btnRunImport";
             this.btnRunImport.Size = new System.Drawing.Size(90, 27);
             this.btnRunImport.TabIndex = 1;
             this.btnRunImport.Text = "Run Import";
             this.btnRunImport.UseVisualStyleBackColor = true;
-            this.btnRunImport.Click += new System.EventHandler( this.btnRunImport_Click );
+            this.btnRunImport.Click += new System.EventHandler(this.btnRunImport_Click);
             // 
             // txtDataFilePath
             // 
-            this.txtDataFilePath.Location = new System.Drawing.Point(12, 113);
+            this.txtDataFilePath.Location = new System.Drawing.Point(12, 177);
             this.txtDataFilePath.Name = "txtDataFilePath";
             this.txtDataFilePath.Size = new System.Drawing.Size(384, 20);
             this.txtDataFilePath.TabIndex = 3;
@@ -82,7 +84,7 @@
             // 
             // txtBindingsFilePath
             // 
-            this.txtBindingsFilePath.Location = new System.Drawing.Point(12, 25);
+            this.txtBindingsFilePath.Location = new System.Drawing.Point(12, 89);
             this.txtBindingsFilePath.Name = "txtBindingsFilePath";
             this.txtBindingsFilePath.Size = new System.Drawing.Size(384, 20);
             this.txtBindingsFilePath.TabIndex = 4;
@@ -91,7 +93,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 97);
+            this.label1.Location = new System.Drawing.Point(12, 161);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(49, 13);
             this.label1.TabIndex = 5;
@@ -100,7 +102,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 9);
+            this.label2.Location = new System.Drawing.Point(12, 73);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 6;
@@ -109,7 +111,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 197);
+            this.label3.Location = new System.Drawing.Point(12, 261);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(123, 13);
             this.label3.TabIndex = 7;
@@ -124,22 +126,22 @@
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(482, 300);
+            this.txtLog.Size = new System.Drawing.Size(482, 356);
             this.txtLog.TabIndex = 8;
             // 
             // btnReadBindings
             // 
-            this.btnReadBindings.Location = new System.Drawing.Point(15, 50);
+            this.btnReadBindings.Location = new System.Drawing.Point(15, 114);
             this.btnReadBindings.Name = "btnReadBindings";
             this.btnReadBindings.Size = new System.Drawing.Size(90, 27);
             this.btnReadBindings.TabIndex = 9;
             this.btnReadBindings.Text = "Read Bindings";
             this.btnReadBindings.UseVisualStyleBackColor = true;
-            this.btnReadBindings.Click += new System.EventHandler( this.btnReadBindings_Click );
+            this.btnReadBindings.Click += new System.EventHandler(this.btnReadBindings_Click);
             // 
             // txtRows
             // 
-            this.txtRows.Location = new System.Drawing.Point(125, 242);
+            this.txtRows.Location = new System.Drawing.Point(125, 306);
             this.txtRows.Name = "txtRows";
             this.txtRows.Size = new System.Drawing.Size(30, 20);
             this.txtRows.TabIndex = 10;
@@ -148,7 +150,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(161, 245);
+            this.label4.Location = new System.Drawing.Point(161, 309);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(69, 13);
             this.label4.TabIndex = 11;
@@ -157,7 +159,7 @@
             // cbxImportDataTableName
             // 
             this.cbxImportDataTableName.FormattingEnabled = true;
-            this.cbxImportDataTableName.Location = new System.Drawing.Point(12, 213);
+            this.cbxImportDataTableName.Location = new System.Drawing.Point(12, 277);
             this.cbxImportDataTableName.Name = "cbxImportDataTableName";
             this.cbxImportDataTableName.Size = new System.Drawing.Size(384, 21);
             this.cbxImportDataTableName.TabIndex = 12;
@@ -166,7 +168,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(122, 279);
+            this.label5.Location = new System.Drawing.Point(122, 343);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(79, 13);
             this.label5.TabIndex = 13;
@@ -175,7 +177,7 @@
             // lblPending
             // 
             this.lblPending.AutoSize = true;
-            this.lblPending.Location = new System.Drawing.Point(207, 279);
+            this.lblPending.Location = new System.Drawing.Point(207, 343);
             this.lblPending.Name = "lblPending";
             this.lblPending.Size = new System.Drawing.Size(13, 13);
             this.lblPending.TabIndex = 14;
@@ -184,7 +186,7 @@
             // lblError
             // 
             this.lblError.AutoSize = true;
-            this.lblError.Location = new System.Drawing.Point(207, 301);
+            this.lblError.Location = new System.Drawing.Point(207, 365);
             this.lblError.Name = "lblError";
             this.lblError.Size = new System.Drawing.Size(13, 13);
             this.lblError.TabIndex = 16;
@@ -193,7 +195,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(139, 301);
+            this.label8.Location = new System.Drawing.Point(139, 365);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(62, 13);
             this.label8.TabIndex = 15;
@@ -205,7 +207,7 @@
             this.cbVerbose.AutoSize = true;
             this.cbVerbose.Checked = true;
             this.cbVerbose.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbVerbose.Location = new System.Drawing.Point(819, 318);
+            this.cbVerbose.Location = new System.Drawing.Point(819, 374);
             this.cbVerbose.Name = "cbVerbose";
             this.cbVerbose.Size = new System.Drawing.Size(65, 17);
             this.cbVerbose.TabIndex = 17;
@@ -215,7 +217,7 @@
             // cbContinuous
             // 
             this.cbContinuous.AutoSize = true;
-            this.cbContinuous.Location = new System.Drawing.Point(248, 244);
+            this.cbContinuous.Location = new System.Drawing.Point(248, 308);
             this.cbContinuous.Name = "cbContinuous";
             this.cbContinuous.Size = new System.Drawing.Size(79, 17);
             this.cbContinuous.TabIndex = 18;
@@ -226,18 +228,37 @@
             // 
             this.btnRefreshCounts.Enabled = false;
             this.btnRefreshCounts.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshCounts.Image")));
-            this.btnRefreshCounts.Location = new System.Drawing.Point(248, 279);
+            this.btnRefreshCounts.Location = new System.Drawing.Point(248, 343);
             this.btnRefreshCounts.Name = "btnRefreshCounts";
             this.btnRefreshCounts.Size = new System.Drawing.Size(41, 35);
             this.btnRefreshCounts.TabIndex = 19;
             this.btnRefreshCounts.UseVisualStyleBackColor = true;
-            this.btnRefreshCounts.Click += new System.EventHandler( this.btnRefreshCounts_Click );
+            this.btnRefreshCounts.Click += new System.EventHandler(this.btnRefreshCounts_Click);
+            // 
+            // txtAccessId
+            // 
+            this.txtAccessId.Location = new System.Drawing.Point(12, 31);
+            this.txtAccessId.Name = "txtAccessId";
+            this.txtAccessId.Size = new System.Drawing.Size(208, 20);
+            this.txtAccessId.TabIndex = 20;
+            this.txtAccessId.Text = "1";
+            // 
+            // lblAccessId
+            // 
+            this.lblAccessId.AutoSize = true;
+            this.lblAccessId.Location = new System.Drawing.Point(12, 15);
+            this.lblAccessId.Name = "lblAccessId";
+            this.lblAccessId.Size = new System.Drawing.Size(54, 13);
+            this.lblAccessId.TabIndex = 21;
+            this.lblAccessId.Text = "Access Id";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(896, 340);
+            this.ClientSize = new System.Drawing.Size(896, 396);
+            this.Controls.Add(this.lblAccessId);
+            this.Controls.Add(this.txtAccessId);
             this.Controls.Add(this.btnRefreshCounts);
             this.Controls.Add(this.cbContinuous);
             this.Controls.Add(this.cbVerbose);
@@ -285,6 +306,8 @@
         private System.Windows.Forms.CheckBox cbVerbose;
         private System.Windows.Forms.CheckBox cbContinuous;
         private System.Windows.Forms.Button btnRefreshCounts;
+        private System.Windows.Forms.TextBox txtAccessId;
+        private System.Windows.Forms.Label lblAccessId;
     }
 }
 

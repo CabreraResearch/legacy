@@ -467,7 +467,7 @@
             this.ClientSize = new System.Drawing.Size(432, 403);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
-            this.Text = "ChemSW Label Printer Client v1.2";
+            this.Text = "ChemSW Label Printer Client v1.3";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
