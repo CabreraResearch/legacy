@@ -341,8 +341,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 case Modes.Move:
                     CswNbtNode itemToMove = _getNodeByBarcode( NbtResources, OpData.Field2.FoundObjClass, OpData.Field2.Value, true );
-                    CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value, true );
-
                     string locationPropName = "Location";
                     switch( OpData.Field2.FoundObjClass )
                     {
@@ -356,11 +354,23 @@ namespace ChemSW.Nbt.WebServices
                             locationPropName = CswNbtObjClassContainer.PropertyName.Location;
                             break;
                     }
-                    itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
-                    itemToMove.postChanges( false );
-
                     string itemType = itemToMove.getNodeType().NodeTypeName;
-                    OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
+
+                    if( NbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, itemToMove.getNodeType() ) && false == itemToMove.Properties[locationPropName].ReadOnly )
+                    {
+                        CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, OpData.Field1.Value, true );
+                        itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
+                        itemToMove.postChanges( false );
+                        OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
+                    }
+                    else
+                    {
+                        string statusMsg = "You do not have permission to edit " + itemType + " (" + OpData.Field2.Value + ")";
+                        OpData.Field2.StatusMsg = statusMsg;
+                        OpData.Field2.ServerValidated = false;
+                        resetField2 = false;
+                        OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
+                    }
                     break;
                 case Modes.Owner:
                     CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
@@ -440,7 +450,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        string statusMsg = "You do not have permission to edit the Status of " + itemTypeName + " (" + OpData.Field2.Value + ")";
+                        string statusMsg = "You do not have permission to edit " + itemTypeName + " (" + OpData.Field2.Value + ")";
                         OpData.Field2.StatusMsg = statusMsg;
                         OpData.Field2.ServerValidated = false;
                         resetField2 = false;
