@@ -104,6 +104,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _trySetNodeTypeSelectDefaultValues()
         {
+            //has owner and (is inspection schedule or has a view already)
             bool RequiresParentView = CswTools.IsPrimaryKey(Owner.RelatedNodeId) &&
                             ( Node.getNodeType().getFirstVersionNodeType().NodeTypeName == InspectionGeneratorNodeTypeName ||
                             ( ParentView.ViewId != null &&
@@ -114,6 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
                 Collection<CswNbtMetaDataNodeType> MatchingInspectionTargetNts = new Collection<CswNbtMetaDataNodeType>();
 
+                //parent is selectable and is inspection and owner is valid and (parent untouched or empty)
                 bool SetDefaultParentType = ( ( false == ParentType.WasModified ||
                                                 ParentType.SelectedNodeTypeIds.Count == 0 ) &&
                                                 null != OwnerNode &&
@@ -149,6 +151,7 @@ namespace ChemSW.Nbt.ObjClasses
                     } // foreach( CswNbtMetaDataNodeType InspectionTargetNt in InspectionTargetOc.NodeTypes )
                 } // if( SetDefaultTargetType )
 
+                //target is selectable and (parent or target not empty) and (target untouched or empty)
                 bool SetDefaultTargetType = ( ( false == TargetType.WasModified ||
                                             TargetType.SelectedNodeTypeIds.Count == 0 ) &&
                                           TargetType.SelectMode != PropertySelectMode.Blank &&
@@ -323,7 +326,29 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
         private void onTargetTypePropChange( CswNbtNodeProp NodeProp )
         {
-            //Does nothing but enable a breakpoint for debugging purposes
+            //TODO - run through the selected target nodetypes and uncheck any of them whose parent doesn't match the current parent type
+            if( Node.getNodeType().getFirstVersionNodeType().NodeTypeName == InspectionGeneratorNodeTypeName )
+            {
+                Int32 InspectionTargetNTId = CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] );
+
+                foreach( Int32 InspectionTargetNodeTypeId in TargetType.SelectedNodeTypeIds.ToIntCollection() )
+                {
+                    CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetNodeTypeId );
+                    if( null != InspectionDesignNt )
+                    {
+                        CswNbtMetaDataNodeTypeProp DesignTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
+                        if( DesignTargetNtp.IsFK &&
+                            NbtViewRelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
+                            Int32.MinValue != DesignTargetNtp.FKValue )
+                        {
+                            if( InspectionTargetNTId != DesignTargetNtp.FKValue )
+                            {
+                                TargetType.SelectedNodeTypeIds.Remove( InspectionDesignNt.NodeTypeId.ToString() );
+                            }
+                        }
+                    }
+                }
+            }
         }
         public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
 
