@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using ChemSW.Audit;
@@ -626,13 +625,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void deleteConfigurationVariable( CswNbtResources.ConfigurationVariables Name )
         {
-            CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
-            DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where lower(variablename)='" + Name.ToString().ToLower() + "'", true );
-            if( ConfigVarDataTable.Rows.Count == 1 )
-            {
-                ConfigVarDataTable.Rows[0].Delete();
-            }
-            ConfigVarTable.update( ConfigVarDataTable );
+            deleteConfigurationVariable( Name.ToString() );
         }
 
         /// <summary>
@@ -643,9 +636,9 @@ namespace ChemSW.Nbt.Schema
         {
             CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
             DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where lower(variablename)='" + Name.ToLower() + "'", true );
-            if( ConfigVarDataTable.Rows.Count == 1 )
+            foreach( DataRow Row in ConfigVarDataTable.Rows )
             {
-                ConfigVarDataTable.Rows[0].Delete();
+                Row.Delete();
             }
             ConfigVarTable.update( ConfigVarDataTable );
         }
@@ -836,7 +829,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public Int32 createModule( string Description, string Name )
         {
-            return createModule( Description, Name, Enabled: isMaster() );
+            return createModule( Description, Name, Enabled : isMaster() );
         }
 
         /// <summary>
@@ -1044,7 +1037,7 @@ namespace ChemSW.Nbt.Schema
         public void deleteModule( string ModuleName )
         {
             Int32 ModuleId = Modules.GetModuleId( ModuleName );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId: Int32.MinValue );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId : Int32.MinValue );
             deleteAllModuleObjectClassJunctions( ModuleId );
 
             CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
@@ -1164,7 +1157,7 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
             {
-                deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
+                deleteModuleNodeTypeJunction( ModuleId : Int32.MinValue, NodeTypeId : NodeTypeId );
             }
 
             CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );

@@ -52,6 +52,7 @@ namespace ChemSW.Nbt.Schema
 
             _createExcludeInQuotaBarColumns( CswDeveloper.MB, 28752 );
             _createPrereqColumn( CswDeveloper.MB, 29089 );
+            _alterUpdateHistory();
 
             #endregion YORICK
 
@@ -88,6 +89,15 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "modules", PrereqColName, "Prerequisite for this module to be activated", false, false );
             }
+
+            _resetBlame();
+        }
+
+        private void _alterUpdateHistory()
+        {
+            _acceptBlame( CswDeveloper.SS, 29221 );
+
+            _CswNbtSchemaModTrnsctn.changeColumnDataType( "update_history", "version", DataDictionaryPortableDataType.String, 10 );
 
             _resetBlame();
         }
