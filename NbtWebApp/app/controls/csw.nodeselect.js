@@ -57,8 +57,7 @@
                 cswPrivate.useSearch = cswPrivate.useSearch;
                 cswPrivate.usePreview = cswPrivate.usePreview;
                 cswPrivate.options = cswPrivate.options || [];
-
-                cswPrivate.addNewC3Supplier = cswPrivate.addNewC3Supplier;
+                cswPrivate.extraOptions = cswPrivate.extraOptions || [];
 
                 cswPublic = cswParent.div();
                 cswPrivate.table = cswPublic.table();
@@ -110,10 +109,10 @@
                         if (false === cswPrivate.isRequired) {
                             cswPrivate.options.push({ id: '', value: '' });
                         }
-                        
-                        if (cswPrivate.addNewC3Supplier) {
-                            cswPrivate.options.push({ id: '', value: 'New Supplier Name >>' });
-                        }
+
+                        cswPrivate.extraOptions.forEach(function(obj) {
+                            cswPrivate.options.push({ id: obj.id, value: obj.value });
+                        });
                         
                         data.Nodes.forEach(function (obj) {
                             cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });

@@ -206,7 +206,7 @@
                         cswPrivate.supplierSelect.selectedText &&
                         Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
                         cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
-                        if (cswPrivate.supplierSelect.selectedText() === 'New Supplier Name >>') {
+                        if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                             cswPrivate.makeNewC3SupplierInput(true);
                         } else {
                             cswPrivate.makeNewC3SupplierInput(false);
@@ -221,7 +221,7 @@
                         cswPrivate.state.partNo = cswPrivate.partNoInput.val();
                     }
                     if (cswPrivate.newC3SupplierInput && cswPrivate.supplierSelect.selectedText) {
-                        if (cswPrivate.supplierSelect.selectedText() === 'New Supplier Name >>') {
+                        if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                             cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
                         }
                     }
@@ -294,10 +294,13 @@
                         tbl.cell(3, 1).span().setLabelText('Supplier: ', true, false);
 
                         var allowAddButton = true;
+                        var extraOptions = [];
 
                         if (cswPrivate.state.addNewC3Supplier) {
-                            cswPrivate.makeNewC3SupplierInput(true);
                             allowAddButton = false;
+                            cswPrivate.newSupplierName = 'New Supplier Name >>';
+                            extraOptions.push({ id: '', value: cswPrivate.newSupplierName });
+                            cswPrivate.makeNewC3SupplierInput(true);
                         }
 
                         var ajaxData = {};
@@ -320,7 +323,7 @@
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                             onChange: changeMaterial,
                             isRequired: true,
-                            addNewC3Supplier: cswPrivate.state.addNewC3Supplier
+                            extraOptions: extraOptions
                         });
                     };
                     cswPrivate.makeSupplierCtrl();
