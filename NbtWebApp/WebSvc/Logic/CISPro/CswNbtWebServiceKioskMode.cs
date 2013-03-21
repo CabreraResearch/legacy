@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
         #region Data Contracts
 
         [DataContract]
-        public class KioskModeDataReturn : CswWebSvcReturn
+        public class KioskModeDataReturn: CswWebSvcReturn
         {
             public KioskModeDataReturn()
             {
@@ -172,7 +172,10 @@ namespace ChemSW.Nbt.WebServices
                         }
                         StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" );
                     }
-                    StatusMsg = "Could not find " + StatusMsg;
+                    StatusMsg = "Could not find " + StatusMsg + " with barcode " + Value;
+
+                    OpData.Field2.StatusMsg = StatusMsg;
+                    OpData.Field2.ServerValidated = false;
                     OpData.Log.Add( DateTime.Now + " - ERROR: " + StatusMsg );
                 }
 
@@ -356,7 +359,8 @@ namespace ChemSW.Nbt.WebServices
                     itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
                     itemToMove.postChanges( false );
 
-                    OpData.Log.Add( DateTime.Now + " - Moved " + OpData.Field2.FoundObjClass.Replace( "Class", "" ) + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
+                    string itemType = itemToMove.getNodeType().NodeTypeName;
+                    OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
                     break;
                 case Modes.Owner:
                     CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtResources, NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
@@ -430,8 +434,8 @@ namespace ChemSW.Nbt.WebServices
                     item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
                     item.postChanges( false );
 
-                    OpData.Log.Add( DateTime.Now + " - Status of " + OpData.Field2.FoundObjClass.Replace( "Class", "" ) + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
-                    resetField2 = true;
+                    string itemTypeName = item.getNodeType().NodeTypeName;
+                    OpData.Log.Add( DateTime.Now + " - Status of " + itemTypeName + " " + OpData.Field2.Value + " changed to \"" + OpData.Field1.Value + "\"" );
                     break;
             }
             if( resetField2 )
@@ -529,8 +533,7 @@ namespace ChemSW.Nbt.WebServices
                         Field.StatusMsg = "Error: " + Field.Value + " is not a number";
                     }
                 }
-
-                if( loweredMode.Equals( Modes.Status ) )
+                else if( loweredMode.Equals( Modes.Status ) && false == OpData.Field1.ServerValidated )
                 {
                     if( _validateStatus( NbtResources, OpData.Field1.Value, ref OpData ) )
                     {
@@ -546,6 +549,7 @@ namespace ChemSW.Nbt.WebServices
             if( IsValid )
             {
                 Field.ServerValidated = true;
+                Field.StatusMsg = "";
                 if( NbtObjectClass.LocationClass.Equals( ObjClass ) )
                 {
                     CswNbtObjClassLocation scannedLocation = _getNodeByBarcode( NbtResources, NbtObjectClass.LocationClass, Field.Value, true );
@@ -621,10 +625,10 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView view = new CswNbtView( NbtResources );
                 CswNbtViewRelationship parent = view.AddViewRelationship( metaDataOC, IncludeDefaultFilters );
                 view.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: barcodeOCP,
-                    Value: Barcode,
-                    SubFieldName: CswNbtSubField.SubFieldName.Barcode,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals
+                    MetaDataProp : barcodeOCP,
+                    Value : Barcode,
+                    SubFieldName : CswNbtSubField.SubFieldName.Barcode,
+                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals
                 );
 
                 if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
@@ -659,32 +663,49 @@ namespace ChemSW.Nbt.WebServices
             bool ret = false;
             string foundMatch = "";
 
-            Regex alphNums = new Regex("[^a-zA-Z0-9]" );
+            Regex alphNums = new Regex( "[^a-zA-Z0-9]" );
             string strippedStatus = alphNums.Replace( status, "" );
+
+            Collection<CswNbtMetaDataNodeTypeProp> statusNTPs = new Collection<CswNbtMetaDataNodeTypeProp>();
 
             CswNbtMetaDataObjectClass equipmentOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp statusOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Status );
             foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusOCP.getNodeTypeProps() )
             {
+                statusNTPs.Add( statusNTP );
+            }
+
+            CswNbtMetaDataObjectClass assemblyOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            statusOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Status );
+            foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusOCP.getNodeTypeProps() )
+            {
+                statusNTPs.Add( statusNTP );
+            }
+
+            foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusNTPs )
+            {
                 CswCommaDelimitedString statusOptCDS = new CswCommaDelimitedString();
-                statusOptCDS.FromString(statusNTP.ListOptions);
+                statusOptCDS.FromString( statusNTP.ListOptions );
 
                 foreach( string candidateStatus in statusOptCDS )
                 {
-                    if( candidateStatus.Equals( status ) )
+                    if( String.IsNullOrEmpty( foundMatch ) )
                     {
-                        foundMatch = candidateStatus;
-                        ret = true;
-                    }
-                    else
-                    {
-                        string strippedCandidateStatus = alphNums.Replace( candidateStatus, "" );
-                        if( strippedStatus.Equals( strippedCandidateStatus ) )
+                        if( candidateStatus.Equals( status ) )
                         {
                             foundMatch = candidateStatus;
                             ret = true;
-                            OpData.Field1.Value = candidateStatus;
-                            OpData.Field1.SecondValue = "(entered: \"" + status +"\")";
+                        }
+                        else
+                        {
+                            string strippedCandidateStatus = alphNums.Replace( candidateStatus, "" );
+                            if( strippedStatus.Equals( strippedCandidateStatus ) )
+                            {
+                                foundMatch = candidateStatus;
+                                ret = true;
+                                OpData.Field1.Value = candidateStatus;
+                                OpData.Field1.SecondValue = "(entered: \"" + status + "\")";
+                            }
                         }
                     }
                 }
