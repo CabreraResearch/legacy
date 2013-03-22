@@ -241,17 +241,16 @@ namespace ChemSW.Nbt.WebServices
                     _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, useCheckboxes );
                 }
                 Tree.goToParentNode();
-
-                if( Tree.getCurrentNodeChildrenTruncated() )
-                {
-                    CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, TreeNode, false );
-                    TruncatedTreeNode.Name = "Results Truncated";
-                    TruncatedTreeNode.IsLeaf = true;
-                    TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
-                    TruncatedTreeNode.Id = TruncatedTreeNode.Id + "_truncated";
-                    TruncatedTreeNode.NodeId = "";
-                    TreeNodes.Add( TruncatedTreeNode );
-                }
+            }
+            if( Tree.getCurrentNodeChildrenTruncated() )
+            {
+                CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, ParentNode, false );
+                TruncatedTreeNode.Name = "Results Truncated";
+                TruncatedTreeNode.IsLeaf = true;
+                TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
+                TruncatedTreeNode.Id = TruncatedTreeNode.Id + "_truncated";
+                TruncatedTreeNode.NodeId = "";
+                TreeNodes.Add( TruncatedTreeNode );
             }
         } // _runTreeNodesRecursive()
 

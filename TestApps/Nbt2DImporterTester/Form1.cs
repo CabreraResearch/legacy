@@ -22,23 +22,20 @@ namespace Nbt2DImporterTester
             _WorkerThread.OnImportFinish = ImportFinish;
         }
 
-        #region NON-UI THREAD 
+        #region NON-UI THREAD
 
         private void handleMessage( string Msg )
         {
-            if( cbVerbose.Checked )
-            {
-                txtLog.BeginInvoke( new logHandler( log ), new object[] {Msg} );
-            }
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { Msg, false } );
         }
         private void handleError( string Msg )
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] { "ERROR: " + Msg } );
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { "ERROR: " + Msg, true } );
         }
 
         private void finish()
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished." } );
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished.", false } );
             btnLoadData.BeginInvoke( new setButtonsEnabledHandler( setButtonsEnabled ), new object[] { true } );
         }
 
@@ -52,20 +49,23 @@ namespace Nbt2DImporterTester
             lblPending.BeginInvoke( new setCountsHandler( setCounts ), new object[] { PendingCount, ErrorCount } );
         }
 
-        private void ImportFinish()
+        private void ImportFinish( bool More )
         {
-            if( cbContinuous.Checked )
+            if( More && cbContinuous.Checked )
             {
-                btnRunImport.BeginInvoke( new buttonClickHandler( btnRunImport_Click ), new object[] {null, null} );
+                btnRunImport.BeginInvoke( new buttonClickHandler( btnRunImport_Click ), new object[] { null, null } );
             }
         }
 
         #endregion NON-UI THREAD
 
-        public delegate void logHandler( string Msg );
-        public void log( string Msg )
+        public delegate void logHandler( string Msg, bool isError );
+        public void log( string Msg, bool isError = false )
         {
-            txtLog.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + Msg + "\r\n" + txtLog.Text;
+            if( cbVerbose.Checked || isError )
+            {
+                txtLog.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + Msg + "\r\n" + txtLog.Text;
+            }
         }
 
         private delegate void setButtonsEnabledHandler( bool enabled );
