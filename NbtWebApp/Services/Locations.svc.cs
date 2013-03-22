@@ -25,14 +25,14 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Assign specified inventory group to specified locations" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceLocations.AssignInventoryGroupResponse assignInventoryGroupToLocations( CswNbtWebServiceLocations.AssignInventoryGroupData.AssignRequest Request )
+        public CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse assignInventoryGroupToLocations( CswNbtWebServiceLocationsCis.AssignInventoryGroupData.AssignRequest Request )
         {
-            CswNbtWebServiceLocations.AssignInventoryGroupResponse ReturnVal = new CswNbtWebServiceLocations.AssignInventoryGroupResponse();
+            CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse ReturnVal = new CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.AssignInventoryGroupResponse, CswNbtWebServiceLocations.AssignInventoryGroupData.AssignRequest>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse, CswNbtWebServiceLocationsCis.AssignInventoryGroupData.AssignRequest>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: ReturnVal,
-                WebSvcMethodPtr: CswNbtWebServiceLocations.assignInventoryGroupToLocations,
+                WebSvcMethodPtr: CswNbtWebServiceLocationsCis.assignInventoryGroupToLocations,
                 ParamObj: Request
                 );
 

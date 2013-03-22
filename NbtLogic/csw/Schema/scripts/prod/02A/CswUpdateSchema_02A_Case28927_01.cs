@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
                         CswNbtTreeNode IGTreeNode = null;
                         CswNbtNode DefaultInventoryGroupNode = null;
                         ICswNbtTree TreeOfArbitraryNodes = _CswNbtSchemaModTrnsctn.getArbitraryNodes( "Default Inventory Group", InventoryGroupOC );
-                        if( null != ( IGTreeNode = TreeOfArbitraryNodes.getRootNode().ChildNodes[0] ) && ( null != ( DefaultInventoryGroupNode = _CswNbtSchemaModTrnsctn.Nodes[IGTreeNode.NodeKey] ) ) )
+                        if( null != ( IGTreeNode = TreeOfArbitraryNodes.getRootTreeNode().ChildNodes[0] ) && ( null != ( DefaultInventoryGroupNode = _CswNbtSchemaModTrnsctn.Nodes[IGTreeNode.NodeKey] ) ) )
                         {
                             foreach( CswNbtNode CurrentLocationNode in LocationOC.getNodes( false, true ) )
                             {
