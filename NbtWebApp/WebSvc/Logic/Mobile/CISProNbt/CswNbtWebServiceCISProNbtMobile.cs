@@ -35,7 +35,9 @@ namespace NbtWebApp.WebSvc.Logic.Mobile.CISProNbt
         /// </summary>
         public static void RLSaveData( ICswResources CswResources, CswNbtMobileReturn Return, RapidLoaderData.RapidLoaderDataRequest Request )
         {
-            CswNbtMobileRapidLoader _CswNbtMobileRapidLoader = new CswNbtMobileRapidLoader( (CswNbtResources) CswResources );
+            CswNbtResources _CswNbtResources = ( CswNbtResources ) CswResources;
+            Request.EmailAddress = _CswNbtResources.CurrentNbtUser.Email.Trim();
+            CswNbtMobileRapidLoader _CswNbtMobileRapidLoader = new CswNbtMobileRapidLoader( _CswNbtResources );
             _CswNbtMobileRapidLoader.saveRapidLoaderData( Request );
         }
 
