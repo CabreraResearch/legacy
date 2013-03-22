@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -91,7 +92,7 @@ namespace ChemSW.Nbt.WebServices
         public static void HandleScan( ICswResources CswResources, KioskModeDataReturn Return, KioskModeData KioskModeData )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            if( _isModeScan( KioskModeData.OperationData.LastItemScanned ) )
+            if( _isModeScan( KioskModeData.OperationData.LastItemScanned, KioskModeData ) )
             {
                 KioskModeData.OperationData.Mode = KioskModeData.OperationData.LastItemScanned;
                 _setFields( NbtResources, KioskModeData.OperationData );
@@ -136,16 +137,9 @@ namespace ChemSW.Nbt.WebServices
             rule.SetFields( ref OpData );
         }
 
-        private static bool _isModeScan( string ScannedMode )
+        private static bool _isModeScan( string ScannedMode, KioskModeData KMData )
         {
-            bool Ret = false;
-            foreach( CswNbtKioskModeRuleName Rule in CswNbtKioskModeRuleName._All )
-            {
-                if( Rule._Name.ToLower().Equals( ScannedMode.ToLower() ) )
-                {
-                    Ret = true;
-                }
-            }
+            bool Ret = KMData.AvailableModes.Any<Mode>( mode => mode.name.ToLower().Equals( ScannedMode.ToLower() ) );
             return Ret;
         }
 
