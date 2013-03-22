@@ -39,5 +39,22 @@ namespace NbtWebApp.Services
             Ret.Data.Success = true;
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Save a given CSV string of records to the temp directory and email a link to the user" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn RLSaveData( RapidLoaderData.RapidLoaderDataRequest Request )
+        {
+            CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn Ret = new CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceCISProNbtMobile.CswNbtMobileReturn, RapidLoaderData.RapidLoaderDataRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceCISProNbtMobile.RLSaveData,
+                ParamObj: Request
+                );
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }
