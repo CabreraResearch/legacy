@@ -1005,8 +1005,18 @@
                             title: 'Sizes',
                             height: 100,
                             width: 300,
-                            fields: [{ name: 'case_qty', type: 'string' }, { name: 'pkg_qty', type: 'string' }, { name: 'pkg_qty_uom', type: 'string' }, { name: 'catalog_no', type: 'string'}],
-                            columns: [{ header: 'Unit Count', dataIndex: 'case_qty' }, { header: 'Initial Quantity', dataIndex: 'pkg_qty' }, { header: 'UOM', dataIndex: 'pkg_qty_uom' }, { header: 'Catalog No', dataIndex: 'catalog_no'}],
+                            fields: [
+                                { name: 'case_qty', type: 'string' },
+                                { name: 'pkg_qty', type: 'string' },
+                                { name: 'pkg_qty_uom', type: 'string' },
+                                { name: 'catalog_no', type: 'string' }
+                            ],
+                            columns: [
+                                { header: 'Unit Count', dataIndex: 'case_qty' },
+                                { header: 'Initial Quantity', dataIndex: 'pkg_qty' },
+                                { header: 'UOM', dataIndex: 'pkg_qty_uom' },
+                                { header: 'Catalog No', dataIndex: 'catalog_no' }
+                            ],
                             data: {
                                 items: UniqueProductSizes,
                                 buttons: []
@@ -1110,19 +1120,29 @@
             searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
 
             var searchTermField = tableInner.cell(1, 4).input({
-                value: cswPrivate.c3searchterm
+                value: cswPrivate.c3searchterm,
+                onChange: function () {
+                    if (Csw.isNullOrEmpty(searchTermField.val())) {
+                        searchButton.disable();
+                    } else {
+                        searchButton.enable();
+                    }
+                }
             });
+            
+            var enableSearchButton = !(Csw.isNullOrEmpty(searchTermField.val()));
 
-            tableInner.cell(1, 5).button({
+            var searchButton = tableInner.cell(1, 5).button({
                 name: 'c3SearchBtn',
                 enabledText: 'Search',
-                disabledText: "Searching...",
+                //disabledText: "Searching...",
                 bindOnEnter: div,
+                isEnabled: enableSearchButton,
                 onClick: function () {
 
                     var CswC3SearchParams = {
                         Field: searchTypeSelect.selectedVal(),
-                        Query: searchTermField.val(),
+                        Query: $.trim(searchTermField.val()),
                         SearchOperator: searchOperatorSelect.selectedVal(),
                         SourceName: sourceSelect.selectedVal()
                     };
