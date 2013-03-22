@@ -8,10 +8,10 @@ using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.Test
+namespace ChemSW.Nbt.Test.Actions
 {
     [TestFixture]
-    public class CswNbtActDispenseContainerTest
+    public class CswNbtActionDispenseContainerTest
     {
         #region Setup and Teardown
 
@@ -270,9 +270,8 @@ namespace ChemSW.Nbt.Test
 
         private double _getNewSourceContainerQuantity( CswPrimaryKey SourceContainerId )
         {
-            CswNbtNode UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( SourceContainerId );
-            CswNbtObjClassContainer NodeAsContianer = UpdatedContainerNode;
-            return NodeAsContianer.Quantity.Quantity;
+            CswNbtObjClassContainer UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( SourceContainerId );
+            return UpdatedContainerNode.Quantity.Quantity;
         }
 
         private int _getNewContainerCount( CswPrimaryKey SourceContainerId )

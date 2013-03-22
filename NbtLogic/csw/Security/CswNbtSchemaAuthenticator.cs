@@ -24,10 +24,7 @@ namespace ChemSW.Nbt.Security
         {
             CswNbtObjClassUser UserNode = _authorizeUser( CswEncryption, username, password );
             AuthenticationStatus AuthStatus = _getAuthStatus( UserNode );
-            _logAuthenticationAttempt( username, IPAddress,
-                //This one-line hack is used to determine if AuthenticationStatus.Failed means bad username or bad password (for logging).
-                //We should probably have separate AuthenticationStatus types to handle this discrepancy (since we already do for everything else)
-                AuthStatus == AuthenticationStatus.Failed && UserNode == null ? ( AuthenticationStatus ) AuthenticationStatus.Unknown : AuthStatus );
+            _logAuthenticationAttempt( UserNode, username, IPAddress, AuthStatus );
             AuthenticatedUser = UserNode;
             return AuthStatus;
         }
@@ -74,8 +71,11 @@ namespace ChemSW.Nbt.Security
             return AuthStatus;
         }
 
-        private void _logAuthenticationAttempt( String username, String IPAddress, AuthenticationStatus AuthStatus )
+        private void _logAuthenticationAttempt( CswNbtObjClassUser UserNode, String username, String IPAddress, AuthenticationStatus AuthStatus )
         {
+            Int32 FailedLoginCount = null != UserNode ? UserNode.getFailedLoginCount() : 0;
+            AuthStatus = UserNode == null ? (AuthenticationStatus) AuthenticationStatus.Unknown : AuthStatus;
+
             LoginData.Login LoginRecord = new LoginData.Login
             {
                 Username = username,
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Security
                 LoginDate = DateTime.Now.ToString(),
                 LoginStatus = "Failed",
                 FailureReason = "",
-                FailedLoginCount = 0
+                FailedLoginCount = FailedLoginCount
             };
 
             LoginRecord.setStatus( AuthStatus );

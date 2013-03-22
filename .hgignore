@@ -35,8 +35,8 @@ NbtWebApp/vendor/vendor.min.js
 *.tmpl
 NbtWebApp/*.html
 NbtWebApp/release/*
+NbtDev.sln.DotSettings.user
 syntax: regexp
-NbtLogic/csw/Batch/CswNbtBatchOpUpdateRegulatoryLists.cs.orig
 .*\.orig
 .*\.vsp
 .*\.psess
