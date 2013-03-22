@@ -34,7 +34,8 @@
             };
 
             cswPublic.selectedData = function (propName) {
-                return cswPublic.$.find('option:selected')[0].dataset[propName];
+                var dataset = cswPublic.$.find('option:selected')[0].dataset;
+                return Csw.isNullOrEmpty(dataset) ? '' : dataset[propName];
             };
 
             cswPublic.selectedText = function () {
