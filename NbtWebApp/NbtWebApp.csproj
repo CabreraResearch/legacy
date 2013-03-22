@@ -99,6 +99,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Locations.svc.cs">
+      <DependentUpon>Locations.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\NbtPublic.svc.cs">
       <DependentUpon>NbtPublic.svc</DependentUpon>
     </Compile>
@@ -160,6 +163,7 @@
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcError.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceLocations.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRegulatoryReporting.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceKioskMode.cs" />
     <Compile Include="WebSvc\Logic\CISPro\MolDataContract.cs" />
@@ -687,6 +691,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Locations.svc" />
     <Content Include="Services\NbtPublic.svc" />
     <Content Include="Services\Scheduler.svc" />
     <Content Include="Services\KioskMode.svc" />

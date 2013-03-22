@@ -13,6 +13,7 @@
                 onBeforeSelectNode: function () { return true; }, //false prevents selection
                 isMulti: false,
                 validateCheckboxes: true,
+                overrideBeforeSelect: false,
                 showToggleLink: true,
                 useScrollbars: true,
                 rootVisible: false,
@@ -21,7 +22,7 @@
                 width: '',
 
                 //State
-                state: {
+                state: { 
                     viewId: '',
                     viewMode: '',
                     nodeId: '',
@@ -64,11 +65,10 @@
                     columns: data.Columns,
                     fields: data.Fields,
                     selectedId: data.SelectedId,
-
                     onSelect: cswPrivate.handleSelectNode,
                     beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,
-
+                    overrideBeforeSelect: cswPrivate.overrideBeforeSelect,
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
                     useToggles: cswPrivate.showToggleLink,
                     useCheckboxes: cswPrivate.isMulti,

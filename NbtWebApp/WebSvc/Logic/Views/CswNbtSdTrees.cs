@@ -608,6 +608,25 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+
+        public static void getLocationTree( ICswResources CswResources, Contract.Response Response, object Request )
+        {
+            CswNbtResources Resources = (CswNbtResources) CswResources;
+
+            //MaxLevel = 0 == MaxLevel ? Int32.MinValue : MaxLevel;
+
+            CswNbtView View = new CswNbtView( Resources );
+            CswNbtObjClassLocation.makeLocationsTreeView( ref View, Resources );
+            View.SaveToCache( false, false );
+            Response.Data.ViewId = View.SessionViewId;
+            //if( null != View )
+            //{
+            //    CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
+            //    SdTrees.runTree( Response.Data, new Contract.Request() );
+            //}
+        }//getLocationTree()
+
+
         //public JObject getTypes()
         //{
         //    JObject TypesJson = new JObject();

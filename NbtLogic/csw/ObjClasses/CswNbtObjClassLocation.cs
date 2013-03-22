@@ -251,7 +251,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( PropertyName.Location );
                 CswNbtMetaDataObjectClassProp LocationOrderOCP = LocationOC.getObjectClassProp( PropertyName.Order );
                 CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( PropertyName.AllowInventory );
-
+                CswNbtMetaDataObjectClassProp LocationInventoryGroupOCP = LocationOC.getObjectClassProp( PropertyName.InventoryGroup );
+ 
                 if( loc_max_depth == Int32.MinValue )
                 {
                     loc_max_depth = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
@@ -284,6 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
                         LocReln.NodeIdsToFilterOut.Add( NodeIdToFilterOut );
                     }
 
+                    CswNbtViewProperty InGroupVp = LocationsView.AddViewProperty( LocReln, LocationInventoryGroupOCP );
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
                     LocationsView.setSortProperty( OrderVPn, NbtViewPropertySortMethod.Ascending, false );
 

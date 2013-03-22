@@ -20,6 +20,8 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
+using ChemSW.Nbt.Search;
+
 
 namespace ChemSW.Nbt.Schema
 {
@@ -1733,6 +1735,30 @@ namespace ChemSW.Nbt.Schema
         {
             return new CswRateInterval( _CswNbtResources );
         }
+
+        private CswNbtSearch _search = null;
+        public ICswNbtTree getArbitraryNodes( string SearchTerm, CswNbtMetaDataObjectClass ObjClass = null, CswNbtMetaDataNodeType NodeType = null )
+        {
+            if( null == _search )
+            {
+                _search = new CswNbtSearch( _CswNbtResources ) { SearchTerm = SearchTerm  }; 
+            }
+
+
+            if( null != NodeType )
+            {
+                _search.addFilter( NodeType, false );
+            }
+
+            if( null != ObjClass )
+            {
+                _search.addFilter( ObjClass , false ); 
+            }
+
+            return( _search.Results() ); 
+
+        }//doSearch()
+
 
     }//class CswNbtSchemaModTrnsctn
 
