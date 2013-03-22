@@ -7,7 +7,7 @@ using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswNbtWebServiceLocations
+    public class CswNbtWebServiceLocationsCis
     {
         #region DataContract
 
