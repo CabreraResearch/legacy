@@ -12,6 +12,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ImportExport
@@ -427,7 +428,8 @@ namespace ChemSW.Nbt.ImportExport
                                                         CswRateInterval rateInterval = new CswRateInterval( _CswNbtResources );
                                                         rateInterval.ReadXml( xmlDoc.DocumentElement );
 
-                                                        Node.Properties[Binding.DestProperty].SetPropRowValue( CswNbtSubField.PropColumn.ClobData, rateInterval.ToXmlString() );
+                                                        ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
+                                                        //Node.Properties[Binding.DestProperty].SetPropRowValue( CswNbtSubField.PropColumn.ClobData, rateInterval.ToXmlString() );
                                                         Node.Properties[Binding.DestProperty].SyncGestalt();
                                                     }
                                                     else
