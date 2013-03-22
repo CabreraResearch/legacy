@@ -1,0 +1,22 @@
+    <style type="text/css">
+        
+        .propertylabel
+        {
+            font-weight: bold;
+        }
+
+    </style>
+
+    <div id="paramsDiv"></div>
+    <div id="formatChooser">
+        <input type="button" value="View As Grid" id="btnGrid" />
+        <input type="button" value="Save As CSV" id="btnCsv" />
+        <input type="button" value="View Using Crystal Reports" id="btnCrystal" style="display: none;" />
+    </div>
+    <div id="spinner" width="100%" style="text-align: center; display: none;">
+        <img src="images/ajax/progress.gif" />
+    </div>
+    <div id="rptDiv"></div>
+    <div id="DialogErrorDiv"></div>
+
+    

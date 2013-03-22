@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Int32 FailedLoginCount = 0;
 
-            public void setFailureReason( AuthenticationStatus Status )
+            public void setStatus( AuthenticationStatus Status )
             {
                 switch( Status )
                 {
@@ -53,6 +53,9 @@ namespace ChemSW.Nbt.Actions
                     case AuthenticationStatus.Unknown:
                         FailureReason = "Unknown Username";
                         break;
+                    case AuthenticationStatus.Authenticated:
+                        LoginStatus = "Success";
+                        break;
                 }
             }
         }
@@ -60,8 +63,6 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class LoginDataRequest
         {
-            [DataMember]
-            public String Username = String.Empty;//Do we need this?
             [DataMember]
             public String StartDate = String.Empty;
             [DataMember]
@@ -129,9 +130,8 @@ namespace ChemSW.Nbt.Actions
 
         private DataTable _getLoginRecords( LoginData.LoginDataRequest Request )
         {
-            String WhereClauseTemplate = @"where logindate >= {1} and logindate < {2} + 1";
+            String WhereClauseTemplate = @"where logindate >= {0} and logindate < {1} + 1";
             String WhereClause = String.Format( WhereClauseTemplate,
-                Request.Username,
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
                 _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) )
             );

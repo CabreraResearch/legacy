@@ -1,6 +1,5 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -13,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Jurisdiction = "Jurisdiction";
             public const string Material = "Material";
@@ -76,7 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             LabelCodes.InitOptions = _initGhsPhraseOptions;
             ClassCodes.InitOptions = _initGhsPhraseOptions;
@@ -84,7 +83,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setupPhraseView( LabelCodesGrid.View, LabelCodes.Value );
             _setupPhraseView( ClassCodesGrid.View, ClassCodes.Value );
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()
 
         private void _setupPhraseView( CswNbtView View, CswCommaDelimitedString SelectedPhraseIds )
@@ -132,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;

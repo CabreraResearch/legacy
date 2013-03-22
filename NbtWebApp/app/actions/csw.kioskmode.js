@@ -27,14 +27,16 @@
                             Value: '',
                             StatusMsg: '',
                             ServerValidated: false,
-                            SecondValue: ''
+                            SecondValue: '',
+                            FoundObjClass: ''
                         },
                         Field2: {
                             Name: '',
                             Value: '',
                             StatusMsg: '',
                             ServerValidated: false,
-                            SecondValue: ''
+                            SecondValue: '',
+                            FoundObjClass: ''
                         },
                         LastItemScanned: ''
                     };
@@ -129,14 +131,16 @@
                             Value: '',
                             StatusMsg: '',
                             ServerValidated: false,
-                            SecondValue: ''
+                            SecondValue: '',
+                            FoundObjClass: ''
                         },
                         Field2: {
                             Name: '',
                             Value: '',
                             StatusMsg: '',
                             ServerValidated: false,
-                            SecondValue: ''
+                            SecondValue: '',
+                            FoundObjClass: ''
                         }
                     };
                 };
@@ -255,7 +259,7 @@
                 (function _postCtor() {
 
                     cswPrivate.action = Csw.layouts.action(cswParent, {
-                        title: 'CISPro Kiosk Mode',
+                        title: 'Kiosk Mode',
                         cancelText: 'Exit Kiosk Mode',
                         onFinish: cswPrivate.onSubmitClick,
                         onCancel: cswPrivate.onCancel
@@ -278,8 +282,8 @@
                     });
 
                     cswPrivate.operationTbl.cell(1, 1)
-                        .css({ 'text-align': 'left', 'font-size': '225%', 'width': '55%', 'padding-bottom': '75px' })
-                        .span({ text: 'CISPro Kiosk Mode' });
+                        .css({ 'text-align': 'left', 'font-size': '255%', 'width': '55%', 'padding-bottom': '75px' })
+                        .span({ text: 'Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
                 } ());

@@ -45,18 +45,18 @@
                 name: o.name,
                 TableCssClass: 'CswWizard_WizardTable'
             });
-            table.propNonDom({
+            table.$.attr({
                 stepcount: o.StepCount,
                 startingstep: o.StartingStep
             });
 
             /* Title Cell */
             table.cell(1, 1).text(o.Title)
-                .propDom('colspan', 2)
+                .$.prop('colspan', 2)
                 .addClass('CswWizard_TitleCell');
 
             var indexCell = table.cell(2, 1)
-                .propDom('rowspan', 2)
+                .$.prop('rowspan', 2)
                 .addClass('CswWizard_IndexCell');
 
             var stepsCell = table.cell(2, 2)
@@ -75,12 +75,12 @@
             buttonTable.addClass('CswWizard_ButtonsCell');
 
             var bCell11 = buttonTable.cell(1, 1);
-            bCell11.propDom({
+            bCell11.$.prop({
                 'align': 'right',
                 'width': '65%'
             });
             var bCell12 = buttonTable.cell(1, 2);
-            bCell12.propDom({
+            bCell12.$.prop({
                 'align': 'right',
                 'width': '35%'
             });
@@ -202,12 +202,12 @@
     }
 
     function _getCurrentStepNo(table) {
-        return Csw.number(table.find('.CswWizard_StepLinkDivSelected').propNonDom('stepno'));
+        return Csw.number(table.find('.CswWizard_StepLinkDivSelected').$.attr('stepno'));
     }
 
     function _selectStep(table, stepno) {
-        var stepcount = +table.propNonDom('stepcount');
-        var startingstep = +table.propNonDom('startingstep');
+        var stepcount = +table.$.attr('stepcount');
+        var startingstep = +table.$.attr('startingstep');
         if (stepno > 0 && stepno <= stepcount) {
             table.find('.CswWizard_StepLinkDiv').removeClass('CswWizard_StepLinkDivSelected');
             table.find('.CswWizard_StepLinkDiv[stepno=' + stepno + ']').addClass('CswWizard_StepLinkDivSelected');
@@ -215,14 +215,14 @@
             table.find('.CswWizard_StepDiv').hide();
             table.find('.CswWizard_StepDiv[stepno=' + stepno + ']').show();
 
-            var $prevbtn = $('#' + table.propDom('id') + '_prev');
+            var $prevbtn = $('#' + table.$.prop('id') + '_prev');
             if (stepno <= startingstep) {
                 disable($prevbtn);
             } else {
                 enable($prevbtn);
             }
 
-            var $nextbtn = $('#' + table.propDom('id') + '_next');
+            var $nextbtn = $('#' + table.$.prop('id') + '_next');
             if (stepno >= stepcount) {
                 disable($nextbtn);
             } else {

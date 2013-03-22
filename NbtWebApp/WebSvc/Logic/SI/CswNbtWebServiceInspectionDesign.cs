@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Threading;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -22,9 +21,9 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
 
-            if( _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
+            if( false == _CswNbtResources.Permit.can(CswNbtActionName.Create_Inspection) )
             {
-                throw new CswDniException( ErrorType.Error, "Only the ChemSW Admin role can access the Inspection Design wizard.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
+                throw new CswDniException( ErrorType.Error, "You do not have permission for this Action.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
 
             _CurrentUser = _CswNbtResources.CurrentNbtUser;

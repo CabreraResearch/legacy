@@ -1,0 +1,27 @@
+     <script type="text/javascript">
+
+        $(document).ready(function () {
+            var initReport = function () {
+                if (Csw.queryString) {
+                    var qs = Csw.queryString();
+                    var parent = Csw.domNode({ ID: 'ReportContent' });
+                    Csw.layouts.tabsAndProps(parent, {
+                        name: 'nodereporttabs',
+                        globalState: {
+                            currentNodeId: qs.nodeid,
+                            currentNodeKey: qs.nodekey
+                        },
+                        tabState: {
+                            EditMode: Csw.enums.editMode.PrintReport
+                        }
+                    });
+                }
+            };
+
+            $(window).load(function () {
+                initReport();
+            });
+
+        });
+
+    </script>

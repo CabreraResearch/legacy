@@ -5,13 +5,14 @@ using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Schema;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassLocation : CswNbtObjClass
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string ChildLocationType = "Child Location Type";
             public const string LocationTemplate = "Location Template";
@@ -105,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             // BZ 6744
             // Hide the Child Location Type and Location Template controls
@@ -117,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.LocationTemplate.setHidden( value: true, SaveToDb: false );
             }
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -125,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
@@ -242,12 +243,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-
+        
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false )
+        {
+            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory );
+        }
+        
         public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false )
+        {
+            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory );
+        }
+
+        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory )
         {
             if( null != LocationsView )
             {
-                CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
                 CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( PropertyName.Location );
                 CswNbtMetaDataObjectClassProp LocationOrderOCP = LocationOC.getObjectClassProp( PropertyName.Order );
                 CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( PropertyName.AllowInventory );
@@ -255,7 +266,7 @@ namespace ChemSW.Nbt.ObjClasses
  
                 if( loc_max_depth == Int32.MinValue )
                 {
-                    loc_max_depth = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
+                    loc_max_depth = CswConvert.ToInt32( ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
                 }
                 if( loc_max_depth < 1 )
                 {

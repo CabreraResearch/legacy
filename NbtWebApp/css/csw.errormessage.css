@@ -10,30 +10,30 @@
 .CswErrorMessage_Error
 {
 	background-color: #ff3333;
-	color: &cswtextcolor;
+	color: #000000;
 }
 .CswErrorMessage_Error a
 {
 	background-color: #ff3333;
-	color: &cswtextcolor;
+	color: #000000;
 }
 .CswErrorMessage_Warning
 {
-	background-color: &cswbgcolorhilite;
-	color: &cswtextcolor;
+	background-color: #ffff00;
+	color: #000000;
 }
 .CswErrorMessage_Warning a
 {
-	background-color: &cswbgcolorhilite;
-	color: &cswtextcolor;
+	background-color: #ffff00;
+	color: #000000;
 }
 .CswErrorMessage_JS
 {
 	background-color: #FF8D33;
-	color: &cswtextcolor;
+	color: #000000;
 }
 .CswErrorMessage_JS a
 {
 	background-color: #FF8D33;
-	color: &cswtextcolor;
+	color: #000000;
 }

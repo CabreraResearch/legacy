@@ -49,7 +49,8 @@
                     documentId: '',
                     materialType: { name: '', val: '' },
                     tradeName: '', 
-                    supplier: { name: '', val: '' }, 
+                    supplier: { name: '', val: '' },
+                    addNewC3Supplier: false,
                     partNo: '',
                     properties: {},
                     useExistingTempNode: false,
@@ -74,6 +75,7 @@
                     sizesForm: null,
                     sizeGrid: null                
                 },
+                sizesToDelete: [],
                 containersModuleEnabled: true,
                 SDSModuleEnabled: true
             };
@@ -190,7 +192,7 @@
             }());
             //#endregion Step 1: Choose Type and Identity
 
-            cswPrivate.makeIdentityStep = function(){
+            cswPrivate.makeIdentityStep = function() {
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
                         Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
@@ -204,6 +206,11 @@
                         cswPrivate.supplierSelect.selectedText &&
                         Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
                         cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
+                        if (cswPrivate.supplierSelect.selectedText() === 'New Supplier Name >>') {
+                            cswPrivate.makeNewC3SupplierInput(true);
+                        } else {
+                            cswPrivate.makeNewC3SupplierInput(false);
+                        }
                     }
                     if (cswPrivate.tradeNameInput &&
                         cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
@@ -213,6 +220,12 @@
                         cswPrivate.state.partNo !== cswPrivate.partNoInput.val()) {
                         cswPrivate.state.partNo = cswPrivate.partNoInput.val();
                     }
+                    if (cswPrivate.newC3SupplierInput && cswPrivate.supplierSelect.selectedText) {
+                        if (cswPrivate.supplierSelect.selectedText() === 'New Supplier Name >>') {
+                            cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
+                        }
+                    }
+                    
                 }//changeMaterial()
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -256,12 +269,36 @@
                         onChange: changeMaterial,
                         isRequired: true
                     });
+                    
+                   cswPrivate.makeNewC3SupplierInput = function(visible) {
+                        if (!cswPrivate.newC3SupplierInput) {
+                            cswPrivate.newC3SupplierInput = tbl.cell(3, 3).input({
+                                value: cswPrivate.state.supplier.name,
+                                onChange: changeMaterial
+                            });
+                        }
+                       
+                        if (visible) {
+                            cswPrivate.newC3SupplierInput.show();
+                        } else {
+                            cswPrivate.newC3SupplierInput.hide();
+                        }
+                       
+                    };
 
                     /* Supplier */
                     cswPrivate.makeSupplierCtrl = function (NodeTypeId) {
                         tbl.cell(3, 1).empty();
                         tbl.cell(3, 2).empty();
+                        tbl.cell(3, 3).empty();
                         tbl.cell(3, 1).span().setLabelText('Supplier: ', true, false);
+
+                        var allowAdd = true;
+
+                        if (cswPrivate.state.addNewC3Supplier) {
+                            cswPrivate.makeNewC3SupplierInput(true);
+                            allowAdd = false;
+                        }
 
                         var ajaxData = {};
                         if (cswPrivate.supplierViewId) {
@@ -277,11 +314,13 @@
                             width: '200px',
                             ajaxData: ajaxData,
                             showSelectOnLoad: true,
-                            allowAdd: true,
+                            allowAdd: allowAdd,
+                            onAfterAdd: changeMaterial,
                             addNodeDialogTitle: 'Vendor',
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                             onChange: changeMaterial,
-                            isRequired: true
+                            isRequired: true,
+                            addNewC3Supplier: cswPrivate.state.addNewC3Supplier
                         });
                     };
                     cswPrivate.makeSupplierCtrl();
@@ -310,7 +349,8 @@
                             data: {
                                 NodeTypeId: cswPrivate.state.materialType.val,
                                 Tradename: cswPrivate.state.tradeName,
-                                Supplier: cswPrivate.state.supplier.val,
+                                SupplierId: cswPrivate.state.supplier.val,
+                                Suppliername: cswPrivate.state.supplier.name,
                                 PartNo: cswPrivate.state.partNo,
                                 NodeId: cswPrivate.state.materialId
                             },
@@ -328,6 +368,7 @@
                                     cswPrivate.state.materialId = data.materialid;
                                     cswPrivate.state.documentTypeId = data.documenttypeid;
                                     cswPrivate.state.properties = data.properties;
+                                    cswPrivate.state.supplier.val = data.supplierid;
                                     Csw.publish('SaveMaterialSuccess');
                                 }
                             },
@@ -378,14 +419,10 @@
                         ReloadTabOnSave: false,
                         async: false,
                         onPropertyChange: function(propid, propName, propData) {
-                            console.log(propid);
-                            console.log(propName);
-                            console.log(propData);
                             if (propName === "Physical State") {
                                 //cswPrivate.setPhysicalStateValue();
                                 cswPrivate.physicalStateModified = true;
                             }
-                            console.log(arguments);
                     }
                     });
                 };
@@ -596,8 +633,21 @@
                                 cswPrivate.newSizes.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
                             },
                             onDelete: function(rowid) {
+                                
                                 delete cswPrivate.newSizes.rows[rowid];
                                 cswPrivate.newSizes.rows[rowid] = { sizeValues: { } };
+                                
+                                // For ChemCatCentral imports:
+                                // Add information of size to be deleted to cswPrivate.sizesToDelete
+                                var arrayOfSizeInfo = [];
+                                if (Csw.isArray(cswPrivate.state.sizes[rowid - 1])) {
+                                    Csw.each(cswPrivate.state.sizes[rowid - 1], function (objVal) {
+                                        arrayOfSizeInfo.push(objVal.value);
+                                    });
+                                    cswPrivate.sizesToDelete.push(arrayOfSizeInfo);
+                                }
+                                
+                               
                             }
                         });
                     };
@@ -714,7 +764,7 @@
                     function getMaterialDefinition() {
                         var createMaterialDef = {
                             useexistingmaterial: cswPrivate.state.useExistingTempNode,
-                            sizes: cswPrivate.sizeNodes,
+                            sizesToDelete: cswPrivate.sizesToDelete,
                             sizeNodes: []
                         };
                         

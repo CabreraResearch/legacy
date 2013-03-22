@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         #region Properties and ctor
 
-        public sealed class PropertyName
+        public new class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string SetName = "Set Name";
             public const string HazardCategory = "Hazard Category";
@@ -85,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;

@@ -271,6 +271,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData.NodeTypeProp )
             {
+                //Remember: Save is an OCP too
                 switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:
@@ -290,7 +291,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     if( null != NodeAsMaterial.Receive.NodeTypeProp )
                                     {
                                         NbtButtonData ReceiveData = new NbtButtonData( NodeAsMaterial.Receive.NodeTypeProp );
-                                        NodeAsMaterial.onButtonClick( ReceiveData );
+                                        NodeAsMaterial.triggerOnButtonClick( ReceiveData );
                                         ButtonData.clone( ReceiveData );
                                         Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
                                         if( Int32.MinValue != DocumentNodeTypeId )

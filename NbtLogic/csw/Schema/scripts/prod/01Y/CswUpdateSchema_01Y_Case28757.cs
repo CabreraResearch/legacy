@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
                 OwnerNTP.PropName = "Material";
                 OwnerNTP.ReadOnly = true;
                 CswNbtMetaDataNodeTypeProp TitleNTP = DocNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
-                TitleNTP.TextAreaColumns = 40;
+                TitleNTP.Attribute1 = "40";//Size attribute
             }
         }
     }//class CswUpdateSchema_01Y_Case28757

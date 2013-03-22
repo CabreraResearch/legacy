@@ -39,7 +39,11 @@
             /// <summary> Get the current value of a cookie by name.</summary>
             /// <param name="cookiename" type="String">A Csw cookie() cookieName</param>
             /// <returns type="Object">Cookie value</returns>
-            var ret = Csw.string($.cookie(cookiename));
+            var cookie = $.cookie(cookiename);
+            var ret = '';
+            if (cookie !== "[object Object]") {
+                ret = Csw.string(cookie);
+            }
             return ret;
         });
 
@@ -73,7 +77,7 @@
             return true;
         });
 
-} ());
+}());
 
 
 

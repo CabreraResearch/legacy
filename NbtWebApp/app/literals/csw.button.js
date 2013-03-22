@@ -69,11 +69,6 @@
                     cswPrivate.bindOnEnter.clickOnEnter(cswPublic);
                 }
                 
-                cswPublic.propNonDom({
-                    enabledText: cswPrivate.enabledText,
-                    disabledText: cswPrivate.disabledText
-                });
-
                 if (false === Csw.isNullOrEmpty(cswPrivate.cssclass)) {
                     cswPublic.addClass(cswPrivate.cssclass);
                 }
@@ -88,7 +83,7 @@
                     }
                 };
                 if (buttonOpt.disabled && false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
-                    buttonOpt.label = cswPrivate.disabledText;
+                    buttonOpt.label = cswPrivate.disabledText || cswPrivate.enabledText;
                 }
                 cswPublic.$.button(buttonOpt);
 
@@ -102,7 +97,7 @@
                 cswPrivate.isEnabled = true;
                 if (cswPublic.length() > 0) {
                     cswPublic.$.button({
-                        label: cswPublic.propNonDom('enabledText'),
+                        label: cswPrivate.enabledText,
                         disabled: false
                     });
                 }
@@ -114,7 +109,7 @@
                 cswPrivate.isEnabled = false;
                 if (cswPublic.length() > 0) {
                     cswPublic.$.button({
-                        label: cswPublic.propNonDom('disabledText'),
+                        label: cswPrivate.disabledText || cswPrivate.enabledText,
                         disabled: true
                     });
                 }

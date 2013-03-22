@@ -1071,15 +1071,53 @@ namespace ChemSW.Nbt
                 }
             } // if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
 
-            // case 28895
+
             if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
             {
-                // Keep 'Locations' view up to date
+                // case 28895 - Keep 'Locations' view up to date
                 CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", NbtViewVisibility.Global );
-                CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( NewValue ) );
-                LocationsView.save();
+                if( null != LocationsView )
+                {
+                    CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( NewValue ) );
+                    LocationsView.save();
+                }
+
+                // case 28958 - Also fix the Equipment by Location view
+                CswNbtView EquipByLocView = this.ViewSelect.restoreView( "Equipment By Location", NbtViewVisibility.Global );
+                if( null != EquipByLocView )
+                {
+                    CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( NewValue ) );
+
+                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+                    CswNbtMetaDataNodeType EquipmentNT = EquipmentOC.FirstNodeType;
+                    CswNbtMetaDataNodeTypeProp EquipmentLocationNTP = null;
+                    if( null != EquipmentNT )
+                    {
+                        EquipmentLocationNTP = EquipmentNT.getNodeTypeProp( "Location" );
+                    }
+                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+                    CswNbtMetaDataNodeType AssemblyNT = AssemblyOC.FirstNodeType;
+                    CswNbtMetaDataNodeTypeProp AssemblyLocationNTP = null;
+                    if( null != AssemblyNT )
+                    {
+                        AssemblyLocationNTP = AssemblyNT.getNodeTypeProp( "Location" );
+                    }
+
+                    foreach( CswNbtViewRelationship LocRel in EquipByLocView.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+                    {
+                        if( null != EquipmentLocationNTP )
+                        {
+                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, EquipmentLocationNTP, true );
+                        }
+                        if( null != AssemblyLocationNTP )
+                        {
+                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, AssemblyLocationNTP, true );
+                        }
+                    }
+                    EquipByLocView.save();
+                }
             } // if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
-        }
+        } // _onConfigVblChange()
 
         #endregion
 

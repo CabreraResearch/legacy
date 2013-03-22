@@ -41,7 +41,19 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( CswNbtModuleName.Unknown != ModuleName )
                     {
-                        ret[ModuleName.ToString()] = _CswNbtResources.Modules.IsModuleEnabled( ModuleName );
+                        JObject moduleInfo = new JObject();
+                        moduleInfo["enabled"] = _CswNbtResources.Modules.IsModuleEnabled( ModuleName );
+
+                        if( _CswNbtResources.Modules.ModuleHasPrereq( ModuleName ) )
+                        {
+                            moduleInfo["prereq"] = _CswNbtResources.Modules.GetModulePrereq( ModuleName )._Name;
+                        }
+                        else
+                        {
+                            moduleInfo["prereq"] = "";
+                        }
+
+                        ret[ModuleName.ToString()] = moduleInfo;
                     }
                 }
             } // if(_CanEditModules)

@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string BatchData = "Batch Data";
             public const string CreatedDate = "Created Date";
@@ -23,10 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Status = "Status";
             public const string User = "User";
         }
-
-
-
-
+        
         public CswNbtObjClassBatchOp( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
@@ -130,9 +127,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -140,7 +137,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
 
 

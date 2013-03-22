@@ -1,4 +1,6 @@
 ﻿using System;
+using ChemSW.DB;
+using System.Data;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -77,6 +79,17 @@ namespace ChemSW.Nbt.Actions
         public CswNbtSessionDataId SaveToCache( bool IncludeInQuickLaunch, bool KeepInQuickLaunch )
         {
             return _CswNbtResources.SessionDataMgr.saveSessionData( this, IncludeInQuickLaunch, KeepInQuickLaunch );
+        }
+
+        public void SetCategory( string Category )
+        {
+            CswTableUpdate actionsTU = _CswNbtResources.makeCswTableUpdate( "setActionCategory", "actions" );
+            DataTable actionsDT = actionsTU.getTable( "where actionid = " + ActionId );
+            foreach( DataRow row in actionsDT.Rows )
+            {
+                row["category"] = Category;
+            }
+            actionsTU.update( actionsDT );
         }
     }
 }

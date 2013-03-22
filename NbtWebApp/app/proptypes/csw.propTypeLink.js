@@ -93,8 +93,12 @@
                         if (cswPublic.data.isRequired() && cswPrivate.href === '') {
                             cswPrivate.editTable.show();
                         }
-                        cswPrivate.editText.clickOnEnter(cswPublic.data.saveBtn);
-                        cswPrivate.editHref.clickOnEnter(cswPublic.data.saveBtn);
+                        cswPrivate.editText.clickOnEnter(function() {
+                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
+                        });
+                        cswPrivate.editHref.clickOnEnter(function () {
+                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
+                        });
                     }
 
                 };

@@ -28,9 +28,15 @@ glob:TestResults/*
 *.js.map
 .*\.rej
 *.xsd
-NbtWebApp/node_modules/*
+NbtWebApp/node_modules*
+NbtWebApp/test/Test.html
+NbtWebApp/vendor/vendor.min.css
+NbtWebApp/vendor/vendor.min.js
+*.tmpl
+NbtWebApp/*.html
+NbtWebApp/release/*
+NbtDev.sln.DotSettings.user
 syntax: regexp
-NbtLogic/csw/Batch/CswNbtBatchOpUpdateRegulatoryLists.cs.orig
 .*\.orig
 .*\.vsp
 .*\.psess

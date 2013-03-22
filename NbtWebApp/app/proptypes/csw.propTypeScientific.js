@@ -57,10 +57,15 @@
                         });
 
                         if (cswPrivate.valueNtb && cswPrivate.valueNtb.length() > 0) {
-                            cswPrivate.valueNtb.clickOnEnter(cswPublic.data.saveBtn);
+                            cswPrivate.valueNtb.clickOnEnter(function () {
+                                cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
+                            });
+                            
                         }
                         if (cswPrivate.exponentNtb && cswPrivate.exponentNtb.length() > 0) {
-                            cswPrivate.exponentNtb.clickOnEnter(cswPublic.data.saveBtn);
+                            cswPrivate.valueNtb.clickOnEnter(function () {
+                                cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
+                            });
                         }
                         //Case 24645 - scientific-specific number validation (i.e. - ensuring that the evaluated number is positive)
                         if (Csw.isNumber(cswPrivate.minValue) && Csw.isNumeric(cswPrivate.minValue)) {

@@ -62,23 +62,40 @@ namespace ChemSW.Nbt.Grid
                 grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
 
                 CswExtJsGridDataIndex nodeIdDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodeId" );
+                {
                 CswExtJsGridField nodeIdFld = new CswExtJsGridField { dataIndex = nodeIdDataIndex };
                 grid.fields.Add( nodeIdFld );
                 CswExtJsGridColumn nodeIdCol = new CswExtJsGridColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
                 grid.columns.Add( nodeIdCol );
-
+                }
                 CswExtJsGridDataIndex nodekeyDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodekey" );
+                {
                 CswExtJsGridField nodekeyFld = new CswExtJsGridField { dataIndex = nodekeyDataIndex };
                 grid.fields.Add( nodekeyFld );
                 CswExtJsGridColumn nodekeyCol = new CswExtJsGridColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
                 grid.columns.Add( nodekeyCol );
-
+                }
                 CswExtJsGridDataIndex nodenameDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodename" );
+                {
                 CswExtJsGridField nodenameFld = new CswExtJsGridField { dataIndex = nodenameDataIndex };
                 grid.fields.Add( nodenameFld );
                 CswExtJsGridColumn nodenameCol = new CswExtJsGridColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
                 grid.columns.Add( nodenameCol );
-
+                }
+                CswExtJsGridDataIndex NodeTypeDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodetypeid" );
+                {
+                    CswExtJsGridField NodeTypeField = new CswExtJsGridField { dataIndex = NodeTypeDataIndex };
+                    grid.fields.Add( NodeTypeField );
+                    CswExtJsGridColumn NodeTypeColumn = new CswExtJsGridColumn { header = "Internal Type ID", dataIndex = NodeTypeDataIndex, hidden = true };
+                    grid.columns.Add( NodeTypeColumn );
+                }
+                CswExtJsGridDataIndex ObjectClassDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "objectclassid" );
+                {
+                    CswExtJsGridField ObjectClassField = new CswExtJsGridField { dataIndex = ObjectClassDataIndex };
+                    grid.fields.Add( ObjectClassField );
+                    CswExtJsGridColumn ObjectClassColumn = new CswExtJsGridColumn { header = "Internal Parent Type ID", dataIndex = ObjectClassDataIndex, hidden = true };
+                    grid.columns.Add( ObjectClassColumn );
+                }
                 // View Properties determine Columns and Fields
                 foreach( CswNbtViewProperty ViewProp in View.getOrderedViewProps( true ) )
                 {
@@ -163,9 +180,13 @@ namespace ChemSW.Nbt.Grid
                     CswExtJsGridRow gridrow = new CswExtJsGridRow( c, gridUniquePrefix );
                     Tree.goToNthChild( c );
 
+                    CswNbtTreeNode TreeNode = Tree.getCurrentTreeNode();
+
                     gridrow.data.Add( nodeIdDataIndex, Tree.getNodeIdForCurrentPosition().ToString() );
                     gridrow.data.Add( nodekeyDataIndex, Tree.getNodeKeyForCurrentPosition().ToString() );
                     gridrow.data.Add( nodenameDataIndex, Tree.getNodeNameForCurrentPosition().ToString() );
+                    gridrow.data.Add( NodeTypeDataIndex, TreeNode.NodeTypeId.ToString() );
+                    gridrow.data.Add( ObjectClassDataIndex, TreeNode.ObjectClassId.ToString() );
 
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
                     gridrow.canView = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.View,

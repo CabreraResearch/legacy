@@ -2,13 +2,13 @@ using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassRegulatoryList : CswNbtObjClass
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string CASNumbers = "CAS Numbers";
             public const string Name = "Name";
@@ -78,9 +78,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
@@ -105,25 +105,28 @@ namespace ChemSW.Nbt.ObjClasses
         #region private helper functions
         private void _removeListFromMaterials()
         {
-            CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
-            CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
             string OriginalName = Name.GetOriginalPropRowValue();
-            materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: OriginalName, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
-
-            ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
-            int nodeCount = materialsWithListTree.getChildNodeCount();
-            for( int i = 0; i < nodeCount; i++ )
+            if( false == String.IsNullOrEmpty( OriginalName ) ) //if the original name is blank, it's a new node no materials have this on their reg lists prop
             {
-                materialsWithListTree.goToNthChild( i );
-                CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialsWithListTree.getNodeForCurrentPosition();
-                CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-                regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
-                regLists.Remove( OriginalName );
-                nodeAsMaterial.RegulatoryLists.StaticText = regLists.ToString();
-                nodeAsMaterial.postChanges( false );
-                materialsWithListTree.goToParentNode();
+                CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
+                CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
+                materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: OriginalName, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+                ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
+                int nodeCount = materialsWithListTree.getChildNodeCount();
+                for( int i = 0; i < nodeCount; i++ )
+                {
+                    materialsWithListTree.goToNthChild( i );
+                    CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialsWithListTree.getNodeForCurrentPosition();
+                    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
+                    regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
+                    regLists.Remove( OriginalName );
+                    nodeAsMaterial.RegulatoryLists.StaticText = regLists.ToString();
+                    nodeAsMaterial.postChanges( false );
+                    materialsWithListTree.goToParentNode();
+                }
             }
         }
         #endregion

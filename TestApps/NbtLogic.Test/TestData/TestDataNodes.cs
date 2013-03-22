@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -19,6 +18,8 @@ namespace ChemSW.Nbt.Test
                 return _UniqueSequence;
             }
         }
+
+        internal bool FinalizeNodes = false;
 
         internal TestDataNodes( CswNbtResources CswNbtResources )
         {
@@ -46,6 +47,8 @@ namespace ChemSW.Nbt.Test
                 LocationNode.ControlZone.RelatedNodeId = ControlZoneId;
             }
             LocationNode.postChanges( true );
+            _finalize();
+
             return LocationNode.Node;
         }
 
@@ -68,6 +71,8 @@ namespace ChemSW.Nbt.Test
             }
             ContainerLocationNode.ContainerScan.Text = ContainerScan;
             ContainerLocationNode.postChanges( true );
+            _finalize();
+
             return ContainerLocationNode.Node;
         }
 
@@ -93,6 +98,7 @@ namespace ChemSW.Nbt.Test
                 ContainerNode.Location.RefreshNodeName();
             }
             ContainerNode.postChanges( true );
+            _finalize();
 
             return ContainerNode.Node;
         }
@@ -108,11 +114,13 @@ namespace ChemSW.Nbt.Test
             UnitOfMeasureNode.Fractional.Checked = Fractional;
             UnitOfMeasureNode.UnitType.Value = NodeTypeName;
             UnitOfMeasureNode.postChanges( true );
+            _finalize();
 
             return UnitOfMeasureNode.Node;
         }
 
-        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, string PPE = "", string Hazards = "", string SpecialFlags = "" )
+        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
+            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", Tristate IsTierII = Tristate.True )
         {
             CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
@@ -130,8 +138,13 @@ namespace ChemSW.Nbt.Test
                 }
                 MaterialNode.postChanges( true );
                 _setMultiListValue( MaterialNode.Node, SpecialFlags, "Special Flags" );
+
+                MaterialNode.CasNo.Text = CASNo;
+                MaterialNode.IsTierII.Checked = IsTierII;
             }
             MaterialNode.postChanges( true );
+            _finalize();
+
             return MaterialNode.Node;
         }
 
@@ -151,13 +164,39 @@ namespace ChemSW.Nbt.Test
                 }
             }
             ControlZoneNode.postChanges( true );
+            _finalize();
 
             return ControlZoneNode;
+        }
+
+        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", Tristate isLocked = Tristate.False, Tristate isArchived = Tristate.False )
+        {
+            CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswPrimaryKey RoleId = RoleOc.getNodeIdAndNames( false, false ).Select( RoleIds => RoleIds.Key ).FirstOrDefault();
+
+            CswNbtObjClassUser NewUser = CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "User" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
+            NewUser.UsernameProperty.Text = Username;
+            NewUser.Role.RelatedNodeId = RoleId;
+            NewUser.PasswordProperty.Password = Password;
+            NewUser.AccountLocked.Checked = isLocked;
+            NewUser.Archived.Checked = isArchived;
+            NewUser.postChanges( ForceUpdate: false );
+            _finalize();
+
+            return NewUser.Node;
         }
 
         #endregion
 
         #region Private Helper Functions
+
+        private void _finalize()
+        {
+            if( FinalizeNodes )
+            {
+                CswNbtResources.finalize();
+            }
+        }
 
         private int _getNodeTypeId( string NodeTypeName )
         {

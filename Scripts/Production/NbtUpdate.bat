@@ -27,6 +27,8 @@ echo "Compiling new code..."
 
 msbuild %1\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64"
 
+cd %1\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:prod
+
 echo "Compile Finished."
 
 pause

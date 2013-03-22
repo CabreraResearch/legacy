@@ -244,6 +244,7 @@ namespace ChemSW.Nbt.Actions
                     Ret["tradename"] = NodeAsMaterial.TradeName.Text;
                     Ret["partno"] = NodeAsMaterial.PartNumber.Text;
                     Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
+                    Ret["supplierid"] = NodeAsMaterial.Supplier.RelatedNodeId.ToString();
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
@@ -267,30 +268,52 @@ namespace ChemSW.Nbt.Actions
 
         #region Public
 
-        public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
+
+            //Check if the vendor needs to be created
+            if (false == CswTools.IsPrimaryKey(CswConvert.ToPrimaryKey(SupplierId)))
+            {
+                CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
+                if( null != VendorNT )
+                {
+                    CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    NewVendorNode.VendorName.Text = Suppliername;
+                    NewVendorNode.VendorName.SyncGestalt();
+                    NewVendorNode.IsTemp = false;
+                    NewVendorNode.postChanges( true );
+                    //Set the supplierId to the new vendor node
+                    SupplierId = NewVendorNode.NodeId.ToString();
+                }
+            }
 
             CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( NodeId );
             if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
             {
-                CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode(CurrentTempNodePk);
+                CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
                 if( null != CurrentTempNode )
                 {
+                    if( null == CurrentTempNode.Supplier.RelatedNodeId )
+                    {
+                        CurrentTempNode.Supplier.RelatedNodeId = CswConvert.ToPrimaryKey( SupplierId );
+                    }
+
                     Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
-                    if (NodeTypeId != CurrentNodeTypeId)
+                    if( NodeTypeId != CurrentNodeTypeId )
                     {
                         // Then we want to just forget about the first temp node created and create a new one with the new nodetype
-                        Ret = _tryCreateMaterial(NodeTypeId, CswConvert.ToPrimaryKey(SupplierId), Tradename, PartNo, null);
+                        Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, null );
                     }
                     else
                     {
                         // If the nodetype isn't different then we want to get the props and check if it exsits
-                        if (string.IsNullOrEmpty(CurrentTempNode.PhysicalState.Value))
+                        if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
                         {
                             CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                         }
-                        Ret = _tryCreateMaterial(NodeTypeId, CswConvert.ToPrimaryKey(SupplierId), Tradename, PartNo, CurrentTempNodePk.ToString());
+                        
+                        Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
                     }
                 }
             }
@@ -429,6 +452,24 @@ namespace ChemSW.Nbt.Actions
                     Ret = _CswNbtResources.Nodes[CswConvert.ToString( MaterialObj["materialId"] )];
                     if( null != Ret )
                     {
+                        // Delete any preexisting sizes that were created on import of a C3 product if necessary
+                        JArray SizesToDelete = (JArray) MaterialObj["sizesToDelete"];
+                        for( int i = 0; i < SizesToDelete.Count; i++ )
+                        {
+                            if (SizesToDelete[i].HasValues)
+                            {
+                                CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey(SizesToDelete[i].Last.ToString());
+                                if (CswTools.IsPrimaryKey(SizeNodePK))
+                                {
+                                    CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode(SizeNodePK);
+                                    if (null != SizeNodeToDelete)
+                                    {
+                                        SizeNodeToDelete.delete();
+                                    }
+                                }
+                            }
+                        }
+
                         Ret.IsTemp = false;
                         SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
 

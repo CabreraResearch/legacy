@@ -68,7 +68,10 @@
                         return ret;
                     },
                     set csw(val) {
-                        //No setter.
+                        //No setter
+                        if (val) {
+                            throw new Error('Cannot assign to this property');
+                        }
                     }
                 };
                 newTab.name = tab.title;

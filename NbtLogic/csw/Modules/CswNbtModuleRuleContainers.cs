@@ -88,9 +88,14 @@ namespace ChemSW.Nbt
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.KioskMode );
+            _CswNbtResources.Actions[CswNbtActionName.KioskMode].SetCategory( "Containers" );
+
 
             //Show Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( false, CswNbtModuleName.Containers );
+
+            //Show the request fulfiller Role
+            _CswNbtResources.Modules.ToggleRoleNodes( false, "request_fulfiller" );
         }
 
         public override void OnDisable()
@@ -102,6 +107,10 @@ namespace ChemSW.Nbt
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
             {
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.FireCode );
+            }
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MultiInventoryGroup ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MultiInventoryGroup );
             }
 
             //Hide the following Location properties...
@@ -162,10 +171,17 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleReportNodes( "Containers", true );
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.KioskMode );
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            {
+                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.KioskMode );
+                _CswNbtResources.Actions[CswNbtActionName.KioskMode].SetCategory( "Equipment" );
+            }
 
             //Hide Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( true, CswNbtModuleName.Containers );
+
+            //Hide the request fulfiller Role
+            _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
 
         } // OnDisable()
 

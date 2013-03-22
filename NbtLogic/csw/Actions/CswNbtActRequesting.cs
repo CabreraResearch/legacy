@@ -56,6 +56,10 @@ namespace ChemSW.Nbt.Actions
             public CswNbtView RecurringItemsView;
             [DataMember( IsRequired = false )]
             public CswNbtView FavoriteItemsView;
+
+            [DataMember]
+            public Int32 CopyableObjectClassId;
+
             [DataMember]
             public CartCounts Counts;
         }
@@ -550,6 +554,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtView FavoriteItems = getFavoriteRequestsItemsView();
             FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
             Cart.FavoriteItemsView = FavoriteItems;
+
+            Cart.CopyableObjectClassId = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialDispenseClass );
 
             Cart.Counts = new CartCounts();
             if( CalculateCounts )

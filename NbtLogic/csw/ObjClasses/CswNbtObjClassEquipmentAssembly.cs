@@ -9,10 +9,13 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassEquipmentAssembly : CswNbtObjClass
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Type = "Assembly Type";
             public const string AssemblyParts = "Assembly Parts";
+            public const string Barcode = "Barcode";
+            public const string Location = "Location";
+            public const string Status = "Status";
         }
 
         public static string PartsXValueName = "Uses";
@@ -97,7 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             if( Type.RelatedNodeId != null )
             {
@@ -110,7 +113,7 @@ namespace ChemSW.Nbt.ObjClasses
                     AssemblyParts.YValues = PartsString;
                 }
             }
-            _CswNbtObjClassDefault.afterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -118,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
@@ -136,11 +139,11 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );
             CswNbtViewProperty AssemblyProperty = EquipmentView.AddViewProperty( EquipmentRelationship, EquipmentObjectClass.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly ) );
-            CswNbtViewPropertyFilter AssemblyIsOriginalFilter = EquipmentView.AddViewPropertyFilter( 
-                AssemblyProperty, 
-                CswNbtSubField.SubFieldName.NodeID, 
-                CswNbtPropFilterSql.PropertyFilterMode.Equals, 
-                NodeId.PrimaryKey.ToString());
+            CswNbtViewPropertyFilter AssemblyIsOriginalFilter = EquipmentView.AddViewPropertyFilter(
+                AssemblyProperty,
+                CswNbtSubField.SubFieldName.NodeID,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree EquipmentTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, EquipmentView, true, false, false );
             EquipmentTree.goToRoot();
@@ -158,6 +161,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             return CopiedAssemblyNode;
         }
+
         #endregion
 
         #region Object class specific properties
@@ -175,6 +179,30 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[PropertyName.AssemblyParts] );
+            }
+        }
+
+        public CswNbtNodePropBarcode Barcode
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.Barcode] );
+            }
+        }
+
+        public CswNbtNodePropLocation Location
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.Location] );
+            }
+        }
+
+        public CswNbtNodePropList Status
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PropertyName.Status] );
             }
         }
 

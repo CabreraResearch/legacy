@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropButton : CswNbtNodeProp
+    public class CswNbtNodePropButton: CswNbtNodeProp
     {
         public sealed class ButtonMode
         {
@@ -29,12 +29,15 @@ namespace ChemSW.Nbt.PropTypes
             _FieldTypeRule = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _StateSubField = _FieldTypeRule.StateSubField;
             _MenuOptionsSubField = _FieldTypeRule.MenuOptionsSubField;
-
+            _DisplayNameSubField = _FieldTypeRule.DisplayNameField;
+            _IconSubField = _FieldTypeRule.IconSubField;
         }
 
         private CswNbtFieldTypeRuleButton _FieldTypeRule;
         private CswNbtSubField _StateSubField;
         private CswNbtSubField _MenuOptionsSubField;
+        private CswNbtSubField _DisplayNameSubField;
+        private CswNbtSubField _IconSubField;
 
 
         public string Text
@@ -84,6 +87,63 @@ namespace ChemSW.Nbt.PropTypes
             set { _CswNbtNodePropData.SetPropRowValue( _StateSubField.Column, value ); }
         }
 
+        private bool isThisTheSaveButton()
+        {
+            bool Ret = false;
+            if( this.ObjectClassPropId != Int32.MinValue )
+            {
+                CswNbtMetaDataObjectClassProp Ocp = _CswNbtResources.MetaData.getObjectClassProp( this.ObjectClassPropId );
+                if( null != Ocp && Ocp.PropName == CswNbtObjClass.PropertyName.Save )
+                {
+                    Ret = true;
+                }
+            }
+            return Ret;
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                string Ret = _CswNbtNodePropData.GetPropRowValue( _DisplayNameSubField.Column );
+                if( string.IsNullOrEmpty( Ret ) )
+                {
+                    if( isThisTheSaveButton() )
+                    {
+                        Ret = "Save Changes";
+                    }
+                    else
+                    {
+                        Ret = Text;
+                    }
+                    DisplayName = Ret;
+                }
+                return Ret;
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _DisplayNameSubField.Column, value );
+            }
+        }
+
+
+        public string Icon 
+        {
+            get
+            {
+                string Ret = _CswNbtNodePropData.GetPropRowValue( _IconSubField.Column );
+                if( string.IsNullOrEmpty( Ret ) && isThisTheSaveButton() )
+                {
+                    Ret = "save";
+                    Icon = Ret;
+                }
+                return Ret;
+            }
+            set { _CswNbtNodePropData.SetPropRowValue( _IconSubField.Column, value ); }
+        }
+
+
+
         override public string Gestalt
         {
             get
@@ -104,6 +164,8 @@ namespace ChemSW.Nbt.PropTypes
             //ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
             AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
             ParentObject["confirmmessage"] = ConfirmationDialogMessage;
+            ParentObject["displayText"] = DisplayName;
+            ParentObject["icon"] = Icon;
         }
 
         public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject, string MenuOptions, string SelectedText )
@@ -118,7 +180,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["menuoptions"] = string.Empty;
             }
-
+            
             ParentObject["selectedText"] = SelectedText;
         }
 

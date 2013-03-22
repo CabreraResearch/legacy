@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" href="images/favicon.ico" />
+    <title>ChemSW Live</title>
+    <%
+            var buildMode = grunt.config('buildMode');
+            switch(buildMode) {
+                case 'dev':
+                    var cssFiles = grunt.file.expand(grunt.config('CswAppCssFiles'));
+                    for(var i = 0, len = cssFiles.length; i < len; i += 1) {
+                        print('        <link rel="stylesheet" href="' + cssFiles[i] + '"/>\n');
+                    }
+                    break;
+                default:
+                    print('        <link rel="stylesheet" href="release/ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.css" />\n');
+                    break;
+            }
+    %>
+    <link rel="stylesheet" href="vendor/extJS-4.1.0/resources/css/ext-all-scoped.css" />
+    <link rel="stylesheet" href="vendor/extJS-4.1.0/ux/TabScrollerMenu.css" />
+    <link rel="stylesheet" href="vendor/extJS-4.1.0/ux/css/CheckHeader.css" />
+
+    <link rel="stylesheet" href="Content/themes/cupertino/minified/jquery-ui.min.css" />
+    <link rel="stylesheet" href="vendor/multiselect/jquery.multiselect.css" />
+    <link rel="stylesheet" href="vendor/multiselect/jquery.multiselect.filter.css" />
+    
+</head>
+
+<body>
+    <!--[if lte IE 8]>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+            <style>
+             .chromeFrameInstallDefaultStyle {
+       
+               border: 1px solid blue;
+             }
+            </style>
+    
+            <script>
+                // The conditional ensures that this code will only execute in IE,
+                // Therefore we can use the IE-specific attachEvent without worry
+                window.attachEvent("onload", function () {
+                    CFInstall.check({
+                        //mode: "popup", // the default
+                        //url: "http://google.com/chromeframe",
+                        preventPrompt: true,
+                        onmissing: function() {
+                            if(window.confirm("You are using an unsupported version of Internet Explorer. To improve the speed and performance of this application, click OK to install Chrome Frame.")) {
+                                window.open("http://google.com/chromeframe");
+                            } else {
+                                window.internetExplorerVersionNo = 8;
+                            }
+                        }
+                    });
+                });
+            </script>
+
+            <script>
+        </script>
+    <![endif]-->
+
+    <!--[if IE 9]>
+        <script>
+            window.internetExplorerVersionNo = 9;
+        </script>
+    <![endif]-->
+    <div id="watermark" class="watermark wmcenter wmbottom"></div>
+    

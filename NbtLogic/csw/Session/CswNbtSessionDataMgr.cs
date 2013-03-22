@@ -43,6 +43,8 @@ namespace ChemSW.Nbt
             }
         }
 
+        #region Get Session Data
+
         /// <summary>
         /// Retrieve a session data item
         /// </summary>
@@ -57,6 +59,34 @@ namespace ChemSW.Nbt
             }
             return ret;
         }
+
+        /// <summary>
+        /// Retrieves a sessionViewId for a given ViewId.  If none exists, returns the current ViewId.
+        /// <param name="ViewIdString"></param>
+        /// </summary>
+        public string getSessionViewIdForView( string ViewIdString )
+        {
+            String SessionViewIdString = ViewIdString;
+            if( false == CswNbtSessionDataId.isSessionDataIdString( ViewIdString ) )
+            {
+                CswNbtViewId ViewId = new CswNbtViewId( ViewIdString );
+                CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getSessionViewId_select", "session_data" );
+                string WhereClause = @"where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and "
+                                     + SessionDataColumn_ViewId + " = " + ViewId.get();
+                DataTable SessionDataTable = SessionDataSelect.getTable( WhereClause );
+                if( SessionDataTable.Rows.Count > 0 )
+                {
+                    int SessionViewId = CswConvert.ToInt32( SessionDataTable.Rows[0][SessionDataColumn_PrimaryKey] );
+                    CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( SessionViewId );
+                    SessionViewIdString = SessionDataId.ToString();
+                }
+            }
+            return SessionViewIdString;
+        }
+
+        #endregion Get Session Data
+
+        #region QuickLaunch
 
         public void getQuickLaunchJson( ref ViewSelect.Response.Category Category )
         {
@@ -144,6 +174,9 @@ namespace ChemSW.Nbt
                 } );
         }
 
+        #endregion QuickLaunch
+
+        #region Save Session Data
 
         /// <summary>
         /// Save an action to the session data collection.
@@ -236,6 +269,10 @@ namespace ChemSW.Nbt
             return SessionViewRow;
         } // _getSessionViewRow()
 
+        #endregion Save Session Data
+
+        #region Remove Session Data
+
         /// <summary>
         /// Remove a view from the session view cache
         /// </summary>
@@ -321,12 +358,8 @@ namespace ChemSW.Nbt
             }
         } // removeSessionData()
 
-
+        #endregion Remove Session Data
 
     } // class CswNbtSessionViewMgr
 
-
 } // namespace ChemSW.Nbt
-
-
-

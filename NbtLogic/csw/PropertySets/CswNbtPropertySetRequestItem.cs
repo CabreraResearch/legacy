@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public class PropertyName
+        public new class PropertyName: CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Inventory Group (<see cref="CswNbtObjClassInventoryGroup"/>) from which the Request Item will be Fulfilled.
@@ -295,6 +295,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _setDefaultValues();
+            
             Description.StaticText = setRequestDescription();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -335,7 +336,7 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: HideMenuButton, SaveToDb: false );
         }
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             //TODO: Create Mail Report for Status Changes
 
@@ -344,7 +345,7 @@ namespace ChemSW.Nbt.ObjClasses
             Status.SetOnPropChange( _onStatusPropChange );
             Type.SetOnPropChange( _onTypePropChange );
             Request.SetOnPropChange( _onRequestPropChange );
-            CswNbtObjClassDefault.afterPopulateProps();
+            CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -356,11 +357,12 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
             if ( null != ButtonData.NodeTypeProp )
             {
+                //Remember: Save is an OCP too
                 switch ( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:

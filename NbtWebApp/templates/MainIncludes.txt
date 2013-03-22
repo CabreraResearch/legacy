@@ -1,0 +1,22 @@
+<script src="vendor/vendor.min.js"></script>
+        
+
+        <%
+            var buildMode = grunt.config('buildMode');
+            switch(buildMode) {
+                case 'dev':
+                    var jsFiles = grunt.file.expand(grunt.config('CswAppJsFiles'));
+                    for(var i = 0, len = jsFiles.length; i < len; i += 1) {
+                        print('        <script type="text/javascript" src="' + jsFiles[i] + '"></script>\n');
+                    }
+                    break;
+                default:
+                    print('        <script type="text/javascript" src="release/ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.js"></script>\n');
+                    break;
+            }
+            
+        %>
+       
+
+ </body> 
+</html>

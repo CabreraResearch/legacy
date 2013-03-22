@@ -41,7 +41,9 @@
                             value: cswPrivate.value
                         });
                         cswPrivate.input.required(cswPublic.data.isRequired());
-                        cswPrivate.input.clickOnEnter(cswPublic.data.saveBtn);
+                        cswPrivate.input.clickOnEnter(function () {
+                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
+                        });
                     }
                     if (false === cswPublic.data.isMulti()) {
                         var nodeObj = {};

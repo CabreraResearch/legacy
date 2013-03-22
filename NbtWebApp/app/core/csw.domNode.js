@@ -12,7 +12,7 @@
 
                 //#region Pre-ctor
                 (function _pre() {
-                    cswPrivate.ID = cswPrivate.ID || 'No ID defined!';
+                    cswPrivate.ID = cswPrivate.ID || window.Ext.id();
                     cswPrivate.tagName = cswPrivate.tagName || 'DIV';
                     cswPrivate.el = cswPrivate.el; //for Intellisense
                 }());

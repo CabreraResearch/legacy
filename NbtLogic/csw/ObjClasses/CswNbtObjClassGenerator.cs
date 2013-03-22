@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public const string InspectionGeneratorNodeTypeName = "Inspection Schedule";
 
-        public sealed class PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public static string DueDateInterval = "Due Date Interval";
             public static string RunTime = "Run Time";
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        protected override void afterPopulateProps()
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
 
@@ -283,8 +283,9 @@ namespace ChemSW.Nbt.ObjClasses
             Owner.SetOnPropChange( onOwnerPropChange );
             TargetType.SetOnPropChange( onTargetTypePropChange );
             ParentType.SetOnPropChange( onParentTypePropChange );
+// _CswNbtObjClassDefault.afterPopulateProps();
 
-            _CswNbtObjClassDefault.afterPopulateProps();
+             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -292,7 +293,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
+        protected override bool onButtonClick( NbtButtonData ButtonData )
         {
             if( null != ButtonData.NodeTypeProp )
             {
@@ -308,6 +309,7 @@ namespace ChemSW.Nbt.ObjClasses
             CopiedIDNode.postChanges( true );
             return CopiedIDNode.Node;
         }
+
         #endregion
 
         #region Object class specific properties

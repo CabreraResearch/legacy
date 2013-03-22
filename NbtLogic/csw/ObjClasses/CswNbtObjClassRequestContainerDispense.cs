@@ -212,6 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData.NodeTypeProp )
             {
+                //Remember: Save is an OCP too
                 switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Fulfill:
@@ -223,7 +224,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 if( null != NodeAsContainer && null != NodeAsContainer.Dispense.NodeTypeProp )
                                 {
                                     NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
-                                    NodeAsContainer.onButtonClick( DispenseData );
+                                    NodeAsContainer.triggerOnButtonClick( DispenseData );
                                     ButtonData.clone( DispenseData );
                                 }
                                 else

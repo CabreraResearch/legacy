@@ -784,6 +784,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
             private string case_qtyField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string catalog_noField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
             private string pkg_qtyField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -807,6 +810,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                     if ((object.ReferenceEquals(this.case_qtyField, value) != true)) {
                         this.case_qtyField = value;
                         this.RaisePropertyChanged("case_qty");
+                    }
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public string catalog_no {
+                get {
+                    return this.catalog_noField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.catalog_noField, value) != true)) {
+                        this.catalog_noField = value;
+                        this.RaisePropertyChanged("catalog_no");
                     }
                 }
             }

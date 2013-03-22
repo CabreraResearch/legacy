@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
@@ -10,11 +11,17 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
         #region Blame Logic
+
+        private void _acceptBlame( UnitOfBlame Blame )
+        {
+            _Author = Blame.Developer;
+            _CaseNo = Blame.CaseNumber;
+        }
 
         private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
         {
@@ -52,7 +59,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
                     CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add,
                     Nodetype.NodeTypeId,
-                    Prop.PropId,
+                    Prop,
                     true,
                     Nodetype.getFirstNodeTypeTab().TabId
                     );
@@ -60,7 +67,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
                 Nodetype.NodeTypeId,
-                Prop.PropId,
+                Prop,
                 true,
                 Nodetype.getFirstNodeTypeTab().TabId
                 );
@@ -87,7 +94,7 @@ namespace ChemSW.Nbt.Schema
             if( DateFormatOcp.ListOptions != ValidFormats )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DateFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, ValidFormats );
-                foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit : true, includeSystemNodes : false, IncludeDefaultFilters : false ) )
+                foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false, IncludeDefaultFilters: false ) )
                 {
                     if( false == string.IsNullOrEmpty( User.DateFormatProperty.Value ) &&
                         CswResources.UnknownEnum == (CswDateFormat) User.DateFormatProperty.Value )
@@ -100,14 +107,6 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        #endregion Yorick Methods
-
-        #region ASPEN Methods
-        
-        #endregion ASPEN Methods
-        
-        #region Case 28671
-        
         private void _makeUnCode( CswDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
@@ -141,20 +140,16 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        #endregion Case 28671
-
-        #region Case 29039
-
         private void _correctGeneratorTargetTypeProps( CswDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
 
             CswNbtMetaDataObjectClass GeneratorOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
             CswNbtMetaDataObjectClassProp TargetTypeOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.TargetType );
-            
+
             //This prop is already server managed, but I think this makes the intention explicit for the reader
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
-            
+
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, false );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, false );
 
@@ -167,7 +162,149 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        #endregion Case 29039
+        #endregion Yorick Methods
+
+        #region ASPEN Methods
+
+        private void _addSaveProperty( UnitOfBlame Blamne )
+        {
+            _acceptBlame( Blamne );
+
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtSchemaModTrnsctn.MetaData.getObjectClasses() )
+            {
+                CswNbtMetaDataObjectClassProp SaveOcp = ObjectClass.getObjectClassProp( CswNbtObjClass.PropertyName.Save );
+                if( null == SaveOcp )
+                {
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ObjectClass )
+                        {
+                            PropName = CswNbtObjClass.PropertyName.Save,
+                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                            Extended = CswNbtNodePropButton.ButtonMode.button
+                        } );
+                }
+            }
+
+            _resetBlame();
+        }
+
+        private void _createAssemblyBarcodeProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClassProp barcodeOCP = assemblyOC.getBarcodeProp();
+            if( null == barcodeOCP )
+            {
+                barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
+                {
+                    PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Barcode,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode,
+                    IsUnique = true
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        private void _upgradeEquipmentBarcodeProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClassProp barcodeOCP = equipmentOC.getBarcodeProp();
+            if( null == barcodeOCP )
+            {
+                barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( equipmentOC )
+                {
+                    PropName = CswNbtObjClassEquipment.PropertyName.EquipmentId,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode,
+                    IsUnique = true
+                } );
+            }
+
+            _resetBlame();
+        }
+        
+         private void _makeC3ProductIdProperty( CswDeveloper Dev, Int32 Case )
+        {
+            _acceptBlame( Dev, Case );
+
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            if( null != MaterialOC )
+            {
+                // Add property to material object class
+                _CswNbtSchemaModTrnsctn.createObjectClassProp(new CswNbtWcfMetaDataModel.ObjectClassProp(MaterialOC)
+                    {
+                        PropName = CswNbtObjClassMaterial.PropertyName.C3ProductId,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        IsRequired = false,
+                        ReadOnly = true,
+                        ServerManaged = true
+                    });
+
+                // Now add the property to all material nodetypes
+                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+                foreach (CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes())
+                {
+                    CswNbtMetaDataNodeTypeProp C3ProductIdProp = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3ProductId );
+                    C3ProductIdProp.removeFromAllLayouts();
+                }
+
+            }
+
+            _resetBlame();
+        }
+
+
+        private void _upgradeAssemblyAndEquipmentLocationProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClassProp locationOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Location );
+            if( null == locationOCP )
+            {
+                locationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( equipmentOC )
+                {
+                    PropName = CswNbtObjClassEquipment.PropertyName.Location,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
+                } );
+            }
+
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            locationOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Location );
+            if( null == locationOCP )
+            {
+                locationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
+                {
+                    PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        private void _upgradeAssemblyStatusProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClassProp statusOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Status );
+            if( null == statusOCP )
+            {
+                statusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
+                {
+                    PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion ASPEN Methods
 
         /// <summary>
         /// The actual update call
@@ -177,11 +314,15 @@ namespace ChemSW.Nbt.Schema
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
 
+            //This ASPEN method has to be first
+            _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
+
+
             #region YORICK
 
             //YORICK OC changes go here.
 
-            
+
             _makeUnCode( CswDeveloper.PG, 28671 );
             _updateUserFormats( CswDeveloper.CF, 26574 );
             _correctGeneratorTargetTypeProps( CswDeveloper.CF, 29039 );
@@ -189,6 +330,12 @@ namespace ChemSW.Nbt.Schema
             #endregion YORICK
 
             #region ASPEN
+
+            _makeC3ProductIdProperty( CswDeveloper.CM, 28688 );
+            _createAssemblyBarcodeProp( new UnitOfBlame( CswDeveloper.MB, 29108 ) );
+            _upgradeEquipmentBarcodeProp( new UnitOfBlame( CswDeveloper.MB, 29108 ) );
+            _upgradeAssemblyAndEquipmentLocationProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
+            _upgradeAssemblyStatusProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
 
             #endregion ASPEN
 
