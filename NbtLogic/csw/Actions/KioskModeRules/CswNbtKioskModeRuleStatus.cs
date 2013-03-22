@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 {
                     if( String.IsNullOrEmpty( foundMatch ) )
                     {
-                        if( candidateStatus.Equals( status ) )
+                        if( candidateStatus.Equals( status, StringComparison.CurrentCultureIgnoreCase ) )
                         {
                             foundMatch = candidateStatus;
                             ret = true;
@@ -120,12 +120,11 @@ namespace ChemSW.Nbt.Actions.KioskMode
                         else
                         {
                             string strippedCandidateStatus = alphNums.Replace( candidateStatus, "" );
-                            if( strippedStatus.Equals( strippedCandidateStatus ) )
+                            if( strippedStatus.Equals( strippedCandidateStatus, StringComparison.CurrentCultureIgnoreCase ) )
                             {
                                 foundMatch = candidateStatus;
                                 ret = true;
                                 OpData.Field1.Value = candidateStatus;
-                                OpData.Field1.SecondValue = "(entered: \"" + status + "\")";
                             }
                         }
                     }
@@ -172,7 +171,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 tree.goToParentNode();
             }
 
-            if( null == OpData.Field2.FoundObjClass )
+            if( string.IsNullOrEmpty( OpData.Field2.FoundObjClass ) )
             {
                 string StatusMsg = "Could not find " + NbtObjectClass.EquipmentClass.Replace( "Class", "" );
                 StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" ) + " with barcode " + OpData.Field2.Value;

@@ -63,6 +63,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtObjectClass.LocationClass, OpData.Field1.Value, true );
                 itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
+                itemToMove.Properties[locationPropName].AsLocation.SyncGestalt();
+                itemToMove.Properties[locationPropName].AsLocation.RefreshNodeName();
                 itemToMove.postChanges( false );
                 OpData.Log.Add( DateTime.Now + " - Moved " + itemType + " " + OpData.Field2.Value + " to " + locationToMoveTo.Name.Text + " (" + OpData.Field1.Value + ")" );
                 base.CommitOperation( ref OpData );
@@ -84,6 +86,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
             ICswNbtTree tree = _getTree( NbtObjectClass.LocationClass, OpData.Field1.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
+                tree.goToNthChild( 0 );
+                OpData.Field1.SecondValue = "(" + tree.getNodeNameForCurrentPosition() + ")";
                 ret = true;
             }
             else
@@ -133,7 +137,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 tree.goToParentNode();
             }
 
-            if( null == OpData.Field2.FoundObjClass )
+            if( string.IsNullOrEmpty( OpData.Field2.FoundObjClass ) )
             {
                 string StatusMsg = "";
                 bool first = true;
