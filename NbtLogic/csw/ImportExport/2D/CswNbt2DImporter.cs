@@ -4,7 +4,10 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -79,8 +82,7 @@ namespace ChemSW.Nbt.ImportExport
         } // _readExcel
 
         /// <summary>
-        /// Stores data in a temporary Oracle table
-        /// Returns the name of the table
+        /// Stores data in temporary Oracle tables
         /// </summary>
         public void storeData( string DataFilePath )
         {
@@ -415,8 +417,24 @@ namespace ChemSW.Nbt.ImportExport
                                             {
                                                 foreach( CswNbt2DBinding Binding in NodeTypeBindings )
                                                 {
-                                                    Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
-                                                    Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                    // special case for TimeInterval, specifically for IMCS imports
+                                                    if( Binding.DestProperty.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.TimeInterval )
+                                                    {
+                                                        XElement input = XElement.Parse( "<rateintervalvalue>" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "</rateintervalvalue>" );
+                                                        XmlDocument xmlDoc = new XmlDocument();
+                                                        xmlDoc.Load( input.CreateReader() );
+
+                                                        CswRateInterval rateInterval = new CswRateInterval( _CswNbtResources );
+                                                        rateInterval.ReadXml( xmlDoc.DocumentElement );
+
+                                                        Node.Properties[Binding.DestProperty].SetPropRowValue( CswNbtSubField.PropColumn.ClobData, rateInterval.ToXmlString() );
+                                                        Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                    }
+                                                    else
+                                                    {
+                                                        Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
+                                                        Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                    }
                                                 }
 
                                                 foreach( CswNbt2DRowRelationship RowRelationship in RowRelationships )
