@@ -39,7 +39,6 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Testing", Factory, typeof( Testing ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Trees", Factory, typeof( Trees ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Views", Factory, typeof( Views ) ) );
-            RouteTable.Routes.Add( new ServiceRoute( "Services/Locations", Factory, typeof( Locations ) ) );
         }
 
         /// <summary>

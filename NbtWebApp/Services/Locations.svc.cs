@@ -20,7 +20,7 @@ namespace NbtWebApp
 
         /// <summary>
         /// 
-        /// </summary>
+       /// </summary>
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Assign specified inventory group to specified locations" )]
@@ -40,5 +40,23 @@ namespace NbtWebApp
             return ( ReturnVal );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Generate a list of Locations" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceLocations.CswNbtLocationReturn list( bool IsMobile = true )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtWebServiceLocations.CswNbtLocationReturn Ret = new CswNbtWebServiceLocations.CswNbtLocationReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocations.CswNbtLocationReturn, bool>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceLocations.getLocationsList,
+                ParamObj: IsMobile
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }//Locations
 }
