@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -8,7 +7,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -244,7 +242,7 @@ namespace ChemSW.Nbt.Actions
                     Ret["tradename"] = NodeAsMaterial.TradeName.Text;
                     Ret["partno"] = NodeAsMaterial.PartNumber.Text;
                     Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
-                    Ret["supplierid"] = NodeAsMaterial.Supplier.RelatedNodeId.ToString();
+                    Ret["supplierid"] = SupplierId.ToString();
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
@@ -273,18 +271,21 @@ namespace ChemSW.Nbt.Actions
             JObject Ret = new JObject();
 
             //Check if the vendor needs to be created
-            if (false == CswTools.IsPrimaryKey(CswConvert.ToPrimaryKey(SupplierId)))
+            if( false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( SupplierId ) ) )
             {
-                CswNbtMetaDataNodeType VendorNT = _CswNbtResources.MetaData.getNodeType( "Vendor" );
-                if( null != VendorNT )
+                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                if( null != VendorOC )
                 {
-                    CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
-                    NewVendorNode.VendorName.Text = Suppliername;
-                    NewVendorNode.VendorName.SyncGestalt();
-                    NewVendorNode.IsTemp = false;
-                    NewVendorNode.postChanges( true );
-                    //Set the supplierId to the new vendor node
-                    SupplierId = NewVendorNode.NodeId.ToString();
+                    CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
+                    if( null != VendorNT )
+                    {
+                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        NewVendorNode.VendorName.Text = Suppliername;
+                        NewVendorNode.VendorName.SyncGestalt();
+                        NewVendorNode.postChanges( true );
+                        //Set the supplierId to the new vendor node
+                        SupplierId = NewVendorNode.NodeId.ToString();
+                    }
                 }
             }
 
@@ -294,11 +295,6 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
                 if( null != CurrentTempNode )
                 {
-                    if( null == CurrentTempNode.Supplier.RelatedNodeId )
-                    {
-                        CurrentTempNode.Supplier.RelatedNodeId = CswConvert.ToPrimaryKey( SupplierId );
-                    }
-
                     Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
                     if( NodeTypeId != CurrentNodeTypeId )
                     {
@@ -312,7 +308,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                         }
-                        
+
                         Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
                     }
                 }
@@ -456,17 +452,29 @@ namespace ChemSW.Nbt.Actions
                         JArray SizesToDelete = (JArray) MaterialObj["sizesToDelete"];
                         for( int i = 0; i < SizesToDelete.Count; i++ )
                         {
-                            if (SizesToDelete[i].HasValues)
+                            if( SizesToDelete[i].HasValues )
                             {
-                                CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey(SizesToDelete[i].Last.ToString());
-                                if (CswTools.IsPrimaryKey(SizeNodePK))
+                                CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey( SizesToDelete[i].Last.ToString() );
+                                if( CswTools.IsPrimaryKey( SizeNodePK ) )
                                 {
-                                    CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode(SizeNodePK);
-                                    if (null != SizeNodeToDelete)
+                                    CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode( SizeNodePK );
+                                    if( null != SizeNodeToDelete )
                                     {
                                         SizeNodeToDelete.delete();
                                     }
                                 }
+                            }
+                        }
+
+                        // Set the Vendor node property isTemp = false if necessary
+                        CswPrimaryKey VendorNodePk = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
+                        if( CswTools.IsPrimaryKey( VendorNodePk ) )
+                        {
+                            CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
+                            if( null != VendorNode )
+                            {
+                                VendorNode.IsTemp = false;
+                                VendorNode.postChanges( false );
                             }
                         }
 

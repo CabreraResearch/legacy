@@ -99,6 +99,16 @@
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
     <Compile Include="csw\Actions\CswNbtActHMISReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleDispose.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleOwner.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleTransfer.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleDispense.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleMove.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleFactory.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleName.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleStatus.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeDataContracts.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRule.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\ImportExport\2D\CswNbt2DBindingCollection.cs" />
