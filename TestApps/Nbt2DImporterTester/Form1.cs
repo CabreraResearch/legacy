@@ -26,19 +26,16 @@ namespace Nbt2DImporterTester
 
         private void handleMessage( string Msg )
         {
-            if( cbVerbose.Checked )
-            {
-                txtLog.BeginInvoke( new logHandler( log ), new object[] { Msg } );
-            }
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { Msg, false } );
         }
         private void handleError( string Msg )
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] { "ERROR: " + Msg } );
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { "ERROR: " + Msg, true } );
         }
 
         private void finish()
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished." } );
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished.", false } );
             btnLoadData.BeginInvoke( new setButtonsEnabledHandler( setButtonsEnabled ), new object[] { true } );
         }
 
@@ -62,10 +59,13 @@ namespace Nbt2DImporterTester
 
         #endregion NON-UI THREAD
 
-        public delegate void logHandler( string Msg );
-        public void log( string Msg )
+        public delegate void logHandler( string Msg, bool isError );
+        public void log( string Msg, bool isError = false )
         {
-            txtLog.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + Msg + "\r\n" + txtLog.Text;
+            if( cbVerbose.Checked || isError )
+            {
+                txtLog.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + Msg + "\r\n" + txtLog.Text;
+            }
         }
 
         private delegate void setButtonsEnabledHandler( bool enabled );
