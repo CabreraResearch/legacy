@@ -291,7 +291,13 @@ namespace ChemSW.Nbt.ImportExport
         } // readBindings()
 
 
-        public void ImportRows( Int32 RowsToImport, string ImportDataTableName )
+        /// <summary>
+        /// Import a number of rows
+        /// </summary>
+        /// <param name="RowsToImport">Number of rows to import</param>
+        /// <param name="ImportDataTableName">Source Oracle table to import</param>
+        /// <returns>True if there are more rows to import from this source data, false otherwise</returns>
+        public bool ImportRows( Int32 RowsToImport, string ImportDataTableName )
         {
             Int32 RowsImported = 0;
             try
@@ -514,9 +520,9 @@ namespace ChemSW.Nbt.ImportExport
                                         ImportRow["errorlog"] = ErrorMsg;
                                         ImportDataUpdate.update( ImportDataTable );
                                     }
+                                    RowsImported += 1;
                                 } // if(moreRows)
 
-                                RowsImported += 1;
                                 if( RowsImported >= RowsToImport )
                                 {
                                     break;
@@ -543,6 +549,7 @@ namespace ChemSW.Nbt.ImportExport
             {
                 OnError( ex.Message + "\r\n" + ex.StackTrace );
             }
+            return ( RowsImported != 0 );
         } // ImportRows()
 
 

@@ -22,13 +22,13 @@ namespace Nbt2DImporterTester
             _WorkerThread.OnImportFinish = ImportFinish;
         }
 
-        #region NON-UI THREAD 
+        #region NON-UI THREAD
 
         private void handleMessage( string Msg )
         {
             if( cbVerbose.Checked )
             {
-                txtLog.BeginInvoke( new logHandler( log ), new object[] {Msg} );
+                txtLog.BeginInvoke( new logHandler( log ), new object[] { Msg } );
             }
         }
         private void handleError( string Msg )
@@ -52,11 +52,11 @@ namespace Nbt2DImporterTester
             lblPending.BeginInvoke( new setCountsHandler( setCounts ), new object[] { PendingCount, ErrorCount } );
         }
 
-        private void ImportFinish()
+        private void ImportFinish( bool More )
         {
-            if( cbContinuous.Checked )
+            if( More && cbContinuous.Checked )
             {
-                btnRunImport.BeginInvoke( new buttonClickHandler( btnRunImport_Click ), new object[] {null, null} );
+                btnRunImport.BeginInvoke( new buttonClickHandler( btnRunImport_Click ), new object[] { null, null } );
             }
         }
 

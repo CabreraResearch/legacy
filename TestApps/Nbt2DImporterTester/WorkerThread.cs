@@ -22,8 +22,8 @@ namespace Nbt2DImporterTester
 
         public delegate void getCountsFinishEvent( Int32 PendingRows, Int32 ErrorRows );
         public getCountsFinishEvent OnGetCountsFinish;
-        
-        public delegate void importFinishEvent();
+
+        public delegate void importFinishEvent( bool More );
         public importFinishEvent OnImportFinish;
 
         public WorkerThread()
@@ -67,13 +67,13 @@ namespace Nbt2DImporterTester
         {
             _CswNbtResources.AccessId = AccessId;
 
-            _Importer.ImportRows( rows, ImportDataTableName );
-            
+            bool More = _Importer.ImportRows( rows, ImportDataTableName );
+
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
-            
+
             OnFinish();
-            OnImportFinish();
+            OnImportFinish( More );
         }
 
         public delegate void readBindingsHandler( string AccessId, string BindingsFilePath );
