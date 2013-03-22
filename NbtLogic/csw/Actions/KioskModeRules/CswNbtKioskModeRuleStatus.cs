@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 {
                     if( String.IsNullOrEmpty( foundMatch ) )
                     {
-                        if( candidateStatus.Equals( status, StringComparison.CurrentCultureIgnoreCase ) )
+                        if( candidateStatus.Equals( status ) )
                         {
                             foundMatch = candidateStatus;
                             ret = true;
