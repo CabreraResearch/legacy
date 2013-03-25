@@ -52,6 +52,7 @@
                 Csw.ajaxWcf.get({
                     urlMethod: "Trees/locations",
                     success: function (data) {
+                        tree_cell.empty();
                         mainTree = Csw.nbt.nodeTreeExt(tree_cell, {
                             width: '500px',
                             overrideBeforeSelect: true,
