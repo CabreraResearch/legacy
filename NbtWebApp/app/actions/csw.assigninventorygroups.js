@@ -93,7 +93,7 @@
                     inventoryGroupSelect = select_inventory_group_cell.span().nodeSelect({
                     name: 'intentory_group_select',
                     objectClassName: 'InventoryGroupClass',
-                    allowAdd: false,
+                    allowAdd: true,
                     isRequired: true,
                     showSelectOnLoad: true,
                     isMulti: false,
@@ -142,7 +142,9 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'Locations/assignInventoryGroupToLocations',
                             data: AssignRequest,
-                            success: function (ajaxdata) { }
+                            success: function (ajaxdata) { 
+                                    initTree();
+                                }
                             });
 
                     },
