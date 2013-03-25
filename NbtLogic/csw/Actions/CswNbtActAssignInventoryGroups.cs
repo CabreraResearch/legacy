@@ -51,10 +51,10 @@ namespace ChemSW.Nbt.Actions
                     if( string.Empty != CurrentLocationKey )
                     {
                         CswNbtNodeKey LKey = new CswNbtNodeKey( CurrentLocationKey );
-                        CswNbtNode CurrentLocationNode = _CswNbtResources.Nodes[LKey];
+                        CswNbtObjClassLocation CurrentLocationNode = _CswNbtResources.Nodes[LKey];
                         if( null != CurrentLocationNode )
                         {
-                            CurrentLocationNode.Properties[CswNbtObjClassLocation.PropertyName.InventoryGroup].AsRelationship.RelatedNodeId = InventoryGroupNode.NodeId;
+                            CurrentLocationNode.InventoryGroup.RelatedNodeId = InventoryGroupNode.NodeId;
                             CurrentLocationNode.postChanges( true );
                         }
                     }//
