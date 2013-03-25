@@ -92,8 +92,9 @@ namespace ChemSW.Nbt
             //Show Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( false, CswNbtModuleName.Containers );
 
-            //Show the request fulfiller Role
+            //Show the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( false, "request_fulfiller" );
+            _CswNbtResources.Modules.ToggleUserNodes( false, "request_fulfiller" );
         }
 
         public override void OnDisable()
@@ -174,8 +175,9 @@ namespace ChemSW.Nbt
             //Hide Print Labels with a dependent NodeType
             _CswNbtResources.Modules.TogglePrintLabels( true, CswNbtModuleName.Containers );
 
-            //Hide the request fulfiller Role
+            //Hide the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
+            _CswNbtResources.Modules.ToggleUserNodes( false, "request_fulfiller" );
 
         } // OnDisable()
 
