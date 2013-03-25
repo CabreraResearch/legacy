@@ -47,16 +47,63 @@ namespace ChemSW.Nbt.Schema
                         ICswNbtTree TreeOfArbitraryNodes = _CswNbtSchemaModTrnsctn.getArbitraryNodes( "Default Inventory Group", InventoryGroupOC );
                         if( null != ( IGTreeNode = TreeOfArbitraryNodes.getRootTreeNode().ChildNodes[0] ) && ( null != ( DefaultInventoryGroupNode = _CswNbtSchemaModTrnsctn.Nodes[IGTreeNode.NodeKey] ) ) )
                         {
-                            foreach( CswNbtNode CurrentLocationNode in LocationOC.getNodes( false, true ) )
+
+                            CswNbtView ViewOfLocationsWithNullIG = _CswNbtSchemaModTrnsctn.makeView();
+//                            ViewOfLocationsWithNullIG.makeNew( "Null IVG Locations", NbtViewVisibility.Global, null, null );
+                            ViewOfLocationsWithNullIG.ViewMode = NbtViewRenderingMode.Tree;
+                            ViewOfLocationsWithNullIG.Category = "System";
+                            ViewOfLocationsWithNullIG.Width = 100;
+
+                            CswNbtViewRelationship ViewRelLocationsOC = ViewOfLocationsWithNullIG.AddViewRelationship( LocationOC, true );
+
+                            CswNbtViewProperty ViewPropIGOCP = null;
+                            foreach( CswNbtMetaDataNodeType CurrentLoactionNT in LocationOC.getNodeTypes() )
                             {
-                                if( null == CurrentLocationNode.Properties[InventoryGroupOCP.PropName].AsRelationship.RelatedNodeId )
+                                CswNbtMetaDataNodeTypeProp IGNTP = CurrentLoactionNT.getNodeTypeProp( "Inventory Group" );
+                                if( null != IGNTP )
                                 {
-                                    CurrentLocationNode.Properties[InventoryGroupOCP.PropName].AsRelationship.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
-                                    CurrentLocationNode.postChanges( true );
+                                    ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, IGNTP );
+                                    break;
+                                }
+                            }
 
-                                }//if the location doesn't have an inventory group
+                            //ViewOfLocationsWithNullIG.save();
 
-                            }//iterate location nodes
+                            ICswNbtTree TreeOfLocations = _CswNbtSchemaModTrnsctn.getTreeFromView( ViewOfLocationsWithNullIG, true );
+
+
+                            TreeOfLocations.goToRoot();
+                            if( TreeOfLocations.getChildNodeCount() > 0 )
+                            {
+                                TreeOfLocations.goToNthChild( 0 );//go to generator node
+                                int TotalLocationNodes = TreeOfLocations.getChildNodeCount();
+                                if( TotalLocationNodes > 0 )
+                                {
+                                    for( int idx = 0; idx < TotalLocationNodes; idx++ )
+                                    {
+                                        TreeOfLocations.goToNthChild( idx );
+                                        CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
+                                        CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
+
+                                    } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
+
+                                }//if there are child nodes
+
+                            }//if there are any nodes
+
+
+
+
+                            //foreach( CswNbtNode CurrentLocationNode in LocationOC.getNodes( false, true ) )
+                            //{
+                            //    if( null == CurrentLocationNode.Properties[InventoryGroupOCP.PropName].AsRelationship.RelatedNodeId )
+                            //    {
+                            //        CurrentLocationNode.Properties[InventoryGroupOCP.PropName].AsRelationship.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
+                            //        CurrentLocationNode.postChanges( true );
+
+                            //    }//if the location doesn't have an inventory group
+
+                            //}//iterate location nodes
 
                         }//if we found a default inventory group
 
