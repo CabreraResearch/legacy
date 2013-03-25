@@ -39,12 +39,13 @@
 
                     canSelectRow: false,
                     reapplyViewReadyOnLayout: false, //This is not normal. See Requesting for the specific use case.
-                    
+
                     onLoad: function (grid, ajaxResult) { },
                     onEdit: function (rows) { },
                     onPreview: function (rows) { },
                     onDelete: function (rows) { },
                     onSelect: function (rows) { },
+                    onBeforeSelect: function (rows) { return true; }, //Case 29241 - when overriding this functuon always return true if you want onSelect to fire!!
                     onDeselect: function (row) { },
                     onSelectChange: function (rowCount) { },
                     onMouseEnter: function (rowCount) { },
@@ -221,7 +222,7 @@
                         //of the methods we're listening to here, called 4th. Will also trigger afterlayout.
                         Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                     },
-                    afterlayout: function() {
+                    afterlayout: function () {
                         if (cswPrivate.reapplyViewReadyOnLayout) {
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
@@ -356,7 +357,7 @@
 
                     cswPrivate.toggleGroups = function (collapse) {
                         if (cswPrivate.grid.view) {
-                            Csw.each(cswPrivate.grid.view.features, function(feature) {
+                            Csw.each(cswPrivate.grid.view.features, function (feature) {
                                 if (feature.ftype === 'grouping' || feature.ftype === 'groupingsummary') {
                                     if (collapse) {
                                         feature.collapseAll();
@@ -634,7 +635,7 @@
                 } else {
                     cswPublic.extGrid = window.Ext.create('Ext.panel.Panel');
                 }
-                
+
                 return cswPublic.extGrid;
             }); // makeGrid()
 
@@ -889,7 +890,7 @@
                 return return_val;
             };
 
-            cswPublic.iterateRows = function(callBack) {
+            cswPublic.iterateRows = function (callBack) {
                 /// <summary>
                 /// Iterate each row in the grid and execute a callback with the row record and node as the parameters
                 /// </summary>
