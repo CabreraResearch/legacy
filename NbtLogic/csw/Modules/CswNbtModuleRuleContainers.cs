@@ -177,7 +177,7 @@ namespace ChemSW.Nbt
 
             //Hide the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
-            _CswNbtResources.Modules.ToggleUserNodes( false, "request_fulfiller" );
+            _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
 
         } // OnDisable()
 
