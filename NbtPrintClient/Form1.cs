@@ -250,24 +250,24 @@ namespace CswPrintClient1
             CswEncryption _CswEncryption = new CswEncryption( string.Empty );
             _CswEncryption.Method = EncryptionMethod.TypeZero;
 
-            Application.CommonAppDataRegistry.SetValue( "LPCname", tbLPCname.Text );
-            Application.CommonAppDataRegistry.SetValue( "Enabled", cbEnabled.Checked.ToString() );
-            Application.CommonAppDataRegistry.SetValue( "printer", tbPrinter.Text );
-            Application.CommonAppDataRegistry.SetValue( "printerkey", _printerKey );
-            Application.CommonAppDataRegistry.SetValue( "description", tbDescript.Text );
-            Application.CommonAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
-            Application.CommonAppDataRegistry.SetValue( "logon", tbUsername.Text );
+            Application.UserAppDataRegistry.SetValue( "LPCname", tbLPCname.Text );
+            Application.UserAppDataRegistry.SetValue( "Enabled", cbEnabled.Checked.ToString() );
+            Application.UserAppDataRegistry.SetValue( "printer", tbPrinter.Text );
+            Application.UserAppDataRegistry.SetValue( "printerkey", _printerKey );
+            Application.UserAppDataRegistry.SetValue( "description", tbDescript.Text );
+            Application.UserAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
+            Application.UserAppDataRegistry.SetValue( "logon", tbUsername.Text );
             String pwd = tbPassword.Text;
             if( pwd.Length > 0 )
             {
                 pwd = _CswEncryption.encrypt( pwd );
             }
-            Application.CommonAppDataRegistry.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
+            Application.UserAppDataRegistry.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
             if( tbURL.Modified && tbURL.Text == string.Empty )
             {
                 tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
             }
-            Application.CommonAppDataRegistry.SetValue( "serverurl", tbURL.Text );
+            Application.UserAppDataRegistry.SetValue( "serverurl", tbURL.Text );
         }
 
         private void LoadSettings()
@@ -277,15 +277,14 @@ namespace CswPrintClient1
 
             try
             {
-
-                tbLPCname.Text = Application.CommonAppDataRegistry.GetValue( "LPCname" ).ToString();
-                cbEnabled.Checked = ( Application.CommonAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
-                tbPrinter.Text = Application.CommonAppDataRegistry.GetValue( "printer" ).ToString();
-                _printerKey = Application.CommonAppDataRegistry.GetValue( "printerkey" ).ToString();
-                tbDescript.Text = Application.CommonAppDataRegistry.GetValue( "description" ).ToString();
-                tbAccessId.Text = Application.CommonAppDataRegistry.GetValue( "accessid" ).ToString();
-                tbUsername.Text = Application.CommonAppDataRegistry.GetValue( "logon" ).ToString();
-                String pwd = Application.CommonAppDataRegistry.GetValue( "password" ).ToString();
+                tbLPCname.Text = Application.UserAppDataRegistry.GetValue( "LPCname" ).ToString();
+                cbEnabled.Checked = ( Application.UserAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
+                tbPrinter.Text = Application.UserAppDataRegistry.GetValue( "printer" ).ToString();
+                _printerKey = Application.UserAppDataRegistry.GetValue( "printerkey" ).ToString();
+                tbDescript.Text = Application.UserAppDataRegistry.GetValue( "description" ).ToString();
+                tbAccessId.Text = Application.UserAppDataRegistry.GetValue( "accessid" ).ToString();
+                tbUsername.Text = Application.UserAppDataRegistry.GetValue( "logon" ).ToString();
+                String pwd = Application.UserAppDataRegistry.GetValue( "password" ).ToString();
                 pwd = pwd.Replace( "\0", string.Empty );
                 try
                 {
@@ -295,7 +294,7 @@ namespace CswPrintClient1
                 {
                     tbPassword.Text = "";
                 }
-                tbURL.Text = Application.CommonAppDataRegistry.GetValue( "serverurl" ).ToString();
+                tbURL.Text = Application.UserAppDataRegistry.GetValue( "serverurl" ).ToString();
                 if( tbURL.Text == string.Empty )
                 {
                     tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server

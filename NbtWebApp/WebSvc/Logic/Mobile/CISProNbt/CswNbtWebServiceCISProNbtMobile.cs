@@ -30,6 +30,17 @@ namespace NbtWebApp.WebSvc.Logic.Mobile.CISProNbt
 
         }
 
+        /// <summary>
+        /// Saves a given CSV string of RapidLoader records to the temp directory and emails a link to the user
+        /// </summary>
+        public static void RLSaveData( ICswResources CswResources, CswNbtMobileReturn Return, RapidLoaderData.RapidLoaderDataRequest Request )
+        {
+            CswNbtResources _CswNbtResources = ( CswNbtResources ) CswResources;
+            Request.EmailAddress = _CswNbtResources.CurrentNbtUser.Email.Trim();
+            CswNbtMobileRapidLoader _CswNbtMobileRapidLoader = new CswNbtMobileRapidLoader( _CswNbtResources );
+            _CswNbtMobileRapidLoader.saveRapidLoaderData( Request );
+        }
+
     }//class CswNbtWebServiceCISProNbtMobile
 
 }//namespace NbtWebApp.WebSvc.Logic.CISProNbtMobile

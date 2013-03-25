@@ -86,12 +86,10 @@ namespace ChemSW.Nbt.Schema
              * Filtered on Status = Pending
              * Filtered by 
              */
-            CswNbtView PendingRequestsView = _CswNbtSchemaModTrnsctn.makeView();
+            CswNbtView PendingRequestsView = _CswNbtSchemaModTrnsctn.makeSafeView( "Pending Requests", NbtViewVisibility.Global );
             PendingRequestsView.ViewMode = NbtViewRenderingMode.Grid;
             PendingRequestsView.Category = "Requests";
             PendingRequestsView.Width = 100;
-
-            PendingRequestsView.saveNew( "Pending Requests", NbtViewVisibility.Global );
 
             //do this for all
             CswNbtMetaDataNodeType Rel1SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Container Dispense" );
@@ -129,7 +127,7 @@ namespace ChemSW.Nbt.Schema
 
             }//if we have the request dispense nt
 
-            
+
             CswNbtMetaDataNodeType Rel7SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Material Create" );
             if( null != Rel7SecondNT )
             {
@@ -164,7 +162,7 @@ namespace ChemSW.Nbt.Schema
 
             }//if we have "Request Material Create"
 
-            
+
             CswNbtMetaDataNodeType Rel13SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Container Update" );
             if( null != Rel13SecondNT )
             {
@@ -200,7 +198,7 @@ namespace ChemSW.Nbt.Schema
             }//if we have "Request Container Update" nt
 
 
-            
+
             CswNbtMetaDataNodeType Rel19SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Material Dispense" );
             if( null != Rel19SecondNT )
             {

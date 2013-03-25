@@ -1088,21 +1088,28 @@ namespace ChemSW.Nbt
                 {
                     CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( NewValue ) );
 
-                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
-                    CswNbtMetaDataNodeType EquipmentNT = EquipmentOC.FirstNodeType;
                     CswNbtMetaDataNodeTypeProp EquipmentLocationNTP = null;
-                    if( null != EquipmentNT )
+                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+                    if( null != EquipmentOC )
                     {
-                        EquipmentLocationNTP = EquipmentNT.getNodeTypeProp( "Location" );
-                    }
-                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
-                    CswNbtMetaDataNodeType AssemblyNT = AssemblyOC.FirstNodeType;
-                    CswNbtMetaDataNodeTypeProp AssemblyLocationNTP = null;
-                    if( null != AssemblyNT )
-                    {
-                        AssemblyLocationNTP = AssemblyNT.getNodeTypeProp( "Location" );
+                        CswNbtMetaDataNodeType EquipmentNT = EquipmentOC.FirstNodeType;
+                        if( null != EquipmentNT )
+                        {
+                            EquipmentLocationNTP = EquipmentNT.getNodeTypeProp( "Location" );
+                        }
                     }
 
+                    CswNbtMetaDataNodeTypeProp AssemblyLocationNTP = null;
+                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+                    if( null != AssemblyOC )
+                    {
+                        CswNbtMetaDataNodeType AssemblyNT = AssemblyOC.FirstNodeType;
+                        if( null != AssemblyNT )
+                        {
+                            AssemblyLocationNTP = AssemblyNT.getNodeTypeProp( "Location" );
+                        }
+                    }
+                    
                     foreach( CswNbtViewRelationship LocRel in EquipByLocView.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
                     {
                         if( null != EquipmentLocationNTP )

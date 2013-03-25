@@ -22,23 +22,20 @@ namespace Nbt2DImporterTester
             _WorkerThread.OnImportFinish = ImportFinish;
         }
 
-        #region NON-UI THREAD 
+        #region NON-UI THREAD
 
         private void handleMessage( string Msg )
         {
-            if( cbVerbose.Checked )
-            {
-                txtLog.BeginInvoke( new logHandler( log ), new object[] {Msg} );
-            }
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { Msg, false } );
         }
         private void handleError( string Msg )
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] { "ERROR: " + Msg } );
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { "ERROR: " + Msg, true } );
         }
 
         private void finish()
         {
-            txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished." } );
+            txtLog.BeginInvoke( new logHandler( log ), new object[] { "Finished.", false } );
             btnLoadData.BeginInvoke( new setButtonsEnabledHandler( setButtonsEnabled ), new object[] { true } );
         }
 
@@ -52,20 +49,23 @@ namespace Nbt2DImporterTester
             lblPending.BeginInvoke( new setCountsHandler( setCounts ), new object[] { PendingCount, ErrorCount } );
         }
 
-        private void ImportFinish()
+        private void ImportFinish( bool More )
         {
-            if( cbContinuous.Checked )
+            if( More && cbContinuous.Checked )
             {
-                btnRunImport.BeginInvoke( new buttonClickHandler( btnRunImport_Click ), new object[] {null, null} );
+                btnRunImport.BeginInvoke( new buttonClickHandler( btnRunImport_Click ), new object[] { null, null } );
             }
         }
 
         #endregion NON-UI THREAD
 
-        public delegate void logHandler( string Msg );
-        public void log( string Msg )
+        public delegate void logHandler( string Msg, bool isError );
+        public void log( string Msg, bool isError = false )
         {
-            txtLog.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + Msg + "\r\n" + txtLog.Text;
+            if( cbVerbose.Checked || isError )
+            {
+                txtLog.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + Msg + "\r\n" + txtLog.Text;
+            }
         }
 
         private delegate void setButtonsEnabledHandler( bool enabled );
@@ -116,7 +116,7 @@ namespace Nbt2DImporterTester
         {
             setButtonsEnabled( false );
             log( "Storing data..." );
-            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtDataFilePath.Text, null, null );
+            ( (WorkerThread.storeDataHandler) _WorkerThread.storeData ).BeginInvoke( txtAccessId.Text, txtDataFilePath.Text, null, null );
         }
 
         private void btnRunImport_Click( object sender, EventArgs e )
@@ -128,27 +128,27 @@ namespace Nbt2DImporterTester
             {
                 rows = 1;
             }
-            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( cbxImportDataTableName.Text, rows, null, null );
+            ( (WorkerThread.importRowsHandler) _WorkerThread.importRows ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, rows, null, null );
         }
 
         private void btnReadBindings_Click( object sender, EventArgs e )
         {
             setButtonsEnabled( false );
             log( "Reading bindings..." );
-            ( (WorkerThread.readBindingsHandler) _WorkerThread.readBindings).BeginInvoke( txtBindingsFilePath.Text, null, null );
+            ( (WorkerThread.readBindingsHandler) _WorkerThread.readBindings ).BeginInvoke( txtAccessId.Text, txtBindingsFilePath.Text, null, null );
         }
 
         private void cbxImportDataTableName_TextChanged( object sender, EventArgs e )
         {
             log( "Refreshing row counts..." );
-            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( cbxImportDataTableName.Text, null, null );
+            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, null, null );
         }
 
         private delegate void buttonClickHandler( object sender, EventArgs e );
         private void btnRefreshCounts_Click( object sender, EventArgs e )
         {
             log( "Refreshing row counts..." );
-            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( cbxImportDataTableName.Text, null, null );
+            ( (WorkerThread.getCountsHandler) _WorkerThread.getCounts ).BeginInvoke( txtAccessId.Text, cbxImportDataTableName.Text, null, null );
         }
     }
 }
