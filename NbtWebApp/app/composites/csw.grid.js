@@ -45,7 +45,7 @@
                     onPreview: function (rows) { },
                     onDelete: function (rows) { },
                     onSelect: function (rows) { },
-                    onBeforeSelect: function (rows) { return true; }, //Case 29241 - when overriding this functuon always return true if you want onSelect to fire!!
+                    onBeforeSelect: function (rows) { },
                     onDeselect: function (row) { },
                     onSelectChange: function (rowCount) { },
                     onMouseEnter: function (rowCount) { },
