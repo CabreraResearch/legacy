@@ -42,27 +42,23 @@ namespace ChemSW.Nbt.csw.Mobile
 
         public void saveRapidLoaderData( RapidLoaderData.RapidLoaderDataRequest Request )
         {
+            String FullPathName = _getFileNameAndPath();
+            FileStream fs = new FileStream( FullPathName, FileMode.CreateNew );
+            StreamWriter sw = new StreamWriter( fs, System.Text.Encoding.Default );
+            sw.Write( Request.CSVData );
+            sw.Flush();
+
+            String EmailMessageSubject = "Your ChemSW Rapid Loader import is available for download";
+            String EmailMessageBody = String.Format( 
+                _EmailBodyTemplate, 
+                _CswNbtResources.CurrentNbtUser.Username, 
+                _makeLink( FullPathName, FullPathName ) 
+                );
             if( false == String.IsNullOrEmpty( Request.EmailAddress ) )
             {
-                String FullPathName = _getFileNameAndPath();
-                FileStream fs = new FileStream( FullPathName, FileMode.CreateNew );
-                StreamWriter sw = new StreamWriter( fs, System.Text.Encoding.Default );
-                sw.Write( Request.CSVData );
-                sw.Flush();
-
-                String EmailMessageSubject = "Your ChemSW Rapid Loader import is available for download";
-                String EmailMessageBody = String.Format( 
-                    _EmailBodyTemplate, 
-                    _CswNbtResources.CurrentNbtUser.Username, 
-                    _makeLink( FullPathName, FullPathName ) 
-                    );
                 _sendEmail( _CswNbtResources.CurrentNbtUser.Username, Request.EmailAddress, EmailMessageSubject, EmailMessageBody );
-                _sendEmail( _CswNbtResources.CurrentNbtUser.Username, "enterprisesupport@chemsw.com", EmailMessageSubject, EmailMessageBody );
             }
-            else
-            {
-                throw new CswDniException( ErrorType.Error, "Email Missing", "null email address" );
-            }
+            _sendEmail( _CswNbtResources.CurrentNbtUser.Username, "enterprisesupport@chemsw.com", EmailMessageSubject, EmailMessageBody );
         }
 
         #endregion Public Methods
