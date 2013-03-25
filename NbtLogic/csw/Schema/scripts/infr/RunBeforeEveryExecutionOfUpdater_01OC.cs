@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Schema
             if( DateFormatOcp.ListOptions != ValidFormats )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DateFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, ValidFormats );
-                foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false, IncludeDefaultFilters: false ) )
+                foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit : true, includeSystemNodes : false, IncludeDefaultFilters : false ) )
                 {
                     if( false == string.IsNullOrEmpty( User.DateFormatProperty.Value ) &&
                         CswResources.UnknownEnum == (CswDateFormat) User.DateFormatProperty.Value )
@@ -224,8 +224,8 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
-         private void _makeC3ProductIdProperty( CswDeveloper Dev, Int32 Case )
+
+        private void _makeC3ProductIdProperty( CswDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
 
@@ -233,19 +233,19 @@ namespace ChemSW.Nbt.Schema
             if( null != MaterialOC )
             {
                 // Add property to material object class
-                _CswNbtSchemaModTrnsctn.createObjectClassProp(new CswNbtWcfMetaDataModel.ObjectClassProp(MaterialOC)
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                     {
                         PropName = CswNbtObjClassMaterial.PropertyName.C3ProductId,
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                         IsRequired = false,
                         ReadOnly = true,
                         ServerManaged = true
-                    });
+                    } );
 
                 // Now add the property to all material nodetypes
                 _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
-                foreach (CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes())
+                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
                     CswNbtMetaDataNodeTypeProp C3ProductIdProp = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3ProductId );
                     C3ProductIdProp.removeFromAllLayouts();
@@ -304,6 +304,35 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _createReportInstructionsProp( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClassProp instructionsOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Instructions );
+            if( null == instructionsOCP )
+            {
+                instructionsOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( reportOC )
+                {
+                    PropName = CswNbtObjClassReport.PropertyName.Instructions,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                    ServerManaged = true
+                } );
+
+                string txt = @"To create a parameterized report, enclose the name of the property in {}.  For example:
+    and datecolumn < '{Date}'
+will prompt the user to enter a Date. Parameters that match properties on the current User will be automatically filled in. For example:
+    {Username} - The username of the user running the report.
+    {Role} - The role of the user running the report.
+    {userid} - The primary key of the user running the report.";
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( instructionsOCP, txt );
+
+            }
+
+            _resetBlame();
+        }
+
         #endregion ASPEN Methods
 
         /// <summary>
@@ -336,6 +365,7 @@ namespace ChemSW.Nbt.Schema
             _upgradeEquipmentBarcodeProp( new UnitOfBlame( CswDeveloper.MB, 29108 ) );
             _upgradeAssemblyAndEquipmentLocationProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
             _upgradeAssemblyStatusProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
+            _createReportInstructionsProp( new UnitOfBlame( CswDeveloper.MB, 28950 ) );
 
             #endregion ASPEN
 

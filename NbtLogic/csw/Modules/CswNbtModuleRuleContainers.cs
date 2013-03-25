@@ -1,10 +1,6 @@
-using System;
-using System.Data;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
-using ChemSW.DB;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -174,6 +170,8 @@ namespace ChemSW.Nbt
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.KioskMode );
+            }
+            {
                 _CswNbtResources.Actions[CswNbtActionName.KioskMode].SetCategory( "Equipment" );
             }
 
