@@ -42,54 +42,62 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataObjectClassProp InventoryGroupOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
                     if( null != InventoryGroupOCP )
                     {
-                        CswNbtTreeNode IGTreeNode = null;
-                        CswNbtNode DefaultInventoryGroupNode = null;
-                        ICswNbtTree TreeOfArbitraryNodes = _CswNbtSchemaModTrnsctn.getArbitraryNodes( "Default Inventory Group", InventoryGroupOC );
-                        if( null != ( IGTreeNode = TreeOfArbitraryNodes.getRootTreeNode().ChildNodes[0] ) && ( null != ( DefaultInventoryGroupNode = _CswNbtSchemaModTrnsctn.Nodes[IGTreeNode.NodeKey] ) ) )
+
+                        CswNbtSearch InventoryGroupNodeSearch = _CswNbtSchemaModTrnsctn.CswNbtSearch;
+                        InventoryGroupNodeSearch.SearchTerm = "Default Inventory Group";
+                        InventoryGroupNodeSearch.addFilter( InventoryGroupOC, false );
+
+                        ICswNbtTree TreeOfArbitraryNodes = InventoryGroupNodeSearch.Results();
+                        if( TreeOfArbitraryNodes.getRootTreeNode().ChildNodes.Count > 0 )
                         {
 
-                            CswNbtView ViewOfLocationsWithNullIG = _CswNbtSchemaModTrnsctn.makeView();
-//                            ViewOfLocationsWithNullIG.makeNew( "Null IVG Locations", NbtViewVisibility.Global, null, null );
-                            ViewOfLocationsWithNullIG.ViewMode = NbtViewRenderingMode.Tree;
-                            ViewOfLocationsWithNullIG.Category = "System";
-                            ViewOfLocationsWithNullIG.Width = 100;
-
-                            CswNbtViewRelationship ViewRelLocationsOC = ViewOfLocationsWithNullIG.AddViewRelationship( LocationOC, true );
-
-                            CswNbtViewProperty ViewPropIGOCP = null;
-                            foreach( CswNbtMetaDataNodeType CurrentLoactionNT in LocationOC.getNodeTypes() )
+                            CswNbtTreeNode IGTreeNode = TreeOfArbitraryNodes.getRootTreeNode().ChildNodes[0];
+                            CswNbtNode DefaultInventoryGroupNode = _CswNbtSchemaModTrnsctn.Nodes[IGTreeNode.NodeKey];
+                            if( null != DefaultInventoryGroupNode )
                             {
-                                CswNbtMetaDataNodeTypeProp IGNTP = CurrentLoactionNT.getNodeTypeProp( "Inventory Group" );
-                                if( null != IGNTP )
+                                //*** get tree of locations that don't have an inventory group
+                                CswNbtView ViewOfLocationsWithNullIG = _CswNbtSchemaModTrnsctn.makeView();
+                                //                            ViewOfLocationsWithNullIG.makeNew( "Null IVG Locations", NbtViewVisibility.Global, null, null );
+                                ViewOfLocationsWithNullIG.ViewMode = NbtViewRenderingMode.Tree;
+                                ViewOfLocationsWithNullIG.Category = "System";
+                                ViewOfLocationsWithNullIG.Width = 100;
+                                CswNbtViewRelationship ViewRelLocationsOC = ViewOfLocationsWithNullIG.AddViewRelationship( LocationOC, true );
+
+                                CswNbtViewProperty ViewPropIGOCP = null;
+                                foreach( CswNbtMetaDataNodeType CurrentLoactionNT in LocationOC.getNodeTypes() )
                                 {
-                                    ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, IGNTP );
-                                    break;
-                                }
-                            }
-
-                            //ViewOfLocationsWithNullIG.save();
-
-                            ICswNbtTree TreeOfLocations = _CswNbtSchemaModTrnsctn.getTreeFromView( ViewOfLocationsWithNullIG, true );
-
-
-                            TreeOfLocations.goToRoot();
-                            if( TreeOfLocations.getChildNodeCount() > 0 )
-                            {
-                                TreeOfLocations.goToNthChild( 0 );//go to generator node
-                                int TotalLocationNodes = TreeOfLocations.getChildNodeCount();
-                                if( TotalLocationNodes > 0 )
-                                {
-                                    for( int idx = 0; idx < TotalLocationNodes; idx++ )
+                                    CswNbtMetaDataNodeTypeProp IGNTP = CurrentLoactionNT.getNodeTypeProp( "Inventory Group" );
+                                    if( null != IGNTP )
                                     {
-                                        TreeOfLocations.goToNthChild( idx );
-                                        CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
-                                        CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
+                                        ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, IGNTP );
+                                        break;
+                                    }
+                                }
 
-                                    } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
+                                ICswNbtTree TreeOfLocations = _CswNbtSchemaModTrnsctn.getTreeFromView( ViewOfLocationsWithNullIG, true );
 
-                                }//if there are child nodes
 
-                            }//if there are any nodes
+                                TreeOfLocations.goToRoot();
+                                if( TreeOfLocations.getChildNodeCount() > 0 )
+                                {
+                                    TreeOfLocations.goToNthChild( 0 );
+                                    int TotalLocationNodes = TreeOfLocations.getChildNodeCount();
+                                    if( TotalLocationNodes > 0 )
+                                    {
+                                        for( int idx = 0; idx < TotalLocationNodes; idx++ )
+                                        {
+                                            TreeOfLocations.goToNthChild( idx );
+                                            CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
+                                            CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
+                                            CurrentLocationNode.postChanges( true );
+
+                                        } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
+
+                                    }//if there are child nodes
+
+                                }//if there are any locatioin nodes
+
+                            }//if there are any matching inventory group nodes
 
 
 

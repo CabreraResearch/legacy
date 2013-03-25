@@ -1677,27 +1677,40 @@ namespace ChemSW.Nbt.Schema
         }
 
         private CswNbtSearch _search = null;
-        public ICswNbtTree getArbitraryNodes( string SearchTerm, CswNbtMetaDataObjectClass ObjClass = null, CswNbtMetaDataNodeType NodeType = null )
+        public CswNbtSearch CswNbtSearch
         {
-            if( null == _search )
+            get
             {
-                _search = new CswNbtSearch( _CswNbtResources ) { SearchTerm = SearchTerm  }; 
+                if( null == _search )
+                {
+                    _search = new CswNbtSearch( _CswNbtResources );
+                }
+
+                return ( _search  ); 
             }
+        }
+
+        //public ICswNbtTree getArbitraryNodes( string SearchTerm, CswNbtMetaDataObjectClass ObjClass = null, CswNbtMetaDataNodeType NodeType = null )
+        //{
+        //    if( null == _search )
+        //    {
+        //        _search = new CswNbtSearch( _CswNbtResources ) { SearchTerm = SearchTerm  }; 
+        //    }
 
 
-            if( null != NodeType )
-            {
-                _search.addFilter( NodeType, false );
-            }
+        //    if( null != NodeType )
+        //    {
+        //        _search.addFilter( NodeType, false );
+        //    }
 
-            if( null != ObjClass )
-            {
-                _search.addFilter( ObjClass , false ); 
-            }
+        //    if( null != ObjClass )
+        //    {
+        //        _search.addFilter( ObjClass , false ); 
+        //    }
 
-            return( _search.Results() ); 
+        //    return( _search.Results() ); 
 
-        }//doSearch()
+        //}//doSearch()
 
 
     }//class CswNbtSchemaModTrnsctn
