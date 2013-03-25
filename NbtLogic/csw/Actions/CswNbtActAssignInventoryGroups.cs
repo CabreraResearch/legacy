@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Actions
             }
             else
             {
-                throw( new CswDniException("There is no Inventory Group node corresponding to the key: " + InventoryGroupNodeId ) ); 
+                throw( new CswDniException("There is no Inventory Group node corresponding to the key: " + InventoryGroupNodeId ) , "Invalid intevenotry group" ); 
             }//if-else the inventory group is valid
 
 
