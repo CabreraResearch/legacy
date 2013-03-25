@@ -65,8 +65,14 @@ namespace ChemSW.Nbt.PropTypes
                 //CswNbtView Ret = new CswNbtView(_CswNbtResources);
                 CswNbtView Ret = null;
                 if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
+                {
                     //Ret.LoadXml(_CswNbtMetaDataNodeTypeProp.ViewId);
                     Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                    if( false == Ret.SessionViewId.isSet() )
+                    {
+                        Ret.SaveToCache( false );
+                    }
+                }
                 return Ret;
             }
         }
@@ -136,7 +142,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["viewname"] = View.ViewName;
             ParentObject["gridmode"] = GridMode.ToString();
             ParentObject["maxrows"] = MaxRows;
-            ParentObject["viewid"] = View.ViewId.ToString();
+            ParentObject["viewid"] = View.SessionViewId.ToString();
             ParentObject["width"] = Width.ToString();
             ParentObject["hasHeader"] = HasHeader.ToString();
         }

@@ -482,7 +482,8 @@ namespace ChemSW.Nbt.Schema
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
 
         /// <summary>
-        /// Returns a new CswNbtView. (really) Does actually call makeNew()
+        /// STRONGLY RECOMMEND USING makeSafeView()
+        /// Returns a new CswNbtView. (really) Does actually call makeNew() 
         /// </summary>
         public CswNbtView makeNewView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
@@ -493,6 +494,24 @@ namespace ChemSW.Nbt.Schema
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
         public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
         public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
+
+        /// <summary>
+        /// Clears a matching existing view or creates a new one
+        /// </summary>
+        public CswNbtView makeSafeView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        {
+            CswNbtView Ret = ViewSelect.restoreView( ViewName, Visibility );
+            if( null != Ret )
+            {
+                Ret.Root.ChildRelationships.Clear();
+            }
+            else
+            {
+                Ret = new CswNbtView( _CswNbtResources );
+                Ret.saveNew( ViewName, Visibility, RoleId, UserId, CopyViewId );
+            }
+            return Ret;
+        }
 
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, false ); }
         public List<CswNbtView> restoreViews( string ViewName )
@@ -624,13 +643,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void deleteConfigurationVariable( CswNbtResources.ConfigurationVariables Name )
         {
-            CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
-            DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where lower(variablename)='" + Name.ToString().ToLower() + "'", true );
-            if( ConfigVarDataTable.Rows.Count == 1 )
-            {
-                ConfigVarDataTable.Rows[0].Delete();
-            }
-            ConfigVarTable.update( ConfigVarDataTable );
+            deleteConfigurationVariable( Name.ToString() );
         }
 
         /// <summary>
@@ -641,9 +654,9 @@ namespace ChemSW.Nbt.Schema
         {
             CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
             DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where lower(variablename)='" + Name.ToLower() + "'", true );
-            if( ConfigVarDataTable.Rows.Count == 1 )
+            foreach( DataRow Row in ConfigVarDataTable.Rows )
             {
-                ConfigVarDataTable.Rows[0].Delete();
+                Row.Delete();
             }
             ConfigVarTable.update( ConfigVarDataTable );
         }
@@ -834,7 +847,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public Int32 createModule( string Description, string Name )
         {
-            return createModule( Description, Name, Enabled: isMaster() );
+            return createModule( Description, Name, Enabled : isMaster() );
         }
 
         /// <summary>
@@ -962,7 +975,7 @@ namespace ChemSW.Nbt.Schema
         public void deleteModule( string ModuleName )
         {
             Int32 ModuleId = Modules.GetModuleId( ModuleName );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId: Int32.MinValue );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId : Int32.MinValue );
             deleteAllModuleObjectClassJunctions( ModuleId );
 
             CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
@@ -1082,7 +1095,7 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
             {
-                deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
+                deleteModuleNodeTypeJunction( ModuleId : Int32.MinValue, NodeTypeId : NodeTypeId );
             }
 
             CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );

@@ -22,15 +22,14 @@ namespace Nbt2DImporterTester
 
         public delegate void getCountsFinishEvent( Int32 PendingRows, Int32 ErrorRows );
         public getCountsFinishEvent OnGetCountsFinish;
-        
-        public delegate void importFinishEvent();
+
+        public delegate void importFinishEvent( bool More );
         public importFinishEvent OnImportFinish;
 
         public WorkerThread()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
             _CswNbtResources.InitCurrentUser = InitUser;
-            _CswNbtResources.AccessId = "1";
 
             _Importer = new CswNbt2DImporter( _CswNbtResources );
             _Importer.Overwrite = true;
@@ -50,9 +49,11 @@ namespace Nbt2DImporterTester
             set { _Importer.OnMessage = value; }
         }
 
-        public delegate void storeDataHandler( string DataFilePath );
-        public void storeData( string DataFilePath )
+        public delegate void storeDataHandler( string AccessId, string DataFilePath );
+        public void storeData( string AccessId, string DataFilePath )
         {
+            _CswNbtResources.AccessId = AccessId;
+
             _Importer.storeData( DataFilePath );
             OnStoreDataFinish( _Importer.ImportDataTableNames );
 
@@ -61,21 +62,25 @@ namespace Nbt2DImporterTester
             OnFinish();
         }
 
-        public delegate void importRowsHandler( string ImportDataTableName, Int32 rows );
-        public void importRows( string ImportDataTableName, Int32 rows )
+        public delegate void importRowsHandler( string AccessId, string ImportDataTableName, Int32 rows );
+        public void importRows( string AccessId, string ImportDataTableName, Int32 rows )
         {
-            _Importer.ImportRows( rows, ImportDataTableName );
-            
+            _CswNbtResources.AccessId = AccessId;
+
+            bool More = _Importer.ImportRows( rows, ImportDataTableName );
+
             _CswNbtResources.commitTransaction();
             _CswNbtResources.beginTransaction();
-            
+
             OnFinish();
-            OnImportFinish();
+            OnImportFinish( More );
         }
 
-        public delegate void readBindingsHandler( string BindingsFilePath );
-        public void readBindings( string BindingsFilePath )
+        public delegate void readBindingsHandler( string AccessId, string BindingsFilePath );
+        public void readBindings( string AccessId, string BindingsFilePath )
         {
+            _CswNbtResources.AccessId = AccessId;
+
             _Importer.readBindings( BindingsFilePath );
 
             _CswNbtResources.commitTransaction();
@@ -83,9 +88,11 @@ namespace Nbt2DImporterTester
             OnFinish();
         }
 
-        public delegate void getCountsHandler( string ImportDataTableName );
-        public void getCounts( string ImportDataTableName )
+        public delegate void getCountsHandler( string AccessId, string ImportDataTableName );
+        public void getCounts( string AccessId, string ImportDataTableName )
         {
+            _CswNbtResources.AccessId = AccessId;
+
             Int32 PendingRows;
             Int32 ErrorRows;
             _Importer.getCounts( ImportDataTableName, out PendingRows, out ErrorRows );

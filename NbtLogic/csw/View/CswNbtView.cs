@@ -1748,16 +1748,16 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save this View to Session's data cache
         /// </summary>
-        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
+        public void SaveToCache( bool IncludeInQuickLaunch, bool UpdateCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
             if( SessionViewId == null ||
                 false == SessionViewId.isSet() ||
-                ForceCache ||
+                UpdateCache ||
                 IncludeInQuickLaunch )  // case 23999
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
-                _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );
+                _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch, UpdateCache );
             }
         } // SaveToCache()
 
