@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( NbtObjectClass.UserClass, OpData.Field1.Value, true );
                 containerNode.UpdateOwner( newOwnerNode );
+                containerNode.postChanges( false );
                 OpData.Log.Add( DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.Username + " (" + OpData.Field1.Value + ")" );
                 base.CommitOperation( ref OpData );
             }
