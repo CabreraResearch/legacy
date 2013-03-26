@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Schema
             if( DateFormatOcp.ListOptions != ValidFormats )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DateFormatOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, ValidFormats );
-                foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit : true, includeSystemNodes : false, IncludeDefaultFilters : false ) )
+                foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false, IncludeDefaultFilters: false ) )
                 {
                     if( false == string.IsNullOrEmpty( User.DateFormatProperty.Value ) &&
                         CswResources.UnknownEnum == (CswDateFormat) User.DateFormatProperty.Value )
@@ -256,7 +256,6 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-
         private void _upgradeAssemblyAndEquipmentLocationProp( UnitOfBlame Blame )
         {
             _acceptBlame( Blame );
@@ -333,6 +332,92 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _resetBlame();
         }
 
+        private void _fixHazardClassSpellingAndAddNewClasses( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+            if( null != FireClassExemptAmountOC )
+            {
+                CswNbtMetaDataObjectClassProp HazardClassOCP = FireClassExemptAmountOC.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
+                if( null != HazardClassOCP )
+                {
+                    CswCommaDelimitedString FireHazardClassTypes = new CswCommaDelimitedString
+                        {
+                            "Aero-1",
+                            "Aero-2",
+                            "Aero-3",
+                            "Carc",
+                            "CF/D (bailed)",
+                            "CF/D (loose)",
+                            "CL-II",
+                            "CL-IIIA",
+                            "CL-IIIB",
+                            "Corr",
+                            "Corr (liquified gas)",
+                            "CRY-FG",
+                            "CRY-NFG",
+                            "CRY-OXY",
+                            "Exp",
+                            "Exp-1.1",
+                            "Exp-1.2",
+                            "Exp-1.3",
+                            "Exp-1.4",
+                            "Exp-1.4G",
+                            "Exp-1.5",
+                            "Exp-1.6",
+                            "FG (gaseous)",
+                            "FG (liquified)",
+                            "FL-1A",
+                            "FL-1B",
+                            "FL-1C",
+                            "FL-Comb",
+                            "FS",
+                            "H.T.",
+                            "H.T. (liquified gas)",
+                            "Irr",
+                            "N/R",
+                            "NFG",
+                            "NFG (liquified)",
+                            "NFS",
+                            "OHH",
+                            "Oxy-1",
+                            "Oxy-2",
+                            "Oxy-3",
+                            "Oxy-4",
+                            "Oxy-Gas",
+                            "Oxy-Gas (liquid)",
+                            "Perox-Det",
+                            "Perox-I",
+                            "Perox-II",
+                            "Perox-III",
+                            "Perox-IV",
+                            "Perox-V",
+                            "Pyro",
+                            "RAD-Alpha",
+                            "RAD-Beta",
+                            "RAD-Gamma",
+                            "Sens",
+                            "Tox",
+                            "Tox (liquified gas)",
+                            "UR-1",
+                            "UR-2",
+                            "UR-3",
+                            "UR-4",
+                            "WR-1",
+                            "WR-2",
+                            "WR-3"
+                        };
+
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( HazardClassOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, FireHazardClassTypes.ToString() );
+                }
+
+            }
+
+
+            _resetBlame();
+        }
+
         #endregion ASPEN Methods
 
         /// <summary>
@@ -366,6 +451,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _upgradeAssemblyAndEquipmentLocationProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
             _upgradeAssemblyStatusProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
             _createReportInstructionsProp( new UnitOfBlame( CswDeveloper.MB, 28950 ) );
+            _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswDeveloper.CM, 29243 ) );
 
             #endregion ASPEN
 
