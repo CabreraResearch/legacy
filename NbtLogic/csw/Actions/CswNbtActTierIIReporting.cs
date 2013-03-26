@@ -64,6 +64,9 @@ namespace ChemSW.Nbt.Actions
                 get { return _MaxQty; }
                 set { _MaxQty = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
             }
+
+            [DataMember] 
+            public String MaxQtyRangeCode = String.Empty;
             private Double _AvgQty;
             [DataMember]
             public Double AverageQty
@@ -71,6 +74,8 @@ namespace ChemSW.Nbt.Actions
                 get { return _AvgQty; }
                 set { _AvgQty = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
             }
+            [DataMember]
+            public String AverageQtyRangeCode = String.Empty;
             [DataMember]
             public Int32 DaysOnSite = 0;
             [DataMember]
@@ -124,11 +129,13 @@ namespace ChemSW.Nbt.Actions
         private TierIIData Data;
         private CswNbtObjClassUnitOfMeasure BaseUnit;
         private CswCommaDelimitedString LocationIds;
+        private Collection<TierIIRangeCode> RangeCodes;
 
         public CswNbtActTierIIReporting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             Data = new TierIIData();
+            _setDefaultRangeCodes();
         }
 
         #endregion Properties and ctor
@@ -167,7 +174,9 @@ namespace ChemSW.Nbt.Actions
                     EHS = MaterialRow["specialflags"].ToString().Contains("EHS"),
                     TradeSecret = MaterialRow["specialflags"].ToString().Contains( "Trade Secret" ),
                     MaxQty = MaxQty,
+                    MaxQtyRangeCode = _getRangeCode( MaxQty ),
                     AverageQty = AverageQty,
+                    AverageQtyRangeCode = _getRangeCode( AverageQty ),
                     DaysOnSite = CswConvert.ToInt32( MaterialRow["daysonsite"] ),
                     Unit = PoundsUnit != null ? PoundsUnit.Name.Text : "lb"
                 };
@@ -457,6 +466,52 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
+        private String _getRangeCode( Double QuantityInPounds )
+        {
+            String RangeCode = "00";
+            TierIIRangeCode Code = RangeCodes.FirstOrDefault( 
+                RC => 
+                    QuantityInPounds >= RC.LowerBound && 
+                    QuantityInPounds < RC.UpperBound + 1 
+                );
+            if( null != Code )
+            {
+                RangeCode = Code.RangeCode;
+            }
+            return RangeCode;
+        }
+
+        /// <summary>
+        /// Default list of Tier II Reporting Ranges
+        /// Note that this list is subject to change
+        /// </summary>
+        private void _setDefaultRangeCodes()
+        {
+            RangeCodes = new Collection<TierIIRangeCode>
+            {
+                new TierIIRangeCode { RangeCode = "01", LowerBound = 0, UpperBound = 99 }, 
+                new TierIIRangeCode { RangeCode = "02", LowerBound = 100, UpperBound = 499 }, 
+                new TierIIRangeCode { RangeCode = "03", LowerBound = 500, UpperBound = 999 }, 
+                new TierIIRangeCode { RangeCode = "04", LowerBound = 1000, UpperBound = 4999 }, 
+                new TierIIRangeCode { RangeCode = "05", LowerBound = 5000, UpperBound = 9999 }, 
+                new TierIIRangeCode { RangeCode = "06", LowerBound = 10000, UpperBound = 24999 }, 
+                new TierIIRangeCode { RangeCode = "07", LowerBound = 25000, UpperBound = 49999 }, 
+                new TierIIRangeCode { RangeCode = "08", LowerBound = 50000, UpperBound = 74999 }, 
+                new TierIIRangeCode { RangeCode = "09", LowerBound = 75000, UpperBound = 99999 }, 
+                new TierIIRangeCode { RangeCode = "10", LowerBound = 100000, UpperBound = 499999 }, 
+                new TierIIRangeCode { RangeCode = "11", LowerBound = 500000, UpperBound = 999999 }, 
+                new TierIIRangeCode { RangeCode = "12", LowerBound = 1000000, UpperBound = 9999999 }, 
+                new TierIIRangeCode { RangeCode = "13", LowerBound = 10000000, UpperBound = Int32.MaxValue - 1 }
+            };
+        }
+
         #endregion Private Methods
     }
+
+    internal class TierIIRangeCode
+    {
+        public String RangeCode = String.Empty;
+        public Int32 LowerBound = 0;
+        public Int32 UpperBound = Int32.MaxValue;
+}
 }
