@@ -193,7 +193,7 @@
                         Csw.ajax.post({
                             urlMethod: 'createView',
                             data: createData,
-                            success: function(data) {
+                            success: function (data) {
                                 div.$.dialog('close');
                                 Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
                             },
@@ -1133,7 +1133,7 @@
                     }
                 }
             });
-            
+
             var enableSearchButton = !(Csw.isNullOrEmpty(searchTermField.val()));
 
             var searchButton = tableInner.cell(1, 5).button({
@@ -1223,21 +1223,19 @@
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
             getMolImgFromText('', currentNodeId);
 
-            var uploadBtn = table.cell(2, 1).input({
-                name: 'fileupload',
-                labelText: "Mol File",
-                type: Csw.enums.inputTypes.file
-            }).css('float', 'left');
-            uploadBtn.$.fileupload({
-                datatype: 'json',
+            table.cell(2, 1).fileUpload({
                 url: 'Services/Mol/getImgFromFile',
+                forceIframeTransport: true,
                 paramName: 'filename',
-                done: function (e, data) {
-                    molText.val(data.result.Data.molString);
+                onSuccess: function (data) {
+                    var molString = $(data.children()[0].getElementsByTagName('a:molstring')[0]).text();
+                    var molImg = $(data.children()[0].getElementsByTagName('a:molImgAsBase64String')[0]).text();
+
+                    molText.val(molString);
                     table.cell(4, 2).empty();
                     table.cell(4, 2).img({
                         labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + data.result.Data.molImgAsBase64String
+                        src: "data:image/jpeg;base64," + molImg
                     });
                 }
             });
