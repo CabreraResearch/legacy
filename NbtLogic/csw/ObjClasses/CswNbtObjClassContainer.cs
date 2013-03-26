@@ -679,6 +679,11 @@ namespace ChemSW.Nbt.ObjClasses
             this.Owner.RefreshNodeName();
         }
 
+        public void UpdateOwner( CswNbtObjClassUser userNode )
+        {
+            UpdateOwner( userNode.NodeId );
+        }
+
         /// <summary>
         /// Update the owner and location of a container.
         /// </summary>
@@ -687,13 +692,18 @@ namespace ChemSW.Nbt.ObjClasses
             if( CswTools.IsPrimaryKey( newOwner ) )
             {
                 CswNbtObjClassUser userNode = _CswNbtResources.Nodes[newOwner];
-                Owner.RelatedNodeId = newOwner;
-                Owner.RefreshNodeName();
-
-                Location.SelectedNodeId = userNode.DefaultLocationId;
-                Location.SyncGestalt();
-                Location.RefreshNodeName();
+                TransferContainer( userNode );
             }
+        }
+
+        public void TransferContainer( CswNbtObjClassUser newOwner )
+        {
+            Owner.RelatedNodeId = newOwner.NodeId;
+            Owner.RefreshNodeName();
+
+            Location.SelectedNodeId = newOwner.DefaultLocationId;
+            Location.SyncGestalt();
+            Location.RefreshNodeName();
         }
 
         #endregion  CISPro/NBT CORE Mobile App Operations
