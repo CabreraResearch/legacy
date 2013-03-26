@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.csw.Mobile
             {
                 _sendEmail( _CswNbtResources.CurrentNbtUser.Username, Request.EmailAddress, EmailMessageSubject, EmailMessageBody );
             }
-            _sendEmail( _CswNbtResources.CurrentNbtUser.Username, "enterprisesupport@chemsw.com", EmailMessageSubject, EmailMessageBody );
+            _sendEmail( _CswNbtResources.CurrentNbtUser.Username, _CswNbtResources.SetupVbls[CswSetupVariableNames.SupportEmail], EmailMessageSubject, EmailMessageBody );
         }
 
         #endregion Public Methods
