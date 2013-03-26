@@ -811,7 +811,9 @@ namespace ChemSW.Nbt.Security
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == NodeTypePermission.Edit )
                     {
-                        ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
+                        // see case 29095; this is now handled in CswNbtSdTabsAndProps
+                        //ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
+                        ret = ret && ( false == Node.ReadOnly );
                     }
                 }
             }//if NodeId is not null

@@ -13,7 +13,7 @@
                 ReadOnly: false,
                 isRequired: false,
                 Multi: false,
-                cssclass: 'CswTristateCheckBox',
+                cssclass: 'CswTristateCheckBox cswInline',
                 onChange: function () {
                 },
                 value: 'null',

@@ -6,11 +6,11 @@
         Csw.properties.register('dateTime',
             Csw.method(function (propertyOption) {
                 'use strict';
-                var cswPrivate = { };
+                var cswPrivate = {};
                 var cswPublic = {
                     data: propertyOption
                 };
-                
+
                 //The render function to be executed as a callback
                 var render = function () {
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -19,7 +19,7 @@
                     cswPrivate.date = Csw.string(cswPrivate.propVals.value.date).trim();
                     cswPrivate.time = Csw.string(cswPrivate.propVals.value.time).trim();
 
-                    cswPublic.control = cswPrivate.parent.div();
+                    cswPublic.control = cswPrivate.parent.div({ cssclass: 'cswInline' });
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control.append(cswPublic.data.propData.gestalt);
                     } else {
@@ -48,12 +48,12 @@
 
                 //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
-                
+
                 //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
                 //cswPublic.data.unBindRender();
 
                 return cswPublic;
             }));
 
-}());
+} ());
 

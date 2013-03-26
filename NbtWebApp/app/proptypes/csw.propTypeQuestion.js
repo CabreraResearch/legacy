@@ -74,7 +74,7 @@
                     cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
 
                     if (cswPublic.data.isReadOnly()) {
-                        cswPublic.control = cswPrivate.parent.div();
+                        cswPublic.control = cswPrivate.parent.div({ cssclass: 'cswInline' });
                         cswPublic.table = cswPublic.control.table({
                             TableCssClass: 'CswFieldTypeQuestion_table',
                             CellCssClass: 'CSwFieldTypeQuestion_cell'
