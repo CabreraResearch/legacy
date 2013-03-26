@@ -692,7 +692,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( CswTools.IsPrimaryKey( newOwner ) )
             {
                 CswNbtObjClassUser userNode = _CswNbtResources.Nodes[newOwner];
-                TransferContainer( userNode );
+                if( null != userNode )
+                {
+                    TransferContainer( userNode );
+                }
             }
         }
 
