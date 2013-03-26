@@ -3,7 +3,6 @@ using System.Data;
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -18,26 +17,10 @@ namespace ChemSW.Nbt.WebPages
     public partial class Report : Page
     {
         protected CrystalReportViewer _CrystalReportViewer;
-        //protected CswLiteralText _LoadingLiteral;
         protected override void OnInit( EventArgs e )
         {
             try
             {
-                //LoadReportButton.Style.Add( HtmlTextWriterStyle.Display, "none" );
-                //LoadReportButton.Click += new EventHandler( LoadReportButton_Click );
-
-                //_LoadingLiteral = new CswLiteralText( "Loading..." );
-                //ph.Controls.Add( _LoadingLiteral );
-
-                _CrystalReportViewer = new CrystalReportViewer();
-                _CrystalReportViewer.ID = "CrystalReportViewer";
-                ph.Controls.Add( _CrystalReportViewer );
-
-                //if( Page.IsPostBack )
-                //{
-                // this allows paging on the report control to work
-                LoadReport();
-                //}
             }
             catch( Exception ex )
             {
@@ -50,8 +33,11 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                //Master.AjaxManager.AjaxSettings.AddAjaxSetting( LoadReportButton, ph );
-                //Master.AjaxManager.AjaxSettings.AddAjaxSetting( _CrystalReportViewer, _CrystalReportViewer );
+                _CrystalReportViewer = new CrystalReportViewer();
+                _CrystalReportViewer.ID = "CrystalReportViewer";
+                ph.Controls.Add( _CrystalReportViewer );
+
+                LoadReport();
             }
             catch( Exception ex )
             {
@@ -61,85 +47,72 @@ namespace ChemSW.Nbt.WebPages
             base.OnLoad( e );
         }
 
-        protected override void OnPreRender( EventArgs e )
-        {
-            //            string JS = @"  <script>
-            //                            function LoadReport()
-            //                            {
-            //                                document.getElementById('" + LoadReportButton.ClientID + @"').click();
-            //                            }
-            //                            </script>";
-
-            //            System.Web.UI.ScriptManager.RegisterClientScriptBlock( this, this.GetType(), this.UniqueID + "_JS", JS, false );
-
-            base.OnPreRender( e );
-        }
-
-        //void LoadReportButton_Click( object sender, EventArgs e )
-        //{
-        //    LoadReport();
-        //}
-
         private void LoadReport()
         {
             //_LoadingLiteral.Visible = false;
-            if( Request.Form["reportid"] != string.Empty )
+            CswPrimaryKey ReportPk = new CswPrimaryKey();
+            if( false == string.IsNullOrEmpty( Request.Form["reportid"] ) )
             {
-                CswPrimaryKey ReportId = new CswPrimaryKey();
-                ReportId.FromString( Request.Form["reportid"] );
-                CswNbtNode Node = Master.CswNbtResources.Nodes.GetNode( ReportId );
-                CswNbtObjClassReport ReportNode = (CswNbtObjClassReport) Node;
-
-                // Get the Report Data
-                //CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( ReportNode.View.ViewId );
-                //if( View == null )
-                //    throw new CswDniException( ErrorType.Warning, "Report has invalid View", "Report received a null view" );
-
-                CswNbtWebServiceReport.ReportData reportData = new CswNbtWebServiceReport.ReportData();
-                reportData.reportParams = CswNbtWebServiceReport.FormReportParamsToCollection( Request.Form );
-
-                string ReportSql = CswNbtObjClassReport.ReplaceReportParams( ReportNode.SQL.Text, reportData.ReportParamDictionary );
-                CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
-                DataTable ReportTable = ReportSelect.getTable();
-                if( ReportTable.Rows.Count > 0 )
-                {
-                    // Get the Report Layout File
-                    Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
-                    if( JctNodePropId > 0 )
-                    {
-                        CswFilePath FilePathTools = new CswFilePath( Master.CswNbtResources );
-                        string ReportTempFileName = FilePathTools.getFullReportFilePath( JctNodePropId.ToString() );
-                        if( !File.Exists( ReportTempFileName ) )
-                        {
-                            ( new FileInfo( ReportTempFileName ) ).Directory.Create();//creates the /rpt directory if it doesn't exist
-
-                            DataTable JctTable = _getReportSQLFromDB( JctNodePropId );
-
-                            if( JctTable.Rows.Count > 0 )
-                            {
-                                if( !JctTable.Rows[0].IsNull( "blobdata" ) )
-                                {
-                                    _createReportFileFromNodePropData( ReportTempFileName, JctTable.Rows[0] );
-                                }
-                                else
-                                    throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
-                            }
-                        }
-                        if( File.Exists( ReportTempFileName ) )
-                        {
-                            _renderReport( ReportTempFileName, ReportTable );
-                        }
-                    } // if( JctNodePropId > 0 )
-                } // if(ReportTable.Rows.Count > 0) 
-                else
-                {
-                    Label NoResultsLabel = new Label();
-                    NoResultsLabel.ID = "NoResultsLabel";
-                    NoResultsLabel.Text = "<br><br>There are no rows to display.<br><br><br>";
-                    ph.Controls.Add( NoResultsLabel );
-                }
+                ReportPk.FromString( Request.Form["reportid"] );
             }
-        }
+            else if( false == string.IsNullOrEmpty( reportid.Value ) )
+            {
+                ReportPk.FromString( reportid.Value );
+            }
+
+            if( CswTools.IsPrimaryKey( ReportPk ) )
+            {
+                reportid.Value = ReportPk.ToString();
+
+                CswNbtObjClassReport ReportNode = Master.CswNbtResources.Nodes.GetNode( ReportPk );
+                if( null != ReportNode )
+                {
+                    CswNbtWebServiceReport.ReportData reportData = new CswNbtWebServiceReport.ReportData();
+                    reportData.reportParams = CswNbtWebServiceReport.FormReportParamsToCollection( Request.Form );
+
+                    string ReportSql = CswNbtObjClassReport.ReplaceReportParams( ReportNode.SQL.Text, reportData.ReportParamDictionary );
+                    CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
+                    DataTable ReportTable = ReportSelect.getTable();
+                    if( ReportTable.Rows.Count > 0 )
+                    {
+                        // Get the Report Layout File
+                        Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
+                        if( JctNodePropId > 0 )
+                        {
+                            CswFilePath FilePathTools = new CswFilePath( Master.CswNbtResources );
+                            string ReportTempFileName = FilePathTools.getFullReportFilePath( JctNodePropId.ToString() );
+                            if( !File.Exists( ReportTempFileName ) )
+                            {
+                                ( new FileInfo( ReportTempFileName ) ).Directory.Create(); //creates the /rpt directory if it doesn't exist
+
+                                DataTable JctTable = _getReportSQLFromDB( JctNodePropId );
+
+                                if( JctTable.Rows.Count > 0 )
+                                {
+                                    if( !JctTable.Rows[0].IsNull( "blobdata" ) )
+                                    {
+                                        _createReportFileFromNodePropData( ReportTempFileName, JctTable.Rows[0] );
+                                    }
+                                    else
+                                        throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
+                                }
+                            }
+                            if( File.Exists( ReportTempFileName ) )
+                            {
+                                _renderReport( ReportTempFileName, ReportTable );
+                            }
+                        } // if( JctNodePropId > 0 )
+                    } // if(ReportTable.Rows.Count > 0) 
+                    else
+                    {
+                        Label NoResultsLabel = new Label();
+                        NoResultsLabel.ID = "NoResultsLabel";
+                        NoResultsLabel.Text = "<br><br>There are no rows to display.<br><br><br>";
+                        ph.Controls.Add( NoResultsLabel );
+                    }
+                } // if(null != ReportNode)
+            } // if( CswTools.IsPrimaryKey( ReportId ) )
+        } // LoadReport()
 
         private DataTable _getReportSQLFromDB( Int32 JctNodePropId )
         {
