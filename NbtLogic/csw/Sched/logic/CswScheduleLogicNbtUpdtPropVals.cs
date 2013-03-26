@@ -131,8 +131,8 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtPropVals exception: " + Exception.Message;
-                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CswNbtResources.logError( Exception );
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtPropVals exception: " + Exception.Message + "; " + Exception.StackTrace;
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;//last line
                 }
 

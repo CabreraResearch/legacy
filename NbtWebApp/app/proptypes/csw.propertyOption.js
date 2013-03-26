@@ -117,6 +117,10 @@
                         Csw.bool(cswPublic.propData.readonly);
                 };
 
+                cswPublic.canOverride = function () {
+                    return Csw.bool(cswPublic.propData.canoverride);
+                };
+
                 cswPublic.isRequired = function () {
                     return Csw.bool(cswPublic.propData.required);
                 };
@@ -173,10 +177,26 @@
 
                     cswPrivate.renderThisProp = (function () {
                         'use strict';
-                        return function () {
+                        var renderMe = function () {
                             cswPublic.propDiv.empty();
                             Csw.tryExec(callBack, cswPublic);
+
+                            // case 29095
+                            if (cswPublic.isReadOnly() && cswPublic.canOverride()) {
+                                cswPublic.propDiv.buttonExt({
+                                    name: 'override',
+                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.lock),
+                                    tooltip: {
+                                        title: 'Administrative Override'
+                                    },
+                                    onClick: function () {
+                                        cswPublic.propData.readonly = false;
+                                        renderMe();
+                                    }
+                                }); // buttonExt()
+                            } // if (cswPublic.isReadOnly() && cswPublic.canOverride()) {
                         };
+                        return renderMe;
                     } ());
 
                     cswPrivate.renderer = function () {
