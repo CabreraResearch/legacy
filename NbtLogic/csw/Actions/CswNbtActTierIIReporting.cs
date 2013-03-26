@@ -56,10 +56,21 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Collection<String> HazardCategories;//Fire,Pressure,Reactive,Immediate,Delayed
             //Inventory
+            private Int32 Precision = 6;
+            private Double _MaxQty;
             [DataMember]
-            public Double MaxQty = 0.0;
+            public Double MaxQty
+            {
+                get { return _MaxQty; }
+                set { _MaxQty = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
+            }
+            private Double _AvgQty;
             [DataMember]
-            public Double AverageQty = 0.0;
+            public Double AverageQty
+            {
+                get { return _AvgQty; }
+                set { _AvgQty = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
+            }
             [DataMember]
             public Int32 DaysOnSite = 0;
             [DataMember]
@@ -127,6 +138,10 @@ namespace ChemSW.Nbt.Actions
         public TierIIData getTierIIData( TierIIData.TierIIDataRequest Request )
         {
             BaseUnit = _setBaseUnit( "kg", "Unit (Weight)" );
+            CswNbtObjClassUnitOfMeasure PoundsUnit = _setBaseUnit( "lb", "Unit (Weight)" );
+            CswNbtUnitConversion Conversion = ( BaseUnit != null && PoundsUnit != null ) ?
+                new CswNbtUnitConversion( _CswNbtResources, BaseUnit.NodeId, PoundsUnit.NodeId ) : 
+                new CswNbtUnitConversion();
             LocationIds = _setLocationIds( Request.LocationId );
             DataTable MaterialsTable = _getTierIIMaterials( Request );
             foreach( DataRow MaterialRow in MaterialsTable.Rows )
@@ -137,7 +152,11 @@ namespace ChemSW.Nbt.Actions
                     //Theoretically, this should never happen 
                     //(unless we decide, one day, to change the unit in which we're storing TierII quantity data)
                     BaseUnit = _CswNbtResources.Nodes.GetNode( BaseUnitId );
+                    Conversion.setOldUnitProps( BaseUnit );
                 }
+                Double MaxQty = Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) );
+                Double AverageQty = Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) );
+
                 TierIIData.TierIIMaterial Material = new TierIIData.TierIIMaterial
                 {
                     MaterialId = MaterialRow["materialid"].ToString(),
@@ -147,10 +166,10 @@ namespace ChemSW.Nbt.Actions
                     PhysicalState = MaterialRow["physicalstate"].ToString(),
                     EHS = MaterialRow["specialflags"].ToString().Contains("EHS"),
                     TradeSecret = MaterialRow["specialflags"].ToString().Contains( "Trade Secret" ),
-                    MaxQty = CswConvert.ToDouble( MaterialRow["maxqty"] ),
-                    AverageQty = CswConvert.ToDouble( MaterialRow["avgqty"] ),
+                    MaxQty = MaxQty,
+                    AverageQty = AverageQty,
                     DaysOnSite = CswConvert.ToInt32( MaterialRow["daysonsite"] ),
-                    Unit = BaseUnit != null ? BaseUnit.Name.Text : "kg"
+                    Unit = PoundsUnit != null ? PoundsUnit.Name.Text : "lb"
                 };
                 CswCommaDelimitedString Hazards = new CswCommaDelimitedString();
                 Hazards.FromString( MaterialRow["hazardcategories"].ToString() );
