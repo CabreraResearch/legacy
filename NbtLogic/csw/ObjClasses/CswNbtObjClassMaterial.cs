@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Receive.setHidden( value : ApprovedForReceiving.Checked != Tristate.True, SaveToDb : true );
             }
 
-            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
+            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) && false == IsCopy )
             {
                 CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
                 getParentMaterials( ref ParentMaterials );
