@@ -418,6 +418,36 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _resetBlame();
         }
 
+        private void _createMaterialC3SyncDataProp( UnitOfBlame Blame )
+        {
+            // Add the C3SyncData property to the Material Object Class
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            if( null != MaterialOC )
+            {
+                CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+                if( null == C3SyncDateOCP )
+                {
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
+                        {
+                            PropName = CswNbtObjClassMaterial.PropertyName.C3SyncDate,
+                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                            ServerManaged = true,
+                            ReadOnly = true
+                        } );
+                }
+
+                // Add the C3SyncData property to all Material NodeTypes
+                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+                // Remove from all layouts
+                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+                {
+                    CswNbtMetaDataNodeTypeProp C3SyncDateNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+                    C3SyncDateNTP.removeFromAllLayouts();
+                }
+            }
+        }
+
         #endregion ASPEN Methods
 
         /// <summary>
@@ -452,6 +482,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _upgradeAssemblyStatusProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
             _createReportInstructionsProp( new UnitOfBlame( CswDeveloper.MB, 28950 ) );
             _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswDeveloper.CM, 29243 ) );
+            _createMaterialC3SyncDataProp( new UnitOfBlame( CswDeveloper.CM, 29246 ) );
 
             #endregion ASPEN
 
