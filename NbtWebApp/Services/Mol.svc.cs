@@ -51,6 +51,7 @@ namespace NbtWebApp
             CswTools.MultiPartFormDataFile mpfdf = new CswTools.MultiPartFormDataFile( dataStream );
             MolData ImgData = new MolData();
             ImgData.molString = mpfdf.FileContents;
+            ImgData.href = mpfdf.Filename;
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceMols.MolDataReturn, MolData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
