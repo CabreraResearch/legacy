@@ -265,6 +265,7 @@ namespace ChemSW.Nbt
                 CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 if( false == View.IsFullyEnabled() ||
+                    ( _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername && CswConvert.ToBoolean(Row["issystem"])) ||
                     ( ExcludeCswAdmin &&
                       ( ( View.Visibility == NbtViewVisibility.Role &&
                           View.VisibilityRoleId == ChemSwAdminRole.NodeId ) ||
@@ -419,7 +420,8 @@ namespace ChemSW.Nbt
                     ) || IncludeEmptyViews ) &&
                    View.IsFullyEnabled() &&
                    ( IncludeEmptyViews || View.ViewMode != NbtViewRenderingMode.Grid || null != View.findFirstProperty() ) &&
-                   ( !SearchableOnly || View.IsSearchable() );
+                   ( !SearchableOnly || View.IsSearchable() ) &&
+                   ( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || false == CswConvert.ToBoolean( View.IsSystem ) );
         }
 
         /// <summary>

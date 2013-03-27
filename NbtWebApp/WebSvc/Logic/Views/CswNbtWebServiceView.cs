@@ -114,6 +114,7 @@ namespace ChemSW.Nbt.WebServices
                 CswExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
                 grid.getColumn( "nodeviewid" ).hidden = true;
                 grid.getColumn( "viewid" ).hidden = true;
+                grid.getColumn( "issystem" ).hidden = true;
 
                 ReturnVal = grid.ToJson();
             } // if(ViewsTable != null)
