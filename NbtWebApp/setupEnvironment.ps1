@@ -34,7 +34,7 @@ param(
 }
 
 #install chocolatey
-if (Install-NeededFor 'chocolatey') {
+if (Install-NeededFor 'chocolatey [Required for the rest of this script to work]') {
   iex ((new-object net.webclient).DownloadString("http://chocolatey.org/install.ps1")) 
 }
 
@@ -51,8 +51,8 @@ if (Install-NeededFor 'autosave' $false) {
 }
 
 if (Install-NeededFor 'Grunt' $false) {
-  cinstm nodejs.install
-  cinst PhantomJS
+  cinstm  nodejs.install
+  cinstm  PhantomJS
   $nodePath = Join-Path $env:programfiles 'nodejs'
    $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
   if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
@@ -65,96 +65,102 @@ if (Install-NeededFor 'Grunt' $false) {
 
 Write-Host "Checking for/installing required frameworks"
 if (Install-NeededFor '.NET Runtimes up to 4.5' $false) {
-    cinst netframework2 -source webpi
-    cinst NETFramework35 -source webpi
-    cinst NETFramework4 -source webpi
-    cinst NETFramework4Update402 -source webpi
-    cinst NETFramework4Update402_KB2544514_Only -source webpi
-    cinst WindowsInstaller31 -source webpi
-    cinst WindowsInstaller45 -source webpi
+    cinstm  netframework2 -source webpi
+    cinstm  NETFramework35 -source webpi
+    cinstm  NETFramework4 -source webpi
+    cinstm  NETFramework4Update402 -source webpi
+    cinstm  NETFramework4Update402_KB2544514_Only -source webpi
+	cinstm  DotNet4.5
+    cinstm  WindowsInstaller31 -source webpi
+    cinstm WindowsInstaller45 -source webpi
 }
 
 Write-Host "Checking for/installing required compilers"
 if (Install-NeededFor 'C++ Libraries' $false) {
-    cinst vcredist2005 -source webpi
-    cinst vcredist2008 -source webpi
-    cinst vcredist2010 -source webpi
+    cinstm  vcredist2005
+    cinstm  vcredist2008
+    cinstm  vcredist2010
 }
 
 if (Install-NeededFor 'Tortoise' $false) {
-    cinst tortoisehg -source webpi
+    cinstm  tortoisehg
 }
 
 Write-Host "Checking for/installing PowerShell"
 if (Install-NeededFor 'PowerShell 3.0' $false) {
-    cinst PowerShell -source webpi
-    cinst PowerGUI -source webpi
+    cinstm  PowerShell
+    cinstm  PowerGUI
+	cinstm  pscx
 }
 
 Write-Host "Checking for/installing Visual Studio Items..."
 if (Install-NeededFor 'VS2012 Premium' $false) {
- cinst VisualStudio2012Premium -source webpi
- cinst resharper -source webpi
- cinst MVC3 -source webpi
- cinst MVC3Loc -source webpi
+ cinstm  VisualStudio2012Premium
+ cinstm  resharper
+ cinstm  aspnetmvc
+ cinstm  MVCLoc -source webpi
 }
 
 if (Install-NeededFor 'VS2010 Full Edition SP1' $false) {
- cinst VS2010SP1Pack -source webpi
- cinst resharper -source webpi
- cinst MVC3 -source webpi
- cinst MVC3Loc -source webpi
+ cinstm  VS2010SP1Pack -source webpi
+ cinstm  resharper
+ cinstm  aspnetmvc
+ cinstm  MVCLoc -source webpi
 }
 
 Write-Host "Finished checking for/installing Visual Studio Items."
 
 Write-Host "Checking for/installing Other language support"
 if (Install-NeededFor 'Perl' $false) {
- cinst ActivePerl -source webpi
+ cinstm  ActivePerl
 }
 if (Install-NeededFor 'Python' $false) {
- cinst python -source webpi
- cinst easy.install -source webpi
+ cinstm  python 
+ cinstm  easy.install
 }
 if (Install-NeededFor 'Java' $false) {
- cinst javaruntime -source webpi
- cinst javaruntime.x64cinst java.jdk
- cinst javaruntime.x64 -source webpi
+ chocolatey uninstall javaruntime
+ cinst javaruntime
 }
 Write-Host "Finished checking for/installing Other language support"
 
 Write-Host "Checking for/installing IIS Items..."
 if (Install-NeededFor 'IIS' $false) {
-  cinst ASPNET -source webpi
-  cinst ASPNET_REGIIS -source webpi
-  cinst DefaultDocument -source webpi
-  cinst DynamicContentCompression -source webpi
-  cinst HTTPRedirection -source webpi
-  cinst IIS7_ExtensionLessURLs -source webpi
-  cinst IISExpress -source webpi
-  cinst IISExpress_7_5 -source webpi
-  cinst IISManagementConsole -source webpi
-  cinst ISAPIExtensions -source webpi
-  cinst ISAPIFilters -source webpi
-  cinst NETExtensibility -source webpi
-  cinst RequestFiltering -source webpi
-  cinst StaticContent -source webpi
-  cinst StaticContentCompression -source webpi
-  cinst UrlRewrite2 -source webpi
-  cinst WindowsAuthentication -source webpi
+  cinstm  ASPNET -source webpi
+  cinstm  ASPNET_REGIIS -source webpi
+  cinstm  DefaultDocument -source webpi
+  cinstm  DynamicContentCompression -source webpi
+  cinstm  HTTPRedirection -source webpi
+  cinstm  IIS7_ExtensionLessURLs -source webpi
+  cinstm  IISExpress -source webpi
+  cinstm  IISExpress_7_5 -source webpi
+  cinstm  IISManagementConsole -source webpi
+  cinstm  ISAPIExtensions -source webpi
+  cinstm  ISAPIFilters -source webpi
+  cinstm  NETExtensibility -source webpi
+  cinstm  RequestFiltering -source webpi
+  cinstm  StaticContent -source webpi
+  cinstm  StaticContentCompression -source webpi
+  cinstm  UrlRewrite2 -source webpi
+  cinstm  WindowsAuthentication -source webpi
+  cinstm  NodeJSExt -source webpi
 }
 
 Write-Host "Checking for/installing Project NPM..."
 if (Install-NeededFor 'This Web App Project NPM package' $false) {
-  npm install
+	$nodePath = Join-Path $env:programfiles 'nodejs'
+   $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
+  if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
+  $env:Path = "$($env:Path);$nodePath" 
+ npm install
   
   Write-Host 'This step has worked inconsistenly for some people. If needed, cd into the project folder and execute `npm install`'
   Write-Host 'You still need to open the project folder in a command prompt and execute `grunt.cmd build:{mode}` to build the project.'
 }
 
-$projectName = 'ProjectName'
+$projectName = 'Nbt'
 $srcDir = Join-Path $scriptDir "$($projectName)"
-if (Install-NeededFor 'website' $false) {
+if (Install-NeededFor 'Auto-Configure IIS App and AppPool for Nbt' $false) {
   $networkSvc = 'NT AUTHORITY\NETWORK SERVICE'
   Write-Host "Setting folder permissions on `'$srcDir`' to 'Read' for user $networkSvc"
   $acl = Get-Acl $srcDir
