@@ -189,3 +189,29 @@ if (Install-NeededFor 'Auto-Configure IIS App and AppPool for Nbt' $false) {
   
   Write-Host 'You still need to open Visual Studio and build the application one time prior to going to the site in a browser.'
 }
+
+Write-Host "Tools"
+if (Install-NeededFor 'Install NotePad++' $false) {
+  cinstm notepadplusplus
+}
+
+if (Install-NeededFor 'Install SublimeText' $false) {
+  cinstm sublimetext2
+}
+  
+if (Install-NeededFor 'Install SublimeText' $false) {
+  cinstm Emacs
+}
+  
+if (Install-NeededFor 'Install SysInternals' $false) {
+  cinstm sysinternals
+}
+
+if (Install-NeededFor 'Install GNU Windows Utils' $false) {
+  cinstm GnuWin
+}
+
+Write-Host "Update all packages"
+if (Install-NeededFor 'Update all packages to latest version?' $false) {
+  cup
+}
