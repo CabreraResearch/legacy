@@ -84,6 +84,7 @@ if (Install-NeededFor 'C++ Libraries' $false) {
 
 if (Install-NeededFor 'Tortoise' $false) {
     cinstm  tortoisehg
+	cinstm  VisualHG
 }
 
 Write-Host "Checking for/installing PowerShell"
@@ -209,6 +210,14 @@ if (Install-NeededFor 'Install SysInternals' $false) {
 
 if (Install-NeededFor 'Install GNU Windows Utils' $false) {
   cinstm GnuWin
+}
+
+if (Install-NeededFor 'Install 7-zip' $false) {
+  cinstm 7zip
+}
+
+if (Install-NeededFor 'Install FileZilla' $false) {
+  cinstm filezilla
 }
 
 Write-Host "Update all packages"
