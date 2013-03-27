@@ -20,7 +20,8 @@
                     cswPrivate.value = Csw.string(cswPrivate.propVals.barcode).trim();
 
                     cswPublic.control = cswPublic.data.propDiv.table({
-                        name: 'tbl'
+                        name: 'tbl',
+                        TableCssClass: 'cswInline'
                     });
 
                     cswPrivate.cell1 = cswPublic.control.cell(1, 1);

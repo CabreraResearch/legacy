@@ -1416,6 +1416,10 @@ ul li div {
     color: #808080;
 }
 
+.cswInline {
+    display: inline-block !Important;
+}
+
 /* extJs overrides */
 
 .x-grid-row-summary .x-grid-cell-inner {
@@ -1426,3 +1430,4 @@ ul li div {
 .x-window-body-default {
     background-color: #ffffff !Important;
 }
+

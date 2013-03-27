@@ -170,29 +170,29 @@ namespace ChemSW.Nbt.PropTypes
 
         public void RefreshNodeName()
         {
+            CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
+            CachedPath = CachedNodeName;
+            CachedBarcode = string.Empty;
+            
             if( SelectedNodeId != null )
             {
-                CswNbtNode Node = _CswNbtResources.Nodes.GetNode( SelectedNodeId );
-                CswNbtObjClassLocation NodeAsLocation = Node;
-                CachedNodeName = Node.NodeName;
-                CachedPath = _generateLocationPath( Node );
-                CachedBarcode = NodeAsLocation.Barcode.Barcode;
+                CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( SelectedNodeId );
+                if( null != NodeAsLocation )
+                {
+                    CachedNodeName = NodeAsLocation.NodeName;
+                    CachedPath = _generateLocationPath( NodeAsLocation );
+                    CachedBarcode = NodeAsLocation.Barcode.Barcode;
+                }
             }
-            else
-            {
-                CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
-                CachedPath = CachedNodeName;
-                CachedBarcode = string.Empty;
-            }
+            
             this.PendingUpdate = false;
         }
 
         public static readonly string PathDelimiter = " > ";
-        private string _generateLocationPath( CswNbtNode Node )
+        private string _generateLocationPath( CswNbtObjClassLocation NodeAsLocation )
         {
             string ret;
-            ret = Node.NodeName;
-            CswNbtObjClassLocation NodeAsLocation = Node;
+            ret = NodeAsLocation.NodeName;
             if( NodeAsLocation.Location.SelectedNodeId != null )
             {
                 string prev = _generateLocationPath( _CswNbtResources.Nodes[NodeAsLocation.Location.SelectedNodeId] );
