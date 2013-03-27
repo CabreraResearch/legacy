@@ -63,26 +63,25 @@ namespace ChemSW.Nbt.Schema
                                 ViewOfLocationsWithNullIG.Width = 100;
                                 CswNbtViewRelationship ViewRelLocationsOC = ViewOfLocationsWithNullIG.AddViewRelationship( LocationOC, true );
 
+
                                 CswNbtViewProperty ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, InventoryGroupOCP );
+
+                                ViewOfLocationsWithNullIG.AddViewPropertyFilter( ViewPropIGOCP, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Null );
 
                                 ICswNbtTree TreeOfLocations = _CswNbtSchemaModTrnsctn.getTreeFromView( ViewOfLocationsWithNullIG, true );
 
 
                                 TreeOfLocations.goToRoot();
-                                if( TreeOfLocations.getChildNodeCount() > 0 )
+                                int TotalLocationNodes = TreeOfLocations.getChildNodeCount();
+                                for( int idx = 0; idx < TotalLocationNodes; idx++ )
                                 {
-                                    TreeOfLocations.goToNthChild( 0 );
-                                    int TotalLocationNodes = TreeOfLocations.getChildNodeCount();
-                                    for( int idx = 0; idx < TotalLocationNodes; idx++ )
-                                    {
-                                        TreeOfLocations.goToNthChild( idx );
-                                        CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
-                                        CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
-                                        CurrentLocationNode.postChanges( true );
+                                    TreeOfLocations.goToNthChild( idx );
+                                    CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
+                                    CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
+                                    CurrentLocationNode.postChanges( true );
 
-                                    } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
+                                } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
 
-                                }//if there are any locatioin nodes
 
                             }//if there are any matching inventory group nodes
 
