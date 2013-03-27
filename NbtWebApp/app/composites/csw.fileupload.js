@@ -16,6 +16,8 @@
                 cswPrivate.params = cswPrivate.params || {};
                 cswPrivate.onSuccess = cswPrivate.onSuccess || function () { };
 
+                //'forceIframeTransport' should always be false unless you want to upload a file and get the contents back via a WCF service - see StructureSearch dialog for more detail
+                //if forceIframeTransport == true, the dataType must be 'iframe' or 'text' or there will not be a response
                 cswPrivate.forceIframeTransport = cswPrivate.forceIframeTransport || false;
                 cswPrivate.url = cswPrivate.url || Csw.enums.ajaxUrlPrefix + cswPrivate.uploadUrl + '?' + Csw.params(cswPrivate.params);
                 cswPrivate.dataType = cswPrivate.dataType || 'json';
