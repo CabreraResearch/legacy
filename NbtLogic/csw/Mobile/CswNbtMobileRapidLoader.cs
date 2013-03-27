@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.csw.Mobile
             StreamWriter sw = new StreamWriter( fs, System.Text.Encoding.Default );
             sw.Write( Request.CSVData );
             sw.Flush();
+            sw.Close();
 
             String EmailMessageSubject = "Your ChemSW Rapid Loader import is available for download";
             String EmailMessageBody = String.Format( 
