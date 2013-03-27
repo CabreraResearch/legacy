@@ -860,6 +860,9 @@
             'use strict';
             var o = {
                 urlMethod: 'fileForProp',
+                url: '',
+                dataType: '',
+                forceIframeTransport: '',
                 params: {},
                 onSuccess: function () { }
             };
@@ -871,6 +874,9 @@
 
             div.fileUpload({
                 uploadUrl: o.urlMethod,
+                url: o.url,
+                dataType: o.dataType,
+                forceIframeTransport: o.forceIframeTransport,
                 params: o.params,
                 onSuccess: function (data) {
                     div.$.dialog('close');
@@ -1185,7 +1191,7 @@
 
             var table = div.table({ cellpadding: '2px', align: 'left' });
 
-            table.cell(3, 1).span({ text: 'MOL Text (Paste from Clipboard):' });
+            table.cell(3, 1).span().setLabelText('MOL Text (Paste from Clipboard):', false, false);
             var molText = table.cell(4, 1).textArea({
                 name: '',
                 rows: 12,
@@ -1223,19 +1229,35 @@
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
             getMolImgFromText('', currentNodeId);
 
-            table.cell(2, 1).fileUpload({
-                url: 'Services/Mol/getImgFromFile',
-                forceIframeTransport: true,
-                paramName: 'filename',
-                onSuccess: function (data) {
-                    var molString = $(data.children()[0].getElementsByTagName('a:molstring')[0]).text();
-                    var molImg = $(data.children()[0].getElementsByTagName('a:molImgAsBase64String')[0]).text();
+            var fileTbl = table.cell(2, 1).table({ cellpadding: '2px', align: 'left' });
+            cswPrivate.cell11 = fileTbl.cell(1, 1).div().setLabelText('Selected MOL File: ', false, false);
+            cswPrivate.cell12 = fileTbl.cell(1, 2).div().text('(No File Chosen)');
+            cswPrivate.cell13 = fileTbl.cell(1, 3).div().icon({
+                name: 'uploadmolSS',
+                iconType: Csw.enums.iconType.pencil,
+                hovertext: 'Upload a Mol file',
+                size: 16,
+                isButton: true,
+                onClick: function () {
+                    $.CswDialog('FileUploadDialog', {
+                        url: 'Services/Mol/getImgFromFile',
+                        forceIframeTransport: true,
+                        dataType: 'iframe',
+                        onSuccess: function (data) {
 
-                    molText.val(molString);
-                    table.cell(4, 2).empty();
-                    table.cell(4, 2).img({
-                        labelText: "Query Image",
-                        src: "data:image/jpeg;base64," + molImg
+                            var molString = $(data.children()[0].getElementsByTagName('a:molstring')[0]).text();
+                            var molImg = $(data.children()[0].getElementsByTagName('a:molImgAsBase64String')[0]).text();
+                            var filename = $(data.children()[0].getElementsByTagName('a:href')[0]).text();
+
+                            cswPrivate.cell12.text(filename);
+
+                            molText.val(molString);
+                            table.cell(4, 2).empty();
+                            table.cell(4, 2).img({
+                                labelText: "Query Image",
+                                src: "data:image/jpeg;base64," + molImg
+                            });
+                        }
                     });
                 }
             });

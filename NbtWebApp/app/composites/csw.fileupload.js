@@ -18,6 +18,7 @@
 
                 cswPrivate.forceIframeTransport = cswPrivate.forceIframeTransport || false;
                 cswPrivate.url = cswPrivate.url || Csw.enums.ajaxUrlPrefix + cswPrivate.uploadUrl + '?' + Csw.params(cswPrivate.params);
+                cswPrivate.dataType = cswPrivate.dataType || 'json';
 
                 cswParent.empty();
                 cswPublic = cswParent.div();
@@ -43,20 +44,21 @@
                 });
 
                 cswPrivate.uploadBtn = cswPrivate.uploadInp.$.fileupload({
-                    datatype: 'json',
+                    dataType: cswPrivate.dataType,
                     url: cswPrivate.url,
                     paramName: 'fileupload',
                     forceIframeTransport: cswPrivate.forceIframeTransport,
-                    send: function () {
+                    send: function (e, data) {
                         cswPrivate.progressBar = cswPrivate.progressBar || window.Ext.create('Ext.ProgressBar', {
                             renderTo: cswPublic.p().getId(),
                             width: 300
                         });
-                        cswPrivate.progressBar.show();
+
                         cswPrivate.progressBar.wait();
                     },
                     done: function (e, jqXHR) {
-
+                        cswPrivate.progressBar.reset();
+                        cswPrivate.progressBar.updateText('Upload Complete');
                         var data = Csw.extend(jqXHR.result);
                         if (jqXHR.result && false === Csw.isNullOrEmpty(jqXHR.result.data)) {
                             Csw.extend(data, jqXHR.result.data);
@@ -64,10 +66,38 @@
                         if (Csw.isNullOrEmpty(data)) {
                             Csw.extend(data, jqXHR.data);
                         }
-                        cswPrivate.progressBar.hide();
+
                         Csw.tryExec(cswPrivate.onSuccess, data);
                     }
                 });
+
+                //cswPrivate.uploadBtn = cswPrivate.uploadInp.$.fileupload({
+                //    dataType: cswPrivate.dataType,
+                //    url: cswPrivate.url,
+                //    paramName: 'fileupload',
+                //    forceIframeTransport: cswPrivate.forceIframeTransport,
+                //    send: function () {
+                //        cswPrivate.progressBar = cswPrivate.progressBar || window.Ext.create('Ext.ProgressBar', {
+                //            renderTo: cswPublic.p().getId(),
+                //            width: 300
+                //        });
+                //
+                //        cswPrivate.progressBar.wait();
+                //    },
+                //    done: function (e, jqXHR) {
+                //        cswPrivate.progressBar.reset();
+                //        cswPrivate.progressBar.updateText('Upload Complete');
+                //        var data = Csw.extend(jqXHR.result);
+                //        if (jqXHR.result && false === Csw.isNullOrEmpty(jqXHR.result.data)) {
+                //            Csw.extend(data, jqXHR.result.data);
+                //        }
+                //        if (Csw.isNullOrEmpty(data)) {
+                //            Csw.extend(data, jqXHR.data);
+                //        }
+                //
+                //        Csw.tryExec(cswPrivate.onSuccess, data);
+                //    }
+                //});
             }());
 
             //#endregion Post-ctor
