@@ -73,18 +73,14 @@ namespace ChemSW.Nbt.Schema
                                 {
                                     TreeOfLocations.goToNthChild( 0 );
                                     int TotalLocationNodes = TreeOfLocations.getChildNodeCount();
-                                    if( TotalLocationNodes > 0 )
+                                    for( int idx = 0; idx < TotalLocationNodes; idx++ )
                                     {
-                                        for( int idx = 0; idx < TotalLocationNodes; idx++ )
-                                        {
-                                            TreeOfLocations.goToNthChild( idx );
-                                            CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
-                                            CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
-                                            CurrentLocationNode.postChanges( true );
+                                        TreeOfLocations.goToNthChild( idx );
+                                        CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
+                                        CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
+                                        CurrentLocationNode.postChanges( true );
 
-                                        } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
-
-                                    }//if there are child nodes
+                                    } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
 
                                 }//if there are any locatioin nodes
 
