@@ -237,7 +237,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                bool ret = true;
+                bool ret = false;
                 if( _RootString[17] != string.Empty )
                     ret = CswConvert.ToBoolean( _RootString[17] );
                 return ret;
@@ -284,7 +284,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                bool ret = true;
+                bool ret = false;
                 if( _RootString[20] != string.Empty )
                     ret = CswConvert.ToBoolean( _RootString[20] );
                 return ret;
