@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.csw.Mobile
                     RecipientDisplayName = UserName, 
                     Subject = Subject, 
                     Content = MessageBody, 
-                    Format = Quiksoft.EasyMail.SMTP.BodyPartFormat.HTML
+                    Format = CswMailMessageBodyFormat.HTML
                 };
 
             if( _CswMail.send( MailMessage ) )
