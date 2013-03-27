@@ -68,6 +68,9 @@ namespace ChemSW.Nbt
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.KioskMode );
+            }
+            else
+            {
                 _CswNbtResources.Actions[CswNbtActionName.KioskMode].SetCategory( "Containers" );
             }
         }

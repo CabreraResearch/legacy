@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
             public const string C3ProductId = "C3ProductId";
+            public const string C3SyncDate = "C3SyncDate";
         }
 
         public sealed class PhysicalStates
@@ -93,10 +94,10 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ApprovedForReceiving.WasModified )
             {
-                Receive.setHidden( value : ApprovedForReceiving.Checked != Tristate.True, SaveToDb : true );
+                Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
             }
 
-            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
+            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) && false == IsCopy )
             {
                 CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
                 getParentMaterials( ref ParentMaterials );
@@ -644,6 +645,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
+        public CswNbtNodePropDateTime C3SyncDate { get { return ( _CswNbtNode.Properties[PropertyName.C3SyncDate] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial

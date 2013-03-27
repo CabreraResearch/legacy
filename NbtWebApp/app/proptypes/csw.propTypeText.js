@@ -17,6 +17,7 @@
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.required = cswPublic.data.propData.required;
                     cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
@@ -63,9 +64,17 @@
                             Message = cswPrivate.regexmsg;
                         }
 
-                        $.validator.addMethod( regex_name, function () {
-                            var regex_obj = new RegExp(cswPrivate.regex);
-                            return (true == regex_obj.test(cswPrivate.value));
+                        $.validator.addMethod(regex_name, function () {
+
+                            var return_val = true;
+
+                            if ((false === cswPrivate.required ) && '' !== cswPrivate.value) {
+                                var regex_obj = new RegExp(cswPrivate.regex);
+                                return_val = regex_obj.test(cswPrivate.value);
+                            }
+
+                            return (return_val);
+
                         }, Message);
                     }
                 };

@@ -42,7 +42,7 @@
                     };
 
                     cswParent.empty();
-                } ());
+                }());
 
                 cswPrivate.renderAvailableModes = function () {
                     Csw.ajaxWcf.post({
@@ -90,6 +90,7 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'KioskMode/HandleScan',
                             data: {
+                                AvailableModes: cswPrivate.availableModes,
                                 OperationData: cswPrivate.OperationData
                             },
                             success: function (KioskModeData) {
@@ -211,7 +212,7 @@
                             isButton: false
                         });
                         iconCell3.css({ 'background-color': 'yellow' });
-                    } else if (Csw.isNullOrEmpty(cswPrivate.OperationData.Mode)) {
+                    } else if (Csw.isNullOrEmpty(cswPrivate.OperationData.Mode) || false === cswPrivate.OperationData.ModeServerValidated) {
                         modeValCell.css({ 'background-color': 'yellow' });
                         modeCell.css({ 'background-color': 'yellow' });
                         iconCell1.icon({
@@ -286,8 +287,8 @@
                         .span({ text: 'Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
-                } ());
+                }());
 
                 return cswPublic;
             });
-} ());
+}());

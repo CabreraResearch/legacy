@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             OpData.Field2.Value = string.Empty;
             OpData.Field2.SecondValue = string.Empty;
             OpData.Field2.ServerValidated = false;
+            OpData.Field2.FoundObjClass = string.Empty;
         }
 
         public virtual void SetFields( ref OperationData OpData )

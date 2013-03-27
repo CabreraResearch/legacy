@@ -529,8 +529,6 @@ namespace ChemSW.Nbt.WebServices
 
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
-                    //Translate the name if necessary
-                    //string TranslatedUnitOfMeasure = _uomTranslator( unitOfMeasurementName );
 
                     CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
@@ -539,18 +537,21 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewRelationship Parent = UnitsView.AddViewRelationship( UnitOfMeasureOC, false );
 
                     UnitsView.AddViewPropertyAndFilter( Parent,
-                                                       MetaDataProp: NameOCP,
-                                                       Value: unitOfMeasurementName,
-                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                        MetaDataProp: NameOCP,
+                                                        Value: unitOfMeasurementName,
+                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
                     int Count = Tree.getChildNodeCount();
+
                     for( int i = 0; i < Count; i++ )
                     {
                         Tree.goToNthChild( i );
                         UnitOfMeasureNode = Tree.getNodeForCurrentPosition();
                         Tree.goToParentNode();
                     }
+
                 }
 
                 return UnitOfMeasureNode;

@@ -509,12 +509,16 @@ namespace ChemSW.Nbt.ServiceDrivers
                     _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ) )
                     )
                 {
-
                     PropObj["readonly"] = false;
                 }
                 else
                 {
                     PropObj["readonly"] = true;
+
+                    // case 29095
+                    PropObj["canoverride"] = ( false == Prop.ServerManaged &&
+                            FieldType != CswNbtMetaDataFieldType.NbtFieldType.PropertyReference &&
+                            _CswNbtResources.CurrentNbtUser.IsAdministrator() );   
                 }
 
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );

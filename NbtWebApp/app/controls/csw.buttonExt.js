@@ -49,7 +49,7 @@
 
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
-                cswPublic = cswParent.div();
+                cswPublic = cswParent.div({ cssclass: 'cswInline' });
             } ());
 
 

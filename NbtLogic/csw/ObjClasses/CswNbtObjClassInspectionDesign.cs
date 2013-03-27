@@ -435,8 +435,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             SetPreferred.setReadOnly( value : _InspectionState.AllAnswered, SaveToDb : true );
-            // case 26584, 28155
-            Status.setReadOnly( value : false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb : false );
+            //// case 26584, 28155
+            // removed by case 29095
+            //Status.setReadOnly( value : false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb : false );
 
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );

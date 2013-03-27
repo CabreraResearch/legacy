@@ -132,7 +132,9 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                         TradeSecret: false,
                         HazardCategories: '',
                         MaxQty: '',
+                        MaxQtyRangeCode: '',
                         AverageQty: '',
+                        AverageQtyRangeCode: '',
                         DaysOnSite: '',
                         Unit: '',
                         Storage: [{
@@ -180,8 +182,10 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                                 ehs: row.EHS ? 'Y' : 'N',
                                 tradesecret: row.TradeSecret ? 'Y' : 'N',
                                 hazardcategories: HazardCategories,
-                                mazqty: row.MaxQty + ' ' + row.Unit,
+                                maxqty: row.MaxQty + ' ' + row.Unit,
+                                maxqtyrangecode: row.MaxQtyRangeCode,
                                 avgqty: row.AverageQty + ' ' + row.Unit,
+                                avgqtyrangecode: row.AverageQtyRangeCode,
                                 daysonsite: row.DaysOnSite,
                                 usetype: UseTypes,
                                 pressure: Pressures,
@@ -215,8 +219,10 @@ Csw.actions.tierIIReporting = Csw.actions.template ||
                     addColumn('ehs', 'EHS');
                     addColumn('tradesecret', 'Trade<br/>Secret');
                     addColumn('hazardcategories', 'Physical and<br/>Health Hazards');
-                    addColumn('mazqty', 'Max Qty');
+                    addColumn('maxqty', 'Max Qty');
+                    addColumn('maxqtyrangecode', 'Max Qty<br/>Range Code');
                     addColumn('avgqty', 'Average Qty ');
+                    addColumn('avgqtyrangecode', 'Average Qty<br/>Range Code');
                     addColumn('daysonsite', 'Days On Site');
                     addColumn('usetype', 'Container Type');
                     addColumn('pressure', 'Pressure');

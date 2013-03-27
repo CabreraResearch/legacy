@@ -4,11 +4,15 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ImportExport
@@ -79,8 +83,7 @@ namespace ChemSW.Nbt.ImportExport
         } // _readExcel
 
         /// <summary>
-        /// Stores data in a temporary Oracle table
-        /// Returns the name of the table
+        /// Stores data in temporary Oracle tables
         /// </summary>
         public void storeData( string DataFilePath )
         {
@@ -288,7 +291,13 @@ namespace ChemSW.Nbt.ImportExport
         } // readBindings()
 
 
-        public void ImportRows( Int32 RowsToImport, string ImportDataTableName )
+        /// <summary>
+        /// Import a number of rows
+        /// </summary>
+        /// <param name="RowsToImport">Number of rows to import</param>
+        /// <param name="ImportDataTableName">Source Oracle table to import</param>
+        /// <returns>True if there are more rows to import from this source data, false otherwise</returns>
+        public bool ImportRows( Int32 RowsToImport, string ImportDataTableName )
         {
             Int32 RowsImported = 0;
             try
@@ -321,7 +330,7 @@ namespace ChemSW.Nbt.ImportExport
                                         CswNbtNode Node = null;
 
                                         IEnumerable<CswNbt2DBinding> NodeTypeBindings = BindingDef.Bindings.Where( b => b.DestNodeType == Order.NodeType && b.Instance == Order.Instance );
-                                        IEnumerable<CswNbt2DRowRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId && r.Instance == Order.Instance );
+                                        IEnumerable<CswNbt2DRowRelationship> RowRelationships = BindingDef.RowRelationships.Where( r => r.NodeType.NodeTypeId == Order.NodeType.NodeTypeId ); //&& r.Instance == Order.Instance );
                                         //IEnumerable<CswNbt2DBinding> RequiredBindings = NodeTypeBindings.Where( b => b.DestProperty.IsRequired );
                                         //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
                                         IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
@@ -415,8 +424,25 @@ namespace ChemSW.Nbt.ImportExport
                                             {
                                                 foreach( CswNbt2DBinding Binding in NodeTypeBindings )
                                                 {
-                                                    Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
-                                                    Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                    // special case for TimeInterval, specifically for IMCS imports
+                                                    if( Binding.DestProperty.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.TimeInterval )
+                                                    {
+                                                        XElement input = XElement.Parse( "<rateintervalvalue>" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "</rateintervalvalue>" );
+                                                        XmlDocument xmlDoc = new XmlDocument();
+                                                        xmlDoc.Load( input.CreateReader() );
+
+                                                        CswRateInterval rateInterval = new CswRateInterval( _CswNbtResources );
+                                                        rateInterval.ReadXml( xmlDoc.DocumentElement );
+
+                                                        ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
+                                                        //Node.Properties[Binding.DestProperty].SetPropRowValue( CswNbtSubField.PropColumn.ClobData, rateInterval.ToXmlString() );
+                                                        Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                    }
+                                                    else
+                                                    {
+                                                        Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
+                                                        Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                    }
                                                 }
 
                                                 foreach( CswNbt2DRowRelationship RowRelationship in RowRelationships )
@@ -424,11 +450,11 @@ namespace ChemSW.Nbt.ImportExport
                                                     CswNbt2DOrder TargetOrder = null;
                                                     if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                                     {
-                                                        TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.NodeTypeId == RowRelationship.Relationship.FKValue );
+                                                        TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.NodeTypeId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
                                                     }
                                                     else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
                                                     {
-                                                        TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.ObjectClassId == RowRelationship.Relationship.FKValue );
+                                                        TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.ObjectClassId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
                                                     }
                                                     if( null != TargetOrder )
                                                     {
@@ -494,9 +520,9 @@ namespace ChemSW.Nbt.ImportExport
                                         ImportRow["errorlog"] = ErrorMsg;
                                         ImportDataUpdate.update( ImportDataTable );
                                     }
+                                    RowsImported += 1;
                                 } // if(moreRows)
 
-                                RowsImported += 1;
                                 if( RowsImported >= RowsToImport )
                                 {
                                     break;
@@ -523,6 +549,7 @@ namespace ChemSW.Nbt.ImportExport
             {
                 OnError( ex.Message + "\r\n" + ex.StackTrace );
             }
+            return ( RowsImported != 0 );
         } // ImportRows()
 
 

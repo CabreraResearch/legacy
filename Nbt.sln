@@ -29,8 +29,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebApp", "NbtWebApp\NbtW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript", "NbtWebApp\NbtWebAppJavaScript.csproj", "{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWcfServices", "NbtWcfServices\NbtWcfServices.csproj", "{22B27336-428C-4A59-9909-38BE803C9161}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructureSearch", "..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj", "{E9156C9A-605E-4F21-8BB1-0970DA055FF0}"
 EndProject
 Global
@@ -69,8 +67,6 @@ Global
 		{DB33D180-B7CC-407B-8611-52DEB49363A8}.Release|x64.Build.0 = Release|x64
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Release|x64.ActiveCfg = Release|x64
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Release|x64.Build.0 = Release|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Release|x64.ActiveCfg = Release|x64
-		{22B27336-428C-4A59-9909-38BE803C9161}.Release|x64.Build.0 = Release|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.ActiveCfg = Release|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection

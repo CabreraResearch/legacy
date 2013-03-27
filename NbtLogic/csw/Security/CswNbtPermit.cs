@@ -711,7 +711,8 @@ namespace ChemSW.Nbt.Security
                   ( false == MetaDataProp.ServerManaged ) &&
                   (
                     // Anyone but an admin cannot write to read-only props  
-                    ( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
+                    // but see case 29095; this is now handled in CswNbtSdTabsAndProps
+                    //( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
                       //Buttons are always "writable"  
                       MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
                       (
@@ -810,7 +811,9 @@ namespace ChemSW.Nbt.Security
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == NodeTypePermission.Edit )
                     {
-                        ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
+                        // see case 29095; this is now handled in CswNbtSdTabsAndProps
+                        //ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
+                        ret = ret && ( false == Node.ReadOnly );
                     }
                 }
             }//if NodeId is not null

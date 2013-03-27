@@ -42,6 +42,9 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29059() ) );                 //01Y-020
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29117_PendingRequests() ) ); //01Y-021
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29114() ) );                 //01Y-022
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29125() ) );                 //01Y-023
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29142() ) );                 //01Y-024
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29217() ) );                 //01Y-025
 
 
             #endregion YORICK
@@ -49,14 +52,19 @@ namespace ChemSW.Nbt.Schema
             #region ASPEN
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_CaseXXXXX() ) );   //01Y-000  02A-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case27923_Save() ) );      //01Y-018  01A-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28355() ) );           //01Y-019  02A-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28907() ) );           //01Y-020  02A-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case27906() ) );           //01Y-021  02A-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29108A() ) );          //01Y-022  02A-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29108B() ) );          //01Y-023  02A-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28950() ) );           //01Y-024  02A-007
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28927_01() ) );        //01Y-025  02A-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case27923_Save() ) );      //01Y-026  02A-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28355() ) );           //01Y-027  02A-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28907() ) );           //01Y-028  02A-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case27906() ) );           //01Y-029  02A-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29108A() ) );          //01Y-030  02A-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29108B() ) );          //01Y-031  02A-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28950() ) );           //01Y-032  02A-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29243A() ) );          //01Y-033  02A-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29243B() ) );          //01Y-034  02A-009
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29147() ) );           //01Y-035  02A-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28927_01() ) );        //01Y-036  02A-011
+
+
             
             #endregion ASPEN
 

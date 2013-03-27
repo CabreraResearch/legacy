@@ -1,12 +1,13 @@
+using System;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassRegulatoryList : CswNbtObjClass
+    public class CswNbtObjClassRegulatoryList: CswNbtObjClass
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -49,6 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 //Case 28838 - remove newline char from CASNos
                 CASNumbers.Text = CASNumbers.Text.Replace( "\n", "" ).Replace( "\r", "" );
+                CASNumbers.Text = Regex.Replace( CASNumbers.Text, @"\s+", "" );
 
                 //remove this list from all material nodes
                 _removeListFromMaterials();
@@ -112,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
                 CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
-                materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: OriginalName, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value : OriginalName, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
 
                 ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
                 int nodeCount = materialsWithListTree.getChildNodeCount();
