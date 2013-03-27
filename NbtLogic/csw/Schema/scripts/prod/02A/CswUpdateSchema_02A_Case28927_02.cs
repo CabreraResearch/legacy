@@ -28,7 +28,42 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
+            CswNbtMetaDataNodeType InventoryGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Inventory Group" );
+            if( null != InventoryGroupNT ) 
+            {
+                CswNbtMetaDataNodeTypeProp LocationsNTP = InventoryGroupNT.getNodeTypeProp( "Locations" );
+                if( null != LocationsNTP )
+                {
+                    CswNbtViewId LocationsViewId = LocationsNTP.ViewId;
+                    CswNbtView IvgLocationsView = _CswNbtSchemaModTrnsctn.restoreView( LocationsViewId );
+                    if( ( null != IvgLocationsView ) && ( null != IvgLocationsView.Root.ChildRelationships[0] ) && ( null != IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0] ) )
+                    {
+                        IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0].AddChildren = NbtViewAddChildrenSetting.None;
+                        IvgLocationsView.save();
+                    }
 
+                }//if we have the locations nt
+
+                CswNbtMetaDataNodeTypeProp AssignLocationsNTP = InventoryGroupNT.getNodeTypeProp( CswNbtObjClassInventoryGroup.PropertyName.AssignLocation );
+                if( null != AssignLocationsNTP )
+                {
+                    CswNbtMetaDataNodeTypeTab LocationsTab = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeTab( InventoryGroupNT.NodeTypeId, "Locations" );
+                    if( null != LocationsTab )
+                    {
+                        _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
+                            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                            InventoryGroupNT.NodeTypeId,
+                            AssignLocationsNTP,
+                            true,
+                            LocationsTab.TabId
+                            );
+                    }//if we have a locatioins tab
+
+                }//if we have an assign locations button. 
+
+            }//if we have the inventory group nt
+
+            
         } // update()
 
     }//class  CswUpdateSchema_02A_Case28927_02
