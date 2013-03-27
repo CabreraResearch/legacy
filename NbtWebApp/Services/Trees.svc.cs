@@ -55,5 +55,25 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+
+        [OperationContract]
+        [WebInvoke( Method = "GET", UriTemplate = "locations" )]
+        [Description( "Returns a tree of locations." )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtSdTrees.Contract.Response getLocationTree()
+        {
+            CswNbtSdTrees.Contract.Response Ret = new CswNbtSdTrees.Contract.Response();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtSdTrees.Contract.Response, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtSdTrees.getLocationTree,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }

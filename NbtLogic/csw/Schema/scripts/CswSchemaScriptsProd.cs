@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29125() ) );                 //01Y-023
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29142() ) );                 //01Y-024
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01Y_Case29217() ) );                 //01Y-025
-            
+
 
             #endregion YORICK
 
@@ -59,7 +59,13 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29108A() ) );          //01Y-030  02A-005
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29108B() ) );          //01Y-031  02A-006
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28950() ) );           //01Y-032  02A-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29243A() ) );          //01Y-033  02A-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29243B() ) );          //01Y-034  02A-009
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29147() ) );           //01Y-035  02A-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28927_01() ) );        //01Y-036  02A-011
 
+
+            
             #endregion ASPEN
 
 
