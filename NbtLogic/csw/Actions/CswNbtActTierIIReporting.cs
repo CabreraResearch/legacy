@@ -56,10 +56,26 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Collection<String> HazardCategories;//Fire,Pressure,Reactive,Immediate,Delayed
             //Inventory
+            private Int32 Precision = 6;
+            private Double _MaxQty;
             [DataMember]
-            public Double MaxQty = 0.0;
+            public Double MaxQty
+            {
+                get { return _MaxQty; }
+                set { _MaxQty = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
+            }
+
+            [DataMember] 
+            public String MaxQtyRangeCode = String.Empty;
+            private Double _AvgQty;
             [DataMember]
-            public Double AverageQty = 0.0;
+            public Double AverageQty
+            {
+                get { return _AvgQty; }
+                set { _AvgQty = CswTools.IsDouble( value ) ? Math.Round( value, Precision, MidpointRounding.AwayFromZero ) : 0.0; }
+            }
+            [DataMember]
+            public String AverageQtyRangeCode = String.Empty;
             [DataMember]
             public Int32 DaysOnSite = 0;
             [DataMember]
@@ -113,11 +129,13 @@ namespace ChemSW.Nbt.Actions
         private TierIIData Data;
         private CswNbtObjClassUnitOfMeasure BaseUnit;
         private CswCommaDelimitedString LocationIds;
+        private Collection<TierIIRangeCode> RangeCodes;
 
         public CswNbtActTierIIReporting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             Data = new TierIIData();
+            _setDefaultRangeCodes();
         }
 
         #endregion Properties and ctor
@@ -127,6 +145,10 @@ namespace ChemSW.Nbt.Actions
         public TierIIData getTierIIData( TierIIData.TierIIDataRequest Request )
         {
             BaseUnit = _setBaseUnit( "kg", "Unit (Weight)" );
+            CswNbtObjClassUnitOfMeasure PoundsUnit = _setBaseUnit( "lb", "Unit (Weight)" );
+            CswNbtUnitConversion Conversion = ( BaseUnit != null && PoundsUnit != null ) ?
+                new CswNbtUnitConversion( _CswNbtResources, BaseUnit.NodeId, PoundsUnit.NodeId ) : 
+                new CswNbtUnitConversion();
             LocationIds = _setLocationIds( Request.LocationId );
             DataTable MaterialsTable = _getTierIIMaterials( Request );
             foreach( DataRow MaterialRow in MaterialsTable.Rows )
@@ -137,7 +159,11 @@ namespace ChemSW.Nbt.Actions
                     //Theoretically, this should never happen 
                     //(unless we decide, one day, to change the unit in which we're storing TierII quantity data)
                     BaseUnit = _CswNbtResources.Nodes.GetNode( BaseUnitId );
+                    Conversion.setOldUnitProps( BaseUnit );
                 }
+                Double MaxQty = Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) );
+                Double AverageQty = Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) );
+
                 TierIIData.TierIIMaterial Material = new TierIIData.TierIIMaterial
                 {
                     MaterialId = MaterialRow["materialid"].ToString(),
@@ -147,10 +173,12 @@ namespace ChemSW.Nbt.Actions
                     PhysicalState = MaterialRow["physicalstate"].ToString(),
                     EHS = MaterialRow["specialflags"].ToString().Contains("EHS"),
                     TradeSecret = MaterialRow["specialflags"].ToString().Contains( "Trade Secret" ),
-                    MaxQty = CswConvert.ToDouble( MaterialRow["maxqty"] ),
-                    AverageQty = CswConvert.ToDouble( MaterialRow["avgqty"] ),
+                    MaxQty = MaxQty,
+                    MaxQtyRangeCode = _getRangeCode( MaxQty ),
+                    AverageQty = AverageQty,
+                    AverageQtyRangeCode = _getRangeCode( AverageQty ),
                     DaysOnSite = CswConvert.ToInt32( MaterialRow["daysonsite"] ),
-                    Unit = BaseUnit != null ? BaseUnit.Name.Text : "kg"
+                    Unit = PoundsUnit != null ? PoundsUnit.Name.Text : "lb"
                 };
                 CswCommaDelimitedString Hazards = new CswCommaDelimitedString();
                 Hazards.FromString( MaterialRow["hazardcategories"].ToString() );
@@ -281,17 +309,28 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp PressureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StoragePressure );
                 CswNbtMetaDataNodeTypeProp TemperatureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
                 CswNbtMetaDataNodeTypeProp UseTypeProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.UseType );
-                CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Location );
                 CswNbtMetaDataNodeTypeProp QuantityProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Quantity );
-                String SelectText = 
-                @"select unique pressure, temperature, usetype from (
+                String SelectText =
+                @"with containerids as (
+                    select n.nodeid 
+                    from jct_nodes_props n
+                    left join (select jnp.nodeid, jnp.field1_numeric as quantity
+                        from jct_nodes_props jnp
+                        where jnp.nodetypepropid = " + QuantityProp.PropId + @") q
+                        on n.nodeid = q.nodeid
+                    where nodetypepropid = " + MaterialProp.PropId + @" 
+                        and q.quantity > 0 
+                        and field1_fk in 
+                            (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
+                            (select nodeid from jct_nodes_props where nodetypepropid = " + ConstituentProp.PropId + @" and field1_fk = " + MaterialId + @")
+                                union (select " + MaterialId + @" from dual) ) )
+                select unique pressure, temperature, usetype from (
                     select props.* from (
                         select codes.*, dense_rank() over(partition by codes.containerid order by recordcreated desc) rank from (
                             select unique jnpa.nodeid as ContainerId,
                                 last_value(p.pressure ignore nulls) OVER (ORDER BY jnpa.audittransactionid) pressure,
                                 last_value(t.temperature ignore nulls) OVER (ORDER BY jnpa.audittransactionid) temperature,
                                 last_value(u.usetype ignore nulls) OVER (ORDER BY jnpa.audittransactionid) usetype,
-                                last_value(l.locationid ignore nulls) OVER (ORDER BY jnpa.nodeid, jnpa.audittransactionid) locationid,
                                 jnpa.audittransactionid,
                                 jnpa.recordcreated
                             from jct_nodes_props_audit jnpa
@@ -307,38 +346,33 @@ namespace ChemSW.Nbt.Actions
                                 from jct_nodes_props_audit jnp
                                 where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
                                 on jnpa.nodeid = u.nodeid and jnpa.audittransactionid = u.audittransactionid
-                            left join (select jnp.nodeid, jnp.field1_fk as locationid, jnp.audittransactionid
-                                from jct_nodes_props_audit jnp
-                                where jnp.nodetypepropid = " + LocationProp.PropId + @") l
-                                on jnpa.nodeid = l.nodeid and jnpa.audittransactionid = l.audittransactionid
-                            where jnpa.nodeid in (
-                                select nodeid from (
-                                    select unique j.nodeid, j.field1_fk, l.locationid, q.quantity from jct_nodes_props j
-                                        left join (select jnp.nodeid, jnp.field1_fk as locationid
-                                        from jct_nodes_props_audit jnp
-                                        where jnp.nodetypepropid = " + LocationProp.PropId + @") l
-                                        on j.nodeid = l.nodeid
-                                    left join (select jnp.nodeid, jnp.field1_numeric as quantity
-                                        from jct_nodes_props jnp
-                                        where jnp.nodetypepropid = " + QuantityProp.PropId + @") q
-                                        on j.nodeid = q.nodeid
-                                    where j.nodetypepropid = " + MaterialProp.PropId + @" 
-                                        and l.locationid in (" + LocationIds + @")
-                                        and q.quantity > 0
-                                        and j.field1_fk in 
-                                        (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
-                                            (select nodeid from jct_nodes_props where nodetypepropid = " + ConstituentProp.PropId + @" and field1_fk = " + MaterialId + @")
-                                                union 
-                                            (select " + MaterialId + @" from dual) 
-                                        ) 
-                                )
-                            )
+                            where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
                             order by containerid, audittransactionid
                         ) codes 
                     ) props
                     where props.rank=1
                         and props.recordcreated < " + _CswNbtResources.getDbNativeDate(DateTime.Parse(Request.EndDate)) + @" + 1
+                ) union (
+                    select unique 
+                        last_value(p.pressure ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) pressure,
+                        last_value(t.temperature ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) temperature,
+                        last_value(u.usetype ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) usetype
+                    from jct_nodes_props jnpa
+                    left join (select jnp.nodeid, jnp.field1 as pressure
+                        from jct_nodes_props jnp
+                        where jnp.nodetypepropid = " + PressureProp.PropId + @") p 
+                        on jnpa.nodeid = p.nodeid
+                    left join (select jnp.nodeid, jnp.field1 as temperature
+                        from jct_nodes_props jnp
+                        where jnp.nodetypepropid = " + TemperatureProp.PropId + @") t 
+                        on jnpa.nodeid = t.nodeid
+                    left join (select jnp.nodeid, jnp.field1 as usetype
+                        from jct_nodes_props jnp
+                        where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
+                        on jnpa.nodeid = u.nodeid
+                    where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
                 )";
+
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Props Select", SelectText );
                 TargetTable = CswArbitrarySelect.getTable();
             }
@@ -359,19 +393,34 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtMetaDataNodeTypeProp MaterialProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Material );
                 CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Location );
-                String SelectText = @"with containerids
-                    as (select nodeid from jct_nodes_props where nodetypepropid = " + MaterialProp.PropId + @" and field1_fk in 
-                          (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
+                CswNbtMetaDataNodeTypeProp QuantityProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Quantity );
+                String SelectText = 
+                @"with containerids as (
+                    select n.nodeid 
+                    from jct_nodes_props n
+                    left join (select jnp.nodeid, jnp.field1_numeric as quantity
+                        from jct_nodes_props jnp
+                        where jnp.nodetypepropid = " + QuantityProp.PropId + @") q
+                        on n.nodeid = q.nodeid
+                    where nodetypepropid = " + MaterialProp.PropId + @" 
+                        and q.quantity > 0 
+                        and field1_fk in 
+                            (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
                             (select nodeid from jct_nodes_props where nodetypepropid = " + ConstituentProp.PropId + @" and field1_fk = " + MaterialId + @")
-                              union (select " + MaterialId + @" from dual) ) )
+                                union (select " + MaterialId + @" from dual) ) )
                 select unique locationid, fulllocation from (
-                    select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation, jnp.recordcreated
+                    (select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
                         from jct_nodes_props_audit jnp
-                    where jnp.nodetypepropid = " + LocationProp.PropId + @"
-                        and jnp.field1_fk in (" + LocationIds + @")
-                        and exists (select nodeid from containerids where nodeid = jnp.nodeid)
-                        and jnp.recordcreated < " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) + @" + 1
-                )";
+                        where jnp.nodetypepropid = " + LocationProp.PropId + @"
+                            and exists (select nodeid from containerids where nodeid = jnp.nodeid)
+                            and jnp.recordcreated < " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) + @" + 1)
+                    union
+                    (select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
+                        from jct_nodes_props jnp
+                        where jnp.nodetypepropid = " + LocationProp.PropId + @"
+                            and exists (select nodeid from containerids where nodeid = jnp.nodeid))
+                ) where locationid in (" + LocationIds + @") and fulllocation is not null";
+
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Locations Select", SelectText );
                 TargetTable = CswArbitrarySelect.getTable();
             }
@@ -417,6 +466,52 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
+        private String _getRangeCode( Double QuantityInPounds )
+        {
+            String RangeCode = "00";
+            TierIIRangeCode Code = RangeCodes.FirstOrDefault( 
+                RC => 
+                    QuantityInPounds >= RC.LowerBound && 
+                    QuantityInPounds < RC.UpperBound + 1 
+                );
+            if( null != Code )
+            {
+                RangeCode = Code.RangeCode;
+            }
+            return RangeCode;
+        }
+
+        /// <summary>
+        /// Default list of Tier II Reporting Ranges
+        /// Note that this list is subject to change
+        /// </summary>
+        private void _setDefaultRangeCodes()
+        {
+            RangeCodes = new Collection<TierIIRangeCode>
+            {
+                new TierIIRangeCode { RangeCode = "01", LowerBound = 0, UpperBound = 99 }, 
+                new TierIIRangeCode { RangeCode = "02", LowerBound = 100, UpperBound = 499 }, 
+                new TierIIRangeCode { RangeCode = "03", LowerBound = 500, UpperBound = 999 }, 
+                new TierIIRangeCode { RangeCode = "04", LowerBound = 1000, UpperBound = 4999 }, 
+                new TierIIRangeCode { RangeCode = "05", LowerBound = 5000, UpperBound = 9999 }, 
+                new TierIIRangeCode { RangeCode = "06", LowerBound = 10000, UpperBound = 24999 }, 
+                new TierIIRangeCode { RangeCode = "07", LowerBound = 25000, UpperBound = 49999 }, 
+                new TierIIRangeCode { RangeCode = "08", LowerBound = 50000, UpperBound = 74999 }, 
+                new TierIIRangeCode { RangeCode = "09", LowerBound = 75000, UpperBound = 99999 }, 
+                new TierIIRangeCode { RangeCode = "10", LowerBound = 100000, UpperBound = 499999 }, 
+                new TierIIRangeCode { RangeCode = "11", LowerBound = 500000, UpperBound = 999999 }, 
+                new TierIIRangeCode { RangeCode = "12", LowerBound = 1000000, UpperBound = 9999999 }, 
+                new TierIIRangeCode { RangeCode = "13", LowerBound = 10000000, UpperBound = Int32.MaxValue - 1 }
+            };
+        }
+
         #endregion Private Methods
     }
+
+    internal class TierIIRangeCode
+    {
+        public String RangeCode = String.Empty;
+        public Int32 LowerBound = 0;
+        public Int32 UpperBound = Int32.MaxValue;
+}
 }
