@@ -69,7 +69,7 @@
                     }
                     cswPrivate.viewid = Csw.string(cswPrivate.viewid).trim();
                     cswPrivate.value = cswPrivate.nodeid;
-                    cswPublic.table = cswParent.table();
+                    cswPublic.table = cswParent.table({ TableCssClass: 'cswInline' });
 
                     cswPrivate.pathCell = cswPublic.table.cell(1, 1);
                     cswPrivate.selectCell = cswPublic.table.cell(1, 2);

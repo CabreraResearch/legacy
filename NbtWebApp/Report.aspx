@@ -10,6 +10,6 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MasterCenterContent" runat="Server">
     <asp:PlaceHolder runat="server" ID="ph" />
     
-    <asp:Button runat="server" ID="LoadReportButton" />
+    <asp:HiddenField runat="server" ID="reportid" />
 
 </asp:Content>

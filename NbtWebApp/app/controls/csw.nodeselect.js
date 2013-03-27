@@ -59,7 +59,7 @@
                 cswPrivate.options = cswPrivate.options || [];
                 cswPrivate.extraOptions = cswPrivate.extraOptions || [];
 
-                cswPublic = cswParent.div();
+                cswPublic = cswParent.div({ cssclass: 'cswInline' });
                 cswPrivate.table = cswPublic.table();
 
                 // Default to selected node as relationship value for new nodes being added
