@@ -126,7 +126,7 @@
 
             function initButtons() {
 
-                save_button_cell.button({
+                save_button_cell.buttonExt({
                     name: 'save_action',
                     disableOnClick: false,
                     onClick: function () {
@@ -158,7 +158,7 @@
                     enabledText: 'Set To'
                 });
 
-                close_button_cell.button({
+                close_button_cell.buttonExt({
                     name: 'close_action',
                     disableOnClick: false,
                     onClick: function () {
