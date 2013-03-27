@@ -127,13 +127,24 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleFireDbSync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSDS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireCode.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleMultiInventoryGroup.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleMultiSite.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExtChemDataSync.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search.disco" />
+    <None Include="Service References\ChemCatCentral\Search.wsdl" />
+    <None Include="Service References\ChemCatCentral\Search.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search1.disco" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28968.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28717.cs" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28843.cs" />
@@ -174,6 +185,7 @@
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29117_PendingRequests.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29059.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29089.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29245.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29147.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29243A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29243B.cs" />
@@ -253,16 +265,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Service References\ChemCatCentral\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Service References\ChemCatCentral\configuration.svcinfo" />
     <None Include="Service References\ChemCatCentral\configuration91.svcinfo" />
-    <None Include="Service References\ChemCatCentral\Search.disco" />
     <None Include="app.config" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28254.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case28260.cs" />
@@ -1068,6 +1076,34 @@
       <SubType>Component</SubType>
     </Compile>
     <None Include="Properties\DataSources\ChemSW.MtSched.Core.CswSchedSvcReturn.datasource" />
+    <None Include="Service References\ChemCatCentral\Search1.wsdl" />
+    <None Include="Service References\ChemCatCentral\Search1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search41.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search42.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search43.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search44.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search45.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -1081,31 +1117,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSchedSvcRef\CswSchedSvcAdminEndPoint.wsdl" />
-    <None Include="Service References\ChemCatCentral\Search.wsdl" />
-    <None Include="Service References\ChemCatCentral\Search.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\item1.xsd" />
-    <None Include="Service References\ChemCatCentral\Search1.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\item2.xsd" />
-    <None Include="Service References\ChemCatCentral\Search2.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\item3.xsd" />
-    <None Include="Service References\ChemCatCentral\Search3.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\item4.xsd" />
     <None Include="Service References\NbtSchedSvcRef\item5.xsd" />
-    <None Include="Service References\ChemCatCentral\Search41.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\NbtSchedSvcRef\item6.xsd" />
-    <None Include="Service References\ChemCatCentral\Search42.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">

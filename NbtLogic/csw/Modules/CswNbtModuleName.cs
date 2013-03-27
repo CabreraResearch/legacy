@@ -81,6 +81,10 @@ namespace ChemSW.Nbt
         /// Multiple Site NodeTypes
         /// </summary>
         public static readonly CswNbtModuleName MultiInventoryGroup = new CswNbtModuleName( "Multi Inventory Group" );
+        /// <summary>
+        /// Module that syncs FireDb data with ChemCatCentral.
+        /// </summary>
+        public static readonly CswNbtModuleName FireDbSync = new CswNbtModuleName( "FireDb Sync" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt
