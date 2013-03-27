@@ -1,4 +1,8 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -9,7 +13,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override CswDeveloper Author
         {
-            get { return CswDeveloper.NBT; }
+            get { return CswDeveloper.CM; }
         }
 
         public override int CaseNo
@@ -19,12 +23,18 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // Create the FireDb Sync module
-            _CswNbtSchemaModTrnsctn.createModule( "Add-on for Fire Code that syncs FireDb data with ChemCatCentral", CswNbtModuleName.FireDbSync.ToString() );
-
-            // Create the module dependency
-            _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.FireCode, CswNbtModuleName.FireDbSync );
-
+            // Add ExtChemDataSync Schedule Rule to the ScheduledRules Table
+            CswTableUpdate TableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "extChemDataSyncSchedRule_29245", "scheduledrules" );
+            DataTable ScheduledRules = TableUpdate.getTable();
+            DataRow ExtChemDataSyncRow = ScheduledRules.NewRow();
+            ExtChemDataSyncRow["rulename"] = NbtScheduleRuleNames.ExtChemDataSync;
+            ExtChemDataSyncRow["recurrence"] = "NSeconds";
+            ExtChemDataSyncRow["interval"] = "60";
+            ExtChemDataSyncRow["disabled"] = CswConvert.ToDbVal( false );
+            ExtChemDataSyncRow["reprobatethreshold"] = "3";
+            ExtChemDataSyncRow["maxruntimems"] = "600000";
+            ScheduledRules.Rows.Add( ExtChemDataSyncRow );
+            TableUpdate.update( ScheduledRules );
         } // update()
 
     }//class CswUpdateSchema_02A_Case29245

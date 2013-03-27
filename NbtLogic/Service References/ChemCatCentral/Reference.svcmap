@@ -12,8 +12,40 @@
     <GenerateSerializableTypes>true</GenerateSerializableTypes>
     <Serializer>Auto</Serializer>
     <UseSerializerForFaults>true</UseSerializerForFaults>
-    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
-    <ReferencedAssemblies />
+    <ReferenceAllAssemblies>false</ReferenceAllAssemblies>
+    <ReferencedAssemblies>
+      <ReferencedAssembly AssemblyName="CrystalDecisions.CrystalReports.Engine" />
+      <ReferencedAssembly AssemblyName="CrystalDecisions.ReportSource" />
+      <ReferencedAssembly AssemblyName="CrystalDecisions.Shared" />
+      <ReferencedAssembly AssemblyName="CswCommon" />
+      <ReferencedAssembly AssemblyName="Microsoft.Build" />
+      <ReferencedAssembly AssemblyName="Microsoft.Build.Engine" />
+      <ReferencedAssembly AssemblyName="Microsoft.Build.Framework" />
+      <ReferencedAssembly AssemblyName="Microsoft.Build.Utilities.v4.0" />
+      <ReferencedAssembly AssemblyName="Microsoft.CSharp" />
+      <ReferencedAssembly AssemblyName="Microsoft.Office.Interop.Excel" />
+      <ReferencedAssembly AssemblyName="mscorlib" />
+      <ReferencedAssembly AssemblyName="NbtConfig" />
+      <ReferencedAssembly AssemblyName="Oracle.DataAccess" />
+      <ReferencedAssembly AssemblyName="SMTP.Net" />
+      <ReferencedAssembly AssemblyName="StructureSearch" />
+      <ReferencedAssembly AssemblyName="System" />
+      <ReferencedAssembly AssemblyName="System.Configuration" />
+      <ReferencedAssembly AssemblyName="System.Core" />
+      <ReferencedAssembly AssemblyName="System.Data" />
+      <ReferencedAssembly AssemblyName="System.Data.DataSetExtensions" />
+      <ReferencedAssembly AssemblyName="System.Data.Entity" />
+      <ReferencedAssembly AssemblyName="System.Drawing" />
+      <ReferencedAssembly AssemblyName="System.EnterpriseServices" />
+      <ReferencedAssembly AssemblyName="System.Runtime.Serialization" />
+      <ReferencedAssembly AssemblyName="System.Security" />
+      <ReferencedAssembly AssemblyName="System.ServiceModel" />
+      <ReferencedAssembly AssemblyName="System.Transactions" />
+      <ReferencedAssembly AssemblyName="System.Web.Services" />
+      <ReferencedAssembly AssemblyName="System.Windows.Forms" />
+      <ReferencedAssembly AssemblyName="System.Xml" />
+      <ReferencedAssembly AssemblyName="System.Xml.Linq" />
+    </ReferencedAssemblies>
     <ReferencedDataContractTypes />
     <ServiceContractMappings />
   </ClientOptions>
@@ -21,12 +53,12 @@
     <MetadataSource Address="http://localhost/c3/Search.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Search41.xsd" MetadataType="Schema" ID="f0a44cf4-2289-4a13-8cb5-79b20950c1df" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd5" />
     <MetadataFile FileName="Search.xsd" MetadataType="Schema" ID="1b350f9f-12f6-4e6e-86fb-275bc6dd135b" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd1" />
     <MetadataFile FileName="Search1.xsd" MetadataType="Schema" ID="02190973-a044-4ab8-b04c-55bc10b8a793" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd0" />
     <MetadataFile FileName="Search.wsdl" MetadataType="Wsdl" ID="08bb553c-fda9-430d-a4c2-efe6c2c1ab35" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?wsdl" />
-    <MetadataFile FileName="Search42.xsd" MetadataType="Schema" ID="208ad4c2-66cd-48fc-8304-50bf06e5fc36" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd4" />
+    <MetadataFile FileName="Search41.xsd" MetadataType="Schema" ID="f0a44cf4-2289-4a13-8cb5-79b20950c1df" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd5" />
     <MetadataFile FileName="Search2.xsd" MetadataType="Schema" ID="c044eab4-7f25-4646-a8f2-adb40b229ef8" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd3" />
+    <MetadataFile FileName="Search42.xsd" MetadataType="Schema" ID="208ad4c2-66cd-48fc-8304-50bf06e5fc36" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd4" />
     <MetadataFile FileName="Search3.xsd" MetadataType="Schema" ID="85d6f257-82c0-4122-8712-b7903dfdf1c9" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd2" />
     <MetadataFile FileName="Search.disco" MetadataType="Disco" ID="78047a10-a415-42d8-9759-533e53ef211b" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?disco" />
   </Metadata>

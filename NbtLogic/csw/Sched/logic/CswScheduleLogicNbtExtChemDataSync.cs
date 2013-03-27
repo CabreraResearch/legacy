@@ -1,0 +1,193 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.ServiceModel;
+using ChemSW.Config;
+using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.MtSched.Core;
+using ChemSW.MtSched.Sched;
+using ChemSW.Nbt.ChemCatCentral;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+
+namespace ChemSW.Nbt.Sched
+{
+    public class CswScheduleLogicNbtExtChemDataSync : ICswScheduleLogic
+    {
+        #region Properties
+
+        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
+        public LogicRunStatus LogicRunStatus
+        {
+            set { _LogicRunStatus = value; }
+            get { return ( _LogicRunStatus ); }
+        }
+        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
+        private CswScheduleLogicDetail _CswScheduleLogicDetail;
+        public CswScheduleLogicDetail CswScheduleLogicDetail
+        {
+            get { return ( _CswScheduleLogicDetail ); }
+        }
+        public string RuleName
+        {
+            get { return ( NbtScheduleRuleNames.ExtChemDataSync ); }
+        }
+
+        #endregion Properties
+
+        #region Scheduler Methods
+
+        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetailIn )
+        {
+            _CswScheduleLogicDetail = CswScheduleLogicDetailIn;
+        }
+
+
+        public bool hasLoad( ICswResources CswResources )
+        {
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            return ( true );
+            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+        }
+
+        public void stop()
+        {
+            _LogicRunStatus = LogicRunStatus.Stopping;
+        }
+
+        public void reset()
+        {
+            _LogicRunStatus = LogicRunStatus.Idle;
+        }
+
+        public void threadCallBack( ICswResources CswResources )
+        {
+            _LogicRunStatus = LogicRunStatus.Running;
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+
+            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            {
+                try
+                {
+                    // Get all sync modules
+                    Collection<CswNbtModuleName> SyncModules = new Collection<CswNbtModuleName>();
+                    SyncModules.Add( CswNbtModuleName.FireDbSync );
+
+                    // Check to see if at least one is enabled
+                    if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
+                    {
+                        // Get all nodes that need to be synced.
+                        CswNbtView MaterialsToBeSyncedView = getMaterialsToBeSynced( CswNbtResources );
+                        Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources, MaterialsToBeSyncedView );
+
+                        // Check C3 Status
+                        bool C3ServiceStatus = _checkC3ServiceReferenceStatus( CswNbtResources );
+                        if( C3ServiceStatus )
+                        {
+                            if( MaterialPks.Count > 0 )
+                            {
+                                // Call sync method in materials oc
+                                CswNbtObjClassMaterial.syncExtChemData( CswNbtResources, MaterialPks );
+                            }
+
+                            _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                            _LogicRunStatus = LogicRunStatus.Succeeded;
+                        }
+
+                    }
+                }
+                catch( Exception Exception )
+                {
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtExtChemDataSync exception: " + Exception.Message;
+                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    _LogicRunStatus = LogicRunStatus.Failed;
+                }
+            }
+        }
+
+        #endregion Scheduler Methods
+
+        private bool _checkC3ServiceReferenceStatus( CswNbtResources CswNbtResources )
+        {
+            bool Status = true;
+
+            ChemCatCentral.SearchClient C3ServiceTest = new SearchClient();
+            _setEndpointAddress( CswNbtResources, C3ServiceTest );
+
+            try
+            {
+                C3ServiceTest.isAlive();
+            }
+            catch
+            {
+                Status = false;
+            }
+
+            return Status;
+        }
+
+        /// <summary>
+        /// Dynamically set the endpoint address for a ChemCatCentral SearchClient.
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
+        /// <param name="C3SearchClient"></param>
+        private static void _setEndpointAddress( CswNbtResources CswNbtResources, ChemCatCentral.SearchClient C3SearchClient )
+        {
+            if( null != C3SearchClient )
+            {
+                string C3_UrlStem = CswNbtResources.SetupVbls[CswSetupVariableNames.C3UrlStem];
+                EndpointAddress URI = new EndpointAddress( C3_UrlStem );
+                C3SearchClient.Endpoint.Address = URI;
+            }
+        }
+
+        #region Schedule-Specific Logic
+
+        public CswNbtView getMaterialsToBeSynced( CswNbtResources CswNbtResources )
+        {
+            CswNbtView MaterialsToBeSyncedView = new CswNbtView( CswNbtResources );
+            CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtViewRelationship ParentRelationship = MaterialsToBeSyncedView.AddViewRelationship( MaterialOC, true );
+
+            CswNbtMetaDataObjectClassProp CasNoOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
+                MetaDataProp: CasNoOCP,
+                Value: "",
+                SubFieldName: CswNbtSubField.SubFieldName.Text,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+
+            CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+            MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
+                MetaDataProp: C3SyncDateOCP,
+                Value: "",
+                SubFieldName: CswNbtSubField.SubFieldName.Value,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+
+            return MaterialsToBeSyncedView;
+        }
+
+        public Collection<CswPrimaryKey> getMaterialPks( CswNbtResources CswNbtResources, CswNbtView MaterialsToBeSyncedView )
+        {
+            Collection<CswPrimaryKey> MaterialPks = new Collection<CswPrimaryKey>();
+            Int32 MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+
+            ICswNbtTree MaterialPksTree = CswNbtResources.Trees.getTreeFromView( MaterialsToBeSyncedView, false, false, false );
+            if( MaterialPksTree.getChildNodeCount() > 0 )
+            {
+                for( int i = 0; i < MaterialsProcessedPerIteration; i++ )
+                {
+                    MaterialPksTree.goToNthChild( i );
+                    MaterialPks.Add( MaterialPksTree.getNodeIdForCurrentPosition() );
+                    MaterialPksTree.goToParentNode();
+                }
+            }
+
+            return MaterialPks;
+        }
+
+        #endregion Schedule-Specific Logic
+
+    }//CswScheduleLogicNbtUpdtMTBF
+}//namespace ChemSW.Nbt.Sched
