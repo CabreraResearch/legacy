@@ -63,16 +63,7 @@ namespace ChemSW.Nbt.Schema
                                 ViewOfLocationsWithNullIG.Width = 100;
                                 CswNbtViewRelationship ViewRelLocationsOC = ViewOfLocationsWithNullIG.AddViewRelationship( LocationOC, true );
 
-                                CswNbtViewProperty ViewPropIGOCP = null;
-                                foreach( CswNbtMetaDataNodeType CurrentLoactionNT in LocationOC.getNodeTypes() )
-                                {
-                                    CswNbtMetaDataNodeTypeProp IGNTP = CurrentLoactionNT.getNodeTypeProp( "Inventory Group" );
-                                    if( null != IGNTP )
-                                    {
-                                        ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, IGNTP );
-                                        break;
-                                    }
-                                }
+                                CswNbtViewProperty ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, InventoryGroupOCP );
 
                                 ICswNbtTree TreeOfLocations = _CswNbtSchemaModTrnsctn.getTreeFromView( ViewOfLocationsWithNullIG, true );
 
