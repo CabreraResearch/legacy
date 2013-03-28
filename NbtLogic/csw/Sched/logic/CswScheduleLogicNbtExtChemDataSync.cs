@@ -81,7 +81,8 @@ namespace ChemSW.Nbt.Sched
                         Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources );
 
                         // Check C3 Status
-                        bool C3ServiceStatus = _checkC3ServiceReferenceStatus( CswNbtResources );
+                        CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources );
+                        bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( CswNbtResources );
                         if( C3ServiceStatus )
                         {
                             if( MaterialPks.Count > 0 )
@@ -116,29 +117,6 @@ namespace ChemSW.Nbt.Sched
         }
 
         #endregion Scheduler Methods
-
-        #region Private Helper Methods
-
-        private bool _checkC3ServiceReferenceStatus( CswNbtResources CswNbtResources )
-        {
-            bool Status = true;
-
-            try
-            {
-                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources );
-                ChemCatCentral.SearchClient C3ServiceTest = CswNbtC3ClientManager.initializeC3Client();
-                C3ServiceTest.isAlive();
-            }
-            catch
-            {
-                Status = false;
-            }
-
-            return Status;
-        }
-
-        #endregion Private Helper Methods
-
 
         #region Schedule-Specific Logic
 
