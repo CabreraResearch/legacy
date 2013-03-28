@@ -118,22 +118,21 @@ namespace ChemSW.Nbt.ObjClasses
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
             {
                 //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
-
-                CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
-                CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
-                if( null != FireClassExemptAmountNT )
+                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
+                if( null != ChemicalHazardClassesNTP )
                 {
-                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
-                        _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
-                    String FLComb = "FL-Comb";
-                    int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
-                    String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
-
-                    CswCommaDelimitedString HazardClassListOptions = new CswCommaDelimitedString();
-                    HazardClassListOptions.FromString( FireClassListOptions );
-                    this.HazardClasses.Value = HazardClassListOptions;
+                    CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+                    CswNbtMetaDataNodeType FireClassExemptAmountNT = FireClassExemptAmountOC.FirstNodeType;
+                    if( null != FireClassExemptAmountNT )
+                    {
+                        CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP =
+                            _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( FireClassExemptAmountNT.NodeTypeId, CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
+                        String FLComb = "FL-Comb";
+                        int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
+                        String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
+                        ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                    }
                 }
-
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
