@@ -79,8 +79,7 @@ namespace ChemSW.Nbt.Sched
                     if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                     {
                         // Get all nodes that need to be synced.
-                        CswNbtView MaterialsToBeSyncedView = getMaterialsToBeSynced( CswNbtResources );
-                        Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources, MaterialsToBeSyncedView );
+                        Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources );
 
                         // Check C3 Status
                         bool C3ServiceStatus = _checkC3ServiceReferenceStatus( CswNbtResources );
@@ -88,14 +87,24 @@ namespace ChemSW.Nbt.Sched
                         {
                             if( MaterialPks.Count > 0 )
                             {
-                                // Call sync method in materials oc
-                                CswNbtObjClassMaterial.syncExtChemData( CswNbtResources, MaterialPks );
+                                foreach( CswPrimaryKey MaterialPk in MaterialPks )
+                                {
+                                    CswNbtObjClassMaterial MaterialNode = CswNbtResources.Nodes.GetNode( MaterialPk );
+
+                                    // FireDb Sync Module
+                                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireDbSync ) )
+                                    {
+                                        MaterialNode.syncFireDbData( CswNbtResources );
+                                        MaterialNode.postChanges( false );
+                                    }
+
+                                    //Todo: Add subsequent sync modules here
+                                }
                             }
 
                             _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                             _LogicRunStatus = LogicRunStatus.Succeeded;
                         }
-
                     }
                 }
                 catch( Exception Exception )
@@ -113,11 +122,10 @@ namespace ChemSW.Nbt.Sched
         {
             bool Status = true;
 
-            ChemCatCentral.SearchClient C3ServiceTest = new SearchClient();
-            _setEndpointAddress( CswNbtResources, C3ServiceTest );
-
             try
             {
+                ChemCatCentral.SearchClient C3ServiceTest = new SearchClient();
+                _setEndpointAddress( CswNbtResources, C3ServiceTest );
                 C3ServiceTest.isAlive();
             }
             catch
@@ -145,8 +153,11 @@ namespace ChemSW.Nbt.Sched
 
         #region Schedule-Specific Logic
 
-        public CswNbtView getMaterialsToBeSynced( CswNbtResources CswNbtResources )
+        public Collection<CswPrimaryKey> getMaterialPks( CswNbtResources CswNbtResources )
         {
+            Collection<CswPrimaryKey> MaterialPks = new Collection<CswPrimaryKey>();
+
+            // Create the view
             CswNbtView MaterialsToBeSyncedView = new CswNbtView( CswNbtResources );
             CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             CswNbtViewRelationship ParentRelationship = MaterialsToBeSyncedView.AddViewRelationship( MaterialOC, true );
@@ -165,17 +176,18 @@ namespace ChemSW.Nbt.Sched
                 SubFieldName: CswNbtSubField.SubFieldName.Value,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
 
-            return MaterialsToBeSyncedView;
-        }
-
-        public Collection<CswPrimaryKey> getMaterialPks( CswNbtResources CswNbtResources, CswNbtView MaterialsToBeSyncedView )
-        {
-            Collection<CswPrimaryKey> MaterialPks = new Collection<CswPrimaryKey>();
-            Int32 MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
-
+            // Get and iterate the Tree
             ICswNbtTree MaterialPksTree = CswNbtResources.Trees.getTreeFromView( MaterialsToBeSyncedView, false, false, false );
-            if( MaterialPksTree.getChildNodeCount() > 0 )
+            Int32 MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+            Int32 MaterialsToSync = MaterialPksTree.getChildNodeCount();
+            if( MaterialsToSync > 0 )
             {
+                // In case we didn't actually retrieve the full "NodesProcessedPerCycle" amount
+                if( MaterialsProcessedPerIteration > MaterialsToSync )
+                {
+                    MaterialsProcessedPerIteration = MaterialsToSync;
+                }
+
                 for( int i = 0; i < MaterialsProcessedPerIteration; i++ )
                 {
                     MaterialPksTree.goToNthChild( i );
