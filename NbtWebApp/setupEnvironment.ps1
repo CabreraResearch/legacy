@@ -51,8 +51,8 @@ if (Install-NeededFor 'autosave' $false) {
 }
 
 if (Install-NeededFor 'Grunt' $false) {
-  cinstm  nodejs.install
-  cinstm  PhantomJS
+  cinstm nodejs.install
+  cinstm PhantomJS
   $nodePath = Join-Path $env:programfiles 'nodejs'
    $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
   if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
@@ -65,59 +65,59 @@ if (Install-NeededFor 'Grunt' $false) {
 
 Write-Host "Checking for/installing required frameworks"
 if (Install-NeededFor '.NET Runtimes up to 4.5' $false) {
-    cinstm  netframework2 -source webpi
-    cinstm  NETFramework35 -source webpi
-    cinstm  NETFramework4 -source webpi
-    cinstm  NETFramework4Update402 -source webpi
-    cinstm  NETFramework4Update402_KB2544514_Only -source webpi
-	cinstm  DotNet4.5
-    cinstm  WindowsInstaller31 -source webpi
-    cinstm WindowsInstaller45 -source webpi
+    cwebpi netframework2 
+    cwebpi NETFramework35
+    cwebpi NETFramework4 
+    cwebpi NETFramework4Update402
+    cwebpi NETFramework4Update402_KB2544514_Only
+	cinstm DotNet4.5
+    cwebpi WindowsInstaller31 
+    cwebpi WindowsInstaller45 
 }
 
 Write-Host "Checking for/installing required compilers"
 if (Install-NeededFor 'C++ Libraries' $false) {
-    cinstm  vcredist2005
-    cinstm  vcredist2008
-    cinstm  vcredist2010
+    cinstm vcredist2005
+    cinstm vcredist2008
+    cinstm vcredist2010
 }
 
 if (Install-NeededFor 'Tortoise' $false) {
-    cinstm  tortoisehg
-	cinstm  VisualHG
+    cinstm tortoisehg
+	cinstm VisualHG
 }
 
 Write-Host "Checking for/installing PowerShell"
 if (Install-NeededFor 'PowerShell 3.0' $false) {
-    cinstm  PowerShell
-    cinstm  PowerGUI
-	cinstm  pscx
+    cinstm PowerShell
+    cinstm PowerGUI
+	cinstm pscx
 }
 
 Write-Host "Checking for/installing Visual Studio Items..."
 if (Install-NeededFor 'VS2012 Premium' $false) {
- cinstm  VisualStudio2012Premium
- cinstm  resharper
- cinstm  aspnetmvc
- cinstm  MVCLoc -source webpi
+ cinstm VisualStudio2012Premium
+ cinstm resharper
+ cinstm aspnetmvc
+ cwebpi MVCLoc
 }
 
 if (Install-NeededFor 'VS2010 Full Edition SP1' $false) {
- cinstm  VS2010SP1Pack -source webpi
- cinstm  resharper
- cinstm  aspnetmvc
- cinstm  MVCLoc -source webpi
+ cwebpi VS2010SP1Pack
+ cinstm resharper
+ cinstm aspnetmvc
+ cwebpi MVCLoc
 }
 
 Write-Host "Finished checking for/installing Visual Studio Items."
 
 Write-Host "Checking for/installing Other language support"
 if (Install-NeededFor 'Perl' $false) {
- cinstm  ActivePerl
+ cinstm ActivePerl
 }
 if (Install-NeededFor 'Python' $false) {
- cinstm  python 
- cinstm  easy.install
+ cinstm python 
+ cinstm easy.install
 }
 if (Install-NeededFor 'Java' $false) {
  chocolatey uninstall javaruntime
@@ -127,24 +127,24 @@ Write-Host "Finished checking for/installing Other language support"
 
 Write-Host "Checking for/installing IIS Items..."
 if (Install-NeededFor 'IIS' $false) {
-  cinstm  ASPNET -source webpi
-  cinstm  ASPNET_REGIIS -source webpi
-  cinstm  DefaultDocument -source webpi
-  cinstm  DynamicContentCompression -source webpi
-  cinstm  HTTPRedirection -source webpi
-  cinstm  IIS7_ExtensionLessURLs -source webpi
-  cinstm  IISExpress -source webpi
-  cinstm  IISExpress_7_5 -source webpi
-  cinstm  IISManagementConsole -source webpi
-  cinstm  ISAPIExtensions -source webpi
-  cinstm  ISAPIFilters -source webpi
-  cinstm  NETExtensibility -source webpi
-  cinstm  RequestFiltering -source webpi
-  cinstm  StaticContent -source webpi
-  cinstm  StaticContentCompression -source webpi
-  cinstm  UrlRewrite2 -source webpi
-  cinstm  WindowsAuthentication -source webpi
-  cinstm  NodeJSExt -source webpi
+  cwebpi ASPNET 
+  cwebpi ASPNET_REGIIS 
+  cwebpi DefaultDocument 
+  cwebpi DynamicContentCompression 
+  cwebpi HTTPRedirection 
+  cwebpi IIS7_ExtensionLessURLs 
+  cwebpi IISExpress 
+  cwebpi IISExpress_7_5 
+  cwebpi IISManagementConsole 
+  cwebpi ISAPIExtensions 
+  cwebpi ISAPIFilters 
+  cwebpi NETExtensibility 
+  cwebpi RequestFiltering 
+  cwebpi StaticContent 
+  cwebpi StaticContentCompression 
+  cwebpi UrlRewrite2 
+  cwebpi WindowsAuthentication 
+  cwebpi NodeJSExt 
 }
 
 Write-Host "Checking for/installing Project NPM..."
@@ -200,7 +200,7 @@ if (Install-NeededFor 'Install SublimeText' $false) {
   cinstm sublimetext2
 }
   
-if (Install-NeededFor 'Install SublimeText' $false) {
+if (Install-NeededFor 'Install Emacs' $false) {
   cinstm Emacs
 }
   
