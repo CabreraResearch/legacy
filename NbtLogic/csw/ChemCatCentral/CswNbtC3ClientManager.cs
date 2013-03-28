@@ -54,6 +54,30 @@ namespace ChemSW.Nbt.ChemCatCentral
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
+        /// <returns></returns>
+        public bool checkC3ServiceReferenceStatus( CswNbtResources CswNbtResources )
+        {
+            bool Status = true;
+
+            _CswNbtResources = CswNbtResources;
+
+            try
+            {
+                ChemCatCentral.SearchClient C3ServiceTest = initializeC3Client();
+                C3ServiceTest.isAlive();
+            }
+            catch
+            {
+                Status = false;
+            }
+
+            return Status;
+        }
+
+        /// <summary>
         /// Set the c3 parameter object's CustomerLoginName, LoginPassword, and AccessId
         /// parameters using the values from the configuration_variables table in the db.
         /// </summary>
