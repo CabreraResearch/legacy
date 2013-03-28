@@ -76,7 +76,14 @@
                     doAttr($this, prop, name[prop]);
                 }
             } else {
-                ret = doAttr($this, name, value);
+                switch (arguments.length) {
+                    case 1:
+                        ret = doAttr($this, name);
+                        break;
+                    case 2:
+                        ret = doAttr($this, name, value);
+                        break;
+                }
             }
             // For proper chaining support
         } catch (e) {
