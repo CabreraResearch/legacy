@@ -20,7 +20,12 @@
                     doProp($Dom, prop, name[prop]);
                 }
             } else {
-                ret = doProp($Dom, name, value);
+                if (arguments.length === 1) {
+                    ret = doProp($Dom, name);
+                }
+                else {
+                    ret = doProp($Dom, name, value);
+                }
             }
         } catch (e) {
             //We're in IE hell. Do nothing.
