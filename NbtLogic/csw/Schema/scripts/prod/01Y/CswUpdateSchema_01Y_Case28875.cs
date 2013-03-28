@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Schema
 
             if( null != cispro_admin_role )
             {
-                _CswNbtSchemaModTrnsctn.Permit.set( Actions.CswNbtActionName.KioskMode, cispro_admin_role, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( Actions.CswNbtActionName.Kiosk_Mode, cispro_admin_role, true );
             }
 
             if( null != cispro_request_fulfiller_role )
