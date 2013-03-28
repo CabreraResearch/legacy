@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -617,77 +616,50 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public static void syncExtChemData( CswNbtResources NbtResources, Collection<CswPrimaryKey> MaterialPksToBeSynced )
+        public void syncFireDbData( CswNbtResources NbtResources )
         {
-            foreach( CswPrimaryKey MaterialPk in MaterialPksToBeSynced )
+            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+            _setConfigurationVariables( CswC3SearchParams, NbtResources );
+
+            //Instance a new C3 search and dynamically set the endpoint address
+            ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
+            _setEndpointAddress( NbtResources, C3SearchClient );
+
+            // Set FireDb specific properties
+            CswC3SearchParams.Purpose = "FireDb";
+            CswC3SearchParams.SyncType = "CasNo";
+            CswC3SearchParams.SyncKey = this.CasNo.Text;
+
+            CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+            if( SearchResults.ExtChemDataResults.Length > 0 )
             {
-                // FireDb Sync Module
-                if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireDbSync ) )
+                CswCommaDelimitedString CurrentHazardClasses = new CswCommaDelimitedString();
+                CurrentHazardClasses = this.HazardClasses.Value;
+
+                CswCommaDelimitedString UpdatedHazardClasses = new CswCommaDelimitedString();
+
+                ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
+                foreach( CswC3ExtChemData.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.UfcHazardClasses )
                 {
-                    _syncFireDbData( NbtResources, MaterialPk );
-                }
-            }
-        }
-
-        #region Private Helper Methods
-
-        private static void _syncFireDbData( CswNbtResources NbtResources, CswPrimaryKey MaterialPk )
-        {
-            CswNbtObjClassMaterial MaterialNode = NbtResources.Nodes.GetNode( MaterialPk );
-            if( null != MaterialNode )
-            {
-                CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-                _setConfigurationVariables( CswC3SearchParams, NbtResources );
-
-                //Instance a new C3 search and dynamically set the endpoint address
-                ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
-                _setEndpointAddress( NbtResources, C3SearchClient );
-
-                // Set FireDb specific properties
-                CswC3SearchParams.Purpose = "FireDb";
-                CswC3SearchParams.SyncType = "CasNo";
-                CswC3SearchParams.SyncKey = MaterialNode.NodeId.ToString();
-
-                CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
-                if( SearchResults.ExtChemDataResults.Length > 0 )
-                {
-                    CswCommaDelimitedString CurrentHazardClasses = new CswCommaDelimitedString();
-
-                    CswNbtMetaDataNodeType MaterialNodeNT = MaterialNode.Node.getNodeType();
-                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = null;
-                    if( null != MaterialNodeNT )
+                    if( false == CurrentHazardClasses.Contains( UfcHazardClass.HazardClass ) )
                     {
-                        HazardClassesNTP = MaterialNodeNT.getNodeTypeProp( "Hazard Classes" );
-                        if( null != HazardClassesNTP )
-                        {
-                            CurrentHazardClasses.FromString( MaterialNode.Node.Properties[HazardClassesNTP].ClobData );
-
-                            CswCommaDelimitedString UpdatedHazardClasses = new CswCommaDelimitedString();
-
-                            ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
-                            foreach( CswC3ExtChemData.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.UfcHazardClasses )
-                            {
-                                if( false == CurrentHazardClasses.Contains( UfcHazardClass.HazardClass ) )
-                                {
-                                    UpdatedHazardClasses.Add( UfcHazardClass.HazardClass );
-                                }
-                            }
-
-                            // Add the original hazard classes to the new list
-                            foreach( string HazardClass in CurrentHazardClasses )
-                            {
-                                UpdatedHazardClasses.Add( HazardClass );
-                            }
-
-                            // Set the value of the property to the new list
-                            MaterialNode.Node.Properties[HazardClassesNTP].SetPropRowValue( CswNbtSubField.PropColumn.ClobData, UpdatedHazardClasses.ToString() );
-                        }
+                        UpdatedHazardClasses.Add( UfcHazardClass.HazardClass );
                     }
                 }
 
-                // Set the C3SyncDate property
-                MaterialNode.C3SyncDate.DateTimeValue = DateTime.Now;
+                // Add the original hazard classes to the new list
+                foreach( string HazardClass in CurrentHazardClasses )
+                {
+                    UpdatedHazardClasses.Add( HazardClass );
+                }
+
+                // Set the value of the property to the new list
+                this.HazardClasses.Value = UpdatedHazardClasses;
+                this.HazardClasses.SyncGestalt();
             }
+
+            // Set the C3SyncDate property
+            this.C3SyncDate.DateTimeValue = DateTime.Now;
         }
 
         /// <summary>
@@ -717,8 +689,6 @@ namespace ChemSW.Nbt.ObjClasses
                 C3SearchClient.Endpoint.Address = URI;
             }
         }
-
-        #endregion Private Helper Methods
 
         #endregion Custom Logic
 
