@@ -1,6 +1,7 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -86,7 +87,15 @@ namespace ChemSW.Nbt.ObjClasses
                 if( PropertyName.AssignLocation == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     ButtonData.Action = NbtButtonAction.assignivglocation;
-                    //ButtonData.Data["viewid"] = containerFamilyView.SessionViewId.ToString();
+
+
+                    JObject Ret = new JObject();
+
+                    JObject ActionOptioinsJObj = new JObject();
+                    ActionOptioinsJObj["ivgnodeid"] = NodeId.ToString();
+
+                    ButtonData.Data["ActionOptions"] = ActionOptioinsJObj;
+                    //ButtonData.Data["ivgnodeid"] = NodeId.ToString();
                     //ButtonData.Data["viewmode"] = containerFamilyView.ViewMode.ToString();
                     //ButtonData.Data["type"] = "view";
 

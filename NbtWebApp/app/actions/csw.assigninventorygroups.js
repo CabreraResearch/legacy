@@ -9,6 +9,7 @@
             var o = {
                 saveUrlMethod: 'saveassigninventorygroups',
                 name: 'action_assigninventorygroups',
+                actionjson: null,
                 onQuotaChange: null // function () { }
             };
 
@@ -17,7 +18,7 @@
             }
 
             o.action = Csw.layouts.action( cswParent, {
-                title: 'Assign Inventory Group To Locatioins',
+                title: 'Assign Inventory Group To Locations',
                 useFinish: false,
                 useCancel: false
                 } );
@@ -97,9 +98,16 @@
 
             function initSelectBox() {
 
+                    var selected_node_id = null;
+                    if( ( null !== o.actionjson ) && ( null !== o.actionjson.ivgnodeid ) ) 
+                    {
+                        selected_node_id = o.actionjson.ivgnodeid;
+                    }
+
                     inventoryGroupSelect = select_inventory_group_cell.span().nodeSelect({
                     name: 'intentory_group_select',
                     objectClassName: 'InventoryGroupClass',
+                    selectedNodeId: selected_node_id,
                     allowAdd: true,
                     isRequired: true,
                     showSelectOnLoad: true,
