@@ -51,7 +51,7 @@
 
             var check_children_of_current_check_box = null;
 
-
+            var this_tree_was_expanded = false;
 
 
             function initTree() {
@@ -60,12 +60,20 @@
                     urlMethod: "Trees/locations",
                     success: function (data) {
                         tree_cell.empty();
+                        this_tree_was_expanded = false;
                         mainTree = Csw.nbt.nodeTreeExt(tree_cell, {
                             width: '500px',
                             overrideBeforeSelect: true,
                             forSearch: false,
                             onBeforeSelectNode: function ( node ) 
                             { 
+
+                                if( false == this_tree_was_expanded ) 
+                                {
+                                    //mainTree.nodeTree.expandAll();  //<== causes a BIG ERROR :-(
+                                    this_tree_was_expanded = true;
+                                }
+
                                 if( null != check_children_of_current_check_box && true == check_children_of_current_check_box.checked() ) 
                                 {
                                     if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
@@ -81,8 +89,11 @@
 
                                 return (false);  //allow selection of multiple node types
                             }, 
-                            onSelectNode: function (optSelect) {           
-                            },
+//                            onAfterLayout: function() { 
+//                                mainTree.nodeTree.expandAll(); 
+//                            },
+//                            onSelectNode: function (optSelect) {                 
+//                            },
                             isMulti: true, //checkboxes
                             state: {
                                 viewId: data.NewViewId,
@@ -90,10 +101,12 @@
                                 includeInQuickLaunch: false
                             }
                         });
+                        
 
                     } //success
                 }); //ajaxget
 
+                
             } //initTree()
 
             function initSelectBox() {

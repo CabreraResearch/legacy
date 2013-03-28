@@ -11,6 +11,8 @@
                 forSearch: false, // if true, used to override default behavior of list views
                 onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
                 onBeforeSelectNode: function () { return true; }, //false prevents selection
+                onAfterViewReady: function () { },
+                onAfterLayout: function () { },
                 isMulti: false,
                 validateCheckboxes: true,
                 overrideBeforeSelect: false,
@@ -21,8 +23,9 @@
                 height: '',
                 width: '',
 
+
                 //State
-                state: { 
+                state: {
                     viewId: '',
                     viewMode: '',
                     nodeId: '',
@@ -73,7 +76,10 @@
                     useToggles: cswPrivate.showToggleLink,
                     useCheckboxes: cswPrivate.isMulti,
                     useScrollbars: cswPrivate.useScrollbars,
-                    rootVisible: cswPrivate.rootVisible
+                    rootVisible: cswPrivate.rootVisible,
+                    onSuccess: cswPrivate.onSuccess,
+                    onAfterViewReady: cswPrivate.onAfterViewReady,
+                    onAfterLayout: cswPrivate.onAfterLayout
                 };
                 if (cswPrivate.useHover) {
                     treeOpts.onMouseEnter = hoverNode;
@@ -92,10 +98,10 @@
                             nodekey: treeNode.raw.id,
                             nodename: treeNode.raw.text,
                             parentDiv: div,
-                            buttonHoverIn: function() {
+                            buttonHoverIn: function () {
                                 cswPublic.nodeTree.preventSelect();
                             },
-                            buttonHoverOut: function() {
+                            buttonHoverOut: function () {
                                 cswPublic.nodeTree.allowSelect();
                             }
                         });
@@ -144,15 +150,16 @@
                 var ret = [];
                 if (checked && checked.length > 0) {
                     checked.forEach(function (treeNode) {
-                        ret.push({ 
-                            nodeid: treeNode.raw.nodeid, 
+                        ret.push({
+                            nodeid: treeNode.raw.nodeid,
                             nodekey: treeNode.raw.id,
-                            nodename: treeNode.raw.text 
+                            nodename: treeNode.raw.text
                         });
                     });
                 }
                 return ret;
             };
+
 
             cswPrivate.runTree = function () {
                 Csw.ajaxWcf.post({
