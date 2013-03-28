@@ -92,6 +92,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActAssignInventoryGroups.cs" />
     <Compile Include="csw\Actions\CswNbtActLoginData.cs" />
     <Compile Include="csw\Actions\CswNbtActTierIIReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActUploadLegacyMobileData.cs" />
@@ -176,6 +177,8 @@
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29089.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28890.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29147.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29243A.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29243B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28950.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case28958.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108B.cs" />
@@ -208,6 +211,7 @@
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case27906.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28907.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28355.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28927_01.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_CaseXXXXX.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>

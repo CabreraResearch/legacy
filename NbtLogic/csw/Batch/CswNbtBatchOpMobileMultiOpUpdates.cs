@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Batch
 {
-    public class CswNbtBatchOpMobileMultiOpUpdates : ICswNbtBatchOp
+    public class CswNbtBatchOpMobileMultiOpUpdates: ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
         private NbtBatchOpName _BatchOpName = NbtBatchOpName.MobileMultiOpUpdates;
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Batch
                             operation = BatchData.Operations[0]["op"].ToString();
                             //Fix issue of operation case variations
                             operation = operation.ToLower();
-                            operation = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(operation);
+                            operation = CultureInfo.CurrentCulture.TextInfo.ToTitleCase( operation );
 
                             //Get parameters from record
                             JObject update = (JObject) BatchData.Operations[0]["update"];
@@ -229,9 +229,9 @@ namespace ChemSW.Nbt.Batch
 
             CswNbtViewRelationship parent = objClassView.AddViewRelationship( objClass, true );
             objClassView.AddViewPropertyAndFilter( parent,
-                                                    MetaDataProp: barcodeOCP,
-                                                    Value: barcode,
-                                                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                    MetaDataProp : barcodeOCP,
+                                                    Value : barcode,
+                                                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( objClassView, false, true, true );
             Tree.goToRoot();
@@ -334,39 +334,26 @@ namespace ChemSW.Nbt.Batch
             string errorString = null;
 
             string newOwnerBarcode = update["user"].ToString();
-            string newLocationBarcode = update["location"].ToString();
-
-            CswNbtNode newLocationNode = _getNodeFromBarcode( newLocationBarcode, NbtObjectClass.LocationClass, CswNbtObjClassLocation.PropertyName.Barcode );
-            if( null != newLocationNode )
+            CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass, CswNbtObjClassUser.PropertyName.Barcode );
+            if( null != newOwnerNode )
             {
-                CswPrimaryKey newLocationNodeId = newLocationNode.NodeId;
+                CswPrimaryKey newOwnerNodeId = newOwnerNode.NodeId;
 
-                CswNbtNode newOwnerNode = _getNodeFromBarcode( newOwnerBarcode, NbtObjectClass.UserClass, CswNbtObjClassUser.PropertyName.Barcode );
-                if( null != newOwnerNode )
+                CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
+                if( null != containerNode )
                 {
-                    CswPrimaryKey newOwnerNodeId = newOwnerNode.NodeId;
-
-                    CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, NbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
-                    if( null != containerNode )
-                    {
-                        containerNode.TransferContainer( newLocationNodeId, newOwnerNodeId );
-                        containerNode.postChanges( false );
-                    }
-                    else
-                    {
-                        errorString = "A container with barcode " + barcode + " does not exist.";
-                    }
+                    containerNode.TransferContainer( newOwnerNodeId );
+                    containerNode.postChanges( false );
                 }
                 else
                 {
-                    errorString = "The User barcode, " + newOwnerBarcode + ", does not exist";
+                    errorString = "A container with barcode " + barcode + " does not exist.";
                 }
             }
             else
             {
-                errorString = "The Location barcode, " + newLocationBarcode + ", does not exist";
+                errorString = "The User barcode, " + newOwnerBarcode + ", does not exist";
             }
-
             return errorString;
         }
 

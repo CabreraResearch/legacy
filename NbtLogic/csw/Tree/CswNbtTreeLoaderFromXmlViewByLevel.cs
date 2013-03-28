@@ -443,8 +443,12 @@ namespace ChemSW.Nbt
             OrderByProps.Add( "lower(n.nodename)" );
             
             OrderBy = " order by " + OrderByProps.ToString() + " ";
-            OrderBy += ",n.nodeid "; // for property multiplexing
-
+            // for property multiplexing
+            OrderBy += ",n.nodeid"; 
+            if( Relationship.PropId != Int32.MinValue && null != ParentNodeIds )
+            {
+                OrderBy += ",parent.parentnodeid ";
+            }
 
             // Properties for Select
             if( Relationship.Properties.Count > 0 )

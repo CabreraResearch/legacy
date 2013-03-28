@@ -986,7 +986,7 @@
 
                         var cell4_hidden = 'hidden';
                         var producturl = data.ProductDetails.ProductUrl;
-                        if (null != producturl) {
+                        if (false === Csw.isNullOrEmpty(producturl)) {
                             cell4_hidden = 'visible';
                         }
                         table1.cell(4, 1).div({
@@ -996,7 +996,7 @@
 
                         var cell5_hidden = 'hidden';
                         var msdsurl = data.ProductDetails.MsdsUrl;
-                        if (null != msdsurl) {
+                        if (false === Csw.isNullOrEmpty(msdsurl)) {
                             cell5_hidden = 'visible';
                         }
                         table1.cell(5, 1).div({
