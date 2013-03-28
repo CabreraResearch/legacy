@@ -1,6 +1,4 @@
 using System;
-using System.ServiceModel;
-using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -620,11 +618,8 @@ namespace ChemSW.Nbt.ObjClasses
         public void syncFireDbData( CswNbtResources NbtResources )
         {
             CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-            _setConfigurationVariables( CswC3SearchParams, NbtResources );
-
-            //Instance a new C3 search and dynamically set the endpoint address
-            ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
-            _setEndpointAddress( NbtResources, C3SearchClient );
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( NbtResources, CswC3SearchParams );
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
             // Set FireDb specific properties
             CswC3SearchParams.Purpose = "FireDb";
@@ -661,34 +656,6 @@ namespace ChemSW.Nbt.ObjClasses
 
             // Set the C3SyncDate property
             this.C3SyncDate.DateTimeValue = DateTime.Now;
-        }
-
-        /// <summary>
-        /// Set the c3 search parameter object's CustomerLoginName, LoginPassword, and AccessId
-        /// parameters using the values from the configuration_variables table in the db.
-        /// </summary>
-        /// <param name="CswC3SearchParams"></param>
-        private static void _setConfigurationVariables( CswC3SearchParams CswC3SearchParams, CswNbtResources _CswNbtResources )
-        {
-            CswC3SearchParams.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Username );
-            CswC3SearchParams.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_Password );
-            CswC3SearchParams.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.C3_AccessId );
-            CswC3SearchParams.MaxRows = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" ) );
-        }
-
-        /// <summary>
-        /// Dynamically set the endpoint address for a ChemCatCentral SearchClient.
-        /// </summary>
-        /// <param name="CswNbtResources"></param>
-        /// <param name="C3SearchClient"></param>
-        private static void _setEndpointAddress( CswNbtResources CswNbtResources, ChemCatCentral.SearchClient C3SearchClient )
-        {
-            if( null != C3SearchClient )
-            {
-                string C3_UrlStem = CswNbtResources.SetupVbls[CswSetupVariableNames.C3UrlStem];
-                EndpointAddress URI = new EndpointAddress( C3_UrlStem );
-                C3SearchClient.Endpoint.Address = URI;
-            }
         }
 
         #endregion Custom Logic

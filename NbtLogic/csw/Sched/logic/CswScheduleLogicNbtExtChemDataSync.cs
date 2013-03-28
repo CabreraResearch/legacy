@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.ServiceModel;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -118,14 +117,16 @@ namespace ChemSW.Nbt.Sched
 
         #endregion Scheduler Methods
 
+        #region Private Helper Methods
+
         private bool _checkC3ServiceReferenceStatus( CswNbtResources CswNbtResources )
         {
             bool Status = true;
 
             try
             {
-                ChemCatCentral.SearchClient C3ServiceTest = new SearchClient();
-                _setEndpointAddress( CswNbtResources, C3ServiceTest );
+                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources );
+                ChemCatCentral.SearchClient C3ServiceTest = CswNbtC3ClientManager.initializeC3Client();
                 C3ServiceTest.isAlive();
             }
             catch
@@ -136,20 +137,8 @@ namespace ChemSW.Nbt.Sched
             return Status;
         }
 
-        /// <summary>
-        /// Dynamically set the endpoint address for a ChemCatCentral SearchClient.
-        /// </summary>
-        /// <param name="CswNbtResources"></param>
-        /// <param name="C3SearchClient"></param>
-        private static void _setEndpointAddress( CswNbtResources CswNbtResources, ChemCatCentral.SearchClient C3SearchClient )
-        {
-            if( null != C3SearchClient )
-            {
-                string C3_UrlStem = CswNbtResources.SetupVbls[CswSetupVariableNames.C3UrlStem];
-                EndpointAddress URI = new EndpointAddress( C3_UrlStem );
-                C3SearchClient.Endpoint.Address = URI;
-            }
-        }
+        #endregion Private Helper Methods
+
 
         #region Schedule-Specific Logic
 
