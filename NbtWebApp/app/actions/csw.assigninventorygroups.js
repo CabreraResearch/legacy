@@ -51,28 +51,19 @@
 
             var check_children_of_current_check_box = null;
 
-            var this_tree_was_expanded = false;
-
-
             function initTree() {
 
                 Csw.ajaxWcf.get({
                     urlMethod: "Trees/locations",
                     success: function (data) {
                         tree_cell.empty();
-                        this_tree_was_expanded = false;
                         mainTree = Csw.nbt.nodeTreeExt(tree_cell, {
                             width: '500px',
                             overrideBeforeSelect: true,
+                            ExpandAll: true,
                             forSearch: false,
-                            onBeforeSelectNode: function ( node ) 
+                            onBeforeSelectNode: function ( node , tree ) 
                             { 
-
-                                if( false == this_tree_was_expanded ) 
-                                {
-                                    //mainTree.nodeTree.expandAll();  //<== causes a BIG ERROR :-(
-                                    this_tree_was_expanded = true;
-                                }
 
                                 if( null != check_children_of_current_check_box && true == check_children_of_current_check_box.checked() ) 
                                 {
@@ -89,11 +80,6 @@
 
                                 return (false);  //allow selection of multiple node types
                             }, 
-//                            onAfterLayout: function() { 
-//                                mainTree.nodeTree.expandAll(); 
-//                            },
-//                            onSelectNode: function (optSelect) {                 
-//                            },
                             isMulti: true, //checkboxes
                             state: {
                                 viewId: data.NewViewId,

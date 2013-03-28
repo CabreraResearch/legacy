@@ -166,7 +166,7 @@
                             //cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
 
-                        cswPrivate.onAfterViewReady();
+                        cswPrivate.onAfterViewReady( cswPublic.tree );
                     },
                     afteritemcollapse: function () {
                         //cswPublic.toggleCheckboxes();
@@ -179,10 +179,10 @@
                         if (false === cswPrivate.overrideBeforeSelect) {
                             ret = (false === cswPrivate.preventSelect && (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1));
                             if (false !== ret && cswPrivate.useCheckboxes !== true) {
-                                ret = Csw.tryExec(cswPrivate.beforeSelect, record);
+                                ret = Csw.tryExec(cswPrivate.beforeSelect, record, cswPublic.tree);
                             }
                         } else {
-                            Csw.tryExec(cswPrivate.beforeSelect, record);
+                            Csw.tryExec(cswPrivate.beforeSelect, record, cswPublic.tree);
                         }
 
                         return ret;
@@ -198,7 +198,7 @@
                             if (cswPublic.selectedTreeNode.raw) {
                                 Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, cswPublic.selectedTreeNode.raw.path);
                             }
-                            Csw.tryExec(cswPrivate.onSelect, record.raw);
+                            Csw.tryExec(cswPrivate.onSelect, record.raw, cswPublic.tree );
 
                             if (cswPrivate.useCheckboxes) {
                                 // also check this node

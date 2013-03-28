@@ -14,6 +14,7 @@
                 onAfterViewReady: function () { },
                 onAfterLayout: function () { },
                 isMulti: false,
+                ExpandAll: false,
                 validateCheckboxes: true,
                 overrideBeforeSelect: false,
                 showToggleLink: true,
@@ -166,13 +167,14 @@
                     urlMethod: 'Trees/run',
                     data: {
                         AccessedByObjClassId: '',
-                        DefaultSelect: cswPrivate.state.defaultSelect,
+                        DefaultSelect: cswPrivate.state.defaultSelect || Csw.enums.nodeTree_DefaultSelect.firstchild.name, //why do we have any _other_ state than first child? 
                         IncludeInQuickLaunch: cswPrivate.state.includeInQuickLaunch,
                         IncludeNodeRequired: cswPrivate.state.includeNodeRequired,
                         NbtViewId: cswPrivate.state.viewId,
                         NodeId: cswPrivate.state.nodeId,
                         NodeKey: cswPrivate.state.nodeKey,
-                        UseCheckboxes: cswPrivate.isMulti
+                        UseCheckboxes: cswPrivate.isMulti, 
+                        ExpandAll: cswPrivate.ExpandAll
                     },
                     success: function (data) {
 
