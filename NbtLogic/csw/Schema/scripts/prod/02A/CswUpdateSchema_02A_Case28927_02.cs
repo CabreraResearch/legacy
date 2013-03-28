@@ -45,24 +45,38 @@ namespace ChemSW.Nbt.Schema
                 }//if we have the locations nt
 
                 CswNbtMetaDataNodeTypeProp AssignLocationsNTP = InventoryGroupNT.getNodeTypeProp( CswNbtObjClassInventoryGroup.PropertyName.AssignLocation );
-                if( null != AssignLocationsNTP )
+                CswNbtMetaDataNodeTypeProp LocationsGridNTP = InventoryGroupNT.getNodeTypeProp( "Locations" );
+                if( ( null != AssignLocationsNTP ) && ( null != LocationsGridNTP )  )
                 {
                     CswNbtMetaDataNodeTypeTab LocationsTab = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeTab( InventoryGroupNT.NodeTypeId, "Locations" );
                     if( null != LocationsTab )
                     {
+                        
+                        //AssignLocationsNTP
+                        //_CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.
                         _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
                             CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
                             InventoryGroupNT.NodeTypeId,
                             AssignLocationsNTP,
                             true,
-                            LocationsTab.TabId
+                            LocationsTab.TabId,
+                            1
                             );
+
+                        _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
+                            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                            InventoryGroupNT.NodeTypeId,
+                            LocationsGridNTP,
+                            true,
+                            LocationsTab.TabId,
+                            2
+                            );
+                        //AssignLocationsNTP.
                     }//if we have a locatioins tab
 
                 }//if we have an assign locations button. 
 
             }//if we have the inventory group nt
-
             
         } // update()
 
