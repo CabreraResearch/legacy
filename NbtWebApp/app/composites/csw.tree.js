@@ -49,7 +49,8 @@
                 cswPrivate.useCheckboxes = cswPrivate.useCheckboxes;
                 cswPrivate.useScrollbars = cswPrivate.useScrollbars;
                 cswPrivate.rootVisible = cswPrivate.rootVisible;
-                
+                cswPrivate.overrideBeforeSelect = cswPrivate.overrideBeforeSelect;
+
                 //Events
                 cswPrivate.onClick = cswPrivate.onClick || function () { };
                 cswPrivate.onMouseEnter = cswPrivate.onMouseEnter || function () { };
@@ -168,10 +169,16 @@
                         return (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1);
                     },
                     beforeselect: function (rowModel, record, index, eOpts) {
-                        var ret = (false === cswPrivate.preventSelect && (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1));
-                        if (false !== ret && cswPrivate.useCheckboxes !== true) {
-                            ret = Csw.tryExec(cswPrivate.beforeSelect);
+                        var ret = false;
+                        if ( false === cswPrivate.overrideBeforeSelect ) {
+                            ret = (false === cswPrivate.preventSelect && (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1));
+                            if (false !== ret && cswPrivate.useCheckboxes !== true) {
+                                ret = Csw.tryExec(cswPrivate.beforeSelect, record);
+                            }
+                        } else {
+                            Csw.tryExec(cswPrivate.beforeSelect, record);
                         }
+
                         return ret;
                     },
                     select: function (rowModel, record, index, eOpts) {
@@ -266,6 +273,8 @@
                 return cswPublic.tree;
             };
 
+
+
             //#region Tree Mutators
 
             cswPublic.collapseAll = function (button, toolbar) {
@@ -353,6 +362,16 @@
                 }
                 return cswPublic;
             };
+
+            cswPublic.checkChildrenOfNode = function (node, checked) {
+
+                cswPrivate.eachNodeRecursive(node,
+                                                  function (node) {
+                                                      cswPrivate.check(node, checked);
+                                                      return (true);
+                                                  }
+                                              );
+            }; //checkChildrenOfCurrent()
 
             //#endregion Tree Mutators
 

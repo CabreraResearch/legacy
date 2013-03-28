@@ -1402,6 +1402,15 @@ window.initMain = window.initMain || function (undefined) {
                         });
 
                         break;
+                    case 'assign inventory groups':
+                        Csw.actions.assigninventorygroups(Csw.main.centerTopDiv, {
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            }
+                        });
+                        break;
                     case 'modules':
                         Csw.actions.modules(Csw.main.centerTopDiv, {
                             onModuleChange: function() {

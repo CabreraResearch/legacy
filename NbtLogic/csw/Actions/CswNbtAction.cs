@@ -29,7 +29,8 @@ namespace ChemSW.Nbt.Actions
         KioskMode,
         Tier_II_Reporting,
         Material_Approval,
-        Login_Data
+        Login_Data,
+        Assign_Inventory_Groups
     }
 
     public class CswNbtAction

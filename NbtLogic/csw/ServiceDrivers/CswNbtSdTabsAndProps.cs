@@ -518,6 +518,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     // case 29095
                     PropObj["canoverride"] = ( false == Prop.ServerManaged &&
                             FieldType != CswNbtMetaDataFieldType.NbtFieldType.PropertyReference &&
+                            FieldType != CswNbtMetaDataFieldType.NbtFieldType.Static &&
                             _CswNbtResources.CurrentNbtUser.IsAdministrator() );   
                 }
 
