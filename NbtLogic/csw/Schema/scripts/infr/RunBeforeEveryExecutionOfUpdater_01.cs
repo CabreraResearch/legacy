@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.Schema
 
             _createNodeCountColumns( CswDeveloper.MB, 28355 );
             _createLoginDataTable( CswDeveloper.BV, 27906 );
+            _addViewIsSystemColumn( CswDeveloper.BV, 28890 );
 
             #endregion ASPEN
 
@@ -168,6 +169,24 @@ namespace ChemSW.Nbt.Schema
                 {
                     _CswNbtSchemaModTrnsctn.addLongColumn( LoginDataTableName, "failedlogincount", "Number of times user login has failed this session", false, false );
                 }
+            }
+
+            _resetBlame();
+        }
+
+        private void _addViewIsSystemColumn( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            string IsSystemColumnName = "issystem";
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "node_views", IsSystemColumnName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "node_views", IsSystemColumnName, "When set to true, only ChemSWAdmin can edit this view", false, false );
+            }
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "node_views_audit", IsSystemColumnName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "node_views_audit", IsSystemColumnName, "When set to true, only ChemSWAdmin can edit this view", false, false );
             }
 
             _resetBlame();

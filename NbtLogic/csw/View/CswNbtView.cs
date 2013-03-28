@@ -77,6 +77,16 @@ namespace ChemSW.Nbt
             set { Root.IsDemo = value; }
         }
 
+        /// <summary>
+        /// Is System View
+        /// </summary>
+        [DataMember]
+        public bool IsSystem
+        {
+            get { return Root.IsSystem; }
+            set { Root.IsSystem = value; }
+        }
+
         [DataMember( Name = "ViewMode" )]
         public string NbtViewMode
         {
@@ -728,6 +738,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
             ViewTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( IsDemo );
+            ViewTable.Rows[0]["issystem"] = CswConvert.ToDbVal( IsSystem );
             if( Visibility == NbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
             else
