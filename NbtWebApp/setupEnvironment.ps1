@@ -16,7 +16,7 @@ param(
   
   $answer = $msgBoxTimeout
   try {
-    $timeout = 10
+    $timeout = 30
     $question = "Do you need to install $($packageName)? Defaults to `'$defaultAnswerDisplay`' after $timeout seconds"
     $msgBox = New-Object -ComObject WScript.Shell
     $answer = $msgBox.Popup($question, $timeout, "Install $packageName", $buttonType)
@@ -34,37 +34,12 @@ param(
 }
 
 #install chocolatey
-if (Install-NeededFor 'chocolatey [Required for the rest of this script to work]') {
+if (Install-NeededFor 'Chocolatey: apt-get for Windows [Required for the rest of this script to work]') {
   iex ((new-object net.webclient).DownloadString("http://chocolatey.org/install.ps1")) 
 }
 
-if (Install-NeededFor 'autosave' $false) {
-  cinstm nodejs.install
-  $nodePath = Join-Path $env:programfiles 'nodejs'
-   $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
-  if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
-  $env:Path = "$($env:Path);$nodePath"
-  npm install -g autosave
-  
-  Write-Host 'You still need to enable experimental packages in Chrome and install the Chrome Extension'
-  Write-Host 'Details at https://github.com/NV/chrome-devtools-autosave#readme'
-}
-
-if (Install-NeededFor 'Grunt' $false) {
-  cinstm nodejs.install
-  cinstm PhantomJS
-  $nodePath = Join-Path $env:programfiles 'nodejs'
-   $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
-  if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
-  $env:Path = "$($env:Path);$nodePath"
-  npm uninstall -g grunt
-  npm install -g grunt-cli
-  
-  Write-Host 'Details at http://gruntjs.com/getting-started'
-}
-
-Write-Host "Checking for/installing required frameworks"
-if (Install-NeededFor '.NET Runtimes up to 4.5' $false) {
+Write-Host "Start: Checking for/installing required frameworks"
+if (Install-NeededFor '.NET Runtimes from 2.0 to 4.5 (These are required under the hood for any NPM packages dependent on .NET, such as Phantom)' $false) {
     cwebpi netframework2 
     cwebpi NETFramework35
     cwebpi NETFramework4 
@@ -75,58 +50,101 @@ if (Install-NeededFor '.NET Runtimes up to 4.5' $false) {
     cwebpi WindowsInstaller45 
 }
 
-Write-Host "Checking for/installing required compilers"
-if (Install-NeededFor 'C++ Libraries' $false) {
+if (Install-NeededFor 'C++ Libraries (2005 - 2010) also required for some Node packages' $false) {
     cinstm vcredist2005
     cinstm vcredist2008
     cinstm vcredist2010
 }
 
-if (Install-NeededFor 'Tortoise' $false) {
+if (Install-NeededFor 'NodeJS and PhantomJS (Required for compiling the Project' $true) {
+  cinstm nodejs.install
+  cinstm PhantomJS
+}
+
+Write-Host "End: Checking for/installing required frameworks"
+Write-Host "-----------"
+Write-Host "Start: Checking for/installing NPM packages"
+
+if (Install-NeededFor 'Grunt: Installs the CLI and AutoSave globally' $true) {
+  $nodePath = Join-Path $env:programfiles 'nodejs'
+   $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
+  if ($is64bit) {$nodePath = Join-Path ${env:ProgramFiles(x86)} 'nodejs'}
+  $env:Path = "$($env:Path);$nodePath"
+  npm uninstall -g grunt
+  npm install -g grunt-cli
+  
+  Write-Host 'Details at http://gruntjs.com/getting-started'
+  
+  npm install -g autosave
+  
+  Write-Host 'You still need to enable experimental packages in Chrome and install the Chrome Extension'
+  Write-Host 'Details at https://github.com/NV/chrome-devtools-autosave#readme'
+}
+
+Write-Host "End: Checking for/installing NPM packages"
+Write-Host "-----------"
+Write-Host "Start: Checking for/installing Core developer tools..."
+
+if (Install-NeededFor 'TortoiseHg: Installs latest Tortoise and VisualHg' $false) {
     cinstm tortoisehg
 	cinstm VisualHG
 }
 
-Write-Host "Checking for/installing PowerShell"
-if (Install-NeededFor 'PowerShell 3.0' $false) {
+if (Install-NeededFor 'PowerShell 3.0 (the thing running this script, plus an IDE and common extensions' $false) {
     cinstm PowerShell
     cinstm PowerGUI
 	cinstm pscx
 }
 
-Write-Host "Checking for/installing Visual Studio Items..."
-if (Install-NeededFor 'VS2012 Premium' $false) {
+if (Install-NeededFor 'Visual Studio 2012 (Premium)' $false) {
  cinstm VisualStudio2012Premium
- cinstm resharper
- cinstm aspnetmvc
- cwebpi MVCLoc
 }
 
-if (Install-NeededFor 'VS2010 Full Edition SP1' $false) {
+if (Install-NeededFor 'Visual Studio 2010 (Full Edition) SP1' $false) {
  cwebpi VS2010SP1Pack
- cinstm resharper
- cinstm aspnetmvc
- cwebpi MVCLoc
 }
 
-Write-Host "Finished checking for/installing Visual Studio Items."
+if (Install-NeededFor 'ReSharper (for 2010 and 2012)' $false) {
+ cinstm resharper
+}
 
-Write-Host "Checking for/installing Other language support"
-if (Install-NeededFor 'Perl' $false) {
+if (Install-NeededFor 'Visual Studio MVC (2010 and 2012)' $false) {
+ cinstm aspnetmvc
+ cwebpi MVCLoc
+ cwebpi MVC4Vs2010_Loc
+}
+
+if (Install-NeededFor 'Google Chrome Canary (Best browser for development)' $false) {
+ cinst GoogleChrome.Canary
+}
+
+if (Install-NeededFor 'Supported Browsers: Chrome, FF, Safari, IE9' $false) {
+ cinst GoogleChrome
+ cinst Firefox
+ cinst safari
+ cinst ie9
+}
+
+Write-Host "End: Checking for/installing Core developer tools..."
+Write-Host "-----------"
+Write-Host "Start: Checking for/installing Other language support"
+
+if (Install-NeededFor 'Perl (ActivePerl)' $false) {
  cinstm ActivePerl
 }
-if (Install-NeededFor 'Python' $false) {
+if (Install-NeededFor 'Python and Easy' $false) {
  cinstm python 
  cinstm easy.install
 }
-if (Install-NeededFor 'Java' $false) {
- chocolatey uninstall javaruntime
+if (Install-NeededFor 'Java Runtime' $false) {
  cinst javaruntime
 }
-Write-Host "Finished checking for/installing Other language support"
 
-Write-Host "Checking for/installing IIS Items..."
-if (Install-NeededFor 'IIS' $false) {
+Write-Host "End: checking for/installing Other language support"
+Write-Host "-----------"
+Write-Host "Start: Checking for/installing IIS Items..."
+
+if (Install-NeededFor 'IIS: Includes ASP.NET and IIS Modules' $false) {
   cwebpi ASPNET 
   cwebpi ASPNET_REGIIS 
   cwebpi DefaultDocument 
@@ -144,10 +162,12 @@ if (Install-NeededFor 'IIS' $false) {
   cwebpi StaticContentCompression 
   cwebpi UrlRewrite2 
   cwebpi WindowsAuthentication 
-  cwebpi NodeJSExt 
 }
 
-Write-Host "Checking for/installing Project NPM..."
+Write-Host "End: Checking for/installing IIS Items..."
+Write-Host "-----------"
+Write-Host "Start: Checking for/installing Project NPM..."
+
 if (Install-NeededFor 'This Web App Project NPM package' $false) {
 	$nodePath = Join-Path $env:programfiles 'nodejs'
    $is64bit = (Get-WmiObject Win32_Processor).AddressWidth -eq 64
@@ -159,9 +179,13 @@ if (Install-NeededFor 'This Web App Project NPM package' $false) {
   Write-Host 'You still need to open the project folder in a command prompt and execute `grunt.cmd build:{mode}` to build the project.'
 }
 
-$projectName = 'Nbt'
-$srcDir = Join-Path $scriptDir "$($projectName)"
+Write-Host "End: Checking for/installing Project NPM..."
+Write-Host "-----------"
+Write-Host "Start: Attempting IIS Auto-Configure"
+
 if (Install-NeededFor 'Auto-Configure IIS App and AppPool for Nbt' $false) {
+	$projectName = 'Nbt'
+	$srcDir = Join-Path $scriptDir "$($projectName)"
   $networkSvc = 'NT AUTHORITY\NETWORK SERVICE'
   Write-Host "Setting folder permissions on `'$srcDir`' to 'Read' for user $networkSvc"
   $acl = Get-Acl $srcDir
@@ -191,36 +215,49 @@ if (Install-NeededFor 'Auto-Configure IIS App and AppPool for Nbt' $false) {
   Write-Host 'You still need to open Visual Studio and build the application one time prior to going to the site in a browser.'
 }
 
-Write-Host "Tools"
-if (Install-NeededFor 'Install NotePad++' $false) {
+Write-Host "End: Attempting IIS Auto-Configure"
+Write-Host "-----------"
+Write-Host "Start: Purely optional developer tools"
+
+if (Install-NeededFor 'Install NotePad++ (The old-and-busted Notepad of choice)' $false) {
   cinstm notepadplusplus
 }
 
-if (Install-NeededFor 'Install SublimeText' $false) {
+if (Install-NeededFor 'Install SublimeText2 (The new hotness Notepad of choice' $false) {
   cinstm sublimetext2
+  cinst EthanBrown.SublimeText2.EditorPackages
+  cinst EthanBrown.SublimeText2.WebPackages
+  cinst EthanBrown.SublimeText2.UtilPackages
 }
   
-if (Install-NeededFor 'Install Emacs' $false) {
+if (Install-NeededFor 'Install Emacs (If thats the kind of thing you are into)' $false) {
   cinstm Emacs
 }
   
-if (Install-NeededFor 'Install SysInternals' $false) {
+if (Install-NeededFor 'Install SysInternals (Complete SysInternals suite added to PATH)' $false) {
   cinstm sysinternals
 }
 
-if (Install-NeededFor 'Install GNU Windows Utils' $false) {
+if (Install-NeededFor 'Install GNU Windows Utils (Collection of nix tools for Windows)' $false) {
   cinstm GnuWin
 }
 
-if (Install-NeededFor 'Install 7-zip' $false) {
+if (Install-NeededFor 'Install 7-zip (File zipper/unzipper)' $false) {
   cinstm 7zip
 }
 
-if (Install-NeededFor 'Install FileZilla' $false) {
+if (Install-NeededFor 'Install FileZilla (FTP client)' $false) {
   cinstm filezilla
 }
 
-Write-Host "Update all packages"
+Write-Host "End: Purely optional developer tools"
+Write-Host "-----------"
+Write-Host "Start: Update all packages?"
+
 if (Install-NeededFor 'Update all packages to latest version?' $false) {
   cup
 }
+
+Write-Host "End: Update all packages?"
+Write-Host "-----------"
+Write-Host "Setup Script Completed"
