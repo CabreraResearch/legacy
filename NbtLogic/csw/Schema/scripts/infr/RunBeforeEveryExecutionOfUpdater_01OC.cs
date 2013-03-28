@@ -448,6 +448,24 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             }
         }
 
+        private void _createHazardClassProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp HazardClassOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.HazardClasses );
+            if( null == HazardClassOCP )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
+                {
+                    PropName = CswNbtObjClassMaterial.PropertyName.HazardClasses,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                } );
+            }
+
+            _resetBlame();
+        }
+
         #endregion ASPEN Methods
 
         /// <summary>
@@ -483,6 +501,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _createReportInstructionsProp( new UnitOfBlame( CswDeveloper.MB, 28950 ) );
             _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswDeveloper.CM, 29243 ) );
             _createMaterialC3SyncDataProp( new UnitOfBlame( CswDeveloper.CM, 29246 ) );
+            _createHazardClassProp( new UnitOfBlame( CswDeveloper.CM, 29245 ) );
 
             #endregion ASPEN
 

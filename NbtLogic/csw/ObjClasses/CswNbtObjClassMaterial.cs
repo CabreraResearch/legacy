@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ViewSDS = "View SDS";
             public const string C3ProductId = "C3ProductId";
             public const string C3SyncDate = "C3SyncDate";
+            public const string HazardClasses = "Hazard Classes";
         }
 
         public sealed class PhysicalStates
@@ -753,6 +754,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
         public CswNbtNodePropDateTime C3SyncDate { get { return ( _CswNbtNode.Properties[PropertyName.C3SyncDate] ); } }
+        public CswNbtNodePropMultiList HazardClasses { get { return ( _CswNbtNode.Properties[PropertyName.HazardClasses] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial
