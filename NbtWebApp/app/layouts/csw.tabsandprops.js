@@ -269,7 +269,6 @@
             };
 
             cswPrivate.makeIdentityTab = function () {
-
                 cswPrivate.ajax.tabs = Csw.ajax.post({
                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                     urlMethod: 'getIdentityTabProps',
@@ -277,7 +276,7 @@
                         EditMode: cswPrivate.tabState.EditMode,
                         NodeId: cswPublic.getNodeId(),
                         SafeNodeKey: cswPublic.getNodeKey(),
-                        NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                        //NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                         Date: Csw.string(cswPrivate.globalState.date, new Date().toDateString()),
                         Multi: Csw.bool(cswPrivate.tabState.Multi),
                         filterToPropId: Csw.string(cswPrivate.globalState.filterToPropId),

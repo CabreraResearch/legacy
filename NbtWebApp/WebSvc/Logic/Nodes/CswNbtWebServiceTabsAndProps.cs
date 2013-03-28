@@ -38,9 +38,9 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.getProps( NodeId, NodeKey, TabId, NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
         } // getProps()
 
-        public JObject getIdentityTabProps( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
-            return _TabsPropsSd.getIdentityTabProps( NodeId, NodeKey, NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+            return _TabsPropsSd.getIdentityTabProps( NodeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
         } // getProps()
 
         /// <summary>
