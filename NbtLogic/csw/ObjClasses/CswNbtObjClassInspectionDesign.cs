@@ -681,7 +681,8 @@ namespace ChemSW.Nbt.ObjClasses
                 ICswNbtPropertySetInspectionParent ParentAsParent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
                 bool IsDeficient = areMoreActionsRequired();  //case 25041
 
-                String OKStatus = ParentAsParent.Status.Value == TargetStatusAsString( TargetStatus.Not_Inspected ) ? 
+                String OKStatus = ( ParentAsParent.Status.Value == TargetStatusAsString( TargetStatus.Not_Inspected ) &&
+                    Status.Value == InspectionStatus.Pending || Status.Value == InspectionStatus.Overdue ) ? 
                     TargetStatusAsString( TargetStatus.Not_Inspected ) : TargetStatusAsString( TargetStatus.OK );
                 ParentAsParent.Status.Value = IsDeficient ? TargetStatusAsString( TargetStatus.Deficient ) : OKStatus;
                 //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
