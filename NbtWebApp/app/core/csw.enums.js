@@ -139,7 +139,8 @@
             loadView: 'loadview',
             editprop: 'editprop',
             nothing: 'nothing',
-            griddialog: 'griddialog'
+            griddialog: 'griddialog',
+            assignivglocation: 'assignivglocation'
         });
 
     Csw.enums.inputTypes = Csw.enums.inputTypes ||

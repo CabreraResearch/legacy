@@ -257,15 +257,16 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in the identity tab
         /// </summary>
-        public JObject getIdentityTabProps( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject Ret = new JObject();
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
+            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
             if( null != NodeType )
             {
                 CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
                 Ret["tabid"] = IdentityTab.TabId;
-                Ret = getProps( NodeId, NodeKey, IdentityTab.TabId.ToString(), NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+                Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
             }
             return Ret;
         } // getIdentityTabProps()

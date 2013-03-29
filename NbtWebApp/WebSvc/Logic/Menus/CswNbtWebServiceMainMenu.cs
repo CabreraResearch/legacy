@@ -290,7 +290,8 @@ namespace ChemSW.Nbt.WebServices
 
                 // EDIT VIEW
                 if( _MenuItems.Contains( "Edit View" ) &&
-                    _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
+                    _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) &&
+                    ( null == View || ( false == View.IsSystem || CswNbtObjClassUser.ChemSWAdminUsername == _CswNbtResources.CurrentNbtUser.Username ) ) )
                 {
                     MoreObj["Edit View"] = new JObject();
                     MoreObj["Edit View"]["action"] = MenuActions.editview.ToString();

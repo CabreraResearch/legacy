@@ -148,10 +148,14 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp TargetTypeOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.TargetType );
 
             //This prop is already server managed, but I think this makes the intention explicit for the reader
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
-
+            _acceptBlame( CswDeveloper.BV, 29125 );
+            //Not explicit enough for me, apparently - 
+            //with recent changes made in Case 29125, we want to be able to edit Inspection Type, so we're downgrading the OCP to readonly
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, true );
+            _acceptBlame( Dev, Case );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, false );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, false );
+            
 
             //To prevent the various behaviors associated with changing Owner, make it readonly
             CswNbtMetaDataObjectClassProp OwnerOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
@@ -418,6 +422,8 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _resetBlame();
         }
 
+
+
         private void _createMaterialC3SyncDataProp( UnitOfBlame Blame )
         {
             // Add the C3SyncData property to the Material Object Class
@@ -447,6 +453,28 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 }
             }
         }
+
+
+        private void _addAssignIvgButton( UnitOfBlame Blame )
+        {
+
+            _acceptBlame( Blame );
+            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+            if( null != InventoryGroupOC )
+            {
+                CswNbtMetaDataObjectClassProp AssignLocationButtonOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                                                                                                                        InventoryGroupOC,
+                                                                                                                        new CswNbtWcfMetaDataModel.ObjectClassProp()
+                                                                                                                        {
+                                                                                                                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                                                                                                                            PropName = CswNbtObjClassInventoryGroup.PropertyName.AssignLocation
+                                                                                                                        } );
+
+            }//if we found the ing ocp
+
+            _resetBlame();
+
+        }//_addAssignIvgButton() 
 
         #endregion ASPEN Methods
 
@@ -483,6 +511,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _createReportInstructionsProp( new UnitOfBlame( CswDeveloper.MB, 28950 ) );
             _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswDeveloper.CM, 29243 ) );
             _createMaterialC3SyncDataProp( new UnitOfBlame( CswDeveloper.CM, 29246 ) );
+            _addAssignIvgButton( new UnitOfBlame( CswDeveloper.PG, 28927 ) );
 
             #endregion ASPEN
 

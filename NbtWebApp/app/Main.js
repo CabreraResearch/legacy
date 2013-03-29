@@ -183,7 +183,7 @@ window.initMain = window.initMain || function (undefined) {
                 }); // ajax
             }
 
-            function refreshHeaderMenu() {
+            function refreshHeaderMenu(onSuccess) {
                 var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
                 Csw.main.headerMenu.empty();
                 Csw.main.headerMenu.menu({
@@ -229,7 +229,8 @@ window.initMain = window.initMain || function (undefined) {
                                 }
                             } // success
                         }); // ajax
-                    } // onEndImpersonation
+                    }, // onEndImpersonation
+                    onSuccess: onSuccess
                 }); // CswMenuHeader
             }
 
@@ -305,12 +306,21 @@ window.initMain = window.initMain || function (undefined) {
                 setUsername(username);
             });
 
+            
+            // see case 29072
+            var _headerInitDone = {
+                dash: false,
+                menu: false,
+                search: false,
+                quota: false
+            }
+
             function initAll(onSuccess) {
                 Csw.main.centerBottomDiv.$.CswLogin('init', {
                     'onAuthenticate': function (u) {
                         setUsername(u);
-                        refreshDashboard();
-                        refreshHeaderMenu();
+                        refreshDashboard(function() { _headerInitDone.dash = true; _finishInitAll(onSuccess); });
+                        refreshHeaderMenu(function() { _headerInitDone.menu = true; _finishInitAll(onSuccess); });
                         universalsearch = Csw.composites.universalSearch(null, {
                             searchBoxParent: Csw.main.searchDiv,
                             searchResultsParent: Csw.main.rightDiv,
@@ -333,56 +343,64 @@ window.initMain = window.initMain || function (undefined) {
                                     itemid: viewid,
                                     mode: viewmode
                                 });
-                            }
+                            },
+                            onSuccess: function() { _headerInitDone.search = true;  _finishInitAll(onSuccess); }
                         });
 
-                        Csw.actions.quotaImage(Csw.main.headerQuota);
-
-                        // handle querystring arguments
-                        var loadCurrent = handleQueryString();
-
-                        if (Csw.isNullOrEmpty(onSuccess) && loadCurrent) {
-                            onSuccess = function () {
-                                var current = Csw.clientState.getCurrent();
-                                if (false === Csw.isNullOrEmpty(current.viewid)) {
-                                    handleItemSelect({
-                                        type: 'view',
-                                        itemid: current.viewid,
-                                        mode: current.viewmode
-                                    });
-                                } else if (false === Csw.isNullOrEmpty(current.actionname)) {
-                                    handleItemSelect({
-                                        type: 'action',
-                                        name: current.actionname,
-                                        url: current.actionurl
-                                    });
-                                } else if (false === Csw.isNullOrEmpty(current.reportid)) {
-                                    handleItemSelect({
-                                        type: 'report',
-                                        itemid: current.reportid
-                                    });
-                                } else if (false === Csw.isNullOrEmpty(current.searchid)) {
-                                    handleItemSelect({
-                                        type: 'search',
-                                        itemid: current.searchid
-                                    });
-                                } else {
-                                    refreshWelcomeLandingPage();
-                                }
-                            };
-                        }
-                        Csw.tryExec(onSuccess);
-
+                        Csw.actions.quotaImage(Csw.main.headerQuota, { onSuccess: function() { _headerInitDone.quota = true; _finishInitAll(onSuccess); } });
+                        
                     } // onAuthenticate
                 }); // CswLogin
+            } // initAll()
 
+            function _finishInitAll(onSuccess) {
+                if (_headerInitDone.menu == true &&
+                    _headerInitDone.quota == true &&
+                    _headerInitDone.search == true &&
+                    _headerInitDone.dash == true) {
+
+                    // handle querystring arguments
+                    var loadCurrent = handleQueryString();
+
+                    if (Csw.isNullOrEmpty(onSuccess) && loadCurrent) {
+                        onSuccess = function() {
+                            var current = Csw.clientState.getCurrent();
+                            if (false === Csw.isNullOrEmpty(current.viewid)) {
+                                handleItemSelect({
+                                    type: 'view',
+                                    itemid: current.viewid,
+                                    mode: current.viewmode
+                                });
+                            } else if (false === Csw.isNullOrEmpty(current.actionname)) {
+                                handleItemSelect({
+                                    type: 'action',
+                                    name: current.actionname,
+                                    url: current.actionurl
+                                });
+                            } else if (false === Csw.isNullOrEmpty(current.reportid)) {
+                                handleItemSelect({
+                                    type: 'report',
+                                    itemid: current.reportid
+                                });
+                            } else if (false === Csw.isNullOrEmpty(current.searchid)) {
+                                handleItemSelect({
+                                    type: 'search',
+                                    itemid: current.searchid
+                                });
+                            } else {
+                                refreshWelcomeLandingPage();
+                            }
+                        };
+                    }
+                    Csw.tryExec(onSuccess);
+                } // if(_headerInitDone == true)
+            } // _finishInitAll()
+
+
+            function refreshDashboard(onSuccess) {
+                Csw.main.headerDashboard.empty().$.CswDashboard({ onSuccess: onSuccess });
             }
 
-            function refreshDashboard() {
-                Csw.main.headerDashboard.empty().$.CswDashboard();
-            }
-
-            // initAll()
 
             function refreshViewSelect(onSuccess) {
                 Csw.main.viewSelectDiv.empty();
@@ -1408,7 +1426,8 @@ window.initMain = window.initMain || function (undefined) {
                                 clear({ 'all': true });
                                 Csw.clientState.setCurrent(Csw.clientState.getLast());
                                 refreshSelected();
-                            }
+                            },
+                            actionjson: o.ActionOptions
                         });
                         break;
                     case 'modules':
