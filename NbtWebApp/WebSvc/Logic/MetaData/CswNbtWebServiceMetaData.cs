@@ -81,6 +81,7 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 NodeTypes = ObjectClass.getLatestVersionNodeTypes();
+                ReturnVal["objectClassId"] = ObjectClass.ObjectClassId;
             }
 
             Int32 NodeTypeCount = 0;

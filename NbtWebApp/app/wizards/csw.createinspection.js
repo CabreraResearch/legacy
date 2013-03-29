@@ -1,4 +1,3 @@
-
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 (function () {
@@ -119,71 +118,58 @@
             //Step 1. Select an Inspection Target.
             cswPrivate.makeStepOne = (function () {
                 var stepOneComplete = false,
-                    inspectionTable, addBtn, rowOneTable;
+                    inspectionTable, addBtnCell, addBtn, rowOneTable;
                 return function () {
 
                     var onNodeTypeSelectSuccess = function (data) {
-                        //If the picklist is empty, we have to add a new Target
-                        if (data.nodetypecount === 0) {
+                        
+                        if (data.nodetypecount === 0) {//If the picklist is empty, we have to add a new Target
+                            cswPrivate.wizard.next.disable();
                             cswPrivate.inspectionTargetSelect.hide();
-                            cswPrivate.isNewTarget(true);
-                            cswPrivate.addNewTarget = rowOneTable.cell(2, 2);
-                            cswPrivate.addNewTarget.css({ 'padding': '1px', 'vertical-align': 'middle' })
-                                .input({
-                                    suffix: 'newTargetName',
-                                    value: '',
-                                    maxlength: 40
-                                })
-                                .propNonDom('maxlength', 40)
-                                .$.keypress(function () {
-                                    setTimeout(function () {
-                                        var newTargetName = cswPrivate.addNewTarget.val();
-                                        if (false === Csw.isNullOrEmpty(newTargetName)) {
-                                            cswPrivate.wizard.next.enable();
-                                        }
-                                    }, 100);
-                                });
-                        } else { //Select an existing Target or add a new Target
-                            cswPrivate.selectedInspectionTarget = cswPrivate.inspectionTargetSelect.find(':selected').text();
+                        } else {
                             cswPrivate.wizard.next.enable();
+                        }
 
-                            addBtn = addBtn || rowOneTable.cell(2, 3);
-                            addBtn.css({ 'padding': '1px', 'vertical-align': 'middle' })
-                                .div()
-                                .button({
-                                    name: 'addNewInspectionTarget',
-                                    enabledText: 'Add New',
-                                    disableOnClick: false,
-                                    onClick: function () {
-                                        $.CswDialog('AddNodeTypeDialog', {
-                                            objectclassid: cswPrivate.inspectionTargetSelect.find(':selected').data('objectClassId'),
-                                            nodetypename: '',
-                                            category: 'do not show',
-                                            select: cswPrivate.inspectionTargetSelect,
-                                            nodeTypeDescriptor: 'Target',
-                                            maxlength: 40,
-                                            onSuccess: function (newData) {
-                                                var proposedInspectionTarget = newData.nodetypename;
-                                                if (cswPrivate.checkTargetIsClientSideUnique(proposedInspectionTarget)) {
-                                                    cswPrivate.selectedInspectionTarget = proposedInspectionTarget;
-                                                    cswPrivate.isNewTarget(true);
-                                                    cswPrivate.wizard.next.enable();
-                                                    Csw.publish(cswPrivate.createInspectionEvents.targetNameChanged);
-                                                } else {
-                                                    cswPrivate.inspectionTargetSelect.find('option[value="' + proposedInspectionTarget + '"]').remove();
-                                                }
-                                            },
-                                            title: 'Create a New Inspection Target Type.'
-                                        });
-                                        return false;
-                                    }
+                        var selectedTarget = cswPrivate.inspectionTargetSelect.find(':selected');
+                        if (false === Csw.isNullOrEmpty(selectedTarget)) {
+                            cswPrivate.selectedInspectionTarget = selectedTarget.text();
+                        }
+
+                        addBtnCell = addBtnCell || rowOneTable.cell(2, 3);
+                        addBtnCell.css({ 'padding': '1px', 'vertical-align': 'middle' });
+                        addBtn = addBtnCell.div().buttonExt({
+                            enabledText: 'Add New',
+                            size: 'small',
+                            tooltip: { title: 'Add new Target Type' },
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                            onClick: function () {
+                                $.CswDialog('AddNodeTypeDialog', {
+                                    objectclassid: data.objectClassId,
+                                    nodetypename: '',
+                                    category: 'Checklist',
+                                    select: cswPrivate.inspectionTargetSelect,
+                                    nodeTypeDescriptor: 'Target',
+                                    maxlength: 40,
+                                    onSuccess: function (newData) {
+                                        var proposedInspectionTarget = newData.nodetypename;
+                                        if (cswPrivate.checkTargetIsClientSideUnique(proposedInspectionTarget)) {
+                                            cswPrivate.selectedInspectionTarget = proposedInspectionTarget;
+                                            cswPrivate.isNewTarget(true);
+                                            cswPrivate.wizard.next.enable();
+                                            cswPrivate.inspectionTargetSelect.show();
+                                            Csw.publish(cswPrivate.createInspectionEvents.targetNameChanged);
+                                        } else {
+                                            cswPrivate.inspectionTargetSelect.find('option[value="' + proposedInspectionTarget + '"]').remove();
+                                        }
+                                    },
+                                    title: 'Create a New Inspection Target Type.'
                                 });
-                        } // else
+                                return false;
+                            }
+                        });
                     };
 
                     var makeTargetSelect = function () {
-                        //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
-                        //However, the variable assignment is sufficiently complex that this deviation is justified.
                         if (false === Csw.isNullOrEmpty(cswPrivate.inspectionTargetSelect, true)) {
                             cswPrivate.inspectionTargetSelect.remove();
                         }
@@ -202,7 +188,6 @@
                                 },
                                 onSuccess: function (data) {
                                     onNodeTypeSelectSuccess(data);
-                                    cswPrivate.selectedInspectionTarget = cswPrivate.inspectionTargetSelect.find(':selected').text();
                                 }
                             });
                     };
@@ -584,7 +569,7 @@
                                 });
                             }
 
-                            if (cswPrivate.isNewTarget) {
+                            if (cswPrivate.isNewTarget()) {
                                 confirmTypesList.li({
                                     text: 'New Inspection Target <b>' + cswPrivate.selectedInspectionTarget + '</b>'
                                 });
@@ -601,14 +586,16 @@
                             .ul({
                                 name: 'confirmationViews'
                             });
+                        if (cswPrivate.isNewTarget()) {
+                            confirmViewsList.li({
+                                text: '<b>Scheduling: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            });
+                            confirmViewsList.li({
+                                text: '<b>Groups: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            });
+                        }
                         confirmViewsList.li({
-                            text: '<b>Scheduling, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
-                        });
-                        confirmViewsList.li({
-                            text: '<b>Groups, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
-                        });
-                        confirmViewsList.li({
-                            text: '<b>Inspections, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            text: '<b>' + cswPrivate.selectedInspectionDesign.name + ' Inspections: ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                     } /*else {
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);

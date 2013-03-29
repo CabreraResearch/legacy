@@ -175,7 +175,8 @@
                     if (cswPrivate.currentStepNo === 2) {
                         if (cswPrivate.lastStepNo === 1) {
                             cswPrivate.saveMaterial();
-                            if (cswPrivate.isDuplicateMaterial) {
+                            if (cswPrivate.isDuplicateMaterial || cswPrivate.saveMaterialError) {
+                                cswPrivate.saveMaterialError = false;
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         }  
@@ -372,6 +373,7 @@
                             success: function(data) {
                                 removeFoundMaterialLabel();
                                 cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
+                                
                                 if (cswPrivate.isDuplicateMaterial) {
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
                                     foundMaterialLabel = cswPrivate.identityDiv.nodeLink({
@@ -387,6 +389,7 @@
                                 }
                             },
                             error: function () {
+                                cswPrivate.saveMaterialError = true;
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
                             }
                         });

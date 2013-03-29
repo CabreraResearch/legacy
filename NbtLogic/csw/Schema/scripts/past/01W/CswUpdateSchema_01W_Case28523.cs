@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
                     case CswNbtActionName.Edit_View                 : IconFileName = "options.png";        break;
                     case CswNbtActionName.Future_Scheduling         : IconFileName = "calendarstack.png";  break;
                     case CswNbtActionName.HMIS_Reporting            : IconFileName = "doc.png";            break;
-                    case CswNbtActionName.KioskMode                 : IconFileName = "barcode.png";        break;
+                    case CswNbtActionName.Kiosk_Mode                 : IconFileName = "barcode.png";        break;
                     case CswNbtActionName.Modules                   : IconFileName = "options.png";        break;
                     case CswNbtActionName.Multi_Edit                : IconFileName = "largeicons.png";     break;
                     case CswNbtActionName.Quotas                    : IconFileName = "plus.png";           break;

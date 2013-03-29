@@ -1433,9 +1433,7 @@ window.initMain = window.initMain || function (undefined) {
                     case 'modules':
                         Csw.actions.modules(Csw.main.centerTopDiv, {
                             onModuleChange: function() {
-                                refreshHeaderMenu();
-                                refreshDashboard();
-                                refreshViewSelect();
+                                initAll();
                             }
                         });
                         break;
@@ -1520,7 +1518,7 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
-                    case 'kioskmode':
+                    case 'kiosk mode':
                         Csw.actions.kioskmode(Csw.main.centerTopDiv, {
                             onCancel: function() {
                                 clear({ 'all': true });

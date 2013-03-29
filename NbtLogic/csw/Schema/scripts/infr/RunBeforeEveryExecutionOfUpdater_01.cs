@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
@@ -61,6 +62,7 @@ namespace ChemSW.Nbt.Schema
             _createNodeCountColumns( CswDeveloper.MB, 28355 );
             _createLoginDataTable( CswDeveloper.BV, 27906 );
             _addViewIsSystemColumn( CswDeveloper.BV, 28890 );
+            _fixKioskModeName( CswDeveloper.MB, 29274 );
 
             #endregion ASPEN
 
@@ -190,6 +192,14 @@ namespace ChemSW.Nbt.Schema
             }
 
             _resetBlame();
+        }
+
+        private void _fixKioskModeName( CswDeveloper Dev, Int32 CaseNo )
+        {
+            if( null == _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.Kiosk_Mode] )
+            {
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update actions set actionname = 'Kiosk Mode' where actionname = 'KioskMode'" );
+            }
         }
 
         #endregion ASPEN
