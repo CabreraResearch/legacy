@@ -15,6 +15,7 @@
                 onAfterNewSearch: null,
                 onLoadView: null,
                 onAddView: null,
+                onSuccess: null,
                 searchbox_width: '200px',
                 showSave: true,
                 allowEdit: true,
@@ -114,6 +115,7 @@
                             }
                         }); // toolbar
 
+                        Csw.tryExec(cswPrivate.onSuccess);
                     } // success
                 }); // ajax
 
@@ -158,23 +160,23 @@
                 var srchOnClick = function (selectedOption) {
                     var ret = Csw.clientChanges.manuallyCheckChanges();
                     if (ret) {
-                    switch (selectedOption) {
-                        case 'Structure Search':
-                            $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
-                            break;
-                        case 'ChemCatCentral Search':
-                            $.CswDialog('C3SearchDialog', {
-                                loadView: cswPrivate.onLoadView,
-                                c3searchterm: cswPrivate.searchinput.val(),
-                                c3handleresults: cswPublic.handleResults,
-                                clearview: cswPrivate.onBeforeSearch
-                            });
-                            break;
-                        default:
-                            Csw.publish('initPropertyTearDown');
-                            cswPrivate.searchterm = cswPrivate.searchinput.val();
-                            cswPrivate.newsearch();
-                    }
+                        switch (selectedOption) {
+                            case 'Structure Search':
+                                $.CswDialog('StructureSearchDialog', { loadView: cswPrivate.onLoadView });
+                                break;
+                            case 'ChemCatCentral Search':
+                                $.CswDialog('C3SearchDialog', {
+                                    loadView: cswPrivate.onLoadView,
+                                    c3searchterm: cswPrivate.searchinput.val(),
+                                    c3handleresults: cswPublic.handleResults,
+                                    clearview: cswPrivate.onBeforeSearch
+                                });
+                                break;
+                            default:
+                                Csw.publish('initPropertyTearDown');
+                                cswPrivate.searchterm = cswPrivate.searchinput.val();
+                                cswPrivate.newsearch();
+                        }
                     }
                     return ret;
                 };
@@ -271,7 +273,7 @@
                                     });
                                 }
                             });
-                            
+
                         } // if (data.alternateoption != null)
 
                     } //if (data.searchtype == 'universal')

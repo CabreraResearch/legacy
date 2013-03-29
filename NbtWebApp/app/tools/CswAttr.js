@@ -20,7 +20,12 @@
                     doProp($Dom, prop, name[prop]);
                 }
             } else {
-                ret = doProp($Dom, name, value);
+                if (arguments.length === 1) {
+                    ret = doProp($Dom, name);
+                }
+                else {
+                    ret = doProp($Dom, name, value);
+                }
             }
         } catch (e) {
             //We're in IE hell. Do nothing.
@@ -76,7 +81,14 @@
                     doAttr($this, prop, name[prop]);
                 }
             } else {
-                ret = doAttr($this, name, value);
+                switch (arguments.length) {
+                    case 1:
+                        ret = doAttr($this, name);
+                        break;
+                    case 2:
+                        ret = doAttr($this, name, value);
+                        break;
+                }
             }
             // For proper chaining support
         } catch (e) {

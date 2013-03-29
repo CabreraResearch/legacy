@@ -1417,7 +1417,7 @@ ul li div {
 }
 
 .cswInline {
-    display: inline-block !Important;
+    display: inline-block;
 }
 
 /* extJs overrides */

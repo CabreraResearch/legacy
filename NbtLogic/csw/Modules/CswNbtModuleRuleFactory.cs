@@ -74,6 +74,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleMultiInventoryGroup( CswNbtResources );
             }
+            else if( CswNbtModuleName.FireDbSync == ModuleName )
+            {
+                ret = new CswNbtModuleRuleFireDbSync( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( ErrorType.Error,

@@ -22,8 +22,8 @@ namespace ChemSW.Nbt.Schema
         {
 
             //Add CISPro: Kiosk Mode action
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.KioskMode, true, "", "Containers" );
-            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.KioskMode );
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Kiosk_Mode, true, "", "Containers" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Kiosk_Mode );
 
         } //Update()
 

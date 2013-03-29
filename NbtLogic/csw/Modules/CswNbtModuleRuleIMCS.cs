@@ -36,8 +36,8 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Future_Scheduling );
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.KioskMode );
-            _CswNbtResources.Actions[CswNbtActionName.KioskMode].SetCategory( "Equipment" );
+            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Kiosk_Mode );
+            _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
         }
 
         public override void OnDisable()
@@ -67,11 +67,11 @@ namespace ChemSW.Nbt
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.KioskMode );
+                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Kiosk_Mode );
             }
             else
             {
-                _CswNbtResources.Actions[CswNbtActionName.KioskMode].SetCategory( "Containers" );
+                _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
             }
         }
 

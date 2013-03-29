@@ -1,6 +1,7 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -11,6 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Name = "Name";
             public const string Central = "Central";
             public const string AutomaticCertificateApproval = "Automatic Certificate Approval";
+            public const string AssignLocation = "Assign Location";
         }
 
 
@@ -79,7 +81,28 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            if( null != ButtonData && null != ButtonData.NodeTypeProp ) 
+            {
+
+                if( PropertyName.AssignLocation == ButtonData.NodeTypeProp.getObjectClassPropName() )
+                {
+                    ButtonData.Action = NbtButtonAction.assignivglocation;
+
+
+                    JObject Ret = new JObject();
+
+                    JObject ActionOptioinsJObj = new JObject();
+                    ActionOptioinsJObj["ivgnodeid"] = NodeId.ToString();
+
+                    ButtonData.Data["ActionOptions"] = ActionOptioinsJObj;
+                    //ButtonData.Data["ivgnodeid"] = NodeId.ToString();
+                    //ButtonData.Data["viewmode"] = containerFamilyView.ViewMode.ToString();
+                    //ButtonData.Data["type"] = "view";
+
+                }//if clicked button is assign location
+
+
+            }
             return true;
         }
         #endregion
@@ -89,6 +112,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
         public CswNbtNodePropLogical Central { get { return _CswNbtNode.Properties[PropertyName.Central]; } }
         public CswNbtNodePropLogical AutomaticCertificateApproval { get { return _CswNbtNode.Properties[PropertyName.AutomaticCertificateApproval]; } }
+        public CswNbtNodePropButton AssignLocation { get { return ( _CswNbtNode.Properties[PropertyName.AssignLocation] ); } }
+
 
         #endregion
 

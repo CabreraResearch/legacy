@@ -57,6 +57,8 @@
                 cswPrivate.onMouseExit = cswPrivate.onMouseExit || function () { };
                 cswPrivate.beforeSelect = cswPrivate.beforeSelect || function () { return true; };
                 cswPrivate.preventSelect = false;
+                cswPrivate.onAfterViewReady = cswPrivate.onAfterViewReady || function () { };
+                cswPrivate.onAfterLayout = cswPrivate.onAfterLayout || function () { };
 
                 cswPrivate.lastSelectedPathDbName = 'CswTree_' + cswPrivate.name + '_LastSelectedPath';
 
@@ -138,11 +140,15 @@
                                 border: '0px'
                             });
                         });
+
+                        Csw.tryExec( cswPrivate.onAfterLayout );
+
                     },
                     afterrender: function () {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
                         //It _will_ in the next nano-second, so we have to defer.
                         //cswPublic.toggleCheckboxes();
+
                     },
                     viewready: function () {
                         //This is the "last" event to fire, but it's _still_ not safe to assume the DOM is ready.
@@ -161,6 +167,7 @@
                             //cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
 
+                        Csw.tryExec( cswPrivate.onAfterViewReady, cswPublic.tree );
                     },
                     afteritemcollapse: function () {
                         //cswPublic.toggleCheckboxes();
@@ -170,13 +177,13 @@
                     },
                     beforeselect: function (rowModel, record, index, eOpts) {
                         var ret = false;
-                        if ( false === cswPrivate.overrideBeforeSelect ) {
+                        if (false === cswPrivate.overrideBeforeSelect) {
                             ret = (false === cswPrivate.preventSelect && (cswPrivate.useCheckboxes !== true || cswPrivate.selectedNodeCount <= 1));
                             if (false !== ret && cswPrivate.useCheckboxes !== true) {
-                                ret = Csw.tryExec(cswPrivate.beforeSelect, record);
+                                ret = Csw.tryExec(cswPrivate.beforeSelect, record, cswPublic.tree);
                             }
                         } else {
-                            Csw.tryExec(cswPrivate.beforeSelect, record);
+                            Csw.tryExec(cswPrivate.beforeSelect, record, cswPublic.tree);
                         }
 
                         return ret;
@@ -192,7 +199,7 @@
                             if (cswPublic.selectedTreeNode.raw) {
                                 Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, cswPublic.selectedTreeNode.raw.path);
                             }
-                            Csw.tryExec(cswPrivate.onSelect, record.raw);
+                            Csw.tryExec(cswPrivate.onSelect, record.raw, cswPublic.tree);
 
                             if (cswPrivate.useCheckboxes) {
                                 // also check this node

@@ -238,7 +238,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                bool ret = true;
+                bool ret = false;
                 if( _RootString[17] != string.Empty )
                     ret = CswConvert.ToBoolean( _RootString[17] );
                 return ret;
@@ -280,7 +280,23 @@ namespace ChemSW.Nbt
             }
         } // GroupBySiblings
 
-        private Int32 _PropCount = 20;
+        // 20 - IsSystem
+        public bool IsSystem
+        {
+            get
+            {
+                bool ret = false;
+                if( _RootString[20] != string.Empty )
+                    ret = CswConvert.ToBoolean( _RootString[20] );
+                return ret;
+            }
+            set
+            {
+                _RootString[20] = value.ToString();
+            }
+        } // IsSystem
+
+        private Int32 _PropCount = 21;
 
         #endregion Properties in _RootString
 
@@ -403,6 +419,10 @@ namespace ChemSW.Nbt
                 {
                     IsDemo = CswConvert.ToBoolean( Node.Attributes["isdemo"].Value );
                 }
+                if( Node.Attributes["issystem"] != null )
+                {
+                    IsSystem = CswConvert.ToBoolean( Node.Attributes["issystem"].Value );
+                }
                 if( Node.Attributes["gridgroupbycol"] != null )
                 {
                     GridGroupByCol = Node.Attributes["gridgroupbycol"].Value;
@@ -513,6 +533,12 @@ namespace ChemSW.Nbt
                 {
                     bool _isDemo = CswConvert.ToBoolean( Node["isdemo"] );
                     IsDemo = _isDemo;
+                }
+
+                if( Node["issystem"] != null )
+                {
+                    bool _isSystem = CswConvert.ToBoolean( Node["issystem"] );
+                    IsSystem = _isSystem;
                 }
 
                 if( Node["gridgroupbycol"] != null )
@@ -635,6 +661,10 @@ namespace ChemSW.Nbt
             IsDemoAttribute.Value = IsDemo.ToString().ToLower();
             RootXmlNode.Attributes.Append( IsDemoAttribute );
 
+            XmlAttribute IsSystemAttribute = XmlDoc.CreateAttribute( "issystem" );
+            IsSystemAttribute.Value = IsSystem.ToString().ToLower();
+            RootXmlNode.Attributes.Append( IsSystemAttribute );
+
             XmlAttribute GridGroupByColAttribute = XmlDoc.CreateAttribute( "gridgroupbycol" );
             GridGroupByColAttribute.Value = GridGroupByCol.ToString().ToLower();
             RootXmlNode.Attributes.Append( GridGroupByColAttribute );
@@ -673,6 +703,7 @@ namespace ChemSW.Nbt
             RootPropObj["groupbysiblings"] = GroupBySiblings;
             RootPropObj["included"] = Included.ToString().ToLower();
             RootPropObj["isdemo"] = IsDemo.ToString().ToLower();
+            RootPropObj["issystem"] = IsSystem.ToString().ToLower();
             RootPropObj["gridgroupbycol"] = GridGroupByCol.ToString().ToLower();
 
             JObject ChildObject = new JObject();
