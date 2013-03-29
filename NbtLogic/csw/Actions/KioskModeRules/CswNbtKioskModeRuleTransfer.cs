@@ -48,9 +48,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
                 CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( NbtObjectClass.UserClass, OpData.Field1.Value, true );
-                containerToTransfer.Owner.RelatedNodeId = newTransferOwner.NodeId;
-                containerToTransfer.Owner.RefreshNodeName();
-                containerToTransfer.MoveContainer( newTransferOwner.DefaultLocationId );
+                containerToTransfer.TransferContainer( newTransferOwner );
                 containerToTransfer.postChanges( false );
                 CswNbtObjClassLocation newLocationNode = _CswNbtResources.Nodes[newTransferOwner.DefaultLocationId];
                 OpData.Log.Add( DateTime.Now + " - Transferred container " + OpData.Field2.Value + " ownership to " + newTransferOwner.Username + " (" + OpData.Field1.Value + ") at " + newLocationNode.Name.Text );

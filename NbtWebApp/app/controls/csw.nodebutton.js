@@ -323,6 +323,14 @@
                 });
                 break;
 
+            case Csw.enums.nbtButtonAction.assignivglocation:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                actionJson.actionname = 'assign inventory groups';
+//                actionJson.state.request = actionJson.request;
+                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                break;
+
+
             default:
                 Csw.debug.error('No event has been defined for button click ' + opts.data.action);
                 break;

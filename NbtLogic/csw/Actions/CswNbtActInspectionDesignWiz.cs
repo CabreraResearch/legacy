@@ -16,8 +16,7 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActInspectionDesignWiz
     {
-
-        #       region ctor
+        #region ctor
         CswNbtResources _CswNbtResources = null;
         private readonly ICswNbtUser _CurrentUser;
         private readonly TextInfo _TextInfo;
@@ -45,7 +44,6 @@ namespace ChemSW.Nbt.Actions
         }//ctor
         #endregion ctor
 
-
         #region Private
 
         private const string _SectionName = "section";
@@ -65,7 +63,6 @@ namespace ChemSW.Nbt.Actions
                                                                _HelpTextName
                                                            };
 
-
         private const string _DefaultSectionName = "Questions";
         private const string _DefaultAllowedAnswers = "Yes,No,N/A";
         private const string _DefaultCompliantAnswers = "Yes";
@@ -77,8 +74,6 @@ namespace ChemSW.Nbt.Actions
         private CswNbtViewId _groupsViewId = null;
         private CswNbtViewId _inspectionsViewId = null;
         private CswNbtViewId _schedulingViewId = null;
-
-
 
         #region MetaData
 
@@ -600,14 +595,9 @@ namespace ChemSW.Nbt.Actions
                     /* View:
                         [Group]
                             [Target]
-                        [Target]
                     */
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
                     RetView.AddViewRelationship( IpGroupRelationship, NbtViewPropOwnerType.Second, ItTargetGroupNtp, false );
-                    //Only show unrelated targets at the root level
-                    CswNbtViewRelationship DanglingTargetRel = RetView.AddViewRelationship( InspectionTargetNt, false );
-                    CswNbtViewProperty GroupVp = RetView.AddViewProperty( DanglingTargetRel, ItTargetGroupNtp );
-                    RetView.AddViewPropertyFilter( GroupVp, ItTargetGroupNtp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID].Name, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
                     RetView.save();
                 }
                 catch( Exception ex )
@@ -941,14 +931,6 @@ namespace ChemSW.Nbt.Actions
             return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
         }
 
-        //public JObject createInspectionDesignTabsAndProps( DataTable TheQuestions, string InspectionDesignName, string InspectionTargetName, string Category )
-        //{
-
-        //    JObject GridObj = CswConvert.DataTableToJSON( prepareDataTable( TheQuestions ) );
-        //    JArray GridArray = (JArray) GridObj["data"];
-        //    return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
-        //}
-
         private JObject _createInspectionDesignTabsAndProps( JArray GridArray, string InspectionDesignName, string InspectionTargetName, string Category )
         {
             CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
@@ -992,8 +974,6 @@ namespace ChemSW.Nbt.Actions
         }
 
         #endregion public
-
-
 
     }//class CswNbtActInspectionDesignWiz
 

@@ -20,7 +20,26 @@ namespace NbtWebApp
 
         /// <summary>
         /// 
-        /// </summary>
+       /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Assign specified inventory group to specified locations" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse assignInventoryGroupToLocations( CswNbtWebServiceLocationsCis.AssignInventoryGroupData.AssignRequest Request )
+        {
+            CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse ReturnVal = new CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse, CswNbtWebServiceLocationsCis.AssignInventoryGroupData.AssignRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: ReturnVal,
+                WebSvcMethodPtr: CswNbtWebServiceLocationsCis.assignInventoryGroupToLocations,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( ReturnVal );
+        }
+
         [OperationContract]
         [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Generate a list of Locations" )]
@@ -39,6 +58,5 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-
-    }
+    }//Locations
 }

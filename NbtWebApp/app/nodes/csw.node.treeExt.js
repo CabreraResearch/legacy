@@ -11,14 +11,19 @@
                 forSearch: false, // if true, used to override default behavior of list views
                 onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
                 onBeforeSelectNode: function () { return true; }, //false prevents selection
+                onAfterViewReady: function () { },
+                onAfterLayout: function () { },
                 isMulti: false,
+                ExpandAll: false,
                 validateCheckboxes: true,
+                overrideBeforeSelect: false,
                 showToggleLink: true,
                 useScrollbars: true,
                 rootVisible: false,
                 useHover: true,
                 height: '',
                 width: '',
+
 
                 //State
                 state: {
@@ -64,16 +69,18 @@
                     columns: data.Columns,
                     fields: data.Fields,
                     selectedId: data.SelectedId,
-
                     onSelect: cswPrivate.handleSelectNode,
                     beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,
-
+                    overrideBeforeSelect: cswPrivate.overrideBeforeSelect,
                     useArrows: cswPrivate.state.viewMode !== Csw.enums.viewMode.list.name,
                     useToggles: cswPrivate.showToggleLink,
                     useCheckboxes: cswPrivate.isMulti,
                     useScrollbars: cswPrivate.useScrollbars,
-                    rootVisible: cswPrivate.rootVisible
+                    rootVisible: cswPrivate.rootVisible,
+                    onSuccess: cswPrivate.onSuccess,
+                    onAfterViewReady: cswPrivate.onAfterViewReady,
+                    onAfterLayout: cswPrivate.onAfterLayout
                 };
                 if (cswPrivate.useHover) {
                     treeOpts.onMouseEnter = hoverNode;
@@ -92,10 +99,10 @@
                             nodekey: treeNode.raw.id,
                             nodename: treeNode.raw.text,
                             parentDiv: div,
-                            buttonHoverIn: function() {
+                            buttonHoverIn: function () {
                                 cswPublic.nodeTree.preventSelect();
                             },
-                            buttonHoverOut: function() {
+                            buttonHoverOut: function () {
                                 cswPublic.nodeTree.allowSelect();
                             }
                         });
@@ -144,28 +151,30 @@
                 var ret = [];
                 if (checked && checked.length > 0) {
                     checked.forEach(function (treeNode) {
-                        ret.push({ 
-                            nodeid: treeNode.raw.nodeid, 
+                        ret.push({
+                            nodeid: treeNode.raw.nodeid,
                             nodekey: treeNode.raw.id,
-                            nodename: treeNode.raw.text 
+                            nodename: treeNode.raw.text
                         });
                     });
                 }
                 return ret;
             };
 
+
             cswPrivate.runTree = function () {
                 Csw.ajaxWcf.post({
                     urlMethod: 'Trees/run',
                     data: {
                         AccessedByObjClassId: '',
-                        DefaultSelect: cswPrivate.state.defaultSelect,
+                        DefaultSelect: cswPrivate.state.defaultSelect || Csw.enums.nodeTree_DefaultSelect.firstchild.name, //why do we have any _other_ state than first child? 
                         IncludeInQuickLaunch: cswPrivate.state.includeInQuickLaunch,
                         IncludeNodeRequired: cswPrivate.state.includeNodeRequired,
                         NbtViewId: cswPrivate.state.viewId,
                         NodeId: cswPrivate.state.nodeId,
                         NodeKey: cswPrivate.state.nodeKey,
-                        UseCheckboxes: cswPrivate.isMulti
+                        UseCheckboxes: cswPrivate.isMulti, 
+                        ExpandAll: cswPrivate.ExpandAll
                     },
                     success: function (data) {
 

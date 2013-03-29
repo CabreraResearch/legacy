@@ -1,6 +1,6 @@
 ﻿using System;
-using ChemSW.DB;
 using System.Data;
+using ChemSW.DB;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -26,10 +26,11 @@ namespace ChemSW.Nbt.Actions
         Reconciliation,
         Upload_Legacy_Mobile_Data,
         HMIS_Reporting,
-        KioskMode,
+        Kiosk_Mode,
         Tier_II_Reporting,
         Material_Approval,
-        Login_Data
+        Login_Data,
+        Assign_Inventory_Groups
     }
 
     public class CswNbtAction

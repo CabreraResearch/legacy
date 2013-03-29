@@ -29,6 +29,7 @@
                 onSubscriptions: null,
                 onImpersonate: null,
                 onLoginData: null,
+                onSuccess: null,
                 nodeTreeCheck: null,
                 Multi: false
             };
@@ -76,7 +77,7 @@
                         var nodetypeid = Csw.string(menuItemJson.nodetypeid);
                         var viewid = Csw.string(menuItemJson.viewid);
                         var isWholePageNavigation = false; //If we're switching to a completely new context
-                        
+
                         switch (menuItemJson.action) {
                             case 'About':
                                 $.CswDialog('AboutDialog');
@@ -119,12 +120,12 @@
                                     $.CswDialog('ConfirmDialog',
                                         'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>',
                                         'Delete All Demo Data',
-                                        function() {
+                                        function () {
                                             Csw.ajax.post({
                                                 url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
-                                                success: function(data) {
+                                                success: function (data) {
                                                     isWholePageNavigation = true;
-                                                    var onOpen = function(dialogDiv) {
+                                                    var onOpen = function (dialogDiv) {
                                                         var statusDiv = dialogDiv.div();
                                                         statusDiv.span({ text: data.successtext });
                                                         statusDiv.span({ text: data.failedtext });
@@ -142,7 +143,7 @@
                                                             table.cell(1, 4).append('<b>Id</b>');
                                                             table.cell(1, 5).append('<b>Link</b>');
                                                             if (Csw.number(data.counts.failed) > 0) {
-                                                                Csw.each(data.failed, function(failObj) {
+                                                                Csw.each(data.failed, function (failObj) {
                                                                     f += 1;
                                                                     table.cell(f, 1).append('Failed');
                                                                     table.cell(f, 2).append(failObj.type);
@@ -158,7 +159,7 @@
                                                             }
                                                             if (Csw.number(data.counts.succeeded) > 0) {
 
-                                                                Csw.each(data.succeeded, function(successObj) {
+                                                                Csw.each(data.succeeded, function (successObj) {
                                                                     s += 1;
                                                                     table.cell(s, 1).append('Succeeded');
                                                                     table.cell(s, 2).append(successObj.type);
@@ -168,7 +169,7 @@
                                                             }
                                                         }
                                                         if (data.exceptions) {
-                                                            Csw.each(data.exceptions, function(ex) {
+                                                            Csw.each(data.exceptions, function (ex) {
                                                                 Csw.debug.error(ex);
                                                             });
                                                         }
@@ -241,6 +242,12 @@
                                     Csw.tryExec(cswPrivate.onQuotas);
                                 }
                                 break;
+                            case 'Assign Inventory Groups':
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onQuotas);
+                                }
+                                break;
                             case 'Modules':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
@@ -286,7 +293,7 @@
                                 Csw.main.handleAction({ actionname: menuItemJson.action });
                                 break;
                         } // switch(menuItemJson.action)
-                        
+
                         if (isWholePageNavigation === true) {
                             //If we're changing the contents of the entire page, make sure all dangling events are torn down
                             Csw.publish('initGlobalEventTeardown');
@@ -387,10 +394,11 @@
                         } else {
                             cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar');
                         }
-                        //}                                                            
+                        //}                   
+                        Csw.tryExec(cswPrivate.onSuccess);
                     }       //success
                 }); // ajax
-            }()); // constructor
+            } ()); // constructor
 
             return cswPublic;
         });
@@ -403,4 +411,4 @@
             Csw.window.location(Csw.getGlobalProp('homeUrl'));
         });
 
-}());
+} ());
