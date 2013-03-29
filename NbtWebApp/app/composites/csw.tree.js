@@ -141,7 +141,8 @@
                             });
                         });
 
-                        cswPrivate.onAfterLayout();
+                        Csw.tryExec( cswPrivate.onAfterLayout );
+
                     },
                     afterrender: function () {
                         //Despite the fact that this is the last "render" event to fire, the tree is still _NOT_ in the DOM. 
@@ -166,7 +167,7 @@
                             //cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
 
-                        cswPrivate.onAfterViewReady( cswPublic.tree );
+                        Csw.tryExec( cswPrivate.onAfterViewReady, cswPublic.tree );
                     },
                     afteritemcollapse: function () {
                         //cswPublic.toggleCheckboxes();
@@ -198,7 +199,7 @@
                             if (cswPublic.selectedTreeNode.raw) {
                                 Csw.clientDb.setItem(cswPrivate.lastSelectedPathDbName, cswPublic.selectedTreeNode.raw.path);
                             }
-                            Csw.tryExec(cswPrivate.onSelect, record.raw, cswPublic.tree );
+                            Csw.tryExec(cswPrivate.onSelect, record.raw, cswPublic.tree);
 
                             if (cswPrivate.useCheckboxes) {
                                 // also check this node
