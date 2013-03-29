@@ -653,7 +653,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // Set the value of the property to the new list
                     this.HazardClasses.Value = UpdatedHazardClasses;
-                    this.HazardClasses.SyncGestalt();
                 }
             }
 
