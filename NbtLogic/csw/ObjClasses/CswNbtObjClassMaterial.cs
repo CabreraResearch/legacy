@@ -615,10 +615,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public void syncFireDbData( CswNbtResources NbtResources )
+        public void syncFireDbData()
         {
             CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( NbtResources, CswC3SearchParams );
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
             ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
             // Set FireDb specific properties
@@ -678,7 +678,7 @@ namespace ChemSW.Nbt.ObjClasses
                 bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( _CswNbtResources );
                 if( C3ServiceStatus )
                 {
-                    syncFireDbData( _CswNbtResources );
+                    syncFireDbData();
                 }
             }
         }

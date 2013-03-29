@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Sched
                                     // FireDb Sync Module
                                     if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireDbSync ) )
                                     {
-                                        MaterialNode.syncFireDbData( CswNbtResources );
+                                        MaterialNode.syncFireDbData();
                                         MaterialNode.postChanges( false );
                                     }
 
