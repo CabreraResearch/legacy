@@ -95,9 +95,9 @@ namespace ChemSW.Nbt
 
         public List<CswNbtView> restoreViews( string ViewName )
         {
-            return restoreViews( ViewName, NbtViewVisibility.Unknown, Int32.MinValue );
+            return restoreViews( ViewName, NbtViewVisibility.Unknown );
         }
-        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility, Int32 VisibilityId )
+        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility, Int32 VisibilityId = Int32.MinValue, bool allowPartialMatches = false )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
 
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt
             foreach( DataRow CurrentRow in ViewTable.Rows )
             {
                 string CurrentViewName = CswConvert.ToString( CurrentRow["viewname"] ).ToLower().Trim();
-                if( ViewName == CurrentViewName )
+                if( ViewName == CurrentViewName || ( allowPartialMatches && CurrentViewName.Contains( ViewName ) ) )
                 {
                     ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
                 }

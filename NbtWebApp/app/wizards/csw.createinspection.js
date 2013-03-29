@@ -569,7 +569,7 @@
                                 });
                             }
 
-                            if (cswPrivate.isNewTarget) {
+                            if (cswPrivate.isNewTarget()) {
                                 confirmTypesList.li({
                                     text: 'New Inspection Target <b>' + cswPrivate.selectedInspectionTarget + '</b>'
                                 });
@@ -586,14 +586,16 @@
                             .ul({
                                 name: 'confirmationViews'
                             });
+                        if (cswPrivate.isNewTarget()) {
+                            confirmViewsList.li({
+                                text: '<b>Scheduling: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            });
+                            confirmViewsList.li({
+                                text: '<b>Groups: ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            });
+                        }
                         confirmViewsList.li({
-                            text: '<b>Scheduling, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
-                        });
-                        confirmViewsList.li({
-                            text: '<b>Groups, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
-                        });
-                        confirmViewsList.li({
-                            text: '<b>Inspections, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
+                            text: '<b>' + cswPrivate.selectedInspectionDesign.name + ' Inspections: ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                     } /*else {
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
