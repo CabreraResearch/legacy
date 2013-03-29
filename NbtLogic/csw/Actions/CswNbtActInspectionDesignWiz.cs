@@ -494,8 +494,6 @@ namespace ChemSW.Nbt.Actions
 
             RetObj["views"] = new JObject();
 
-            //TODO - if group and target had already existed, do not create new scheudling and group views - instead, retrieve existing views
-
             //Inspection Scheduling view
             CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
             _schedulingViewId = InspectionSchedulesView.ViewId;
