@@ -189,6 +189,7 @@
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29117_PendingRequests.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29059.cs" />
     <Compile Include="csw\Schema\scripts\prod\01Y\CswUpdateSchema_01Y_Case29089.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28535.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29245B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29245.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28890.cs" />
