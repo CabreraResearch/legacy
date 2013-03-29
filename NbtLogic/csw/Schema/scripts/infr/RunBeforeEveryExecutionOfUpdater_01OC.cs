@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, true );
             _acceptBlame( Dev, Case );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TargetTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, false );
-            
+
 
             //To prevent the various behaviors associated with changing Owner, make it readonly
             CswNbtMetaDataObjectClassProp OwnerOcp = GeneratorOc.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
@@ -455,27 +455,25 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         }
 
 
-       private void _addAssignIvgButton( UnitOfBlame Blame )
+        private void _addAssignIvgButton( UnitOfBlame Blame )
         {
 
             _acceptBlame( Blame );
             CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
             if( null != InventoryGroupOC )
             {
-                CswNbtMetaDataObjectClassProp AssignLocationButtonOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
-                                                                                                                        InventoryGroupOC,
-                                                                                                                        new CswNbtWcfMetaDataModel.ObjectClassProp()
-                                                                                                                        {
-                                                                                                                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                                                                                                                            PropName = CswNbtObjClassInventoryGroup.PropertyName.AssignLocation
-                                                                                                                        } );
+                CswNbtMetaDataObjectClassProp AssignLocationButtonOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryGroupOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.AssignLocation
+                } );
 
             }//if we found the ing ocp
 
             _resetBlame();
 
         }//_addAssignIvgButton()
-        
+
         private void _createHazardClassProp( UnitOfBlame Blame )
         {
             _acceptBlame( Blame );
@@ -493,12 +491,6 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
             _resetBlame();
         }
- 
-
-
-            _resetBlame();
-
-        }//_addAssignIvgButton() 
 
         #endregion ASPEN Methods
 
