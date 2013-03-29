@@ -308,7 +308,7 @@ namespace ChemSW.Nbt.Actions
             else
             {
                 _targetAlreadyExists = true;
-                //TODO - update existing target type's inspections view with new design nt
+                _updateInspectionsGridView( InspectionDesignNt, InspectionTargetNt );
             }
             _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
 
@@ -639,7 +639,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType RetInspectionTargetNt )
         {
-            String GridViewName = RetInspectionTargetNt.NodeTypeName + " Grid Prop View";
+            String GridViewName = RetInspectionTargetNt.NodeTypeName + " Inspections Grid Prop View";
             CswNbtView RetView = new CswNbtView( _CswNbtResources );
             try
             {
@@ -656,6 +656,22 @@ namespace ChemSW.Nbt.Actions
                 throw new CswDniException( ErrorType.Error, "Failed to create view: " + GridViewName, "View creation failed", ex );
             }
             return RetView;
+        }
+
+        private void _updateInspectionsGridView( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType RetInspectionTargetNt )
+        {
+            String GridViewName = RetInspectionTargetNt.NodeTypeName + " Inspections Grid Prop View";
+            foreach( CswNbtView View in _CswNbtResources.ViewSelect.restoreViews( GridViewName ) )
+            {
+                CswNbtViewRelationship TargetVr = View.Root.ChildRelationships[0];
+                if( null != TargetVr )
+                {
+                    CswNbtViewRelationship InspectionVr = View.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), true );
+                    CswNbtViewProperty DueDateVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate ) );
+                    CswNbtViewProperty StatusVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status ) );
+                    View.save();
+                }
+            }
         }
 
         private CswNbtView _createTargetInspectionsView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
