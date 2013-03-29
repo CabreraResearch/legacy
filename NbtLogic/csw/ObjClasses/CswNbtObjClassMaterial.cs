@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
@@ -45,6 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ViewSDS = "View SDS";
             public const string C3ProductId = "C3ProductId";
             public const string C3SyncDate = "C3SyncDate";
+            public const string HazardClasses = "Hazard Classes";
         }
 
         public sealed class PhysicalStates
@@ -116,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
             {
                 //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
-                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
+                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( this.NodeTypeId, this.HazardClasses.ToString() );
                 if( null != ChemicalHazardClassesNTP )
                 {
                     CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
@@ -159,6 +161,7 @@ namespace ChemSW.Nbt.ObjClasses
             ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswNbtActionName.Material_Approval ), SaveToDb: false );
             _toggleButtonVisibility();
             PhysicalState.SetOnPropChange( _physicalStatePropChangeHandler );
+            CasNo.SetOnPropChange( _onCasNoPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -612,6 +615,54 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public void syncFireDbData()
+        {
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireDbSync ) )
+            {
+                CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+                ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
+                // Set FireDb specific properties
+                CswC3SearchParams.Purpose = "FireDb";
+                CswC3SearchParams.SyncType = "CasNo";
+                CswC3SearchParams.SyncKey = this.CasNo.Text;
+
+                CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+                if( null != SearchResults.ExtChemDataResults )
+                {
+                    if( SearchResults.ExtChemDataResults.Length > 0 )
+                    {
+                        CswCommaDelimitedString CurrentHazardClasses = new CswCommaDelimitedString();
+                        CurrentHazardClasses = this.HazardClasses.Value;
+
+                        CswCommaDelimitedString UpdatedHazardClasses = new CswCommaDelimitedString();
+
+                        ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
+                        foreach( CswC3ExtChemData.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.UfcHazardClasses )
+                        {
+                            if( false == CurrentHazardClasses.Contains( UfcHazardClass.HazardClass ) )
+                            {
+                                UpdatedHazardClasses.Add( UfcHazardClass.HazardClass );
+                            }
+                        }
+
+                        // Add the original hazard classes to the new list
+                        foreach( string HazardClass in CurrentHazardClasses )
+                        {
+                            UpdatedHazardClasses.Add( HazardClass );
+                        }
+
+                        // Set the value of the property to the new list
+                        this.HazardClasses.Value = UpdatedHazardClasses;
+                    }
+                }
+
+                // Set the C3SyncDate property
+                this.C3SyncDate.DateTimeValue = DateTime.Now;
+            }
+        }
+
         #endregion Custom Logic
 
         #region Object class specific properties
@@ -621,6 +672,19 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber SpecificGravity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificGravity] ); } }
         public CswNbtNodePropList PhysicalState { get { return ( _CswNbtNode.Properties[PropertyName.PhysicalState] ); } }
         public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
+        private void _onCasNoPropChange( CswNbtNodeProp Prop )
+        {
+            if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
+            {
+                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
+                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( _CswNbtResources );
+                if( C3ServiceStatus )
+                {
+                    syncFireDbData();
+                }
+            }
+        }
+
         public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryLists] ); } }
         public CswNbtNodePropText TradeName { get { return ( _CswNbtNode.Properties[PropertyName.Tradename] ); } }
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
@@ -646,6 +710,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
         public CswNbtNodePropDateTime C3SyncDate { get { return ( _CswNbtNode.Properties[PropertyName.C3SyncDate] ); } }
+        public CswNbtNodePropMultiList HazardClasses { get { return ( _CswNbtNode.Properties[PropertyName.HazardClasses] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial
