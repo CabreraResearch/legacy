@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
             {
                 //Make sure the list of Hazard Class options matches the default set of hazard class options (except FL-Comb)
-                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Hazard Classes" );
+                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( this.NodeTypeId, this.HazardClasses.ToString() );
                 if( null != ChemicalHazardClassesNTP )
                 {
                     CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
