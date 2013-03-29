@@ -215,6 +215,7 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadview" );
             public static readonly NbtButtonAction nothing = new NbtButtonAction( "nothing" );
             public static readonly NbtButtonAction griddialog = new NbtButtonAction( "griddialog" );
+            public static readonly NbtButtonAction assignivglocation = new NbtButtonAction( "assignivglocation" );
         }
 
         // For validating object class casting

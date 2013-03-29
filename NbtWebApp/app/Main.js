@@ -1426,7 +1426,8 @@ window.initMain = window.initMain || function (undefined) {
                                 clear({ 'all': true });
                                 Csw.clientState.setCurrent(Csw.clientState.getLast());
                                 refreshSelected();
-                            }
+                            },
+                            actionjson: o.ActionOptions
                         });
                         break;
                     case 'modules':

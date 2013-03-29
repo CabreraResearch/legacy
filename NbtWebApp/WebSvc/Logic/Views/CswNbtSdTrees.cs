@@ -28,6 +28,9 @@ namespace ChemSW.Nbt.WebServices
                 public CswPrimaryKey IncludeNodeId;
 
                 [DataMember]
+                public bool ExpandAll = false;
+
+                [DataMember]
                 public string NodeId
                 {
                     get
@@ -144,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
                         return _treecount( Tree );
                     }
 
-                    private Int32 _treecount(Collection<CswExtTree.TreeNode> Coll)
+                    private Int32 _treecount( Collection<CswExtTree.TreeNode> Coll )
                     {
                         Int32 ret = 0;
                         foreach( CswExtTree.TreeNode t in Coll )
@@ -227,24 +230,25 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Recursively iterate the tree and add child nodes according to parent hierarchy
         /// </summary>
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode, bool useCheckboxes )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode, CswNbtSdTrees.Contract.Request Request )
         {
+
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
             {
                 Tree.goToNthChild( c );
 
-                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode, useCheckboxes );
+                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode, Request );
                 TreeNodes.Add( TreeNode );
 
                 if( null != TreeNode.Children )
                 {
-                    _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, useCheckboxes );
+                    _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, Request );
                 }
                 Tree.goToParentNode();
             }
             if( Tree.getCurrentNodeChildrenTruncated() )
             {
-                CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, ParentNode, false );
+                CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, ParentNode, null );
                 TruncatedTreeNode.Name = "Results Truncated";
                 TruncatedTreeNode.IsLeaf = true;
                 TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
@@ -258,10 +262,10 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Generate a JObject for the tree's current node
         /// </summary>
-        private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree, CswExtTree.TreeNode Parent, bool useCheckboxes )
+        private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree, CswExtTree.TreeNode Parent, CswNbtSdTrees.Contract.Request Request )
         {
             CswExtTree.TreeNode Ret;
-            if (useCheckboxes)
+            if( Request.UseCheckboxes )
             {
                 Ret = new CswExtTree.TreeNodeWithCheckbox();
             }
@@ -280,8 +284,8 @@ namespace ChemSW.Nbt.WebServices
 
             bool ThisNodeLocked = false;
             bool ThisNodeDisabled = false;
-            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType(ThisNodeKey.NodeTypeId);
-            switch (ThisNodeKey.NodeSpecies)
+            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
+            switch( ThisNodeKey.NodeSpecies )
             {
                 case NodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
@@ -289,7 +293,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisNodeTypeId = ThisNodeType.FirstVersionNodeTypeId;
                     ThisObjectClassId = ThisNodeType.ObjectClassId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-                    ThisNodeDisabled = (false == Tree.getNodeIncludedForCurrentPosition());
+                    ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
                     //if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
                     //{
                     //    ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
@@ -301,13 +305,13 @@ namespace ChemSW.Nbt.WebServices
                     break;
             }
 
-            CswNbtViewNode ThisNodeViewNode = _View.FindViewNodeByUniqueId(ThisNodeKey.ViewNodeUniqueId);
+            CswNbtViewNode ThisNodeViewNode = _View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
 
             string ThisNodeState = "closed";
-            if (ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+            if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
                 _View.ViewMode == NbtViewRenderingMode.List ||
-                (Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0) ||
-                (ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType(NbtViewNodeType.CswNbtViewRelationship).Count == 0))
+                ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
+                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
             {
                 ThisNodeState = "leaf";
             }
@@ -315,7 +319,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.Name = ThisNodeName;
             Ret.Icon = ThisNodeIcon;
             Ret.Id = ThisNodeKeyString;
-            switch (ThisNodeState)
+            switch( ThisNodeState )
             {
                 case "closed":
                     Ret.Expanded = false;
@@ -324,11 +328,14 @@ namespace ChemSW.Nbt.WebServices
                     Ret.IsLeaf = true;
                     break;
             }
-            if (int.MinValue != ThisNodeTypeId)
+
+            Ret.Expanded = Request.ExpandAll;
+
+            if( int.MinValue != ThisNodeTypeId )
             {
                 Ret.NodeTypeId = ThisNodeTypeId.ToString();
             }
-            if (int.MinValue != ThisObjectClassId)
+            if( int.MinValue != ThisObjectClassId )
             {
                 Ret.ObjectClassId = ThisObjectClassId.ToString();
             }
@@ -336,13 +343,13 @@ namespace ChemSW.Nbt.WebServices
             Ret.NodeSpecies = ThisNodeKey.NodeSpecies.ToString();
             Ret.NodeId = ThisNodeId;
             Ret.IsLocked = ThisNodeLocked;
-            if (ThisNodeDisabled)
+            if( ThisNodeDisabled )
             {
                 Ret.IsDisabled = true;
                 Ret.CssClass = "disabled";
             }
 
-            if (null != Parent && false == string.IsNullOrEmpty(Parent.Path))
+            if( null != Parent && false == string.IsNullOrEmpty( Parent.Path ) )
             {
                 Ret.Path = Parent.Path;
             }
@@ -351,10 +358,10 @@ namespace ChemSW.Nbt.WebServices
                 Ret.ParentId = "root";
                 Ret.Path = "|root";
             }
-            if (false == Tree.isCurrentPositionRoot())
+            if( false == Tree.isCurrentPositionRoot() )
             {
                 CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-                if (ParentKey.NodeSpecies != NodeSpecies.Root)
+                if( ParentKey.NodeSpecies != NodeSpecies.Root )
                 {
                     Ret.ParentId = ParentKey.ToString();
                 }
@@ -372,7 +379,9 @@ namespace ChemSW.Nbt.WebServices
             }
             //ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
 
+
             return Ret;
+
         } // _treeNodeJObject()
 
         public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request )
@@ -569,7 +578,7 @@ namespace ChemSW.Nbt.WebServices
             if( HasResults )
             {
                 Tree.goToRoot();
-                _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request.UseCheckboxes );
+                _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request );
             }
             else
             {
@@ -641,6 +650,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassLocation.makeLocationsTreeView( ref View, Resources );
             View.SaveToCache( false, false );
             Response.Data.ViewId = View.SessionViewId;
+
             //if( null != View )
             //{
             //    CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
