@@ -161,7 +161,7 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.ajax.post({
                     urlMethod: 'getWatermark',
                     success: function (result) {
-                        if (false === Csw.isNullOrEmpty(result.watermark)) {
+                        if (false === Csw.isNullOrEimpty(result.watermark)) {
                             Csw.main.watermark.text(result.watermark);
                         }
                     }
@@ -1433,9 +1433,7 @@ window.initMain = window.initMain || function (undefined) {
                     case 'modules':
                         Csw.actions.modules(Csw.main.centerTopDiv, {
                             onModuleChange: function() {
-                                refreshHeaderMenu();
-                                refreshDashboard();
-                                refreshViewSelect();
+                                initAll();
                             }
                         });
                         break;
