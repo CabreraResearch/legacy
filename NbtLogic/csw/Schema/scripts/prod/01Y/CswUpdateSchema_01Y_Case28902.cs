@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Upload_Legacy_Mobile_Data );
 
             //Un-tie the actions from CISPro - they belong to Containers now
-            _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.KioskMode );
+            _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Kiosk_Mode );
             _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Receiving );
             _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Reconciliation );
             _CswNbtSchemaModTrnsctn.deleteModuleActionJunction( CswNbtModuleName.CISPro, CswNbtActionName.Submit_Request );

@@ -1520,7 +1520,7 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
-                    case 'kioskmode':
+                    case 'kiosk mode':
                         Csw.actions.kioskmode(Csw.main.centerTopDiv, {
                             onCancel: function() {
                                 clear({ 'all': true });
