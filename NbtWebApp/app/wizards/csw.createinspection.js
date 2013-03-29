@@ -146,7 +146,7 @@
                                 $.CswDialog('AddNodeTypeDialog', {
                                     objectclassid: data.objectClassId,
                                     nodetypename: '',
-                                    category: 'do not show',
+                                    category: 'Checklist',
                                     select: cswPrivate.inspectionTargetSelect,
                                     nodeTypeDescriptor: 'Target',
                                     maxlength: 40,
