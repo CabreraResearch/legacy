@@ -8,6 +8,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Tree;
 using NbtWebApp.WebSvc.Returns;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -370,6 +371,21 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret.Children = null;
             }
+
+            Collection<CswNbtTreeNodeProp> ThisNodeProps = Tree.getChildNodePropsOfNode();
+            CswNbtViewRoot.forEachProperty EachNodeProp = ( ViewProp  ) =>
+                                                 {
+                                                     foreach( CswNbtTreeNodeProp NodeProp in ThisNodeProps )
+                                                     {
+                                                         if( NodeProp.PropName.ToLower().Trim() == ViewProp.Name.ToLower().Trim() )
+                                                         {
+                                                             Ret.data[new CswExtJsGridDataIndex( _View.ViewName, ViewProp.Name.ToLower().Trim() )] = NodeProp.Gestalt;
+                                                         }
+                                                     }
+                                                 };
+
+            _View.Root.eachRelationship(relationshipCallBack: null, propertyCallBack: EachNodeProp );
+
             //ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
 
             return Ret;
@@ -508,7 +524,7 @@ namespace ChemSW.Nbt.WebServices
             //#2: the columns for the Tree Grid
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    ExtDataIndex = "text",
+                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "text"),
                     xtype = extJsXType.treecolumn,
                     MenuDisabled = true,
                     width = 269,
@@ -517,43 +533,43 @@ namespace ChemSW.Nbt.WebServices
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    ExtDataIndex = "nodetypeid",
+                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "nodetypeid" ),
                     header = "NodeTypeId",
                     hidden = true,
                     resizable = false,
                     width = 0,
                     xtype = extJsXType.gridcolumn,
-                    MenuDisabled = true
+                    MenuDisabled = false
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    ExtDataIndex = "objectclassid",
+                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "objectclassid"),
                     header = "ObjectClassId",
                     hidden = true,
                     resizable = false,
                     width = 0,
                     xtype = extJsXType.gridcolumn,
-                    MenuDisabled = true
+                    MenuDisabled = false
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
             {
-                ExtDataIndex = "nodeid",
+                dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "nodeid"),
                 header = "NodeId",
                 hidden = true,
                 resizable = false,
                 width = 0,
                 xtype = extJsXType.gridcolumn,
-                MenuDisabled = true
+                MenuDisabled = false
             } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    ExtDataIndex = "disabled",
+                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "disabled"),
                     header = "Disabled",
                     hidden = true,
                     resizable = false,
                     width = 0,
                     xtype = extJsXType.booleancolumn,
-                    MenuDisabled = true
+                    MenuDisabled = false
                 } );
 
 
@@ -564,7 +580,39 @@ namespace ChemSW.Nbt.WebServices
             ResponseData.Fields.Add( new CswExtJsGridField { name = "nodeid", type = "string" } );
             ResponseData.Fields.Add( new CswExtJsGridField { name = "disabled", type = "bool" } );
 
-            //#4: the tree
+            //#4: View Properties are columns now too
+            Collection<string> UniqueColumnNames = new Collection<string>()
+                                                       {
+                                                           "text", "nodetypeid", "objectclassid", "nodeid", "disabled"
+                                                       };
+            CswNbtViewRoot.forEachProperty AddProp = ( ViewProperty ) =>
+                                                         {
+                                                             string PropName = ViewProperty.Name.ToLower().Trim();
+                                                             if( false == UniqueColumnNames.Contains( PropName ) )
+                                                             {
+                                                                 UniqueColumnNames.Add( PropName );
+
+                                                                 CswExtJsGridColumn Col = new CswExtJsGridColumn
+                                                                                              {
+                                                                                                  dataIndex = new CswExtJsGridDataIndex( _View.ViewName, PropName ),
+                                                                                                  header = ViewProperty.Name,
+                                                                                                  hidden = true,
+                                                                                                  resizable = false,
+                                                                                                  width = ViewProperty.Name.Length * 7,
+                                                                                                  xtype = extJsXType.gridcolumn,
+                                                                                                  MenuDisabled = false
+                                                                                              };
+                                                                 CswExtJsGridField Fld = new CswExtJsGridField {name = PropName, type = "string"};
+                                                                 Fld.dataIndex = Col.dataIndex;
+
+                                                                 ResponseData.Columns.Add( Col );
+                                                                 ResponseData.Fields.Add( Fld );
+                                                             }
+                                                         };
+            _View.Root.eachRelationship( relationshipCallBack: null, propertyCallBack: AddProp );
+
+
+            //#5: the tree
             RootNode.Children = new Collection<CswExtTree.TreeNode>();
             if( HasResults )
             {
@@ -635,70 +683,12 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources Resources = (CswNbtResources) CswResources;
 
-            //MaxLevel = 0 == MaxLevel ? Int32.MinValue : MaxLevel;
-
             CswNbtView View = new CswNbtView( Resources );
             CswNbtObjClassLocation.makeLocationsTreeView( ref View, Resources );
             View.SaveToCache( false, false );
             Response.Data.ViewId = View.SessionViewId;
-            //if( null != View )
-            //{
-            //    CswNbtSdTrees SdTrees = new CswNbtSdTrees( Resources, View );
-            //    SdTrees.runTree( Response.Data, new Contract.Request() );
-            //}
+           
         }//getLocationTree()
-
-
-        //public JObject getTypes()
-        //{
-        //    JObject TypesJson = new JObject();
-        //    TypesJson["root"] = new JObject();
-        //    TypesJson["root"]["icon"] = new JObject();
-        //    TypesJson["root"]["icon"]["image"] = "Images/view/viewtree.gif";
-        //    TypesJson["group"] = new JObject();
-        //    TypesJson["group"]["icon"] = new JObject();
-        //    TypesJson["group"]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + "folder.gif";
-        //    TypesJson["default"] = "";
-
-        //    var NodeTypes = new Dictionary<Int32, string>();
-        //    ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
-        //    foreach( CswNbtViewRelationship Rel in Relationships )
-        //    {
-        //        if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
-        //        {
-        //            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
-        //            if( null != NodeType && false == NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
-        //            {
-        //                NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
-        //            }
-        //        } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
-        //        else
-        //        {
-        //            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
-        //            if( null != ObjectClass )
-        //            {
-        //                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
-        //                {
-        //                    if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
-        //                    {
-        //                        NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
-        //                    }
-        //                }
-        //            }
-        //        } // else
-        //    } // foreach( CswNbtViewRelationship Rel in Relationships )
-
-        //    foreach( KeyValuePair<Int32, string> NodeType in NodeTypes )
-        //    {
-        //        TypesJson["nt_" + NodeType.Key] = new JObject();
-        //        TypesJson["nt_" + NodeType.Key]["icon"] = new JObject();
-        //        if( false == string.IsNullOrEmpty( NodeType.Value ) )
-        //        {
-        //            TypesJson["nt_" + NodeType.Key]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.Value;
-        //        }
-        //    }
-        //    return TypesJson;
-        //} // getTypes()
 
     } // class CswNbtWebServiceTree
 

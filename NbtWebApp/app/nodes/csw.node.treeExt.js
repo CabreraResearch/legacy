@@ -181,6 +181,17 @@
                                     }
                                 });
                             }
+
+                            {
+                                Csw.iterate(data.Tree, function(treeNode) {
+                                    if (treeNode.Row) {
+                                        var thisRow = treeNode.Row;
+                                        delete treeNode.Row;
+                                        Csw.extend(treeNode, thisRow);
+                                    }
+                                }, true);
+                            }
+
                             if (false === Csw.isNullOrEmpty(data.NewViewId) && cswPrivate.state.viewId !== data.NewViewId) {
                                 cswPrivate.state.viewId = data.NewViewId;
                                 cswPrivate.state.viewMode = data.NewViewMode;

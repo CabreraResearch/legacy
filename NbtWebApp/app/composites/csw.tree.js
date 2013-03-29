@@ -42,7 +42,7 @@
 
                 //Styling
                 cswPrivate.height = cswPrivate.height || '100%';
-                cswPrivate.width = cswPrivate.width || 270;
+                cswPrivate.width = cswPrivate.width || 700;
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;

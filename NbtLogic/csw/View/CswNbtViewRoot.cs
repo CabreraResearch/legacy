@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -712,7 +713,34 @@ namespace ChemSW.Nbt
             ChildRelationship.Parent = null;
         }
 
-
+        public delegate void forEachRelationship(CswNbtViewRelationship Relationship);
+        public delegate void forEachProperty(CswNbtViewProperty Property);
+        
+        private void _eachRelationshipRecursive( IEnumerable<CswNbtViewRelationship> Relationships, forEachRelationship relationshipCallBack, forEachProperty propertyCallBack )
+        {
+            foreach( CswNbtViewRelationship Relationship in Relationships )
+            {
+                if( null != relationshipCallBack )
+                {
+                    relationshipCallBack( Relationship );
+                }
+                foreach( CswNbtViewProperty ViewProp in Relationship.Properties )
+                {
+                    if( null != propertyCallBack )
+                    {
+                        propertyCallBack( ViewProp );
+                    }
+                }
+                if( Relationship.ChildRelationships.Any() )
+                {
+                    _eachRelationshipRecursive( Relationship.ChildRelationships, relationshipCallBack, propertyCallBack );
+                }
+            }
+        }
+        public void eachRelationship( forEachRelationship relationshipCallBack, forEachProperty propertyCallBack )
+        {
+            _eachRelationshipRecursive( this.ChildRelationships, relationshipCallBack, propertyCallBack );
+        }
 
     } // class CswNbtViewNodeRoot
 
