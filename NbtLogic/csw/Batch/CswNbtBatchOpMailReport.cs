@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.Batch
             MailMessage.RecipientDisplayName = FirstName + " " + LastName;
             MailMessage.Subject = Subject;
             MailMessage.Content = MailReportMessage;
-            MailMessage.Format = Quiksoft.EasyMail.SMTP.BodyPartFormat.HTML;
+            MailMessage.Format = CswMailMessageBodyFormat.HTML;
 
             if( null != ReportTable )
             {

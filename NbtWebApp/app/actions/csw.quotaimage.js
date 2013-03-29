@@ -8,7 +8,8 @@
             'use strict';
             var o = {
                 urlMethod: 'getQuotaPercent',
-                name: 'action_quota_image'
+                name: 'action_quota_image',
+                onSuccess: null
             };
             if (options) {
                 Csw.extend(o, options);
@@ -31,6 +32,7 @@
                         }
                         cswParent.img({ src: 'Images/quota/' + image, title: 'Quota Usage: ' + percentUsed + '%' });
                     }
+                    Csw.tryExec(o.onSuccess);
                 } // success
             }); // ajax()
 

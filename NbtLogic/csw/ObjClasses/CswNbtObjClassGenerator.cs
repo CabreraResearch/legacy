@@ -370,6 +370,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ParentType.SelectMode == PropertySelectMode.Single &&
                 ParentType.SelectedNodeTypeIds.Count > 0 )
             {
+                CswCommaDelimitedString InvalidNodeTypes = new CswCommaDelimitedString();
                 foreach( Int32 InspectionDesignNodeTypeId in TargetType.SelectedNodeTypeIds.ToIntCollection() )
 
                 {
@@ -380,9 +381,17 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtMetaDataNodeTypeProp DesignTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
                         if( _fkIsValid( DesignTargetNtp ) && InspectionTargetNTId != DesignTargetNtp.FKValue )
                         {
+                            InvalidNodeTypes.Add( InspectionDesignNt.NodeTypeName );
                             TargetType.SelectedNodeTypeIds.Remove( InspectionDesignNt.NodeTypeId.ToString() );
                         }
                     }
+                }
+                if( InvalidNodeTypes.Count > 0 && false == Owner.WasModified )
+                {
+                    throw new CswDniException( ErrorType.Warning,
+                        "Unable to add the following " + TargetType.PropName + " options because they do not belong to " + Owner.CachedNodeName + 
+                        ": <br/>" + InvalidNodeTypes.ToString().Replace( ",", "<br/>" ),
+                        "Invalid Target Type options selected: " + InvalidNodeTypes );
                 }
             }
         }

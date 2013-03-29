@@ -1736,7 +1736,8 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getIdentityTabProps( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public string getIdentityTabProps( string EditMode, string NodeId, string SafeNodeKey, //string NodeTypeId, 
+            string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1751,13 +1752,15 @@ namespace ChemSW.Nbt.WebServices
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
-                    CswNbtNodeKey NodeKey = _getNodeKey( SafeNodeKey );
-                    Int32 NodeTypePk = CswConvert.ToInt32( NodeTypeId );
-                    if( null != NodeKey && Int32.MinValue == NodeTypePk )
+
+                    CswPrimaryKey RealNodeId = _getNodeId( NodeId );
+                    if( false == CswTools.IsPrimaryKey( RealNodeId ) )
                     {
-                        NodeTypePk = NodeKey.NodeTypeId;
+                        CswNbtNodeKey RealNodeKey = _getNodeKey( SafeNodeKey );
+                        RealNodeId = RealNodeKey.NodeId;
                     }
-                    ReturnVal = ws.getIdentityTabProps( NodeId, SafeNodeKey, NodeTypePk, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+                    
+                    ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
 
                 _deInitResources();
