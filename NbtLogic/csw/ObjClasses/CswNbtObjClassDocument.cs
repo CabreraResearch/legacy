@@ -6,7 +6,7 @@ using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassDocument : CswNbtObjClass
+    public class CswNbtObjClassDocument: CswNbtObjClass
     {
         #region Public Sealed Classes
         /// <summary>
@@ -201,12 +201,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _archiveMatchingDocs()
         {
-            //If the document is not already archived and ( is not SDS or ( is SDS and has a Language and Format ) ), 
-            //then archive existing Docs with the same property values
+            //If and SDS Document is not already archived and it has a Language and Format, 
+            //then archive existing SDS Docs with the same property values
             if( Archived.Checked != Tristate.True &&
-                ( NodeType.NodeTypeName != "SDS Document" || (
-                false == string.IsNullOrEmpty( Format.Value ) &&
-                false == string.IsNullOrEmpty( Language.Value ) ) ) )
+                NodeType.NodeTypeName == "SDS Document" &&
+                false == String.IsNullOrEmpty( Language.Value ) &&
+                false == String.IsNullOrEmpty( Format.Value ) )
             {
                 CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
                 if( null != OwnerNode )
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
                     if( NodeType.NodeTypeName == "SDS Document" )
                     {
                         ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
         private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp )
         {
-            ArchiveDate.setHidden( value: true, SaveToDb: true );
+            ArchiveDate.setHidden( value : true, SaveToDb : true );
         }
         public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
         public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
         {
-            ArchiveDate.setHidden( value: Archived.Checked != Tristate.True, SaveToDb: true );
+            ArchiveDate.setHidden( value : Archived.Checked != Tristate.True, SaveToDb : true );
             string ArchivedTitleSuffix = " (Archived)";
             if( Archived.Checked == Tristate.True )
             {
