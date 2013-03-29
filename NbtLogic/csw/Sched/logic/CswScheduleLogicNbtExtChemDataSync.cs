@@ -149,13 +149,7 @@ namespace ChemSW.Nbt.Sched
             Int32 MaterialsToSync = MaterialPksTree.getChildNodeCount();
             if( MaterialsToSync > 0 )
             {
-                // In case we didn't actually retrieve the full "NodesProcessedPerCycle" amount
-                if( MaterialsProcessedPerIteration > MaterialsToSync )
-                {
-                    MaterialsProcessedPerIteration = MaterialsToSync;
-                }
-
-                for( int i = 0; i < MaterialsProcessedPerIteration; i++ )
+                for( int i = 0; i < MaterialsProcessedPerIteration && i < MaterialsToSync; i++ )
                 {
                     MaterialPksTree.goToNthChild( i );
                     MaterialPks.Add( MaterialPksTree.getNodeIdForCurrentPosition() );
