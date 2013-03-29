@@ -276,6 +276,9 @@ namespace ChemSW.Nbt.WebServices
                 C3Import.addNodeTypeProps( C3ProductTempNode.Node );
                 C3ProductTempNode.postChanges( false );
 
+                // Assign hazard classes if they exist and if FireDb Sync is enabled
+                C3ProductTempNode.syncFireDbData();
+
                 // Get or create a vendor node
                 C3CreateMaterialResponse.State.Supplier Supplier = C3Import.createVendorNode( C3ProductDetails.SupplierName );
 
