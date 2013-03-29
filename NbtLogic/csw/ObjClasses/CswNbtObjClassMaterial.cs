@@ -617,47 +617,50 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void syncFireDbData()
         {
-            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-            // Set FireDb specific properties
-            CswC3SearchParams.Purpose = "FireDb";
-            CswC3SearchParams.SyncType = "CasNo";
-            CswC3SearchParams.SyncKey = this.CasNo.Text;
-
-            CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
-            if( null != SearchResults.ExtChemDataResults )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireDbSync ) )
             {
-                if( SearchResults.ExtChemDataResults.Length > 0 )
+                CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+                ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
+                // Set FireDb specific properties
+                CswC3SearchParams.Purpose = "FireDb";
+                CswC3SearchParams.SyncType = "CasNo";
+                CswC3SearchParams.SyncKey = this.CasNo.Text;
+
+                CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+                if( null != SearchResults.ExtChemDataResults )
                 {
-                    CswCommaDelimitedString CurrentHazardClasses = new CswCommaDelimitedString();
-                    CurrentHazardClasses = this.HazardClasses.Value;
-
-                    CswCommaDelimitedString UpdatedHazardClasses = new CswCommaDelimitedString();
-
-                    ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
-                    foreach( CswC3ExtChemData.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.UfcHazardClasses )
+                    if( SearchResults.ExtChemDataResults.Length > 0 )
                     {
-                        if( false == CurrentHazardClasses.Contains( UfcHazardClass.HazardClass ) )
+                        CswCommaDelimitedString CurrentHazardClasses = new CswCommaDelimitedString();
+                        CurrentHazardClasses = this.HazardClasses.Value;
+
+                        CswCommaDelimitedString UpdatedHazardClasses = new CswCommaDelimitedString();
+
+                        ChemCatCentral.CswC3ExtChemData C3ExtChemData = SearchResults.ExtChemDataResults[0];
+                        foreach( CswC3ExtChemData.UfcHazardClass UfcHazardClass in C3ExtChemData.ExtensionData1.UfcHazardClasses )
                         {
-                            UpdatedHazardClasses.Add( UfcHazardClass.HazardClass );
+                            if( false == CurrentHazardClasses.Contains( UfcHazardClass.HazardClass ) )
+                            {
+                                UpdatedHazardClasses.Add( UfcHazardClass.HazardClass );
+                            }
                         }
-                    }
 
-                    // Add the original hazard classes to the new list
-                    foreach( string HazardClass in CurrentHazardClasses )
-                    {
-                        UpdatedHazardClasses.Add( HazardClass );
-                    }
+                        // Add the original hazard classes to the new list
+                        foreach( string HazardClass in CurrentHazardClasses )
+                        {
+                            UpdatedHazardClasses.Add( HazardClass );
+                        }
 
-                    // Set the value of the property to the new list
-                    this.HazardClasses.Value = UpdatedHazardClasses;
+                        // Set the value of the property to the new list
+                        this.HazardClasses.Value = UpdatedHazardClasses;
+                    }
                 }
-            }
 
-            // Set the C3SyncDate property
-            this.C3SyncDate.DateTimeValue = DateTime.Now;
+                // Set the C3SyncDate property
+                this.C3SyncDate.DateTimeValue = DateTime.Now;
+            }
         }
 
         #endregion Custom Logic
