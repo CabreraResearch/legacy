@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.Actions
         private bool _IsSchemaUpdater = false;
         private NbtViewVisibility _newViewVis;
         private Int32 _VisId = Int32.MinValue;
+        private bool _targetAlreadyExists;
 
         public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources, NbtViewVisibility newViewVis, ICswNbtUser newViewUser, bool isSchemaUpdater )
         {
@@ -304,6 +305,10 @@ namespace ChemSW.Nbt.Actions
             {
                 InspectionTargetNt = _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt );
             }
+            else
+            {
+                _targetAlreadyExists = true;
+            }
             _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
 
             return InspectionTargetNt;
@@ -489,6 +494,8 @@ namespace ChemSW.Nbt.Actions
 
             RetObj["views"] = new JObject();
 
+            //TODO - if group and target had already existed, do not create new scheudling and group views - instead, retrieve existing views
+
             //Inspection Scheduling view
             CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
             _schedulingViewId = InspectionSchedulesView.ViewId;
@@ -511,12 +518,23 @@ namespace ChemSW.Nbt.Actions
         {
             _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
             CswNbtView RetView = null;
-            string InspectionSchedulesViewName = "Scheduling, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
+            string InspectionSchedulesViewName = "Scheduling: " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
                 break;
+            }
+            if( _targetAlreadyExists )
+            {
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                {
+                    if( SchedulingView.ViewName.Contains( "Scheduling, " ) )
+                    {
+                        RetView = SchedulingView;
+                        break;
+                    }
+                }
             }
             if( null == RetView )
             {
@@ -568,12 +586,23 @@ namespace ChemSW.Nbt.Actions
             _validateNodeType( InspectionTargetGroupNt, NbtObjectClass.InspectionTargetGroupClass );
 
             CswNbtView RetView = null;
-            string GroupAssignmentViewName = "Groups, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
+            string GroupAssignmentViewName = "Groups: " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
                 break;
+            }
+            if( _targetAlreadyExists )
+            {
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                {
+                    if( SchedulingView.ViewName.Contains( "Groups, " ) )
+                    {
+                        RetView = SchedulingView;
+                        break;
+                    }
+                }
             }
 
             if( null == RetView )
@@ -659,7 +688,7 @@ namespace ChemSW.Nbt.Actions
             _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
 
             CswNbtView RetView = null;
-            string InspectionTargetViewName = "Inspections, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
+            string InspectionTargetViewName = InspectionDesignNt.NodeTypeName + " Inspections: " + InspectionTargetNt.NodeTypeName;
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
