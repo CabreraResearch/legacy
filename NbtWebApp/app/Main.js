@@ -1188,7 +1188,7 @@ window.initMain = window.initMain || function (undefined) {
                     clear({ 'all': true });
                     refreshMainMenu();
 
-                    var actionName = Csw.string(o.actionname).replace('_', ' ').trim().toLowerCase();
+                    var actionName = Csw.string(o.actionname).replace(/_/g, ' ').trim().toLowerCase();
                     switch (actionName) {
                     case 'create inspection':
                         designOpt = {
@@ -1497,7 +1497,6 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         });
                         break;
-                    case 'view scheduled_rules':
                     case 'view scheduled rules':
                         var rulesOpt = {
                             onCancel: function() {
