@@ -114,19 +114,19 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 CswNbtNode node = tree.getNodeForCurrentPosition();
                 string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
 
-                if( ObjClass == NbtObjectClass.EquipmentAssemblyClass && null == OpData.Field2.FoundObjClass )
+                if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
                 {
                     OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentAssemblyClass;
                     ret = true;
                 }
 
-                if( ObjClass == NbtObjectClass.EquipmentClass && null == OpData.Field2.FoundObjClass )
+                if( ObjClass == NbtObjectClass.EquipmentClass )
                 {
                     OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentClass;
                     ret = true;
                 }
 
-                if( ObjClass == NbtObjectClass.ContainerClass && null == OpData.Field2.FoundObjClass )
+                if( ObjClass == NbtObjectClass.ContainerClass )
                 {
                     OpData.Field2.FoundObjClass = NbtObjectClass.ContainerClass;
                     ret = true;
