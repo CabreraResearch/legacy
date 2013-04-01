@@ -388,13 +388,6 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            if( false == _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) )
-            {
-                Finish.setHidden( value : true, SaveToDb : false );
-                Cancel.setHidden( value : true, SaveToDb : false );
-                SetPreferred.setHidden( value : true, SaveToDb : false );
-            }
-
             // !!!
             // Don't clear IsFuture here, like we do with Tasks.  See case 28317.
             // !!!
@@ -432,6 +425,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
                 QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired ); // case 25035
+            }
+
+            if( false == _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) )
+            {
+                Finish.setHidden( value: true, SaveToDb: false );
+                Cancel.setHidden( value: true, SaveToDb: false );
+                SetPreferred.setHidden( value: true, SaveToDb: false );
             }
 
             SetPreferred.setReadOnly( value : _InspectionState.AllAnswered, SaveToDb : true );
