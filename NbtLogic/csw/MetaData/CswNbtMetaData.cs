@@ -1332,7 +1332,20 @@ namespace ChemSW.Nbt.MetaData
                         }
                     }
                 }
-                
+
+                //Case 29181 - Save prop on all tabs except identity
+                if( NodeTypeProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) )
+                {
+                    CswNbtMetaDataNodeTypeProp saveNTP = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
+                    foreach( CswNbtMetaDataNodeTypeTab tab in NewNodeType.getNodeTypeTabs() )
+                    {
+                        if( false == tab.Equals( NewNodeType.getIdentityTab() ) )
+                        {
+                            saveNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, tab.TabId, Int32.MaxValue, 1 );
+                        }
+                    }
+                }
+
                 //_CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewPropRow, NodeTypeProp.PropId );
             }
 
