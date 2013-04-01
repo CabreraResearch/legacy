@@ -178,6 +178,7 @@
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
                                         name: 'containerCount',
                                         value: '',
+                                        isRequired: true,
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: cswPublic.containerlimit,
                                         width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
