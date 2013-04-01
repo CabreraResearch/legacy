@@ -203,7 +203,7 @@
                                 };
                                 if (row && row.Row) {
                                     Object.keys(row.Row).forEach(function (key) {
-                                        if (key === 'reprobate') {
+                                        if (key === 'reprobate' || key === 'disabled') {
                                             parsedRow[key] = Csw.bool(row.Row[key]);
                                         } else {
                                             parsedRow[key] = row.Row[key];
@@ -344,6 +344,22 @@
                                             allowBlank: true
                                         }
                                     });
+                                    break;
+                                case result.ColumnIds.disabled:
+                                    col.editable = true;
+                                    col.xtype = 'checkcolumn';
+                                    col.listeners = {
+                                        checkchange: function (checkbox, rowNum, isChecked) {
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum]['disabled'] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['disabled'] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['has_changed'] = 'true';
+                                        }
+                                    };
+                                    col.editor = {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true
+                                    };
                                     break;
                                 case result.ColumnIds.has_changed:
                                     col.editable = true;
