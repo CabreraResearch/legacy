@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
         #region DataContracts
 
         [DataContract]
-        public class CswNbtSearchMenuReturn : CswWebSvcReturn
+        public class CswNbtSearchMenuReturn: CswWebSvcReturn
         {
             public CswNbtSearchMenuReturn()
             {
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.WebServices
                 searchTypes = new Collection<SearchType>();
             }
 
-            [DataMember] 
+            [DataMember]
             public Collection<SearchType> searchTypes;
 
             [DataContract]
@@ -61,10 +61,13 @@ namespace ChemSW.Nbt.WebServices
 
             Collection<SearchMenuResponse.SearchType> searchTypes = new Collection<SearchMenuResponse.SearchType>();
 
-            SearchMenuResponse.SearchType ss = new SearchMenuResponse.SearchType();
-            ss.name = "Structure Search";
-            ss.iconfilename = "Images/newicons/16/atommag.png";
-            searchTypes.Add(ss);
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            {
+                SearchMenuResponse.SearchType ss = new SearchMenuResponse.SearchType();
+                ss.name = "Structure Search";
+                ss.iconfilename = "Images/newicons/16/atommag.png";
+                searchTypes.Add( ss );
+            }
 
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 ) )
             {

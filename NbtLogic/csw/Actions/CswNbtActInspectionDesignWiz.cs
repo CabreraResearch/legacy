@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.Actions
         private bool _IsSchemaUpdater = false;
         private NbtViewVisibility _newViewVis;
         private Int32 _VisId = Int32.MinValue;
+        private bool _targetAlreadyExists;
 
         public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources, NbtViewVisibility newViewVis, ICswNbtUser newViewUser, bool isSchemaUpdater )
         {
@@ -304,6 +305,11 @@ namespace ChemSW.Nbt.Actions
             {
                 InspectionTargetNt = _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt );
             }
+            else
+            {
+                _targetAlreadyExists = true;
+                _updateInspectionsGridView( InspectionDesignNt, InspectionTargetNt );
+            }
             _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
 
             return InspectionTargetNt;
@@ -361,7 +367,7 @@ namespace ChemSW.Nbt.Actions
             //Inspection Target has a tab to host a grid view of Inspections
             CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( RetInspectionTargetNt, InspectionDesignName, 2 );
             CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewProp( RetInspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionDesignName, ItInspectionsTab.TabId );
-            CswNbtView ItInspectionsGridView = _createInspectionsGridView( string.Empty, NbtViewRenderingMode.Grid, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
+            CswNbtView ItInspectionsGridView = _createInspectionsGridView( InspectionDesignNt, RetInspectionTargetNt );
             ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
             ItInspectionsNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             #endregion Set new InspectionTarget Props and Tabs
@@ -511,12 +517,23 @@ namespace ChemSW.Nbt.Actions
         {
             _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
             CswNbtView RetView = null;
-            string InspectionSchedulesViewName = "Scheduling, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
+            string InspectionSchedulesViewName = "Scheduling: " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
                 break;
+            }
+            if( _targetAlreadyExists )
+            {
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                {
+                    if( SchedulingView.ViewName.Contains( "Scheduling, " ) )
+                    {
+                        RetView = SchedulingView;
+                        break;
+                    }
+                }
             }
             if( null == RetView )
             {
@@ -568,12 +585,23 @@ namespace ChemSW.Nbt.Actions
             _validateNodeType( InspectionTargetGroupNt, NbtObjectClass.InspectionTargetGroupClass );
 
             CswNbtView RetView = null;
-            string GroupAssignmentViewName = "Groups, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
+            string GroupAssignmentViewName = "Groups: " + InspectionTargetNt.NodeTypeName;
 
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
                 break;
+            }
+            if( _targetAlreadyExists )
+            {
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                {
+                    if( SchedulingView.ViewName.Contains( "Groups, " ) )
+                    {
+                        RetView = SchedulingView;
+                        break;
+                    }
+                }
             }
 
             if( null == RetView )
@@ -609,48 +637,41 @@ namespace ChemSW.Nbt.Actions
             return RetView;
         }
 
-        private CswNbtView _createInspectionsGridView( string Category, NbtViewRenderingMode ViewMode, bool AllInspections, DateTime DueDate, string InspectionsViewName )
+        private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType RetInspectionTargetNt )
         {
-            if( string.IsNullOrEmpty( InspectionsViewName ) )
-            {
-                throw new CswDniException( ErrorType.Warning, "Cannot create an Inspections view without a name.", "View name was null or empty." );
-            }
-
+            String GridViewName = RetInspectionTargetNt.NodeTypeName + " Inspections Grid Prop View";
             CswNbtView RetView = new CswNbtView( _CswNbtResources );
             try
             {
-                RetView.saveNew( InspectionsViewName, NbtViewVisibility.Property, null, null, null );
-                RetView.ViewMode = ViewMode;
-                RetView.Category = Category;
-
-                CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass );
-                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
-
-                CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( InspectionTargetOc, true );
-                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), true );
-                CswNbtViewProperty DueDateVp = RetView.AddViewProperty( InspectionVr, InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate ) );
-                CswNbtViewProperty StatusVp = RetView.AddViewProperty( InspectionVr, InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status ) );
-
-                if( false == AllInspections )
-                {
-                    RetView.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled );
-                    RetView.AddViewPropertyFilter( StatusVp, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : CswNbtObjClassInspectionDesign.InspectionStatus.Completed );
-                    RetView.AddViewPropertyFilter( StatusVp, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate );
-                    RetView.AddViewPropertyFilter( StatusVp, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value : CswNbtObjClassInspectionDesign.InspectionStatus.Missed );
-                }
-
-                if( DateTime.MinValue != DueDate )
-                {
-                    RetView.AddViewPropertyFilter( DueDateVp, Value: DateTime.Today.ToString() );
-                }
-
+                RetView.saveNew( GridViewName, NbtViewVisibility.Property, null, null, null );
+                RetView.ViewMode = NbtViewRenderingMode.Grid;
+                CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( RetInspectionTargetNt, true );
+                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), true );
+                CswNbtViewProperty DueDateVp = RetView.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate ) );
+                CswNbtViewProperty StatusVp = RetView.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status ) );
                 RetView.save();
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionsViewName, "View creation failed", ex );
+                throw new CswDniException( ErrorType.Error, "Failed to create view: " + GridViewName, "View creation failed", ex );
             }
             return RetView;
+        }
+
+        private void _updateInspectionsGridView( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType RetInspectionTargetNt )
+        {
+            String GridViewName = RetInspectionTargetNt.NodeTypeName + " Inspections Grid Prop View";
+            foreach( CswNbtView View in _CswNbtResources.ViewSelect.restoreViews( GridViewName ) )
+            {
+                CswNbtViewRelationship TargetVr = View.Root.ChildRelationships[0];
+                if( null != TargetVr )
+                {
+                    CswNbtViewRelationship InspectionVr = View.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), true );
+                    CswNbtViewProperty DueDateVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate ) );
+                    CswNbtViewProperty StatusVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status ) );
+                    View.save();
+                }
+            }
         }
 
         private CswNbtView _createTargetInspectionsView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
@@ -659,7 +680,7 @@ namespace ChemSW.Nbt.Actions
             _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
 
             CswNbtView RetView = null;
-            string InspectionTargetViewName = "Inspections, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
+            string InspectionTargetViewName = InspectionDesignNt.NodeTypeName + " Inspections: " + InspectionTargetNt.NodeTypeName;
             foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
