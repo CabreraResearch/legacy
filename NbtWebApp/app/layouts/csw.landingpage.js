@@ -316,7 +316,11 @@
                 cswPrivate.addItemForm[cswPrivate.select.view].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.view, 2).viewSelect({
                     name: 'landingpage_viewsel',
                     maxHeight: '275px',
-                    includeRecent: false
+                    includeRecent: false,
+                    onSelect: function (itemobj) {
+                        cswPrivate.selectedViewItemType = itemobj.type;
+                        cswPrivate.selectedItemPK = itemobj.itemid;
+                    }
                 });
                 cswPrivate.addItemForm[cswPrivate.select.view].control.$.hide();
             };
@@ -423,24 +427,17 @@
                     enabledText: 'Add',
                     disabledText: 'Adding',
                     onClick: function () {
-                        var viewtype = '';
-                        var pkvalue = '';
-                        var selectedView;
-                        if (false == cswPrivate.addItemForm[cswPrivate.select.view].control.$.is(':hidden')) {
-                            selectedView = cswPrivate.addItemForm[cswPrivate.select.view].control.val();
-                            viewtype = selectedView.type;
-                            pkvalue = selectedView.value;
-                        } else if (false === Csw.isNullOrEmpty(cswPrivate.addItemForm[cswPrivate.select.tab]) &&
+                        if (false === Csw.isNullOrEmpty(cswPrivate.addItemForm[cswPrivate.select.tab]) &&
                             false == cswPrivate.addItemForm[cswPrivate.select.tab].control.$.is(':hidden')) {
-                            pkvalue = cswPrivate.addItemForm[cswPrivate.select.tab].control.val();
+                            cswPrivate.selectedItemPK = cswPrivate.addItemForm[cswPrivate.select.tab].control.val();
                         } else if (false === Csw.isNullOrEmpty(cswPrivate.addItemForm[cswPrivate.select.button]) &&
                             false == cswPrivate.addItemForm[cswPrivate.select.button].control.$.is(':hidden')) {
-                            pkvalue = cswPrivate.addItemForm[cswPrivate.select.button].control.val();
+                            cswPrivate.selectedItemPK = cswPrivate.addItemForm[cswPrivate.select.button].control.val();
                         }
                         cswPrivate.addItem({
                             type: cswPrivate.addItemForm[cswPrivate.select.type].control.val(),
-                            viewtype: viewtype,
-                            pkvalue: pkvalue,
+                            viewtype: cswPrivate.selectedViewItemType,
+                            pkvalue: cswPrivate.selectedItemPK,
                             nodetypeid: cswPrivate.addItemForm[cswPrivate.select.nodetype].control.val(),
                             text: cswPrivate.addItemForm[cswPrivate.select.text].control.val(),
                             buttonIcon: cswPrivate.addItemForm[cswPrivate.select.icon].control.val(),
