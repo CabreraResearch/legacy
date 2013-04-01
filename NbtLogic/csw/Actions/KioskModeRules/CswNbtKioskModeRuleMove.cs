@@ -8,8 +8,6 @@ namespace ChemSW.Nbt.Actions.KioskMode
 {
     public class CswNbtKioskModeRuleMove: CswNbtKioskModeRule
     {
-        public CswNbtResources _CswNbtResources;
-
         public CswNbtKioskModeRuleMove( CswNbtResources NbtResources )
             : base( NbtResources )
         {
