@@ -953,6 +953,9 @@
     <None Include="package.json" />
     <None Include="README.md" />
     <None Include="Scripts\jquery-1.9.1.min.map" />
+    <None Include="Scripts\jquery-ui-1.10.1.min.js.map">
+      <DependentUpon>jquery-ui-1.10.1.js</DependentUpon>
+    </None>
     <None Include="test\test.tmpl" />
     <None Include="vendor\es5-sham.min.js.map">
       <DependentUpon>es5-sham.js</DependentUpon>
