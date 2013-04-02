@@ -95,6 +95,9 @@
                         tabid = val;
                     }
                 });
+                
+
+
             }());
             cswPrivate.onMultiEdit = function (eventObj, multiOpts) {
                 var isMulti = false;
@@ -152,26 +155,7 @@
             });
             cswPrivate.initAtLeastOne(true);
 
-            (function _preCtor() {
-                Csw.extend(cswPrivate, options, true);
-                cswPrivate.init = function () {
-                    Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
-                    Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
-                    //We don't have node name yet. Init the div in the right place and polyfill later.
-                    cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
-                    cswPrivate.identityWrapDiv = cswParent.div();
-
-                    cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
-
-                    cswPrivate.identityForm = cswPrivate.tabsTable.cell(1, 1).form();
-
-                    cswPrivate.outerTabDiv = cswPrivate.tabsTable
-                        .cell(3, 1)
-                        .tabDiv({});
-                    cswPrivate.tabcnt = 0;
-                };
-                cswPrivate.init();
-            }());
+       
 
             //#region Events
 
@@ -285,9 +269,7 @@
                         RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid)
                     },
                     success: function (data) {
-                        cswPrivate.IdentityTab = data;
-                        cswPrivate.tabState.nodename = data.nodename;
-                        cswPrivate.tabState.nodetypeid = data.nodetypeid;
+                        cswPrivate.IdentityTab = data.properties;
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab) &&
                             false === cswPrivate.tabState.Config &&
@@ -306,8 +288,7 @@
                                 showExpandColButton: false,
                                 showRemoveButton: false
                             };
-                            cswPrivate.IdentityTabId = cswPrivate.IdentityTab.tabid;
-                            delete cswPrivate.IdentityTab.tabid;
+                            cswPrivate.IdentityTabId = data.tab.tabid;
 
                             cswPrivate.titleDiv.empty();
                             if (cswPrivate.showTitle) {
@@ -517,24 +498,22 @@
                 return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup) && cswPrivate.Multi;
             };
 
-            cswPrivate.setNode = function (data) {
+            cswPrivate.setNode = function (node) {
                 /// <summary>
                 /// Set the current NodeId and NodeKey
                 /// </summary>
                 var nodeid = null;
-                if (data) {
-                    nodeid = Csw.string(data.nodeid);
-                    var nodekey = data.nodekey;
+                if (node) {
+                    nodeid = Csw.string(node.nodeid);
+                    var nodekey = node.nodekey;
                     if (nodeid !== cswPublic.getNodeId()) {
                         Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = nodekey;
                         cswPrivate.globalState.currentNodeId = nodeid;
-                        cswPrivate.globalState.currentNodeLink = data.nodelink;
+                        cswPrivate.globalState.currentNodeLink = node.nodelink;
                         cswPrivate.globalState.currentNodeKey = nodekey;
                     }
-                    delete data.nodeid;
-                    delete data.nodelink;
                 }
                 return nodeid;
             };
@@ -887,16 +866,14 @@
                                     lineNumber: 387
                                 });
                             }
-                            if (data.nodeid) {
-                                cswPrivate.setNode(data);
-                            }
-                            cswPrivate.globalState.propertyData = data;
+                            cswPrivate.setNode(data.node);
+                            cswPrivate.globalState.propertyData = data.properties;
                             makePropLayout();
                         } // success{}
                     }); // ajax
                 } else {
-                    if (cswPrivate.globalState.propertyData.nodeid) {
-                        cswPrivate.setNode(cswPrivate.globalState.propertyData);
+                    if (cswPrivate.globalState.propertyData.node) {
+                        cswPrivate.setNode(cswPrivate.globalState.propertyData.node);
                     }
                     makePropLayout();
                 }
@@ -927,8 +904,8 @@
                         propName = Csw.string(propData.name),
                         labelCell = {};
 
-                    if (propData.displayrow < 0 || propData.displayrow >= Number.MAX_VALUE || 
-                         propData.displaycol < 0 || propData.displaycol >= Number.MAX_VALUE) {
+                    if (propData.displayrow <= 0 || propData.displayrow >= Number.MAX_VALUE || 
+                         propData.displaycol <= 0 || propData.displaycol >= Number.MAX_VALUE) {
                         throw new Error('Cannot make a property at these coordinate: x=' + propData.displaycol + ',y=' + propData.displayrow + '.');
                     }
                     cellSet = cswPrivate.getCellSet(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
@@ -1338,6 +1315,33 @@
                 cswPrivate.refreshLinkDiv();
                 cswPrivate.bindSaveSub();
             };
+
+            (function _preCtor() {
+                Csw.extend(cswPrivate, options, true);
+                if (cswPrivate.globalState.propertyData && cswPrivate.globalState.propertyData.properties) {
+                    cswPrivate.setNode(cswPrivate.globalState.propertyData.node);
+                    cswPrivate.globalState.propertyData = cswPrivate.globalState.propertyData.properties;
+                }
+
+
+                cswPrivate.init = function () {
+                    Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
+                    Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                    //We don't have node name yet. Init the div in the right place and polyfill later.
+                    cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
+                    cswPrivate.identityWrapDiv = cswParent.div();
+
+                    cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
+
+                    cswPrivate.identityForm = cswPrivate.tabsTable.cell(1, 1).form();
+
+                    cswPrivate.outerTabDiv = cswPrivate.tabsTable
+                        .cell(3, 1)
+                        .tabDiv({});
+                    cswPrivate.tabcnt = 0;
+                };
+                cswPrivate.init();
+            }());
 
             (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
