@@ -130,6 +130,8 @@
     <Content Include="app\wizards\csw.reconciliation.js" />
     <Content Include="app\types\csw.casno.js" />
     <Content Include="app\wizards\_template.js" />
+    <Content Include="Content\jquery.multiselect.css" />
+    <Content Include="Content\jquery.multiselect.filter.css" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -319,6 +321,9 @@
     <Content Include="test\csw-test.js" />
     <Content Include="vendor\ext-done.js" />
     <Content Include="vendor\ext-init.js" />
+    <Content Include="vendor\jquery.multiselect.filter.js" />
+    <Content Include="vendor\jquery.multiselect.js" />
+    <Content Include="vendor\jquery.multiselect.min.js" />
     <Content Include="vendor\loggly-0.1.0.min.js" />
     <Content Include="vendor\es6-shim.min.js" />
     <Content Include="vendor\es5-sham.min.js" />
@@ -832,12 +837,6 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
     <Content Include="vendor\less-1.3.1.min.js" />
     <Content Include="vendor\loggly-0.1.0.js" />
-    <Content Include="vendor\multiselect\jquery.multiselect.css" />
-    <Content Include="vendor\multiselect\jquery.multiselect.filter.css" />
-    <Content Include="vendor\multiselect\jquery.multiselect.filter.js" />
-    <Content Include="vendor\multiselect\jquery.multiselect.filter.min.js" />
-    <Content Include="vendor\multiselect\jquery.multiselect.js" />
-    <Content Include="vendor\multiselect\jquery.multiselect.min.js" />
     <Content Include="vendor\xstats\.gitattributes" />
     <Content Include="vendor\xstats\.gitignore" />
     <Content Include="vendor\xstats\LICENSE.txt" />
@@ -953,6 +952,9 @@
     <None Include="package.json" />
     <None Include="README.md" />
     <None Include="Scripts\jquery-1.9.1.min.map" />
+    <None Include="Scripts\jquery-ui-1.10.1.min.js.map">
+      <DependentUpon>jquery-ui-1.10.1.js</DependentUpon>
+    </None>
     <None Include="test\test.tmpl" />
     <None Include="vendor\es5-sham.min.js.map">
       <DependentUpon>es5-sham.js</DependentUpon>
@@ -975,12 +977,6 @@
     </None>
     <None Include="vendor\loggly-0.1.0.min.js.map">
       <DependentUpon>loggly-0.1.0.js</DependentUpon>
-    </None>
-    <None Include="vendor\multiselect\jquery.multiselect.filter.min.js.map">
-      <DependentUpon>jquery.multiselect.filter.js</DependentUpon>
-    </None>
-    <None Include="vendor\multiselect\jquery.multiselect.min.js.map">
-      <DependentUpon>jquery.multiselect.js</DependentUpon>
     </None>
     <None Include="vendor\xstats\doc\parse.php" />
     <None Include="vendor\xstats\doc\README.md" />

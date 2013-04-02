@@ -26,12 +26,13 @@
     <link rel="stylesheet" href="vendor/extJS-4.1.0/ux/css/CheckHeader.css" />
 
     <link rel="stylesheet" href="Content/themes/cupertino/minified/jquery-ui.min.css" />
-    <link rel="stylesheet" href="vendor/multiselect/jquery.multiselect.css" />
-    <link rel="stylesheet" href="vendor/multiselect/jquery.multiselect.filter.css" />
+    <link rel="stylesheet" href="Content/jquery.multiselect.css" />
+    <link rel="stylesheet" href="Content/jquery.multiselect.filter.css" />
+    
     
 </head>
 
-<body>
+<body> 
     <!--[if lte IE 8]>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
             <style>

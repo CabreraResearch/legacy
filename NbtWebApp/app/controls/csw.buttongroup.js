@@ -10,9 +10,6 @@
                 name: '',
                 buttons: {
                     previous: {
-                        tooltip: {
-                            title: 'Go Back a Step'
-                        },
                         suffix: 'previous',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.back),
                         text: 'Previous',
@@ -21,9 +18,6 @@
                         onclick: null
                     },
                     next: {
-                        tooltip: {
-                            title: 'Go to Next Step' 
-                        },
                         suffix: 'next',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.right),
                         text: 'Next',
@@ -32,9 +26,6 @@
                         onclick: null
                     },
                     finish: {
-                        tooltip: {
-                            title: 'Submit Action'
-                        },
                         suffix: 'finish',
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                         text: 'Finish',
@@ -45,9 +36,6 @@
 
                 },
                 cancel: {
-                    tooltip: {
-                        title: 'Cancel Action'
-                    },
                     suffix: 'cancel',
                     icon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.cancel),
                     text: 'Cancel',
