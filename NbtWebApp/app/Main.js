@@ -297,8 +297,9 @@ window.initMain = window.initMain || function (undefined) {
             }
 
             function setUsername(username) {
+                var userid = Csw.cookie.get(Csw.cookie.cookieNames.CustomerId);
                 Csw.clientSession.setUsername(username);
-                Csw.main.headerUsername.text(username)
+                Csw.main.headerUsername.text(username + '@' + userid)
                     .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
             }
 
