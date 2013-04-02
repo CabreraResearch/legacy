@@ -867,7 +867,11 @@ namespace ChemSW.Nbt.ObjClasses
                     prop.ObjectClassPropName != PropertyName.Undispose &&
                     prop.ObjectClassPropName != PropertyName.Disposed )
                 {
-                    prop.setReadOnly( isReadOnly, SaveToDb : true );
+                    if( prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
+                    {
+                        prop.setHidden( isReadOnly, SaveToDb: true );
+                    }
+                    prop.setReadOnly( isReadOnly, SaveToDb: true );
                 }
             }
         } // _setDisposedReadOnly()
