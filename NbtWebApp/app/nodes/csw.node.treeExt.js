@@ -174,7 +174,8 @@
                         NodeId: cswPrivate.state.nodeId,
                         NodeKey: cswPrivate.state.nodeKey,
                         UseCheckboxes: cswPrivate.isMulti, 
-                        ExpandAll: cswPrivate.ExpandAll
+                        ExpandAll: cswPrivate.ExpandAll,
+                        PropsToShow: cswPrivate.PropsToShow
                     },
                     success: function (data) {
 

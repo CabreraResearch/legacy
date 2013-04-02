@@ -62,6 +62,7 @@
                             overrideBeforeSelect: true,
                             ExpandAll: true,
                             forSearch: false,
+                            PropsToShow: ['inventory group'],
                             onBeforeSelectNode: function ( node , tree ) 
                             { 
 
