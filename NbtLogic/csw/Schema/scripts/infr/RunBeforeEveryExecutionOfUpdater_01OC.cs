@@ -410,6 +410,10 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
         #endregion ASPEN Methods
 
+        #region BUCKEYE Methods
+        
+        #endregion BUCKEYE Methods
+
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -435,6 +439,10 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _createHazardClassProp( new UnitOfBlame( CswDeveloper.CM, 29245 ) );
 
             #endregion ASPEN
+
+            #region BUCKEYE
+            
+            #endregion BUCKEYE
 
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
