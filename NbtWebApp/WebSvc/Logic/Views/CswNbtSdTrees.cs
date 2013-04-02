@@ -611,7 +611,7 @@ namespace ChemSW.Nbt.WebServices
                                                                                                   header = ViewProperty.Name,
                                                                                                   hidden = HideProp,
                                                                                                   resizable = false,
-                                                                                                  width = ViewProperty.Name.Length * 7,
+                                                                                                  width = ViewProperty.Width * 7,
                                                                                                   xtype = extJsXType.gridcolumn,
                                                                                                   MenuDisabled = false
                                                                                               };

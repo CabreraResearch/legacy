@@ -22,7 +22,7 @@
                 rootVisible: false,
                 useHover: true,
                 height: '',
-                width: '',
+                width: 270, //this has to be a number
 
 
                 //State

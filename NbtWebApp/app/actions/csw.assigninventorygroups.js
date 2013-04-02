@@ -29,6 +29,7 @@
 //            action_table.propDom( 'border', '1'); 
 //            action_table.css({ width: '100%' }); 
             var tree_cell = action_table.cell(2, 1);
+            //tree_cell.css( {'width' : '1500px' } ); 
 
              
             var include_children_table = action_table.cell(1, 1).table();
@@ -58,7 +59,7 @@
                     success: function (data) {
                         tree_cell.empty();
                         mainTree = Csw.nbt.nodeTreeExt(tree_cell, {
-                            width: '500px',
+                            width: 500,
                             overrideBeforeSelect: true,
                             ExpandAll: true,
                             forSearch: false,
