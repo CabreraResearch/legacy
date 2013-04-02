@@ -88,8 +88,8 @@ timeout /T 30
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:web:%env%
->>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:web:%env%
+>>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
+>>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
 
 :SchemaReset
 IF "%ResetSchema%" NEQ "Y" GOTO Continue

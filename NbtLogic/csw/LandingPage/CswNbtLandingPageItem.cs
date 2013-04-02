@@ -99,12 +99,17 @@ namespace ChemSW.Nbt.LandingPage
 
         private Int32 _getNextAvailableRowForItem( Int32 RoleId, string ActionId )
         {
-            String ActionText = String.Empty;
+            String SqlText = "select max(display_row) maxrow from landingpage where display_col = 1 ";
+            String ActionClause = " and (for_actionid = " + ActionId + ")";
+            String RoleClause = " and (for_roleid = " + RoleId.ToString() + ")";
             if( false == String.IsNullOrEmpty( ActionId ) )
             {
-                ActionText = " and (for_actionid = " + ActionId + ")";
+                SqlText += ActionClause;
             }
-            string SqlText = "select max(display_row) maxrow from landingpage where display_col = 1 and (for_roleid = " + RoleId.ToString() + ")" + ActionText;
+            else//TODO - if and when Action Landing Pages are Role-specific, remove this else clause
+            {
+                SqlText += RoleClause;
+            }
             CswArbitrarySelect LandingPageSelect = _CswNbtResources.makeCswArbitrarySelect( "LandingPageForRole", SqlText );
             DataTable LandingPageSelectTable = LandingPageSelect.getTable();
             Int32 MaxRow = 0;
