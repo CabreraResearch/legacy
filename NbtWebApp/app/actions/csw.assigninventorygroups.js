@@ -41,7 +41,8 @@
             var close_button_cell = action_table.cell(3, 1);
 
             var right_side_table = action_table.cell(1, 2).table();
-            action_table.cell(1, 2).css( { 'vertical-align' : 'bottom' } );
+            action_table.cell(1, 2).propDom( 'rowspan', 2 ); 
+            action_table.cell(1, 2).css( { 'vertical-align' : 'top' } );
             var select_box_label_cell = right_side_table.cell(1, 1);
             var select_inventory_group_cell = right_side_table.cell(1, 2);
             var save_button_cell = right_side_table.cell(2, 2);
