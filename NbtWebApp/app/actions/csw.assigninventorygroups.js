@@ -132,6 +132,7 @@
             function initCheckBox() {
 
                 include_children_checkbox_label_cell.span({ text: 'Include Children:' }).addClass('propertylabel');
+                include_children_checkbox_cell.empty();
                 check_children_of_current_check_box = include_children_checkbox_cell.input({
                     name: "include_children",
                     type: Csw.enums.inputTypes.checkbox,
@@ -165,6 +166,7 @@
                             urlMethod: 'Locations/assignInventoryGroupToLocations',
                             data: AssignRequest,
                             success: function (ajaxdata) { 
+                                    initCheckBox();
                                     initTree();
                                 }
                             });
