@@ -325,13 +325,12 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node, bool HasEditableProps )
         {
-            bool Ret = ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
-                Prop.IsSaveProp ||
-                //Case 24023: Exclude buttons on Add (Except the Save button)
-                Prop.IsSaveProp ||
-                Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
-                Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) ) &&
-                       ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            bool Ret = Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) &&
+                 ( Prop.IsSaveProp ||
+                 ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
+                   //Case 24023: Exclude buttons on Add (Except the Save button)
+                   Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                 ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId ) );
             
             return Ret;
         }
@@ -471,7 +470,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropObj["ocpname"] = Prop.getObjectClassPropName();
             Int32 DisplayRow = _getUniqueRow( Layout.DisplayRow, Layout.DisplayColumn );
 
-            if( Int32.MaxValue == DisplayRow )
+            if( Prop.IsSaveProp )
             {
                 DisplayRow = CswNbtMetaDataNodeTypeLayoutMgr.getCurrentMaxDisplayRow( _CswNbtResources, Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
                 if( Int32.MinValue != Prop.ObjectClassPropId && null != Prop.getObjectClassProp() && Prop.getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )

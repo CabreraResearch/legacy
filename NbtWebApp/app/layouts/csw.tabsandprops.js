@@ -104,7 +104,7 @@
                     isMulti = cswPrivate.toggleMulti();
                     cswPrivate.toggleConfigIcon(false === isMulti);
                     if (multiOpts.nodeid === cswPublic.getNodeId()) {
-                        Csw.each(cswPrivate.globalState.checkBoxes, function (chk) {
+                        Csw.iterate(cswPrivate.globalState.checkBoxes, function (chk) {
                             if (isMulti) {
                                 chk.show();
                             } else {
@@ -188,7 +188,7 @@
                 cswPrivate.onTearDownProps();
                 cswPrivate.clearTabs();
                 cswPrivate.globalState.checkBoxes = {};
-                Csw.each(cswPrivate.ajax, function (call, name) {
+                Csw.iterate(cswPrivate.ajax, function (call, name) {
                     call.ajax.abort();
                     delete cswPrivate.ajax[name];
                 });
@@ -213,12 +213,11 @@
                 cswPrivate.titleDiv.empty();
                 cswPrivate.identityForm.empty();
                 cswPrivate.outerTabDiv.empty();
-                Object.keys(cswPrivate.tabs).forEach(
-                    function (tabId) {
-                        if (cswPrivate.tabs[tabId] && cswPrivate.tabs[tabId].remove) {
-                            cswPrivate.tabs[tabId].remove();
-                        }
-                    });
+                Csw.iterate(cswPrivate.tabs, function (tabId) {
+                    if (cswPrivate.tabs[tabId] && cswPrivate.tabs[tabId].remove) {
+                        cswPrivate.tabs[tabId].remove();
+                    }
+                });
                 cswPrivate.tabs = [];
             };
 
@@ -369,7 +368,7 @@
                                 cswPrivate.makeIdentityTab();
 
                                 var tabIds = Csw.delimitedString();
-                                Csw.each(data.tabs, function (tab) {
+                                Csw.iterate(data.tabs, function (tab) {
                                     tabIds.add(tab.id);
                                 });
                                 if (false === tabIds.contains(cswPrivate.tabState.tabid)) {
@@ -420,20 +419,18 @@
 
                                 cswPrivate.getTabDivFromIndex = function (idx) {
                                     var ret = null;
-                                    Object.keys(cswPrivate.tabs).forEach(
-                                        function (tabId) {
-                                            var div = cswPrivate.tabs[tabId];
-                                            if (div && div.data('tabidx') === idx) {
-                                                ret = div;
-                                                return false;
-                                            }
+                                    Csw.iterate(cswPrivate.tabs, function (tabId) {
+                                        var div = cswPrivate.tabs[tabId];
+                                        if (div && div.data('tabidx') === idx) {
+                                            ret = div;
+                                            return false;
                                         }
-                                    );
+                                    });
                                     return ret;
                                 };
 
 
-                                Csw.each(jqTabs, function (thisTabDiv) {
+                                Csw.iterate(jqTabs, function (thisTabDiv) {
 
                                     thisTabDiv.$.tabs({
                                         active: cswPrivate.tabState.tabNo,
@@ -548,7 +545,7 @@
                     //It's easier to nuke the collection than to remap it
                     cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
                     cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
-                    Csw.each(nodeData, function (thisNode) {
+                    Csw.iterate(nodeData, function (thisNode) {
                         cswPrivate.globalState.selectedNodeIds.add(thisNode.nodeid);
                         cswPrivate.globalState.selectedNodeKeys.add(thisNode.nodekey);
                     });
@@ -801,7 +798,7 @@
                             }
                             return false;
                         };
-                        Csw.eachRecursive(cswPrivate.globalState.propertyData, updOnSuccess, false);
+                        Csw.iterate(cswPrivate.globalState.propertyData, updOnSuccess);
                     }
 
                     cswPrivate.handleProperties(null, tabid, false);
@@ -816,7 +813,6 @@
                         cswPrivate.layoutTable.configOn();
                     } else if (!cswPrivate.tabState.Config &&
                             Csw.isNullOrEmpty(cswPrivate.globalState.date) &&
-                                cswPrivate.globalState.filterToPropId === '' &&
                                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
                                         Csw.bool(cswPrivate.tabs[tabid].data('canEditLayout'))) {
                         /* Case 24437 */
@@ -915,7 +911,7 @@
                     return false;
                 };
                 tabPropData = tabPropData || cswPrivate.globalState.propertyData;
-                Csw.eachRecursive(tabPropData, handleSuccess, false);
+                Csw.iterate(tabPropData, handleSuccess);
 
                 cswPrivate.onRenderProps(tabid);
 
@@ -931,6 +927,10 @@
                         propName = Csw.string(propData.name),
                         labelCell = {};
 
+                    if (propData.displayrow < 0 || propData.displayrow >= Number.MAX_VALUE || 
+                         propData.displaycol < 0 || propData.displaycol >= Number.MAX_VALUE) {
+                        throw new Error('Cannot make a property at these coordinate: x=' + propData.displaycol + ',y=' + propData.displayrow + '.');
+                    }
                     cellSet = cswPrivate.getCellSet(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
                     layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
@@ -1006,8 +1006,6 @@
             cswPrivate.canDisplayProp = function (propData, configMode) {
                 /*The prop is set to display or we're in layout config mode*/
                 var ret = (Csw.bool(propData.display, true) || configMode);
-                /*And either no filter is set or the filter is set to this property */
-                ret = ret && (cswPrivate.globalState.filterToPropId === '' || cswPrivate.globalState.filterToPropId === propData.id);
                 /* We're not excluding any OC Props or this prop has not been excluded */
                 ret = ret && ((Csw.isNullOrEmpty(cswPrivate.globalState.excludeOcProps) || cswPrivate.globalState.excludeOcProps.length === 0) || false === Csw.contains(cswPrivate.globalState.excludeOcProps, Csw.string(propData.ocpname).toLowerCase()));
                 return ret;
@@ -1095,7 +1093,7 @@
                             }
                             return false;
                         };
-                        Csw.eachRecursive(subProps, subOnSuccess, false);
+                        Csw.iterate(subProps, subOnSuccess);
                     }
                 } // if (propData.display != 'false' || ConfigMode )
             }; // _makeProp()
@@ -1185,7 +1183,7 @@
                         }
                         return false;
                     };
-                    Csw.eachRecursive(propData, updSuccess, false);
+                    Csw.iterate(propData, updSuccess);
                     return propIds;
                 });
             }; // updatePropJsonFromLayoutTable()
