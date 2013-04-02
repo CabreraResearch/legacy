@@ -23,7 +23,8 @@
                 useCancel: false
                 } );
 
-
+    
+            o.action.actionDiv.css( { padding: '10px' } ); 
             o.action.actionDiv.append( "You can assign the selected <b>Inventory Group</b> to any location(s). Just click the locations' checkbox, and then click <b>Set To</b>.<BR><BR>" ); 
 
             //Where we are putting stuff
