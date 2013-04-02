@@ -180,22 +180,31 @@
             return ret;
         });
 
+    var cswPrivate = Object.create(null);
+    Object.defineProperties(cswPrivate, {
+       canIterate: {
+           value: function(obj) {
+               return (obj && (typeof obj === 'object' || Array.isArray(obj)));
+           }
+       } 
+    });
+
     Csw.iterate = Csw.iterate ||
-        Csw.register('iterate', function(obj, onSuccess, recursive) {
+        Csw.register('iterate', function iterate(obj, onSuccess, recursive) {
             /// <summary>
             /// Safely iterates an Object or an Array
             /// </summary>
-            if (obj) {
-                Object.keys(obj).forEach(function(key) {
+            if (cswPrivate.canIterate(obj)) {
+                Object.keys(obj).forEach(function (key) {
                     var val = obj[key];
-                    if (onSuccess) {
-                        var quit = onSuccess(val);
+                    if (onSuccess && val && key) {
+                        var quit = onSuccess(val, key);
                         if (false === quit) {
                             return false;
                         }
                     }
-                    if (true === recursive) {
-                        Csw.iterate(val, onSuccess, true);
+                    if (true === recursive && cswPrivate.canIterate(obj)) {
+                        iterate(val, onSuccess, true);
                     }
                 });
             }

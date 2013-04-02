@@ -63,24 +63,24 @@ namespace ChemSW.Nbt.Grid
 
                 CswExtJsGridDataIndex nodeIdDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodeId" );
                 {
-                CswExtJsGridField nodeIdFld = new CswExtJsGridField { dataIndex = nodeIdDataIndex };
-                grid.fields.Add( nodeIdFld );
-                CswExtJsGridColumn nodeIdCol = new CswExtJsGridColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
-                grid.columns.Add( nodeIdCol );
+                    CswExtJsGridField nodeIdFld = new CswExtJsGridField { dataIndex = nodeIdDataIndex };
+                    grid.fields.Add( nodeIdFld );
+                    CswExtJsGridColumn nodeIdCol = new CswExtJsGridColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
+                    grid.columns.Add( nodeIdCol );
                 }
                 CswExtJsGridDataIndex nodekeyDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodekey" );
                 {
-                CswExtJsGridField nodekeyFld = new CswExtJsGridField { dataIndex = nodekeyDataIndex };
-                grid.fields.Add( nodekeyFld );
-                CswExtJsGridColumn nodekeyCol = new CswExtJsGridColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
-                grid.columns.Add( nodekeyCol );
+                    CswExtJsGridField nodekeyFld = new CswExtJsGridField { dataIndex = nodekeyDataIndex };
+                    grid.fields.Add( nodekeyFld );
+                    CswExtJsGridColumn nodekeyCol = new CswExtJsGridColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
+                    grid.columns.Add( nodekeyCol );
                 }
                 CswExtJsGridDataIndex nodenameDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodename" );
                 {
-                CswExtJsGridField nodenameFld = new CswExtJsGridField { dataIndex = nodenameDataIndex };
-                grid.fields.Add( nodenameFld );
-                CswExtJsGridColumn nodenameCol = new CswExtJsGridColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
-                grid.columns.Add( nodenameCol );
+                    CswExtJsGridField nodenameFld = new CswExtJsGridField { dataIndex = nodenameDataIndex };
+                    grid.fields.Add( nodenameFld );
+                    CswExtJsGridColumn nodenameCol = new CswExtJsGridColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
+                    grid.columns.Add( nodenameCol );
                 }
                 CswExtJsGridDataIndex NodeTypeDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, "nodetypeid" );
                 {
@@ -126,6 +126,10 @@ namespace ChemSW.Nbt.Grid
                                 CswExtJsGridColumn col = new CswExtJsGridColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
                                 switch( ViewProp.FieldType )
                                 {
+                                    case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                                        col.MenuDisabled = true;
+                                        col.IsSortable = false;
+                                        break;
                                     case CswNbtMetaDataFieldType.NbtFieldType.Number:
                                         fld.type = "number";
                                         col.xtype = extJsXType.numbercolumn;
@@ -329,7 +333,7 @@ namespace ChemSW.Nbt.Grid
                 grid.columns.Add( gridcol );
                 gridcol.header = Column.ColumnName;
                 gridcol.dataIndex = dataIndex;
-                
+
                 if( Column.DataType == typeof( string ) )
                 {
                     fld.type = "string";
@@ -339,7 +343,7 @@ namespace ChemSW.Nbt.Grid
                     fld.type = "bool";
                     gridcol.xtype = extJsXType.booleancolumn;
                 }
-                else if( Column.DataType == typeof( Int32 ) || 
+                else if( Column.DataType == typeof( Int32 ) ||
                     ( GroupByColType != null &&
                       Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
                       GroupByColType.Equals( extJsXType.numbercolumn ) ) )
@@ -356,12 +360,12 @@ namespace ChemSW.Nbt.Grid
                     string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
                     string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
                     gridcol.dateformat = CswTools.ConvertNetToPHP( userDateFormat ) + " " + CswTools.ConvertNetToPHP( userTimeFormat );
-                    
+
                     fld.type = "date";
                     gridcol.xtype = extJsXType.datecolumn;
                     gridcol.Format = "m/d/y H:i:s";
                 }
-                
+
             }
 
             Int32 RowNo = 0;

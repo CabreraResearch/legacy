@@ -417,7 +417,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        ///     Returns the root node of the tree
+        ///     Returns the current node of the tree
         /// </summary>
         public CswNbtTreeNode getCurrentTreeNode()
         {

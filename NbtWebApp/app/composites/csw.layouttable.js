@@ -137,9 +137,9 @@
                         cellObj = cswPublic.table.find('.CswLayoutTable_celldiv');
                     }
                     try {
+                        cellObj.$.droppable();
                         cellObj.$.droppable('destroy');
                     } catch (e) {
-                        Csw.debug.error('destroy() was called on a droppable before droppable was instanced on the control. This is non-fatal, but it should not happen.');
                         Csw.debug.error(e);
                     }
                     cellObj.$.droppable({

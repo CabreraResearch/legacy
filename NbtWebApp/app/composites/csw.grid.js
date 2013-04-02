@@ -517,6 +517,8 @@
                     var newcol = {
                         header: 'Action',
                         dataIndex: cswPrivate.actionDataIndex,
+                        menuDisabled: true,
+                        sortable: false,
                         width: 70,
                         flex: false,
                         resizable: false,
