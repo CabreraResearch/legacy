@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        public static void saveFile( ICswResources CswResources, object Return, BlobDataParams Request )
+        public static void saveFile( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
@@ -33,8 +33,7 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( NbtResources );
 
-            CswPrimaryKey pk = new CswPrimaryKey( "node", CswConvert.ToInt32( Request.nodeid ) );
-            CswPropIdAttr PropId = new CswPropIdAttr( pk, CswConvert.ToInt32( Request.propid ) );
+            CswPropIdAttr PropId = new CswPropIdAttr( Request.propid );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             CswNbtNode Node = NbtResources.Nodes[PropId.NodeId];
