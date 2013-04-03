@@ -44,110 +44,15 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding Modules, which often become required by other business logic and can cause prior scripts to fail.
 
-            #region YORICK
-
-            _makeContainersModule();
-            _makeRegulatoryListsModule();
-            _makeFireCodeModule( CswDeveloper.BV, 28903 );
-            _makeMultiSiteModule( CswDeveloper.MB, 28899 );
-            _makeMultiInventoryGroupModule( CswDeveloper.MB, 28901 );
-            _makeSDSModule( CswDeveloper.BV, 28898 );
-            _makeFireDbSyncModule( CswDeveloper.CM, 29245 );
-
-            #endregion YORICK
-
             #region ASPEN
 
             #endregion ASPEN
 
         }//Update()
 
-        #region Private Methods
+        #region ASPEN Methods
 
-        private void _makeContainersModule()
-        {
-            _acceptBlame( CswDeveloper.MB, 28902 );
-            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.Containers );
-            if( Int32.MinValue == moduleId )
-            {
-                _CswNbtSchemaModTrnsctn.createModule( "Containers add-on for CISPro", CswNbtModuleName.Containers.ToString() );
-            }
-            _resetBlame();
-        }
-
-        private void _makeFireCodeModule( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.FireCode );
-            if( Int32.MinValue == ModuleId )
-            {
-                _CswNbtSchemaModTrnsctn.createModule( "Fire Code reporting add-on for CISPro", CswNbtModuleName.FireCode.ToString() );
-            }
-            _resetBlame();
-        }
-
-        private void _makeRegulatoryListsModule()
-        {
-            _acceptBlame( CswDeveloper.MB, 28904 );
-            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.RegulatoryLists );
-            if( Int32.MinValue == moduleId )
-            {
-                _CswNbtSchemaModTrnsctn.createModule( "Regulatory lists add-on for CISPro", CswNbtModuleName.RegulatoryLists.ToString() );
-            }
-            _resetBlame();
-        }
-
-        private void _makeMultiSiteModule( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.MultiSite );
-            if( Int32.MinValue == moduleId )
-            {
-                _CswNbtSchemaModTrnsctn.createModule( "Allow multiple Sites", CswNbtModuleName.MultiSite.ToString(), false );
-            }
-            _resetBlame();
-        }
-
-        private void _makeMultiInventoryGroupModule( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-            int moduleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.MultiInventoryGroup );
-            if( Int32.MinValue == moduleId )
-            {
-                _CswNbtSchemaModTrnsctn.createModule( "Allow multiple Inventory Groups", CswNbtModuleName.MultiInventoryGroup.ToString(), false );
-            }
-            _resetBlame();
-        }
-
-        private void _makeSDSModule( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.SDS );
-            if( Int32.MinValue == ModuleId )
-            {
-                _CswNbtSchemaModTrnsctn.createModule( "SDS add-on for CISPro", CswNbtModuleName.SDS.ToString() );
-            }
-            _resetBlame();
-        }
-
-        private void _makeFireDbSyncModule( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-
-            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.FireDbSync );
-            if( Int32.MinValue == ModuleId )
-            {
-                // Create the FireDb Sync module
-                _CswNbtSchemaModTrnsctn.createModule( "Add-on for Fire Code that syncs FireDb data with ChemCatCentral", CswNbtModuleName.FireDbSync.ToString() );
-
-                // Create the module dependency
-                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.FireCode, CswNbtModuleName.FireDbSync );
-            }
-
-            _resetBlame();
-        }
-
-        #endregion
+        #endregion ASPEN Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01M
 

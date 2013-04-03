@@ -36,7 +36,7 @@
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
-                printBarcodes: false,
+                printBarcodes: true,
                 amountsGrid: null,
                 saveError: false
             };

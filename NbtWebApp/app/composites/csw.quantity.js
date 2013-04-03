@@ -164,7 +164,7 @@
                 cswPrivate.quantity = data.value;
                 cswPrivate.nodeid = data.nodeid;
                 cswPrivate.name = data.name;
-                cswPrivate.qtyReadonly = data.qtyReadonly;
+                cswPrivate.isReadOnly = data.qtyReadonly;
                 cswPrivate.isRequired = data.isRequired;
                 cswPrivate.options = data.options;
                 cswPrivate.selectedNodeId = Csw.string(data.relatednodeid).trim();
