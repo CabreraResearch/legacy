@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Test.Actions
 
         private TestData TestData;
         private CswNbtActHMISReporting HMISAction;
-        private const Int32 HazardClassCount = 48;
+        private const Int32 HazardClassCount = 63;
 
         [SetUp]
         public void MyTestInitialize()

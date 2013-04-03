@@ -138,6 +138,7 @@ namespace ChemSW.Nbt.WebServices
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.StatusMessage, typeof( string ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Disabled, typeof( bool ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.HasChanged, typeof( bool ) );
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
@@ -157,6 +158,7 @@ namespace ChemSW.Nbt.WebServices
                         Row[CswScheduleLogicDetail.ColumnNames.FailedCount] = LogicDetail.FailedCount;
                         Row[CswScheduleLogicDetail.ColumnNames.ThreadId] = LogicDetail.ThreadId;
                         Row[CswScheduleLogicDetail.ColumnNames.StatusMessage] = LogicDetail.StatusMessage;
+                        Row[CswScheduleLogicDetail.ColumnNames.Disabled] = LogicDetail.Disabled;
                         Row[CswScheduleLogicDetail.ColumnNames.HasChanged] = false;
 
                         GridTable.Rows.Add(Row);
@@ -300,7 +302,8 @@ namespace ChemSW.Nbt.WebServices
                         TotalRogueCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount)]),
                         FailedCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount)]),
                         ThreadId = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId)]),
-                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage)]
+                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage)],
+                        Disabled = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Disabled)])
                     };
                     CswSchedSvcParams.LogicDetails.Add(Rule);
                 }

@@ -335,12 +335,14 @@ namespace ChemSW.Nbt.ImportExport
                                         //IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => ( b.DestProperty.IsUnique() || b.DestProperty.IsCompoundUnique() ) );
                                         IEnumerable<CswNbtMetaDataNodeTypeProp> Props = Order.NodeType.getNodeTypeProps();
                                         //IEnumerable<CswNbtMetaDataNodeTypeProp> RequiredProps = Props.Where( p => p.IsRequired && false == p.HasDefaultValue() );
-                                        IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => NodeTypeBindings.Any( b => b.DestProperty == p ) &&
-                                                                                                                ( p.IsUnique() || p.IsCompoundUnique() || Order.NodeType.NameTemplatePropIds.Contains( p.FirstPropVersionId ) ) );
+                                        IEnumerable<CswNbt2DBinding> UniqueBindings = NodeTypeBindings.Where( b => b.DestProperty.IsUnique() || 
+                                                                                                              b.DestProperty.IsCompoundUnique() || 
+                                                                                                              Order.NodeType.NameTemplatePropIds.Contains( b.DestProperty.FirstPropVersionId ) );
+                                        //IEnumerable<CswNbtMetaDataNodeTypeProp> UniqueProps = Props.Where( p => UniqueBindings.Any( b => b.DestProperty == p ) );
 
-                                        // Skip rows with null values for all properties
+                                        // Skip rows with null values for all unique properties
                                         bool allEmpty = true;
-                                        foreach( CswNbt2DBinding Binding in NodeTypeBindings )
+                                        foreach( CswNbt2DBinding Binding in UniqueBindings )
                                         {
                                             allEmpty = allEmpty && string.IsNullOrEmpty( ImportRow[Binding.ImportDataColumnName].ToString() );
                                         }
@@ -351,34 +353,30 @@ namespace ChemSW.Nbt.ImportExport
                                             UniqueView.ViewName = "Check Unique";
                                             CswNbtViewRelationship NTRel = UniqueView.AddViewRelationship( Order.NodeType, false );
 
-                                            if( UniqueProps.Any() )
+                                            if( UniqueBindings.Any() )
                                             {
                                                 bool atLeastOneFilter = false;
-                                                foreach( CswNbtMetaDataNodeTypeProp UniqueProp in UniqueProps )
+                                                foreach( CswNbt2DBinding Binding in UniqueBindings )
                                                 {
-                                                    IEnumerable<CswNbt2DBinding> UniqueBindings = BindingDef.Bindings.byProp( Order.Instance, UniqueProp );
-                                                    foreach( CswNbt2DBinding Binding in UniqueBindings )
+                                                    string Value = ImportRow[Binding.ImportDataColumnName].ToString();
+                                                    if( Value != string.Empty )
                                                     {
-                                                        string Value = ImportRow[Binding.ImportDataColumnName].ToString();
-                                                        if( Value != string.Empty )
-                                                        {
-                                                            UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                                 Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                                                                 Value: Value,
-                                                                                                 CaseSensitive: false );
-                                                        }
-                                                        else
-                                                        {
-                                                            UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                                 Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-                                                        }
-                                                        atLeastOneFilter = true;
+                                                        UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
+                                                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                                                                SubFieldName: Binding.DestSubfield.Name,
+                                                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                                                                Value: Value,
+                                                                                                CaseSensitive: false );
                                                     }
-                                                } // foreach( CswNbtMetaDataNodeTypeProp UniqueProp in UniqueProps )
+                                                    else
+                                                    {
+                                                        UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
+                                                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                                                                SubFieldName: Binding.DestSubfield.Name,
+                                                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                                                    }
+                                                    atLeastOneFilter = true;
+                                                }
 
                                                 if( atLeastOneFilter )
                                                 {
@@ -475,22 +473,19 @@ namespace ChemSW.Nbt.ImportExport
 
 
                                             // Simplify future imports by saving this nodeid on matching rows
-                                            if( UniqueProps.Any() )
+                                            if( UniqueBindings.Any() )
                                             {
                                                 // We have to check for repeats amongst all instances
                                                 IEnumerable<CswNbt2DOrder> AllInstanceNodeTypeOrders = BindingDef.ImportOrder.Values.Where( o => o.NodeType == Order.NodeType );
                                                 foreach( CswNbt2DOrder OtherOrder in AllInstanceNodeTypeOrders )
                                                 {
                                                     string WhereClause = "where error = '" + CswConvert.ToDbVal( false ) + "' and " + OtherOrder.PkColName + " is null";
-                                                    foreach( CswNbtMetaDataNodeTypeProp UniqueProp in UniqueProps )
+                                                    foreach( CswNbt2DBinding UniqueBinding in UniqueBindings )
                                                     {
-                                                        foreach( CswNbt2DBinding UniqueBinding in BindingDef.Bindings.byProp( Order.Instance, UniqueProp ) )
+                                                        CswNbt2DBinding OtherUniqueBinding = BindingDef.Bindings.byProp( OtherOrder.Instance, UniqueBinding.DestProperty, UniqueBinding.DestSubfield ).FirstOrDefault();
+                                                        if( null != OtherUniqueBinding )
                                                         {
-                                                            CswNbt2DBinding OtherUniqueBinding = BindingDef.Bindings.byProp( OtherOrder.Instance, UniqueBinding.DestProperty, UniqueBinding.DestSubfield ).FirstOrDefault();
-                                                            if( null != OtherUniqueBinding )
-                                                            {
-                                                                WhereClause += " and lower(" + OtherUniqueBinding.ImportDataColumnName + ") = '" + CswTools.SafeSqlParam( ImportRow[UniqueBinding.ImportDataColumnName].ToString().ToLower() ) + "' ";
-                                                            }
+                                                            WhereClause += " and lower(" + OtherUniqueBinding.ImportDataColumnName + ") = '" + CswTools.SafeSqlParam( ImportRow[UniqueBinding.ImportDataColumnName].ToString().ToLower() ) + "' ";
                                                         }
                                                     }
                                                     DataTable OtherImportDataTable = ImportDataUpdate.getTable( WhereClause );

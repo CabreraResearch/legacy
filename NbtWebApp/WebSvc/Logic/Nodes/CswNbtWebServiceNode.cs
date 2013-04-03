@@ -338,7 +338,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtNodePropQuantity InitialQuantity = Size.InitialQuantity;
                 InitialQuantity.ToJSON( Ret );
                 Ret["unitName"] = Ret["name"];
-                Ret["qtyReadonly"] = "false";
+                Ret["qtyReadonly"] = false;
                 Ret["unitReadonly"] = "false";
                 Ret["unitCount"] = "1";
                 Ret["isRequired"] = InitialQuantity.Required.ToString();
@@ -347,7 +347,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["unitReadonly"] = "true";
                     if( Size.QuantityEditable.Checked == Tristate.False )
                     {
-                        Ret["qtyReadonly"] = "true";
+                        Ret["qtyReadonly"] = true;
                     }
                     Ret["unitCount"] = CswTools.IsDouble( Size.UnitCount.Value ) ? Size.UnitCount.Value.ToString() : "";
                 }
