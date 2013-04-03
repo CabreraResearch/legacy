@@ -21,7 +21,7 @@
                         var newPropValue = newObjectValues[originalPropKey];
                             
                         if (Csw.isPlainObject(newPropValue)) {
-                            _recurse(originalPropVal[originalPropKey], newPropValue);
+                            wasModified = _recurse(originalPropVal[originalPropKey], newPropValue);
                         }
                         else if ((false === isMulti && originalPropVal[originalPropKey] !== newPropValue) ||
                             (isMulti && false === Csw.isNullOrUndefined(newPropValue))) {
