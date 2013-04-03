@@ -71,13 +71,13 @@
                 }
 
                 var foundSelected = false;
-                Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
+                Csw.iterate(cswPrivate.options, function (relatedObj) {
                     if (relatedObj.id === cswPrivate.selectedNodeId) {
                         foundSelected = true;
                         cswPrivate.fractional = Csw.bool(relatedObj.fractional);
                     }
                     cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
-                }, false);
+                });
                 if (false === cswPrivate.isMulti && false === foundSelected && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                     cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.unit, frac: cswPrivate.fractional });
                 }
