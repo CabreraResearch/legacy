@@ -63,6 +63,11 @@ namespace ChemSW.Nbt.WebServices
             BlobUpdate.update( BlobTbl );
 
             Node.postChanges( false );
+
+            Request.contenttype = Request.postedFile.ContentType;
+            Request.filename = Request.postedFile.FileName;
+            Request.href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.NodeTypePropId );
+            Return.Data = Request;
         }
 
         public void displayBlobData( HttpContext Context )
