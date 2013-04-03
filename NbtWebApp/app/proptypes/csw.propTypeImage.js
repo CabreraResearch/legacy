@@ -119,18 +119,18 @@
                                 isButton: true,
                                 onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
-                                        urlMethod: 'fileForProp',
+                                        urlMethod: 'Services/BlobData/SaveFile',
                                         params: {
-                                            PropId: cswPublic.data.propData.id
+                                            propid: cswPublic.data.propData.id
                                         },
                                         onSuccess: function (data) {
                                             var val = {
-                                                href: data.href,
-                                                name: data.filename,
-                                                fileName: data.filename,
-                                                contenttype: data.contenttype
+                                                href: data.Data.href,
+                                                name: data.Data.filename,
+                                                fileName: data.Data.filename,
+                                                contenttype: data.Data.contenttype
                                             };
-                                            if (data.success) {
+                                            if (data.Data.success) {
                                                 cswPrivate.makeImg(val);
                                                 cswPublic.data.onPropChange(val);
                                             }

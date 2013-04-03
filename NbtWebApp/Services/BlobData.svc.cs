@@ -90,6 +90,7 @@ namespace NbtWebApp
     [DataContract]
     public class BlobDataParams
     {
+        [DataMember]
         public bool success = false;
         public HttpPostedFile postedFile;
         public string nodeid = string.Empty;
