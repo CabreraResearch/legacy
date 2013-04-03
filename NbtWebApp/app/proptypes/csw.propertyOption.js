@@ -14,25 +14,26 @@
             ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
             'use strict';
             var wasModified = false;
-            (function _recurse(newData, oldData) {
-                if (newData && newData.values) {
+            (function _recurse(originalObject, newObjectValues) {
+                if (originalObject) {
 
-                    Csw.iterate(propData.values, function(newProp, key) {
-                        if (Csw.contains(oldData, key)) {
-                            var oldProp = oldData[key];
-                            //don't bother sending this to server unless it's changed
-                            if (Csw.isPlainObject(oldProp)) {
-                                wasModified = _recurse(newProp[key], oldProp) || wasModified;
-                            } else if ((false === isMulti && newProp[key] !== oldProp) ||
-                                (isMulti && false === Csw.isNullOrUndefined(oldProp))) {
+                    Csw.iterate(originalObject, function (originalPropVal, originalPropKey) {
+                        if (Csw.contains(newObjectValues, originalPropKey)) {
+                            var newPropValue = newObjectValues[originalPropKey];
+                            
+                            if (Csw.isPlainObject(newPropValue)) {
+                                wasModified = _recurse(originalPropVal[originalPropKey], newPropValue) || wasModified;
+                            }
+                            else if ((false === isMulti && originalPropVal[originalPropKey] !== newPropValue) ||
+                                (isMulti && false === Csw.isNullOrUndefined(newPropValue))) {
                                 wasModified = true;
-                                newProp[key] = oldProp;
+                                originalObject[originalPropKey] = newPropValue;
                             }
                         }
-                    }, false);
+                    }, true);
                 }
-            }(propData, attributes));
-        
+            }(propData.values, attributes));
+
             propData.wasmodified = propData.wasmodified || wasModified;
         
         }
