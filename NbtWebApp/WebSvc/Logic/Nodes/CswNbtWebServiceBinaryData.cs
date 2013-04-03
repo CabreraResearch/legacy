@@ -70,6 +70,30 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = Request;
         }
 
+        public static void getBlob( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            //Get the file from blob_data
+            CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
+            DataTable blobDataTbl = blobDataSelect.getTable( "where jctnodepropid = " + Request.propid );
+            foreach( DataRow row in blobDataTbl.Rows )
+            {
+                Request.data = row["blobdata"] as byte[];
+            }
+
+            //Get the file info from jct_nodes_props
+            CswTableSelect jctnodepropsSelect = NbtResources.makeCswTableSelect( "getBlobAttr", "jct_nodes_props" );
+            DataTable jnpTbl = jctnodepropsSelect.getTable( "where jctnodepropid = " + Request.propid );
+            foreach( DataRow row in jnpTbl.Rows )
+            {
+                Request.filename = row["field1"].ToString();
+                Request.contenttype = row["field2"].ToString();
+            }
+
+            Return.Data = Request;
+        }
+
         public void displayBlobData( HttpContext Context )
         {
             bool UseNodeTypeAsPlaceHolder = true;
