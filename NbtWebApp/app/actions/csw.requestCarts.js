@@ -355,26 +355,23 @@
                     }, // onEdit
                     onDelete: function (rows) {
                         // this works for both Multi-edit and regular
-                        var cswnbtnodekeys = [],
-                            nodeids = [],
-                            nodenames = [];
+                        var nodes = [];
 
-                        Csw.each(rows, function (row) {
-                            cswnbtnodekeys.push(row.nodekey);
-                            nodeids.push(row.nodeid);
-                            nodenames.push(row.nodename);
+                        Csw.iterate(rows, function (row) {
+                            nodes.push({
+                                nodeid: row.nodeid,
+                                nodename: row.nodename,
+                                nodekey: row.nodekey
+                            });
                         });
 
                         $.CswDialog('DeleteNodeDialog', {
-                            nodeids: nodeids,
-                            nodepks: nodeids,
-                            nodekeys: cswnbtnodekeys,
-                            nodenames: nodenames,
+                            nodes: nodes,
                             onDeleteNode: Csw.method(function () {
                                 Csw.tryExec(opts.onEditNode);
                                 cswPrivate.getCartCounts();
                             }),
-                            Multi: (nodeids.length > 1),
+                            Multi: (nodes.length > 1),
                             publishDeleteEvent: false
                         });
                     }, // onDelete

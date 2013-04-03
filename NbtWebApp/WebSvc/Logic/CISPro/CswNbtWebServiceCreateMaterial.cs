@@ -37,12 +37,12 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject createMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
         {
-            return _CswNbtActCreateMaterial.createMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
+            return _CswNbtActCreateMaterial.tryCreateTempMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
         }
 
         public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
         {
-            return _CswNbtActCreateMaterial.saveMaterial( NodeTypeId, SupplierId, Suppliername, Tradename, PartNo, NodeId );
+            return _CswNbtActCreateMaterial.initNewTempMaterialNode( NodeTypeId, SupplierId, Suppliername, Tradename, PartNo, NodeId );
         }
 
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
