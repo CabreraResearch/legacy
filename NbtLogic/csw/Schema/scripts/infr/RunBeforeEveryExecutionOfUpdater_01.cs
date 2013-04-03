@@ -58,6 +58,10 @@ namespace ChemSW.Nbt.Schema
 
             #endregion ASPEN
 
+            #region BUCKEYE
+
+            #endregion BUCKEYE
+
         }//Update()
 
         #region ASPEN
@@ -149,6 +153,10 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion ASPEN
+
+        #region BUCKEYE Methods
+        
+        #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01
 }//namespace ChemSW.Nbt.Schema
