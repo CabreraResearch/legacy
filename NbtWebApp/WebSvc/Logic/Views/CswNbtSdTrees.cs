@@ -8,7 +8,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Tree;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -600,7 +599,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewRoot.forEachProperty AddProp = ( ViewProperty ) =>
                                                          {
                                                              string PropName = ViewProperty.Name.ToLower().Trim();
-                                                             bool HideProp = ( false == Request.PropsToShow.Contains( PropName ) );
+                                                             bool HideProp = ( null != Request.PropsToShow && false == Request.PropsToShow.Contains( PropName ) );
                                                              if( false == UniqueColumnNames.Contains( PropName ) )
                                                              {
                                                                  UniqueColumnNames.Add( PropName );

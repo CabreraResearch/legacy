@@ -4,8 +4,8 @@ using System.IO;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -15,6 +15,11 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceBinaryData( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+        }
+
+        public static void saveFile( ICswResources CswResources, object Return, HttpPostedFile PostedFile )
+        {
+            
         }
 
         public void displayBlobData( HttpContext Context )

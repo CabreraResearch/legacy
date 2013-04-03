@@ -97,6 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\WcfReadEntityBodyModeWorkaroundModule.cs" />
+    <Compile Include="Services\BlobData.svc.cs">
+      <DependentUpon>BlobData.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
@@ -709,6 +712,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\BlobData.svc" />
     <Content Include="Services\Inspections.svc" />
     <Content Include="Services\Locations.svc" />
     <Content Include="Services\NbtPublic.svc" />
