@@ -75,8 +75,7 @@ namespace ChemSW.Nbt.WebServices
                     //ViewsTable = (via out)
                     _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser,
                                                                          true, false, false, NbtViewRenderingMode.Any,
-                                                                         out ViewsTable );
-
+                                                                         out ViewsTable, ForEdit: true );
                 }
             }
             else

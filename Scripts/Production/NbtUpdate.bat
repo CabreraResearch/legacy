@@ -29,6 +29,10 @@ msbuild %1\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64"
 
 cd %1\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:prod
 
+cd %1%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:prod
+cd %1%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:prod
+
+
 echo "Compile Finished."
 
 pause

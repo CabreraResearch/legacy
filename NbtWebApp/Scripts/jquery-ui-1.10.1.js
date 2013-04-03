@@ -14268,7 +14268,7 @@ $.widget( "ui.tabs", {
 			this.xhr.abort();
 		}
 
-		if ( !toHide.length && !toShow.length ) {
+		if (false && !toHide.length && !toShow.length ) {
 			$.error( "jQuery UI Tabs: Mismatching fragment identifier." );
 		}
 
