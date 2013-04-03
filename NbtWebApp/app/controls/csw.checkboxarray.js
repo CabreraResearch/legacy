@@ -95,7 +95,7 @@
                         checked: rowdata[cswPrivate.valCol][c]
                     });
 
-                    check.propNonDom({
+                    check.data({
                         key: rowdata[cswPrivate.keyCol],
                         rowlabel: rowdata[cswPrivate.nameCol],
                         collabel: cswPrivate.cols[c],
@@ -104,8 +104,8 @@
                     });
 
                     var onChange = function (cB) {
-                        var col = cB.propNonDom('col');
-                        var row = cB.propNonDom('row');
+                        var col = cB.data('col');
+                        var row = cB.data('row');
                         if(cswPrivate.UseRadios) {
                             // clear all other values
                             for (var r = 0; r < cswPrivate.data.length; r += 1) {
