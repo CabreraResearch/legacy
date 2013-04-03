@@ -340,7 +340,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a Collection of all views visible to the current user, and the DataTable
         /// </summary>
-        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, out DataTable ViewsTable, CswCommaDelimitedString LimitToViews = null )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, out DataTable ViewsTable, CswCommaDelimitedString LimitToViews = null, bool ForEdit = false )
         {
             CswTimer VisibleViewsTimer = new CswTimer();
             ViewsTable = null;
@@ -383,7 +383,7 @@ namespace ChemSW.Nbt
                     CswNbtView ThisView = new CswNbtView( _CswNbtResources );
                     ThisView.LoadXml( Row["viewxml"].ToString() );
 
-                    if( isVisible( ThisView, User, IncludeEmptyViews, SearchableOnly ) )
+                    if( isVisible( ThisView, User, IncludeEmptyViews, SearchableOnly, ForEdit ) )
                     {
                         Ret.Add( ThisView.ViewId, ThisView );
                     }
@@ -408,20 +408,20 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Checks to see if a view is visible to a given user
         /// </summary>
-        public bool isVisible( CswNbtView View, ICswNbtUser User, bool IncludeEmptyViews, bool SearchableOnly )
+        public bool isVisible( CswNbtView View, ICswNbtUser User, bool IncludeEmptyViews, bool SearchableOnly, bool ForEdit = false )
         {
             return ( ( View.Root.ChildRelationships.Count > 0 &&
-                     (
-                         View.Root.ChildRelationships.Any( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                                                               _CswNbtResources.Permit.canAnyTab(
-                                                                   CswNbtPermit.NodeTypePermission.View,
-                                                                   _CswNbtResources.MetaData.getNodeType( R.SecondId ),
-                                                                   User ) ) )
-                    ) || IncludeEmptyViews ) &&
+                       (
+                           View.Root.ChildRelationships.Any( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
+                                                                  _CswNbtResources.Permit.canAnyTab(
+                                                                      CswNbtPermit.NodeTypePermission.View,
+                                                                      _CswNbtResources.MetaData.getNodeType( R.SecondId ),
+                                                                      User ) ) )
+                     ) || IncludeEmptyViews ) &&
                    View.IsFullyEnabled() &&
                    ( IncludeEmptyViews || View.ViewMode != NbtViewRenderingMode.Grid || null != View.findFirstProperty() ) &&
                    ( !SearchableOnly || View.IsSearchable() ) &&
-                   ( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || false == CswConvert.ToBoolean( View.IsSystem ) );
+                   ( false == ForEdit || ( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || false == CswConvert.ToBoolean( View.IsSystem ) ) );
         }
 
         /// <summary>

@@ -666,10 +666,15 @@ namespace ChemSW.Nbt.Actions
                 CswNbtViewRelationship TargetVr = View.Root.ChildRelationships[0];
                 if( null != TargetVr )
                 {
-                    CswNbtViewRelationship InspectionVr = View.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target ), true );
-                    CswNbtViewProperty DueDateVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate ) );
-                    CswNbtViewProperty StatusVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status ) );
-                    View.save();
+                    CswNbtMetaDataNodeTypeProp DesignTargetNTP = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
+                    bool AlreadyExists = TargetVr.ChildRelationships.Any( DesignNTRel => DesignNTRel.PropId == DesignTargetNTP.PropId );
+                    if( false == AlreadyExists )
+                    {
+                        CswNbtViewRelationship InspectionVr = View.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, DesignTargetNTP, true );
+                        CswNbtViewProperty DueDateVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate ) );
+                        CswNbtViewProperty StatusVp = View.AddViewProperty( InspectionVr, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status ) );
+                        View.save();
+                    }
                 }
             }
         }
