@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.Schema
 
                 if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "jctnodepropid" ) )
                 {
-                    _CswNbtSchemaModTrnsctn.addBlobColumn( blobdatatblname, "jctnodepropid", "The property row this blob data belongs to", false, true );
+                    _CswNbtSchemaModTrnsctn.addLongColumn( blobdatatblname, "jctnodepropid", "The property row this blob data belongs to", false, true );
                 }
             }
 
