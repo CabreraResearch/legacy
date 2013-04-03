@@ -6,6 +6,9 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
+using NbtWebApp;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -17,9 +20,50 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        public static void saveFile( ICswResources CswResources, object Return, HttpPostedFile PostedFile )
+        public static void saveFile( ICswResources CswResources, object Return, BlobDataParams Request )
         {
-            
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            BinaryReader br = new BinaryReader( Request.postedFile.InputStream );
+            byte[] FileData = new byte[Request.postedFile.InputStream.Length];
+            for( int i = 0; i < Request.postedFile.InputStream.Length; i++ )
+            {
+                FileData[i] = br.ReadByte();
+            }
+
+            CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( NbtResources );
+
+            CswPrimaryKey pk = new CswPrimaryKey( "node", CswConvert.ToInt32( Request.nodeid ) );
+            CswPropIdAttr PropId = new CswPropIdAttr( pk, CswConvert.ToInt32( Request.propid ) );
+
+            CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+            CswNbtNode Node = NbtResources.Nodes[PropId.NodeId];
+            CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
+
+            //Save the attribute data to jct_nodes_props
+            CswTableUpdate JctUpdate = NbtResources.makeCswTableUpdate( "Blobber_save_update", "jct_nodes_props" );
+            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", FileProp.JctNodePropId );
+            JctTable.Rows[0]["field1"] = Request.postedFile.FileName;
+            JctTable.Rows[0]["field2"] = Request.postedFile.ContentType;
+            JctUpdate.update( JctTable );
+
+            //Save the file to blob_data
+            CswTableUpdate BlobUpdate = NbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
+            DataTable BlobTbl = BlobUpdate.getTable( "where jctnodepropid = " + FileProp.JctNodePropId );
+            if( BlobTbl.Rows.Count > 0 )
+            {
+                BlobTbl.Rows[0]["blobdata"] = FileData;
+            }
+            else
+            {
+                DataRow NewRow = BlobTbl.NewRow();
+                NewRow["jctnodepropid"] = FileProp.JctNodePropId;
+                NewRow["blobdata"] = FileData;
+                BlobTbl.Rows.Add( NewRow );
+            }
+            BlobUpdate.update( BlobTbl );
+
+            Node.postChanges( false );
         }
 
         public void displayBlobData( HttpContext Context )
