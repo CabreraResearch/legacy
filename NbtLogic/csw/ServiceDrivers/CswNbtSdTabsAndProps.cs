@@ -507,6 +507,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( PropWrapper != null )
             {
+                PropObj["helptext"] = PropWrapper.HelpText;   // case 29342
+
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
                 if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible
                     FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button || (

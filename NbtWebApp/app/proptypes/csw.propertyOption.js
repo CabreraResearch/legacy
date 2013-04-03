@@ -15,23 +15,21 @@
             'use strict';
             var wasModified = false;
             (function _recurse(originalObject, newObjectValues) {
-                if (originalObject) {
-
-                    Csw.iterate(originalObject, function (originalPropVal, originalPropKey) {
-                        if (Csw.contains(newObjectValues, originalPropKey)) {
-                            var newPropValue = newObjectValues[originalPropKey];
+                
+                Csw.iterate(originalObject, function (originalPropVal, originalPropKey) {
+                    if (Csw.contains(newObjectValues, originalPropKey)) {
+                        var newPropValue = newObjectValues[originalPropKey];
                             
-                            if (Csw.isPlainObject(newPropValue)) {
-                                wasModified = _recurse(originalPropVal[originalPropKey], newPropValue) || wasModified;
-                            }
-                            else if ((false === isMulti && originalPropVal[originalPropKey] !== newPropValue) ||
-                                (isMulti && false === Csw.isNullOrUndefined(newPropValue))) {
-                                wasModified = true;
-                                originalObject[originalPropKey] = newPropValue;
-                            }
+                        if (Csw.isPlainObject(newPropValue)) {
+                            wasModified = _recurse(originalPropVal[originalPropKey], newPropValue) || wasModified;
                         }
-                    }, true);
-                }
+                        else if ((false === isMulti && (Csw.isNullOrEmpty(originalPropVal) || originalPropVal[originalPropKey] !== newPropValue)) ||
+                            (isMulti && false === Csw.isNullOrUndefined(newPropValue))) {
+                            wasModified = true;
+                            originalObject[originalPropKey] = newPropValue;
+                        }
+                    }
+                }, true);
             }(propData.values, attributes));
 
             propData.wasmodified = propData.wasmodified || wasModified;

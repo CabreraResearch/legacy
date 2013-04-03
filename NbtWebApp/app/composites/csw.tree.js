@@ -39,7 +39,9 @@
 
                 //State
                 cswPrivate.allowMultiSelection = cswPrivate.allowMultiSelection || function () { };
-
+                cswPrivate.selectedId = cswPrivate.selectedId;
+                cswPrivate.forceSelected = cswPrivate.forceSelected;
+                
                 //Styling
                 cswPrivate.height = cswPrivate.height || '100%';
                 cswPrivate.width = cswPrivate.width || 270; //thus must be a number
@@ -80,10 +82,10 @@
 
             cswPrivate.getLastSelectedPath = function () {
                 var lastSelectedPath;
-                if (Csw.isNullOrEmpty(cswPrivate.selectedId)) {
-                    lastSelectedPath = Csw.clientDb.getItem(cswPrivate.lastSelectedPathDbName);
-                } else {
+                if (false == Csw.isNullOrEmpty(cswPrivate.selectedId) && Csw.bool(cswPrivate.forceSelected)) {
                     lastSelectedPath = cswPublic.getPathFromId(cswPrivate.selectedId);
+                } else {
+                    lastSelectedPath = Csw.clientDb.getItem(cswPrivate.lastSelectedPathDbName);
                 }
                 if (!lastSelectedPath) {
                     lastSelectedPath = cswPrivate.rootNode.childNodes[0].raw.path;

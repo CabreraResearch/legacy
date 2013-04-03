@@ -197,7 +197,7 @@
             if (cswPrivate.canIterate(obj)) {
                 Object.keys(obj).forEach(function (key) {
                     var val = obj[key];
-                    if (onSuccess && val && key) {
+                    if (onSuccess && key) {
                         var quit = onSuccess(val, key);
                         if (false === quit) {
                             return false;
