@@ -22,7 +22,7 @@
                 rootVisible: false,
                 useHover: true,
                 height: '',
-                width: '',
+                width: 270, //this has to be a number
 
 
                 //State
@@ -174,7 +174,8 @@
                         NodeId: cswPrivate.state.nodeId,
                         NodeKey: cswPrivate.state.nodeKey,
                         UseCheckboxes: cswPrivate.isMulti, 
-                        ExpandAll: cswPrivate.ExpandAll
+                        ExpandAll: cswPrivate.ExpandAll,
+                        PropsToShow: cswPrivate.PropsToShow
                     },
                     success: function (data) {
 

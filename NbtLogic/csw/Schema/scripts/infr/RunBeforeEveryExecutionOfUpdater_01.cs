@@ -49,14 +49,6 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
-            #region YORICK
-
-            _createExcludeInQuotaBarColumns( CswDeveloper.MB, 28752 );
-            _createPrereqColumn( CswDeveloper.MB, 29089 );
-            _alterUpdateHistory();
-
-            #endregion YORICK
-
             #region ASPEN
 
             _createNodeCountColumns( CswDeveloper.MB, 28355 );
@@ -66,53 +58,11 @@ namespace ChemSW.Nbt.Schema
 
             #endregion ASPEN
 
+            #region BUCKEYE
+
+            #endregion BUCKEYE
+
         }//Update()
-
-        #region Yorick
-
-        private void _createExcludeInQuotaBarColumns( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-
-            string ExcludeInQuotaBarColName = "excludeinquotabar";
-
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class", ExcludeInQuotaBarColName ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class", ExcludeInQuotaBarColName, "Whether this ObjectClass is excluded when determining the quota bar size", false, true );
-            }
-
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", ExcludeInQuotaBarColName ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", ExcludeInQuotaBarColName, "Whether this NodeType is excluded when determining the quota bar size", false, true );
-            }
-
-            _resetBlame();
-        }
-
-        private void _createPrereqColumn( CswDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-
-            string PrereqColName = "prereq";
-
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "modules", PrereqColName ) )
-            {
-                _CswNbtSchemaModTrnsctn.addLongColumn( "modules", PrereqColName, "Prerequisite for this module to be activated", false, false );
-            }
-
-            _resetBlame();
-        }
-
-        private void _alterUpdateHistory()
-        {
-            _acceptBlame( CswDeveloper.SS, 29221 );
-
-            _CswNbtSchemaModTrnsctn.changeColumnDataType( "update_history", "version", DataDictionaryPortableDataType.String, 10 );
-
-            _resetBlame();
-        }
-
-        #endregion Yorick
 
         #region ASPEN
 
@@ -203,6 +153,10 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion ASPEN
+
+        #region BUCKEYE Methods
+        
+        #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01
 }//namespace ChemSW.Nbt.Schema

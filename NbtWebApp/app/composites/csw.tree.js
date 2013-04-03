@@ -42,7 +42,7 @@
 
                 //Styling
                 cswPrivate.height = cswPrivate.height || '100%';
-                cswPrivate.width = cswPrivate.width || 270;
+                cswPrivate.width = cswPrivate.width || 270; //thus must be a number
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;
@@ -63,7 +63,8 @@
                 cswPrivate.lastSelectedPathDbName = 'CswTree_' + cswPrivate.name + '_LastSelectedPath';
 
                 cswParent.empty();
-                cswPublic.div = cswParent.div();
+                cswPublic.div = cswParent.div( { width: ( cswPrivate.width + 20 ) + 'px' } ); //add a pad for scroll bar
+                
 
                 if (cswPrivate.useScrollbars) {
                     cswPublic.div.addClass('treediv');
