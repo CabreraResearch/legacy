@@ -222,7 +222,7 @@
                 cswPrivate.tabs = [];
             };
 
-            cswPrivate.makeTabContentDiv = function (tabParent, tabid, tabidx, canEditLayout) {
+            cswPrivate.makeTabContentDiv = function (tabParent, tabid, canEditLayout) {
                 'use strict';
                 if (cswPrivate.tabs[tabid] && cswPrivate.tabs[tabid].remove) {
                     cswPrivate.tabs[tabid].remove();
@@ -231,7 +231,6 @@
 
                 cswPrivate.tabs[tabid].data({
                     tabid: tabid,
-                    tabidx: tabidx,
                     canEditLayout: canEditLayout
                 });
 
@@ -417,21 +416,6 @@
                                 Csw.iterate(data.tabs, tabFunc);
 
                                 cswPrivate.tabcnt = tabno;
-
-                                cswPrivate.getTabDivFromIndex = function (idx) {
-                                    var ret = null;
-                                    Object.keys(cswPrivate.tabs).forEach(
-                                        function (tabId) {
-                                            var div = cswPrivate.tabs[tabId];
-                                            if (div && div.data('tabidx') === idx) {
-                                                ret = div;
-                                                return false;
-                                            }
-                                        }
-                                    );
-                                    return ret;
-                                };
-
 
                                 Csw.each(jqTabs, function (thisTabDiv) {
 
@@ -814,11 +798,10 @@
 
                     if (Csw.bool(cswPrivate.tabState.Config)) {
                         cswPrivate.layoutTable.configOn();
-                    } else if (!cswPrivate.tabState.Config &&
-                            Csw.isNullOrEmpty(cswPrivate.globalState.date) &&
+                    } else if ( Csw.isNullOrEmpty(cswPrivate.globalState.date) &&
                                 cswPrivate.globalState.filterToPropId === '' &&
-                                    cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
-                                        Csw.bool(cswPrivate.tabs[tabid].data('canEditLayout'))) {
+                                cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
+                                Csw.bool(cswPrivate.tabs[tabid].data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
