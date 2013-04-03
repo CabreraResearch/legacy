@@ -203,7 +203,7 @@
                             return false;
                         }
                     }
-                    if (true === recursive && cswPrivate.canIterate(obj)) {
+                    if (true === recursive) {
                         iterate(val, onSuccess, true);
                     }
                 });

@@ -5,31 +5,7 @@
     'use strict';
 
     var cswStaticInternalClosure = {
-        preparePropJsonForSaveRecursive: function (isMulti, propVals, attributes) {
-            ///<summary>Recurses over the subfields and sub-subfields of a property to update its JSON.</summary>
-            ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
-            ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
-            ///<param name="attributes" type="Object">An object which mirrors the structure of propVals. This contains the new prop JSON derived from the form.</param>
-            ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
-            'use strict';
-            var wasModified = false;
-            if (false === Csw.isNullOrEmpty(propVals)) {
-                Csw.eachRecursive(propVals, function (prop, key) {
-                    if (Csw.contains(attributes, key)) {
-                        var attr = attributes[key];
-                        //don't bother sending this to server unless it's changed
-                        if (Csw.isPlainObject(attr)) {
-                            wasModified = cswStaticInternalClosure.preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
-                        } else if ((false === isMulti && propVals[key] !== attr) ||
-                            (isMulti && false === Csw.isNullOrUndefined(attr))) {
-                            wasModified = true;
-                            propVals[key] = attr;
-                        }
-                    }
-                }, false);
-            }
-            return wasModified;
-        },
+        
         preparePropJsonForSave: function (isMulti, propData, attributes) {
             ///<summary>Takes property JSON from the form and modifies it in order to send back to the server.</summary>
             ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
@@ -38,13 +14,27 @@
             ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
             'use strict';
             var wasModified = false;
-            if (false === Csw.isNullOrEmpty(propData)) {
-                if (Csw.contains(propData, 'values')) {
-                    var propVals = propData.values;
-                    wasModified = cswStaticInternalClosure.preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
+            (function _recurse(newData, oldData) {
+                if (newData && newData.values) {
+
+                    Csw.iterate(propData.values, function(newProp, key) {
+                        if (Csw.contains(oldData, key)) {
+                            var oldProp = oldData[key];
+                            //don't bother sending this to server unless it's changed
+                            if (Csw.isPlainObject(oldProp)) {
+                                wasModified = _recurse(newProp[key], oldProp) || wasModified;
+                            } else if ((false === isMulti && newProp[key] !== oldProp) ||
+                                (isMulti && false === Csw.isNullOrUndefined(oldProp))) {
+                                wasModified = true;
+                                newProp[key] = oldProp;
+                            }
+                        }
+                    }, false);
                 }
-                propData.wasmodified = propData.wasmodified || wasModified;
-            }
+            }(propData, attributes));
+        
+            propData.wasmodified = propData.wasmodified || wasModified;
+        
         }
     };
 

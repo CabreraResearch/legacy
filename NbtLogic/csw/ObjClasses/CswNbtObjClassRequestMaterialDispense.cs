@@ -603,23 +603,22 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private void _hideFakeItemProps()
+        private void _toggleItemProps( bool Hidden = true )
         {
-            //Neither favs nor recurs represent real (aka Fulfillable) Items
-            if( _IsFavorite || _IsRecurring ) 
-            {
-                Status.Value = "";
-                Status.setHidden( value : true, SaveToDb : true );
-                Fulfill.setHidden( value : true, SaveToDb : true );
-                AssignedTo.setHidden( value : true, SaveToDb : true );
-                Number.setHidden( value : true, SaveToDb : true );
-                NeededBy.setHidden( value : true, SaveToDb : true );
-                TotalMoved.setHidden( value : true, SaveToDb : true );
-                TotalDispensed.setHidden( value : true, SaveToDb : true );
-                ReceiptLotToDispense.setHidden( value : true, SaveToDb : true );
-                ReceiptLotsReceived.setHidden( value : true, SaveToDb : true );
-                GoodsReceived.setHidden( value : true, SaveToDb : true );
-            }
+            bool HideTheseProperties = ( ( _IsFavorite || _IsRecurring ) && Hidden == true );
+            
+            Status.Value = "";
+            Status.setHidden( value: HideTheseProperties, SaveToDb: true );
+            Fulfill.setHidden( value: HideTheseProperties, SaveToDb: true );
+            AssignedTo.setHidden( value: HideTheseProperties, SaveToDb: true );
+            Number.setHidden( value: HideTheseProperties, SaveToDb: true );
+            NeededBy.setHidden( value: HideTheseProperties, SaveToDb: true );
+            TotalMoved.setHidden( value: HideTheseProperties, SaveToDb: true );
+            TotalDispensed.setHidden( value: HideTheseProperties, SaveToDb: true );
+            ReceiptLotToDispense.setHidden( value: HideTheseProperties, SaveToDb: true );
+            ReceiptLotsReceived.setHidden( value: HideTheseProperties, SaveToDb: true );
+            GoodsReceived.setHidden( value: HideTheseProperties, SaveToDb: true );
+            
         }
 
         public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
@@ -630,17 +629,19 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _IsRecurring { get { return Tristate.True == IsRecurring.Checked; } } //&& _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ); } }
         private void onIsRecurringChange( CswNbtNodeProp NodeProp )
         {
+            //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items
+            //Support both directions
             IsRecurring.setHidden( value : true, SaveToDb : true );
-            // No "else": like favorites, recurring items never transition out of this state--they can only be deleted.
+            _toggleItemProps( _IsRecurring );
             if( _IsRecurring )
             {
-                _hideFakeItemProps();
                 RecurringFrequency.setHidden( value: false, SaveToDb: true );
                 NextReorderDate.setHidden( value: false, SaveToDb: true );
                 Name.setHidden( value: true, SaveToDb: true );
             }
             else
             {
+                IsRecurring.setHidden( value: true, SaveToDb: true );
                 RecurringFrequency.setHidden( value : true, SaveToDb : true );
                 NextReorderDate.setHidden( value : true, SaveToDb : true );
             }
@@ -652,16 +653,11 @@ namespace ChemSW.Nbt.ObjClasses
         private void onIsFavoritePropChange( CswNbtNodeProp NodeProp )
         {
             // No "else": like recurring, favorite items never transition out of this state--they can only be deleted.
-            if( _IsFavorite ) 
-            {
-                _hideFakeItemProps();
-
-                //Name is normally shown on status change, which doesn't happen for "fake" request items
-                Name.setHidden( value : false, SaveToDb : true );
-                IsRecurring.setHidden( value : true, SaveToDb : true );
-                NextReorderDate.setHidden( value : true, SaveToDb : true );
-                RecurringFrequency.setHidden( value : true, SaveToDb : true );
-            }
+            _toggleItemProps( _IsFavorite );
+            IsRecurring.setHidden( value: true, SaveToDb: true );
+            NextReorderDate.setHidden( value: true, SaveToDb: true );
+            RecurringFrequency.setHidden( value: true, SaveToDb: true );
+            Name.setHidden( value: false, SaveToDb: true );
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }

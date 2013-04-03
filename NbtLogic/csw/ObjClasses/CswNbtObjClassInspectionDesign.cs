@@ -434,7 +434,7 @@ namespace ChemSW.Nbt.ObjClasses
                 SetPreferred.setHidden( value: true, SaveToDb: false );
             }
 
-            SetPreferred.setReadOnly( value : _InspectionState.AllAnswered, SaveToDb : true );
+            SetPreferred.setHidden( value : _InspectionState.AllAnswered, SaveToDb : true );
             //// case 26584, 28155
             // removed by case 29095
             //Status.setReadOnly( value : false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb : false );
@@ -491,7 +491,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
-                        SetPreferred.setReadOnly( value : true, SaveToDb : true );
+                        SetPreferred.setHidden( value : true, SaveToDb : true );
                         ButtonData.Action = NbtButtonAction.nothing;
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -652,9 +652,9 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else
                     {
-                        Finish.setReadOnly( true, true );
-                        SetPreferred.setReadOnly( true, true );
-                        Cancel.setReadOnly( true, true );
+                        Finish.setHidden( true, true );
+                        SetPreferred.setHidden( true, true );
+                        Cancel.setHidden( true, true );
                         Node.setReadOnly( value : true, SaveToDb : true );
                     }
                     break;
@@ -662,18 +662,18 @@ namespace ChemSW.Nbt.ObjClasses
                 case InspectionStatus.Cancelled:
                 case InspectionStatus.Missed:
                     //InspectionDate.DateTimeValue = DateTime.Now;
-                    Finish.setReadOnly( true, true );
-                    SetPreferred.setReadOnly( true, true );
-                    Cancel.setReadOnly( true, true );
+                    Finish.setHidden( true, true );
+                    SetPreferred.setHidden( true, true );
+                    Cancel.setHidden( true, true );
                     Node.setReadOnly( value : true, SaveToDb : true );
                     break;
 
                 case InspectionStatus.Overdue:
                 case InspectionStatus.ActionRequired:
                 case InspectionStatus.Pending:
-                    Finish.setReadOnly( false, true );
-                    SetPreferred.setReadOnly( false, true );
-                    Cancel.setReadOnly( false, true );
+                    Finish.setHidden( false, true );
+                    SetPreferred.setHidden( false, true );
+                    Cancel.setHidden( false, true );
                     Node.setReadOnly( value : false, SaveToDb : true );
                     break;
 
