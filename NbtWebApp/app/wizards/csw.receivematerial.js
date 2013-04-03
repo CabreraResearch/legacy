@@ -330,6 +330,7 @@
 
                         cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.divStep2, {
                             name: cswPrivate.state.containerNodeTypeId + 'add_layout',
+                            excludeOcProps: ['save'],
                             tabState: {
                                 nodetypeid: cswPrivate.state.containerNodeTypeId
                             },
