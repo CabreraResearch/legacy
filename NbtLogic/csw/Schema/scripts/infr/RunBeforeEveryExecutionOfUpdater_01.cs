@@ -1,5 +1,4 @@
 using System;
-using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 
@@ -59,6 +58,8 @@ namespace ChemSW.Nbt.Schema
             #endregion ASPEN
 
             #region BUCKEYE
+
+            _createBlobDataTable( CswDeveloper.MB, 26531 );
 
             #endregion BUCKEYE
 
@@ -155,7 +156,33 @@ namespace ChemSW.Nbt.Schema
         #endregion ASPEN
 
         #region BUCKEYE Methods
-        
+
+        private void _createBlobDataTable( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            const string blobdatatblname = "blob_data";
+
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( blobdatatblname ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( blobdatatblname, "blobdataid" );
+            }
+            if( _CswNbtSchemaModTrnsctn.isTableDefined( blobdatatblname ) )
+            {
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "blobdata" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addBlobColumn( blobdatatblname, "blobdata", "The blob data", false, false );
+                }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "jctnodepropid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addBlobColumn( blobdatatblname, "jctnodepropid", "The property row this blob data belongs to", false, true );
+                }
+            }
+
+            _resetBlame();
+        }
+
         #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01
