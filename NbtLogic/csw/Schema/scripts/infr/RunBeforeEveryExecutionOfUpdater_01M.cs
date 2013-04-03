@@ -46,11 +46,31 @@ namespace ChemSW.Nbt.Schema
 
             #region ASPEN
 
+            _makeFireDbSyncModule( CswDeveloper.CM, 29245 );
+
             #endregion ASPEN
 
         }//Update()
 
         #region ASPEN Methods
+
+        private void _makeFireDbSyncModule( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.FireDbSync );
+            if( Int32.MinValue == ModuleId )
+            {
+                // Create the FireDb Sync module
+                _CswNbtSchemaModTrnsctn.createModule( "Add-on for Fire Code that syncs FireDb data with ChemCatCentral", CswNbtModuleName.FireDbSync.ToString() );
+
+                // Create the module dependency
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.FireCode, CswNbtModuleName.FireDbSync );
+            }
+
+            _resetBlame();
+        }
+
 
         #endregion ASPEN Methods
 
