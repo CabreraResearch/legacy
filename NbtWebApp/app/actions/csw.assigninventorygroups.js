@@ -23,12 +23,19 @@
                 useCancel: false
                 } );
 
+    
+            o.action.actionDiv.css( { padding: '10px' } ); 
+            o.action.actionDiv.append( "You can assign the selected <b>Inventory Group</b> to any location(s). Just click the locations' checkbox, and then click <b>Set To</b>.<BR><BR>" ); 
+
             //Where we are putting stuff
             var action_table = o.action.actionDiv.table();
+
+            //action_table.p
 //            debugger;
 //            action_table.propDom( 'border', '1'); 
 //            action_table.css({ width: '100%' }); 
             var tree_cell = action_table.cell(2, 1);
+            //tree_cell.css( {'width' : '1500px' } ); 
 
              
             var include_children_table = action_table.cell(1, 1).table();
@@ -40,7 +47,8 @@
             var close_button_cell = action_table.cell(3, 1);
 
             var right_side_table = action_table.cell(1, 2).table();
-            action_table.cell(1, 2).css( { 'vertical-align' : 'bottom' } );
+            action_table.cell(1, 2).propDom( 'rowspan', 2 ); 
+            action_table.cell(1, 2).css( { 'vertical-align' : 'top' } );
             var select_box_label_cell = right_side_table.cell(1, 1);
             var select_inventory_group_cell = right_side_table.cell(1, 2);
             var save_button_cell = right_side_table.cell(2, 2);
@@ -58,10 +66,11 @@
                     success: function (data) {
                         tree_cell.empty();
                         mainTree = Csw.nbt.nodeTreeExt(tree_cell, {
-                            width: '500px',
+                            width: 500,
                             overrideBeforeSelect: true,
                             ExpandAll: true,
                             forSearch: false,
+                            PropsToShow: ['inventory group'],
                             onBeforeSelectNode: function ( node , tree ) 
                             { 
 
@@ -124,6 +133,7 @@
             function initCheckBox() {
 
                 include_children_checkbox_label_cell.span({ text: 'Include Children:' }).addClass('propertylabel');
+                include_children_checkbox_cell.empty();
                 check_children_of_current_check_box = include_children_checkbox_cell.input({
                     name: "include_children",
                     type: Csw.enums.inputTypes.checkbox,
@@ -157,6 +167,7 @@
                             urlMethod: 'Locations/assignInventoryGroupToLocations',
                             data: AssignRequest,
                             success: function (ajaxdata) { 
+                                    initCheckBox();
                                     initTree();
                                 }
                             });

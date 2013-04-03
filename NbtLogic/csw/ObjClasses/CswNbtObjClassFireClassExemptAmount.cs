@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -7,7 +8,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         #region Properties and ctor
 
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string SetName = "Set Name";
             public const string HazardCategory = "Hazard Category";
@@ -71,6 +72,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            _syncDefaultHazardClassOptions();
+
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -82,6 +85,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
+            _syncDefaultHazardClassOptions();
+
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
@@ -100,6 +105,35 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+        #endregion
+
+        #region Private Helper Methods
+
+        /// <summary>
+        /// Make sure the list of Hazard Class options on the Chemical NodeType matches
+        /// the default set of hazard class options (except FL-Comb)
+        /// </summary>
+        private void _syncDefaultHazardClassOptions()
+        {
+            CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
+            if( null != ChemicalNT )
+            {
+                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.HazardClasses );
+                if( null != ChemicalHazardClassesNTP )
+                {
+                    CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, PropertyName.HazardClass );
+                    if( null != FireClassHazardTypesNTP )
+                    {
+                        String FLComb = "FL-Comb";
+                        int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
+                        String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
+                        ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                    }
+                }
+            }
+
+        }
+
         #endregion
 
         #region Object class specific properties

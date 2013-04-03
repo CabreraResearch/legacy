@@ -113,6 +113,9 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember( EmitDefaultValue = false, IsRequired = false )]
                 public bool UseCheckboxes = false;
 
+                [DataMember]
+                public List<string> PropsToShow = new List<string>();
+
             }
 
             public class Response : CswWebSvcReturn
@@ -380,7 +383,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Collection<CswNbtTreeNodeProp> ThisNodeProps = Tree.getChildNodePropsOfNode();
-            CswNbtViewRoot.forEachProperty EachNodeProp = ( ViewProp  ) =>
+            CswNbtViewRoot.forEachProperty EachNodeProp = ( ViewProp ) =>
                                                  {
                                                      foreach( CswNbtTreeNodeProp NodeProp in ThisNodeProps )
                                                      {
@@ -391,7 +394,7 @@ namespace ChemSW.Nbt.WebServices
                                                      }
                                                  };
 
-            _View.Root.eachRelationship(relationshipCallBack: null, propertyCallBack: EachNodeProp );
+            _View.Root.eachRelationship( relationshipCallBack: null, propertyCallBack: EachNodeProp );
 
             //ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
 
@@ -533,7 +536,7 @@ namespace ChemSW.Nbt.WebServices
             //#2: the columns for the Tree Grid
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "text"),
+                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "text" ),
                     xtype = extJsXType.treecolumn,
                     MenuDisabled = true,
                     width = 269,
@@ -552,7 +555,7 @@ namespace ChemSW.Nbt.WebServices
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "objectclassid"),
+                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "objectclassid" ),
                     header = "ObjectClassId",
                     hidden = true,
                     resizable = false,
@@ -562,7 +565,7 @@ namespace ChemSW.Nbt.WebServices
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
             {
-                dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "nodeid"),
+                dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "nodeid" ),
                 header = "NodeId",
                 hidden = true,
                 resizable = false,
@@ -572,7 +575,7 @@ namespace ChemSW.Nbt.WebServices
             } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
-                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "disabled"),
+                    dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "disabled" ),
                     header = "Disabled",
                     hidden = true,
                     resizable = false,
@@ -597,6 +600,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewRoot.forEachProperty AddProp = ( ViewProperty ) =>
                                                          {
                                                              string PropName = ViewProperty.Name.ToLower().Trim();
+                                                             bool HideProp = ( false == Request.PropsToShow.Contains( PropName ) );
                                                              if( false == UniqueColumnNames.Contains( PropName ) )
                                                              {
                                                                  UniqueColumnNames.Add( PropName );
@@ -605,13 +609,13 @@ namespace ChemSW.Nbt.WebServices
                                                                                               {
                                                                                                   dataIndex = new CswExtJsGridDataIndex( _View.ViewName, PropName ),
                                                                                                   header = ViewProperty.Name,
-                                                                                                  hidden = true,
+                                                                                                  hidden = HideProp,
                                                                                                   resizable = false,
-                                                                                                  width = ViewProperty.Name.Length * 7,
+                                                                                                  width = ViewProperty.Width * 7,
                                                                                                   xtype = extJsXType.gridcolumn,
                                                                                                   MenuDisabled = false
                                                                                               };
-                                                                 CswExtJsGridField Fld = new CswExtJsGridField {name = PropName, type = "string"};
+                                                                 CswExtJsGridField Fld = new CswExtJsGridField { name = PropName, type = "string" };
                                                                  Fld.dataIndex = Col.dataIndex;
 
                                                                  ResponseData.Columns.Add( Col );
@@ -697,7 +701,7 @@ namespace ChemSW.Nbt.WebServices
             View.SaveToCache( false, false );
             Response.Data.ViewId = View.SessionViewId;
 
-           
+
         }//getLocationTree()
 
     } // class CswNbtWebServiceTree

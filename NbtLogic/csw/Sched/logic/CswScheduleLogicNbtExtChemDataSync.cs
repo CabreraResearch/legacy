@@ -79,13 +79,12 @@ namespace ChemSW.Nbt.Sched
                     {
                         // Get all nodes that need to be synced.
                         Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources );
-
-                        // Check C3 Status
-                        CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources );
-                        bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( CswNbtResources );
-                        if( C3ServiceStatus )
+                        if( MaterialPks.Count > 0 )
                         {
-                            if( MaterialPks.Count > 0 )
+                            // Check C3 Status
+                            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources );
+                            bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( CswNbtResources );
+                            if( C3ServiceStatus )
                             {
                                 foreach( CswPrimaryKey MaterialPk in MaterialPks )
                                 {

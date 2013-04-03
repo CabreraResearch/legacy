@@ -297,6 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     CswNbtViewProperty InGroupVp = LocationsView.AddViewProperty( LocReln, LocationInventoryGroupOCP );
+                    InGroupVp.Width = 100;
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
                     LocationsView.setSortProperty( OrderVPn, NbtViewPropertySortMethod.Ascending, false );
 

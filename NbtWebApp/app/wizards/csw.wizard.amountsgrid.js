@@ -178,6 +178,7 @@
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
                                         name: 'containerCount',
                                         value: '',
+                                        isRequired: true,
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: cswPublic.containerlimit,
                                         width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
@@ -191,7 +192,7 @@
                                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities());
                                         }
                                     });
-                                    cswPublic.rows[rowid].quantityValues.containerNo = cswPublic.rows[rowid].containerNoControl.val();
+                                    cswPublic.rows[rowid].quantityValues.containerNo = cswPublic.rows[rowid].containerNoControl.val(); 
                                     break;
                                 case cswPrivate.config.sizeName:
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
@@ -235,6 +236,7 @@
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     cswPrivate.quantity.isUnitReadOnly = true;
+                                    cswPrivate.quantity.isReadOnly = cswPrivate.quantity.qtyReadonly;
 
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
