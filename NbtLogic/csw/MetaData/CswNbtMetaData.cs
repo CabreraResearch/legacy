@@ -683,17 +683,25 @@ namespace ChemSW.Nbt.MetaData
 
                 NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
 
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, DisplayRow, 1 );
-                if( OCProp.getFieldType().IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) &&
-                    ( ( OCProp.IsRequired &&
-                    false == OCProp.HasDefaultValue() ) ||
-                    ( OCProp.SetValueOnAdd ||
-                    ( Int32.MinValue != OCProp.DisplayColAdd &&
-                    Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
+                if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
                 }
-                DisplayRow++;
+                else
+                {
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, DisplayRow, 1 );
+                    if( OCProp.getFieldType().IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) &&
+                        ( ( OCProp.IsRequired &&
+                            false == OCProp.HasDefaultValue() ) ||
+                          ( OCProp.SetValueOnAdd ||
+                            ( Int32.MinValue != OCProp.DisplayColAdd &&
+                              Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
+                    {
+                        NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                    }
+                    DisplayRow++;
+                }
             }//iterate object class props
 
             if( NodeTypeProps.Rows.Count > 0 )
@@ -803,6 +811,14 @@ namespace ChemSW.Nbt.MetaData
             //CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( Row ) as CswNbtMetaDataNodeTypeTab;
             CswNbtMetaDataNodeTypeTab NewTab = new CswNbtMetaDataNodeTypeTab( _CswNbtMetaDataResources, Row );
             _CswNbtMetaDataResources.NodeTypeTabsCollection.AddToCache( NewTab );
+
+            CswNbtMetaDataNodeTypeProp SaveNtp = NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.Save );
+            if( null != SaveNtp ) //Case 29181 - Save prop on new tabs
+            {
+                //Note - when first creating a new NodeType and creating its first tab this will be null, which is expected
+                SaveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId : NewTab.TabId, DisplayColumn : 1, DisplayRow : Int32.MaxValue );
+            }
+
             return NewTab;
 
         }//makeNewTab()
@@ -1313,6 +1329,19 @@ namespace ChemSW.Nbt.MetaData
                             }
                             CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
                             NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, Prop, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
+                        }
+                    }
+                }
+
+                //Case 29181 - Save prop on all tabs except identity
+                if( NodeTypeProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) )
+                {
+                    CswNbtMetaDataNodeTypeProp saveNTP = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
+                    foreach( CswNbtMetaDataNodeTypeTab tab in NewNodeType.getNodeTypeTabs() )
+                    {
+                        if( false == tab.Equals( NewNodeType.getIdentityTab() ) )
+                        {
+                            saveNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, tab.TabId, Int32.MaxValue, 1 );
                         }
                     }
                 }
