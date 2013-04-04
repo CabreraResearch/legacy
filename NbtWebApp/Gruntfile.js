@@ -121,14 +121,16 @@ module.exports = function (grunt) {
                 strict: false,
                 browser: true,
                 globalstrict: false,
-                smarttabs: true
+                smarttabs: true,
+                reporter: 'jslint.js'
             },
             globals: {
                 $: true,
                 Csw: true,
                 window: true,
                 Ext: true
-            }
+            },
+            files: cswAppJsFiles
         },
         
         lint: {
@@ -139,6 +141,22 @@ module.exports = function (grunt) {
 
         },
         
+        plato: {
+            test: {
+                options : {
+                    complexity : {
+                        logicalor : false,
+                        switchcase : false,
+                        forin : true,
+                        trycatch : true
+                    }
+                },
+                files: {
+                    'test/plato': cswAppJsFiles,
+                },
+            }
+        },
+
         qunit: {
             files: ['test/*.html']
         },
@@ -201,7 +219,8 @@ module.exports = function (grunt) {
     /**REGION: *-contrib tasks */
 
     grunt.loadNpmTasks('grunt-contrib');
-
+    grunt.loadNpmTasks('grunt-plato');
+    
     /**ENDREGION: *-contrib tasks */
 
     /**REGION: init tasks */
@@ -274,6 +293,7 @@ module.exports = function (grunt) {
         /// </summary>
         grunt.task.run('toHtml:test'); //Generate the HTML file from the template
         grunt.task.run('qunit');
+        grunt.task.run('plato');
     });
 
     /**REGION: register CSW tasks */
