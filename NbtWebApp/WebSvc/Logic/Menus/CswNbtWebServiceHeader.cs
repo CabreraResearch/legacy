@@ -131,11 +131,10 @@ namespace ChemSW.Nbt.WebServices
                     Ret["Admin"]["Quotas"]["action"] = "Quotas";
                     Ret["Admin"]["Login Data"] = new JObject();
                     Ret["Admin"]["Login Data"]["action"] = "Login Data";
-                    if( false == CswSessionResources.CswSessionManager.isImpersonating() )
-                    {
-                        Ret["Admin"]["Impersonate"] = new JObject();
-                        Ret["Admin"]["Impersonate"]["action"] = "Impersonate";
-                    }
+
+                    //Removed condition for Case 29185
+                    Ret["Admin"]["Impersonate"] = new JObject();
+                    Ret["Admin"]["Impersonate"]["action"] = "Impersonate";
 
                     if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                     {
