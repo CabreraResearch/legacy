@@ -314,6 +314,7 @@ namespace ChemSW.Nbt.WebServices
 
                 AuthenticationStatus AuthenticationStatus = _doCswAdminAuthenticate( PropId );
                 ReturnVal["username"] = CswNbtObjClassUser.ChemSWAdminUsername;
+                ReturnVal["customerid"] = _CswNbtResources.AccessId;
 
                 CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
                 _deInitResources();

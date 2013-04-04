@@ -295,16 +295,24 @@ window.initMain = window.initMain || function (undefined) {
 
                 return ret;
             }
+            
+            function setCustomerId(customerid) {
+                Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, customerid);
+                return newcustomerid = Csw.cookie.get(Csw.cookie.cookieNames.CustomerId);
+            }
 
-            function setUsername(username) {
-                var userid = Csw.cookie.get(Csw.cookie.cookieNames.CustomerId);
+            function setUsername(username, customerid) {
+                var currcustomerid = Csw.cookie.get(Csw.cookie.cookieNames.CustomerId);
+                if (Csw.isNullOrEmpty(currcustomerid)) {
+                    currcustomerid = setCustomerId(customerid);
+                }
                 Csw.clientSession.setUsername(username);
-                Csw.main.headerUsername.text(username + '@' + userid)
+                Csw.main.headerUsername.text(username + '@' + currcustomerid)
                     .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
             }
 
-            Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj, username) {
-                setUsername(username);
+            Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj, extraParams) {
+                setUsername(extraParams.username, extraParams.customerid);
             });
 
             
