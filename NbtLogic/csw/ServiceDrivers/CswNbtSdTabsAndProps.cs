@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) )
                         {
-                            _makeTab( Tabs, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
+                            _makeTab( Tabs, Int32.MaxValue, "history", "History", false );
                         }
                     }
                     Ret["node"]["nodename"] = Node.NodeName;
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 FilterPropIdAttr = new CswPropIdAttr( filterToPropId );
             }
 
-            if( TabId.StartsWith( HistoryTabPrefix ) )
+            if( TabId == "history" )
             {
                 CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
                 if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
