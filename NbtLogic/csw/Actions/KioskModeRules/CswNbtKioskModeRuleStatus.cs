@@ -68,6 +68,18 @@ namespace ChemSW.Nbt.Actions.KioskMode
             else
             {
                 string statusMsg = "You do not have permission to edit " + itemTypeName + " (" + OpData.Field2.Value + ")";
+                if( OpData.Field2.FoundObjClass.Equals( NbtObjectClass.EquipmentClass ) )
+                {
+                    CswNbtObjClassEquipment nodeAsEquip = item;
+                    if( null != nodeAsEquip.Assembly.RelatedNodeId )
+                    {
+                        CswNbtObjClassEquipmentAssembly assembly = _CswNbtResources.Nodes[nodeAsEquip.Assembly.RelatedNodeId];
+                        if( null != assembly )
+                        {
+                            statusMsg = "Cannot perform STATUS operation on Equipment (" + OpData.Field2.Value + ") when it belongs to Assembly (" + assembly.Barcode.Barcode + ")";
+                        }
+                    }
+                }
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;
                 OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
@@ -159,21 +171,21 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 if( null != barcodeProp )
                 {
                     string barcodeValue = node.Properties[barcodeProp].AsBarcode.Barcode;
-                string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
+                    string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
 
                     if( barcodeValue.Equals( OpData.Field2.Value ) )
                     {
-                if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
-                {
-                    OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentAssemblyClass;
-                    ret = true;
-                }
+                        if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
+                        {
+                            OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentAssemblyClass;
+                            ret = true;
+                        }
 
-                if( ObjClass == NbtObjectClass.EquipmentClass )
-                {
-                    OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentClass;
-                    ret = true;
-                }
+                        if( ObjClass == NbtObjectClass.EquipmentClass )
+                        {
+                            OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentClass;
+                            ret = true;
+                        }
                     }
                 }
                 tree.goToParentNode();
