@@ -543,9 +543,11 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             if( Node != null )
             {
+                JObject AuditProperty = new JObject();
+                ParentObj["properties"] = AuditProperty;
                 JObject PropObj = new JObject();
-                string FakePropIdAttr = Node.NodeId.ToString() + "_audit";
-                ParentObj["prop_" + FakePropIdAttr] = PropObj;
+                ParentObj["properties"]["prop_" + Node.NodeId.ToString() + "_audit"] = PropObj;
+ 
                 PropObj["name"] = "Audit History";
                 PropObj["helptext"] = string.Empty;
                 PropObj["fieldtype"] = "AuditHistoryGrid";
@@ -553,7 +555,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 PropObj["displaycol"] = 1;
                 PropObj["required"] = false;
                 PropObj["readonly"] = true;
-                PropObj["id"] = FakePropIdAttr;
+                PropObj["id"] = Node.NodeId.ToString() + "_audit";
                 PropObj["showpropertyname"] = false;
             }
         } // _getAuditHistoryGridProp()
