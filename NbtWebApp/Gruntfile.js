@@ -267,6 +267,14 @@ module.exports = function (grunt) {
         }
         grunt.task.run(taskName);
     });
+    
+    grunt.registerTask('runUnitTests', function () {
+        /// <summary>
+        /// Build the Test HTML and execute the QUnit tests
+        /// </summary>
+        grunt.task.run('toHtml:test'); //Generate the HTML file from the template
+        grunt.task.run('qunit');
+    });
 
     /**REGION: register CSW tasks */
 };
