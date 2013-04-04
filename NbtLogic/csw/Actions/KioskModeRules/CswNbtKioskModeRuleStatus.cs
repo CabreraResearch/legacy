@@ -153,8 +153,16 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 tree.goToNthChild( i );
                 CswNbtNode node = tree.getNodeForCurrentPosition();
+                CswNbtMetaDataNodeType nodeType = node.getNodeType();
+                CswNbtMetaDataNodeTypeProp barcodeProp = nodeType.getBarcodeProperty();
+
+                if( null != barcodeProp )
+                {
+                    string barcodeValue = node.Properties[barcodeProp].AsBarcode.Barcode;
                 string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
 
+                    if( barcodeValue.Equals( OpData.Field2.Value ) )
+                    {
                 if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
                 {
                     OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentAssemblyClass;
@@ -165,6 +173,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 {
                     OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentClass;
                     ret = true;
+                }
+                    }
                 }
                 tree.goToParentNode();
             }
