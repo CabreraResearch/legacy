@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.Schema
             string JctPsOcTableName = "jct_propertyset_objectclass";
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( JctPsOcTableName ) )
             {
-                _CswNbtSchemaModTrnsctn.addTable( JctPsOcTableName, "jctpropertysetobjectclassid" );
+                _CswNbtSchemaModTrnsctn.addTable( JctPsOcTableName, "jctpropsetobjclassid" );
                 _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, "objectclassid", "Object class foreign key", false, true, "object_class", "objectclassid" );
                 _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, PropSetPkName, "Property Set foreign key", false, true, PropSetTableName, PropSetPkName );
             }
