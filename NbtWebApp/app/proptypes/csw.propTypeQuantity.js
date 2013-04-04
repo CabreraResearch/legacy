@@ -19,7 +19,7 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    var quantity = {}
+                    var quantity = {};
                     quantity.precision = Csw.number(cswPrivate.propVals.precision, 6);
                     quantity.ceilingVal = Csw.number('999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision));
                     quantity.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
@@ -42,24 +42,31 @@
                     quantity.isMulti = cswPublic.data.isMulti();
                     quantity.isRequired = cswPublic.data.isRequired();
                     quantity.isReadOnly = cswPublic.data.isReadOnly();
-                    quantity.onPropChange = cswPublic.data.onPropChange;
                     quantity.doPropChangeDataBind = cswPublic.data.doPropChangeDataBind;
                     quantity.propVals = cswPrivate.propVals;
                     quantity.onNumberChange = function () {
                         var val = cswPrivate.quntCtrl.value();
-                        Csw.tryExec(cswPublic.data.onChange, val);
-                        cswPublic.data.onPropChange({ value: val });
+                        cswPublic.data.onPropChange({
+                            value: val,
+                            nodeid: cswPrivate.quntCtrl.selectedUnit()
+                        });
                     };
+                    
+                    
+
                     quantity.onQuantityChange = function () {
                         var val = cswPrivate.quntCtrl.selectedUnit();
-                        Csw.eachRecursive(quantity.options, function (relatedObj) {
+                        Csw.iterate(quantity.options, function (relatedObj) {
                             if (relatedObj.id === val) {
                                 quantity.fractional = Csw.bool(relatedObj.fractional);
                             }
-                        }, false);
+                        });
                         quantity.precision = false === cswPrivate.fractional ? 0 : Csw.number(cswPrivate.propVals.precision, 6);
                         Csw.tryExec(quantity.onChange, val);
-                        quantity.onPropChange({ nodeid: val });
+                        cswPublic.data.onPropChange({
+                            value: cswPrivate.quntCtrl.value(),
+                            nodeid: val
+                        });
                     };
 
                     if (false === cswPrivate.fractional) {

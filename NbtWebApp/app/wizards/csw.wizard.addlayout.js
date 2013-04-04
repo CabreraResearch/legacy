@@ -23,6 +23,7 @@
                 ReloadTabOnSave: false
             };
             Csw.extend(cswPrivate, options, true);
+            cswPrivate.globalState.excludeOcProps.push('save');
 
             var cswPublic = {};
 

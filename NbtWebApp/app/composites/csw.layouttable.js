@@ -197,10 +197,8 @@
             };
 
             cswPrivate.disableDrag = function () {
-                //if (cswPublic.isConfig()) {
-                    cswPublic.table.find('.CswLayoutTable_celldiv')
-                        .$.draggable('destroy');
-                //}
+                cswPublic.table.find('.CswLayoutTable_celldiv').$.draggable();
+                cswPublic.table.find('.CswLayoutTable_celldiv').$.draggable('destroy');
             };
 
             cswPrivate.onHoverIn = function (ev, dd, $cell) {

@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.Actions
 
         #endregion ctor
 
-        private JObject _tryCreateMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
+        private JObject _tryCreateTempMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
 
@@ -245,6 +245,7 @@ namespace ChemSW.Nbt.Actions
                     Ret["supplierid"] = SupplierId.ToString();
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
+                    NodeAsMaterial.Save.setHidden( value: true, SaveToDb: true );
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                     Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
@@ -266,7 +267,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Public
 
-        public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
+        public JObject initNewTempMaterialNode( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
 
@@ -299,7 +300,7 @@ namespace ChemSW.Nbt.Actions
                     if( NodeTypeId != CurrentNodeTypeId )
                     {
                         // Then we want to just forget about the first temp node created and create a new one with the new nodetype
-                        Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, null );
+                        Ret = _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, null );
                     }
                     else
                     {
@@ -309,7 +310,7 @@ namespace ChemSW.Nbt.Actions
                             CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                         }
 
-                        Ret = _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
+                        Ret = _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
                     }
                 }
             }
@@ -353,9 +354,9 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Creates a new material, if one does not already exist, and returns the material nodeid
         /// </summary>
-        public JObject createMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        public JObject tryCreateTempMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
         {
-            return _tryCreateMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
+            return _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
         }
 
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
@@ -487,6 +488,7 @@ namespace ChemSW.Nbt.Actions
                         FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
 
                         CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
+                        NodeAsMaterial.Save.setHidden( value: false, SaveToDb: true );
 
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
                         if( RequestObj.HasValues )
