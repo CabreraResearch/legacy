@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
         private CswPrimaryKey SetNameNodeId;
         private CswNbtMetaDataNodeType FireClassExemptAmountNT;
         private CswNbtMetaDataNodeType FireClassExemptAmountSetNT;
-        private CswNbtMetaDataObjectClass FireClassExemptAmountOC;
+        //private CswNbtMetaDataObjectClass FireClassExemptAmountOC;
         private CswNbtMetaDataObjectClass FireClassExemptAmountSetOC;
 
         public override void update()

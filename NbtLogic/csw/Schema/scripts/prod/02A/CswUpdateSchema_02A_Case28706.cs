@@ -2,7 +2,6 @@
 using System.Data;
 using System.Collections.Generic;
 using ChemSW.DB;
-using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;

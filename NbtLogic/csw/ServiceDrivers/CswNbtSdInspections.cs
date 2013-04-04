@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         private Collection<Int32> InspectionDesignTypeIds = new Collection<Int32>();
         private Collection<CswPrimaryKey> InspectionDesignNodeIds = new Collection<CswPrimaryKey>();
         private Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> _Inspections;
-        private CswNbtSdInspectionsDataModels.InspectionData _InspectionResponse;
+        //private CswNbtSdInspectionsDataModels.InspectionData _InspectionResponse;
 
         public CswNbtSdInspections( CswNbtResources Resources, SystemViewName ViewName )
         {
