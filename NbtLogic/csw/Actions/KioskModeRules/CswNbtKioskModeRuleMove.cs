@@ -82,6 +82,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                         }
                     }
                 }
+                OpData.Field2.FoundObjClass = string.Empty;
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;
                 OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
