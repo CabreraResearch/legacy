@@ -58,12 +58,12 @@
                                         /* remember: confirm is globally blocking call */
                                         if (confirm("Are you sure you want to clear this image?")) {
                                             var dataJson = {
-                                                PropId: cswPublic.data.propData.id,
+                                                propid: cswPublic.data.propData.id,
                                                 IncludeBlob: true
                                             };
 
-                                            Csw.ajax.post({
-                                                urlMethod: 'clearProp',
+                                            Csw.ajaxWcf.post({
+                                                urlMethod: 'BlobData/clearBlob',
                                                 data: dataJson,
                                                 success: function () {
                                                     var val = {
@@ -103,6 +103,7 @@
                                     text: imgData.fileName
                                 });
                             }
+                            cswPrivate.makeClr();
                         };
                         cswPrivate.makeImg(cswPrivate);
 

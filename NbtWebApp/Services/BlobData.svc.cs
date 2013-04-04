@@ -59,6 +59,7 @@ namespace NbtWebApp
 
             BlobDataParams blobDataParams = new BlobDataParams();
             blobDataParams.propid = _Context.Request.QueryString["jctnodepropid"];
+            blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -78,22 +79,41 @@ namespace NbtWebApp
             _Context.Response.AddHeader( "Content-Disposition", "attachment;filename=" + ret.Data.filename + ";" );
 
             return mem;
+        }
 
-            //_Context.Response.ClearContent();
-            //_Context.Response.ContentType = ret.Data.contenttype;
-            //_Context.Response.BinaryWrite( mem.ToArray() );
-            //_Context.Response.AddHeader( "Content-Disposition", "attachment;filename=" + ret.Data.filename + ";" );
-            //_Context.Response.End();
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "clearBlob" )]
+        [Description( "Fetch a file" )]
+        [FaultContract( typeof( FaultException ) )]
+        public BlobDataReturn clearBlob( BlobDataParams Request )
+        {
+            BlobDataReturn ret = new BlobDataReturn();
+
+            var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : ret,
+                WebSvcMethodPtr : CswNbtWebServiceBinaryData.clearBlob,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+
+            return ret;
         }
     }
 
     [DataContract]
     public class BlobDataParams
     {
-        [DataMember]
-        public bool success = false;
         public HttpPostedFile postedFile;
         public string nodeid = string.Empty;
+        public byte[] data = new byte[0];
+        public string appPath = string.Empty;
+
+        [DataMember]
+        public bool success = false;
+
+        [DataMember]
         public string propid = string.Empty;
 
         [DataMember]
@@ -104,8 +124,6 @@ namespace NbtWebApp
 
         [DataMember]
         public string filename = string.Empty;
-
-        public byte[] data = new byte[0];
     }
 
     [DataContract]

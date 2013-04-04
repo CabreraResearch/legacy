@@ -92,6 +92,35 @@ namespace ChemSW.Nbt.WebServices
                 Request.contenttype = row["field2"].ToString();
             }
 
+            if( null == Request.data )
+            {
+                Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
+                Request.contenttype = "image/gif";
+                Request.filename = "empty";
+            }
+
+            Return.Data = Request;
+        }
+
+        public static void clearBlob( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswPropIdAttr PropId = new CswPropIdAttr( Request.propid );
+
+            CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
+            tabsandprops.ClearPropValue( Request.propid, true );
+
+            //CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+            //CswNbtNode Node = NbtResources.Nodes[PropId.NodeId];
+            //CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
+            //FileProp.ClearBlob();
+
+            Request.contenttype = "";
+            Request.filename = "";
+            Request.href = "";
+            Request.success = true;
+
             Return.Data = Request;
         }
 

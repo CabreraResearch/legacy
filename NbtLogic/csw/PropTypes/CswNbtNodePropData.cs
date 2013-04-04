@@ -616,19 +616,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public void ClearBlob()
         {
+            CswTableUpdate blobDataTU = _CswNbtResources.makeCswTableUpdate( "clearBlob", "blob_data" );
+            DataTable blobDataTbl = blobDataTU.getTable( "where jctnodepropid = " + JctNodePropId );
 
-            CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "ClearBlob_update", "jct_nodes_props" );
-            JctUpdate.AllowBlobColumns = true;
-            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", JctNodePropId );
-
-            if( !JctTable.Rows[0].IsNull( "blobdata" ) )
+            if( false == blobDataTbl.Rows[0].IsNull( "blobdata" ) )
             {
                 WasModified = true;
                 WasModifiedForNotification = true;
             }
 
-            JctTable.Rows[0]["blobdata"] = DBNull.Value;
-            JctUpdate.update( JctTable );
+            blobDataTbl.Rows[0]["blobdata"] = DBNull.Value;
+            blobDataTU.update( blobDataTbl );
         }
 
 
