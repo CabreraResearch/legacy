@@ -55,6 +55,11 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getAll().Cast<CswNbtMetaDataPropertySet>();
         }
 
+        public CswNbtMetaDataPropertySet getPropertySet( CswEnumNbtPropertySet PropertySet )
+        {
+            return (CswNbtMetaDataPropertySet) _CollImpl.getWhereFirst( "where name = '" + PropertySet.ToString() + "'" );
+        }
+
         private string _makeModuleWhereClause()
         {
             return string.Empty;

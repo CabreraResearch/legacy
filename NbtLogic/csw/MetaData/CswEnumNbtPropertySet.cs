@@ -23,6 +23,11 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public readonly string Value;
 
+        public static IEnumerable<string> All
+        {
+            get { return _Enums.Values; }
+        }
+
         private static string _Parse( string Val )
         {
             string ret = CswResources.UnknownEnum;

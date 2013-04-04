@@ -435,11 +435,16 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, FieldType );
         }
-        
+
         public IEnumerable<CswNbtMetaDataPropertySet> getPropertySets()
         {
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySets();
         }
+        public CswNbtMetaDataPropertySet getPropertySet( CswEnumNbtPropertySet PropertySet )
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySet );
+        }
+
         #endregion Selectors
 
         #region XML
@@ -820,7 +825,7 @@ namespace ChemSW.Nbt.MetaData
             if( null != SaveNtp ) //Case 29181 - Save prop on new tabs
             {
                 //Note - when first creating a new NodeType and creating its first tab this will be null, which is expected
-                SaveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId : NewTab.TabId, DisplayColumn : 1, DisplayRow : Int32.MaxValue );
+                SaveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: NewTab.TabId, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
             }
 
             return NewTab;
@@ -1459,7 +1464,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
             {
-                DeleteNodeTypeProp( Prop, Internal : true );
+                DeleteNodeTypeProp( Prop, Internal: true );
             }
 
             // Delete Tabs
@@ -1470,7 +1475,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
             {
-                DeleteNodeTypeTab( Tab, CauseVersioning : false, IsNodeTypeDelete : true );
+                DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
             }
 
             // Delete Nodes

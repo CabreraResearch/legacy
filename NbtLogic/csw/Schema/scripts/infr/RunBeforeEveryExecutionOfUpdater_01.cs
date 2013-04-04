@@ -163,10 +163,19 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             string PropSetTableName = "property_set";
+            string PropSetPkName = "propertysetid";
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( PropSetTableName ) )
             {
-                _CswNbtSchemaModTrnsctn.addTable( PropSetTableName, "propertysetid" );
+                _CswNbtSchemaModTrnsctn.addTable( PropSetTableName, PropSetPkName );
                 _CswNbtSchemaModTrnsctn.addStringColumn( PropSetTableName, "name", "Name of property set", false, false, 50 );
+            }
+
+            string JctPsOcTableName = "jct_propertyset_objectclass";
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( JctPsOcTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( JctPsOcTableName, "jctpropertysetobjectclassid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, "objectclassid", "Object class foreign key", false, true, "object_class", "objectclassid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, PropSetPkName, "Property Set foreign key", false, true, PropSetTableName, PropSetPkName );
             }
 
             _resetBlame();
