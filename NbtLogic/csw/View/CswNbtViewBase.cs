@@ -199,6 +199,7 @@ namespace ChemSW.Nbt
 
         public static readonly NbtViewRelatedIdType NodeTypeId = new NbtViewRelatedIdType( "NodeTypeId" );
         public static readonly NbtViewRelatedIdType ObjectClassId = new NbtViewRelatedIdType( "ObjectClassId" );
+        public static readonly NbtViewRelatedIdType PropertySetId = new NbtViewRelatedIdType( "PropertySetId" );
     }
 
     /// <summary>

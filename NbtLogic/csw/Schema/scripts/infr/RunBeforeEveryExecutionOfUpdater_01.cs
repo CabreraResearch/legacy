@@ -168,6 +168,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addTable( PropSetTableName, PropSetPkName );
                 _CswNbtSchemaModTrnsctn.addStringColumn( PropSetTableName, "name", "Name of property set", false, false, 50 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( PropSetTableName, "iconfilename", "Icon for property set", false, false, 50 );
             }
 
             string JctPsOcTableName = "jct_propertyset_objectclass";

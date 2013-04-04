@@ -127,7 +127,19 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     }
                     RetView = TargetNt.CreateDefaultView();
                 }
-
+                else if( RelatedIdType == NbtViewRelatedIdType.PropertySetId )
+                {
+                    CswNbtMetaDataPropertySet TargetPs = _CswNbtFieldResources.CswNbtResources.MetaData.getPropertySet( inFKValue );
+                    if( null == TargetPs )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to propertysetid: " + inFKValue + ", but the target is null." );
+                    }
+                    RetView = TargetPs.CreateDefaultView();
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Invalid RelatedIdType: " + RelatedIdType + "." );
+                }
                 RetView.ViewId = MetaDataProp.ViewId;
                 RetView.Visibility = NbtViewVisibility.Property;
                 RetView.ViewMode = NbtViewRenderingMode.Tree;

@@ -108,6 +108,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypesLatestVersion( ObjectClassId );
         }
 
+        public CswNbtMetaDataPropertySet getPropertySet()
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySetForObjectClass( ObjectClassId );
+        }
+
         public CswNbtMetaDataNodeType FirstNodeType
         {
             get

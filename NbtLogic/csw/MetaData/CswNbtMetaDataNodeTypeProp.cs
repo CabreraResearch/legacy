@@ -13,7 +13,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeTypeProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
+    public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         public enum NodeTypePropAttributes
         {
@@ -382,7 +382,7 @@ namespace ChemSW.Nbt.MetaData
                         //If the prop isn't on the Add layout, Add it.
                         if( false == ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                         {
-                            updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId : Int32.MinValue, TabGroup : string.Empty, DisplayRow : Int32.MinValue, DisplayColumn : Int32.MinValue, DoMove : false );
+                            updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
                         }
                     }
                 }
@@ -497,9 +497,9 @@ namespace ChemSW.Nbt.MetaData
 
         public bool ShowSaveProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Layout, bool IsConfigMode, bool HasEditableProps )
         {
-            return IsSaveProp && 
-                   false == IsConfigMode && 
-                   ( ( Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && HasEditableProps ) || 
+            return IsSaveProp &&
+                   false == IsConfigMode &&
+                   ( ( Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && HasEditableProps ) ||
                     Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
 
@@ -589,7 +589,7 @@ namespace ChemSW.Nbt.MetaData
         {
             bool ret = true;
             CswNbtMetaDataNodeTypeTab Tab = null;
-            
+
             // 1: throw away properties incompatable with layouts
             if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
             {
@@ -606,13 +606,13 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview || 
+            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview ||
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.PrintReport ||
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup )
             {
                 ret = ret && ( getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
             }
-            
+
             // 2: Validate orthogonal use cases
             if( IsConfigMode )
             {
@@ -626,9 +626,9 @@ namespace ChemSW.Nbt.MetaData
             {
                 ret = ret && ( false == hasFilter() && false == Node.Properties[this].Hidden );
             }
-            
+
             // 3: Permissions
-            ret = ret &&  (
+            ret = ret && (
                            _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
                            _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
                            _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
@@ -696,6 +696,25 @@ namespace ChemSW.Nbt.MetaData
             get { return _NodeTypePropRow["valueproptype"].ToString(); }
             private set { _setAttribute( "valueproptype", value, false ); }
         }
+
+        #region FK Matching
+
+        public bool FkMatches( CswNbtMetaDataNodeType CompareNT )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareNT );
+        }
+
+        public bool FkMatches( CswNbtMetaDataObjectClass CompareOC )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareOC );
+        }
+
+        public bool FkMatches( CswNbtMetaDataPropertySet ComparePS )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, ComparePS );
+        }
+
+        #endregion FK Matching
 
         public string getCompositeTemplateText()
         {
@@ -1013,7 +1032,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }//UseNumbering
-        
+
         public string Attribute1
         {
             get
@@ -1757,28 +1776,40 @@ namespace ChemSW.Nbt.MetaData
             bool ret = false;
             if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
             {
-                if( FKType != string.Empty )
-                {
-                    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
-                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
-
-                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
-                    {
-                        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        if( null != TargetNodeType )
-                        {
-                            ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
-                        }
-                    }
-                    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
-                    {
-                        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
-                        if( null != TargetObjectClass )
-                        {
-                            ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
-                        }
-                    }
-                }
+                //if( FKType != string.Empty )
+                //{
+                //    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                //    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
+                    
+                //    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+                //    {
+                //        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
+                //        if( null != TargetNodeType )
+                //        {
+                //            ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
+                //        }
+                //    }
+                //    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
+                //    {
+                //        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
+                //        if( null != TargetObjectClass )
+                //        {
+                //            ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
+                //        }
+                //    }
+                //    else if( TargetType == NbtViewRelatedIdType.PropertySetId )
+                //    {
+                //        CswNbtMetaDataPropertySet TargetPropertySet = _CswNbtMetaDataResources.CswNbtResources.MetaData.getPropertySet( FKValue );
+                //        if( null != TargetPropertySet )
+                //        {
+                //            CswNbtMetaDataObjectClass UserObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                //            ret = ( null != UserObjectClass.getPropertySet() &&
+                //                    TargetPropertySet.PropertySetId == UserObjectClass.getPropertySet().PropertySetId );
+                //        }
+                //    }
+                //}
+                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                ret = FkMatches( UserOC );
             }
             return ret;
         }

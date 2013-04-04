@@ -24,8 +24,11 @@ namespace ChemSW.Nbt.MetaData
         public const string MetaDataUniqueType = "propertysetid";
         public string UniqueIdFieldName { get { return MetaDataUniqueType; } }
 
+        private readonly CswNbtMetaDataResources _CswNbtMetaDataResources;
+
         public CswNbtMetaDataPropertySet( CswNbtMetaDataResources Resources, DataRow Row )
         {
+            _CswNbtMetaDataResources = Resources;
             Reassign( Row );
         }
 
@@ -35,17 +38,31 @@ namespace ChemSW.Nbt.MetaData
             _UniqueId = CswConvert.ToInt32( NewRow[UniqueIdFieldName] );
         }
 
-        public CswEnumNbtPropertySet Name
+        public CswEnumNbtPropertySetName Name
         {
             get
             {
-                return (CswEnumNbtPropertySet) _DataRow["Name"];
+                return (CswEnumNbtPropertySetName) _DataRow["name"];
             }
         }
 
         public Int32 PropertySetId
         {
             get { return _UniqueId; }
+        }
+        
+        public string IconFileName
+        {
+            get { return _DataRow["iconfilename"].ToString(); }
+        }
+
+        public CswNbtView CreateDefaultView( bool IncludeDefaultFilters = true )
+        {
+            CswNbtView DefaultView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
+            DefaultView.ViewName = this.Name;
+
+            CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, IncludeDefaultFilters );
+            return DefaultView;
         }
 
     }//CswNbtMetaDataPropertySet

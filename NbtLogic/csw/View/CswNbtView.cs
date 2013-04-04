@@ -337,6 +337,18 @@ namespace ChemSW.Nbt
 
         /// <summary>
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
+        /// For adding a property set to the root level of the view
+        /// </summary>
+        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataPropertySet PropertySet, bool IncludeDefaultFilters )
+        {
+            CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, PropertySet, IncludeDefaultFilters );
+            if( this.Root != null )
+                this.Root.AddChild( NewRelationship );
+            return NewRelationship;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by a property
         /// </summary>
         public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, ICswNbtMetaDataProp Prop, bool IncludeDefaultFilters )

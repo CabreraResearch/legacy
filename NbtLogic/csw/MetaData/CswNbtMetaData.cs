@@ -440,9 +440,13 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySets();
         }
-        public CswNbtMetaDataPropertySet getPropertySet( CswEnumNbtPropertySet PropertySet )
+        public CswNbtMetaDataPropertySet getPropertySet( CswEnumNbtPropertySetName PropertySet )
         {
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySet );
+        }
+        public CswNbtMetaDataPropertySet getPropertySet( Int32 PropertySetId )
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySetId );
         }
 
         #endregion Selectors
