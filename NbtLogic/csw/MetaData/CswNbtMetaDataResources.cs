@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.MetaData
         public CswTableUpdate FieldTypeTableUpdate;
         public CswTableUpdate NodeTypePropTableUpdate;
         public CswTableUpdate NodeTypeTabTableUpdate;
+        public CswTableUpdate PropertySetTableUpdate;
         public CswTableUpdate JctNodesPropsTableUpdate;  // for prop default values
 
         public CswTableSelect ObjectClassTableSelect;
@@ -28,6 +29,7 @@ namespace ChemSW.Nbt.MetaData
         public CswTableSelect NodeTypeTableSelect;
         public CswTableSelect FieldTypeTableSelect;
         public CswTableSelect NodeTypePropTableSelect;
+        public CswTableSelect PropertySetTableSelect;
         public CswTableSelect NodeTypeTabTableSelect;
 
         public CswNbtMetaDataCollectionObjectClass ObjectClassesCollection;
@@ -36,6 +38,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataCollectionNodeType NodeTypesCollection;
         public CswNbtMetaDataCollectionNodeTypeProp NodeTypePropsCollection;
         public CswNbtMetaDataCollectionNodeTypeTab NodeTypeTabsCollection;
+        public CswNbtMetaDataCollectionPropertySet PropertySetsCollection;
 
         private bool _ExcludeDisabledModules;
         public bool ExcludeDisabledModules { get { return CswNbtMetaData.ExcludeDisabledModules; } }
@@ -55,6 +58,7 @@ namespace ChemSW.Nbt.MetaData
             FieldTypeTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_FieldType_Select", "field_types" );
             NodeTypePropTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeProp_Select", "nodetype_props" );
             NodeTypeTabTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeTab_Select", "nodetype_tabset" );
+            PropertySetTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_PropertySet_Select", "property_set" );
 
             ObjectClassTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClass_update", "object_class" );
             ObjectClassPropTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClassProp_update", "object_class_props" );
@@ -62,6 +66,7 @@ namespace ChemSW.Nbt.MetaData
             FieldTypeTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_FieldType_update", "field_types" );
             NodeTypePropTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_NodeTypeProp_update", "nodetype_props" );
             NodeTypeTabTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_NodeTypeTab_update", "nodetype_tabset" );
+            PropertySetTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_PropertySet_update", "property_set" );
             JctNodesPropsTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_JctNodesProps_update", "jct_nodes_props" );
 
             ObjectClassesCollection = new CswNbtMetaDataCollectionObjectClass( this );
@@ -70,6 +75,7 @@ namespace ChemSW.Nbt.MetaData
             NodeTypesCollection = new CswNbtMetaDataCollectionNodeType( this );
             NodeTypePropsCollection = new CswNbtMetaDataCollectionNodeTypeProp( this );
             NodeTypeTabsCollection = new CswNbtMetaDataCollectionNodeTypeTab( this );
+            PropertySetsCollection = new CswNbtMetaDataCollectionPropertySet( this );
 
             //_CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources );
         }
@@ -117,6 +123,7 @@ namespace ChemSW.Nbt.MetaData
             NodeTypesCollection.clearCache();
             NodeTypePropsCollection.clearCache();
             NodeTypeTabsCollection.clearCache();
+            PropertySetsCollection.clearCache();
 
             //CswTimer refreshAllTimer = new CswTimer();
             //// Post existing changes first, so we don't lose them

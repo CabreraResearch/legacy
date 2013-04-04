@@ -60,6 +60,8 @@ namespace ChemSW.Nbt.Schema
 
             #region BUCKEYE
 
+            _propSetTable(CswDeveloper.SS, 28160 );
+
             #endregion BUCKEYE
 
         }//Update()
@@ -155,7 +157,21 @@ namespace ChemSW.Nbt.Schema
         #endregion ASPEN
 
         #region BUCKEYE Methods
-        
+
+        private void _propSetTable( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            string PropSetTableName = "property_set";
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( PropSetTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( PropSetTableName, "propertysetid" );
+                _CswNbtSchemaModTrnsctn.addStringColumn( PropSetTableName, "name", "Name of property set", false, false, 50 );
+            }
+
+            _resetBlame();
+        }
+
         #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01
