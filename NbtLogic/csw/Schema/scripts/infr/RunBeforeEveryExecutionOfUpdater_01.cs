@@ -163,11 +163,11 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             string table_nodes = "nodes";
-            string column_issearchable = "searchable";
+            string column_searchable = "searchable";
 
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( table_nodes, column_issearchable ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( table_nodes, column_searchable ) )
             {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( table_nodes, column_issearchable, "when set to '0' will not be included in searches", false, true );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( table_nodes, column_searchable, "when set to '0' will not be included in searches", false, true );
             }
 
             _resetBlame();
