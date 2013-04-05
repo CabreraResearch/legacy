@@ -4,6 +4,8 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -36,10 +38,10 @@ namespace ChemSW.Nbt.Schema
                     Row["name"] = PropSetName;
                     switch( PropSetName )
                     {
-                        case CswEnumNbtPropertySetName.GeneratorTargetSet:  Row["iconfilename"] = "clipboardcheck.png"; break;
-                        case CswEnumNbtPropertySetName.InspectionParentSet: Row["iconfilename"] = "target.png";         break;
-                        case CswEnumNbtPropertySetName.RequestItemSet:      Row["iconfilename"] = "cart.png";           break;
-                        case CswEnumNbtPropertySetName.SchedulerSet:        Row["iconfilename"] = "calendar.png";       break;
+                        case CswEnumNbtPropertySetName.GeneratorTargetSet: Row["iconfilename"] = "clipboardcheck.png"; break;
+                        case CswEnumNbtPropertySetName.InspectionParentSet: Row["iconfilename"] = "target.png"; break;
+                        case CswEnumNbtPropertySetName.RequestItemSet: Row["iconfilename"] = "cart.png"; break;
+                        case CswEnumNbtPropertySetName.SchedulerSet: Row["iconfilename"] = "calendar.png"; break;
                     }
                     PropSetTable.Rows.Add( Row );
 
@@ -48,58 +50,101 @@ namespace ChemSW.Nbt.Schema
                 PropSetUpdate.update( PropSetTable );
             }
 
+            Dictionary<NbtObjectClass, CswEnumNbtPropertySetName> Dict = new Dictionary<NbtObjectClass, CswEnumNbtPropertySetName>();
+            Dict.Add( NbtObjectClass.InspectionDesignClass, CswEnumNbtPropertySetName.GeneratorTargetSet );
+            Dict.Add( NbtObjectClass.TaskClass, CswEnumNbtPropertySetName.GeneratorTargetSet );
+            Dict.Add( NbtObjectClass.InspectionTargetClass, CswEnumNbtPropertySetName.InspectionParentSet );
+            Dict.Add( NbtObjectClass.RequestContainerDispenseClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( NbtObjectClass.RequestContainerUpdateClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( NbtObjectClass.RequestMaterialCreateClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( NbtObjectClass.RequestMaterialDispenseClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( NbtObjectClass.GeneratorClass, CswEnumNbtPropertySetName.SchedulerSet );
+            Dict.Add( NbtObjectClass.MailReportClass, CswEnumNbtPropertySetName.SchedulerSet );
+
             {
                 // Populate jct_propertyset_objectclass
                 CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28160_jct_update", "jct_propertyset_objectclass" );
                 DataTable JctTable = JctUpdate.getEmptyTable();
-                
-                DataRow Row1 = JctTable.NewRow();
-                Row1["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.InspectionDesignClass );
-                Row1["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.GeneratorTargetSet] );
-                JctTable.Rows.Add( Row1 );
 
-                DataRow Row2 = JctTable.NewRow();
-                Row2["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.TaskClass );
-                Row2["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.GeneratorTargetSet] );
-                JctTable.Rows.Add( Row2 );
-
-                DataRow Row3 = JctTable.NewRow();
-                Row3["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.InspectionTargetClass );
-                Row3["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.InspectionParentSet] );
-                JctTable.Rows.Add( Row3 );
-
-                DataRow Row4 = JctTable.NewRow();
-                Row4["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.RequestContainerDispenseClass );
-                Row4["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.RequestItemSet] );
-                JctTable.Rows.Add( Row4 );
-
-                DataRow Row5 = JctTable.NewRow();
-                Row5["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.RequestContainerUpdateClass );
-                Row5["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.RequestItemSet] );
-                JctTable.Rows.Add( Row5 );
-
-                DataRow Row6 = JctTable.NewRow();
-                Row6["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialCreateClass );
-                Row6["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.RequestItemSet] );
-                JctTable.Rows.Add( Row6 );
-
-                DataRow Row7 = JctTable.NewRow();
-                Row7["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialDispenseClass );
-                Row7["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.RequestItemSet] );
-                JctTable.Rows.Add( Row7 );
-
-                DataRow Row8 = JctTable.NewRow();
-                Row8["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.GeneratorClass );
-                Row8["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.SchedulerSet] );
-                JctTable.Rows.Add( Row8 );
-
-                DataRow Row9 = JctTable.NewRow();
-                Row9["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( NbtObjectClass.MailReportClass );
-                Row9["propertysetid"] = CswConvert.ToDbVal( PropSetDict[CswEnumNbtPropertySetName.SchedulerSet] );
-                JctTable.Rows.Add( Row9 );
-
+                foreach( NbtObjectClass oc in Dict.Keys )
+                {
+                    DataRow NewRow = JctTable.NewRow();
+                    NewRow["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( oc );
+                    NewRow["propertysetid"] = CswConvert.ToDbVal( PropSetDict[Dict[oc]] );
+                    JctTable.Rows.Add( NewRow );
+                }
                 JctUpdate.update( JctTable );
             }
+
+            {
+                // Populate jct_propertyset_objectclassprop
+                CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28160_jct2_update", "jct_propertyset_ocprop" );
+                DataTable JctTable = JctUpdate.getEmptyTable();
+
+                foreach( NbtObjectClass oc in Dict.Keys )
+                {
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( oc );
+                    foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in ObjectClass.getObjectClassProps() )
+                    {
+                        bool doInsert = false;
+                        switch( Dict[oc] )
+                        {
+                            case CswEnumNbtPropertySetName.GeneratorTargetSet:
+                                doInsert = ( ObjectClassProp.PropName == CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetGeneratorTarget.PropertyName.DueDate ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetGeneratorTarget.PropertyName.Generator ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetGeneratorTarget.PropertyName.IsFuture );
+                                break;
+
+                            case CswEnumNbtPropertySetName.RequestItemSet:
+                                doInsert = ( ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.AssignedTo ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Comments ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Description ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Fulfill ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Location ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Material ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Name ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.NeededBy ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Number ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Priority ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Request ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.RequestedFor ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Requestor ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Status ||
+                                             ObjectClassProp.PropName == CswNbtPropertySetRequestItem.PropertyName.Type );
+                                break;
+
+                            case CswEnumNbtPropertySetName.InspectionParentSet:
+                                doInsert = ( ObjectClassProp.PropName == "Status" );
+                                break;
+
+                            case CswEnumNbtPropertySetName.SchedulerSet:
+                                doInsert = ( ObjectClassProp.PropName == "Status" ||
+                                             ObjectClassProp.PropName == "Final Due Date" ||
+                                             ObjectClassProp.PropName == "Next Due Date" ||
+                                             ObjectClassProp.PropName == "Run Status" ||
+                                             ObjectClassProp.PropName == "Warning Days" ||
+                                             ObjectClassProp.PropName == "Due Date Interval" ||
+                                             ObjectClassProp.PropName == "Run Time" ||
+                                             ObjectClassProp.PropName == "Enabled" );
+                                break;
+                        }
+
+
+                        if( doInsert )
+                        {
+                            DataRow NewRow = JctTable.NewRow();
+                            NewRow["objectclasspropid"] = ObjectClassProp.PropId;
+                            NewRow["propertysetid"] = CswConvert.ToDbVal( PropSetDict[Dict[oc]] );
+                            JctTable.Rows.Add( NewRow );
+                        }
+                    } //  foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in ObjectClass.getObjectClassProps() )
+                } //  foreach( NbtObjectClass oc in OcPsDict.Keys )
+                JctUpdate.update( JctTable );
+            }
+
         } // update()
 
     }//class CswUpdateSchema_02B_Case28160

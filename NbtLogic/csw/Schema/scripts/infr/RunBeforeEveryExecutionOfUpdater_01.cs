@@ -179,6 +179,14 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, PropSetPkName, "Property Set foreign key", false, true, PropSetTableName, PropSetPkName );
             }
 
+            string JctPsOcpTableName = "jct_propertyset_ocprop";
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( JctPsOcpTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( JctPsOcpTableName, "jctpropsetocpropid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcpTableName, "objectclasspropid", "Object class prop foreign key", false, true, "object_class_prop", "objectclasspropid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcpTableName, PropSetPkName, "Property Set foreign key", false, true, PropSetTableName, PropSetPkName );
+            }
+
             _CswNbtSchemaModTrnsctn.UpdateS4( "getRelationsForNodeTypeId",
                 @"select distinct 'NodeTypePropId' proptype, t.firstversionid typeid, p.firstpropversionid propid, p.fktype, p.fkvalue
                   from nodetype_props p
@@ -232,25 +240,32 @@ namespace ChemSW.Nbt.Schema
                                         where j.objectclassid = op.objectclassid))" );
 
             _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
-                                              @"select distinct 'NodeTypePropId' proptype,
+                @"select distinct 'NodeTypePropId' proptype,
                        t.firstversionid typeid,
                        p.firstpropversionid propid,
                        p.fktype,
-                       p.fkvalue
+                       p.fkvalue, 
+                       jpo.propertysetid
                   from nodetype_props p
                   join nodetypes t on p.nodetypeid = t.nodetypeid
-                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
-                   and (fktype = 'PropertySetId' and fkvalue = :getpropertysetid)
+                  left outer join object_class_props ocp on p.objectclasspropid = ocp.objectclasspropid
+                  left outer join jct_propertyset_ocprop jpo on ocp.objectclasspropid = jpo.objectclasspropid
+                 where p.fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and ( ( jpo.propertysetid = :getpropertysetid ) or
+                         ( p.fktype = 'PropertySetId' and p.fkvalue = :getpropertysetid ) )
                    and t.enabled = 1 
                  union
                  select 'ObjectClassPropId' proptype,
                        op.objectclassid typeid,
                        op.objectclasspropid propid,
                        op.fktype,
-                       op.fkvalue
+                       op.fkvalue, 
+                       jpo.propertysetid
                   from object_class_props op
+                  left outer join jct_propertyset_ocprop jpo on op.objectclasspropid = jpo.objectclasspropid
                  where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
-                   and (fktype = 'PropertySetId' and fkvalue = :getpropertysetid)
+                   and ( ( jpo.propertysetid = :getpropertysetid ) or
+                         ( op.fktype = 'PropertySetId' and op.fkvalue = :getpropertysetid ) )
                    and (exists (select j.jctmoduleobjectclassid
                                   from jct_modules_objectclass j
                                   join modules m on j.moduleid = m.moduleid
@@ -259,7 +274,7 @@ namespace ChemSW.Nbt.Schema
                         or not exists (select j.jctmoduleobjectclassid
                                          from jct_modules_objectclass j
                                          join modules m on j.moduleid = m.moduleid
-                                        where j.objectclassid = op.objectclassid))", 
+                                        where j.objectclassid = op.objectclassid))",
                 "nodetype_props" );
 
             _resetBlame();
