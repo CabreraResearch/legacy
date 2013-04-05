@@ -79,7 +79,7 @@ namespace ChemSW.Nbt
         public Int32 GroupByPropId { get { return _GroupByPropId; } }
         public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
         public string GroupByPropName { get { return _GroupByPropName; } }
-        
+
         public ICswNbtMetaDataObject SecondMetaDataObject()
         {
             ICswNbtMetaDataObject Ret = null;
@@ -147,6 +147,22 @@ namespace ChemSW.Nbt
                     _FirstId = FirstNodeType.FirstVersionNodeTypeId;
             }
             _FirstName = InFirstName;
+        }
+
+        public void overrideSecond( NbtViewRelatedIdType InSecondType, Int32 InSecondId )
+        {
+            if( InSecondType == NbtViewRelatedIdType.PropertySetId )
+            {
+                overrideSecond( _CswNbtResources.MetaData.getPropertySet( InSecondId ) );
+            }
+            else if( InSecondType == NbtViewRelatedIdType.ObjectClassId )
+            {
+                overrideSecond( _CswNbtResources.MetaData.getObjectClass( InSecondId ) );
+            }
+            else if( InSecondType == NbtViewRelatedIdType.PropertySetId )
+            {
+                overrideSecond( _CswNbtResources.MetaData.getNodeType( InSecondId ) );
+            }
         }
 
         public void overrideSecond( CswNbtMetaDataNodeType NodeType )
@@ -1378,7 +1394,7 @@ namespace ChemSW.Nbt
         {
             return Matches( _CswNbtResources, FirstType, FirstId, CompareNT, IgnoreVersions );
         }
-        public bool FirstMatches( CswNbtMetaDataObjectClass CompareOC)
+        public bool FirstMatches( CswNbtMetaDataObjectClass CompareOC )
         {
             return Matches( _CswNbtResources, FirstType, FirstId, CompareOC );
         }

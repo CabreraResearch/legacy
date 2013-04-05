@@ -2508,7 +2508,7 @@ namespace ChemSW.Nbt.WebPages
                             }
                             else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
                             {
-                                // do nothing for now. :(
+                                UnitValue.SelectedPropertySetId = SelectedNodeTypeProp.FKValue;
                             }
 
                             UnitRow.Cells[1].Controls.Add( UnitValue );
@@ -2672,7 +2672,7 @@ namespace ChemSW.Nbt.WebPages
                             }
                             else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
                             {
-                                // do nothing for now. :(
+                                TargetValue.SelectedPropertySetId = SelectedNodeTypeProp.FKValue;
                             }
 
                             TargetRow.Cells[1].Controls.Add( TargetValue );

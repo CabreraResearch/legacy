@@ -12,10 +12,10 @@ namespace ChemSW.Nbt.MetaData
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
-            { GeneratorTarget      , GeneratorTarget    },
-            { InspectionParent     , InspectionParent   },
-            { RequestItem          , RequestItem        },
-            { Scheduler            , Scheduler          }
+            { GeneratorTargetSet      , GeneratorTargetSet    },
+            { InspectionParentSet     , InspectionParentSet   },
+            { RequestItemSet          , RequestItemSet        },
+            { SchedulerSet            , SchedulerSet          }
         };
 
         /// <summary>
@@ -74,10 +74,10 @@ namespace ChemSW.Nbt.MetaData
 
         #region Enum members
 
-        public const string GeneratorTarget = "GeneratorTarget";  
-        public const string InspectionParent = "InspectionParent"; 
-        public const string RequestItem = "RequestItem";      
-        public const string Scheduler = "Scheduler";        
+        public const string GeneratorTargetSet = "GeneratorTargetSet";
+        public const string InspectionParentSet = "InspectionParentSet";
+        public const string RequestItemSet = "RequestItemSet";
+        public const string SchedulerSet = "SchedulerSet";
 
         #endregion Enum members
 

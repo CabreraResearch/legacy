@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return (CswEnumNbtPropertySetName) _DataRow["name"];
+                return (CswEnumNbtPropertySetName) _DataRow["name"].ToString();
             }
         }
 

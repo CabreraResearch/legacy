@@ -179,6 +179,89 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, PropSetPkName, "Property Set foreign key", false, true, PropSetTableName, PropSetPkName );
             }
 
+            _CswNbtSchemaModTrnsctn.UpdateS4( "getRelationsForNodeTypeId",
+                @"select distinct 'NodeTypePropId' proptype, t.firstversionid typeid, p.firstpropversionid propid, p.fktype, p.fkvalue
+                  from nodetype_props p
+                  join nodetypes t on p.nodetypeid = t.nodetypeid
+                  left outer join nodetypes f on p.fkvalue = f.nodetypeid
+                 where fieldtypeid in (select fieldtypeid from field_types 
+                                        where fieldtype in ('Relationship', 'Location'))
+                   and ((t.firstversionid = :getnodetypeid) or 
+                        (fktype = 'PropertySetId' and fkvalue = (select propertysetid from jct_propertyset_objectclass 
+                                                                  where objectclassid = (select objectclassid from nodetypes 
+                                                                                          where nodetypeid = :getnodetypeid))) or
+                        (fktype = 'ObjectClassId' and fkvalue = (select objectclassid from nodetypes 
+                                                                  where nodetypeid = :getnodetypeid)) or
+                        (fktype = 'NodeTypeId' and f.firstversionid = :getnodetypeid))
+                   and t.enabled = 1" );
+
+
+            _CswNbtSchemaModTrnsctn.UpdateS4( "getRelationsForObjectClassId",
+                @"select distinct 'NodeTypePropId' proptype,
+                       t.firstversionid typeid,
+                       p.firstpropversionid propid,
+                       p.fktype,
+                       p.fkvalue
+                  from nodetype_props p
+                  join nodetypes t on p.nodetypeid = t.nodetypeid
+                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and ( (fktype = 'ObjectClassId' and fkvalue = :getobjectclassid) or
+                         (fktype = 'PropertySetId' and fkvalue = (select propertysetid from jct_propertyset_objectclass 
+                                                                   where objectclassid = :getobjectclassid) ) )
+                   and t.enabled = 1 
+                 union
+                 select 'ObjectClassPropId' proptype,
+                       op.objectclassid typeid,
+                       op.objectclasspropid propid,
+                       op.fktype,
+                       op.fkvalue
+                  from object_class_props op
+                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and ( (objectclassid = :getobjectclassid) or
+                         ( (fktype = 'ObjectClassId' and fkvalue = :getobjectclassid) or
+                           (fktype = 'PropertySetId' and fkvalue = (select propertysetid from jct_propertyset_objectclass 
+                                                                     where objectclassid = :getobjectclassid) ) ) )           
+                   and (exists (select j.jctmoduleobjectclassid
+                                  from jct_modules_objectclass j
+                                  join modules m on j.moduleid = m.moduleid
+                                 where j.objectclassid = op.objectclassid
+                                   and m.enabled = '1')
+                        or not exists (select j.jctmoduleobjectclassid
+                                         from jct_modules_objectclass j
+                                         join modules m on j.moduleid = m.moduleid
+                                        where j.objectclassid = op.objectclassid))" );
+
+            _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
+                                              @"select distinct 'NodeTypePropId' proptype,
+                       t.firstversionid typeid,
+                       p.firstpropversionid propid,
+                       p.fktype,
+                       p.fkvalue
+                  from nodetype_props p
+                  join nodetypes t on p.nodetypeid = t.nodetypeid
+                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and (fktype = 'PropertySetId' and fkvalue = :getpropertysetid)
+                   and t.enabled = 1 
+                 union
+                 select 'ObjectClassPropId' proptype,
+                       op.objectclassid typeid,
+                       op.objectclasspropid propid,
+                       op.fktype,
+                       op.fkvalue
+                  from object_class_props op
+                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and (fktype = 'PropertySetId' and fkvalue = :getpropertysetid)
+                   and (exists (select j.jctmoduleobjectclassid
+                                  from jct_modules_objectclass j
+                                  join modules m on j.moduleid = m.moduleid
+                                 where j.objectclassid = op.objectclassid
+                                   and m.enabled = '1')
+                        or not exists (select j.jctmoduleobjectclassid
+                                         from jct_modules_objectclass j
+                                         join modules m on j.moduleid = m.moduleid
+                                        where j.objectclassid = op.objectclassid))", 
+                "nodetype_props" );
+
             _resetBlame();
         }
 
