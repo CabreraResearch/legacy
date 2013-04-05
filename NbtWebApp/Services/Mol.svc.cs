@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Core;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.CISPro;
@@ -28,30 +26,6 @@ namespace NbtWebApp
         public CswNbtWebServiceMols.MolDataReturn getMolImgFromText( MolData ImgData )
         {
             CswNbtWebServiceMols.MolDataReturn Ret = new CswNbtWebServiceMols.MolDataReturn();
-
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceMols.MolDataReturn, MolData>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceMols.getMolImg,
-                ParamObj: ImgData
-                );
-
-            SvcDriver.run();
-            return ( Ret );
-        }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "getImgFromFile" )]
-        [Description( "Get an img of a mol" )]
-        [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceMols.MolDataReturn getMolImgFromFile( Stream dataStream )
-        {
-            CswNbtWebServiceMols.MolDataReturn Ret = new CswNbtWebServiceMols.MolDataReturn();
-
-            CswTools.MultiPartFormDataFile mpfdf = new CswTools.MultiPartFormDataFile( dataStream );
-            MolData ImgData = new MolData();
-            ImgData.molString = mpfdf.FileContents;
-            ImgData.href = mpfdf.Filename;
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceMols.MolDataReturn, MolData>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -96,31 +70,6 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceMols.SaveMolPropFile,
                 ParamObj: MolImgData
-                );
-
-            SvcDriver.run();
-            return ( Ret );
-        }
-
-        [OperationContract]
-        [WebInvoke( Method = "POST" )]
-        [Description( "Save a mol file" )]
-        [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceMols.MolDataReturn saveMolPropFile( Stream dataStream )
-        {
-            CswTools.MultiPartFormDataFile mpfdf = new CswTools.MultiPartFormDataFile( dataStream );
-
-            MolData molImgData = new MolData();
-            molImgData.molString = mpfdf.FileContents;
-            molImgData.propId = _Context.Request.QueryString["PropId"];
-
-            CswNbtWebServiceMols.MolDataReturn Ret = new CswNbtWebServiceMols.MolDataReturn();
-
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceMols.MolDataReturn, MolData>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceMols.SaveMolPropFile,
-                ParamObj: molImgData
                 );
 
             SvcDriver.run();

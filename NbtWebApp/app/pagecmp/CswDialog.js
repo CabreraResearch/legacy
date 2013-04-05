@@ -1240,24 +1240,11 @@
                 isButton: true,
                 onClick: function () {
                     $.CswDialog('FileUploadDialog', {
-                        url: 'Services/Mol/getImgFromFile',
-                        forceIframeTransport: true, //we compensate for IE
-                        dataType: 'iframe', //our response will inside and iFrame
+                        url: 'Services/BlobData/getText',
                         onSuccess: function (data) {
-
-                            //dig deep into the response data for our data from the server
-                            var molString = $(data.children()[0].getElementsByTagName('a:molstring')[0]).text();
-                            var molImg = $(data.children()[0].getElementsByTagName('a:molImgAsBase64String')[0]).text();
-                            var filename = $(data.children()[0].getElementsByTagName('a:href')[0]).text();
-
-                            cswPrivate.cell12.text(filename);
-
-                            molText.val(molString);
-                            table.cell(4, 2).empty();
-                            table.cell(4, 2).img({
-                                labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + molImg
-                            });
+                            cswPrivate.cell12.text(data.Data.filename);
+                            molText.val(data.Data.filetext);
+                            getMolImgFromText(molText.val(), '');
                         }
                     });
                 }
