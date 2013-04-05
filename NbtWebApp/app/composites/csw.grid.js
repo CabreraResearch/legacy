@@ -559,7 +559,7 @@
                             //NOTE: this can now be moved to the viewrender event. See action column logic.
                             var divId = cswPrivate.name + 'button' + rowIndex + colIndex;
                             var thisBtn = cswPrivate.rows.buttons.filter(function (btn) {
-                                return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
+                                return btn.index === colObj.dataIndex && btn.propattr.startsWith(record.raw.nodeid);
                             });
                             if (thisBtn.length === 1) {
                                 Csw.defer(function _tryMakeBtn() {
