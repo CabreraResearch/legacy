@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Collections.ObjectModel;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -49,6 +48,11 @@ namespace ChemSW.Nbt.Schema
 
             _acceptBlame( CswDeveloper.PG, 23784 );
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
+            _resetBlame();
+
+            _acceptBlame( CswDeveloper.MB, 26531 );
+            //Drop the BlobData column in Jct_Nodes_Props - it will not be used anymore
+            _CswNbtSchemaModTrnsctn.dropColumn( "jct_nodes_props", "blobdata" );
             _resetBlame();
 
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
