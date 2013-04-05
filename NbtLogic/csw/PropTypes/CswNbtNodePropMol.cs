@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropMol : CswNbtNodeProp
+    public class CswNbtNodePropMol: CswNbtNodeProp
     {
 
         public static implicit operator CswNbtNodePropMol( CswNbtNodePropWrapper PropWrapper )
@@ -68,7 +68,8 @@ namespace ChemSW.Nbt.PropTypes
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
             {
-                ret = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
+                //ret = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
+                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
             }
             return ret;
         }
