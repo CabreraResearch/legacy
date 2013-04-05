@@ -94,16 +94,16 @@
                                     /* remember: confirm is globally blocking call */
                                     if (confirm("Are you sure you want to clear this structure?")) {
                                         var dataJson = {
-                                            PropId: cswPublic.data.propData.id,
-                                            IncludeBlob: true
+                                            propid: cswPublic.data.propData.id
                                         };
 
-                                        Csw.ajax.post({
-                                            urlMethod: 'clearProp',
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'BlobData/clearBlob',
                                             data: dataJson,
                                             success: function () {
                                                 cswPrivate.initMol();
                                                 cswPublic.data.onPropChange({ href: '', mol: '' });
+                                                Csw.publish(Csw.enums.events.main.refreshSelected, {});
                                             }
                                         });
 
