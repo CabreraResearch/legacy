@@ -75,6 +75,8 @@ namespace ChemSW.Nbt.WebServices
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount ).ToString(), CswScheduleLogicDetail.ColumnNames.FailedCount );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId ).ToString(), CswScheduleLogicDetail.ColumnNames.ThreadId );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage ).ToString(), CswScheduleLogicDetail.ColumnNames.StatusMessage );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Priority ).ToString(), CswScheduleLogicDetail.ColumnNames.Priority );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.LoadCount ).ToString(), CswScheduleLogicDetail.ColumnNames.LoadCount );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Disabled ).ToString(), CswScheduleLogicDetail.ColumnNames.Disabled );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.HasChanged ).ToString(), CswScheduleLogicDetail.ColumnNames.HasChanged );
 

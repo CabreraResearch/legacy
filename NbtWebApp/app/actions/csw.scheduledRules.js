@@ -345,6 +345,20 @@
                                         }
                                     });
                                     break;
+                                case result.ColumnIds.priority:
+                                    col.editable = true;
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'numberfield',
+                                            allowBlank: false,
+                                            minValue: 0,
+                                            maxValue: 100
+                                        }
+                                    });
+                                    break;
                                 case result.ColumnIds.disabled:
                                     col.editable = true;
                                     col.xtype = 'checkcolumn';
