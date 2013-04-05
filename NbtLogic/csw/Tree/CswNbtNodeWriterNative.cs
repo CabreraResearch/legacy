@@ -96,6 +96,8 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName] = Node.AuditLevel;
             NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
             NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
+            NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()

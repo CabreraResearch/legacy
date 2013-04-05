@@ -759,6 +759,9 @@ namespace ChemSW.Nbt.ObjClasses
             set { _AuditLevel = value; }
         }
 
+        private bool _Searchable = true;
+        public bool Searchable { set { _Searchable = value; } get { return ( _Searchable ); } }
+
         public override int GetHashCode()
         {
             return this.NodeId.PrimaryKey;
