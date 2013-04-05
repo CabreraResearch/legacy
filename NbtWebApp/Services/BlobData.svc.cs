@@ -59,6 +59,8 @@ namespace NbtWebApp
 
             BlobDataParams blobDataParams = new BlobDataParams();
             blobDataParams.propid = _Context.Request.QueryString["jctnodepropid"];
+            blobDataParams.nodeid = _Context.Request.QueryString["nodeid"];
+            blobDataParams.usenodetypeasplaceholder = _Context.Request.QueryString["usenodetypeasplaceholder"];
             blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
@@ -137,6 +139,7 @@ namespace NbtWebApp
         public string nodeid = string.Empty;
         public byte[] data = new byte[0];
         public string appPath = string.Empty;
+        public string usenodetypeasplaceholder = string.Empty;
 
         [DataMember]
         public bool success = false;

@@ -31,7 +31,6 @@
                     cswPrivate.cell23 = cswPublic.control.cell(2, 3).css('textAlign', 'right');
 
                     cswPrivate.href = Csw.string(cswPrivate.propVals.href);
-                    cswPrivate.href += '&usenodetypeasplaceholder=false';     // case 27596
 
                     cswPrivate.initMol = (function () {
                         function init(molData) {

@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        
+
 
         public static void saveFile( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
         {
@@ -64,11 +64,30 @@ namespace ChemSW.Nbt.WebServices
                 Request.contenttype = row["field2"].ToString();
             }
 
-            if( null == Request.data )
+            if( null == Request.data || Request.data.Length == 0 )
             {
-                Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
-                Request.contenttype = "image/gif";
-                Request.filename = "empty";
+                bool UseNTPlaceHolder = CswConvert.ToBoolean( Request.usenodetypeasplaceholder );
+                if( UseNTPlaceHolder )
+                {
+                    CswPrimaryKey NodeId = CswConvert.ToPrimaryKey( Request.nodeid );
+                    CswNbtNode Node = NbtResources.Nodes[NodeId];
+                    if( null != Node )
+                    {
+                        CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+                        if( null != NodeType && NodeType.IconFileName != string.Empty )
+                        {
+                            Request.filename = NodeType.IconFileName;
+                            Request.contenttype = "image/png";
+                            Request.data = File.ReadAllBytes( Request.appPath + CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName );
+                        }
+                    }
+                }
+                else
+                {
+                    Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
+                    Request.contenttype = "image/gif";
+                    Request.filename = "empty";
+                }
             }
 
             Return.Data = Request;
