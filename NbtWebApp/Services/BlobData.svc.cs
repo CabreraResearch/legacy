@@ -100,6 +100,34 @@ namespace NbtWebApp
 
             return ret;
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "getText" )]
+        [Description( "Get the contents of a file" )]
+        [FaultContract( typeof( FaultException ) )]
+        public BlobDataReturn getText()
+        {
+            BlobDataReturn ret = new BlobDataReturn();
+
+            if( _Context.Request.Files.Count > 0 )
+            {
+                BlobDataParams req = new BlobDataParams()
+                    {
+                        postedFile = _Context.Request.Files[0]
+                    };
+
+                var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
+                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj: ret,
+                    WebSvcMethodPtr: CswNbtWebServiceBinaryData.getText,
+                    ParamObj: req
+                    );
+
+                SvcDriver.run();
+            }
+
+            return ret;
+        }
     }
 
     [DataContract]
@@ -124,6 +152,9 @@ namespace NbtWebApp
 
         [DataMember]
         public string filename = string.Empty;
+
+        [DataMember]
+        public string filetext = string.Empty;
     }
 
     [DataContract]

@@ -124,6 +124,19 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = Request;
         }
 
+        public static void getText( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
+        {
+            Stream stream = Request.postedFile.InputStream;
+            using( StreamReader reader = new StreamReader( stream ) )
+            {
+                Request.filetext = reader.ReadToEnd();
+            }
+            Request.contenttype = Request.postedFile.ContentType;
+            Request.filename = Request.postedFile.FileName;
+
+            Return.Data = Request;
+        }
+
         public void displayBlobData( HttpContext Context )
         {
             bool UseNodeTypeAsPlaceHolder = true;
