@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.ServiceModel;
-using System.Web;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Grid.ExtJs;
 using ChemSW.MtSched.Core;
@@ -19,8 +16,6 @@ using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-//using ChemSW.Nbt.NbtWebSvcSchedService;
-
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -202,73 +197,6 @@ namespace ChemSW.Nbt.WebServices
             Return.Data.CustomerId = AccessId;
         }//getScheduledRulesGrid()
 
-
-        public bool updateScheduledRule( HttpContext Context )
-        {
-            bool RetSuccess = false;
-
-            Int32 ScheduledRuleId = CswConvert.ToInt32( Context.Request["id"] );
-            Int32 FailedCount = CswConvert.ToInt32( Context.Request["FAILEDCOUNT"] );
-            bool Reprobate = CswConvert.ToBoolean( Context.Request["REPROBATE"] );
-            bool Disabled = CswConvert.ToBoolean( Context.Request["DISABLED"] );
-
-            Recurrence Recurrence = CswConvert.ToString( Context.Request["RECURRENCE"] );
-
-            Int32 Interval = CswConvert.ToInt32( Context.Request["INTERVAL"] );
-            Int32 ReprobateThreshold = CswConvert.ToInt32( Context.Request["REPROBATETHRESHOLD"] );
-            Int32 MaxRunTimeMs = CswConvert.ToInt32( Context.Request["MAXRUNTIMEMS"] );
-
-            CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "Scheduledrules_update_on_accessid_" + _OtherResources.AccessId + "_id_" + ScheduledRuleId, "scheduledrules" );
-            DataTable RulesTable = RulesUpdate.getTable( "scheduledruleid", ScheduledRuleId, true );
-            if( RulesTable.Rows.Count == 1 )
-            {
-                DataRow ThisRule = RulesTable.Rows[0];
-                if( FailedCount == 0 || false == Reprobate )
-                {
-                    ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
-                }
-                else if( 0 <= FailedCount )
-                {
-                    ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( FailedCount );
-                }
-
-                ThisRule["REPROBATE"] = CswConvert.ToDbVal( Reprobate );
-                ThisRule["DISABLED"] = CswConvert.ToDbVal( Disabled );
-
-                if( null != Recurrence &&
-                    Recurrence != CswNbtResources.UnknownEnum )
-                {
-                    ThisRule["RECURRENCE"] = CswConvert.ToDbVal( Recurrence.ToString() );
-                }
-                if( 0 < Interval )
-                {
-                    ThisRule["INTERVAL"] = CswConvert.ToDbVal( Interval );
-                }
-                if( 0 < ReprobateThreshold )
-                {
-                    ThisRule["REPROBATETHRESHOLD"] = CswConvert.ToDbVal( ReprobateThreshold );
-                }
-                if( 5000 < MaxRunTimeMs )
-                {
-                    ThisRule["MAXRUNTIMEMS"] = CswConvert.ToDbVal( MaxRunTimeMs );
-                }
-                RetSuccess = RulesUpdate.update( RulesTable );
-            }
-
-            if( false == RetSuccess )
-            {
-                throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + _OtherResources.AccessId + "." );
-            }
-            _finalize( _OtherResources );
-            return RetSuccess;
-        }
-
-        private enum ScheduledRuleActions
-        {
-            Unknown,
-            ClearAllReprobates
-        }
-
         public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, CswNbtScheduledRulesReturn.Ret Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
@@ -370,8 +298,6 @@ namespace ChemSW.Nbt.WebServices
         }
 
         #endregion public
-
-
 
     } // class CswNbtWebServiceNbtManager
 
