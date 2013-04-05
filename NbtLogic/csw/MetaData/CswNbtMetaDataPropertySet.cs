@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 
@@ -63,6 +64,11 @@ namespace ChemSW.Nbt.MetaData
 
             CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, IncludeDefaultFilters );
             return DefaultView;
+        }
+
+        public IEnumerable<CswNbtMetaDataObjectClass> getObjectClasses()
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassesByPropertySetId( PropertySetId );
         }
 
     }//CswNbtMetaDataPropertySet

@@ -152,7 +152,11 @@ namespace ChemSW.Nbt.WebServices
                             Int32 CurrentId = CurrentRelationship.SecondId;
 
                             Collection<CswNbtViewRelationship> Relationships = null;
-                            if( CurrentRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
+                            if( CurrentRelationship.SecondType == NbtViewRelatedIdType.PropertySetId )
+                            {
+                                Relationships = getObjectClassRelatedNodeTypesAndObjectClasses( CurrentId, View, CurrentLevel );
+                            }
+                            else if( CurrentRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
                             {
                                 Relationships = getObjectClassRelatedNodeTypesAndObjectClasses( CurrentId, View, CurrentLevel );
                             }

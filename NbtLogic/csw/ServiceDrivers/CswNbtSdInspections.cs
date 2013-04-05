@@ -302,8 +302,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                 }
             }
-
-        }
+        } // _addSystemViewPropFilter()
 
         private void _addSystemViewBarcodeFilter( object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
         {
@@ -335,16 +334,19 @@ namespace ChemSW.Nbt.ServiceDrivers
                         }
                     }
                 }
+                else if( NbtViewRelatedIdType.PropertySetId == RootLevelRelationship.SecondType )
+                {
+                    // Not much we can do...
+                }
 
                 if( null != BarcodeOcp && null != InstanceOc )
                 {
                     string FilterValueString = CswConvert.ToString( FilterValue );
-                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeOcp, FilterValueString, FilterMode, FieldType : FieldType );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeOcp, FilterValueString, FilterMode, FieldType: FieldType );
                     _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, InstanceOc );
                 }
             }
-
-        }
+        } // _addSystemViewBarcodeFilter()
 
         public CswNbtSdInspectionsDataModels.InspectionData getInspectionsAndDesigns()
         {

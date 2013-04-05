@@ -275,6 +275,20 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
+        public bool TargetMatches( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, CompareNT, IgnoreVersions );
+        }
+        public bool TargetMatches( CswNbtMetaDataObjectClass CompareOC )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, CompareOC );
+        }
+        public bool TargetMatches( CswNbtMetaDataPropertySet ComparePS )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, ComparePS );
+        }
+
+
         public void RefreshNodeName()
         {
             if( RelatedNodeId != null && RelatedNodeId.PrimaryKey != Int32.MinValue )

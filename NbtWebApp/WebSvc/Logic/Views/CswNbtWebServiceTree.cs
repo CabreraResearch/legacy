@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.WebServices
                         NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
                     }
                 } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
-                else
+                else if( Rel.SecondType == NbtViewRelatedIdType.ObjectClassId )
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
                     if( null != ObjectClass )
@@ -293,7 +293,23 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                     }
-                } // else
+                }
+                else if( Rel.SecondType == NbtViewRelatedIdType.PropertySetId )
+                {
+                    foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( Rel.SecondId ) )
+                    {
+                        if( null != ObjectClass )
+                        {
+                            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                            {
+                                if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                                {
+                                    NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+                                }
+                            }
+                        }
+                    }
+                }
             } // foreach( CswNbtViewRelationship Rel in Relationships )
 
             foreach( KeyValuePair<Int32, string> NodeType in NodeTypes )

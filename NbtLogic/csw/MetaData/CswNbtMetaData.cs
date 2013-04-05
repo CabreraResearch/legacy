@@ -198,6 +198,16 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns all objectclasses that belong to a property set
+        /// </summary>
+        public IEnumerable<CswNbtMetaDataObjectClass> getObjectClassesByPropertySetId( Int32 PropertySetId )
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassesByPropertySetId( PropertySetId );
+        }
+
+        
+
+        /// <summary>
         /// Returns the first version of a particular nodetype
         /// </summary>
         public CswNbtMetaDataNodeType getNodeTypeFirstVersion( Int32 NodeTypeId )

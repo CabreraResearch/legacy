@@ -699,9 +699,9 @@ namespace ChemSW.Nbt.MetaData
 
         #region FK Matching
 
-        public bool FkMatches( CswNbtMetaDataNodeType CompareNT )
+        public bool FkMatches( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
         {
-            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareNT );
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareNT, IgnoreVersions );
         }
 
         public bool FkMatches( CswNbtMetaDataObjectClass CompareOC )

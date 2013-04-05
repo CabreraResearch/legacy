@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataObjectClass ExpectedObjectClass = MatchObjectClass ?? _EnforceObjectClassRelationship;
             foreach( CswNbtViewRelationship PotentialSystemViewRelationship in Relationships )
             {
-                if( null == ExpectedObjectClass || PotentialSystemViewRelationship.isExpectedMetaDataType( ExpectedObjectClass ) )
+                if( null == ExpectedObjectClass || PotentialSystemViewRelationship.SecondMatches( ExpectedObjectClass ) )
                 {
                     Ret = true;
                     if( null != FilterDefinition.ObjectClassProp )
