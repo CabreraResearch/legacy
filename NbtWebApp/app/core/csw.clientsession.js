@@ -182,6 +182,11 @@
         Csw.clientSession.register('setUsername', function (username) {
             Csw.cookie.set(Csw.cookie.cookieNames.Username, username);
         });
+    
+    Csw.clientSession.setAccessId = Csw.clientSession.setAccessId ||
+        Csw.clientSession.register('setAccessId', function (accessid) {
+            Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, accessid);
+        });
 
 
     Csw.clientSession.logout = Csw.clientSession.logout ||
