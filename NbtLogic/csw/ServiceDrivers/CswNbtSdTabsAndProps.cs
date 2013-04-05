@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -931,15 +930,6 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             return ret;
         } // ClearPropValue()
-
-        private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )
-        {
-            ( new FileInfo( ReportTempFileName ) ).Directory.Create();
-            FileMode fileMode = File.Exists( ReportTempFileName ) ? FileMode.Truncate : FileMode.CreateNew;
-            FileStream fs = new FileStream( ReportTempFileName, fileMode );
-            BinaryWriter BWriter = new BinaryWriter( fs, System.Text.Encoding.Default );
-            BWriter.Write( BlobData );
-        }
 
         private bool _canEditLayout()
         {

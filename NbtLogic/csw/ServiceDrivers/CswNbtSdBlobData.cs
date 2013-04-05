@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -51,9 +52,26 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             BlobUpdate.update( BlobTbl );
 
+            if( Node.getObjectClass().ObjectClass == NbtObjectClass.ReportClass )
+            {
+                CswNbtObjClassReport Report = Node;
+                CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );
+                string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
+                _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
+            }
+
             Node.postChanges( false );
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId );
+        }
+
+        private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )
+        {
+            ( new FileInfo( ReportTempFileName ) ).Directory.Create();
+            FileMode fileMode = File.Exists( ReportTempFileName ) ? FileMode.Truncate : FileMode.CreateNew;
+            FileStream fs = new FileStream( ReportTempFileName, fileMode );
+            BinaryWriter BWriter = new BinaryWriter( fs, System.Text.Encoding.Default );
+            BWriter.Write( BlobData );
         }
 
         public void saveMol( string MolString, string PropId, out string Href )
