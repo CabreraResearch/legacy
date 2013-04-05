@@ -6,7 +6,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp;
 
@@ -20,43 +19,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        public void saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href )
-        {
-            CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-
-            CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-
-            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-            CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
-            CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
-
-            //Save the attribute data to jct_nodes_props
-            CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Blobber_save_update", "jct_nodes_props" );
-            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", FileProp.JctNodePropId );
-            JctTable.Rows[0]["field1"] = FileName;
-            JctTable.Rows[0]["field2"] = ContentType;
-            JctUpdate.update( JctTable );
-
-            //Save the file to blob_data
-            CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
-            DataTable BlobTbl = BlobUpdate.getTable( "where jctnodepropid = " + FileProp.JctNodePropId );
-            if( BlobTbl.Rows.Count > 0 )
-            {
-                BlobTbl.Rows[0]["blobdata"] = BlobData;
-            }
-            else
-            {
-                DataRow NewRow = BlobTbl.NewRow();
-                NewRow["jctnodepropid"] = FileProp.JctNodePropId;
-                NewRow["blobdata"] = BlobData;
-                BlobTbl.Rows.Add( NewRow );
-            }
-            BlobUpdate.update( BlobTbl );
-
-            Node.postChanges( false );
-
-            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId );
-        }
+        
 
         public static void saveFile( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
         {
@@ -70,8 +33,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             string Href = string.Empty;
-            CswNbtWebServiceBinaryData wsBinData = new CswNbtWebServiceBinaryData( NbtResources );
-            wsBinData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href );
+            CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
+            SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href );
 
             Request.contenttype = Request.postedFile.ContentType;
             Request.filename = Request.postedFile.FileName;
@@ -119,11 +82,6 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
             tabsandprops.ClearPropValue( Request.propid, true );
-
-            //CswNbtMetaDataNodeTypeProp MetaDataProp = NbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-            //CswNbtNode Node = NbtResources.Nodes[PropId.NodeId];
-            //CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
-            //FileProp.ClearBlob();
 
             Request.contenttype = "";
             Request.filename = "";

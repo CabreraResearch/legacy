@@ -153,8 +153,8 @@ namespace ChemSW.Nbt.WebServices
                     byte[] molImage = CswStructureSearch.GetImage( ImgData.molString );
                     string Href = "";
 
-                    CswNbtWebServiceBinaryData wsBinData = new CswNbtWebServiceBinaryData( NBTResources );
-                    wsBinData.saveFile( PropId.ToString(), molImage, "image/jpeg", "Mol.jpeg", out Href );
+                    CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NBTResources );
+                    SdBlobData.saveFile( PropId.ToString(), molImage, "image/jpeg", "Mol.jpeg", out Href );
 
                     ImgData.href = Href;
 
