@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
@@ -59,6 +59,8 @@ namespace ChemSW.Nbt.Schema
             #endregion ASPEN
 
             #region BUCKEYE
+
+            _addIsSearchableColumn( CswDeveloper.PG, 28753 );
 
             #endregion BUCKEYE
 
@@ -155,7 +157,22 @@ namespace ChemSW.Nbt.Schema
         #endregion ASPEN
 
         #region BUCKEYE Methods
-        
+        private void _addIsSearchableColumn( CswDeveloper Dev, Int32 CaseNo )
+        {
+
+            _acceptBlame( Dev, CaseNo );
+
+            string table_nodes = "nodes";
+            string column_issearchable = "searchable";
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( table_nodes, column_issearchable ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( table_nodes, column_issearchable, "when set to '0' will not be included in searches", false, true );
+            }
+
+            _resetBlame();
+        }
+
         #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01
