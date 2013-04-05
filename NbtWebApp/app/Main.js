@@ -234,6 +234,21 @@ window.initMain = window.initMain || function (undefined) {
                             } // success
                         }); // ajax
                     }, // onEndImpersonation
+                    onReturnToNbtManager: function () {
+                        Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                        var sessionid = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
+                        /* case 24669 */
+                        Csw.cookie.clearAll();
+                        Csw.ajax.post({
+                            urlMethod: 'nbtManagerReauthenticate',
+                            data: {SessionId: sessionid},
+                            success: function (result) {
+                                Csw.clientChanges.unsetChanged();
+                                Csw.publish(Csw.enums.events.main.reauthenticate, { username: result.username, customerid: result.customerid });
+                                Csw.window.location('Main.html');
+                            }
+                        });
+                    },
                     onSuccess: onSuccess
                 }); // CswMenuHeader
             }

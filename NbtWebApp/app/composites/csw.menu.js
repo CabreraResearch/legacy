@@ -289,6 +289,11 @@
                                     Csw.tryExec(cswPrivate.onLoginData);
                                 }
                                 break;
+                            case 'NbtManager':
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    Csw.tryExec(cswPrivate.onReturnToNbtManager);
+                                }
+                                break;
                             default:
                                 Csw.main.handleAction({ actionname: menuItemJson.action });
                                 break;

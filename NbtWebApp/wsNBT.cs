@@ -221,18 +221,29 @@ namespace ChemSW.Nbt.WebServices
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
-            string TempPassword = string.Empty;
-            CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
+            //string TempPassword = string.Empty;
+            //CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
+
+
+            // case 29127 - save the old session before removing
 
             // case 26549 - we need to remove the old session
-            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie: false );
+            // _CswSessionResources.CswSessionManager.clearSession( ExpireCookie: false, Deauthenticate: false );
+            //_CswNbtResources.AccessId = NodeAsCustomer.CompanyID.Text;
+            //CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername, false );
 
-            AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
+            string CustomerAccessId = ws.getCustomerAccessId( PropId );
+            _CswNbtResources.AccessId = CustomerAccessId;
+            CswNbtObjClassUser UserNode = ws.getCswAdmin( CustomerAccessId );
 
-            if( AuthenticationStatus != AuthenticationStatus.Authenticated )
-            {
-                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
-            }
+            _CswNbtResources.CswSessionManager.changeSchema( CustomerAccessId, CswNbtObjClassUser.ChemSWAdminUsername, UserNode.UserId );
+
+            //AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
+
+            //if( AuthenticationStatus != AuthenticationStatus.Authenticated )
+            //{
+            //    throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+            //}
 
             return AuthenticationStatus;
         } // _doCswAdminAuthenticate()
@@ -373,6 +384,43 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         }//authenticate()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string nbtManagerReauthenticate( string SessionId )
+        {
+
+            JObject ReturnVal = new JObject();
+            try
+            {
+                _initResources();
+
+                AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
+
+                string OriginalAccessId = _CswNbtResources.CswSessionManager.getOriginalAccessId();
+
+                _CswNbtResources.AccessId = OriginalAccessId;
+                CswNbtObjClassUser UserNode = ws.getCswAdmin( OriginalAccessId );
+
+                // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
+                _CswNbtResources.CswSessionManager.changeSchema( OriginalAccessId, CswNbtObjClassUser.ChemSWAdminUsername, UserNode.UserId, ClearLastAccessId: true );
+
+                ReturnVal["username"] = CswNbtObjClassUser.ChemSWAdminUsername;
+                ReturnVal["customerid"] = _CswNbtResources.AccessId;
+
+                CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            return ( ReturnVal.ToString() );
+
+        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

@@ -161,6 +161,13 @@ namespace ChemSW.Nbt.WebServices
                     Ret["Admin"]["End Impersonation"] = new JObject();
                     Ret["Admin"]["End Impersonation"]["action"] = "EndImpersonation";
                 }
+
+                if( CswSessionResources.CswSessionManager.didChangeSchema() )
+                {
+                    Ret["Admin"]["Return to NbtManager"] = new JObject();
+                    Ret["Admin"]["Return to NbtManager"]["action"] = "NbtManager";
+                }
+
             } // if( _CswNbtResources.CurrentNbtUser.IsAdministrator() || CswSessionResources.CswSessionManager.isImpersonating() )
 
             Ret["Preferences"] = new JObject(

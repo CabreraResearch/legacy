@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -12,7 +11,6 @@ using ChemSW.Grid.ExtJs;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.NbtSchedSvcRef;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
@@ -316,15 +314,20 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )
+        public CswNbtObjClassUser getCswAdmin( string AccessId )
         {
-            CswNbtObjClassCustomer RetNodeAsCustomer = null;
+            CswNbtResources OtherResources = makeOtherResources( AccessId );
+            CswNbtObjClassUser ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+            return ChemSWAdminUserNode;
+        }
 
-            if( string.IsNullOrEmpty( PropId ) )
+        public string getCustomerAccessId( string LoginButtonPropId )
+        {
+            if( string.IsNullOrEmpty( LoginButtonPropId ) )
             {
                 throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
             }
-            CswPropIdAttr PropAttr = new CswPropIdAttr( PropId );
+            CswPropIdAttr PropAttr = new CswPropIdAttr( LoginButtonPropId );
 
             if( null == PropAttr ||
                 null == PropAttr.NodeId ||
@@ -332,36 +335,56 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
             }
-            CswNbtNode CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
-
-            if( null == CustomerNode ||
-                CustomerNode.getObjectClass().ObjectClass != NbtObjectClass.CustomerClass )
-            {
-                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+            CswNbtObjClassCustomer CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
+            return CustomerNode.CompanyID.Text;
             }
 
-            RetNodeAsCustomer = (CswNbtObjClassCustomer) CustomerNode;
-            string AccessId = RetNodeAsCustomer.CompanyID.Text;
+        //public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )
+        //{
+        //    CswNbtObjClassCustomer RetNodeAsCustomer = null;
 
-            CswNbtResources OtherResources = makeOtherResources( AccessId );
-            CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-            CswNbtObjClassUser AdminNodeAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
-            TempPassword = CswNbtObjClassUser.makeRandomPassword( 20 );
+        //    if( string.IsNullOrEmpty( PropId ) )
+        //    {
+        //        throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+        //    }
+        //    CswPropIdAttr PropAttr = new CswPropIdAttr( PropId );
 
-            AdminNodeAsUser.AccountLocked.Checked = Tristate.False;
-            AdminNodeAsUser.PasswordProperty.Password = TempPassword;
-            AdminNodeAsUser.postChanges( true );
-            _finalize( OtherResources );
+        //    if( null == PropAttr ||
+        //        null == PropAttr.NodeId ||
+        //        Int32.MinValue == PropAttr.NodeId.PrimaryKey )
+        //    {
+        //        throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+        //    }
+        //    CswNbtNode CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
 
-            /* 
-             * case 25694 - clear the current user, or else it will be confused with nodes in the new schemata 
-             * case 25206
-             */
-            _NbtManagerResources.clearCurrentUser();
-            _NbtManagerResources.InitCurrentUser = InitUser;
+        //    if( null == CustomerNode ||
+        //        CustomerNode.getObjectClass().ObjectClass != NbtObjectClass.CustomerClass )
+        //    {
+        //        throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+        //    }
 
-            return RetNodeAsCustomer;
-        }
+        //    RetNodeAsCustomer = (CswNbtObjClassCustomer) CustomerNode;
+        //    string AccessId = RetNodeAsCustomer.CompanyID.Text;
+
+        //    CswNbtResources OtherResources = makeOtherResources( AccessId );
+        //    CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+        //    CswNbtObjClassUser AdminNodeAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
+        //    TempPassword = CswNbtObjClassUser.makeRandomPassword( 20 );
+
+        //    AdminNodeAsUser.AccountLocked.Checked = Tristate.False;
+        //    AdminNodeAsUser.PasswordProperty.Password = TempPassword;
+        //    AdminNodeAsUser.postChanges( true );
+        //    _finalize( OtherResources );
+
+        //    /* 
+        //     * case 25694 - clear the current user, or else it will be confused with nodes in the new schemata 
+        //     * case 25206
+        //     */
+        //    _NbtManagerResources.clearCurrentUser();
+        //    _NbtManagerResources.InitCurrentUser = InitUser;
+
+        //    return RetNodeAsCustomer;
+        //}
 
         #endregion public
 
