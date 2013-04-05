@@ -353,6 +353,7 @@
                                 });
                                 if (false === tabIds.contains(cswPrivate.tabState.tabid)) {
                                     cswPrivate.tabState.tabid = '';
+                                    cswPrivate.tabState.tabNo = 0;
                                 }
 
                                 var tabno = 0;
