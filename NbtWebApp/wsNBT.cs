@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
     [ScriptService]
     [WebService( Namespace = "ChemSW.Nbt.WebServices" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-    public class wsNBT : WebService
+    public class wsNBT: WebService
     {
         // case 25887
         CswTimer Timer = new CswTimer();
@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
 
             // case 26549 - we need to remove the old session
-            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie: false );
+            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie : false );
 
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
@@ -881,7 +881,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
                     ReturnVal["rows"] = ws.getThinGridRows( RowLimit );
                 }
 
@@ -916,7 +916,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, SafeNodeKey );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
                     ws.ExportCsv( Context );
                 }
 
@@ -952,7 +952,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( ForReport ) );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( ForReport ) );
                     ReturnVal = ws.runGrid( Title, IsQuickLaunch );
                 }
 
@@ -989,7 +989,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( false ) );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( false ) );
                     ReturnVal = g.getGridRowCount();
                 }
 
@@ -1759,7 +1759,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtNodeKey RealNodeKey = _getNodeKey( SafeNodeKey );
                         RealNodeId = RealNodeKey.NodeId;
                     }
-                    
+
                     ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
 
@@ -1914,7 +1914,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsObj, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: false, RemoveTempStatus: RemoveTempStatus );
+                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsObj, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab : false, RemoveTempStatus : RemoveTempStatus );
                 }
                 _deInitResources();
             }
@@ -2315,76 +2315,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         }
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void fileForProp()
-        {
-            //Come back to implement Multi
-            JObject ReturnVal = new JObject();
-            ReturnVal["data"] = new JObject();
-            ReturnVal["data"]["success"] = false;
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    for( Int32 I = 0; I < Context.Request.Files.Count; I += 1 )
-                    {
-                        HttpPostedFile File = Context.Request.Files[I];
-                        string FileName = File.FileName;
-                        string PropId = Context.Request["propid"];
-                        string Column = Context.Request["column"];
-
-                        Stream FileStream = File.InputStream;
-
-                        if( false == string.IsNullOrEmpty( PropId ) )
-                        {
-                            string ContentType = File.ContentType;
-
-                            // Read the binary data
-                            BinaryReader br = new BinaryReader( FileStream );
-                            long Length = FileStream.Length;
-                            byte[] FileData = new byte[Length];
-                            for( long CurrentIndex = 0; CurrentIndex < Length; CurrentIndex++ )
-                            {
-                                FileData[CurrentIndex] = br.ReadByte();
-                            }
-
-                            // Save the binary data
-                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                            string Href;
-                            bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column, out Href );
-
-                            ReturnVal["data"]["success"] = ret;
-                            if( ret )
-                            {
-                                ReturnVal["data"]["filename"] = FileName;
-                                ReturnVal["data"]["contenttype"] = ContentType;
-                                ReturnVal["data"]["href"] = Href;
-                            }
-
-                        } //if( false == string.IsNullOrEmpty( PropId ) )
-                    } //for( Int32 I = 0; I < Context.Request.Files.Count; I += 1 )
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            //This is the only way to get the content back down to the client using jQuery File Upload.
-            //DO NOT TOUCH.
-            Context.Response.ContentType = "text/plain";
-            Context.Response.Write( ReturnVal.ToString() );
-
-        } // fileForProp()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -2987,7 +2917,7 @@ namespace ChemSW.Nbt.WebServices
                     if( JProps.HasValues )
                     {
                         CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        ReturnProps = Sd.saveProps( PropId.NodeId, CswConvert.ToInt32( TabId ), NodeTypeId: Int32.MinValue, View: null, IsIdentityTab: false, PropsObj: JProps );
+                        ReturnProps = Sd.saveProps( PropId.NodeId, CswConvert.ToInt32( TabId ), NodeTypeId : Int32.MinValue, View : null, IsIdentityTab : false, PropsObj : JProps );
                     }
                 }
 
@@ -3107,7 +3037,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile : true );
             return ( Connected.ToString() );
         }
 
@@ -3135,7 +3065,7 @@ namespace ChemSW.Nbt.WebServices
                 Connected["result"] = "OK";
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile : true );
             //_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
 

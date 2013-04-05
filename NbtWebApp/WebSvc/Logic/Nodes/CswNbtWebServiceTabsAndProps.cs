@@ -105,11 +105,6 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.ClearPropValue( PropIdAttr, IncludeBlob );
         } // ClearPropValue()
 
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )
-        {
-            return _TabsPropsSd.SetPropBlobValue( Data, FileName, ContentType, PropIdAttr, Column, out Href );
-        } // SetPropBlobValue()
-
         /// <summary>
         /// Default content to display when no node is selected, or the tree is empty
         /// </summary>

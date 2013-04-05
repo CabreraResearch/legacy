@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.IO;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
@@ -14,7 +12,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
-using ChemSW.StructureSearch;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ServiceDrivers
@@ -934,110 +931,6 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             return ret;
         } // ClearPropValue()
-
-        public JObject saveMolProp( string moldata, string propIdAttr )
-        {
-            JObject Ret = new JObject();
-            bool Succeeded = false;
-            CswPropIdAttr PropId = new CswPropIdAttr( propIdAttr );
-            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-            if( Int32.MinValue != PropId.NodeId.PrimaryKey )
-            {
-                CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
-                if( null != Node )
-                {
-                    CswNbtNodePropMol PropMol = Node.Properties[MetaDataProp];
-                    if( null != PropMol )
-                    {
-                        // Do the update directly
-                        CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
-                        //JctUpdate.AllowBlobColumns = true;
-                        if( PropMol.JctNodePropId > 0 )
-                        {
-                            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropMol.JctNodePropId );
-                            JctTable.Rows[0]["clobdata"] = moldata;
-                            JctUpdate.update( JctTable );
-                        }
-                        else
-                        {
-                            DataTable JctTable = JctUpdate.getEmptyTable();
-                            DataRow JRow = JctTable.NewRow();
-                            JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
-                            JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                            JRow["nodeidtablename"] = Node.NodeId.TableName;
-                            JRow["clobdata"] = moldata;
-                            JctTable.Rows.Add( JRow );
-                            JctUpdate.update( JctTable );
-                        }
-                        Succeeded = true;
-                        Ret["mol"] = PropMol.Mol;
-                        byte[] molImage = CswStructureSearch.GetImage( moldata );
-                        string Href;
-                        SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", propIdAttr, "blobdata", out Href );
-                        Ret["href"] = Href;
-                    }
-                }
-            } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-            Ret["succeeded"] = Succeeded;
-            return Ret;
-        }
-
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )
-        {
-            bool ret = false;
-            if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
-            Href = "";
-            CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-            if( Int32.MinValue != PropId.NodeId.PrimaryKey )
-            {
-                CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
-                CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
-
-                // Do the update directly
-                CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Blobber_save_update", "jct_nodes_props" );
-                JctUpdate.AllowBlobColumns = true;
-                if( PropWrapper.JctNodePropId > 0 )
-                {
-                    Href = CswNbtNodePropBlob.getLink( PropWrapper.JctNodePropId, PropId.NodeId, PropId.NodeTypePropId );
-                    DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
-                    if( JctTable.Columns[Column].DataType == typeof( string ) )
-                    {
-                        JctTable.Rows[0][Column] = CswTools.ByteArrayToString( Data );
-                    }
-                    else
-                    {
-                        JctTable.Rows[0][Column] = Data;
-                    }
-                    JctTable.Rows[0]["field1"] = FileName;
-                    JctTable.Rows[0]["field2"] = ContentType;
-                    JctUpdate.update( JctTable );
-                }
-                else
-                {
-                    DataTable JctTable = JctUpdate.getEmptyTable();
-                    DataRow JRow = JctTable.NewRow();
-                    JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
-                    JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                    JRow["nodeidtablename"] = Node.NodeId.TableName;
-                    JRow[Column] = Data;
-                    JRow["field1"] = FileName;
-                    JRow["field2"] = ContentType;
-                    JctTable.Rows.Add( JRow );
-                    JctUpdate.update( JctTable );
-                }
-                if( Node.getObjectClass().ObjectClass == NbtObjectClass.ReportClass )
-                {
-                    CswNbtObjClassReport Report = Node;
-                    CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );
-                    string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
-                    _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
-                }
-                Node.postChanges( ForceUpdate : false );
-                ret = true;
-            } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-            return ret;
-        } // SetPropBlobValue()
 
         private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )
         {

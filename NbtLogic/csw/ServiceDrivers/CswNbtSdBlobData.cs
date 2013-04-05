@@ -1,8 +1,11 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -51,6 +54,53 @@ namespace ChemSW.Nbt.ServiceDrivers
             Node.postChanges( false );
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId );
+        }
+
+        public void saveMol( string MolString, string PropId, out string Href )
+        {
+            CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
+
+            Href = "";
+            CswNbtNode Node = _CswNbtResources.Nodes[PropIdAttr.NodeId];
+            if( null != Node )
+            {
+                CswNbtNodePropMol molProp = Node.Properties[MetaDataProp];
+                if( null != molProp )
+                {
+                    //Save the mol text to _CswNbtResources
+                    CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+
+                    if( Int32.MinValue != molProp.JctNodePropId )
+                    {
+                        DataTable JctTable = JctUpdate.getTable( "jctnodepropid", molProp.JctNodePropId );
+                        JctTable.Rows[0]["clobdata"] = MolString;
+                        JctUpdate.update( JctTable );
+                    }
+                    else
+                    {
+                        DataTable JctTable = JctUpdate.getEmptyTable();
+                        DataRow JRow = JctTable.NewRow();
+                        JRow["nodetypepropid"] = CswConvert.ToDbVal( PropIdAttr.NodeTypePropId );
+                        JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                        JRow["nodeidtablename"] = Node.NodeId.TableName;
+                        JRow["clobdata"] = MolString;
+                        JctTable.Rows.Add( JRow );
+                        JctUpdate.update( JctTable );
+                    }
+
+                    //Save the mol image to blob_data
+                    byte[] molImage = CswStructureSearch.GetImage( MolString );
+
+                    CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                    Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId, PropIdAttr.NodeTypePropId );
+
+                    SdBlobData.saveFile( PropId, molImage, "image/jpeg", "Mol.jpeg", out Href );
+
+                    //case 28364 - calculate fingerprint and save it
+                    _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, MolString );
+                }
+            }
         }
 
     }

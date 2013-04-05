@@ -719,10 +719,12 @@ namespace ChemSW.Nbt.WebServices
                             case CswNbtMetaDataFieldType.NbtFieldType.MOL:
                                 if( false == string.IsNullOrEmpty( C3Mapping.C3ProductPropertyValue ) )
                                 {
-                                    CswNbtSdTabsAndProps TabsPropsSd = new CswNbtSdTabsAndProps( _CswNbtResources );
                                     string propAttr = new CswPropIdAttr( Node, NTP ).ToString();
                                     string molData = C3Mapping.C3ProductPropertyValue;
-                                    TabsPropsSd.saveMolProp( molData, propAttr );
+
+                                    string Href;
+                                    CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                                    SdBlobData.saveMol(molData, propAttr, out Href);
                                 }
                                 break;
                             default:
