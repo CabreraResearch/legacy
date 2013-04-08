@@ -408,7 +408,7 @@
             };
 
             cswPrivate.makePendingTab = function (opts) {
-                var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.');
+                var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Submit these Requests" to submit the items in your cart.');
 
                 var inpTbl = ol.li().table({
                     width: '99%',
