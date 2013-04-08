@@ -37,7 +37,7 @@
 
             /* fetchGridSkeleton */
             (function () {
-                cswPublic = cswParent.grid({
+                cswPublic.grid = cswParent.grid({
                     name: cswPrivate.name,
                     stateId: cswPrivate.viewid,
                     ajax: {
@@ -121,6 +121,18 @@
                 Csw.tryExec(cswPrivate.onSuccess, cswPublic);
 
             })();
+
+            cswPublic.getSelectedNodes = function() {
+                var nodes = [];
+                cswPublic.grid.getSelection(function(rawRow) {
+                    nodes.push({
+                        nodeid: rawRow.nodeid,
+                        nodename: rawRow.nodename
+                    });
+                });
+                return nodes;
+            };
+
             return cswPublic;
 
         });
