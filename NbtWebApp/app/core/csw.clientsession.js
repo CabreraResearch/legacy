@@ -195,6 +195,7 @@
             if (options) {
                 Csw.extend(cswPrivate, options);
             }
+            Csw.cookie.clearAll();
             cswPrivate.isAuthenticated = false;
             Csw.ajaxWcf.post({
                 urlMethod: 'Session/End',
