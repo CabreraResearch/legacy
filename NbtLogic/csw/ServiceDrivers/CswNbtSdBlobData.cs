@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             _CswNbtResources = CswNbtResources;
         }
 
-        public void saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href )
+        public void saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue )
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
@@ -27,25 +27,27 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
             CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
 
-            //Save the attribute data to jct_nodes_props
-            CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Blobber_save_update", "jct_nodes_props" );
-            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", FileProp.JctNodePropId );
-            JctTable.Rows[0]["field1"] = FileName;
-            JctTable.Rows[0]["field2"] = ContentType;
-            JctUpdate.update( JctTable );
-
             //Save the file to blob_data
             CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
+            string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId;
+            if( Int32.MinValue != BlobDataId )
+            {
+                whereClause += " and blobdataid = " + BlobDataId;
+            }
             DataTable BlobTbl = BlobUpdate.getTable( "where jctnodepropid = " + FileProp.JctNodePropId );
             if( BlobTbl.Rows.Count > 0 )
             {
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
+                BlobTbl.Rows[0]["contenttype"] = ContentType;
+                BlobTbl.Rows[0]["filename"] = FileName;
             }
             else
             {
                 DataRow NewRow = BlobTbl.NewRow();
                 NewRow["jctnodepropid"] = FileProp.JctNodePropId;
                 NewRow["blobdata"] = BlobData;
+                NewRow["contenttype"] = ContentType;
+                NewRow["filename"] = FileName;
                 BlobTbl.Rows.Add( NewRow );
             }
             BlobUpdate.update( BlobTbl );

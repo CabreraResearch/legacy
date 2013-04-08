@@ -350,6 +350,16 @@ namespace ChemSW.Nbt.Schema
                 {
                     _CswNbtSchemaModTrnsctn.addForeignKeyColumn( blobdatatblname, "jctnodepropid", "The property row this blob data belongs to", false, true, "jct_nodes_props", "jctnodepropid" );
                 }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "contenttype" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( blobdatatblname, "contenttype", "The content type of this blob", false, false, 120 );
+                }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "filename" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( blobdatatblname, "filename", "The name of this blob", false, false, 120 );
+                }
             }
 
             _resetBlame();
