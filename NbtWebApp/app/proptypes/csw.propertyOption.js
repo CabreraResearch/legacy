@@ -23,7 +23,9 @@
                         wasModified = true;
                     } else {
                         Csw.iterate(originalData, function(originalVal) {
-                            updateValues(originalVal);
+                            if (originalVal) {
+                                updateValues(originalVal);
+                            }
                         });
                     }
                 }, true);

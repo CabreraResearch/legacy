@@ -441,21 +441,19 @@
                 var favoriteSelect;
 
                 var toggleCopyButtons = function () {
-                    if (favoriteSelect) {
-                        var nodeId = favoriteSelect.selectedNodeId();
-                        if (nodeId) {
-                            cswPrivate.selectedFavoriteId = nodeId;
-                        }
-                    }
                     if (hasOneRowSelected) {
                         copyBtn.enable();
-                        if (cswPrivate.selectedFavoriteId) {
-                            saveBtn.enable();
-                        } else {
-                            saveBtn.disable();
+                        if (favoriteSelect) {
+                            cswPrivate.selectedFavoriteId = favoriteSelect.selectedNodeId();
+                            if (cswPrivate.selectedFavoriteId) {
+                                saveBtn.enable();
+                            } else {
+                                saveBtn.disable();
+                            }
                         }
                     } else {
                         copyBtn.disable();
+                        saveBtn.disable();
                     }
                 };
 
