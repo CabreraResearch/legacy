@@ -86,6 +86,38 @@ namespace ChemSW.Nbt
                      SecondId == NodeType.getFirstVersionNodeType().NodeTypeId );
         }
 
+        private CswNbtMetaDataNodeType _SecondNodeType = null;
+        public CswNbtMetaDataNodeType getSecondNodeType()
+        {
+            CswNbtMetaDataNodeType Ret = _SecondNodeType;
+            if( null == Ret )
+            {
+                ICswNbtMetaDataObject TryRet = SecondMetaDataObject();
+                CswNbtMetaDataNodeType TryCast = TryRet as CswNbtMetaDataNodeType;
+                if( null != TryCast )
+                {
+                    Ret = TryCast;
+                }
+            }
+            return Ret;
+        }
+
+        private CswNbtMetaDataObjectClass _SecondObjectClass = null;
+        public CswNbtMetaDataObjectClass getSecondObjectClass()
+        {
+            CswNbtMetaDataObjectClass Ret = _SecondObjectClass;
+            if( null == Ret )
+            {
+                ICswNbtMetaDataObject TryRet = SecondMetaDataObject();
+                CswNbtMetaDataObjectClass TryCast = TryRet as CswNbtMetaDataObjectClass;
+                if( null != TryCast )
+                {
+                    Ret = TryCast;
+                }
+            }
+            return Ret;
+        }
+
         public ICswNbtMetaDataObject SecondMetaDataObject()
         {
             ICswNbtMetaDataObject Ret = null;
@@ -93,11 +125,13 @@ namespace ChemSW.Nbt
             {
                 if( SecondType == NbtViewRelatedIdType.ObjectClassId )
                 {
-                    Ret = _CswNbtResources.MetaData.getObjectClass( SecondId );
+                    _SecondObjectClass = _CswNbtResources.MetaData.getObjectClass( SecondId );
+                    Ret = _SecondObjectClass;
                 }
                 else if( SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
-                    Ret = _CswNbtResources.MetaData.getNodeType( SecondId );
+                    _SecondNodeType = _CswNbtResources.MetaData.getNodeType( SecondId );
+                    Ret = _SecondNodeType;
                 }
             }
             return Ret;

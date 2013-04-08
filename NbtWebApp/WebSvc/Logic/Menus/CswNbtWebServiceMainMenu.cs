@@ -218,35 +218,61 @@ namespace ChemSW.Nbt.WebServices
                     JObject PrintObj = null;
 
                     // PRINT LABEL
-                    if( _MenuItems.Contains( "Print" ) &&
-                        false == string.IsNullOrEmpty( SafeNodeKey ) &&
-                        null != Node )
+
+                    bool ValidForTreePrint = ( false == string.IsNullOrEmpty( SafeNodeKey ) &&
+                                               View.ViewMode != NbtViewRenderingMode.Grid &&                        
+                                               null != Node &&
+                                               null != Node.getNodeType() &&
+                                               Node.getNodeType().HasLabel );
+
+                    bool ValidForGridPrint = false;
+                    bool TryValidForGridPrint = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                    Int32 MultiPrintNodeTypeId = Int32.MinValue;
+                    if( TryValidForGridPrint )
                     {
-                        if( View.ViewMode != NbtViewRenderingMode.Grid || View.Root.ChildRelationships.Count == 1 )
+                        CswNbtViewRelationship TryRel = null;
+                        if( View.Visibility != NbtViewVisibility.Property && View.Root.ChildRelationships.Count == 1 )
                         {
-                            if( View.Visibility != NbtViewVisibility.Property )
+                            TryRel = View.Root.ChildRelationships[0];
+                        }
+                        else if( View.Visibility == NbtViewVisibility.Property &&
+                                View.Root.ChildRelationships.Count == 1 &&
+                                View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
+                        {
+                            TryRel = View.Root.ChildRelationships[0].ChildRelationships[0];
+                        }
+
+                        if( null != TryRel )
+                        {
+                            CswNbtMetaDataNodeType Nt = TryRel.getSecondNodeType();
+                            if( null != Nt )
                             {
-                                if( null != Node.getNodeType() && Node.getNodeType().HasLabel )
+                                if( Nt.HasLabel )
                                 {
-                                    PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
-                                    PrintObj["Print Label"] = new JObject();
-                                    PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
-                                    PrintObj["Print Label"]["nodetypeid"] = Node.NodeTypeId;
-                                    PrintObj["Print Label"]["nodename"] = Node.NodeName;
-                                    PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
+                                    MultiPrintNodeTypeId = Nt.NodeTypeId;
+                                    ValidForGridPrint = true;
                                 }
                             }
-                            //This is rather interesting and useless?
-                            //else if( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
-                            //{
-                            //    CswNbtViewRelationship Relationship = View.Root.ChildRelationships[0].ChildRelationships[0];
-                            //    ICswNbtMetaDataObject MetaDataObject = Relationship.SecondMetaDataObject();
-                            //    if( null != MetaDataObject )
-                            //    {
+                            //No else, we don't have "Multi" support for ObjectClass views
+                        }
+                    }
+                    
+                    if( _MenuItems.Contains( "Print" ) &&
+                        ( ValidForTreePrint || ValidForGridPrint ) )
+                    {
+                        PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
+                        PrintObj["Print Label"] = new JObject();
+                        PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
 
-                            //    }
-
-                            //}
+                        if( ValidForTreePrint )
+                        {
+                            PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
+                            PrintObj["Print Label"]["nodetypeid"] = Node.NodeTypeId;
+                            PrintObj["Print Label"]["nodename"] = Node.NodeName;
+                        }
+                        else if( ValidForGridPrint )
+                        {
+                            PrintObj["Print Label"]["nodetypeid"] = MultiPrintNodeTypeId;
                         }
                     }
                     // PRINT
@@ -305,7 +331,7 @@ namespace ChemSW.Nbt.WebServices
                     // Case 21701: for Grid Properties, we need to look one level deeper
                     // Case 29032: furthermore (for Grids), we need to exclude ObjectClass relationships (which can also produce the multi-nodetype no-no
                     ( View.ViewMode != NbtViewRenderingMode.Grid ||
-                    ( ( View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) && 
+                    ( ( View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) &&
                     ( View.Visibility != NbtViewVisibility.Property || ( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) ) ) )
                     )
                 {
