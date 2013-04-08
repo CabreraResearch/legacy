@@ -1484,7 +1484,7 @@
             Csw.ajaxWcf.post({
                 urlMethod: 'Labels/list',
                 data: {
-                    TargetTypeId: cswDlgPrivate.nodetypeid,
+                    TargetTypeId: Csw.number(cswDlgPrivate.nodetypeid,0),
                     TargetId: cswDlgPrivate.nodeids[0]
                 },
                 success: function (data) {
