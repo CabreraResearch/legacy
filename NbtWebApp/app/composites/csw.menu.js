@@ -31,19 +31,23 @@
                 onLoginData: null,
                 onSuccess: null,
                 nodeTreeCheck: null,
+                nodeGrid: null,
                 Multi: false
             };
             var cswPublic = {};
 
             cswPrivate.getSelectedNodes = function (menuItemJson) {
                 var ret = {};
-                var nodechecks = null;
+                var selectedNodes = null;
 
                 if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
-                    nodechecks = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
+                    selectedNodes = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
                 }
-                if (false === Csw.isNullOrEmpty(nodechecks, true)) {
-                    Csw.each(nodechecks, function (thisObj) {
+                else if (false == Csw.isNullOrEmpty(cswPrivate.nodeGrid)) {
+                    selectedNodes = cswPrivate.nodeGrid.getSelectedNodes();
+                }
+                if (false === Csw.isNullOrEmpty(selectedNodes, true)) {
+                    Csw.iterate(selectedNodes, function (thisObj) {
                         ret[thisObj.nodeid] = {
                             nodeid: thisObj.nodeid,
                             nodekey: thisObj.nodekey,
