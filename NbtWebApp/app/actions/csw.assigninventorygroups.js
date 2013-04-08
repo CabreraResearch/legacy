@@ -113,7 +113,7 @@
                     }
 
                     inventoryGroupSelect = select_inventory_group_cell.span().nodeSelect({
-                    name: 'intentory_group_select',
+                    name: 'Inventory Group',
                     objectClassName: 'InventoryGroupClass',
                     selectedNodeId: selected_node_id,
                     allowAdd: true,
