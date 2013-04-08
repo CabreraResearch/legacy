@@ -451,7 +451,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType IncludeNodeType = _CswNbtResources.MetaData.getNodeType( IncludeNodeTypeId );
                 if( null != IncludeNodeType )
                 {
-                    _View = IncludeNodeType.CreateDefaultView();
+                    _View = IncludeNodeType.CreateDefaultView( false );
                     _View.ViewName = IncludeNodeType.NodeTypeName;
                     _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeId );
                     _View.SaveToCache( Request.IncludeInQuickLaunch ); // case 22713

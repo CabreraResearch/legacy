@@ -156,7 +156,10 @@ namespace ChemSW.Nbt.WebServices
                 if( null != RequestNode )
                 {
                     CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( NbtResources );
-                    applyCopyLogic SetRequest = ( Item ) => { Item.Request.RelatedNodeId = RequestNode.NodeId; };
+                    applyCopyLogic SetRequest = ( Item ) =>
+                                                    {
+                                                        Item.Request.RelatedNodeId = RequestNode.NodeId;
+                                                    };
                     Succeeded = ws.copyRequestItems( Request, SetRequest );
                 }
             }

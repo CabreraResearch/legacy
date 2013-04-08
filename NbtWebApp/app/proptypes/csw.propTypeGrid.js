@@ -23,8 +23,8 @@
                     cswPrivate.maxRows = Csw.string(cswPrivate.propVals.maxrows);
                     cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     cswPrivate.hasHeader = Csw.bool(cswPrivate.propVals.hasHeader);
-                    
-                    cswPrivate.makeGridMenu = function (grid, gridParentDiv) {
+
+                    cswPrivate.makeGridMenu = function (grid, gridParentDiv, inDialog) {
                         //Case 21741
                         if (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
 
@@ -42,18 +42,20 @@
                                         ReadOnly: cswPublic.data.isReadOnly()
                                     }
                                 },
-                                onAlterNode: function() { 
-                                    cswPrivate.reinitGrid(); 
+                                onAlterNode: function () {
+                                    cswPrivate.reinitGrid();
                                 },
-                                onMultiEdit: function () { 
-                                    grid.toggleShowCheckboxes(); 
+                                onMultiEdit: function () {
+                                    grid.toggleShowCheckboxes();
                                 },
                                 onEditView: function () {
-                                    Csw.tryExec(gridParentDiv.$.dialog('close'));
-                                    Csw.tryExec(cswPublic.data.onEditView, cswPrivate.viewid); 
+                                    if (inDialog) {
+                                        Csw.tryExec(gridParentDiv.$.dialog('close'));
+                                    }
+                                    Csw.tryExec(cswPublic.data.onEditView, cswPrivate.viewid);
                                 },
-                                onPrintView: function () { 
-                                    grid.print(); 
+                                onPrintView: function () {
+                                    grid.print();
                                 },
                                 Multi: false
                             };
@@ -62,7 +64,7 @@
                         } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
                     }; // makeGridMenu()
 
-                    cswPrivate.makeFullGrid = function (viewid, newDiv) {
+                    cswPrivate.makeFullGrid = function (viewid, newDiv, inDialog) {
                         'use strict';
                         newDiv.empty();
                         cswPrivate.menuDiv = newDiv.div({ name: 'grid_as_fieldtype_menu' }).css({ height: '25px' });
@@ -72,13 +74,13 @@
                             return function () {
                                 cswPublic.control.reload(true);
                             };
-                        }());
+                        } ());
                         Csw.nbt.viewFilters({
                             name: cswPublic.data.name + '_viewfilters',
                             parent: filterDiv,
                             viewid: viewid,
                             onEditFilters: function (newviewid) {
-                                cswPrivate.makeFullGrid(newviewid, newDiv);
+                                cswPrivate.makeFullGrid(newviewid, newDiv, inDialog);
                             } // onEditFilters
                         }); // viewFilters
 
@@ -98,7 +100,7 @@
                                 cswPublic.control.reload(true);
                             },
                             onSuccess: function (grid) {
-                                cswPrivate.makeGridMenu(grid, newDiv);
+                                cswPrivate.makeGridMenu(grid, newDiv, inDialog);
                             }
                         };
                         cswPublic.control = Csw.nbt.nodeGrid(gridDiv, gridOpts);
@@ -121,7 +123,7 @@
                                         $.CswDialog('OpenEmptyDialog', {
                                             title: cswPublic.data.tabState.nodename + ' ' + cswPublic.data.propData.name,
                                             onOpen: function (dialogDiv) {
-                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv);
+                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv, true);
                                             },
                                             onClose: cswPublic.data.onReload
                                         }
@@ -148,7 +150,7 @@
                                         $.CswDialog('OpenEmptyDialog', {
                                             title: cswPublic.data.propData.name,
                                             onOpen: function (dialogDiv) {
-                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv);
+                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv, true);
                                             },
                                             onClose: cswPublic.data.onReload
                                         }
@@ -159,12 +161,12 @@
                         });
                     };
 
-                    if (false == cswPublic.data.isReport() && 
+                    if (false == cswPublic.data.isReport() &&
                         cswPublic.data.isMulti()) {
 
                         cswPublic.control = cswPrivate.parent.append('[Grid display disabled]');
                     } else {
-                        
+
                         switch (cswPrivate.gridMode.toLowerCase()) {
                             case 'small':
                                 cswPrivate.makeSmallGrid();
@@ -173,7 +175,7 @@
                                 cswPrivate.makeLinkGrid();
                                 break;
                             default:
-                                cswPrivate.makeFullGrid(cswPrivate.viewid, cswPrivate.parent);
+                                cswPrivate.makeFullGrid(cswPrivate.viewid, cswPrivate.parent, false);
                                 break;
                         }
 
@@ -183,9 +185,9 @@
 
                 //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
-                
+
                 //Bind an unrender callback to terminate any outstanding ajax requests
-                cswPublic.data.unBindRender(function() {
+                cswPublic.data.unBindRender(function () {
                     if (cswPublic.control && cswPublic.control.ajax && cswPublic.control.ajax.ajax) {
                         cswPublic.control.ajax.ajax.abort();
                     }
@@ -195,11 +197,11 @@
                     if (cswPrivate.smallAjax && cswPrivate.smallAjax.ajax) {
                         cswPrivate.smallAjax.ajax.abort();
                     }
-                    if(cswPrivate.menu && cswPrivate.menu.ajax && cswPrivate.menu.ajax.ajax) {
+                    if (cswPrivate.menu && cswPrivate.menu.ajax && cswPrivate.menu.ajax.ajax) {
                         cswPrivate.menu.ajax.ajax.abort();
                     }
                 });
                 return cswPublic;
             }));
 
-}());
+} ());

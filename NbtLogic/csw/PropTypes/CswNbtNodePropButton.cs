@@ -39,6 +39,21 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _DisplayNameSubField;
         private CswNbtSubField _IconSubField;
 
+        /// <summary>
+        /// Prevent inadvertant attempts to "ReadOnlify" a button. Buttons are either visible or not.
+        /// </summary>
+        public new void setReadOnly( bool value, bool SaveToDb )
+        {
+            setHidden( value: value, SaveToDb: SaveToDb );
+        }
+
+        /// <summary>
+        /// Prevent inadvertant gets on "ReadOnly" on a button. Buttons are either visible or not.
+        /// </summary>
+        public new bool ReadOnly
+        {
+            get { return Hidden; }
+        }
 
         public string Text
         {

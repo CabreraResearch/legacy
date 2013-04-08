@@ -69,6 +69,7 @@
                     columns: data.Columns,
                     fields: data.Fields,
                     selectedId: data.SelectedId,
+                    forceSelected: data.forceSelected,
                     onSelect: cswPrivate.handleSelectNode,
                     beforeSelect: cswPrivate.onBeforeSelectNode,
                     allowMultiSelection: cswPrivate.allowMultiSelection,
@@ -207,7 +208,7 @@
                                 cswPrivate.state.viewMode = data.NewViewMode;
                                 Csw.tryExec(cswPrivate.state.onViewChange, data.NewViewId, data.NewViewMode);
                             }
-
+                            data.forceSelected = cswPrivate.state.includeNodeRequired;
                             cswPrivate.make(data);
                         }
 

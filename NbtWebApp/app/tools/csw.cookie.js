@@ -68,12 +68,12 @@
         Csw.register('clearAll', function () {
             /// <summary> Clear the current value of all Csw cookies.</summary>
             /// <returns type="Boolean">Always true.</returns>
-            var cookieName;
-            for (cookieName in Csw.cookie.cookieNames) {
-                if (Csw.contains(Csw.cookie.cookieNames, cookieName) && cookieName !== Csw.cookie.cookieNames.CustomerId) {
-                    $.cookie(Csw.cookie.cookieNames[cookieName], null);
-                }
-            }
+            Csw.iterate(Csw.cookie.cookieNames, function(name) {
+                $.cookie(name, null);
+            });
+            Csw.iterate($.cookie(), function (name) {
+                $.cookie(name, null);
+            });
             return true;
         });
 

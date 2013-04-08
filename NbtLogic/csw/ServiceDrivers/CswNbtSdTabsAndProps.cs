@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             JObject Ret = new JObject();
             JObject Tabs = new JObject();
             Ret["tabs"] = Tabs;
+            Ret["node"] = new JObject();
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId, NodeKey, Date );
             if( null != Node )
             {
@@ -100,9 +101,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                             _makeTab( Tabs, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
                     }
-                    Ret["nodename"] = Node.NodeName;
+                    Ret["node"]["nodename"] = Node.NodeName;
                 } // if-else( filterToPropId != string.Empty )
-                Ret["nodetypeid"] = NodeTypeId;
+                Ret["node"]["nodetypeid"] = NodeTypeId;
             }
             return Ret;
         } // getTabs()
@@ -256,13 +257,15 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject Ret = new JObject();
+            
             CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
             CswNbtMetaDataNodeType NodeType = Node.getNodeType();
             if( null != NodeType )
             {
                 CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
-                Ret["tabid"] = IdentityTab.TabId;
                 Ret = getProps( NodeId.ToString(), null, IdentityTab.TabId.ToString(), NodeType.NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+                Ret["tab"] = new JObject();
+                Ret["tab"]["tabid"] = IdentityTab.TabId;
             }
             return Ret;
         } // getIdentityTabProps()
@@ -273,14 +276,18 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
         {
             JObject Ret = new JObject();
+            Ret["node"] = new JObject();
+            JObject Properties = new JObject();
+            Ret["properties"] = Properties;
+
             if( Node != null )
             {
                 if( CswTools.IsPrimaryKey( Node.NodeId ) )
                 {
-                    Ret["nodeid"] = Node.NodeId.ToString();
-                    Ret["nodelink"] = Node.NodeLink;
-                    Ret["nodename"] = Node.NodeName;
-                    Ret["nodetypeid"] = Node.NodeTypeId;
+                    Ret["node"]["nodeid"] = Node.NodeId.ToString();
+                    Ret["node"]["nodelink"] = Node.NodeLink;
+                    Ret["node"]["nodename"] = Node.NodeName;
+                    Ret["node"]["nodetypeid"] = Node.NodeTypeId;
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
@@ -288,7 +295,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
                     {
-                        _getAuditHistoryGridProp( Ret, Node );
+                        _getAuditHistoryGridProp( Properties, Node );
                     }
                 }
                 else
@@ -311,7 +318,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
                         {
 
-                            _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
+                            _addProp( Properties, Node, Prop, CswConvert.ToInt32( TabId ) );
                         }
                     }
                 } // if(Node != null)
@@ -321,13 +328,12 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node, bool HasEditableProps )
         {
-            bool Ret = ( ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
-                Prop.IsSaveProp ||
-                //Case 24023: Exclude buttons on Add (Except the Save button)
-                Prop.IsSaveProp ||
-                Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
-                Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) ) &&
-                       ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
+            bool Ret = Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) &&
+                 ( Prop.IsSaveProp ||
+                 ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
+                   //Case 24023: Exclude buttons on Add (Except the Save button)
+                   Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                 ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId ) );
             
             return Ret;
         }
@@ -467,7 +473,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropObj["ocpname"] = Prop.getObjectClassPropName();
             Int32 DisplayRow = _getUniqueRow( Layout.DisplayRow, Layout.DisplayColumn );
 
-            if( Int32.MaxValue == DisplayRow )
+            if( Prop.IsSaveProp )
             {
                 DisplayRow = CswNbtMetaDataNodeTypeLayoutMgr.getCurrentMaxDisplayRow( _CswNbtResources, Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
                 if( Int32.MinValue != Prop.ObjectClassPropId && null != Prop.getObjectClassProp() && Prop.getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
@@ -497,6 +503,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( PropWrapper != null )
             {
+                PropObj["helptext"] = PropWrapper.HelpText;   // case 29342
+
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
                 if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible
                     FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button || (

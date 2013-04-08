@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role",
                                     "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
                             }
-                            /* Case 24447 */
+                            //Case 29338 - If the Role has no Material NT create permissions, remove the Create Material action permission
                             if( Action.Name == CswNbtActionName.Create_Material )
                             {
                                 CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
@@ -142,10 +142,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 if( false == HasOneMaterialCreate )
                                 {
-                                    throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role without first granting Create permission to at least one Material.",
-                                        "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+                                    ActionPermissions.RemoveValue( MakeActionPermissionValue( Action ) );
                                 }
-
                             }
                             if( false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
                             {
