@@ -1,5 +1,4 @@
 using System;
-using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 
@@ -8,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
@@ -59,6 +58,8 @@ namespace ChemSW.Nbt.Schema
             #endregion ASPEN
 
             #region BUCKEYE
+
+            _addColumnsToSessionListTable( CswDeveloper.CM, 29127 );
 
             #endregion BUCKEYE
 
@@ -146,16 +147,37 @@ namespace ChemSW.Nbt.Schema
 
         private void _fixKioskModeName( CswDeveloper Dev, Int32 CaseNo )
         {
+            _acceptBlame( Dev, CaseNo );
+
             if( null == _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.Kiosk_Mode] )
             {
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update actions set actionname = 'Kiosk Mode' where actionname = 'KioskMode'" );
             }
+
+            _resetBlame();
         }
 
         #endregion ASPEN
 
         #region BUCKEYE Methods
-        
+
+        private void _addColumnsToSessionListTable( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            // Add LastAccessId column
+            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "lastaccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
+
+            // Add NbtMgrUserName
+            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+
+            // Add NbtMgrUserId
+            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+
+            _resetBlame();
+
+        }
+
         #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01

@@ -39,11 +39,10 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28706() ) );           // 02A-017
 
             #endregion ASPEN
-            
+
             #region BUCKEYE
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_CaseXXXXX() ) );   // 02A-000   02B-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29127() ) );
 
             #endregion BUCKEYE
 

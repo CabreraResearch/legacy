@@ -203,7 +203,6 @@
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case27923_Save.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29127.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_CaseXXXXX.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspections.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspectionsDataModels.cs" />
