@@ -110,6 +110,18 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        private bool _isChemSWAdminImpersonating( CswSessionResourcesNbt CswSessionResources )
+        {
+            bool Ret = false;
+
+            if( CswSessionResources.CswSessionManager.isImpersonating() )
+            {
+                Ret = _CswNbtResources.CswResources.AuditUsername.Equals( CswNbtObjClassUser.ChemSWAdminUsername );
+            }
+
+            return Ret;
+        }
+
         public JObject getHeaderMenu( CswSessionResourcesNbt CswSessionResources )
         {
             JObject Ret = new JObject();
@@ -162,10 +174,13 @@ namespace ChemSW.Nbt.WebServices
                     Ret["Admin"]["End Impersonation"]["action"] = "EndImpersonation";
                 }
 
-                if( CswSessionResources.CswSessionManager.didChangeSchema() )
+                if( ( CswSessionResources.CswSessionManager.didChangeSchema() ) )
                 {
-                    Ret["Admin"]["Return to NbtManager"] = new JObject();
-                    Ret["Admin"]["Return to NbtManager"]["action"] = "NbtManager";
+                    if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || _isChemSWAdminImpersonating( CswSessionResources ) )
+                    {
+                        Ret["Admin"]["Return to NbtManager"] = new JObject();
+                        Ret["Admin"]["Return to NbtManager"]["action"] = "NbtManager";
+                    }
                 }
 
             } // if( _CswNbtResources.CurrentNbtUser.IsAdministrator() || CswSessionResources.CswSessionManager.isImpersonating() )

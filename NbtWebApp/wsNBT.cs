@@ -221,29 +221,12 @@ namespace ChemSW.Nbt.WebServices
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
-            //string TempPassword = string.Empty;
-            //CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
-
-
-            // case 29127 - save the old session before removing
-
-            // case 26549 - we need to remove the old session
-            // _CswSessionResources.CswSessionManager.clearSession( ExpireCookie: false, Deauthenticate: false );
-            //_CswNbtResources.AccessId = NodeAsCustomer.CompanyID.Text;
-            //CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername, false );
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );
             _CswNbtResources.AccessId = CustomerAccessId;
             CswNbtObjClassUser UserNode = ws.getCswAdmin( CustomerAccessId );
 
             _CswNbtResources.CswSessionManager.changeSchema( CustomerAccessId, CswNbtObjClassUser.ChemSWAdminUsername, UserNode.UserId );
-
-            //AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
-
-            //if( AuthenticationStatus != AuthenticationStatus.Authenticated )
-            //{
-            //    throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
-            //}
 
             return AuthenticationStatus;
         } // _doCswAdminAuthenticate()
@@ -387,7 +370,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string nbtManagerReauthenticate( string SessionId )
+        public string nbtManagerReauthenticate()
         {
 
             JObject ReturnVal = new JObject();
@@ -1808,7 +1791,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtNodeKey RealNodeKey = _getNodeKey( SafeNodeKey );
                         RealNodeId = RealNodeKey.NodeId;
                     }
-                    
+
                     ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
 
