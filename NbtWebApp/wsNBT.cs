@@ -372,26 +372,37 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string nbtManagerReauthenticate()
         {
-
             JObject ReturnVal = new JObject();
             try
             {
                 _initResources();
 
+                // This is for the case where we login to a customer schema,
+                // and then impersonate another user on that schema. We should still
+                // be able to return to NBT Manager as long as chemsw_admin
+                // was doing the impersonation
+                if( _CswNbtResources.CswSessionManager.isImpersonating() )
+                {
+                    _CswNbtResources.CswSessionManager.endImpersonation();
+                }
+
                 AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
+                if( _CswNbtResources.CurrentNbtUser.Username.Equals( CswNbtObjClassUser.ChemSWAdminUsername ) )
+                {
+                    CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
 
-                string OriginalAccessId = _CswNbtResources.CswSessionManager.getOriginalAccessId();
+                    string OriginalAccessId = _CswNbtResources.CswSessionManager.getOriginalAccessId();
 
-                _CswNbtResources.AccessId = OriginalAccessId;
-                CswNbtObjClassUser UserNode = ws.getCswAdmin( OriginalAccessId );
+                    _CswNbtResources.AccessId = OriginalAccessId;
+                    CswNbtObjClassUser UserNode = ws.getCswAdmin( OriginalAccessId );
 
-                // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
-                _CswNbtResources.CswSessionManager.changeSchema( OriginalAccessId, CswNbtObjClassUser.ChemSWAdminUsername, UserNode.UserId, ClearLastAccessId: true );
+                    // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
+                    _CswNbtResources.CswSessionManager.changeSchema( OriginalAccessId, CswNbtObjClassUser.ChemSWAdminUsername, UserNode.UserId, ClearLastAccessId: true );
 
-                ReturnVal["username"] = CswNbtObjClassUser.ChemSWAdminUsername;
-                ReturnVal["customerid"] = _CswNbtResources.AccessId;
+                    ReturnVal["username"] = CswNbtObjClassUser.ChemSWAdminUsername;
+                    ReturnVal["customerid"] = _CswNbtResources.AccessId;
+                }
 
                 CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
                 _deInitResources();
