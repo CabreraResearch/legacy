@@ -276,7 +276,19 @@
         });
 
     Csw.object = Csw.object ||
-        Csw.register('object', function (obj) {
+        Csw.register('object', function(inheritsFrom, properties) {
+            var ret;
+            properties = properties || Object.create(null);
+            if (null === inheritsFrom || typeof inheritsFrom == 'function') {
+                ret = Object.create(inheritsFrom, properties);
+            } else {
+                ret = Object.create(null);
+            }
+            return ret;
+        });
+
+    Csw.objDeprecated = Csw.objDeprecated ||
+        Csw.register('objDeprecated', function (obj) {
             /// <summary>Find an object in a JSON object.</summary>
             /// <param name="obj" type="Object"> Object to search </param>
             /// <returns type="Object"></returns>
