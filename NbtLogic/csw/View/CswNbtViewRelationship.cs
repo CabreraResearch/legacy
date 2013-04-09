@@ -80,52 +80,18 @@ namespace ChemSW.Nbt
         public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
         public string GroupByPropName { get { return _GroupByPropName; } }
 
-        private CswNbtMetaDataNodeType _SecondNodeType = null;
-        public CswNbtMetaDataNodeType getSecondNodeType()
+        public ICswNbtMetaDataDefinitionObject SecondMetaDataDefinitionObject()
         {
-            CswNbtMetaDataNodeType Ret = _SecondNodeType;
-            if( null == Ret )
-            {
-                ICswNbtMetaDataObject TryRet = SecondMetaDataObject();
-                CswNbtMetaDataNodeType TryCast = TryRet as CswNbtMetaDataNodeType;
-                if( null != TryCast )
-                {
-                    Ret = TryCast;
-                }
-            }
-            return Ret;
-        }
-
-        private CswNbtMetaDataObjectClass _SecondObjectClass = null;
-        public CswNbtMetaDataObjectClass getSecondObjectClass()
-        {
-            CswNbtMetaDataObjectClass Ret = _SecondObjectClass;
-            if( null == Ret )
-            {
-                ICswNbtMetaDataObject TryRet = SecondMetaDataObject();
-                CswNbtMetaDataObjectClass TryCast = TryRet as CswNbtMetaDataObjectClass;
-                if( null != TryCast )
-                {
-                    Ret = TryCast;
-                }
-            }
-            return Ret;
-        }
-
-        public ICswNbtMetaDataObject SecondMetaDataObject()
-        {
-            ICswNbtMetaDataObject Ret = null;
+            ICswNbtMetaDataDefinitionObject Ret = null;
             if( Int32.MinValue != SecondId )
             {
                 if( SecondType == NbtViewRelatedIdType.ObjectClassId )
                 {
-                    _SecondObjectClass = _CswNbtResources.MetaData.getObjectClass( SecondId );
-                    Ret = _SecondObjectClass;
+                    Ret = _CswNbtResources.MetaData.getObjectClass( SecondId );
                 }
                 else if( SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
-                    _SecondNodeType = _CswNbtResources.MetaData.getNodeType( SecondId );
-                    Ret = _SecondNodeType;
+                    Ret = _CswNbtResources.MetaData.getNodeType( SecondId );
                 }
                 else if( SecondType == NbtViewRelatedIdType.PropertySetId )
                 {

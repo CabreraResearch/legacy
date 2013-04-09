@@ -133,6 +133,7 @@ namespace ChemSW.Nbt.MetaData
             }
             return _BarcodeProp;
         }
+        public bool HasLabel { get { return false; } }
 
         public Collection<Int32> getObjectClassPropIds()
         {

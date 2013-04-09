@@ -244,16 +244,16 @@ namespace ChemSW.Nbt.WebServices
 
                         if( null != TryRel )
                         {
-                            CswNbtMetaDataNodeType Nt = TryRel.getSecondNodeType();
-                            if( null != Nt )
+                            ICswNbtMetaDataDefinitionObject MdDef = TryRel.SecondMetaDataObject();
+                            if( null != MdDef )
                             {
-                                if( Nt.HasLabel )
+                                if( MdDef.HasLabel )
                                 {
-                                    MultiPrintNodeTypeId = Nt.NodeTypeId;
+                                    //This assumes that only NodeTypes will implement this property
+                                    MultiPrintNodeTypeId = MdDef.UniqueId;
                                     ValidForGridPrint = true;
                                 }
                             }
-                            //No else, we don't have "Multi" support for ObjectClass views
                         }
                     }
                     

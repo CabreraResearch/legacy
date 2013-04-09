@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.MetaData
             }
             return _BarcodeProp;
         }
-
+        public bool HasLabel { get { return false; } }
     }//CswNbtMetaDataPropertySet
 
 }//namespace ChemSW.Nbt.MetaData
