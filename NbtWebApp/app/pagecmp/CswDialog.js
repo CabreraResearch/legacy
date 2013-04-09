@@ -313,7 +313,7 @@
                         viewid: state.viewid,
                         viewmode: state.viewmode,
                         selectednodeid: Csw.cookie.get('csw_currentnodeid'),
-                        author: Csw.cookie.get('csw_username')
+                        author: Csw.cookie.get(Csw.cookie.cookieNames.Username)
                     },
                     success: function (data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {

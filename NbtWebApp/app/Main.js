@@ -169,18 +169,12 @@ window.initMain = window.initMain || function (undefined) {
             }
 
             function handleImpersonation(userid, username, onSuccess) {
-                var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
+                //var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
                 Csw.ajax.post({
                     urlMethod: 'impersonate',
                     data: { UserId: userid },
                     success: function (data) {
                         if (Csw.bool(data.result)) {
-                            var original_u = Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername);
-                            if (false === Csw.isNullOrEmpty(original_u)) {
-                                u = original_u;
-                            }
-                            Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
-                            Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
                             Csw.tryExec(onSuccess);
                         }
                     } // success
@@ -227,8 +221,6 @@ window.initMain = window.initMain || function (undefined) {
                             urlMethod: 'endImpersonation',
                             success: function (data) {
                                 if (Csw.bool(data.result)) {
-                                    Csw.cookie.set(Csw.cookie.cookieNames.Username, Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername));
-                                    Csw.cookie.clear(Csw.cookie.cookieNames.OriginalUsername);
                                     Csw.goHome();
                                 }
                             } // success
@@ -315,17 +307,20 @@ window.initMain = window.initMain || function (undefined) {
                 return ret;
             }
 
-            function setUsername(username, customerid) {
-                if (Csw.isNullOrEmpty(Csw.clientSession.currentAccessId())) {
-                    Csw.clientSession.setAccessId(customerid);
-                }
-                Csw.clientSession.setUsername(username);
-                Csw.main.headerUsername.text(username + '@' + Csw.clientSession.currentAccessId())
+            function setUsername() {
+                var originalU = Csw.clientSession.originalUserName();
+                var currentU = Csw.clientSession.currentUserName();
+                if (Csw.isNullOrEmpty(originalU)) {
+                    Csw.main.headerUsername.text(currentU + '@' + Csw.clientSession.currentAccessId())
+                        .$.hover(function() { $(this).prop('title', Csw.clientSession.getExpireTime()); });
+                } else {
+                    Csw.main.headerUsername.text(originalU + ' as ' + currentU + '@' + Csw.clientSession.currentAccessId())
                     .$.hover(function () { $(this).prop('title', Csw.clientSession.getExpireTime()); });
             }
+            }
 
-            Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj, extraParams) {
-                setUsername(extraParams.username, extraParams.customerid);
+            Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
+                setUsername();
             });
 
 
@@ -339,8 +334,8 @@ window.initMain = window.initMain || function (undefined) {
 
             function initAll(onSuccess) {
                 Csw.main.centerBottomDiv.$.CswLogin('init', {
-                    'onAuthenticate': function (u) {
-                        setUsername(u);
+                    'onAuthenticate': function () {
+                        setUsername();
                         refreshDashboard(function () { _headerInitDone.dash = true; _finishInitAll(onSuccess); });
                         refreshHeaderMenu(function () { _headerInitDone.menu = true; _finishInitAll(onSuccess); });
                         universalsearch = Csw.composites.universalSearch(null, {
