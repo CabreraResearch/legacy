@@ -103,10 +103,11 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
                             if( null == RelatedNodeType ||
-                                 false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
-                                            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
+                                false == RelationshipNtp.FkMatches( RelatedNodeType, true ) )
+                                //false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                                //              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
+                                //            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                //              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
                             {
                                 AddThisNodeType = false;
                             }

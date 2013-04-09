@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
         CswNbtMetaDataNodeType UoM_each_NT;
         CswNbtMetaDataNodeType UoM_vol_NT;
         CswNbtMetaDataObjectClassProp nameOCP;
-        CswNbtMetaDataNodeTypeProp legacyIdNTP;
+        //CswNbtMetaDataNodeTypeProp legacyIdNTP;
 
         CswNbtMetaDataNodeType sizeNT;
         CswNbtMetaDataNodeTypeProp catalogNTP;

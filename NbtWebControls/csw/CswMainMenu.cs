@@ -878,7 +878,7 @@ namespace ChemSW.NbtWebControls
                     CswNbtMetaDataNodeType SelectedNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId );
                     if( SelectedNodeType != null )
                     {
-                        CswNbtMetaDataNodeTypeProp BarcodeProperty = SelectedNodeType.getBarcodeProperty();
+                        CswNbtMetaDataNodeTypeProp BarcodeProperty = (CswNbtMetaDataNodeTypeProp) SelectedNodeType.getBarcodeProperty();
                         if( BarcodeProperty != null )
                         {
                             PrintLabelMenuItem.Visible = true;

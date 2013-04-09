@@ -8,7 +8,7 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataObjectClass>
+    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
     {
         public const string IconPrefix16 = "Images/newicons/16/";
         public const string IconPrefix18 = "Images/newicons/18/";
@@ -108,6 +108,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypesLatestVersion( ObjectClassId );
         }
 
+        public CswNbtMetaDataPropertySet getPropertySet()
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySetForObjectClass( ObjectClassId );
+        }
+
         public CswNbtMetaDataNodeType FirstNodeType
         {
             get
@@ -117,7 +122,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
-        public CswNbtMetaDataObjectClassProp getBarcodeProp()
+        public ICswNbtMetaDataProp getBarcodeProperty()
         {
             if( null == _BarcodeProp )
             {

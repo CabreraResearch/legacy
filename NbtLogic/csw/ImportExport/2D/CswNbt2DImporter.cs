@@ -446,14 +446,24 @@ namespace ChemSW.Nbt.ImportExport
                                                 foreach( CswNbt2DRowRelationship RowRelationship in RowRelationships )
                                                 {
                                                     CswNbt2DOrder TargetOrder = null;
-                                                    if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
-                                                    {
-                                                        TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.NodeTypeId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
-                                                    }
-                                                    else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
-                                                    {
-                                                        TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.ObjectClassId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
-                                                    }
+
+                                                    //if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                                                    //{
+                                                    //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.NodeTypeId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
+                                                    //}
+                                                    //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                                                    //{
+                                                    //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => o.NodeType.ObjectClassId == RowRelationship.Relationship.FKValue && o.Instance == RowRelationship.Instance );
+                                                    //}
+                                                    //else if( RowRelationship.Relationship.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                                                    //{
+                                                    //    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => null != o.NodeType.getObjectClass().getPropertySet() && 
+                                                    //                                                                     o.NodeType.getObjectClass().getPropertySet().PropertySetId == RowRelationship.Relationship.FKValue && 
+                                                    //                                                                     o.Instance == RowRelationship.Instance );
+                                                    //}
+
+                                                    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
+
                                                     if( null != TargetOrder )
                                                     {
                                                         Node.Properties[RowRelationship.Relationship].SetPropRowValue(

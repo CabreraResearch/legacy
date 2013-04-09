@@ -337,6 +337,18 @@ namespace ChemSW.Nbt
 
         /// <summary>
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
+        /// For adding a property set to the root level of the view
+        /// </summary>
+        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataPropertySet PropertySet, bool IncludeDefaultFilters )
+        {
+            CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, PropertySet, IncludeDefaultFilters );
+            if( this.Root != null )
+                this.Root.AddChild( NewRelationship );
+            return NewRelationship;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by a property
         /// </summary>
         public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, ICswNbtMetaDataProp Prop, bool IncludeDefaultFilters )
@@ -402,7 +414,7 @@ namespace ChemSW.Nbt
                 switch( FieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-                        CswNbtMetaDataNodeTypeProp BarcodeNtp = NodeType.getBarcodeProperty();
+                        CswNbtMetaDataNodeTypeProp BarcodeNtp = (CswNbtMetaDataNodeTypeProp) NodeType.getBarcodeProperty();
                         if( null != BarcodeNtp )
                         {
                             return AddViewProperty( ParentViewRelationship, BarcodeNtp );
@@ -1176,10 +1188,15 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisRelationship.SecondId );
                     ret = ret && ( ThisNodeType != null );
                 }
-                else
+                else if( ThisRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
                 {
                     CswNbtMetaDataObjectClass ThisObjectClass = _CswNbtResources.MetaData.getObjectClass( ThisRelationship.SecondId );
                     ret = ret && ( ThisObjectClass != null );
+                }
+                else if( ThisRelationship.SecondType == NbtViewRelatedIdType.PropertySetId )
+                {
+                    IEnumerable<CswNbtMetaDataObjectClass> ObjectClasses = _CswNbtResources.MetaData.getObjectClassesByPropertySetId( ThisRelationship.SecondId );
+                    ret = ret && ObjectClasses.Any( ThisObjectClass => ThisObjectClass != null );
                 }
 
                 // Recurse
@@ -1212,10 +1229,11 @@ namespace ChemSW.Nbt
             bool ReturnVal = false;
             foreach( CswNbtViewRelationship CurrentRelationship in Relationships )
             {
-                if( ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.FirstType ) &&
-                     ( CurrentRelationship.FirstId == NodeType.FirstVersionNodeTypeId ) ) ||
-                    ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
-                     ( CurrentRelationship.SecondId == NodeType.FirstVersionNodeTypeId ) ) )
+                //if( ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.FirstType ) &&
+                //     ( CurrentRelationship.FirstId == NodeType.FirstVersionNodeTypeId ) ) ||
+                //    ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
+                //     ( CurrentRelationship.SecondId == NodeType.FirstVersionNodeTypeId ) ) )
+                if( CurrentRelationship.FirstMatches( NodeType, IgnoreVersions: true ) || CurrentRelationship.SecondMatches( NodeType, IgnoreVersions: true ) )
                 {
                     ReturnVal = true;
                     break;

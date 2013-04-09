@@ -14,7 +14,7 @@ using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
+    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypeRow;
@@ -585,7 +585,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private CswNbtMetaDataNodeTypeProp _BarcodeProperty;
-        public CswNbtMetaDataNodeTypeProp getBarcodeProperty()
+        public ICswNbtMetaDataProp getBarcodeProperty()
         {
             if( _BarcodeProperty == null )
             {

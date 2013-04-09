@@ -821,15 +821,20 @@ namespace ChemSW.Nbt.WebPages
                         {
                             // Get settings from the form
                             //NewIsFk = true;
-                            if( TargetValue.Substring( 0, "nt_".Length ) == "nt_" )
+                            if( TargetValue.StartsWith( "nt_" ) )
                             {
                                 NewFKType = NbtViewRelatedIdType.NodeTypeId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "nt_".Length ) );
                             }
-                            else
+                            else if( TargetValue.StartsWith( "oc_" ) )
                             {
                                 NewFKType = NbtViewRelatedIdType.ObjectClassId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "oc_".Length ) );
+                            }
+                            else if( TargetValue.StartsWith( "ps_" ) )
+                            {
+                                NewFKType = NbtViewRelatedIdType.PropertySetId.ToString();
+                                NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "ps_".Length ) );
                             }
                         }
                     }
@@ -1715,10 +1720,15 @@ namespace ChemSW.Nbt.WebPages
                                     if( PropRow["fktype"].ToString() != String.Empty &&
                                         PropRow["fkvalue"].ToString() != String.Empty )
                                     {
-                                        if( ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                              PropRow["fkvalue"].ToString() == SelectedNodeType.FirstVersionNodeTypeId.ToString() ) ||
-                                            ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                              PropRow["fkvalue"].ToString() == SelectedNodeType.ObjectClassId.ToString() ) )
+                                        //if( ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                                        //      PropRow["fkvalue"].ToString() == SelectedNodeType.FirstVersionNodeTypeId.ToString() ) ||
+                                        //    ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                        //      PropRow["fkvalue"].ToString() == SelectedNodeType.ObjectClassId.ToString() ) )
+                                        if( CswNbtViewRelationship.Matches( Master.CswNbtResources,
+                                                                            PropRow["fktype"].ToString(),
+                                                                            CswConvert.ToInt32( PropRow["fkvalue"] ),
+                                                                            SelectedNodeType,
+                                                                            true ) )
                                         {
                                             CswNbtMetaDataNodeTypeProp ThisNTProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropRow["propid"] ) );
                                             CswNbtMetaDataObjectClassProp ThisOCProp = ThisNTProp.getObjectClassProp();
@@ -2374,13 +2384,22 @@ namespace ChemSW.Nbt.WebPages
                                                               Master.CswNbtResources.MetaData.getNodeType(RelationshipProp.FKValue)
                                                           };
                                     }
-                                    else
+                                    else if( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
                                     {
-                                        CswNbtMetaDataObjectClass RelatedObjectClass =
-                                            Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
+                                        CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
                                         if( RelatedObjectClass != null )
                                         {
                                             NodeTypeCol = RelatedObjectClass.getNodeTypes();
+                                        }
+                                    }
+                                    else if( RelationshipProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                                    {
+                                        foreach( CswNbtMetaDataObjectClass RelatedObjectClass in Master.CswNbtResources.MetaData.getObjectClassesByPropertySetId( RelationshipProp.FKValue ) )
+                                        {
+                                            if( RelatedObjectClass != null )
+                                            {
+                                                NodeTypeCol.Union( RelatedObjectClass.getNodeTypes() );
+                                            }
                                         }
                                     }
 
@@ -2480,9 +2499,17 @@ namespace ChemSW.Nbt.WebPages
                             UnitValue.DataBind();
 
                             if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                            {
                                 UnitValue.SelectedNodeTypeFirstVersionId = SelectedNodeTypeProp.FKValue;
+                            }
                             else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                            {
                                 UnitValue.SelectedObjectClassId = SelectedNodeTypeProp.FKValue;
+                            }
+                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                            {
+                                UnitValue.SelectedPropertySetId = SelectedNodeTypeProp.FKValue;
+                            }
 
                             UnitRow.Cells[1].Controls.Add( UnitValue );
 
@@ -2636,9 +2663,17 @@ namespace ChemSW.Nbt.WebPages
                             TargetValue.DataBind();
 
                             if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                            {
                                 TargetValue.SelectedNodeTypeFirstVersionId = SelectedNodeTypeProp.FKValue;
+                            }
                             else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                            {
                                 TargetValue.SelectedObjectClassId = SelectedNodeTypeProp.FKValue;
+                            }
+                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                            {
+                                TargetValue.SelectedPropertySetId = SelectedNodeTypeProp.FKValue;
+                            }
 
                             TargetRow.Cells[1].Controls.Add( TargetValue );
 
