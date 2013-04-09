@@ -291,7 +291,7 @@
 
                             cswPrivate.titleDiv.empty();
                             if (cswPrivate.showTitle) {
-                                cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
+                                cswPrivate.titleDiv.append(data.node.nodename);
                                 cswPrivate.titleDiv.show();
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
@@ -494,14 +494,18 @@
                 var nodeid = null;
                 if (node) {
                     nodeid = Csw.string(node.nodeid);
-                    var nodekey = node.nodekey;
                     if (nodeid !== cswPublic.getNodeId()) {
                         Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
+
                         cswPrivate.tabState.nodeid = nodeid;
-                        cswPrivate.tabState.nodekey = nodekey;
+                        cswPrivate.tabState.nodekey = node.nodekey;
+                        cswPrivate.tabState.nodename = node.nodename;
+                        cswPrivate.tabState.nodetypeid = node.nodetypeid;
+                        
                         cswPrivate.globalState.currentNodeId = nodeid;
                         cswPrivate.globalState.currentNodeLink = node.nodelink;
-                        cswPrivate.globalState.currentNodeKey = nodekey;
+                        cswPrivate.globalState.currentNodeKey = node.nodekey;
+                        cswPrivate.globalState.currentNodeTypeId = node.nodetypeid;
                     }
                 }
                 return nodeid;
