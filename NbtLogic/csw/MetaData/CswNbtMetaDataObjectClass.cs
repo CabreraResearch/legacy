@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
-        public CswNbtMetaDataObjectClassProp getBarcodeProp()
+        public ICswNbtMetaDataProp getBarcodeProperty()
         {
             if( null == _BarcodeProp )
             {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -69,6 +70,19 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataObjectClass> getObjectClasses()
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassesByPropertySetId( PropertySetId );
+        }
+
+        private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
+        public ICswNbtMetaDataProp getBarcodeProperty()
+        {
+            if( null == _BarcodeProp )
+            {
+                _BarcodeProp = ( from _Prop
+                                     in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByPropertySetId( PropertySetId )
+                                 where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                                 select _Prop ).FirstOrDefault();
+            }
+            return _BarcodeProp;
         }
 
     }//CswNbtMetaDataPropertySet

@@ -9,5 +9,6 @@ namespace ChemSW.Nbt.MetaData
     public interface ICswNbtMetaDataDefinitionObject
     {
         CswNbtView CreateDefaultView( bool includeDefaultFilters = true );
+        ICswNbtMetaDataProp getBarcodeProperty();
     }
 }
