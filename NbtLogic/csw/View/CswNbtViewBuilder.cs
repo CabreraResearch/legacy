@@ -133,33 +133,33 @@ namespace ChemSW.Nbt.Logic
         /// <summary>
         /// Fetches all props and all prop filters for a NodeType
         /// </summary>
-        private JObject _getVbProperties( NbtViewRelatedIdType Relationship, Int32 Pk )
+        private JObject _getVbProperties( NbtViewRelatedIdType RelationshipType, Int32 RelationshipId )
         {
             JObject ViewBuilderProps = new JObject();
 
-            if( Int32.MinValue != Pk )
+            if( Int32.MinValue != RelationshipId )
             {
                 IEnumerable<CswViewBuilderProp> ViewBuilderProperties = null;
-                if( Relationship == NbtViewRelatedIdType.NodeTypeId )
+                if( RelationshipType == NbtViewRelatedIdType.NodeTypeId )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Pk );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( RelationshipId );
                     Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
                     ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
                 }
-                else if( Relationship == NbtViewRelatedIdType.ObjectClassId )
+                else if( RelationshipType == NbtViewRelatedIdType.ObjectClassId )
                 {
-                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Pk );
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( RelationshipId );
                     ViewBuilderProperties = _getObjectClassProps( ObjectClass );
                 }
-                else if( Relationship == NbtViewRelatedIdType.PropertySetId )
+                else if( RelationshipType == NbtViewRelatedIdType.PropertySetId )
                 {
                     ViewBuilderProperties = new Collection<CswViewBuilderProp>();
-                    foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( Pk ) )
+                    foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( RelationshipId ) )
                     {
                         ViewBuilderProperties = ViewBuilderProperties.Union( _getObjectClassProps( ObjectClass ) );
                     }
                 }
-                ViewBuilderProps = _getVbProperties( ViewBuilderProperties, Relationship );
+                ViewBuilderProps = _getVbProperties( ViewBuilderProperties, RelationshipType );
             }
             return ViewBuilderProps;
         } // _getVbProperties()
