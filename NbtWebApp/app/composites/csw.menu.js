@@ -31,14 +31,13 @@
                 onLoginData: null,
                 onSuccess: null,
                 nodeTreeCheck: null,
-                nodeGrid: null,
                 Multi: false
             };
             var cswPublic = {};
 
             cswPrivate.getSelectedNodes = function (menuItemJson) {
-                var ret = {};
-                var selectedNodes = null;
+                var ret = Csw.object();
+                var selectedNodes = [];
 
                 if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
                     selectedNodes = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
@@ -55,7 +54,8 @@
                         };
                     });
                 }
-                if (Csw.isNullOrEmpty(ret)) {
+                if (Csw.isNullOrEmpty(ret) &&
+                    !Csw.isNullOrEmpty(menuItemJson.nodeid)) {
                     ret[menuItemJson.nodeid] = {
                         nodeid: menuItemJson.nodeid,
                         nodename: menuItemJson.nodename,
