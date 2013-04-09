@@ -645,7 +645,9 @@ namespace ChemSW.Nbt.Security
                 _initPermissionInfo( null, User, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
                 ret = _CswNbtPermitInfo.IsUberUser;
-                if( ( false == ret ) || ( true == MetaDataProp.ServerManaged ) ) //we already known that ( null != MetaDataProp ) 
+                if( ( false == ret ) || 
+                    ( MetaDataProp.ServerManaged ) ||
+                    ( ( MetaDataProp.ReadOnly ) || ( null != NodePropWrapper && NodePropWrapper.ReadOnly ) ) ) // case 29321
                 {
                     if( true == _CswNbtPermitInfo.NoExceptionCases )
                     {
@@ -678,7 +680,9 @@ namespace ChemSW.Nbt.Security
                 _initPermissionInfo( Role, null, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
                 ret = _CswNbtPermitInfo.IsUberUser;
-                if( false == ret )
+                if( ( false == ret ) || 
+                    ( MetaDataProp.ServerManaged ) ||
+                    ( ( MetaDataProp.ReadOnly ) || ( null != NodePropWrapper && NodePropWrapper.ReadOnly ) ) ) // case 29321
                 {
                     if( true == _CswNbtPermitInfo.NoExceptionCases )
                     {
@@ -703,27 +707,27 @@ namespace ChemSW.Nbt.Security
             bool ret = _CswNbtPermitInfo.NoExceptionCases;
 
             ret = ret || ( null == MetaDataTab || canTab( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
-            
+
             ret = ret &&
-                  // We've requested an Editable state
+                // We've requested an Editable state
                   ( _CswNbtPermitInfo.NodeTypePermission != NodeTypePermission.View ) &&
-                  // No one can write to servermanaged props
+                // No one can write to servermanaged props
                   ( false == MetaDataProp.ServerManaged ) &&
                   (
-                    // Anyone but an admin cannot write to read-only props  
-                    // but see case 29095; this is now handled in CswNbtSdTabsAndProps
-                    //( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
-                      //Buttons are always "writable"  
+                // Anyone but an admin cannot write to read-only props  
+                // but see case 29095; this is now handled in CswNbtSdTabsAndProps
+                //( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
+                //Buttons are always "writable"  
                       MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
                       (
-                          //This prop is not readonly OR
+                //This prop is not readonly OR
                           ( ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) ) ) ||
-                          //The prop is required AND readonly AND we're creating a new node
-                          //This was removed as part of Case 27984, and I think it was a mistake
-                          ( MetaDataProp.ReadOnly && MetaDataProp.IsRequired && _CswNbtResources.EditMode == NodeEditMode.Add && null != MetaDataProp.getAddLayout() )
+                //The prop is required AND readonly AND we're creating a new node
+                //This was removed as part of Case 27984, and I think it was a mistake
+                          ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == NodeEditMode.Add && null != MetaDataProp.getAddLayout() )
                       )
                   );
-            
+
             return ( ret );
 
         }//_isPropWritableImpl()
