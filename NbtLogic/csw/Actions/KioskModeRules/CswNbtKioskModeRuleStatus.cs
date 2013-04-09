@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 tree.goToNthChild( i );
                 CswNbtNode node = tree.getNodeForCurrentPosition();
                 CswNbtMetaDataNodeType nodeType = node.getNodeType();
-                CswNbtMetaDataNodeTypeProp barcodeProp = nodeType.getBarcodeProperty();
+                CswNbtMetaDataNodeTypeProp barcodeProp = (CswNbtMetaDataNodeTypeProp) nodeType.getBarcodeProperty();
 
                 if( null != barcodeProp )
                 {
