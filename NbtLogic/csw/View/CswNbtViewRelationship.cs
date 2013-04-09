@@ -1390,30 +1390,35 @@ namespace ChemSW.Nbt
 
         #region Matches
 
-        public bool FirstMatches( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
+        public bool FirstMatches( ICswNbtMetaDataDefinitionObject Compare, bool IgnoreVersions = false )
         {
-            return Matches( _CswNbtResources, FirstType, FirstId, CompareNT, IgnoreVersions );
-        }
-        public bool FirstMatches( CswNbtMetaDataObjectClass CompareOC )
-        {
-            return Matches( _CswNbtResources, FirstType, FirstId, CompareOC );
-        }
-        public bool FirstMatches( CswNbtMetaDataPropertySet ComparePS )
-        {
-            return Matches( _CswNbtResources, FirstType, FirstId, ComparePS );
+            return Matches( _CswNbtResources, FirstType, FirstId, Compare, IgnoreVersions );
         }
 
-        public bool SecondMatches( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
+        public bool SecondMatches( ICswNbtMetaDataDefinitionObject Compare, bool IgnoreVersions = false )
         {
-            return Matches( _CswNbtResources, SecondType, SecondId, CompareNT, IgnoreVersions );
+            return Matches( _CswNbtResources, SecondType, SecondId, Compare, IgnoreVersions );
         }
-        public bool SecondMatches( CswNbtMetaDataObjectClass CompareOC )
+
+        /// <summary>
+        /// Returns true if the relationship includes the provided NodeType
+        /// </summary>
+        public static bool Matches( CswNbtResources CswNbtResources, NbtViewRelatedIdType Type, Int32 Pk, ICswNbtMetaDataDefinitionObject Compare, bool IgnoreVersions = false )
         {
-            return Matches( _CswNbtResources, SecondType, SecondId, CompareOC );
-        }
-        public bool SecondMatches( CswNbtMetaDataPropertySet ComparePS )
-        {
-            return Matches( _CswNbtResources, SecondType, SecondId, ComparePS );
+            bool ret = false;
+            if( Compare is CswNbtMetaDataNodeType )
+            {
+                ret = Matches( CswNbtResources, Type, Pk, (CswNbtMetaDataNodeType) Compare, IgnoreVersions );
+            }
+            if( Compare is CswNbtMetaDataObjectClass )
+            {
+                ret = Matches( CswNbtResources, Type, Pk, (CswNbtMetaDataObjectClass) Compare );
+            }
+            if( Compare is CswNbtMetaDataPropertySet )
+            {
+                ret = Matches( CswNbtResources, Type, Pk, (CswNbtMetaDataPropertySet) Compare );
+            }
+            return ret;
         }
 
 

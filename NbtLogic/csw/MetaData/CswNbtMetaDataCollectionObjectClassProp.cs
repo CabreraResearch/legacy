@@ -87,6 +87,12 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getWhere( "where fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataObjectClassProp>();
         }
 
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassPropsByPropertySetId( Int32 PropertySetId )
+        {
+            return _CollImpl.getWhere( "where objectclasspropid in (select objectclasspropid from jct_propertyset_ocprop where propertysetid = " + PropertySetId + ")" ).Cast<CswNbtMetaDataObjectClassProp>();
+        }
+        
+
         private string _makeModuleWhereClause()
         {
             return @" (exists (select j.jctmoduleobjectclassid

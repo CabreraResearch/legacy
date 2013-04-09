@@ -414,7 +414,7 @@ namespace ChemSW.Nbt
                 switch( FieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-                        CswNbtMetaDataNodeTypeProp BarcodeNtp = NodeType.getBarcodeProperty();
+                        CswNbtMetaDataNodeTypeProp BarcodeNtp = (CswNbtMetaDataNodeTypeProp) NodeType.getBarcodeProperty();
                         if( null != BarcodeNtp )
                         {
                             return AddViewProperty( ParentViewRelationship, BarcodeNtp );
