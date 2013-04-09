@@ -18,7 +18,7 @@
             var updateValues = function(originalData) {
 
                 Csw.iterate(attributes, function(propVal, propName) {
-                    if (originalData.hasOwnProperty(propName)) {
+                    if (originalData && originalData.hasOwnProperty && originalData.hasOwnProperty(propName)) {
                         originalData[propName] = propVal;
                         wasModified = true;
                     } else {
