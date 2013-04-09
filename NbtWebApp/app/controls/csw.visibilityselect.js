@@ -94,7 +94,7 @@
 
             cswPublic.getSelected = function() {
                 var ret = {
-                    visibility: cswPrivate.visibilitySelect.val(),
+                    visibility: cswPrivate.visibilitySelect ? cswPrivate.visibilitySelect.val() : null,
                     roleid: '',
                     userid: ''
                 };

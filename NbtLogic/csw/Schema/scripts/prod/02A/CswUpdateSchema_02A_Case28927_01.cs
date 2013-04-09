@@ -79,6 +79,7 @@ namespace ChemSW.Nbt.Schema
                                     CswNbtObjClassLocation CurrentLocationNode = TreeOfLocations.getNodeForCurrentPosition();
                                     CurrentLocationNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroupNode.NodeId;
                                     CurrentLocationNode.postChanges( true );
+                                    TreeOfLocations.goToParentNode(); 
 
                                 } // for( int idx = 0; idx < TotalTargetNodes; idx++ )
 
