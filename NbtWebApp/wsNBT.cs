@@ -390,18 +390,24 @@ namespace ChemSW.Nbt.WebServices
 
                 if( _CswNbtResources.CurrentNbtUser.Username.Equals( CswNbtObjClassUser.ChemSWAdminUsername ) )
                 {
-                    CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
-
-                    string OriginalAccessId = _CswNbtResources.CswSessionManager.getOriginalAccessId();
-
+                    // Return to NBT Manager schema and user who initially logged in
+                    string OriginalAccessId = _CswNbtResources.CswSessionManager.getOriginalAccessId;
                     _CswNbtResources.AccessId = OriginalAccessId;
-                    CswNbtObjClassUser UserNode = ws.getCswAdmin( OriginalAccessId );
 
-                    // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
-                    _CswNbtResources.CswSessionManager.changeSchema( OriginalAccessId, CswNbtObjClassUser.ChemSWAdminUsername, UserNode.UserId, ClearLastAccessId: true );
+                    string NbtMgrUserName = _CswNbtResources.CswSessionManager.NbtMgrUserName;
+                    CswPrimaryKey NbtMgrUserId = _CswNbtResources.CswSessionManager.NbtMgrUserId;
+                    if( null != NbtMgrUserId )
+                    {
+                        CswNbtObjClassUser OriginalUserNode = _CswNbtResources.Nodes.GetNode( NbtMgrUserId );
+                        if( null != OriginalUserNode )
+                        {
+                            // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
+                            _CswNbtResources.CswSessionManager.changeSchema( OriginalAccessId, NbtMgrUserName, OriginalUserNode.UserId, ClearLastAccessId: true );
 
-                    ReturnVal["username"] = CswNbtObjClassUser.ChemSWAdminUsername;
-                    ReturnVal["customerid"] = _CswNbtResources.AccessId;
+                            ReturnVal["username"] = NbtMgrUserName;
+                            ReturnVal["customerid"] = _CswNbtResources.AccessId;
+                        }
+                    }
                 }
 
                 CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
