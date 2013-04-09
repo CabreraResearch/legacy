@@ -181,34 +181,37 @@ namespace ChemSW.Nbt.ServiceDrivers
                         RelatedNodePk.FromString( RelatedNodeId );
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                         {
-                            Int32 RelatedNodeTypePk = CswConvert.ToInt32( RelatedNodeTypeId );
-                            Int32 RelatedObjectClassPk = CswConvert.ToInt32( RelatedObjectClassId );
+                            //Int32 RelatedNodeTypePk = CswConvert.ToInt32( RelatedNodeTypeId );
+                            //Int32 RelatedObjectClassPk = CswConvert.ToInt32( RelatedObjectClassId );
+                            CswNbtMetaDataNodeType RelatedNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( RelatedNodeTypeId ) );
+                            CswNbtMetaDataObjectClass RelatedOC = _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( RelatedObjectClassId ) );
 
-                            if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk )
-                            {
-                                CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypePk );
-                                if( null != RelatedNodeType )
-                                {
-                                    RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
-                                }
-                            }
+                            //if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk )
+                            //{
+                            //    CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypePk );
+                            //    if( null != RelatedNodeType )
+                            //    {
+                            //        RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
+                            //    }
+                            //}
 
-                            if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue != RelatedObjectClassPk )
+                            //if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue != RelatedObjectClassPk )
+                            //{
+                            foreach( CswNbtNodePropRelationship Relationship in from _Prop
+                                                                                    in Ret.Properties
+                                                                                where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                                                                                      ( _Prop.AsRelationship.TargetMatches( RelatedNT ) ||
+                                                                                        _Prop.AsRelationship.TargetMatches( RelatedOC ) )
+                                                                                //( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
+                                                                                //    _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
+                                                                                // ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
+                                                                                //    _Prop.AsRelationship.TargetId == RelatedObjectClassPk ) )
+                                                                                select _Prop )
                             {
-                                foreach( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                        in Ret.Properties
-                                                                                    where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                                                                                      ( ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
-                                                                                          _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
-                                                                                       ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
-                                                                                          _Prop.AsRelationship.TargetId == RelatedObjectClassPk ) )
-                                                                                    select _Prop )
-                                {
-                                    Relationship.RelatedNodeId = RelatedNodePk;
-                                    Ret.postChanges( ForceUpdate : false );
-                                }
+                                Relationship.RelatedNodeId = RelatedNodePk;
+                                Ret.postChanges( ForceUpdate: false );
                             }
-                        }
+                        } // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                     }
                 }
             }

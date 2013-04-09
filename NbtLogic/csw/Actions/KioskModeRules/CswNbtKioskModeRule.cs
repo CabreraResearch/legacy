@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             ICswNbtTree tree = null;
             CswNbtMetaDataObjectClass metaDataOC = _CswNbtResources.MetaData.getObjectClass( ObjClass );
-            CswNbtMetaDataObjectClassProp barcodeOCP = metaDataOC.getBarcodeProp();
+            CswNbtMetaDataObjectClassProp barcodeOCP = (CswNbtMetaDataObjectClassProp) metaDataOC.getBarcodeProperty();
             if( null != barcodeOCP )
             {
                 CswNbtView view = new CswNbtView( _CswNbtResources );

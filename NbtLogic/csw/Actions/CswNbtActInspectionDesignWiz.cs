@@ -746,7 +746,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp InspectionGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
                 CswNbtViewRelationship InspectionTargetVr = RetView.AddViewRelationship( InspectionGroupVr, NbtViewPropOwnerType.Second, InspectionGroupNtp, true );
 
-                CswNbtMetaDataNodeTypeProp BarcodeNtp = InspectionTargetNt.getBarcodeProperty();
+                CswNbtMetaDataNodeTypeProp BarcodeNtp = (CswNbtMetaDataNodeTypeProp) InspectionTargetNt.getBarcodeProperty();
                 RetView.AddViewProperty( InspectionTargetVr, BarcodeNtp ).Order = 0;
 
                 CswNbtMetaDataNodeTypeProp DescriptionNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Description );

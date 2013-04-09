@@ -24,6 +24,7 @@ namespace ChemSW.NbtWebControls
         /// </summary>
         public Int32 ConstrainToObjectClassId = Int32.MinValue;
 
+        private static string _PropertySetPrefix = "ps_";
         private static string _ObjectClassPrefix = "oc_";
         private static string _NodeTypePrefix = "nt_";
 
@@ -36,19 +37,48 @@ namespace ChemSW.NbtWebControls
 
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                if( ConstrainToObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainToObjectClassId ) 
+                if( ConstrainToObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainToObjectClassId )
+                {
                     this.Items.Add( new ListItem( NodeType.NodeTypeName, _NodeTypePrefix + NodeType.FirstVersionNodeTypeId.ToString() ) );
+                }
             }
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
                 if( ConstrainToObjectClassId == Int32.MinValue || ObjectClass.ObjectClassId == ConstrainToObjectClassId )
+                {
                     this.Items.Add( new ListItem( "All " + ObjectClass.ObjectClass.ToString(), _ObjectClassPrefix + ObjectClass.ObjectClassId.ToString() ) );
+                }
+            }
+
+            foreach( CswNbtMetaDataPropertySet PropertySet in _CswNbtResources.MetaData.getPropertySets() )
+            {
+                if( ConstrainToObjectClassId == Int32.MinValue )
+                {
+                    this.Items.Add( new ListItem( "All " + PropertySet.Name.ToString(), _PropertySetPrefix + PropertySet.PropertySetId.ToString() ) );
+                }
             }
 
             base.DataBind();
         }
 
+        public Int32 SelectedPropertySetId
+        {
+            get
+            {
+                EnsureChildControls();
+                Int32 ret = Int32.MinValue;
+                if( this.SelectedValue != string.Empty && this.SelectedValue.StartsWith( _PropertySetPrefix ) )
+                    ret = Convert.ToInt32( this.SelectedValue.Substring( _PropertySetPrefix.Length ) );
+                return ret;
+            }
+            set
+            {
+                string NewValue = _PropertySetPrefix + value.ToString();
+                if( this.Items.FindByValue( NewValue ) != null )
+                    this.SelectedValue = NewValue;
+            }
+        }
         public Int32 SelectedObjectClassId
         {
             get
@@ -116,7 +146,11 @@ namespace ChemSW.NbtWebControls
                 SelectedType = NbtViewRelatedIdType.ObjectClassId;
                 SelectedVal = SelectedObjectClassId;
             }
-
+            else if( this.SelectedValue.StartsWith( _PropertySetPrefix ) )
+            {
+                SelectedType = NbtViewRelatedIdType.PropertySetId;
+                SelectedVal = SelectedPropertySetId;
+            }
             if( SelectedNodeTypeChanged != null )
                 SelectedNodeTypeChanged( SelectedType, SelectedVal );
         }
