@@ -117,7 +117,7 @@
             
             cswPublic.getSelectedNodes = function () {
                 var nodes = [];
-                cswPublic.grid.getSelection(function (rawRow) {
+                cswPublic.grid.iterateRows(function (rawRow) {
                     nodes.push({
                         nodeid: rawRow.nodeid,
                         nodename: rawRow.nodename
