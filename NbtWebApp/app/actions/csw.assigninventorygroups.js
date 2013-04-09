@@ -113,7 +113,7 @@
                     }
 
                     inventoryGroupSelect = select_inventory_group_cell.span().nodeSelect({
-                    name: 'intentory_group_select',
+                    name: 'Inventory Group',
                     objectClassName: 'InventoryGroupClass',
                     selectedNodeId: selected_node_id,
                     allowAdd: true,
@@ -132,7 +132,9 @@
             //check_children_of_current_check_box.checked 
             function initCheckBox() {
 
+                include_children_checkbox_label_cell.empty();
                 include_children_checkbox_label_cell.span({ text: 'Include Children:' }).addClass('propertylabel');
+
                 include_children_checkbox_cell.empty();
                 check_children_of_current_check_box = include_children_checkbox_cell.input({
                     name: "include_children",

@@ -244,7 +244,9 @@ window.initMain = window.initMain || function (undefined) {
 
                 if (Csw.clientSession.isDebug(qs)) {
                     Csw.clientSession.enableDebug();
-                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
+                    if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
+                        Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
+                    }
                     Csw.setGlobalProp('homeUrl', 'Dev.html');
                 }
 
