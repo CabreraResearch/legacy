@@ -117,7 +117,7 @@
             
             cswPublic.getSelectedNodes = function () {
                 var nodes = [];
-                cswPublic.grid.iterateRows(function (rawRow) {
+                cswPublic.grid.iterateSelectedRowRaw(function (rawRow) {
                     nodes.push({
                         nodeid: rawRow.nodeid,
                         nodename: rawRow.nodename
@@ -130,7 +130,7 @@
 
             return cswPublic;
 
-        })();
+        });
         
 } ());
 

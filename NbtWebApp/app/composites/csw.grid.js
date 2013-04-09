@@ -772,7 +772,7 @@
                 return ret;
             });
 
-            cswPublic.iterateRows = Csw.method(function(callBack) {
+            cswPublic.iterateSelectedRowRaw = Csw.method(function(callBack) {
                 var selectedRows = cswPrivate.grid.getSelectionModel().getSelection();
                 Csw.iterate(selectedRows, function(row) {
                     callBack(row.raw);

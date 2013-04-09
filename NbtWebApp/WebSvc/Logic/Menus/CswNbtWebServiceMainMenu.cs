@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.WebServices
 
                         if( null != TryRel )
                         {
-                            ICswNbtMetaDataDefinitionObject MdDef = TryRel.SecondMetaDataObject();
+                            ICswNbtMetaDataDefinitionObject MdDef = TryRel.SecondMetaDataDefinitionObject();
                             if( null != MdDef )
                             {
                                 if( MdDef.HasLabel )
