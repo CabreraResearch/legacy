@@ -446,9 +446,8 @@ namespace ChemSW.Nbt
 
             foreach( DataRow Row in Ret.Rows )
             {
-                CswNbtView ThisView = new CswNbtView( _CswNbtResources );
-                ThisView.LoadXml( Row["viewxml"].ToString() );
-
+                CswNbtViewId ThisViewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
+                CswNbtView ThisView = restoreView( ThisViewId );
                 OutEnabledViews.Add( ThisView.ViewId, ThisView );
             }
             AllEnabledViews = OutEnabledViews;

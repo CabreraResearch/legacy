@@ -37,7 +37,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29245B() ) );          // 02A-015
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28535() ) );           // 02A-016
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case28706() ) );           // 02A-017
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29367() ) );           // 02A-018
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29368() ) );           // 02A-019
 
             #endregion ASPEN
 
