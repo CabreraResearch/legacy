@@ -760,7 +760,17 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         private bool _Searchable = true;
-        public bool Searchable { set { _Searchable = value; } get { return ( _Searchable ); } }
+        public bool Searchable
+        {
+            set
+            {
+                _Searchable = value;
+            }
+            get
+            {
+                return ( _Searchable );
+            }
+        }
 
         public override int GetHashCode()
         {

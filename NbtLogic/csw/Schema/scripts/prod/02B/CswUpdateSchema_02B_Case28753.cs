@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set searchable='1' where nodeid in (select nodeid from nbtdata where propname = 'Disposed' and field1='0')" );
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set searchable='1'" );
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set searchable='0' where nodeid in (select nodeid from nbtdata where propname = 'Disposed' and field1='1')" );
 
 
