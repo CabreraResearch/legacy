@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Represents a Property Set
     /// </summary>
-    public class CswNbtMetaDataPropertySet : ICswNbtMetaDataObject
+    public class CswNbtMetaDataPropertySet : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject
     {
         private DataRow _PropertySetRow;
         public DataRow _DataRow

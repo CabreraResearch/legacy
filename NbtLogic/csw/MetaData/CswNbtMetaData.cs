@@ -459,6 +459,24 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySetId );
         }
 
+        public ICswNbtMetaDataDefinitionObject getDefinitionObject( NbtViewRelatedIdType RelatedIdType, Int32 Id )
+        {
+            ICswNbtMetaDataDefinitionObject ret = null;
+            if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
+            {
+                ret = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( Id );
+            }
+            else if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
+            {
+                ret = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( Id );
+            }
+            else if( RelatedIdType == NbtViewRelatedIdType.PropertySetId )
+            {
+                ret = _CswNbtMetaDataResources.CswNbtResources.MetaData.getPropertySet( Id );
+            }
+            return ret;
+        }
+
         #endregion Selectors
 
         #region XML

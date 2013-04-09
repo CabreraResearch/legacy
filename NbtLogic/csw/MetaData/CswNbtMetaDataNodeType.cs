@@ -14,7 +14,7 @@ using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
+    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypeRow;

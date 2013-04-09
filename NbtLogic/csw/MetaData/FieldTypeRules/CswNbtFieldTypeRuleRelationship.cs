@@ -109,37 +109,48 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     RetView.Root.ChildRelationships.Clear();
                 }
 
-                if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
+                //if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
+                //{
+                //    CswNbtMetaDataObjectClass TargetOc = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( inFKValue );
+                //    if( null == TargetOc )
+                //    {
+                //        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
+                //    }
+                //    RetView = TargetOc.CreateDefaultView();
+                //}
+                //else if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
+                //{
+                //    CswNbtMetaDataNodeType TargetNt = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeType( inFKValue );
+                //    if( null == TargetNt )
+                //    {
+                //        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
+                //    }
+                //    RetView = TargetNt.CreateDefaultView();
+                //}
+                //else if( RelatedIdType == NbtViewRelatedIdType.PropertySetId )
+                //{
+                //    CswNbtMetaDataPropertySet TargetPs = _CswNbtFieldResources.CswNbtResources.MetaData.getPropertySet( inFKValue );
+                //    if( null == TargetPs )
+                //    {
+                //        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to propertysetid: " + inFKValue + ", but the target is null." );
+                //    }
+                //    RetView = TargetPs.CreateDefaultView();
+                //}
+                //else
+                //{
+                //    throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Invalid RelatedIdType: " + RelatedIdType + "." );
+                //}
+
+                ICswNbtMetaDataDefinitionObject targetObj = _CswNbtFieldResources.CswNbtResources.MetaData.getDefinitionObject( RelatedIdType, inFKValue );
+                if( null != targetObj )
                 {
-                    CswNbtMetaDataObjectClass TargetOc = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( inFKValue );
-                    if( null == TargetOc )
-                    {
-                        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
-                    }
-                    RetView = TargetOc.CreateDefaultView();
-                }
-                else if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
-                {
-                    CswNbtMetaDataNodeType TargetNt = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeType( inFKValue );
-                    if( null == TargetNt )
-                    {
-                        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
-                    }
-                    RetView = TargetNt.CreateDefaultView();
-                }
-                else if( RelatedIdType == NbtViewRelatedIdType.PropertySetId )
-                {
-                    CswNbtMetaDataPropertySet TargetPs = _CswNbtFieldResources.CswNbtResources.MetaData.getPropertySet( inFKValue );
-                    if( null == TargetPs )
-                    {
-                        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to propertysetid: " + inFKValue + ", but the target is null." );
-                    }
-                    RetView = TargetPs.CreateDefaultView();
+                    RetView = targetObj.CreateDefaultView();
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Invalid RelatedIdType: " + RelatedIdType + "." );
+                    throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "_setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
                 }
+
                 RetView.ViewId = MetaDataProp.ViewId;
                 RetView.Visibility = NbtViewVisibility.Property;
                 RetView.ViewMode = NbtViewRenderingMode.Tree;

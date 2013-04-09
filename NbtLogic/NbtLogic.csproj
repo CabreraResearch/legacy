@@ -126,6 +126,7 @@
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromRapidLoader.cs" />
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromXml.cs" />
     <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
+    <Compile Include="csw\MetaData\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataCollectionPropertySet.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
@@ -621,7 +622,7 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleViewPickList.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleViewReference.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\ICswNbtFieldTypeRule.cs" />
-    <Compile Include="csw\MetaData\ICswNbtMetaDataObject.cs" />
+    <Compile Include="csw\MetaData\ICswNbtMetaDataDefinitionObject.cs" />
     <Compile Include="csw\MetaData\ICswNbtMetaDataObjectCollection.cs" />
     <Compile Include="csw\MetaData\ICswNbtMetaDataProp.cs" />
     <Compile Include="csw\Modules\CswNbtModuleManager.cs" />
