@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Sched
@@ -16,7 +15,7 @@ namespace ChemSW.Nbt.Sched
         {
             get { return ( _LogicRunStatus ); }
         }
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
+
         private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
@@ -24,21 +23,23 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.TierII.ToString() ); }
+            get { return ( NbtScheduleRuleNames.TierII ); }
         }
 
         #endregion Properties
 
         #region Scheduler Methods
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
+            _CswScheduleLogicDetail = LogicDetail;
         }
 
-        public bool hasLoad( ICswResources CswResources )
+        //This rule always has 'work' to do, but the stored procedure won't do anything if it already ran in the same day
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            return ( true );
+            _CswScheduleLogicDetail.LoadCount = 1;
+            return _CswScheduleLogicDetail.LoadCount;
         }
 
         public void stop()
@@ -55,10 +56,7 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
-
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-
-
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {

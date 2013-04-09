@@ -3,29 +3,26 @@ using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {
-
     public class CswScheduleLogicNbtGenEmailRpt : ICswScheduleLogic
     {
-
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.GenEmailRpt.ToString() ); }
+            get { return ( NbtScheduleRuleNames.GenEmailRpt ); }
         }
 
-        public bool hasLoad( ICswResources CswResources )
+        //Determine the number of mail report nodes that need to run and return that value
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-
-        }//hasLoad()
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( ( CswNbtResources ) CswResources );
+            Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
+            _CswScheduleLogicDetail.LoadCount = MailReports.Count;
+            return _CswScheduleLogicDetail.LoadCount;
+        }
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
@@ -39,17 +36,12 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
+            _CswScheduleLogicDetail = LogicDetail;
         }//initScheduleLogicDetail() 
-
-
-
 
         public void threadCallBack( ICswResources CswResources )
         {
@@ -189,7 +181,7 @@ namespace ChemSW.Nbt.Sched
                         CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( CswNbtResources );
                         BatchOp.makeBatchOp( MailReportIdsToRun );
                     }
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
 
@@ -198,7 +190,7 @@ namespace ChemSW.Nbt.Sched
 
                     _CswScheduleLogicDetail.StatusMessage = "An exception occurred: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
+                    _LogicRunStatus = LogicRunStatus.Failed;
 
                 }//catch
             }//if we're not shutting down
@@ -212,7 +204,7 @@ namespace ChemSW.Nbt.Sched
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
+            _LogicRunStatus = LogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtGenEmailRpt
 

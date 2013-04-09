@@ -3,7 +3,6 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -20,7 +19,6 @@ namespace ChemSW.Nbt.Sched
             set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
@@ -28,24 +26,25 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.Reconciliation.ToString() ); }
+            get { return ( NbtScheduleRuleNames.Reconciliation ); }
         }
 
         #endregion Properties
 
         #region Scheduler Methods
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetailIn )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetailIn;
+            _CswScheduleLogicDetail = LogicDetail;
         }
 
-
-        public bool hasLoad( ICswResources CswResources )
+        //Returns the number of ContainerLocation nodes that require action
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            CswNbtView ContainerLocationsView = getOutstandingContainerLocations( ( CswNbtResources ) CswResources );
+            CswCommaDelimitedString ContainerLocations = getContainerLocationIds( ( CswNbtResources ) CswResources, ContainerLocationsView );
+            _CswScheduleLogicDetail.LoadCount = ContainerLocations.Count;
+            return _CswScheduleLogicDetail.LoadCount;
         }
 
         public void stop()

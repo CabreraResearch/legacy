@@ -4,28 +4,22 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 
 namespace ChemSW.Nbt.Sched
 {
-
     public class CswScheduleLogicNbtUpdtMTBF : ICswScheduleLogic
     {
-
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.UpdtMTBF.ToString() ); }
+            get { return ( NbtScheduleRuleNames.UpdtMTBF ); }
         }
 
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
-        public bool hasLoad( ICswResources CswResources )
+        //This rule always has work to do
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            _CswScheduleLogicDetail.LoadCount = 1;
+            return _CswScheduleLogicDetail.LoadCount;
         }
-
-
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
         public LogicRunStatus LogicRunStatus
@@ -39,11 +33,9 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-
-
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
+            _CswScheduleLogicDetail = LogicDetail;
         }
 
         public void threadCallBack( ICswResources CswResources )
@@ -57,13 +49,11 @@ namespace ChemSW.Nbt.Sched
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
-
                 try
                 {
-
                     // BZ 6779
                     // Set all MTBF fields pendingupdate = 1
-                    Int32 MTBFId = CswNbtResources.MetaData.getFieldType( ChemSW.Nbt.MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId;
+                    Int32 MTBFId = CswNbtResources.MetaData.getFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId;
 
                     CswTableSelect NTPSelect = CswNbtResources.makeCswTableSelect( "UpdateMTBF_NTP_Select", "nodetype_props" );
                     DataTable NTPTable = NTPSelect.getTable( "fieldtypeid", MTBFId );
@@ -86,25 +76,20 @@ namespace ChemSW.Nbt.Sched
                     }
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
 
                 catch( Exception Exception )
                 {
-
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtMTBF::GetUpdatedItems() exception: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
-
+                    _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
-
-
 
             }//if we're not shutting down
 
         }//threadCallBack()
-
 
         public void stop()
         {
@@ -113,9 +98,8 @@ namespace ChemSW.Nbt.Sched
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
+            _LogicRunStatus = LogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtUpdtMTBF
-
 
 }//namespace ChemSW.Nbt.Sched

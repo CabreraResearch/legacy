@@ -2,25 +2,15 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.ObjClasses;
-
 
 namespace ChemSW.Nbt.Sched
 {
-
     public class CswScheduleLogicNbtDisableCswAdmin : ICswScheduleLogic
     {
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.DisableChemSwAdmin.ToString() ); }
-        }
-
-        public bool hasLoad( ICswResources CswResources )
-        {
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            get { return ( NbtScheduleRuleNames.DisableChemSwAdmin ); }
         }
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
@@ -31,20 +21,24 @@ namespace ChemSW.Nbt.Sched
 
 
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            //CswNbtResources.AuditContext = "Scheduler Task: Disable ChemSW Admin User";
-
+            _CswScheduleLogicDetail = LogicDetail;
         }//initScheduleLogicDetail()
 
-
+        //If chemsw_admin is locked, then there is no work to do
+        public Int32 getLoadCount( ICswResources CswResources )
+        {
+            CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
+            CswNbtObjClassUser ChemSWAdminUser = NbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+            _CswScheduleLogicDetail.LoadCount = ChemSWAdminUser.AccountLocked.Checked == Tristate.True ? 0 : 1;
+            return _CswScheduleLogicDetail.LoadCount;
+        }
 
         public void threadCallBack( ICswResources CswResources )
         {
@@ -81,7 +75,6 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtDisableCswAdmin::GetUpdatedItems() exception: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
@@ -90,9 +83,7 @@ namespace ChemSW.Nbt.Sched
 
             }//if we're not shutting down
 
-
         }//threadCallBack()
-
 
         public void stop()
         {
@@ -104,6 +95,5 @@ namespace ChemSW.Nbt.Sched
             _LogicRunStatus = LogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtDisableCswAdmin
-
 
 }//namespace ChemSW.Nbt.Sched
