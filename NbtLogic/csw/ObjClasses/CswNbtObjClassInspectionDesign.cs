@@ -433,8 +433,10 @@ namespace ChemSW.Nbt.ObjClasses
                 Cancel.setHidden( value: true, SaveToDb: false );
                 SetPreferred.setHidden( value: true, SaveToDb: false );
             }
-
-            SetPreferred.setHidden( value : _InspectionState.AllAnswered, SaveToDb : true );
+            else
+            {
+                SetPreferred.setHidden( value: _InspectionState.AllAnswered, SaveToDb: true );
+            }
             //// case 26584, 28155
             // removed by case 29095
             //Status.setReadOnly( value : false == _CswNbtResources.CurrentNbtUser.IsAdministrator(), SaveToDb : false );
