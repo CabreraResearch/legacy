@@ -11,6 +11,8 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropMol: CswNbtNodeProp
     {
+        public static readonly string MolImgFileName = "mol.jpeg";
+        public static readonly string MolImgFileContentType = "image/jpeg";
 
         public static implicit operator CswNbtNodePropMol( CswNbtNodePropWrapper PropWrapper )
         {

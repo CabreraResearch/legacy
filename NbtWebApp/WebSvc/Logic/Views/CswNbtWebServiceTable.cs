@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -154,17 +156,16 @@ namespace ChemSW.Nbt.WebServices
         {
             string ret = "";
 
-            CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-            CswNbtMetaDataNodeTypeProp MolProp = NodeType.getMolProperty();
+            CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
+            DataTable dt = ts.getTable( "where nodeid = " + NodeId.PrimaryKey + " and field1 = '" + CswNbtNodePropMol.MolImgFileName + "' and blobdata is not null" );
 
-            if( null != MolProp ) //if there's a mol prop, use that as the image
+            if( dt.Rows.Count > 0 ) //if there's a mol prop, use that as the image
             {
-                CswNbtNodePropMol prop = Node.Properties[MolProp];
-                int jctnodepropid = CswConvert.ToInt32( prop.JctNodePropId );
-                int nodetypepropid = CswConvert.ToInt32( prop.NodeTypePropId );
-                ret = CswNbtNodePropMol.getLink( jctnodepropid, Node.NodeId, nodetypepropid );
+                int jctnodepropid = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
+                int nodetypepropid = CswConvert.ToInt32( dt.Rows[0]["nodetypepropid"] );
+                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
             }
+
             // default image, overridden below
             else if( defaultIconFileName != string.Empty )
             {
