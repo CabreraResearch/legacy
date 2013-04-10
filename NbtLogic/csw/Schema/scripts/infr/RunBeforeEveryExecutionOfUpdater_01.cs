@@ -303,6 +303,11 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             string ScheduledRulesTableName = "scheduledrules";
+            string NextRunColumnName = "nextrun";
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( ScheduledRulesTableName, NextRunColumnName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addDateColumn( ScheduledRulesTableName, NextRunColumnName, "The next time the rule is scheduled to run", false, false );
+            }
 
             string PriorityColumnName = "priority";
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( ScheduledRulesTableName, PriorityColumnName ) )
