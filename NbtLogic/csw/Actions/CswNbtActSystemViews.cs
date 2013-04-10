@@ -284,7 +284,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     else if( FilterDefinition.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {
-                        ICswNbtMetaDataObject Object = PotentialSystemViewRelationship.SecondMetaDataObject();
+                        ICswNbtMetaDataObject Object = PotentialSystemViewRelationship.SecondMetaDataDefinitionObject();
                         SystemView.AddViewPropertyByFieldType( PotentialSystemViewRelationship, Object, FilterDefinition.FieldType );
                     }
                 }

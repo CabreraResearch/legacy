@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( Relationship.ChildRelationships.Count == 0 )
                 {
-                    ICswNbtMetaDataObject MetaObj = Relationship.SecondMetaDataObject();
+                    ICswNbtMetaDataObject MetaObj = Relationship.SecondMetaDataDefinitionObject();
                     if( MetaObj.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
                     {
                         if( SecondTypes.Count == 0 || 

@@ -80,9 +80,9 @@ namespace ChemSW.Nbt
         public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
         public string GroupByPropName { get { return _GroupByPropName; } }
 
-        public ICswNbtMetaDataObject SecondMetaDataObject()
+        public ICswNbtMetaDataDefinitionObject SecondMetaDataDefinitionObject()
         {
-            ICswNbtMetaDataObject Ret = null;
+            ICswNbtMetaDataDefinitionObject Ret = null;
             if( Int32.MinValue != SecondId )
             {
                 if( SecondType == NbtViewRelatedIdType.ObjectClassId )

@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -77,6 +78,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            CswNbtMetaDataObjectClassProp EnabledOcp = ObjectClass.getObjectClassProp( PropertyName.Enabled );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, EnabledOcp, Value: Tristate.True.ToString(), ShowInGrid: false );
+
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
         

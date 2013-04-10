@@ -772,6 +772,13 @@
                 return ret;
             });
 
+            cswPublic.iterateSelectedRowRaw = Csw.method(function(callBack) {
+                var selectedRows = cswPrivate.grid.getSelectionModel().getSelection();
+                Csw.iterate(selectedRows, function(row) {
+                    callBack(row.raw);
+                });
+            });
+
             cswPublic.getSelectedRowsVals = Csw.method(function (key) {
                 var ret = [];
                 Csw.each(cswPublic.getSelectedRows(), function (val) {
