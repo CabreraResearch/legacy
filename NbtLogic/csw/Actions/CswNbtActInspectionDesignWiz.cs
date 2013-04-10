@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Actions
                     string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
-                        TabName = _DefaultSectionName; //I messed with it.
+                        TabName = _DefaultSectionName;
                     }
                     if( false == RetDict.ContainsKey( TabName ) )
                     {
@@ -197,7 +197,6 @@ namespace ChemSW.Nbt.Actions
                         if( null == ThisTab )
                         {
                             TabCount += 1;
-                            //                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
                             ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabCount );
                         }
                         RetDict.Add( TabName, ThisTab );
