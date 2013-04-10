@@ -526,9 +526,9 @@ namespace ChemSW.Nbt.Actions
             }
             if( _targetAlreadyExists )
             {
-                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, true ) )
                 {
-                    if( SchedulingView.ViewName.Contains( "Scheduling, " ) )
+                    if( SchedulingView.ViewName.Contains( "Scheduling" ) && _isVisibleToCurrentUser( SchedulingView ) )
                     {
                         RetView = SchedulingView;
                         break;
@@ -570,7 +570,7 @@ namespace ChemSW.Nbt.Actions
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
+                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed: " + ex.StackTrace, ex );
                 }
             }
             RetView.SaveToCache( true );
@@ -594,9 +594,9 @@ namespace ChemSW.Nbt.Actions
             }
             if( _targetAlreadyExists )
             {
-                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, true ) )
                 {
-                    if( SchedulingView.ViewName.Contains( "Groups, " ) )
+                    if( SchedulingView.ViewName.Contains( "Groups" ) && _isVisibleToCurrentUser( SchedulingView ) )
                     {
                         RetView = SchedulingView;
                         break;
@@ -630,11 +630,18 @@ namespace ChemSW.Nbt.Actions
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed", ex );
+                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed: " + ex.StackTrace, ex );
                 }
             }
             RetView.SaveToCache( true );
             return RetView;
+        }
+
+        private bool _isVisibleToCurrentUser( CswNbtView View )
+        {
+            return View.Visibility == NbtViewVisibility.Global ||
+                     ( View.Visibility == _newViewVis && ( View.VisibilityRoleId.PrimaryKey == _VisId ||
+                                                            View.VisibilityUserId.PrimaryKey == _VisId ) );
         }
 
         private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType RetInspectionTargetNt )
