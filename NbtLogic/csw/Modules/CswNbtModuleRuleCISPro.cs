@@ -41,7 +41,8 @@ namespace ChemSW.Nbt
 
             // Case 28930 - Enable Scheduled Rules
             _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: false );
-
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.ExtChemDataSync, Disabled: false );
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.TierII, Disabled: false );
         }
 
         public override void OnDisable()
@@ -79,7 +80,8 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", NbtViewVisibility.Global );
             // Case 28930 - Enable Scheduled Rules
             _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: true );
-
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.ExtChemDataSync, Disabled: true );
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.TierII, Disabled: true );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

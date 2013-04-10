@@ -19,8 +19,13 @@ namespace ChemSW.Nbt.Sched
         //Determine the number of expired containers and return that value
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            ICswNbtTree ExpiredContainersTree = _getExpiredContainersTree( ( CswNbtResources ) CswResources );
-            _CswScheduleLogicDetail.LoadCount = ExpiredContainersTree.getChildNodeCount();
+            _CswScheduleLogicDetail.LoadCount = 0;
+            CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
+            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            {
+                ICswNbtTree ExpiredContainersTree = _getExpiredContainersTree( NbtResources );
+                _CswScheduleLogicDetail.LoadCount = ExpiredContainersTree.getChildNodeCount();
+            }
             return _CswScheduleLogicDetail.LoadCount;
         }
 

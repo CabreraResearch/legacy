@@ -41,9 +41,14 @@ namespace ChemSW.Nbt.Sched
         //Returns the number of ContainerLocation nodes that require action
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            CswNbtView ContainerLocationsView = getOutstandingContainerLocations( ( CswNbtResources ) CswResources );
-            CswCommaDelimitedString ContainerLocations = getContainerLocationIds( ( CswNbtResources ) CswResources, ContainerLocationsView );
-            _CswScheduleLogicDetail.LoadCount = ContainerLocations.Count;
+            _CswScheduleLogicDetail.LoadCount = 0;
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            {
+                CswNbtView ContainerLocationsView = getOutstandingContainerLocations( NbtResources );
+                CswCommaDelimitedString ContainerLocations = getContainerLocationIds( NbtResources, ContainerLocationsView );
+                _CswScheduleLogicDetail.LoadCount = ContainerLocations.Count;
+            }
             return _CswScheduleLogicDetail.LoadCount;
         }
 
