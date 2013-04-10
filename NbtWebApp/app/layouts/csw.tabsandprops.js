@@ -17,8 +17,7 @@
                     RemovePropUrlMethod: 'removeProp',
                     SavePropUrlMethod: 'saveProps',
                     CopyPropValuesUrlMethod: 'copyPropValues',
-                    NodePreviewUrlMethod: 'getNodePreview',
-                    QuotaUrlMethod: 'checkQuota'
+                    NodePreviewUrlMethod: 'getNodePreview'
                 },
                 globalState: {
                     currentNodeId: 'newnode',
@@ -684,18 +683,19 @@
                 cswPrivate.onTearDownProps();
                 if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add && cswPrivate.tabState.Config === false) {
                     // case 20970 - make sure there's room in the quota
-                    cswPrivate.ajax.props = Csw.ajax.post({
+                    cswPrivate.ajax.props = Csw.ajaxWcf.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
-                        urlMethod: cswPrivate.urls.QuotaUrlMethod,
+                        urlMethod: 'Quotas/check',
                         data: {
                             NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                             NodeKey: ''
                         },
                         success: function (data) {
-                            if (Csw.bool(data.result)) {
+                            if (data && data.HasSpace) {
                                 cswPrivate.getPropsImpl(tabid, onSuccess);
                             } else {
-                                cswPrivate.tabs[tabid].append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
+                                //cswPrivate.tabs[tabid].append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
+                                cswPrivate.tabs[tabid].append(data.Message);
                                 Csw.tryExec(cswPrivate.onInitFinish, false);
                             }
                         }

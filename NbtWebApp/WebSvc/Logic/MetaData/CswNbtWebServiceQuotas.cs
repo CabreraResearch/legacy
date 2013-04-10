@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -143,14 +148,53 @@ namespace ChemSW.Nbt.WebServices
             return _CswNbtActQuotas.GetHighestQuotaPercent();
         }
 
-        public bool CheckQuota( Int32 NodeTypeId )
+        [DataContract]
+        public class CswNbtQuotaResponse : CswWebSvcReturn
         {
-            return _CswNbtActQuotas.CheckQuotaNT( NodeTypeId );
+            public CswNbtQuotaResponse()
+            {
+                Data = new CswNbtActQuotas.Quota();
+            }
+            [DataMember]
+            public CswNbtActQuotas.Quota Data;
         }
 
-        public bool CheckQuota( CswNbtMetaDataNodeType NodeType )
+        [DataContract]
+        public class QuotaRequest
         {
-            return _CswNbtActQuotas.CheckQuotaNT( NodeType );
+            [DataMember(IsRequired = false)]
+            public int NodeTypeId;
+            [DataMember( IsRequired = false )]
+            public string NodeKey;
+            [DataMember( IsRequired = false )]
+            public string NodeId;
+        }
+
+        public static void getQuota( ICswResources Resources, CswNbtQuotaResponse Response, QuotaRequest Request )
+        {
+            if( null != Resources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) Resources;
+                CswNbtActQuotas ActQuotas = new CswNbtActQuotas( NbtResources );
+                int NodeTypeId = Request.NodeTypeId;
+                if( NodeTypeId <= 0 )
+                {
+                    CswNbtNodeKey Key = wsNBT.getNodeKey( Request.NodeKey );
+                    if( null != Key )
+                    {
+                        NodeTypeId = Key.NodeTypeId;
+                    }
+                }
+                if( NodeTypeId <= 0 )
+                {
+                    CswNbtNode Node = NbtResources.Nodes[Request.NodeId];
+                    if( null != Node )
+                    {
+                        NodeTypeId = Node.NodeTypeId;
+                    }
+                }
+                Response.Data = ActQuotas.CheckQuotaNT( NodeTypeId );
+            }
         }
 
     } // class CswNbtWebServiceInspections
