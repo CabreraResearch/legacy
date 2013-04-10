@@ -1429,6 +1429,16 @@ window.initMain = window.initMain || function (undefined) {
                             actionjson: o.ActionOptions
                         });
                         break;
+                    case 'delete demo data':
+                        Csw.actions.deletedemodata(Csw.main.centerTopDiv, {
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            actionjson: o.ActionOptions
+                        });
+                        break;
                     case 'modules':
                         Csw.actions.modules(Csw.main.centerTopDiv, {
                             onModuleChange: function() {

@@ -252,6 +252,12 @@
                                     Csw.tryExec(cswPrivate.onQuotas);
                                 }
                                 break;
+                            case 'Delete Demo Data':
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onQuotas);
+                                }
+                                break;
                             case 'Modules':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;

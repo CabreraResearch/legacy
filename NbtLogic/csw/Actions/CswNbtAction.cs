@@ -30,7 +30,8 @@ namespace ChemSW.Nbt.Actions
         Tier_II_Reporting,
         Material_Approval,
         Login_Data,
-        Assign_Inventory_Groups
+        Assign_Inventory_Groups,
+        Delete_Demo_Data
     }
 
     public class CswNbtAction
