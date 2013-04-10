@@ -278,9 +278,19 @@ namespace ChemSW.Nbt
 
             // Nodetype/Object Class filter
             if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+            {
                 Where += " and (t.firstversionid = " + Relationship.SecondId + ") ";
-            else
+            }
+            else if( Relationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
+            {
                 Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
+            }
+            else if( Relationship.SecondType == NbtViewRelatedIdType.PropertySetId )
+            {
+                From += @" join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
+                           join property_set ps on (jpo.propertysetid = ps.propertysetid) ";
+                Where += " and (ps.propertysetid = " + Relationship.SecondId + ") ";
+            }
 
             // Parent Node
             if( Relationship.PropId != Int32.MinValue && null != ParentNodeIds )

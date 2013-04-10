@@ -36,6 +36,7 @@ NbtWebApp/vendor/vendor.min.js
 NbtWebApp/*.html
 NbtWebApp/release/*
 NbtDev.sln.DotSettings.user
+NbtWebApp/test/plato*
 syntax: regexp
 .*\.orig
 .*\.vsp

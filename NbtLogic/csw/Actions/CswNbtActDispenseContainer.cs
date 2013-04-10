@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Actions
                 CswPrimaryKey RequestItemPk = new CswPrimaryKey();
                 RequestItemPk.FromString( RequestItemId );
                 JArray GridArray = JArray.Parse( DispenseGrid );
-                JArray jBarcodes = new JArray();
+                JObject jBarcodes = new JObject();
                 ret["barcodes"] = jBarcodes;
                 for( Int32 i = 0; i < GridArray.Count; i += 1 )
                 {
@@ -131,7 +131,11 @@ namespace ChemSW.Nbt.Actions
                                     UnitOfMeasurePK, RequestItemPk, ChildContainer );
                                 //ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
                                 ChildContainer.postChanges( false );
-                                jBarcodes.Add( ChildContainer.NodeId.ToString() );
+
+                                JObject BarcodeNode = new JObject();
+                                jBarcodes[ChildContainer.NodeId.ToString()] = BarcodeNode;
+                                BarcodeNode["nodeid"] = ChildContainer.NodeId.ToString();
+                                BarcodeNode["nodename"] = ChildContainer.NodeName;
                             }
                             _SourceContainer.postChanges( false );
                         }

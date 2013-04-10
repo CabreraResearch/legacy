@@ -14,23 +14,23 @@
             ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
             'use strict';
             var wasModified = false;
-            (function _recurse(originalObject, newObjectValues) {
-                
-                Csw.iterate(originalObject, function (originalPropVal, originalPropKey) {
-                    if (Csw.contains(newObjectValues, originalPropKey)) {
-                        var newPropValue = newObjectValues[originalPropKey];
-                            
-                        if (Csw.isPlainObject(newPropValue)) {
-                            wasModified = _recurse(originalPropVal[originalPropKey], newPropValue) || wasModified;
-                        }
-                        else if ((false === isMulti && (Csw.isNullOrEmpty(originalPropVal) || originalPropVal[originalPropKey] !== newPropValue)) ||
-                            (isMulti && false === Csw.isNullOrUndefined(newPropValue))) {
-                            wasModified = true;
-                            originalObject[originalPropKey] = newPropValue;
-                        }
+            
+            var updateValues = function(originalData) {
+
+                Csw.iterate(attributes, function(propVal, propName) {
+                    if (originalData && originalData.hasOwnProperty && originalData.hasOwnProperty(propName)) {
+                        originalData[propName] = propVal;
+                        wasModified = true;
+                    } else {
+                        Csw.iterate(originalData, function(originalVal) {
+                            if (originalVal) {
+                                updateValues(originalVal);
+                            }
+                        });
                     }
                 }, true);
-            }(propData.values, attributes));
+            };
+            updateValues(propData.values);
 
             propData.wasmodified = propData.wasmodified || wasModified;
         

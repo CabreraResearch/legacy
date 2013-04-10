@@ -87,49 +87,54 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != this.NodeId && Int32.MinValue != this.NodeId.PrimaryKey && null != this.NodeTypeProp )
             {
-                Int32 ThisNodeTypeId = this.NodeTypeProp.NodeTypeId;
-                Int32 ThisObjectClassId = this.NodeTypeProp.getNodeType().ObjectClassId;
+                //Int32 ThisNodeTypeId = this.NodeTypeProp.NodeTypeId;
+                //Int32 ThisObjectClassId = this.NodeTypeProp.getNodeType().ObjectClassId;
 
-                Int32 TargetNodeTypeId = Int32.MinValue;
-                Int32 TargetObjectClassId = Int32.MinValue;
-                _getIds( _CswNbtResources, TargetType, TargetId, out TargetNodeTypeId, out TargetObjectClassId );
+                //Int32 TargetNodeTypeId = Int32.MinValue;
+                //Int32 TargetObjectClassId = Int32.MinValue;
+                //_getIds( _CswNbtResources, TargetType, TargetId, out TargetNodeTypeId, out TargetObjectClassId );
 
-                if( ThisNodeTypeId != TargetNodeTypeId && ThisObjectClassId != TargetObjectClassId )
+                //if( ThisNodeTypeId != TargetNodeTypeId && ThisObjectClassId != TargetObjectClassId )
+                //{
+                if( false == CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, this.NodeTypeProp.getNodeType() ) )
                 {
                     foreach( CswNbtViewRelationship RootRel in View.Root.ChildRelationships )
                     {
-                        Int32 RootNodeTypeId = Int32.MinValue;
-                        Int32 RootObjectClassId = Int32.MinValue;
-                        _getIds( _CswNbtResources, RootRel.SecondType, RootRel.SecondId, out RootNodeTypeId, out RootObjectClassId );
+                        //Int32 RootNodeTypeId = Int32.MinValue;
+                        //Int32 RootObjectClassId = Int32.MinValue;
+                        //_getIds( _CswNbtResources, RootRel.SecondType, RootRel.SecondId, out RootNodeTypeId, out RootObjectClassId );
+                        //if( RootNodeTypeId == ThisNodeTypeId || RootObjectClassId == ThisObjectClassId )
+                        //{
 
-                        if( RootNodeTypeId == ThisNodeTypeId || RootObjectClassId == ThisObjectClassId )
+                        if( CswNbtViewRelationship.Matches( _CswNbtResources, RootRel.SecondType, RootRel.SecondId, this.NodeTypeProp.getNodeType() ) )
                         {
                             RootRel.NodeIdsToFilterIn.Add( this.NodeId );
                         }
 
                     } // foreach( CswNbtViewRelationship RootRel in View.Root.ChildRelationships )
-                } // if( ThisNodeTypeId != TargetNodeTypeId && ThisObjectClassId != TargetObjectClassId )
+                }
+                //} // if( ThisNodeTypeId != TargetNodeTypeId && ThisObjectClassId != TargetObjectClassId )
             } // if( this.NodeTypeProp != null )
         } // _setRootRelationship()
 
-        private static void _getIds( CswNbtResources NbtResources, NbtViewRelatedIdType Type, Int32 Id, out Int32 NodeTypeId, out Int32 ObjectClassId )
-        {
-            NodeTypeId = Int32.MinValue;
-            ObjectClassId = Int32.MinValue;
-            if( Type == NbtViewRelatedIdType.NodeTypeId )
-            {
-                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Id );
-                if( NodeType != null )
-                {
-                    NodeTypeId = NodeType.NodeTypeId;
-                    ObjectClassId = NodeType.ObjectClassId;
-                }
-            }
-            else
-            {
-                ObjectClassId = Id;
-            }
-        }
+        //private static void _getIds( CswNbtResources NbtResources, NbtViewRelatedIdType Type, Int32 Id, out Int32 NodeTypeId, out Int32 ObjectClassId )
+        //{
+        //    NodeTypeId = Int32.MinValue;
+        //    ObjectClassId = Int32.MinValue;
+        //    if( Type == NbtViewRelatedIdType.NodeTypeId )
+        //    {
+        //        CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Id );
+        //        if( NodeType != null )
+        //        {
+        //            NodeTypeId = NodeType.NodeTypeId;
+        //            ObjectClassId = NodeType.ObjectClassId;
+        //        }
+        //    }
+        //    else if( Type == NbtViewRelatedIdType.ObjectClassId )
+        //    {
+        //        ObjectClassId = Id;
+        //    }
+        //}
 
         private string TargetTableName
         {
@@ -270,6 +275,11 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
+        public bool TargetMatches( ICswNbtMetaDataDefinitionObject Compare, bool IgnoreVersions = false )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, Compare, IgnoreVersions );
+        }
+
         public void RefreshNodeName()
         {
             if( RelatedNodeId != null && RelatedNodeId.PrimaryKey != Int32.MinValue )
@@ -309,16 +319,15 @@ namespace ChemSW.Nbt.PropTypes
                     Options.Add( new CswPrimaryKey(), "" );
                 }
 
-                Int32 TargetNodeTypeId;
-                Int32 TargetObjectClassId;
-                _getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
+                //Int32 TargetNodeTypeId;
+                //Int32 TargetObjectClassId;
+                //_getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
 
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView(
-                    View: View,
-                    IncludeSystemNodes: false,
-                    RequireViewPermissions: false,
-                    IncludeHiddenNodes: false );
-                _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: View,
+                                                                             IncludeSystemNodes: false,
+                                                                             RequireViewPermissions: false,
+                                                                             IncludeHiddenNodes: false );
+                _addOptionsRecurse( NbtResources, Options, CswNbtTree, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue ); //, TargetNodeTypeId, TargetObjectClassId );
                 if( RelationshipProp.IsRequired && Options.Count == 2 )
                 {
                     Options.Remove( new CswPrimaryKey() );
@@ -327,34 +336,37 @@ namespace ChemSW.Nbt.PropTypes
             return Options;
         }
 
-        public static Dictionary<CswPrimaryKey, string> getOptions( CswNbtResources NbtResources, CswNbtViewId ViewId, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
-        {
-            CswNbtView View = NbtResources.ViewSelect.restoreView( ViewId );
-            Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
-            if( View != null )
-            {
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView(
-                    View: View,
-                    IncludeSystemNodes: false,
-                    RequireViewPermissions: false,
-                    IncludeHiddenNodes: false );
-                _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
-            }
-            return Options;
-        }
+        //public static Dictionary<CswPrimaryKey, string> getOptions( CswNbtResources NbtResources, CswNbtViewId ViewId, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
+        //{
+        //    CswNbtView View = NbtResources.ViewSelect.restoreView( ViewId );
+        //    Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
+        //    if( View != null )
+        //    {
+        //        ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView(
+        //            View: View,
+        //            IncludeSystemNodes: false,
+        //            RequireViewPermissions: false,
+        //            IncludeHiddenNodes: false );
+        //        _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
+        //    }
+        //    return Options;
+        //}
 
-        private static void _addOptionsRecurse( Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
+        private static void _addOptionsRecurse( CswNbtResources NbtResources, Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, NbtViewRelatedIdType TargetType, Int32 TargetId ) //, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
         {
             for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
             {
                 CswNbtTree.goToNthChild( c );
-                if( CswNbtTree.getNodeKeyForCurrentPosition().NodeTypeId == TargetNodeTypeId ||
-                    CswNbtTree.getNodeKeyForCurrentPosition().ObjectClassId == TargetObjectClassId )
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( CswNbtTree.getNodeKeyForCurrentPosition().NodeTypeId );
+                if( CswNbtViewRelationship.Matches( NbtResources, TargetType, TargetId, NodeType ) )
                 {
+                //if( CswNbtTree.getNodeKeyForCurrentPosition().NodeTypeId == TargetNodeTypeId ||
+                //    CswNbtTree.getNodeKeyForCurrentPosition().ObjectClassId == TargetObjectClassId )
+                //{
                     Options.Add( CswNbtTree.getNodeIdForCurrentPosition(), CswNbtTree.getNodeNameForCurrentPosition() );
                 }
 
-                _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
+                _addOptionsRecurse( NbtResources, Options, CswNbtTree, TargetType, TargetId ); //TargetNodeTypeId, TargetObjectClassId );
 
                 CswNbtTree.goToParentNode();
             } // for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
@@ -391,6 +403,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["objectclassid"] = TargetId.ToString();
                 TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
+            }
+            else if( TargetType == NbtViewRelatedIdType.PropertySetId )
+            {
+                ParentObject["propertysetid"] = TargetId.ToString();
             }
 
             bool AllowAdd = ( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189

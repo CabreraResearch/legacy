@@ -617,10 +617,10 @@
                                 cswPrivate.clearState();
                                 if (cswPrivate.printBarcodes) {
                                     if (false === Csw.isNullOrEmpty(data.barcodes) &&
-                                        data.barcodes.length > 0) {
+                                        Object.keys(data.barcodes).length > 0) {
 
                                         $.CswDialog('PrintLabelDialog', {
-                                            nodeids: data.barcodes,
+                                            nodes: data.barcodes,
                                             nodetypeid: cswPrivate.state.containerNodeTypeId
                                         });
                                     } else {

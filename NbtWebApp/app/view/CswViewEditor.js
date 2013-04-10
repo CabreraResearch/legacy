@@ -647,7 +647,7 @@
                 var $a = $(this);
                 cell.empty();
 
-                var objHelper = Csw.object(currentViewJson);
+                var objHelper = Csw.objDeprecated(currentViewJson);
                 var arbitraryId = $a.CswAttrDom('arbid');
                 var viewnodejson = objHelper.find('arbitraryid', arbitraryId);
 
@@ -785,7 +785,7 @@
                 cell.empty();
 
                 if (viewmode === "Grid") {
-                    var objHelper = Csw.object(currentViewJson);
+                    var objHelper = Csw.objDeprecated(currentViewJson);
                     var arbitraryId = $a.CswAttrDom('arbid');
                     var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
@@ -863,7 +863,7 @@
                 var $a = $(this);
                 cell.empty();
                 //$cell.append('For ' + $a.text());
-                var objHelper = Csw.object(currentViewJson);
+                var objHelper = Csw.objDeprecated(currentViewJson);
                 var arbitraryId = $a.CswAttrDom('arbid');
                 var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
@@ -1163,7 +1163,7 @@
                 var arbid = $span.CswAttrNonDom('arbid');
                 var $btn = $span.children('div').first();
                 $btn.bind('click', function () {
-                    var objUtil = Csw.object(currentViewJson);
+                    var objUtil = Csw.objDeprecated(currentViewJson);
                     objUtil.remove('arbitraryid', arbid);
                     _makeViewTree(stepno);
                 });
@@ -1449,7 +1449,7 @@
                     disabledText: 'Adding',
                     onClick: function () {
                         addButton.disable();
-                        var objHelper = Csw.object(currentViewJson);
+                        var objHelper = Csw.objDeprecated(currentViewJson);
                         var propJson = objHelper.find('arbitraryid', propArbId);
                         
                         var newFiltJson = table.$.CswViewPropFilter('getFilterJson', {
@@ -1555,7 +1555,7 @@
                             if (arbid === "root") {
                                 Csw.extend(currentViewJson.childrelationships, childJson);
                             } else {
-                                var objUtil = Csw.object(currentViewJson);
+                                var objUtil = Csw.objDeprecated(currentViewJson);
                                 var parentObj = objUtil.find('arbitraryid', arbid);
                                 var collection = '';
                                 switch (stepno) {

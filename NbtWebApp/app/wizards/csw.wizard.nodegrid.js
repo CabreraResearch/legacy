@@ -89,7 +89,8 @@
                     },
                     includeInQuickLaunch: false
                 };
-                cswPublic.grid = Csw.nbt.nodeGrid(cswPrivate.gridDiv, cswPrivate.gridOpts);
+                cswPublic.nodeGrid = Csw.nbt.nodeGrid(cswPrivate.gridDiv, cswPrivate.gridOpts);
+                cswPublic.grid = cswPublic.nodeGrid.grid;
             };
 
             cswPrivate.makeGridMenu = function (viewid) {

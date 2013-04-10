@@ -152,6 +152,8 @@ namespace ChemSW.Nbt.ObjClasses
                 };
         }
 
+        private const string NonRequestableStatus = "No Status";
+
         #endregion Enums
 
         #region Base
@@ -603,11 +605,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private void _toggleItemProps( bool Hidden = true )
+        private void _toggleRequestItemPropVisibility( bool Hidden = true )
         {
             bool HideTheseProperties = ( ( _IsFavorite || _IsRecurring ) && Hidden == true );
             
-            Status.Value = "";
             Status.setHidden( value: HideTheseProperties, SaveToDb: true );
             Fulfill.setHidden( value: HideTheseProperties, SaveToDb: true );
             AssignedTo.setHidden( value: HideTheseProperties, SaveToDb: true );
@@ -632,15 +633,19 @@ namespace ChemSW.Nbt.ObjClasses
             //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items
             //Support both directions
             IsRecurring.setHidden( value : true, SaveToDb : true );
-            _toggleItemProps( _IsRecurring );
+            
+            _toggleRequestItemPropVisibility( _IsRecurring );
             if( _IsRecurring )
             {
+                //Case 29393: Use a better status than ""
+                Status.Value = NonRequestableStatus;
                 RecurringFrequency.setHidden( value: false, SaveToDb: true );
                 NextReorderDate.setHidden( value: false, SaveToDb: true );
                 Name.setHidden( value: true, SaveToDb: true );
             }
             else
             {
+                Status.Value = Statuses.Pending;
                 IsRecurring.setHidden( value: true, SaveToDb: true );
                 RecurringFrequency.setHidden( value : true, SaveToDb : true );
                 NextReorderDate.setHidden( value : true, SaveToDb : true );
@@ -652,8 +657,18 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _IsFavorite { get { return CswConvert.ToBoolean( IsFavorite.Gestalt ); } }
         private void onIsFavoritePropChange( CswNbtNodeProp NodeProp )
         {
-            // No "else": like recurring, favorite items never transition out of this state--they can only be deleted.
-            _toggleItemProps( _IsFavorite );
+            //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items
+            _toggleRequestItemPropVisibility( _IsFavorite );
+
+            if( _IsFavorite )
+            {
+                Status.Value = NonRequestableStatus;
+            }
+            else
+            {
+                Status.Value = Statuses.Pending;
+            }
+                
             IsRecurring.setHidden( value: true, SaveToDb: true );
             NextReorderDate.setHidden( value: true, SaveToDb: true );
             RecurringFrequency.setHidden( value: true, SaveToDb: true );

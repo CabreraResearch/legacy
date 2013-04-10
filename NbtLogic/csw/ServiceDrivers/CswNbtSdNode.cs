@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( Relationship.ChildRelationships.Count == 0 )
                 {
-                    ICswNbtMetaDataObject MetaObj = Relationship.SecondMetaDataObject();
+                    ICswNbtMetaDataObject MetaObj = Relationship.SecondMetaDataDefinitionObject();
                     if( MetaObj.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
                     {
                         if( SecondTypes.Count == 0 || 
@@ -523,8 +523,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                 where
                                                     _OcProp.getFieldTypeValue() ==
                                                     CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                                                    _OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                                    _OcProp.FKValue == MetaRelatedObjectClass.ObjectClassId
+                                                    //_OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                                    //_OcProp.FKValue == MetaRelatedObjectClass.ObjectClassId
+                                                    _OcProp.FkMatches( MetaRelatedObjectClass )
                                                 select _OcProp )
                                     {
                                         RelatedProps.Add( OcProp );

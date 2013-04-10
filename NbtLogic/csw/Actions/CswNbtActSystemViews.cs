@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.Actions
 
         public class SystemViewPropFilterDefinition
         {
-            public CswNbtMetaDataObjectClassProp ObjectClassProp { get; set; }
+            public ICswNbtMetaDataProp ObjectClassProp { get; set; }
             public string FilterValue { get; set; }
             public CswNbtPropFilterSql.PropertyFilterMode FilterMode { get; set; }
             public CswNbtSubField.SubFieldName SubFieldName { get; set; }
@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.Actions
             public CswNbtMetaDataFieldType.NbtFieldType FieldType { get; set; }
         }
 
-        public SystemViewPropFilterDefinition makeSystemViewFilter( CswNbtMetaDataObjectClassProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null, bool ShowInGrid = true )
+        public SystemViewPropFilterDefinition makeSystemViewFilter( ICswNbtMetaDataProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null, bool ShowInGrid = true )
         {
             SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
             return new SystemViewPropFilterDefinition
@@ -264,13 +264,13 @@ namespace ChemSW.Nbt.Actions
                        };
         }
 
-        private bool _addSystemViewFilterRecursive( IEnumerable<CswNbtViewRelationship> Relationships, SystemViewPropFilterDefinition FilterDefinition, CswNbtMetaDataObjectClass MatchObjectClass = null )
+        private bool _addSystemViewFilterRecursive( IEnumerable<CswNbtViewRelationship> Relationships, SystemViewPropFilterDefinition FilterDefinition, ICswNbtMetaDataDefinitionObject MatchObj = null )
         {
             bool Ret = false;
-            CswNbtMetaDataObjectClass ExpectedObjectClass = MatchObjectClass ?? _EnforceObjectClassRelationship;
+            ICswNbtMetaDataDefinitionObject ExpectedObjectClass = MatchObj ?? _EnforceObjectClassRelationship;
             foreach( CswNbtViewRelationship PotentialSystemViewRelationship in Relationships )
             {
-                if( null == ExpectedObjectClass || PotentialSystemViewRelationship.isExpectedMetaDataType( ExpectedObjectClass ) )
+                if( null == ExpectedObjectClass || PotentialSystemViewRelationship.SecondMatches( MatchObj ) )
                 {
                     Ret = true;
                     if( null != FilterDefinition.ObjectClassProp )
@@ -284,21 +284,21 @@ namespace ChemSW.Nbt.Actions
                     }
                     else if( FilterDefinition.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {
-                        ICswNbtMetaDataObject Object = PotentialSystemViewRelationship.SecondMetaDataObject();
+                        ICswNbtMetaDataObject Object = PotentialSystemViewRelationship.SecondMetaDataDefinitionObject();
                         SystemView.AddViewPropertyByFieldType( PotentialSystemViewRelationship, Object, FilterDefinition.FieldType );
                     }
                 }
                 if( PotentialSystemViewRelationship.ChildRelationships.Count > 0 )
                 {
-                    Ret = Ret || _addSystemViewFilterRecursive( PotentialSystemViewRelationship.ChildRelationships, FilterDefinition, MatchObjectClass );
+                    Ret = Ret || _addSystemViewFilterRecursive( PotentialSystemViewRelationship.ChildRelationships, FilterDefinition, MatchObj );
                 }
             }
             return Ret;
         }
 
-        public bool addSystemViewFilter( SystemViewPropFilterDefinition FilterDefinition, CswNbtMetaDataObjectClass MatchObjectClass = null )
+        public bool addSystemViewFilter( SystemViewPropFilterDefinition FilterDefinition, ICswNbtMetaDataDefinitionObject MatchObj = null )
         {
-            return _addSystemViewFilterRecursive( SystemView.Root.ChildRelationships, FilterDefinition, MatchObjectClass );
+            return _addSystemViewFilterRecursive( SystemView.Root.ChildRelationships, FilterDefinition, MatchObj );
         }
 
         public void reInitSystemView( SystemViewName ViewName )

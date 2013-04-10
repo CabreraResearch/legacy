@@ -205,6 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -490,6 +491,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _setDisposedReadOnly( true );
                 CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
                 _CswNbtNode.IconFileNameOverride = "x.png";
+                _CswNbtNode.Searchable = false;
             }
         }
 

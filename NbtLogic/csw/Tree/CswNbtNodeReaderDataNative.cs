@@ -46,6 +46,7 @@ namespace ChemSW.Nbt
                 CswNbtNode.IsTemp = CswConvert.ToBoolean( NodesTable.Rows[0]["istemp"] );
                 CswNbtNode.SessionId = CswConvert.ToString( NodesTable.Rows[0]["sessionid"] );
                 CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
+                CswNbtNode.Searchable = CswConvert.ToBoolean( NodesTable.Rows[0]["searchable"] );
 
                 if( NodesTable.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
                 {
