@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -55,6 +56,27 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNbtManager.updateAllScheduledRules,
                 ParamObj: Request
+                );
+
+            SvcDriver.run();
+
+            return ( Ret );
+
+        }//updateAllScheduledRules
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getTimeline" )]
+        [Description( "Save changes to scheduled rules" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtScheduledRulesReturn getTimeline( CswNbtScheduledRulesReturn.Ret Request )
+        {
+            //delegate has to be static because you can't creat e an instance yet: you don't have resources until the delegate is actually called
+            CswNbtScheduledRulesReturn Ret = new CswNbtScheduledRulesReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtScheduledRulesReturn, String>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceNbtManager.getTimelines,
+                ParamObj : String.Empty
                 );
 
             SvcDriver.run();

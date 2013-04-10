@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -79,6 +78,8 @@ namespace ChemSW.Nbt.WebServices
         #endregion private
 
         #region public
+
+        #region Grid
 
         public CswNbtResources makeOtherResources( string AccessId )
         {
@@ -362,6 +363,20 @@ namespace ChemSW.Nbt.WebServices
 
             return RetNodeAsCustomer;
         }
+
+        #endregion
+
+        #region Timeline
+
+        public static void getTimelines( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string AccessId )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+        
+
+        }//getTimelines()
+
+        #endregion
 
         #endregion public
 
