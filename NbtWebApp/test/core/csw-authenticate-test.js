@@ -15,7 +15,7 @@ asyncTest("Validate AJAX authentication failures", function () {
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             completed += 1;
-            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "Failed" absent a Customer Id');
+            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "NonExistentSession" absent a Customer Id');
             if (completed === 4) {
                 start();
             }
@@ -30,7 +30,7 @@ asyncTest("Validate AJAX authentication failures", function () {
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
             completed += 1;
-            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "Failed" absent a Customer Id and Username');
+            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "NonExistentSession" absent a Customer Id and Username');
             if (completed === 4) {
                 start();
             }
@@ -45,7 +45,7 @@ asyncTest("Validate AJAX authentication failures", function () {
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
             completed += 1;
-            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "Failed" absent a Customer Id, Username and Password');
+            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "NonExistentSession" absent a Customer Id, Username and Password');
             if (completed === 4) {
                 start();
             }
@@ -60,7 +60,7 @@ asyncTest("Validate AJAX authentication failures", function () {
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
             completed += 1;
-            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "Failed" absent a Username and Password');
+            deepEqual(data.Authentication.AuthenticationStatus, 'NonExistentSession', 'Authentication status is "NonExistentSession" absent a Username and Password');
             if (completed === 4) {
                 start();
             }
