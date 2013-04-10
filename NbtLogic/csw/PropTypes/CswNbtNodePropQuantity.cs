@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropQuantity : CswNbtNodeProp
+    public class CswNbtNodePropQuantity: CswNbtNodeProp
     {
         #region Private Variables
 
@@ -364,6 +364,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
+                ParentObject["nodeid"] = RelatedNode.NodeId.ToString();
             }
 
             ParentObject["fractional"] = TargetFractional.ToString().ToLower();
@@ -381,6 +382,15 @@ namespace ChemSW.Nbt.PropTypes
                         JOption["id"] = Node.NodeId.ToString();
                         JOption["value"] = Node.NodeName;
                         JOption["fractional"] = Node.Properties[CswNbtObjClassUnitOfMeasure.PropertyName.Fractional].AsLogical.Checked.ToString().ToLower();
+
+                        //Case 29098 - when adding a node, the picklist for UoM has the first item selected, but the selected nodeid is not set - if this is the case, set the related nodeid to the first item
+                        if( null == RelatedNode )
+                        {
+                            RelatedNode = Node;
+                            ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
+                            ParentObject["relatednodelink"] = RelatedNode.NodeLink;
+                            ParentObject["nodeid"] = RelatedNode.NodeId.ToString();
+                        }
                     }
                     else if( false == Required )
                     {
