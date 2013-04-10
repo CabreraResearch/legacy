@@ -611,7 +611,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtNode Ret = Node;
             RetNbtNodeKey = null;
             CswNbtActQuotas QuotaAction = new CswNbtActQuotas( _CswNbtResources );
-            if( QuotaAction.CheckQuotaNT( NodeType ) )
+            CswNbtActQuotas.Quota Quota = QuotaAction.CheckQuotaNT( NodeType );
+            if( Quota.HasSpace  )
             {
                 if( null == Ret || false == CswTools.IsPrimaryKey( Ret.NodeId ) )
                 {
