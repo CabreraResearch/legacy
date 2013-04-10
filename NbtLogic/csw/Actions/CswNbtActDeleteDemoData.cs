@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Actions
 
 
     /// <summary>
-    /// Holds logic for handling node quotas
+    /// Holds logic for deleting demo data
     /// </summary>
     public class  CswNbtActDeleteDemoData
     {
