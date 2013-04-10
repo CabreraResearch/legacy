@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
 
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtCAFImport::ImportItems() exception: " + Exception.Message;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtCAFImport::ImportItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 

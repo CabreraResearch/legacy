@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Sched
                 }
                 catch( Exception Exception )
                 {
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtExtChemDataSync exception: " + Exception.Message;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtExtChemDataSync exception: " + Exception.Message + "; " + Exception.StackTrace;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
                 }
