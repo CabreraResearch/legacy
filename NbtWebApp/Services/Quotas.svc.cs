@@ -9,7 +9,7 @@ using ChemSW.WebSvc;
 namespace NbtWebApp
 {
     /// <summary>
-    /// WCF Web Methods for View operations
+    /// WCF Web Methods for Quota operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract( Namespace = "NbtWebApp" )]
@@ -19,7 +19,7 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
         
         [OperationContract]
-        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Check the Quota for this NodeType" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceQuotas.CswNbtQuotaResponse check( CswNbtWebServiceQuotas.QuotaRequest QuotaReq )
@@ -36,5 +36,5 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-    }//Locations
+    }//
 }

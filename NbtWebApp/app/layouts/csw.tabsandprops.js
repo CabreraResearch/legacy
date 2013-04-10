@@ -687,7 +687,7 @@
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: 'Quotas/check',
                         data: {
-                            NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                            NodeTypeId: Csw.number(cswPrivate.tabState.nodetypeid, 0),
                             NodeKey: ''
                         },
                         success: function (data) {
