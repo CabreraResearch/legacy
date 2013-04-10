@@ -391,18 +391,18 @@ namespace ChemSW.Nbt.WebServices
                 if( _CswNbtResources.CurrentNbtUser.Username.Equals( CswNbtObjClassUser.ChemSWAdminUsername ) )
                 {
                     // Return to NBT Manager schema and user who initially logged in
-                    string OriginalAccessId = _CswNbtResources.CswSessionManager.getOriginalAccessId;
-                    _CswNbtResources.AccessId = OriginalAccessId;
+                    string NbtMgrAccessId = _CswNbtResources.CswSessionManager.getNbtMgrAccessId;
+                    _CswNbtResources.AccessId = NbtMgrAccessId;
 
                     string NbtMgrUserName = _CswNbtResources.CswSessionManager.NbtMgrUserName;
                     CswPrimaryKey NbtMgrUserId = _CswNbtResources.CswSessionManager.NbtMgrUserId;
                     if( null != NbtMgrUserId )
                     {
-                        CswNbtObjClassUser OriginalUserNode = _CswNbtResources.Nodes.GetNode( NbtMgrUserId );
-                        if( null != OriginalUserNode )
+                        CswNbtObjClassUser NbtMgrUserNode = _CswNbtResources.Nodes.GetNode( NbtMgrUserId );
+                        if( null != NbtMgrUserNode )
                         {
                             // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
-                            _CswNbtResources.CswSessionManager.changeSchema( OriginalAccessId, NbtMgrUserName, OriginalUserNode.UserId, ClearLastAccessId: true );
+                            _CswNbtResources.CswSessionManager.changeSchema( NbtMgrAccessId, NbtMgrUserName, NbtMgrUserNode.UserId, ClearNbtMgrAccessId: true );
 
                             ReturnVal["username"] = NbtMgrUserName;
                             ReturnVal["customerid"] = _CswNbtResources.AccessId;
