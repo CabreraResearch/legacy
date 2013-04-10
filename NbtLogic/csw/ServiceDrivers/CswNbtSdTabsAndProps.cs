@@ -261,7 +261,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject getIdentityTabProps( CswPrimaryKey NodeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject Ret = new JObject();
-            
+
             CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
             CswNbtMetaDataNodeType NodeType = Node.getNodeType();
             if( null != NodeType )
@@ -335,10 +335,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             bool Ret = Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) &&
                  ( Prop.IsSaveProp ||
                  ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
-                   //Case 24023: Exclude buttons on Add (Except the Save button)
+                //Case 24023: Exclude buttons on Add (Except the Save button)
                    Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
                  ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId ) );
-            
+
             return Ret;
         }
 
@@ -528,7 +528,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     PropObj["canoverride"] = ( false == Prop.ServerManaged &&
                             FieldType != CswNbtMetaDataFieldType.NbtFieldType.PropertyReference &&
                             FieldType != CswNbtMetaDataFieldType.NbtFieldType.Static &&
-                            _CswNbtResources.CurrentNbtUser.IsAdministrator() );   
+                            _CswNbtResources.CurrentNbtUser.IsAdministrator() );
                 }
 
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
@@ -547,7 +547,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 ParentObj["properties"] = AuditProperty;
                 JObject PropObj = new JObject();
                 ParentObj["properties"]["prop_" + Node.NodeId.ToString() + "_audit"] = PropObj;
- 
+
                 PropObj["name"] = "Audit History";
                 PropObj["helptext"] = string.Empty;
                 PropObj["fieldtype"] = "AuditHistoryGrid";
@@ -985,6 +985,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                         string Href;
                         SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", propIdAttr, "blobdata", out Href );
                         Ret["href"] = Href;
+
+                        _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( Node.NodeId.PrimaryKey, moldata );
                     }
                 }
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
