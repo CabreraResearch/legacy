@@ -1188,8 +1188,6 @@ namespace ChemSW.Nbt.MetaData
         }
         private CswNbtMetaDataNodeType CopyNodeType( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName, bool IsVersioning )
         {
-            Int32 OriginalNodeTypeId = NodeType.NodeTypeId;
-
             if( NewNodeTypeName == String.Empty )
                 NewNodeTypeName = "Copy Of " + NodeType.NodeTypeName;
 
@@ -1226,26 +1224,8 @@ namespace ChemSW.Nbt.MetaData
 
             _CswNbtMetaDataResources.refreshAll();
 
-            CswNbtMetaDataNodeType NewNodeType = null;
-            CswNbtMetaDataNodeType OldNodeType = null;
-            //if( IsVersioning )
-            //{
-            //    // This swaps the existing reference to the new reference!
-            //    //_CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypeRow, OriginalNodeTypeId );
-            //    // "NodeType" is now the new nodetype copy
-            //    NewNodeType = NodeType;
-            //    // get the old one again
-            //    OldNodeType = getNodeType( OriginalNodeTypeId );
-            //}
-            //else
-            //{
-            // No swapping
-            //_CswNbtMetaDataResources.NodeTypesCollection.RegisterNew( InsertedNodeTypeRow );
-            // "NodeType" is still the original nodetype
-            OldNodeType = NodeType;
-            // get the new one
-            NewNodeType = getNodeType( NewNodeTypeId );
-            //}
+            CswNbtMetaDataNodeType OldNodeType = NodeType;
+            CswNbtMetaDataNodeType NewNodeType = getNodeType( NewNodeTypeId );
 
             // Copy tabs
             Hashtable TabMap = new Hashtable();

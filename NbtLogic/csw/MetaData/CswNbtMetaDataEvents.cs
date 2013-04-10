@@ -285,12 +285,12 @@ namespace ChemSW.Nbt.MetaData
                 //CancelReasonProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 3, 1 );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonProp, true, ActionTab.TabId, 4, 1 );
                 
-                // Add a "Section 1" tab
-                CswNbtMetaDataNodeTypeTab SectionOneTab = NewNodeType.getNodeTypeTab( "Section 1" );
+                // DON'T Add a "Section 1" tab
+                /*CswNbtMetaDataNodeTypeTab SectionOneTab = NewNodeType.getNodeTypeTab( "Section 1" );
                 if( SectionOneTab == null )
                 {
                     SectionOneTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Section 1", 9 );
-                }
+                }*/
             } // if( NewNodeType.VersionNo == 1 && !IsCopy )
         } // OnMakeNewInspectionDesignNodeType()
 

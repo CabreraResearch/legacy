@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Actions
                     string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
-                        TabName = "Section 1"; //this is objectclass voodoo, don't mess with it! we will rename it to Questions later...
+                        TabName = _DefaultSectionName; //I messed with it.
                     }
                     if( false == RetDict.ContainsKey( TabName ) )
                     {
@@ -433,23 +433,6 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeProp IdDueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate );
             IdDueDateNtp.IsRequired = true;
             IdDueDateNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
-        }
-
-        private void _pruneSectionOneTab( CswNbtMetaDataNodeType InspectionDesignNt )
-        {
-            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
-            CswNbtMetaDataNodeTypeTab SectionOneTab = InspectionDesignNt.getNodeTypeTab( "Section 1" );
-            if( null != SectionOneTab )
-            {
-                if( SectionOneTab.getNodeTypeProps().Count() > 0 )
-                {
-                    SectionOneTab.TabName = "Questions";
-                }
-                else
-                {
-                    _CswNbtResources.MetaData.DeleteNodeTypeTab( SectionOneTab );
-                }
-            }
         }
 
         private void _validateInspectionScheduleNt( CswNbtMetaDataNodeType InspectionScheduleNt )
@@ -911,8 +894,7 @@ namespace ChemSW.Nbt.Actions
                             NewRow[_HelpTextName] = CswConvert.ToString( Row[_HelpTextName] );
 
                             string SectionName = _standardizeName( Row[_SectionName] );
-                            if( string.Empty == SectionName ||
-                                "Section 1" == SectionName )
+                            if( string.Empty == SectionName )
                             {
                                 SectionName = _DefaultSectionName;
                             }
@@ -985,8 +967,7 @@ namespace ChemSW.Nbt.Actions
 
             //Create the props
             Int32 PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
-            //Delete or rename the "Section 1" tab
-            _pruneSectionOneTab( InspectionDesignNt );
+
             //Build the MetaData
             CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
             _setInspectionDesignTabsAndProps( InspectionDesignNt, InspectionTargetNt );
