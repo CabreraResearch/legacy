@@ -164,6 +164,8 @@ namespace ChemSW.Nbt.WebServices
         {
             [DataMember(IsRequired = false)]
             public int NodeTypeId;
+            [DataMember(IsRequired = false)]
+            public int ObjectClassId;
             [DataMember( IsRequired = false )]
             public string NodeKey;
             [DataMember( IsRequired = false )]
@@ -177,12 +179,14 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtResources NbtResources = (CswNbtResources) Resources;
                 CswNbtActQuotas ActQuotas = new CswNbtActQuotas( NbtResources );
                 int NodeTypeId = Request.NodeTypeId;
+                int ObjectClassId = Request.ObjectClassId;
                 if( NodeTypeId <= 0 )
                 {
                     CswNbtNodeKey Key = wsNBT.getNodeKey( Request.NodeKey );
                     if( null != Key )
                     {
                         NodeTypeId = Key.NodeTypeId;
+                        ObjectClassId = Key.ObjectClassId;
                     }
                 }
                 if( NodeTypeId <= 0 )
@@ -191,9 +195,10 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Node )
                     {
                         NodeTypeId = Node.NodeTypeId;
+                        ObjectClassId = Node.getObjectClassId();
                     }
                 }
-                Response.Data = ActQuotas.CheckQuotaNT( NodeTypeId );
+                Response.Data = ActQuotas.CheckQuota( NodeTypeId, ObjectClassId );
             }
         }
 

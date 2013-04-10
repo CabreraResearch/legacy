@@ -48,7 +48,8 @@
                     relatedobjectclassid: '',
                     //tabid: '',
                     tabNo: 0,
-                    nodetypeid: ''
+                    nodetypeid: 0,
+                    objectClassId: 0
                 },
                 ajax: {
 
@@ -687,6 +688,7 @@
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: 'Quotas/check',
                         data: {
+                            ObjectClassId: Csw.number(cswPrivate.tabState.objectClassId, 0),
                             NodeTypeId: Csw.number(cswPrivate.tabState.nodetypeid, 0),
                             NodeKey: ''
                         },
@@ -694,7 +696,6 @@
                             if (data && data.HasSpace) {
                                 cswPrivate.getPropsImpl(tabid, onSuccess);
                             } else {
-                                //cswPrivate.tabs[tabid].append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
                                 cswPrivate.tabs[tabid].append(data.Message);
                                 Csw.tryExec(cswPrivate.onInitFinish, false);
                             }
@@ -850,13 +851,7 @@
                         },
                         success: function (data) {
                             if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
-                                Csw.error.throwException({
-                                    type: 'warning',
-                                    message: 'No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode,
-                                    name: 'Csw_client_exception',
-                                    fileName: 'csw.tabsandprops.js',
-                                    lineNumber: 387
-                                });
+                                cswPrivate.onEmptyProps();
                             }
                             cswPrivate.setNode(data.node);
                             cswPrivate.globalState.propertyData = data.properties;
@@ -871,6 +866,15 @@
                 }
             }; // getPropsImpl()
 
+            cswPrivate.onEmptyProps = function() {
+                Csw.error.throwException({
+                    type: 'warning',
+                    message: 'No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode,
+                    name: 'Csw_client_exception',
+                    fileName: 'csw.tabsandprops.js'
+                });
+            };
+
             cswPrivate.handleProperties = function (layoutTable, tabid, configMode, tabPropData) {
                 'use strict';
                 layoutTable = layoutTable || cswPrivate.layoutTable;
@@ -880,7 +884,11 @@
                     return false;
                 };
                 tabPropData = tabPropData || cswPrivate.globalState.propertyData;
-                Csw.iterate(tabPropData, handleSuccess);
+                if (Object.keys(tabPropData).length > 0) {
+                    Csw.iterate(tabPropData, handleSuccess);
+                } else {
+                    cswPrivate.onEmptyProps();
+                }
 
                 cswPrivate.onRenderProps(tabid);
 

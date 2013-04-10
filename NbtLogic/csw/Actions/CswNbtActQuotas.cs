@@ -386,6 +386,24 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Returns true if the quota has not been reached for the given nodetype, or its object class
         /// </summary>
+        public Quota CheckQuota( Int32 NodeTypeId, Int32 ObjectClassId )
+        {
+            Quota Ret = new Quota();
+            if( NodeTypeId > 0 )
+            {
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                Ret = CheckQuotaNT( NodeType );
+            }
+            else
+            {
+                Ret = CheckQuotaOC( ObjectClassId );
+            }
+            return Ret;
+        } // CheckQuota()
+
+        /// <summary>
+        /// Returns true if the quota has not been reached for the given nodetype, or its object class
+        /// </summary>
         public Quota CheckQuotaNT( Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
@@ -418,11 +436,11 @@ namespace ChemSW.Nbt.Actions
 
             if( false == ObjClassQuota.HasSpace )
             {
-                Ret.Message = "You have used " + ObjClassQuota.CurrentCount + " of your " + ObjClassQuota.QuotaLimit + " for " + ObjClassQuota.ObjectClass;
+                Ret.Message = ObjClassQuota.Message;
             }
             else if( false == Ret.HasSpace )
             {
-                Ret.Message = "You have used " + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.NodeType;
+                Ret.Message = "You have used all of your purchased quota(" + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.NodeType + "), and must purchase additional quota space in order to add more.";
             }
 
             return Ret;
@@ -445,6 +463,11 @@ namespace ChemSW.Nbt.Actions
                 Ret.CurrentCount = GetNodeCountForObjectClass( ObjectClassId );
                 Ret.HasSpace = ( Ret.CurrentCount < Ret.QuotaLimit );
             }
+            if( false == Ret.HasSpace )
+            {
+                Ret.Message = "You have used all of your purchased quota("  + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.ObjectClass + "), and must purchase additional quota space in order to add more.";
+            }
+
             return Ret;
         } // CheckQuota()
 

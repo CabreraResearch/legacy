@@ -391,6 +391,7 @@
             cswPrivate.openAddNodeDialog = function (nodetypeToAdd) {
                 $.CswDialog('AddNodeDialog', {
                     nodetypeid: nodetypeToAdd,
+                    objectClassId: cswPrivate.objectClassId,
                     onAddNode: cswPrivate.onAddNodeFunc,
                     text: 'Add New ' + cswPrivate.name,
                     relatednodeid: cswPrivate.relatedTo.relatednodeid,

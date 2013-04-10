@@ -223,7 +223,8 @@
             var cswDlgPrivate = {
                 text: '',
                 nodeid: '',
-                nodetypeid: '',
+                nodetypeid: 0,
+                objectClassId: 0,
                 relatednodeid: '',
                 relatednodename: '',
                 relatednodetypeid: '',
@@ -261,6 +262,7 @@
                     },
                     tabState: {
                         nodetypeid: cswDlgPrivate.nodetypeid,
+                        objectClassId: cswDlgPrivate.objectClassId,
                         relatednodeid: cswDlgPrivate.relatednodeid,
                         relatednodename: cswDlgPrivate.relatednodename,
                         relatednodetypeid: cswDlgPrivate.relatednodetypeid,
