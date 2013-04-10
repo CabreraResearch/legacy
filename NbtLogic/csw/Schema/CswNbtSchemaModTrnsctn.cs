@@ -18,9 +18,10 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Sched;
-using ChemSW.Nbt.Security;
-using ChemSW.RscAdo;
 using ChemSW.Nbt.Search;
+using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
+using ChemSW.RscAdo;
 
 
 namespace ChemSW.Nbt.Schema
@@ -217,8 +218,8 @@ namespace ChemSW.Nbt.Schema
         /// <returns></returns>
         public Int32 execArbitraryPlatformNeutralSqlInItsOwnTransaction( string SqlText ) { return ( _CswNbtResources.CswResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( SqlText ) ); }
 
-        
-        
+
+
         /// <summary>
         /// Executes arbitrary sql.  It's your job to make sure it's platform neutral.
         /// You should *strongly* consider using CswArbitrarySelect, CswTableSelect, or CswTableUpdate instead of this.
@@ -1699,7 +1700,20 @@ namespace ChemSW.Nbt.Schema
                     _search = new CswNbtSearch( _CswNbtResources );
                 }
 
-                return ( _search  ); 
+                return ( _search );
+            }
+        }
+
+        private CswNbtSdBlobData _sdBlobData = null;
+        public CswNbtSdBlobData CswNbtSdBlobData
+        {
+            get
+            {
+                if( null == _sdBlobData )
+                {
+                    _sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                }
+                return _sdBlobData;
             }
         }
 

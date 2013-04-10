@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Post-schema update script
     /// </summary>
-    public class RunAfterEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
+    public class RunAfterEveryExecutionOfUpdater_01: CswUpdateSchemaTo
     {
         #region Blame Logic
 
@@ -50,10 +50,17 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
             _resetBlame();
 
+            #region BUCKEYE
+
             _acceptBlame( CswDeveloper.MB, 26531 );
             //Drop the BlobData column in Jct_Nodes_Props - it will not be used anymore
-            _CswNbtSchemaModTrnsctn.dropColumn( "jct_nodes_props", "blobdata" );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
+            {
+                _CswNbtSchemaModTrnsctn.dropColumn( "jct_nodes_props", "blobdata" );
+            }
             _resetBlame();
+
+            #endregion
 
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
         }//Update()

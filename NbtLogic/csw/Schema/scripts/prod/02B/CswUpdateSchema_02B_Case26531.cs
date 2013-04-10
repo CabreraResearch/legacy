@@ -63,8 +63,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _moveBlobData( CswNbtNodePropWrapper PropWrapper, CswNbtNode Node )
         {
-            CswNbtResources NbtResources = _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources;
-            CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
+            CswNbtSdBlobData SdBlobData = _CswNbtSchemaModTrnsctn.CswNbtSdBlobData;
 
             CswPropIdAttr PropId = new CswPropIdAttr( Node.NodeId, PropWrapper.NodeTypePropId );
             byte[] BlobData = new byte[0];

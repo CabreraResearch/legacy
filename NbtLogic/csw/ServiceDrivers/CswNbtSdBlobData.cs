@@ -21,8 +21,6 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public void saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href )
         {
-            CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
