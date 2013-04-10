@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -409,8 +410,21 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["propertysetid"] = TargetId.ToString();
             }
 
-            bool AllowAdd = ( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189
-                ( TargetNodeType == null || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) );
+            bool AllowAddOc = ( TargetObjectClass != null && TargetObjectClass.CanAdd );
+            if( AllowAddOc )
+            {
+                foreach( CswNbtMetaDataNodeType NodeType in TargetObjectClass.getLatestVersionNodeTypes() )
+                {
+                    AllowAddOc = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    if( AllowAddOc )
+                    {
+                        break;
+                    }
+                }
+            }
+            bool AllowAddNt = ( TargetNodeType != null && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) );
+            
+            bool AllowAdd = AllowAddOc || AllowAddNt;
             ParentObject["allowadd"] = AllowAdd;
 
             ParentObject["relatednodeid"] = default( string );
