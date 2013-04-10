@@ -12,7 +12,7 @@ module.exports = function (grunt) {
         'Scripts/mousetrap.min.js', 'Scripts/jquery-1.9.1.min.js', 'Scripts/jquery-ui-1.10.1.min.js', 'Scripts/jquery.validate.min.js',
         'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js', 
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
-        'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js'
+        'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
     ];
     var cswVendorCssFiles = [];    
 
