@@ -326,7 +326,6 @@ namespace ChemSW.Nbt.WebServices
                     ThisRule["runstarttime"] = ScheduledRule.RunStartTime == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.RunStartTime;
                     ThisRule["runendtime"] = ScheduledRule.RunEndTime == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.RunEndTime;
                     ThisRule["lastrun"] = ScheduledRule.LastRun == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.LastRun;
-                    ThisRule["nextrun"] = ScheduledRule.NextRun == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.NextRun;
                     ThisRule["threadid"] = ScheduledRule.ThreadId;
                     ThisRule["loadcount"] = ScheduledRule.LoadCount;
                     RulesUpdate.update( RulesTable );
