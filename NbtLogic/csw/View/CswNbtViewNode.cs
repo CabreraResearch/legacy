@@ -274,6 +274,16 @@ namespace ChemSW.Nbt
                             }
                         }
                     }
+                    else if( ChildRelationship.SecondType == NbtViewRelatedIdType.PropertySetId )
+                    {
+                        foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( ChildRelationship.SecondId ) )
+                        {
+                            foreach( CswNbtMetaDataNodeType PotentialNodeType in ObjectClass.getNodeTypes() )
+                            {
+                                PotentialNodeTypes.Add( PotentialNodeType.getFirstVersionNodeType() );
+                            }
+                        }
+                    }
 
                     foreach( CswNbtMetaDataNodeType FirstVersionNodeType in PotentialNodeTypes )
                     {
@@ -323,12 +333,14 @@ namespace ChemSW.Nbt
 
             if( Relationships != null )
             {
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeID );
                 foreach( CswNbtViewRelationship CurrentRelationship in Relationships )
                 {
-                    if( ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
-                         ( CurrentRelationship.SecondId == NodeTypeID ) ) ||
-                        ( ( NbtViewRelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
-                         ( CurrentRelationship.SecondId == _CswNbtResources.MetaData.getNodeType( NodeTypeID ).ObjectClassId ) ) )
+                    //if( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
+                    //    ( CurrentRelationship.SecondId == NodeTypeID ) ) ||
+                    //  ( ( NbtViewRelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
+                    //    ( CurrentRelationship.SecondId == _CswNbtResources.MetaData.getNodeType( NodeTypeID ).ObjectClassId ) ) )
+                    if( CurrentRelationship.SecondMatches( NodeType ) )
                     {
                         ReturnVal = true;
                         break;

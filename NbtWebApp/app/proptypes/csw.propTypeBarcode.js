@@ -50,7 +50,7 @@
                         var nodeObj = {};
                         nodeObj[cswPublic.data.tabState.nodeid] = {};
                         nodeObj[cswPublic.data.tabState.nodeid].nodeid = cswPublic.data.tabState.nodeid;
-                        nodeObj[cswPublic.data.tabState.nodeid].nodename = cswPublic.data.tabState.nodename;
+                        nodeObj[cswPublic.data.tabState.nodeid].nodename = cswPublic.data.tabState.nodename || cswPrivate.value;
                         cswPublic.control.cell(1, 2).div({ name: 'parent' })
                             .buttonExt({
                                 name: 'print',

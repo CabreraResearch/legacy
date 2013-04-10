@@ -185,10 +185,14 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                     if( RelationshipProp != null )
                     {
-                        if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                              RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
-                            ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                              RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) )
+                        //if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                        //      RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
+                        //    ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                        //      RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) ||
+                        //    ( RelationshipProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() &&
+                        //      null != AssemblyNodeType.getObjectClass().getPropertySet() &&
+                        //      RelationshipProp.FKValue == AssemblyNodeType.getObjectClass().getPropertySet().PropertySetId ) )
+                        if( RelationshipProp.FkMatches( AssemblyNodeType ) )
                         {
 
                             //CswNbtMetaDataNodeTypeProp EquipmentNodeTypeProp = EquipmentNodeType.getNodeTypeProp(EditedProp.PropName);
@@ -280,11 +284,11 @@ namespace ChemSW.Nbt.MetaData
 
                 CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelledProp, true, ActionTab.TabId, 3, 1 );
-                
+
                 CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
                 //CancelReasonProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 3, 1 );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonProp, true, ActionTab.TabId, 4, 1 );
-                
+
                 // Add a "Section 1" tab
                 CswNbtMetaDataNodeTypeTab SectionOneTab = NewNodeType.getNodeTypeTab( "Section 1" );
                 if( SectionOneTab == null )

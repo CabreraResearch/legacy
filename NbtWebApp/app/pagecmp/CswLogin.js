@@ -20,7 +20,7 @@
                 var thisSessionId = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
                 var $parent = $(this);
                 var parent = Csw.literals.factory($parent, {});
-                var loginDiv, loginTable, loginBtn, inpAccessId, inpUserName, inpPassword, loginMsg;
+                var loginForm, loginDiv, loginTable, loginBtn, inpAccessId, inpUserName, inpPassword, loginMsg;
 
                 if (false === Csw.isNullOrEmpty(thisSessionId)) {
                     Csw.tryExec(o.onAuthenticate, Csw.cookie.get(Csw.cookie.cookieNames.Username));
@@ -30,14 +30,16 @@
                         name: 'logindiv',
                         align: 'center'
                     });
-                    loginTable = loginDiv.form().table({ cellalign: 'center', cellvalign: 'center' });
+                    loginForm = loginDiv.form();
+                    loginTable = loginForm.table({ cellalign: 'center', cellvalign: 'center' });
                     loginMsg = loginTable.cell(1, 2, 'loginmsg').hide();
                     loginTable.cell(2, 1).text('Customer ID: ').align('right');
-                    inpAccessId = loginTable.cell(2, 2).align('left').input({ name: 'login_accessid', width: '120px' });
+                    inpAccessId = loginTable.cell(2, 2).align('left').input({ name: 'login_accessid', width: '120px', cssclass: 'required' });
                     loginTable.cell(3, 1).text('User Name: ').align('right');
                     inpUserName = loginTable.cell(3, 2).align('left').input({
                         name: 'login_username',
                         width: '120px',
+                        cssclass: 'required',
                         onChange: function () {//Case 26866/27114
                             var regex = /[^a-zA-Z0-9_]+/g;
                             var validUserName = inpUserName.val();
@@ -46,7 +48,7 @@
                         }
                     });
                     loginTable.cell(4, 1).text('Password: ').align('right');
-                    inpPassword = loginTable.cell(4, 2).align('left').input({ name: 'login_password', type: Csw.enums.inputTypes.password, width: '120px', cssclass: 'mousetrap' });
+                    inpPassword = loginTable.cell(4, 2).align('left').input({ name: 'login_password', type: Csw.enums.inputTypes.password, width: '120px', cssclass: 'mousetrap required' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
                                         .align('left')
                                         .buttonExt({
@@ -56,30 +58,34 @@
                                             disabledText: 'Logging in...',
                                             width: '100px',
                                             bindOnEnter: true,
-                                            onClick: function () {
-                                                loginMsg.hide().empty();
+                                            onClick: function() {
+                                                if (loginForm.isFormValid()) {
+                                                    loginMsg.hide().empty();
                                                 //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, inpAccessId.val());
-                                                Csw.clientSession.login({
-                                                    AccessId: inpAccessId.val(),
-                                                    UserName: inpUserName.val(),
-                                                    Password: inpPassword.val(),
-                                                    ForMobile: false,
-                                                    onAuthenticate: function (userName) {
-                                                        // Case 28670
-                                                        // This is really stupid. So dumb. 
-                                                        window.Mousetrap.reset();
+                                                    Csw.clientSession.login({
+                                                        AccessId: inpAccessId.val(),
+                                                        UserName: inpUserName.val(),
+                                                        Password: inpPassword.val(),
+                                                        ForMobile: false,
+                                                        onAuthenticate: function(userName) {
+                                                            // Case 28670
+                                                            // This is really stupid. So dumb. 
+                                                            window.Mousetrap.reset();
 
-                                                        parent.empty();
-                                                        Csw.tryExec(o.onAuthenticate, userName);
-                                                    },
-                                                    onFail: function (txt) {
-                                                        loginMsg.$.CswErrorMessage({ 'type': 'Warning', 'message': txt });
-                                                        inpPassword.val('');   // case 21303
-                                                        loginBtn.enable();
-                                                        Csw.tryExec(o.onFail, txt);
-                                                    }
-                                                });
-                                            } // onClick
+                                                            parent.empty();
+                                                            Csw.tryExec(o.onAuthenticate, userName);
+                                                        },
+                                                        onFail: function(txt) {
+                                                            loginMsg.$.CswErrorMessage({ 'type': 'Warning', 'message': txt });
+                                                            inpPassword.val(''); // case 21303
+                                                            loginBtn.enable();
+                                                            Csw.tryExec(o.onFail, txt);
+                                                        }
+                                                    });
+                                                } else {
+                                                    loginBtn.enable();
+                                                }
+                                            }// onClick
                                         });
                     loginTable.cell(6, 2);
                     parent.br({ number: 3 });

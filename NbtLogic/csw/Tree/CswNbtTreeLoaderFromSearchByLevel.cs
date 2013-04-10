@@ -163,13 +163,13 @@ namespace ChemSW.Nbt
         private bool _canViewProp( int NodeTypePropId, int NodeId )
         {
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-            
+
             // Must have permission to at least one tab where this property appears
             Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> EditLayouts = NTProp.getEditLayouts();
             bool canView = EditLayouts.Values.Aggregate( false,
-                                                        ( current, EditLayout ) => current || _CswNbtResources.Permit.canTab( 
-                                                            CswNbtPermit.NodeTypePermission.View, 
-                                                            NTProp.getNodeType(), 
+                                                        ( current, EditLayout ) => current || _CswNbtResources.Permit.canTab(
+                                                            CswNbtPermit.NodeTypePermission.View,
+                                                            NTProp.getNodeType(),
                                                             _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId ) ) );
 
             #region Container Request Button Inventory Group Permission
@@ -200,10 +200,10 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 if( null != MaterialClass )
                 {
-                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp(MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive);
-                    if (NTProp.ObjectClassPropId == RequestProp.PropId)
+                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive );
+                    if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
-                        canView = _CswNbtResources.Permit.can(CswNbtActionName.Receiving);
+                        canView = _CswNbtResources.Permit.can( CswNbtActionName.Receiving );
                     }
                 }
             }
@@ -321,6 +321,9 @@ namespace ChemSW.Nbt
                 Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
+
+            Where += " and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + _SearchTerm + "' ) ) ";
+
 
             Where += _ExtraWhereClause;
 

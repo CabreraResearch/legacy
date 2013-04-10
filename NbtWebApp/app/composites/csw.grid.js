@@ -553,22 +553,21 @@
                     var cols = cswPrivate.columns.filter(function (col) {
                         return colNames.contains(col.header);
                     });
-                    var i = 0;
+                    
                     Csw.each(cols, function (colObj, key) {
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //NOTE: this can now be moved to the viewrender event. See action column logic.
-                            i += 1;
-                            var id = cswPrivate.ID + 'nodebutton' + i;
+                            var divId = cswPrivate.name + 'button' + rowIndex + colIndex;
                             var thisBtn = cswPrivate.rows.buttons.filter(function (btn) {
-                                return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
+                                return btn.index === colObj.dataIndex && btn.propattr.startsWith(record.raw.nodeid);
                             });
                             if (thisBtn.length === 1) {
                                 Csw.defer(function _tryMakeBtn() {
                                     //Case 28343. The problem here is that 
                                     // a) our div is not in the DOM until this method returns and 
                                     // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
-                                    if (Csw.isElementInDom(id)) {
-                                        var div = Csw.domNode({ ID: id });
+                                    if (Csw.isElementInDom(divId)) {
+                                        var div = Csw.domNode({ ID: divId });
                                         div.nodeButton({
                                             displayName: colObj.header,
                                             size: 'small',
@@ -577,7 +576,7 @@
                                     }
                                 }, 100);
                             }
-                            return '<div id="' + id + '"></div>';
+                            return '<div id="' + divId + '"></div>';
 
                         };
                     });
@@ -771,6 +770,13 @@
                     }
                 });
                 return ret;
+            });
+
+            cswPublic.iterateSelectedRowRaw = Csw.method(function(callBack) {
+                var selectedRows = cswPrivate.grid.getSelectionModel().getSelection();
+                Csw.iterate(selectedRows, function(row) {
+                    callBack(row.raw);
+                });
             });
 
             cswPublic.getSelectedRowsVals = Csw.method(function (key) {

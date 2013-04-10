@@ -140,7 +140,7 @@
     Csw.clientSession.finishLogout = Csw.clientSession.finishLogout ||
         Csw.clientSession.register('finishLogout', function () {
             ///<summary>Complete the logout. Nuke any lingering client-side data.</summary>
-            cswPrivate.logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
+            cswPrivate.logoutpath = cswPrivate.logoutpath || Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
             Csw.clientDb.clear();
             Csw.cookie.clearAll();
             if (false === Csw.isNullOrEmpty(cswPrivate.logoutpath)) {
@@ -153,9 +153,7 @@
     Csw.clientSession.login = Csw.clientSession.login ||
         Csw.clientSession.register('login', function (loginopts) {
             ///<summary>Attempt a login.</summary>
-            if (loginopts) {
-                Csw.extend(cswPrivate, loginopts);
-            }
+            Csw.extend(cswPrivate, loginopts);
             cswPrivate.isAuthenticated = true;
             Csw.ajaxWcf.post({
                 urlMethod: 'Session/Init',
@@ -197,13 +195,11 @@
     Csw.clientSession.logout = Csw.clientSession.logout ||
         Csw.clientSession.register('logout', function (options) {
             ///<summary>End the current session.</summary>
-            if (options) {
-                Csw.extend(cswPrivate, options);
-            }
-            Csw.cookie.clearAll();
+            Csw.extend(cswPrivate, options);
+
             cswPrivate.isAuthenticated = false;
             Csw.ajaxWcf.post({
-                urlMethod: 'Session/End',
+                urlMethod: 'Session/EndWithAuth',
                 data: {},
                 complete: function() {
                     Csw.clientSession.finishLogout();

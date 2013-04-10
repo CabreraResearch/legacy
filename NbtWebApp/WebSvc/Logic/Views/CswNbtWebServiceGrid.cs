@@ -77,27 +77,41 @@ namespace ChemSW.Nbt.WebServices
             {
                 Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 
-                if( Relationship.SecondType == NbtViewRelatedIdType.ObjectClassId &&
-                    Relationship.SecondId != Int32.MinValue )
+                if( Relationship.SecondId != Int32.MinValue )
                 {
-                    CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
-                    if( null != SecondOc )
+                    if( Relationship.SecondType == NbtViewRelatedIdType.PropertySetId )
                     {
-                        foreach( CswNbtMetaDataNodeType NT in SecondOc.getNodeTypes() )
+                        foreach( CswNbtMetaDataObjectClass SecondOc in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( Relationship.SecondId ) )
                         {
-                            FirstLevelNodeTypes.Add( NT );
+                            if( null != SecondOc )
+                            {
+                                foreach( CswNbtMetaDataNodeType NT in SecondOc.getNodeTypes() )
+                                {
+                                    FirstLevelNodeTypes.Add( NT );
+                                }
+                            }
                         }
                     }
-                }
-                else if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId &&
-                         Relationship.SecondId != Int32.MinValue )
-                {
-                    CswNbtMetaDataNodeType SecondNt = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
-                    if( null != SecondNt )
+                    else if( Relationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
                     {
-                        FirstLevelNodeTypes.Add( SecondNt );
+                        CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
+                        if( null != SecondOc )
+                        {
+                            foreach( CswNbtMetaDataNodeType NT in SecondOc.getNodeTypes() )
+                            {
+                                FirstLevelNodeTypes.Add( NT );
+                            }
+                        }
                     }
-                }
+                    else if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                    {
+                        CswNbtMetaDataNodeType SecondNt = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
+                        if( null != SecondNt )
+                        {
+                            FirstLevelNodeTypes.Add( SecondNt );
+                        }
+                    }
+                } // if( Relationship.SecondId != Int32.MinValue )
 
                 foreach( CswNbtMetaDataNodeType NodeType in FirstLevelNodeTypes )
                 {

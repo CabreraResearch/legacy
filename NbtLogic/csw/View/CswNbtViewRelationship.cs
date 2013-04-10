@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml;
@@ -79,16 +80,9 @@ namespace ChemSW.Nbt
         public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
         public string GroupByPropName { get { return _GroupByPropName; } }
 
-        public bool isExpectedMetaDataType( CswNbtMetaDataNodeType NodeType )
+        public ICswNbtMetaDataDefinitionObject SecondMetaDataDefinitionObject()
         {
-            return ( null != NodeType &&
-                     SecondType == NbtViewRelatedIdType.NodeTypeId &&
-                     SecondId == NodeType.getFirstVersionNodeType().NodeTypeId );
-        }
-
-        public ICswNbtMetaDataObject SecondMetaDataObject()
-        {
-            ICswNbtMetaDataObject Ret = null;
+            ICswNbtMetaDataDefinitionObject Ret = null;
             if( Int32.MinValue != SecondId )
             {
                 if( SecondType == NbtViewRelatedIdType.ObjectClassId )
@@ -99,21 +93,10 @@ namespace ChemSW.Nbt
                 {
                     Ret = _CswNbtResources.MetaData.getNodeType( SecondId );
                 }
-            }
-            return Ret;
-        }
-
-        public bool isExpectedMetaDataType( CswNbtMetaDataObjectClass ObjectClass )
-        {
-            bool Ret = ( null != ObjectClass &&
-                         SecondType == NbtViewRelatedIdType.ObjectClassId &&
-                         SecondId == ObjectClass.ObjectClassId );
-            if( false == Ret &&
-                null != ObjectClass &&
-                SecondType == NbtViewRelatedIdType.NodeTypeId )
-            {
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( SecondId );
-                Ret = ( null != NodeType && NodeType.ObjectClassId == ObjectClass.ObjectClassId );
+                else if( SecondType == NbtViewRelatedIdType.PropertySetId )
+                {
+                    Ret = _CswNbtResources.MetaData.getPropertySet( SecondId );
+                }
             }
             return Ret;
         }
@@ -142,6 +125,17 @@ namespace ChemSW.Nbt
                 setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
             }
         }
+        public void overrideFirst( CswNbtMetaDataPropertySet PropertySet )
+        {
+            if( PropertySet != null )
+            {
+                setFirst( NbtViewRelatedIdType.PropertySetId, PropertySet.PropertySetId, PropertySet.Name.ToString() );
+            }
+            else
+            {
+                setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
+            }
+        }
         private void setFirst( NbtViewRelatedIdType InFirstType, Int32 InFirstId, string InFirstName )
         {
             _FirstType = InFirstType;
@@ -153,6 +147,22 @@ namespace ChemSW.Nbt
                     _FirstId = FirstNodeType.FirstVersionNodeTypeId;
             }
             _FirstName = InFirstName;
+        }
+
+        public void overrideSecond( NbtViewRelatedIdType InSecondType, Int32 InSecondId )
+        {
+            if( InSecondType == NbtViewRelatedIdType.PropertySetId )
+            {
+                overrideSecond( _CswNbtResources.MetaData.getPropertySet( InSecondId ) );
+            }
+            else if( InSecondType == NbtViewRelatedIdType.ObjectClassId )
+            {
+                overrideSecond( _CswNbtResources.MetaData.getObjectClass( InSecondId ) );
+            }
+            else if( InSecondType == NbtViewRelatedIdType.PropertySetId )
+            {
+                overrideSecond( _CswNbtResources.MetaData.getNodeType( InSecondId ) );
+            }
         }
 
         public void overrideSecond( CswNbtMetaDataNodeType NodeType )
@@ -175,6 +185,17 @@ namespace ChemSW.Nbt
             else
             {
                 setSecond( NbtViewRelatedIdType.ObjectClassId, Int32.MinValue, string.Empty, string.Empty );
+            }
+        }
+        public void overrideSecond( CswNbtMetaDataPropertySet PropertySet )
+        {
+            if( null != PropertySet ) /* Case 25943 */
+            {
+                setSecond( NbtViewRelatedIdType.PropertySetId, PropertySet.PropertySetId, PropertySet.Name.ToString(), PropertySet.IconFileName );
+            }
+            else
+            {
+                setSecond( NbtViewRelatedIdType.PropertySetId, Int32.MinValue, string.Empty, string.Empty );
             }
         }
         private void setSecond( NbtViewRelatedIdType InSecondType, Int32 InSecondId, string InSecondName, string InIconFileName )
@@ -219,6 +240,14 @@ namespace ChemSW.Nbt
                     _SecondIconFileName = RootOC.IconFileName;
                 }
             }
+            else if( SecondType == NbtViewRelatedIdType.PropertySetId )
+            {
+                CswNbtMetaDataPropertySet RootPS = _CswNbtResources.MetaData.getPropertySet( SecondId );
+                if( RootPS != null )
+                {
+                    _SecondIconFileName = RootPS.IconFileName;
+                }
+            }
             return _SecondIconFileName;
         }
 
@@ -261,6 +290,14 @@ namespace ChemSW.Nbt
                             overrideSecond( ObjectClass );
                         }
                     }
+                    else if( Prop.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                    {
+                        CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( Prop.FKValue );
+                        if( null != PropertySet )
+                        {
+                            overrideSecond( PropertySet );
+                        }
+                    }
                 }
                 else if( InOwnerType == NbtViewPropOwnerType.Second )
                 {
@@ -278,6 +315,14 @@ namespace ChemSW.Nbt
                         if( null != ObjectClass )
                         {
                             overrideFirst( ObjectClass );
+                        }
+                    }
+                    else if( Prop.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                    {
+                        CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( Prop.FKValue );
+                        if( null != PropertySet )
+                        {
+                            overrideFirst( PropertySet );
                         }
                     }
                     overrideSecond( NodeTypeProp.getNodeType() );
@@ -396,6 +441,10 @@ namespace ChemSW.Nbt
                 {
                     ArbId += "OC_";
                 }
+                else if( this.SecondType == NbtViewRelatedIdType.PropertySetId )
+                {
+                    ArbId += "PS_";
+                }
                 ArbId += SecondId;
                 if( Int32.MinValue != this.PropId )
                 {
@@ -463,6 +512,17 @@ namespace ChemSW.Nbt
             : base( CswNbtResources, View )
         {
             overrideSecond( ObjectClass );
+
+            if( IncludeDefaultFilters )
+                _setDefaultFilters();
+        }
+        /// <summary>
+        /// For adding a property set to the root level of the view
+        /// </summary>
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, CswNbtMetaDataPropertySet PropertySet, bool IncludeDefaultFilters )
+            : base( CswNbtResources, View )
+        {
+            overrideSecond( PropertySet );
 
             if( IncludeDefaultFilters )
                 _setDefaultFilters();
@@ -867,23 +927,35 @@ namespace ChemSW.Nbt
 
         private void _setDefaultFilters()
         {
-            CswNbtMetaDataObjectClass DefaultFilterOC = null;
+            IEnumerable<CswNbtMetaDataObjectClass> DefaultFilterOCs = null;
             if( SecondType == NbtViewRelatedIdType.ObjectClassId )
             {
-                DefaultFilterOC = _CswNbtResources.MetaData.getObjectClass( SecondId );
+                DefaultFilterOCs = new Collection<CswNbtMetaDataObjectClass>();
+                ( (Collection<CswNbtMetaDataObjectClass>) DefaultFilterOCs ).Add( _CswNbtResources.MetaData.getObjectClass( SecondId ) );
             }
             else if( SecondType == NbtViewRelatedIdType.NodeTypeId )
             {
                 CswNbtMetaDataNodeType DefaultFilterNT = _CswNbtResources.MetaData.getNodeType( SecondId );
                 if( DefaultFilterNT != null )
-                    DefaultFilterOC = DefaultFilterNT.getObjectClass();
+                {
+                    DefaultFilterOCs = new Collection<CswNbtMetaDataObjectClass>();
+                    ( (Collection<CswNbtMetaDataObjectClass>) DefaultFilterOCs ).Add( DefaultFilterNT.getObjectClass() );
+                }
             }
-            if( DefaultFilterOC != null )
+            else if( SecondType == NbtViewRelatedIdType.PropertySetId )
             {
-                CswNbtObjClass DefaultFilterObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, DefaultFilterOC );
-                DefaultFilterObjClass.addDefaultViewFilters( this );
+                DefaultFilterOCs = _CswNbtResources.MetaData.getObjectClassesByPropertySetId( SecondId );
             }
-        }
+
+            if( null != DefaultFilterOCs )
+            {
+                foreach( CswNbtMetaDataObjectClass DefaultFilterOC in DefaultFilterOCs )
+                {
+                    CswNbtObjClass DefaultFilterObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, DefaultFilterOC );
+                    DefaultFilterObjClass.addDefaultViewFilters( this );
+                }
+            }
+        } // _setDefaultFilters()
 
         #endregion Constructors
 
@@ -1316,6 +1388,141 @@ namespace ChemSW.Nbt
             }
         }
 
+        #region Matches
+
+        public bool FirstMatches( ICswNbtMetaDataDefinitionObject Compare, bool IgnoreVersions = false )
+        {
+            return Matches( _CswNbtResources, FirstType, FirstId, Compare, IgnoreVersions );
+        }
+
+        public bool SecondMatches( ICswNbtMetaDataDefinitionObject Compare, bool IgnoreVersions = false )
+        {
+            return Matches( _CswNbtResources, SecondType, SecondId, Compare, IgnoreVersions );
+        }
+
+        /// <summary>
+        /// Returns true if the relationship includes the provided NodeType
+        /// </summary>
+        public static bool Matches( CswNbtResources CswNbtResources, NbtViewRelatedIdType Type, Int32 Pk, ICswNbtMetaDataDefinitionObject Compare, bool IgnoreVersions = false )
+        {
+            bool ret = false;
+            if( Compare is CswNbtMetaDataNodeType )
+            {
+                ret = Matches( CswNbtResources, Type, Pk, (CswNbtMetaDataNodeType) Compare, IgnoreVersions );
+            }
+            if( Compare is CswNbtMetaDataObjectClass )
+            {
+                ret = Matches( CswNbtResources, Type, Pk, (CswNbtMetaDataObjectClass) Compare );
+            }
+            if( Compare is CswNbtMetaDataPropertySet )
+            {
+                ret = Matches( CswNbtResources, Type, Pk, (CswNbtMetaDataPropertySet) Compare );
+            }
+            return ret;
+        }
+
+
+        /// <summary>
+        /// Returns true if the relationship includes the provided NodeType
+        /// </summary>
+        public static bool Matches( CswNbtResources CswNbtResources, NbtViewRelatedIdType Type, Int32 Pk, CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
+        {
+            bool ret = false;
+            if( null != CompareNT )
+            {
+                if( Type == NbtViewRelatedIdType.NodeTypeId )
+                {
+                    CswNbtMetaDataNodeType SecondNT = CswNbtResources.MetaData.getNodeType( Pk );
+                    ret = ( null != SecondNT &&
+                            ( IgnoreVersions && SecondNT.FirstVersionNodeTypeId == CompareNT.FirstVersionNodeTypeId ) ||
+                            SecondNT == CompareNT );
+                }
+                else if( Type == NbtViewRelatedIdType.ObjectClassId )
+                {
+
+                    CswNbtMetaDataObjectClass SecondOC = CswNbtResources.MetaData.getObjectClass( Pk );
+                    ret = ( null != SecondOC &&
+                            SecondOC.ObjectClassId == CompareNT.ObjectClassId );
+                }
+                else if( Type == NbtViewRelatedIdType.PropertySetId )
+                {
+                    CswNbtMetaDataPropertySet SecondPS = CswNbtResources.MetaData.getPropertySet( Pk );
+                    ret = ( null != SecondPS &&
+                            null != CompareNT.getObjectClass().getPropertySet() &&
+                            SecondPS == CompareNT.getObjectClass().getPropertySet() );
+                }
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Returns true if the relationship matches the provided ObjectClass
+        /// </summary>
+        public static bool Matches( CswNbtResources CswNbtResources, NbtViewRelatedIdType Type, Int32 Pk, CswNbtMetaDataObjectClass CompareOC )
+        {
+            bool ret = false;
+            if( null != CompareOC )
+            {
+                if( Type == NbtViewRelatedIdType.NodeTypeId )
+                {
+                    CswNbtMetaDataNodeType SecondNT = CswNbtResources.MetaData.getNodeType( Pk );
+                    ret = ( null != SecondNT &&
+                            SecondNT.ObjectClassId == CompareOC.ObjectClassId );
+                }
+                else if( Type == NbtViewRelatedIdType.ObjectClassId )
+                {
+
+                    CswNbtMetaDataObjectClass SecondOC = CswNbtResources.MetaData.getObjectClass( Pk );
+                    ret = ( null != SecondOC &&
+                            SecondOC == CompareOC );
+                }
+                else if( Type == NbtViewRelatedIdType.PropertySetId )
+                {
+                    CswNbtMetaDataPropertySet SecondPS = CswNbtResources.MetaData.getPropertySet( Pk );
+                    ret = ( null != SecondPS &&
+                            null != CompareOC.getPropertySet() &&
+                            SecondPS == CompareOC.getPropertySet() );
+                }
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Returns true if the relationship matches the provided PropertySet
+        /// </summary>
+        public static bool Matches( CswNbtResources CswNbtResources, NbtViewRelatedIdType Type, Int32 Pk, CswNbtMetaDataPropertySet ComparePS )
+        {
+            bool ret = false;
+            if( null != ComparePS )
+            {
+                if( Type == NbtViewRelatedIdType.NodeTypeId )
+                {
+                    CswNbtMetaDataNodeType SecondNT = CswNbtResources.MetaData.getNodeType( Pk );
+                    ret = ( null != SecondNT &&
+                            null != SecondNT.getObjectClass().getPropertySet() &&
+                            SecondNT.getObjectClass().getPropertySet() == ComparePS );
+                }
+                else if( Type == NbtViewRelatedIdType.ObjectClassId )
+                {
+
+                    CswNbtMetaDataObjectClass SecondOC = CswNbtResources.MetaData.getObjectClass( Pk );
+                    ret = ( null != SecondOC &&
+                            null != SecondOC.getPropertySet() &&
+                            SecondOC.getPropertySet() == ComparePS );
+                }
+                else if( Type == NbtViewRelatedIdType.PropertySetId )
+                {
+                    CswNbtMetaDataPropertySet SecondPS = CswNbtResources.MetaData.getPropertySet( Pk );
+                    ret = ( null != SecondPS &&
+                            SecondPS == ComparePS );
+                }
+            }
+            return ret;
+        }
+
+        #endregion Matches
+
+
         #region IComparable
 
         public int CompareTo( object obj )
@@ -1387,8 +1594,6 @@ namespace ChemSW.Nbt
             return SecondId;
         }
         #endregion IEquatable
-
-
 
         private Collection<CswPrimaryKey> _commaDelimitedToFilterAttribute( string CommaDelimitedFilters )
         {

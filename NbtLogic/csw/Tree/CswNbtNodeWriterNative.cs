@@ -56,6 +56,7 @@ namespace ChemSW.Nbt
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
             NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
+            NewNodeRow["searchable"] = CswConvert.ToDbVal( true );
             NewNodeRow["iconfilename"] = Node.IconFileNameOverride;
 
             //case 27709: nodes must have an explicit audit level
@@ -95,6 +96,8 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName] = Node.AuditLevel;
             NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
             NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
+            NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()

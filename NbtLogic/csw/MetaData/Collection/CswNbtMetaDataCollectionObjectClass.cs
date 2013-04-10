@@ -55,6 +55,12 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getAll().Cast<CswNbtMetaDataObjectClass>();
         }
 
+        public IEnumerable<CswNbtMetaDataObjectClass> getObjectClassesByPropertySetId( Int32 PropertySetId )
+        {
+            return _CollImpl.getWhere( "where objectclassid in (select objectclassid from jct_propertyset_objectclass where propertysetid = " + PropertySetId.ToString() + ")" )
+                            .Cast<CswNbtMetaDataObjectClass>();
+        }
+
         public CswNbtMetaDataObjectClass getObjectClass( NbtObjectClass ObjectClass )
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );

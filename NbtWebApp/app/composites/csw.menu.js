@@ -36,14 +36,17 @@
             var cswPublic = {};
 
             cswPrivate.getSelectedNodes = function (menuItemJson) {
-                var ret = {};
-                var nodechecks = null;
+                var ret = Csw.object();
+                var selectedNodes = [];
 
                 if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
-                    nodechecks = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
+                    selectedNodes = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
                 }
-                if (false === Csw.isNullOrEmpty(nodechecks, true)) {
-                    Csw.each(nodechecks, function (thisObj) {
+                else if (false == Csw.isNullOrEmpty(cswPrivate.nodeGrid)) {
+                    selectedNodes = cswPrivate.nodeGrid.getSelectedNodes();
+                }
+                if (false === Csw.isNullOrEmpty(selectedNodes, true)) {
+                    Csw.iterate(selectedNodes, function (thisObj) {
                         ret[thisObj.nodeid] = {
                             nodeid: thisObj.nodeid,
                             nodekey: thisObj.nodekey,
@@ -51,7 +54,8 @@
                         };
                     });
                 }
-                if (Csw.isNullOrEmpty(ret)) {
+                if (Csw.isNullOrEmpty(ret) &&
+                    !Csw.isNullOrEmpty(menuItemJson.nodeid)) {
                     ret[menuItemJson.nodeid] = {
                         nodeid: menuItemJson.nodeid,
                         nodename: menuItemJson.nodename,

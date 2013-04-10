@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         private Collection<Int32> InspectionDesignTypeIds = new Collection<Int32>();
         private Collection<CswPrimaryKey> InspectionDesignNodeIds = new Collection<CswPrimaryKey>();
         private Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> _Inspections;
-        private CswNbtSdInspectionsDataModels.InspectionData _InspectionResponse;
+        //private CswNbtSdInspectionsDataModels.InspectionData _InspectionResponse;
 
         public CswNbtSdInspections( CswNbtResources Resources, SystemViewName ViewName )
         {
@@ -302,8 +302,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                 }
             }
-
-        }
+        } // _addSystemViewPropFilter()
 
         private void _addSystemViewBarcodeFilter( object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
         {
@@ -311,40 +310,47 @@ namespace ChemSW.Nbt.ServiceDrivers
             FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
             foreach( CswNbtViewRelationship RootLevelRelationship in _NbtSystemView.SystemView.Root.ChildRelationships )
             {
-                CswNbtMetaDataObjectClass InstanceOc = null;
-                CswNbtMetaDataObjectClassProp BarcodeOcp = null;
-                if( NbtViewRelatedIdType.ObjectClassId == RootLevelRelationship.SecondType )
-                {
-                    InstanceOc = _CswNbtResources.MetaData.getObjectClass( RootLevelRelationship.SecondId );
-                    if( null != InstanceOc )
-                    {
-                        BarcodeOcp = InstanceOc.getBarcodeProp();
+                //CswNbtMetaDataObjectClass InstanceOc = null;
+                //CswNbtMetaDataObjectClassProp BarcodeOcp = null;
 
-                    }
-                }
-                else if( NbtViewRelatedIdType.NodeTypeId == RootLevelRelationship.SecondType )
-                {
-                    CswNbtMetaDataNodeType InstanceNt = _CswNbtResources.MetaData.getNodeType( RootLevelRelationship.SecondId );
-                    if( null != InstanceNt )
-                    {
-                        InstanceOc = InstanceNt.getObjectClass();
-                        CswNbtMetaDataNodeTypeProp BarcodeNtp = InstanceNt.getBarcodeProperty();
-                        if( null != BarcodeNtp )
-                        {
-                            BarcodeOcp = BarcodeNtp.getObjectClassProp();
-                        }
-                    }
-                }
+                //if( NbtViewRelatedIdType.ObjectClassId == RootLevelRelationship.SecondType )
+                //{
+                //    InstanceOc = _CswNbtResources.MetaData.getObjectClass( RootLevelRelationship.SecondId );
+                //    if( null != InstanceOc )
+                //    {
+                //        BarcodeOcp = (CswNbtMetaDataObjectClassProp) InstanceOc.getBarcodeProperty();
 
-                if( null != BarcodeOcp && null != InstanceOc )
+                //    }
+                //}
+                //else if( NbtViewRelatedIdType.NodeTypeId == RootLevelRelationship.SecondType )
+                //{
+                //    CswNbtMetaDataNodeType InstanceNt = _CswNbtResources.MetaData.getNodeType( RootLevelRelationship.SecondId );
+                //    if( null != InstanceNt )
+                //    {
+                //        InstanceOc = InstanceNt.getObjectClass();
+                //        CswNbtMetaDataNodeTypeProp BarcodeNtp = (CswNbtMetaDataNodeTypeProp) InstanceNt.getBarcodeProperty();
+                //        if( null != BarcodeNtp )
+                //        {
+                //            BarcodeOcp = BarcodeNtp.getObjectClassProp();
+                //        }
+                //    }
+                //}
+                //else if( NbtViewRelatedIdType.PropertySetId == RootLevelRelationship.SecondType )
+                //{
+                //    // Not much we can do...
+                //}
+
+                ICswNbtMetaDataDefinitionObject secondObj = _CswNbtResources.MetaData.getDefinitionObject( RootLevelRelationship.SecondType, RootLevelRelationship.SecondId );
+                ICswNbtMetaDataProp BarcodeProp = secondObj.getBarcodeProperty();
+
+                if( null != BarcodeProp && null != secondObj )
                 {
                     string FilterValueString = CswConvert.ToString( FilterValue );
-                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeOcp, FilterValueString, FilterMode, FieldType : FieldType );
-                    _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, InstanceOc );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeProp, FilterValueString, FilterMode, FieldType: FieldType );
+                    _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, secondObj );
                 }
             }
-
-        }
+        } // _addSystemViewBarcodeFilter()
 
         public CswNbtSdInspectionsDataModels.InspectionData getInspectionsAndDesigns()
         {

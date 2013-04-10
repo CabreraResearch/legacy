@@ -524,26 +524,58 @@ namespace ChemSW.Nbt.MetaData
             bool ret = false;
             if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
             {
-                if( FKType != string.Empty )
-                {
-                    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
-                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
+                //if( FKType != string.Empty )
+                //{
+                //    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                //    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
 
-                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
-                    {
-                        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
-                    }
-                    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
-                    {
-                        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
-                        ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
+                //    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+                //    {
+                //        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
+                //        ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
+                //    }
+                //    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
+                //    {
+                //        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
+                //        ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
 
-                    }
-                }
+                //    }
+                //    else if( TargetType == NbtViewRelatedIdType.PropertySetId )
+                //    {
+                //        CswNbtMetaDataPropertySet TargetPropertySet = _CswNbtMetaDataResources.CswNbtResources.MetaData.getPropertySet( FKValue );
+                //        if( null != TargetPropertySet )
+                //        {
+                //            CswNbtMetaDataObjectClass UserObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                //            ret = ( null != UserObjectClass.getPropertySet() &&
+                //                    TargetPropertySet.PropertySetId == UserObjectClass.getPropertySet().PropertySetId );
+                //        }
+                //    }
+                //}
+                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                ret = FkMatches( UserOC );
             }
             return ret;
         }
+
+
+        #region FK Matching
+
+        public bool FkMatches( CswNbtMetaDataNodeType CompareNT )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareNT );
+        }
+
+        public bool FkMatches( CswNbtMetaDataObjectClass CompareOC )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareOC );
+        }
+
+        public bool FkMatches( CswNbtMetaDataPropertySet ComparePS )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, ComparePS );
+        }
+
+        #endregion FK Matching
 
         #region IEquatable
 

@@ -254,7 +254,9 @@ window.initMain = window.initMain || function (undefined) {
 
                 if (Csw.clientSession.isDebug(qs)) {
                     Csw.clientSession.enableDebug();
-                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
+                    if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
+                        Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
+                    }
                     Csw.setGlobalProp('homeUrl', 'Dev.html');
                 }
 
@@ -670,7 +672,6 @@ window.initMain = window.initMain || function (undefined) {
                     nodekey: '',
                     nodetypeid: '',
                     propid: '',
-                    grid: '',
                     limitMenuTo: '',
                     readonly: false
                 };
@@ -699,7 +700,7 @@ window.initMain = window.initMain || function (undefined) {
                     onMultiEdit: function () {
                         switch (o.viewmode) {
                             case Csw.enums.viewMode.grid.name:
-                                o.grid.toggleShowCheckboxes();
+                            o.nodeGrid.grid.toggleShowCheckboxes();
                                 break;
                             default:
                                 Csw.publish('CswMultiEdit', {
@@ -726,8 +727,8 @@ window.initMain = window.initMain || function (undefined) {
                     onPrintView: function () {
                         switch (o.viewmode) {
                             case Csw.enums.viewMode.grid.name:
-                                if (false == Csw.isNullOrEmpty(o.grid)) {
-                                    o.grid.print();
+                                if (false == Csw.isNullOrEmpty(o.nodeGrid.grid)) {
+                                    o.nodeGrid.grid.print();
                                 }
                                 break;
                             default:
@@ -736,7 +737,8 @@ window.initMain = window.initMain || function (undefined) {
                         }
                     },
                     Multi: cswPrivate.is.multi,
-                    nodeTreeCheck: mainTree
+                    nodeTreeCheck: mainTree,
+                    nodeGrid: o.nodeGrid
                 };
 
                 o.parent.menu(menuOpts);
@@ -770,8 +772,8 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
                 }
 
-                o.onEditNode = function () { grid.reload(true); };
-                o.onDeleteNode = function () { grid.reload(true); };
+                o.onEditNode = function () { nodeGrid.grid.reload(true); };
+                o.onDeleteNode = function () { nodeGrid.grid.reload(true); };
                 o.onRefresh = function (options) {
                     clear({ centertop: true, centerbottom: true });
                     Csw.clientChanges.unsetChanged();
@@ -794,24 +796,21 @@ window.initMain = window.initMain || function (undefined) {
                 }); // viewFilters
                 var div = Csw.main.centerBottomDiv.div({ suffix: window.Ext.id() });
                 div.empty();
-                var grid = Csw.nbt.nodeGrid(div, {
+                var nodeGrid = Csw.nbt.nodeGrid(div, {
                     viewid: o.viewid,
                     nodeid: o.nodeid,
                     nodekey: o.nodekey,
                     showempty: getEmptyGrid,
                     name: mainGridId,
-                    //'onAddNode': o.onAddNode,
                     onEditNode: o.onEditNode,
                     onDeleteNode: o.onDeleteNode,
                     onRefresh: o.onRefresh,
-                    onSuccess: function (grid) {
+                    onSuccess: function (thisNodeGrid) {
                         if (o.doMenuRefresh) {
                             refreshMainMenu({
                                 viewid: o.viewid,
                                 viewmode: Csw.enums.viewMode.grid.name,
-                                grid: grid//,
-                                //nodeid: o.nodeid,  // case 26914
-                                //nodekey: o.nodekey
+                                nodeGrid: thisNodeGrid
                             });
                         }
                     },

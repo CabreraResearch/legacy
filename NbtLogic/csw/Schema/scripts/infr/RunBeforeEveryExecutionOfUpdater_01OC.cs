@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Blame );
 
             CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
-            CswNbtMetaDataObjectClassProp barcodeOCP = assemblyOC.getBarcodeProp();
+            CswNbtMetaDataObjectClassProp barcodeOCP = (CswNbtMetaDataObjectClassProp) assemblyOC.getBarcodeProperty();
             if( null == barcodeOCP )
             {
                 barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Blame );
 
             CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
-            CswNbtMetaDataObjectClassProp barcodeOCP = equipmentOC.getBarcodeProp();
+            CswNbtMetaDataObjectClassProp barcodeOCP = (CswNbtMetaDataObjectClassProp) equipmentOC.getBarcodeProperty();
             if( null == barcodeOCP )
             {
                 barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( equipmentOC )
