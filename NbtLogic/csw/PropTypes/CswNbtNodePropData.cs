@@ -626,7 +626,7 @@ namespace ChemSW.Nbt.PropTypes
                     WasModified = true;
                     WasModifiedForNotification = true;
                 }
-                Row["blobdata"] = DBNull.Value;
+                Row.Delete();
             }
             blobDataTU.update( blobDataTbl );
         }
