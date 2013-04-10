@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Grid.ExtJs;
+using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
@@ -323,12 +324,16 @@ namespace ChemSW.Nbt.WebServices
                     ThisRule["statusmessage"] = ScheduledRule.StatusMessage;
                     ThisRule["priority"] = ScheduledRule.Priority;
                     ThisRule["disabled"] = CswConvert.ToDbVal( ScheduledRule.Disabled );
-                    ThisRule["runstarttime"] = ScheduledRule.RunStartTime == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.RunStartTime;
-                    ThisRule["runendtime"] = ScheduledRule.RunEndTime == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.RunEndTime;
-                    ThisRule["lastrun"] = ScheduledRule.LastRun == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.LastRun;
+                    ThisRule["runstarttime"] = ScheduledRule.RunStartTime == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.RunStartTime;
+                    ThisRule["runendtime"] = ScheduledRule.RunEndTime == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.RunEndTime;
+                    ThisRule["lastrun"] = ScheduledRule.LastRun == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.LastRun;
                     ThisRule["threadid"] = ScheduledRule.ThreadId;
                     ThisRule["loadcount"] = ScheduledRule.LoadCount;
                     RulesUpdate.update( RulesTable );
+                }
+                else
+                {
+                    NbtResources.CswLogger.reportAppState( "Scheduled Rule " + ScheduledRule.RuleName + " does not exist in the database." );
                 }
             }
         }
