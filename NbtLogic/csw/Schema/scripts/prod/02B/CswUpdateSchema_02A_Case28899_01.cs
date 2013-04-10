@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
 
         public override int CaseNo
         {
-            get { return 0; }
+            get { return 28899; }
         }
 
         public override void update()
