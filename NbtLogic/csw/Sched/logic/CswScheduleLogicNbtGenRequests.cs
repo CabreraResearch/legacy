@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.Sched
                                 CswNbtObjClassRequestMaterialDispense CurrentRequestItem = Tree.getNodeForCurrentPosition();
 
                                 if( null != CurrentRequestItem && // The Request Item isn't null
-                                    CurrentRequestItem.IsRecurring.Checked == Tristate.True && // This is actually a recurring request
+                                    CurrentRequestItem.IsRecurring.Checked == CswEnumTristate.True && // This is actually a recurring request
                                     false == CurrentRequestItem.RecurringFrequency.Empty && // The recurring frequency has been defined
                                     CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswRateInterval.RateIntervalType.Hourly || // Recurring on any frequency other than hourly
                                     ( CurrentRequestItem.NextReorderDate.DateTimeValue.Date <= DateTime.Today && // Recurring no more than once per hour

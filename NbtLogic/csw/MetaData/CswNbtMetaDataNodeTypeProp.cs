@@ -472,23 +472,23 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        private Tristate _IsSaveProp = Tristate.Null;
+        private CswEnumTristate _IsSaveProp = CswEnumTristate.Null;
         public bool IsSaveProp
         {
             get
             {
-                if( Tristate.Null == _IsSaveProp )
+                if( CswEnumTristate.Null == _IsSaveProp )
                 {
                     if( Int32.MinValue != ObjectClassPropId &&
                         null != getObjectClassProp() &&
                         getObjectClassProp().getFieldType().FieldType == CswEnumNbtFieldType.Button &&
                         getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
                     {
-                        _IsSaveProp = Tristate.True;
+                        _IsSaveProp = CswEnumTristate.True;
                     }
                     else
                     {
-                        _IsSaveProp = Tristate.False;
+                        _IsSaveProp = CswEnumTristate.False;
                     }
                 }
                 return CswConvert.ToBoolean( _IsSaveProp );

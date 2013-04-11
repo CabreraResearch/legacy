@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.Sched
                                             {
                                                 // might be redundant with CswNbtDbBasedSchdEvents.handleOnSchdItemWasRun()
                                                 CurrentMailReport.RunStatus.AddComment( "Report type is not specified" );
-                                                CurrentMailReport.Enabled.Checked = Tristate.False;
+                                                CurrentMailReport.Enabled.Checked = CswEnumTristate.False;
                                                 CurrentMailReport.postChanges( true );
                                             }
                                         } // if there's something to report
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.Sched
                                     else
                                     {
                                         CurrentMailReport.RunStatus.AddComment( "No recipients selected" );
-                                        CurrentMailReport.Enabled.Checked = Tristate.False;
+                                        CurrentMailReport.Enabled.Checked = CswEnumTristate.False;
                                         CurrentMailReport.postChanges( false );
                                     }
                                 //} // if( CurrentMailReport.Enabled.Checked == Tristate.True )
@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.Sched
                             catch( Exception Exception )
                             {
                                 InnerErrorMessage += "An exception occurred: " + Exception.Message + "; ";
-                                CurrentMailReport.Enabled.Checked = Tristate.False; 
+                                CurrentMailReport.Enabled.Checked = CswEnumTristate.False; 
                                 CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                 CurrentMailReport.postChanges( true );
                             }

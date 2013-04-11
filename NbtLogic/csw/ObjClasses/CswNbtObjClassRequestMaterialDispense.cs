@@ -525,13 +525,13 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp,
                 FilterMode : CswEnumNbtFilterMode.NotEquals,
-                Value : CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ),
+                Value : CswNbtNodePropLogical.toLogicalGestalt( CswEnumTristate.True ),
                 ShowInGrid : false );
 
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp,
                 FilterMode : CswEnumNbtFilterMode.NotEquals,
-                Value : Tristate.True.ToString(),
+                Value : CswEnumTristate.True.ToString(),
                 ShowInGrid : false );
         }
 
@@ -627,7 +627,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical IsBatch { get { return _CswNbtNode.Properties[PropertyName.IsBatch]; } }
         public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
         public CswNbtNodePropLogical IsRecurring { get { return _CswNbtNode.Properties[PropertyName.IsRecurring]; } }
-        private bool _IsRecurring { get { return Tristate.True == IsRecurring.Checked; } } //&& _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ); } }
+        private bool _IsRecurring { get { return CswEnumTristate.True == IsRecurring.Checked; } } //&& _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ); } }
         private void onIsRecurringChange( CswNbtNodeProp NodeProp )
         {
             //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items

@@ -111,8 +111,8 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Value: Tristate.False.ToString(), ShowInGrid: false );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, Value: Tristate.False.ToString(), ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Value: CswEnumTristate.False.ToString(), ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, Value: CswEnumTristate.False.ToString(), ShowInGrid: false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -223,7 +223,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _IsFakeNode
         {
-            get { return IsFavorite.Checked == Tristate.True || IsRecurring.Checked == Tristate.True; }
+            get { return IsFavorite.Checked == CswEnumTristate.True || IsRecurring.Checked == CswEnumTristate.True; }
         }
 
         private void _toggleProps()

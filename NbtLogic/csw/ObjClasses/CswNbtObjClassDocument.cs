@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //If and SDS Document is not already archived and it has a Language and Format, 
             //then archive existing SDS Docs with the same property values
-            if( Archived.Checked != Tristate.True &&
+            if( Archived.Checked != CswEnumTristate.True &&
                 NodeType.NodeTypeName == "SDS Document" &&
                 false == String.IsNullOrEmpty( Language.Value ) &&
                 false == String.IsNullOrEmpty( Format.Value ) )
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
                     if( NodeType.NodeTypeName == "SDS Document" )
                     {
                         ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.ObjClasses
                             if( DocNode.NodeId != NodeId )
                             {
                                 CswNbtObjClassDocument DocNodeAsDocument = DocNode;
-                                DocNodeAsDocument.Archived.Checked = Tristate.True;
+                                DocNodeAsDocument.Archived.Checked = CswEnumTristate.True;
                                 DocNode.postChanges( true );
                             }
                             Tree.goToParentNode();
@@ -298,9 +298,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
         {
-            ArchiveDate.setHidden( value : Archived.Checked != Tristate.True, SaveToDb : true );
+            ArchiveDate.setHidden( value : Archived.Checked != CswEnumTristate.True, SaveToDb : true );
             string ArchivedTitleSuffix = " (Archived)";
-            if( Archived.Checked == Tristate.True )
+            if( Archived.Checked == CswEnumTristate.True )
             {
                 ArchiveDate.DateTimeValue = DateTime.Now;
                 Title.Text += ArchivedTitleSuffix;

@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( TargetType.Empty )
             {
-                Enabled.Checked = Tristate.False;
+                Enabled.Checked = CswEnumTristate.False;
             }
         }
 

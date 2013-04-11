@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Sched
                     {
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
 
-                        if( CurrentGenerator.Enabled.Checked == Tristate.True )
+                        if( CurrentGenerator.Enabled.Checked == CswEnumTristate.True )
                         {
 
                             try
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.Sched
                                         // Therefore, disable anything that is erroneously spewing things.
                                         if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24*CurrentGenerator.TargetParents.Count ) )
                                         {
-                                            CurrentGenerator.Enabled.Checked = Tristate.False;
+                                            CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
                                             CurrentGenerator.RunStatus.AddComment( "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) in a single day" );
                                             CurrentGenerator.postChanges( false );
                                         }
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.Sched
                             {
                                 string Message = "Unable to process generator " + CurrentGenerator.Description.Text + ", which will now be disabled, due to the following exception: " + Exception.Message;
                                 GeneratorDescriptions += Message;
-                                CurrentGenerator.Enabled.Checked = Tristate.False;
+                                CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
                                 CurrentGenerator.RunStatus.AddComment( "Disabled due do exception: " + Exception.Message );
                                 CurrentGenerator.postChanges( false );
                                 CswNbtResources.logError( new CswDniException( Message ) );

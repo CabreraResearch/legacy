@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Test.Security
             Destroy();
         }
 
-        private CswNbtResources _testInit( string RoleName, string UserName, Tristate IsAdmin, CswNbtPermit.NodeTypePermission Permission, bool PermissionValue )
+        private CswNbtResources _testInit( string RoleName, string UserName, CswEnumTristate IsAdmin, CswNbtPermit.NodeTypePermission Permission, bool PermissionValue )
         {
             CswNbtSdResourcesMgr ResourcesMgr = new CswNbtSdResourcesMgr( _TestData.CswNbtResources );
             CswNbtObjClassRole Role = _TestData.CswNbtResources.Nodes[ResourcesMgr.makeNewRole( RoleName )];
@@ -117,9 +117,9 @@ namespace ChemSW.Nbt.Test.Security
         /// <summary>
         /// Test NodeType Edit permission for a particular User
         /// </summary>
-        [TestCase( "CswPermitAdminRole", "CswPermitAdminUser", Tristate.True, CswNbtPermit.NodeTypePermission.Edit, true, Result = true)]
+        [TestCase( "CswPermitAdminRole", "CswPermitAdminUser", CswEnumTristate.True, CswNbtPermit.NodeTypePermission.Edit, true, Result = true)]
         //NOTE: you can have as many of these [TestCase]s as you want. Simply add them to generate a new iteration of the test with different parameters.
-        public bool CanEditWithNodeTypePermission( string RoleName, string UserName, Tristate IsAdmin, CswNbtPermit.NodeTypePermission Permission, bool PermissionValue )
+        public bool CanEditWithNodeTypePermission( string RoleName, string UserName, CswEnumTristate IsAdmin, CswNbtPermit.NodeTypePermission Permission, bool PermissionValue )
         {
             CswNbtResources NewResources = _testInit( RoleName, UserName, IsAdmin, Permission, PermissionValue );
             Assert.NotNull( NewResources );

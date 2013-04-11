@@ -543,7 +543,7 @@ namespace ChemSW.Nbt.ImportExport
                                                     RelatedNode.Properties["Username"].AsText.Text = SplitRelatedNodeID[2].ToLower();
                                                     if( GeneralUserRole != null )
                                                         RelatedNode.Properties["Role"].AsRelationship.RelatedNodeId = GeneralUserRole.NodeId;
-                                                    RelatedNode.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
+                                                    RelatedNode.Properties["AccountLocked"].AsLogical.Checked = CswEnumTristate.True;
                                                 }
                                                 RelatedNode.postChanges( false, false, true );
                                             }

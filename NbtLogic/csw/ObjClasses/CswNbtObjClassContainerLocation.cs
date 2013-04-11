@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ContLocStatus = CswEnumNbtContainerLocationStatusOptions.ScannedCorrect;
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                if( ContainerNode.Disposed.Checked == Tristate.True )
+                if( ContainerNode.Disposed.Checked == CswEnumTristate.True )
                 {
                     ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Disposed;
                 }
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
                                         ? CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation
                                         : CswEnumNbtContainerLocationStatusOptions.WrongLocation;
                 }
-                if( ContainerNode.Missing.Checked == Tristate.True )
+                if( ContainerNode.Missing.Checked == CswEnumTristate.True )
                 {
                     ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
                 }

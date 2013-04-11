@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Batch
                 {
                     _executeReconciliationAction( ContainerLocation );
                 }
-                ContainerLocation.ActionApplied.Checked = Tristate.True;
+                ContainerLocation.ActionApplied.Checked = CswEnumTristate.True;
                 ContainerLocation.postChanges( false );
             }
         }
@@ -144,8 +144,8 @@ namespace ChemSW.Nbt.Batch
                     Container.Location.CreateContainerLocation = false;
                 }
                 Container.Missing.Checked = Action == CswEnumNbtContainerLocationActionOptions.MarkMissing 
-                    ? Tristate.True 
-                    : Tristate.False;
+                    ? CswEnumTristate.True 
+                    : CswEnumTristate.False;
                 Container.postChanges( false );
             }
         }

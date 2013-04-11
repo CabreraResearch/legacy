@@ -61,12 +61,12 @@ namespace ChemSW.Nbt.Sched
                     CswNbtObjClassUser CswAdminAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
                     if( false == CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) )
                     {
-                        CswAdminAsUser.AccountLocked.Checked = Tristate.True;
+                        CswAdminAsUser.AccountLocked.Checked = CswEnumTristate.True;
                         CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
                     }
                     else
                     {
-                        CswAdminAsUser.AccountLocked.Checked = Tristate.False;
+                        CswAdminAsUser.AccountLocked.Checked = CswEnumTristate.False;
                         CswAdminAsUser.FailedLoginCount.Value = 0;
                         CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.password_length.ToString(), "16" );
                         CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.passwordexpiry_days.ToString(), "30" );

@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             CswNbtObjClassContainer containerToDispose = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
             if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerToDispose.NodeType ) && _CswNbtResources.Permit.can( CswNbtActionName.DisposeContainer ) )
             {
-                if( Tristate.True == containerToDispose.Disposed.Checked )
+                if( CswEnumTristate.True == containerToDispose.Disposed.Checked )
                 {
                     OpData.Field1.StatusMsg = "Container " + OpData.Field1.Value + " is already disposed";
                     OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispose already disposed container " + OpData.Field1.Value );

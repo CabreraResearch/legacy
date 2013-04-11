@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.Sched
             CswNbtMetaDataObjectClassProp ActionAppliedOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ActionApplied );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionAppliedOcp,
-                Value: Tristate.True.ToString(),
+                Value: CswEnumTristate.True.ToString(),
                 SubFieldName: CswEnumNbtSubFieldName.Checked,
                 FilterMode: CswEnumNbtFilterMode.NotEquals );
             CswNbtMetaDataObjectClassProp ActionOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Action );

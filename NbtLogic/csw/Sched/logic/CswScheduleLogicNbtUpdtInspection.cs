@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Sched
                         DateTime DueDate = CurrentInspectionDesign.DueDate.DateTimeValue;
                         if( _Pending == CurrentInspectionDesign.Status.Value &&
                             DateTime.Today > DueDate &&
-                            Tristate.True != CurrentInspectionDesign.IsFuture.Checked )
+                            CswEnumTristate.True != CurrentInspectionDesign.IsFuture.Checked )
                         {
                             CurrentInspectionDesign.Status.Value = _Overdue;
                             CurrentInspectionDesign.postChanges( ForceUpdate: true );

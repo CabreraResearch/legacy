@@ -866,7 +866,7 @@ namespace ChemSW.Nbt
 
                     unitOfMeasure = _NBTResources.Nodes.makeNodeFromNodeTypeId( UoM_NT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     unitOfMeasure.Name.Text = unitName;
-                    unitOfMeasure.Fractional.Checked = Tristate.False;
+                    unitOfMeasure.Fractional.Checked = CswEnumTristate.False;
                     unitOfMeasure.ConversionFactor.Base = baseVal;
                     unitOfMeasure.ConversionFactor.Exponent = expVal;
                 }

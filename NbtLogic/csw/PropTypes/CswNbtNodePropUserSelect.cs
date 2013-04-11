@@ -192,7 +192,7 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
-                if( Tristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
+                if( CswEnumTristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
                 {
                     DataRow NTRow = Data.NewRow();
                     NTRow[NameColumn] = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();

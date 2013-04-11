@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswEnumNbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";
-                    if( Size.QuantityEditable.Checked == Tristate.False )
+                    if( Size.QuantityEditable.Checked == CswEnumTristate.False )
                     {
                         Ret["qtyReadonly"] = true;
                     }

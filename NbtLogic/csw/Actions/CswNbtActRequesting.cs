@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtView RequestView = getRequestViewBase( LimitToUnsubmitted: false, IncludeDefaultFilters: false );
                 CswNbtViewRelationship RootVr = RequestView.Root.ChildRelationships[0];
 
-                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring ), Value: Tristate.True.ToString() );
+                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring ), Value: CswEnumTristate.True.ToString() );
                 RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: _ThisUser.UserId.PrimaryKey.ToString() );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestView, RequireViewPermissions: false, IncludeHiddenNodes: false, IncludeSystemNodes: false );
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.Actions
                                                     "No Request NodeType could be found." );
                     }
                     _RecurringRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                    _RecurringRequestNode.IsRecurring.Checked = Tristate.True;
+                    _RecurringRequestNode.IsRecurring.Checked = CswEnumTristate.True;
                     _RecurringRequestNode.postChanges( true );
                 }
             }
@@ -378,7 +378,7 @@ namespace ChemSW.Nbt.Actions
 
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsFavorite ),
-                Value: Tristate.True.ToString(),
+                Value: CswEnumTristate.True.ToString(),
                 ShowInGrid: false );
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ),
@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.Actions
             Vp4.Order = 4;
 
             Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Requestor ), Value: "me", ShowInGrid: false );
-            Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite ), Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ), ShowInGrid: false );
+            Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite ), Value: CswNbtNodePropLogical.toLogicalGestalt( CswEnumTristate.True ), ShowInGrid: false );
 
             return Ret;
         }
@@ -487,7 +487,7 @@ namespace ChemSW.Nbt.Actions
             }
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                                           MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring ),
-                                          Value: Tristate.True.ToString(),
+                                          Value: CswEnumTristate.True.ToString(),
                                           ShowInGrid: false );
             return Ret;
         }

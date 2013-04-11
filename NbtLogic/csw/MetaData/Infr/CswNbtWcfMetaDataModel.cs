@@ -198,11 +198,11 @@ namespace ChemSW.Nbt.MetaData
                                 FieldType.FieldType == CswEnumNbtFieldType.Question );
                 if ( FieldType.FieldType == CswEnumNbtFieldType.NodeTypeSelect )
                 {
-                    Multi = Tristate.False;
+                    Multi = CswEnumTristate.False;
                 }
                 else
                 {
-                    Multi = Tristate.Null;
+                    Multi = CswEnumTristate.Null;
                 }
                 ReadOnly = ( FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
                             FieldType.FieldType == CswEnumNbtFieldType.Sequence );
@@ -233,7 +233,7 @@ namespace ChemSW.Nbt.MetaData
             [DataMember]
             public bool UseNumbering;
             [DataMember]
-            public Tristate Multi;
+            public CswEnumTristate Multi;
             [DataMember]
             public bool ReadOnly;
             [DataMember]

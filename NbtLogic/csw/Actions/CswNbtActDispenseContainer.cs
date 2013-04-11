@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.Actions
                 ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 ChildContainer.Quantity.Quantity = 0;
                 ChildContainer.Quantity.UnitId = UnitId;
-                ChildContainer.Disposed.Checked = Tristate.False;
+                ChildContainer.Disposed.Checked = CswEnumTristate.False;
                 ChildContainer.postChanges( false );
                 ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                 _ContainersToView.Add( ChildContainer.NodeId );
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.Actions
                         MaterialVp.ShowInGrid = false;
 
                         CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
-                        Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: Tristate.True.ToString() );
+                        Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
                         MissingVp.ShowInGrid = false;
 
                         CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );

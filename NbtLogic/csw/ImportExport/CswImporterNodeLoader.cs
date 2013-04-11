@@ -960,7 +960,7 @@ namespace ChemSW.Nbt.ImportExport
                 UserNode.Properties["Role"].AsRelationship.RelatedNodeId = RoleNode.NodeId;
             }
 
-            UserNode.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
+            UserNode.Properties["AccountLocked"].AsLogical.Checked = CswEnumTristate.True;
         }//rehabilitateUser() 
 
         private void _makeImportTable( string TableName, string PkColumnName, DataColumnCollection Columns, Int32 ArbitraryStringColumnLength, Collection<string> AdditionalStringColumns, Collection<string> IndexColumns )

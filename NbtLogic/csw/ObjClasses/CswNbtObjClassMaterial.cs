@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _canReceive()
         {
-            return ApprovedForReceiving.Checked == Tristate.True && _CswNbtResources.Permit.can( CswNbtActionName.Receiving );
+            return ApprovedForReceiving.Checked == CswEnumTristate.True && _CswNbtResources.Permit.can( CswNbtActionName.Receiving );
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ApprovedForReceiving.WasModified )
             {
-                Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
+                Receive.setHidden( value: ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb: true );
             }
 
             if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) && false == IsCopy )

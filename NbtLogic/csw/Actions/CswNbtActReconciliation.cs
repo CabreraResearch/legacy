@@ -362,7 +362,7 @@ namespace ChemSW.Nbt.Actions
                 ContLocNode.Type.Value = CswEnumNbtContainerLocationTypeOptions.Missing.ToString();
                 ContLocNode.Status.Value = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
                 ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString();
-                ContLocNode.ActionApplied.Checked = Tristate.False;
+                ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 ContLocNode.postChanges( false );

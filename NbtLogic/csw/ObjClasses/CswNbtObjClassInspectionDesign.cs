@@ -354,7 +354,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _genFutureNodes()
         {
-            if( Tristate.True != this.IsFuture.Checked &&
+            if( CswEnumTristate.True != this.IsFuture.Checked &&
                 CswTools.IsPrimaryKey( this.Generator.RelatedNodeId ) &&
                 false == _genFutureNodesHasRun )
             {
@@ -379,7 +379,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
                               this.Node != InspectionNode ) &&
                             // Other inspection isn't future (case 28317)
-                            Tristate.True != PriorInspection.IsFuture.Checked )
+                            CswEnumTristate.True != PriorInspection.IsFuture.Checked )
                         {
                             PriorInspection.Status.Value = CswEnumNbtInspectionStatus.Missed.ToString();
                             // Case 20755

@@ -652,11 +652,11 @@ namespace ChemSW.NbtWebControls
                             if( Value != string.Empty && Value != null )
                             {
                                 if( Value.ToString().ToLower() == "1" || Value.ToString().ToLower() == "true" )
-                                    FilterValueCheckBox.Checked = Tristate.True;
+                                    FilterValueCheckBox.Checked = CswEnumTristate.True;
                                 else if( Value.ToString().ToLower() == "0" || Value.ToString().ToLower() == "false" )
-                                    FilterValueCheckBox.Checked = Tristate.False;
+                                    FilterValueCheckBox.Checked = CswEnumTristate.False;
                                 else
-                                    FilterValueCheckBox.Checked = Tristate.Null;
+                                    FilterValueCheckBox.Checked = CswEnumTristate.Null;
                             }
                             break;
                         default:

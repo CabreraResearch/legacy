@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.Test
             ContainerNode.Quantity.Quantity = Quantity;
             if( null == UnitOfMeasure )
             {
-                UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters" + Sequence, 1.0, 0, Tristate.True );
+                UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters" + Sequence, 1.0, 0, CswEnumTristate.True );
             }
             ContainerNode.Quantity.UnitId = UnitOfMeasure.NodeId;
             ContainerNode.UseType.Value = CswEnumNbtContainerUseTypes.Storage;
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Test
             return ContainerNode.Node;
         }
 
-        internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
+        internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, CswEnumTristate Fractional )
         {
             CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswEnumNbtMakeNodeOperation.DoNothing );
             UnitOfMeasureNode.Name.Text = Name + "Test";
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.Test
         }
 
         internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
-            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", Tristate IsTierII = Tristate.True )
+            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = CswEnumTristate.True )
         {
             CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.Test
             return ControlZoneNode;
         }
 
-        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", Tristate isLocked = Tristate.False, Tristate isArchived = Tristate.False )
+        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", CswEnumTristate isLocked = CswEnumTristate.False, CswEnumTristate isArchived = CswEnumTristate.False )
         {
             CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswPrimaryKey RoleId = RoleOc.getNodeIdAndNames( false, false ).Select( RoleIds => RoleIds.Key ).FirstOrDefault();

@@ -100,8 +100,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                 CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, CswEnumNbtViewPropOwnerType.Second, LocationOcp, false );
                 Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
-                Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, Tristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
-                Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, Tristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
+                Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, CswEnumTristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
+                Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, CswEnumTristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
                 Ret.AddViewProperty( ContainerRel, QuantityOcp );
             }
             return Ret;

@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.ObjClasses
                                                                 Conjunction: CswEnumNbtFilterConjunction.And,
                                                                 ResultMode: CswEnumNbtFilterResultMode.Disabled,
                                                                 FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                Value: Tristate.True.ToString() );
+                                                                Value: CswEnumTristate.True.ToString() );
                     }
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )

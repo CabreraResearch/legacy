@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         //BZ 10247
         private void setDoneOnDate()
         {
-            if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
+            if( Completed.Checked == CswEnumTristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
             {
                 DoneOn.DateTimeValue = DateTime.Now;
             }
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //if someone set the flag deliberately don't mess with it
                 if( !_CswNbtNode.Properties[PropertyName.IsFuture].WasModified )
                 {
-                    _CswNbtNode.Properties[PropertyName.IsFuture].AsLogical.Checked = Tristate.False;
+                    _CswNbtNode.Properties[PropertyName.IsFuture].AsLogical.Checked = CswEnumTristate.False;
                 }
 
             }//If one of the main properties is modified        

@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtObjClassRequest Favorite = NbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     if( null != Favorite )
                     {
-                        Favorite.IsFavorite.Checked = Tristate.True;
+                        Favorite.IsFavorite.Checked = CswEnumTristate.True;
                         Favorite.postChanges( ForceUpdate: false );
                         Succeeded = true;
                         CswPropIdAttr NameIdAttr = new CswPropIdAttr( Favorite.Node, Favorite.Name.NodeTypeProp );
@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.WebServices
                 applyCopyLogic SetRequest = ( Item ) =>
                     {
                         Item.Request.RelatedNodeId = RequestNode.NodeId;
-                        Item.IsRecurring.Checked = Tristate.True;
+                        Item.IsRecurring.Checked = CswEnumTristate.True;
                     };
                 Succeeded = ws.copyRequestItems( Request, SetRequest );
             }

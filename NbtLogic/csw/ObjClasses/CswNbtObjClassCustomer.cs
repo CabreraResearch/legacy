@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 // Update the value of Deactivated and IP Filter Regex in the DbConfig file
                 _CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CompanyID.Text );
-                _CswNbtResources.CswDbCfgInfo.CurrentDeactivated = ( Deactivated.Checked == Tristate.True );
+                _CswNbtResources.CswDbCfgInfo.CurrentDeactivated = ( Deactivated.Checked == CswEnumTristate.True );
                 _CswNbtResources.CswDbCfgInfo.CurrentIPFilterRegex = IPFilterRegex.Text;
                 if( !Double.IsNaN( UserCount.Value ) )   // BZ 7822
                     _CswNbtResources.CswDbCfgInfo.CurrentUserCount = UserCount.Value.ToString();
@@ -161,9 +161,9 @@ namespace ChemSW.Nbt.ObjClasses
                 // get data from DbConfig file
                 _CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CompanyID.Text );
                 if( _CswNbtResources.CswDbCfgInfo.CurrentDeactivated )
-                    Deactivated.Checked = Tristate.True;
+                    Deactivated.Checked = CswEnumTristate.True;
                 else
-                    Deactivated.Checked = Tristate.False;
+                    Deactivated.Checked = CswEnumTristate.False;
                 IPFilterRegex.Text = _CswNbtResources.CswDbCfgInfo.CurrentIPFilterRegex;
                 if( CswTools.IsInteger( _CswNbtResources.CswDbCfgInfo.CurrentUserCount ) )
                     UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );

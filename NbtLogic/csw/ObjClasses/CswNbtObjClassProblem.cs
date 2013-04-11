@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _checkClosed()
         {
             // BZ 10051 - If we're closing the Problem, set the Date Closed to today
-            if( Closed.Checked == Tristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
+            if( Closed.Checked == CswEnumTristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
                 DateClosed.DateTimeValue = DateTime.Today;
 
             // case 25838 - don't clear existing values

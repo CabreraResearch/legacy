@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
         public void setStatusTestMissing()
         {
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
-            ContainerNode.Missing.Checked = Tristate.True;
+            ContainerNode.Missing.Checked = CswEnumTristate.True;
             ContainerNode.postChanges( false );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
-            Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
-            Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),

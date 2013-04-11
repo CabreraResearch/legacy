@@ -168,11 +168,11 @@ namespace ChemSW.Nbt.Actions
 
                             if( MarkFuture )
                             {
-                                NewNode.IsFuture.Checked = Tristate.True;
+                                NewNode.IsFuture.Checked = CswEnumTristate.True;
                             }
                             else
                             {
-                                NewNode.IsFuture.Checked = Tristate.False;
+                                NewNode.IsFuture.Checked = CswEnumTristate.False;
                             }
 
                             if( null != onBeforeInsertNode )
@@ -189,16 +189,16 @@ namespace ChemSW.Nbt.Actions
                     {
                         if( false == MarkFuture )
                         {
-                            if( ExistingNode.IsFuture.Checked == Tristate.True )
+                            if( ExistingNode.IsFuture.Checked == CswEnumTristate.True )
                             {
-                                ExistingNode.IsFuture.Checked = Tristate.False;
+                                ExistingNode.IsFuture.Checked = CswEnumTristate.False;
                             }
                         }
                         else
                         {
                             if( DateTime.Now.Date >= ExistingNode.DueDate.DateTimeValue.Date )
                             {
-                                ExistingNode.IsFuture.Checked = Tristate.False;
+                                ExistingNode.IsFuture.Checked = CswEnumTristate.False;
                             }
                         }
                         //ExistingNode.PendingUpdate = true;

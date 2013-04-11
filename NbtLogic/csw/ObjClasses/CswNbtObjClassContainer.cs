@@ -92,10 +92,10 @@ namespace ChemSW.Nbt.ObjClasses
 
             // update Request Menu
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
-            if( Tristate.True != Disposed.Checked )
+            if( CswEnumTristate.True != Disposed.Checked )
             {
                 MenuOpts.Add( CswEnumNbtContainerRequestMenu.Move );
-                if( Tristate.True != Missing.Checked && Quantity.Quantity > 0 )
+                if( CswEnumTristate.True != Missing.Checked && Quantity.Quantity > 0 )
                 {
                     MenuOpts.Add( CswEnumNbtContainerRequestMenu.Dispense );
                 }
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != NewGroupNode )
                 {
-                    if( Tristate.True == NewGroupNode.SyncLocation.Checked )
+                    if( CswEnumTristate.True == NewGroupNode.SyncLocation.Checked )
                     {
                         this.Location.SelectedNodeId = NewGroupNode.Location.SelectedNodeId;
                         this.Location.RefreshNodeName();
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != NewGroupNode )
                 {
-                    if( Tristate.True == NewGroupNode.SyncLocation.Checked && ( this.Location.SelectedNodeId != NewGroupNode.Location.SelectedNodeId ) )
+                    if( CswEnumTristate.True == NewGroupNode.SyncLocation.Checked && ( this.Location.SelectedNodeId != NewGroupNode.Location.SelectedNodeId ) )
                     {
                         this.ContainerGroup.RelatedNodeId = null;
                     }
@@ -176,13 +176,13 @@ namespace ChemSW.Nbt.ObjClasses
             LotControlled.SetOnPropChange( OnLotControlledPropChange );
             Owner.SetOnPropChange( OnOwnerPropChange ); //case 28514
 
-            bool IsDisposed = ( Disposed.Checked == Tristate.True );
+            bool IsDisposed = ( Disposed.Checked == CswEnumTristate.True );
             //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
             Dispense.setHidden( value : ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb : true );
             Dispose.setHidden( value : ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb : true );
             Undispose.setHidden( value : ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb : true );
             bool CantRequest = ( ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) &&
-                                  Requisitionable.Checked == Tristate.False ) ||
+                                  Requisitionable.Checked == CswEnumTristate.False ) ||
                                   IsDisposed ||
                                   false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) );
             Request.setHidden( value : CantRequest, SaveToDb : true );
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( PropertyName.Disposed );
             CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
             viewProp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode : CswEnumNbtFilterMode.Equals, Value : Tristate.False.ToString() , ShowAtRuntime: true );
+            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode : CswEnumNbtFilterMode.Equals, Value : CswEnumTristate.False.ToString() , ShowAtRuntime: true );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -368,10 +368,10 @@ namespace ChemSW.Nbt.ObjClasses
                                 CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
                                 if( Action != null )
                                 {
-                                    if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNode.Dispense.Checked == Tristate.True ) ||
-                                        ( Action.Name == CswNbtActionName.DisposeContainer && PermNode.Dispose.Checked == Tristate.True ) ||
-                                        ( Action.Name == CswNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == Tristate.True ) ||
-                                        ( Action.Name == CswNbtActionName.Submit_Request && PermNode.Request.Checked == Tristate.True ) )
+                                    if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNode.Dispense.Checked == CswEnumTristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.DisposeContainer && PermNode.Dispose.Checked == CswEnumTristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == CswEnumTristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.Submit_Request && PermNode.Request.Checked == CswEnumTristate.True ) )
                                     {
                                         ret = true;
                                     }
@@ -389,8 +389,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 { //there's only edit, so edit applies to all three
-                                    if( ( Permission == CswNbtPermit.NodeTypePermission.View && PermNode.View.Checked == Tristate.True ) ||
-                                        PermNode.Edit.Checked == Tristate.True )
+                                    if( ( Permission == CswNbtPermit.NodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                                        PermNode.Edit.Checked == CswEnumTristate.True )
                                     {
                                         ret = true;
                                     }
@@ -423,7 +423,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( CswEnumNbtContainerDispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer : this );
                 this.Quantity.Quantity = 0;
-                this.Disposed.Checked = Tristate.True;
+                this.Disposed.Checked = CswEnumTristate.True;
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
                 CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Dispose );
@@ -449,7 +449,7 @@ namespace ChemSW.Nbt.ObjClasses
                     this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
                     ContDispTransNode.Node.delete( OverridePermissions : true );
                 }
-                this.Disposed.Checked = Tristate.False;
+                this.Disposed.Checked = CswEnumTristate.False;
                 _setDisposedReadOnly( false );
                 if( CreateContainerLocation )
                 {
@@ -586,14 +586,14 @@ namespace ChemSW.Nbt.ObjClasses
                         ContLocNode.ContainerScan.Text = ContainerBarcode;
                     }
                 }
-                ContLocNode.ActionApplied.Checked = Tristate.False;
+                ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 ContLocNode.postChanges( false );
                 LocationVerified.DateTimeValue = DateTime.Now;
-                if( Missing.Checked == Tristate.True )
+                if( Missing.Checked == CswEnumTristate.True )
                 {
-                    Missing.Checked = Tristate.False;
+                    Missing.Checked = CswEnumTristate.False;
                 }
             }
         }
@@ -988,7 +988,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
                         if( null != InvGroupNode )
                         {
-                            LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
+                            LotControlled.Checked = InvGroupNode.Central.Checked == CswEnumTristate.True ? CswEnumTristate.True : CswEnumTristate.False;
                         }
                     }
                     else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
@@ -1026,7 +1026,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Dispose.setHidden( value : true, SaveToDb : true );
             if( CswConvert.ToTristate( Disposed.GetOriginalPropRowValue() ) != Disposed.Checked &&
-                Disposed.Checked == Tristate.True )
+                Disposed.Checked == CswEnumTristate.True )
             {
                 _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Dispose );
             }
@@ -1058,7 +1058,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( CswConvert.ToInt32( Diff ) != 0 )
                 {
                     string Reason = "Container " + Barcode.Barcode + " quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
-                    if( Disposed.Checked == Tristate.True )
+                    if( Disposed.Checked == CswEnumTristate.True )
                     {
                         Reason += " on disposal.";
                     }
@@ -1111,12 +1111,12 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical LotControlled { get { return ( _CswNbtNode.Properties[PropertyName.LotControlled] ); } }
         private void OnLotControlledPropChange( CswNbtNodeProp Prop )
         {
-            if( LotControlled.Checked == Tristate.True )
+            if( LotControlled.Checked == CswEnumTristate.True )
             {
                 //DispenseForCertificate.RelatedNodeId = null;//TODO - uncomment when DispenseForCertificate is created
                 Status.Value = String.Empty;
             }
-            else if( LotControlled.Checked == Tristate.False )
+            else if( LotControlled.Checked == CswEnumTristate.False )
             {
                 //TODO - uncomment this if-else condition when Certificates have been implemented
                 //if( null != Certificate.RelatedNodeId )

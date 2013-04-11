@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            AutomaticCertificateApproval.setHidden( Central.Checked != Tristate.True, false );
+            AutomaticCertificateApproval.setHidden( Central.Checked != CswEnumTristate.True, false );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

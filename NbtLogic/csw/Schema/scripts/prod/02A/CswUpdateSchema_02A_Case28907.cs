@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.Schema
             CASNoVP.Order = 5;
             CswNbtViewProperty PhysicalStateVP = UnapprovedMaterialsView.AddViewProperty( MatRel, PhysicalStateProp );
             PhysicalStateVP.Order = 6;
-            UnapprovedMaterialsView.AddViewPropertyAndFilter( MatRel, ApprovedForReceivingProp, Tristate.False.ToString(),
+            UnapprovedMaterialsView.AddViewPropertyAndFilter( MatRel, ApprovedForReceivingProp, CswEnumTristate.False.ToString(),
                                                                 FilterMode: CswEnumNbtFilterMode.Equals,
                                                                 ShowInGrid: false );
             UnapprovedMaterialsView.save();

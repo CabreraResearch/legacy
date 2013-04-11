@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Test.Security
         {
             String Username = "gooduser";
             String Password = "goodpw1!";
-            TestData.Nodes.createUserNode( Username, Password, isLocked: Tristate.True );
+            TestData.Nodes.createUserNode( Username, Password, isLocked: CswEnumTristate.True );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Locked;
             ICswUser User;
             CswEnumAuthenticationStatus Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", out User );
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Test.Security
         {
             String Username = "gooduser";
             String Password = "goodpw1!";
-            TestData.Nodes.createUserNode( Username, Password, isArchived: Tristate.True );
+            TestData.Nodes.createUserNode( Username, Password, isArchived: CswEnumTristate.True );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Archived;
             ICswUser User;
             CswEnumAuthenticationStatus Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", out User );

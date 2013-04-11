@@ -95,9 +95,9 @@ namespace ChemSW.Nbt.ObjClasses
         private void _assertMailReportIsValid()
         {
             string mailReportError = _getMailReportError();
-            if( Enabled.Checked == Tristate.True && false == String.IsNullOrEmpty( mailReportError ) )
+            if( Enabled.Checked == CswEnumTristate.True && false == String.IsNullOrEmpty( mailReportError ) )
             {
-                Enabled.Checked = Tristate.False;
+                Enabled.Checked = CswEnumTristate.False;
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot Enable Mail Report: No " + mailReportError + " Selected.", "No " + mailReportError + " Selected." );
             }
         }

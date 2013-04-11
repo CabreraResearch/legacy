@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.Actions
                                                     }
                                                     AsContainer.Size.RelatedNodeId = SizeId;
                                                     AsContainer.Material.RelatedNodeId = NodeAsMaterial.NodeId;
-                                                    if( AsSize.QuantityEditable.Checked != Tristate.True )
+                                                    if( AsSize.QuantityEditable.Checked != CswEnumTristate.True )
                                                     {
                                                         QuantityValue = AsSize.InitialQuantity.Quantity;
                                                         UnitId = AsSize.InitialQuantity.UnitId;
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.Actions
                                                         AsContainer.Quantity.UnitId = UnitId;
                                                     }
                                                     AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId );
-                                                    AsContainer.Disposed.Checked = Tristate.False;
+                                                    AsContainer.Disposed.Checked = CswEnumTristate.False;
                                                     AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
                                                     AsContainer.postChanges( true );
                                                     ContainerIds.Add( AsContainer.NodeId );

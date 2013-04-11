@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        public Tristate Checked
+        public CswEnumTristate Checked
         {
             get
             {
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 // For Logicals, return the property name
                 string ret = string.Empty;
-                if( Checked == Tristate.True )
+                if( Checked == CswEnumTristate.True )
                 {
                     ret = PropName;
                 }
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
         } // ValueForNameTemplate
 
 
-        public static string toLogicalGestalt( Tristate Tristate )
+        public static string toLogicalGestalt( CswEnumTristate Tristate )
         {
             object val = CswConvert.ToDbVal( Tristate );
             string Ret = string.Empty;

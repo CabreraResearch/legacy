@@ -205,13 +205,13 @@ namespace ChemSW.Nbt.ObjClasses
                 false == String.IsNullOrEmpty( this.UsernameProperty.Text ) &&
                 false == CswTools.IsValidUsername( this.UsernameProperty.Text ) &&
                 ( this.UsernameProperty.WasModified ||
-                 ( this.AccountLocked.WasModified && this.AccountLocked.Checked == Tristate.False ) );
+                 ( this.AccountLocked.WasModified && this.AccountLocked.Checked == CswEnumTristate.False ) );
         }
 
         public override void afterWriteNode()
         {
             //bz # 6555
-            if( AccountLocked.Checked != Tristate.True && AccountLocked.WasModified )
+            if( AccountLocked.Checked != CswEnumTristate.True && AccountLocked.WasModified )
             {
                 clearFailedLoginCount();
             }
@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode RoleNode = _CswNbtResources.Nodes[RoleId];
 
                 //prevent user from deleting admin if they are not an admin
-                if( _RoleNodeObjClass.Administrator.Checked == Tristate.True &&
+                if( _RoleNodeObjClass.Administrator.Checked == CswEnumTristate.True &&
                     _CswNbtResources.CurrentNbtUser.IsAdministrator() != true )
                 {
                     throw ( new CswDniException( CswEnumErrorType.Warning,
@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : Tristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -561,7 +561,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( failures >= CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "failedloginlimit" ) ) )
             {
-                this.AccountLocked.Checked = Tristate.True;
+                this.AccountLocked.Checked = CswEnumTristate.True;
             }
         }
 
@@ -572,17 +572,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         public bool IsAccountLocked()
         {
-            return this.AccountLocked.Checked == Tristate.True;
+            return this.AccountLocked.Checked == CswEnumTristate.True;
         }
 
         public bool IsAdministrator()
         {
-            return _RoleNodeObjClass.Administrator.Checked == Tristate.True;
+            return _RoleNodeObjClass.Administrator.Checked == CswEnumTristate.True;
         }
 
         public bool IsArchived()
         {
-            return this.Archived.Checked == Tristate.True;
+            return this.Archived.Checked == CswEnumTristate.True;
         }
 
     }//CswNbtObjClassUser

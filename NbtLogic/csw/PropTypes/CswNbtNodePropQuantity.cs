@@ -272,11 +272,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public Tristate TargetFractional
+        public CswEnumTristate TargetFractional
         {
             get
             {
-                Tristate Fractional = Tristate.True;//We want to be able to enter a decimal value if Unit hasn't been selected yet.
+                CswEnumTristate Fractional = CswEnumTristate.True;//We want to be able to enter a decimal value if Unit hasn't been selected yet.
                 CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes[UnitId];
                 if( UnitNode != null )
                 {

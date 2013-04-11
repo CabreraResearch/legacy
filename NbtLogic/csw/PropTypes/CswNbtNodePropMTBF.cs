@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.PropTypes
                                                                                                     OwnerOCP, true );
                 // BZ 10277 - Only Problems flagged Failure 
                 CswNbtViewProperty FailureVP = ProblemFailuresView.AddViewProperty( ChildRelationship, FailureOCP );
-                CswNbtViewPropertyFilter FailureFilter = ProblemFailuresView.AddViewPropertyFilter( FailureVP, CswEnumNbtSubFieldName.Checked, CswEnumNbtFilterMode.Equals, Tristate.True.ToString(), false );
+                CswNbtViewPropertyFilter FailureFilter = ProblemFailuresView.AddViewPropertyFilter( FailureVP, CswEnumNbtSubFieldName.Checked, CswEnumNbtFilterMode.Equals, CswEnumTristate.True.ToString(), false );
 
                 // BZ 10259...within the calculation date scope
                 CswNbtViewProperty DateOpenedVP = ProblemFailuresView.AddViewProperty( ChildRelationship, DateOpenedOCP );
