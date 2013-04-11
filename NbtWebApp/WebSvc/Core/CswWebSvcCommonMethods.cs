@@ -161,10 +161,10 @@ namespace ChemSW.WebSvc
                         SvcReturn["timer"] = new JObject();
 
                         SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
-                        LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                        CswEnumLogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
                         if( LogLevel == CswNbtResources.UnknownEnum )
                         {
-                            LogLevel = LogLevels.Error;
+                            LogLevel = CswEnumLogLevels.Error;
                         }
                         SvcReturn["LogLevel"] = LogLevel.ToString().ToLower();
 
@@ -227,11 +227,11 @@ namespace ChemSW.WebSvc
                     SvcReturn.Logging = SvcReturn.Logging ?? new CswWebSvcReturnBase.Logging();
                     SvcReturn.Logging.CustomerId = CswNbtResources.AccessId;
                     SvcReturn.Logging.Server = Environment.MachineName;
-                    LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                    CswEnumLogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
 
                     if( LogLevel == CswNbtResources.UnknownEnum )
                     {
-                        LogLevel = LogLevels.Error;
+                        LogLevel = CswEnumLogLevels.Error;
                     }
                     SvcReturn.Logging.LogLevel = LogLevel;
                 }
