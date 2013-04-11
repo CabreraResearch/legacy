@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _createFireClassExemptAmountNode( double SortOrder, string HazardClass, string Class, string HazardType, string HazardCategory )
         {
-            CswNbtObjClassFireClassExemptAmount FireClassExemptAmountNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FireClassExemptAmountNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassFireClassExemptAmount FireClassExemptAmountNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FireClassExemptAmountNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
             FireClassExemptAmountNode.SetName.RelatedNodeId = SetNameNodeId;
             FireClassExemptAmountNode.HazardCategory.Text = HazardCategory;
             FireClassExemptAmountNode.HazardClass.Value = HazardClass;

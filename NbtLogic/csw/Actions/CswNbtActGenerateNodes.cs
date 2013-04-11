@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).getNodeTypeLatestVersion();
 
-                            CswNbtPropertySetGeneratorTarget NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            CswNbtPropertySetGeneratorTarget NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                             NewNode.Node.copyPropertyValues( CswNbtNodeGenerator );
 
                             NewNode.DueDate.DateTimeValue = DueDate;

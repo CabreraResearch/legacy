@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.WebServices
                 ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
                 // Create the temporary material node
-                CswNbtObjClassMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                CswNbtObjClassMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
 
                 //Set the c3productid property
                 C3ProductTempNode.C3ProductId.Text = C3ProductDetails.ProductId.ToString();
@@ -606,7 +606,7 @@ namespace ChemSW.Nbt.WebServices
                     for( int index = 0; index < _ProductToImport.ProductSize.Length; index++ )
                     {
                         CswC3Product.Size CurrentSize = _ProductToImport.ProductSize[index];
-                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         // Don't forget to send in the index so that the correct values get added to the NTPs
                         addNodeTypeProps( sizeNode.Node, index );
                         sizeNode.Material.RelatedNodeId = ChemicalNode.NodeId;
@@ -665,7 +665,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     for( int index = 0; index < _ProductToImport.Synonyms.Length; index++ )
                     {
-                        CswNbtObjClassMaterialSynonym MaterialSynonymOC = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialSynonymNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        CswNbtObjClassMaterialSynonym MaterialSynonymOC = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialSynonymNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         MaterialSynonymOC.Name.Text = _ProductToImport.Synonyms[index];
                         MaterialSynonymOC.Material.RelatedNodeId = ChemicalNode.NodeId;
                         MaterialSynonymOC.IsTemp = false;

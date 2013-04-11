@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
                         OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
                         if( null != OwnerNT && OwnerNT == Node.getNodeType() )
                         {
-                            GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                             if( null != GeneratorNode )
                             {
                                 NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;

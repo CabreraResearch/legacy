@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtPropertySetRequestItem copyNode(bool PostChanges = true, bool ClearRequest = true)
         {
-            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             RetCopy.Node.copyPropertyValues( Node );
             RetCopy.Status.Value = Statuses.Pending;
             if( ClearRequest )

@@ -569,7 +569,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
             if( ContLocNT != null )
             {
-                CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                 ContLocNode.Type.Value = Type.ToString();
                 ContLocNode.Container.RelatedNodeId = NodeId;
                 if( null != Location )
@@ -770,7 +770,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
             if( ContDispTransNT != null )
             {
-                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
 
                 if( SrcContainer != null )
                 {

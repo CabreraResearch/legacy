@@ -250,6 +250,7 @@
     <Compile Include="csw\Search\CswEnumNbtSearchFilterType.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspections.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspectionsDataModels.cs" />
+    <Compile Include="csw\Tree\CswEnumNbtMakeNodeOperation.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

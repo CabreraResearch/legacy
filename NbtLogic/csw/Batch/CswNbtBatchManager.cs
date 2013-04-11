@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Batch
                 CswNbtMetaDataNodeType BatchOpNT = BatchOpOC.getNodeTypes().First();
                 if( BatchOpNT != null )
                 {
-                    CswNbtNode Node = CswNbtResources.Nodes.makeNodeFromNodeTypeId( BatchOpNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    CswNbtNode Node = CswNbtResources.Nodes.makeNodeFromNodeTypeId( BatchOpNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                     BatchNode = Node;
 
                     BatchNode.BatchData.Text = BatchData;

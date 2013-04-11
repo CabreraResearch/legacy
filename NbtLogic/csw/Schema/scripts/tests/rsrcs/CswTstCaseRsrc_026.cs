@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeLatestVersion( TestNodeType.NodeTypeId );
-                TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             }//if we haven't already made a node
 
         }//makeArbitraryNode()

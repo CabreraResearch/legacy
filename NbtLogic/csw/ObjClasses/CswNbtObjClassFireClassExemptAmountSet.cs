@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedFireClassExemptAmountSetNode.copyPropertyValues( Node );
             CopiedFireClassExemptAmountSetNode.postChanges( true, true );
 
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 FCEATree.goToNthChild( ChildrenCopied );
                 CswNbtObjClassFireClassExemptAmount OriginalFCEANode = FCEATree.getNodeForCurrentPosition();
-                CswNbtObjClassFireClassExemptAmount CopiedFCEANode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalFCEANode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CswNbtObjClassFireClassExemptAmount CopiedFCEANode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalFCEANode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                 CopiedFCEANode.Node.copyPropertyValues( OriginalFCEANode.Node );
                 CopiedFCEANode.SetName.RelatedNodeId = CopiedFireClassExemptAmountSetNode.NodeId;
                 CopiedFCEANode.postChanges( true );

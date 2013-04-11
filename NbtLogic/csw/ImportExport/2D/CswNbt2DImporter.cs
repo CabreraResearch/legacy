@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.ImportExport
                                             if( null == Node )
                                             {
                                                 // Make a new node
-                                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                                                 isNewNode = true;
 
 

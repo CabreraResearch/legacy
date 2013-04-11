@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtObjClassInventoryLevel copyNode()
         {
-            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopyNode.copyPropertyValues( Node );
             CswNbtObjClassInventoryLevel RetCopy = CopyNode;
             RetCopy.postChanges( true );

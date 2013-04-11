@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedEquipmentNode.copyPropertyValues( Node );
             CopiedEquipmentNode.postChanges( true, true );
 
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 GeneratorTree.goToNthChild( c );
                 CswNbtNode OriginalGeneratorNode = GeneratorTree.getNodeForCurrentPosition();
-                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                 CopiedGeneratorNode.copyPropertyValues( OriginalGeneratorNode );
                 ( (CswNbtObjClassGenerator) CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
                 CopiedGeneratorNode.postChanges( true, true );

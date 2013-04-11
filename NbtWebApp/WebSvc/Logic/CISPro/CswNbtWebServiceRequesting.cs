@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType RequestNt = RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != RequestNt )
                 {
-                    CswNbtObjClassRequest Favorite = NbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    CswNbtObjClassRequest Favorite = NbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     if( null != Favorite )
                     {
                         Favorite.IsFavorite.Checked = Tristate.True;

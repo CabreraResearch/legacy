@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.Actions
                                                     "Cannot make a Request without a valid Request object.",
                                                     "No Request NodeType could be found." );
                     }
-                    _RecurringRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    _RecurringRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                     _RecurringRequestNode.IsRecurring.Checked = Tristate.True;
                     _RecurringRequestNode.postChanges( true );
                 }
@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.Actions
                                                     "Cannot Submit Request without a valid Request object.",
                                                     "No Request NodeType could be found." );
                     }
-                    _CurrentRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    _CurrentRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                     _CurrentRequestNode.postChanges( true );
                 }
             }

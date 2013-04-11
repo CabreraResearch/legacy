@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Actions
                     if( ResultNodeType != null )
                     {
                         // Make a new result as a child of current Aliquot
-                        CswNbtNode NewResultNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ResultNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                        CswNbtNode NewResultNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ResultNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                         NewResultNode.copyPropertyValues( ParamNode );
                         CswNbtObjClassResult NewResultObjClass = (CswNbtObjClassResult) NewResultNode;
                         NewResultObjClass.Aliquot.RelatedNodeId = AliquotNode.NodeId;

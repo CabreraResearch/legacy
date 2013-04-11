@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( null != CurrentNodeType )
                                 {
 
-                                    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
                                     //CswNbtNode.NodeName = CurrentNodeNameInImportTable; 
 
 
@@ -320,7 +320,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                     //****************************
                                     //Create the node
-                                    CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeOfAbsentNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                    CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeOfAbsentNode.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
                                     //TargetNodeThatWasMissing.NodeName = AbsentNodeNodeName; // Kludge to make the node have a value even when no property values are supplied for it
 
                                     // Kludge specifically for 10340:

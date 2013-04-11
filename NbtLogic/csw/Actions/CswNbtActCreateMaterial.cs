@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     if( false == existsInDb() && Int32.MinValue != NodeTypeId )
                     {
-                        Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         Node = Ret.Node;
 
                         bool InAddLayout = false;
@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
                     if( null != VendorNT )
                     {
-                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        CswNbtObjClassVendor NewVendorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         NewVendorNode.VendorName.Text = Suppliername;
                         NewVendorNode.VendorName.SyncGestalt();
                         NewVendorNode.postChanges( true );
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Chemical" );
                 if( null != ChemicalNT )
                 {
-                    CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     if( null != NewMaterialTempNode )
                     {
                         Ret = NewMaterialTempNode.Node.NodeId;
@@ -376,7 +376,7 @@ namespace ChemSW.Nbt.Actions
         {
             JObject Ret = new JObject();
 
-            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
             CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["unitid"].ToString() );
             if( null != UnitIdPK )
             {

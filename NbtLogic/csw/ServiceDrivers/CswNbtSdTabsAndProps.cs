@@ -142,14 +142,14 @@ namespace ChemSW.Nbt.ServiceDrivers
             ParentObj[RealTabOrder]["canEditLayout"] = CanEditLayout;
         }
 
-        public CswNbtNode getAddNode( CswNbtMetaDataNodeType NodeType, CswNbtNodeCollection.MakeNodeOperation NodeOp = null )
+        public CswNbtNode getAddNode( CswNbtMetaDataNodeType NodeType, CswEnumNbtMakeNodeOperation NodeOp = null )
         {
             CswNbtNode Ret = null;
             if( null != NodeType )
             {
                 if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
                 {
-                    NodeOp = NodeOp ?? CswNbtNodeCollection.MakeNodeOperation.MakeTemp;
+                    NodeOp = NodeOp ?? CswEnumNbtMakeNodeOperation.MakeTemp;
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, NodeOp );
                 }
                 else
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId, CswNbtNodeCollection.MakeNodeOperation NodeOp = null )
+        public CswNbtNode getAddNode( Int32 NodeTypeId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId, CswEnumNbtMakeNodeOperation NodeOp = null )
         {
             CswNbtNode Ret = null;
             CswNbtMetaDataNodeType NodeType = null;
@@ -175,7 +175,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        NodeOp = NodeOp ?? CswNbtNodeCollection.MakeNodeOperation.MakeTemp;
+                        NodeOp = NodeOp ?? CswEnumNbtMakeNodeOperation.MakeTemp;
                         Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, NodeOp );
                         CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
                         RelatedNodePk.FromString( RelatedNodeId );
@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
-                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             }
 
             if( Node != null )
@@ -618,7 +618,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( null == Ret || false == CswTools.IsPrimaryKey( Ret.NodeId ) )
                 {
-                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                 }
                 bool CanEdit = (
                                     _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||

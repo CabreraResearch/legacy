@@ -355,7 +355,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassContainerLocation ContLocNode = 
                     _CswNbtResources.Nodes.makeNodeFromNodeTypeId( 
                         ContLocNt.NodeTypeId,
-                        CswNbtNodeCollection.MakeNodeOperation.DoNothing 
+                        CswEnumNbtMakeNodeOperation.DoNothing 
                     );
                 ContLocNode.Container.RelatedNodeId = CswConvert.ToPrimaryKey( Action.ContainerId );
                 ContLocNode.Location.SelectedNodeId = CswConvert.ToPrimaryKey( Action.LocationId );

@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType ContainerNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ContainerNodeTypeId ) );
             if( ContainerNT != null )
             {
-                CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                 CopyNode.copyPropertyValues( _SourceContainer.Node );
                 ChildContainer = CopyNode;
                 if( false == String.IsNullOrEmpty( Barcode ) )

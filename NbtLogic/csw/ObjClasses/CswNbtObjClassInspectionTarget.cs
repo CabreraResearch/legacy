@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedInspectionTargetNode.Node.copyPropertyValues( Node );
             CopiedInspectionTargetNode.Status.Value = CswEnumNbtInspectionTargetStatus.TargetStatusAsString( CswEnumNbtInspectionTargetStatus.TargetStatus.Not_Inspected );
             CopiedInspectionTargetNode.postChanges( true );

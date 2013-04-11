@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             } // foreach( string TargetId in RealTargetIds )
 
-            CswNbtObjClassPrintJob NewJob = NbtResources.Nodes.makeNodeFromNodeTypeId( PrintJobNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, false );
+            CswNbtObjClassPrintJob NewJob = NbtResources.Nodes.makeNodeFromNodeTypeId( PrintJobNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, false );
             NewJob.Label.RelatedNodeId = PrintLabel.NodeId;
             NewJob.LabelCount.Value = JobCount;
             NewJob.LabelData.Text = JobData;
@@ -517,7 +517,7 @@ namespace ChemSW.Nbt.WebServices
                     ICswNbtTree ExistingPrintersTree = NbtResources.Trees.getTreeFromView( ExistingPrintersView, false, true, true );
                     if( ExistingPrintersTree.getChildNodeCount() == 0 )
                     {
-                        CswNbtObjClassPrinter NewPrinter = NbtResources.Nodes.makeNodeFromNodeTypeId( PrinterNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                        CswNbtObjClassPrinter NewPrinter = NbtResources.Nodes.makeNodeFromNodeTypeId( PrinterNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                         NewPrinter.Name.Text = Request.LpcName;
                         NewPrinter.Description.Text = Request.Description;
                         NewPrinter.postChanges( false );

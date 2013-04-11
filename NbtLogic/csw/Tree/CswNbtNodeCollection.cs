@@ -416,168 +416,32 @@ namespace ChemSW.Nbt
             NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
 
-
-        /// <summary>
-        /// Specifies operation to take on database when using makeNodeFromNodeTypeId
-        /// </summary>
-        public sealed class MakeNodeOperation : IEquatable<MakeNodeOperation>
-        {
-
-            #region Enum Member
-
-            /// <summary>
-            /// Write the new node to the database
-            /// </summary>
-            public const string WriteNode = "WriteNode";
-
-            /// <summary>
-            /// Just set the primary key and the default property values, but make
-            /// no changes to the database
-            /// </summary>
-            public const string JustSetPk = "JustSetPk";
-
-            /// <summary>
-            /// Just get an empty node with meta data from the nodetype
-            /// </summary>
-            public const string DoNothing = "DoNothing";
-
-            /// <summary>
-            /// Write the new temporary node to the database.
-            /// </summary>
-            public const string MakeTemp = "MakeTemp";
-            #endregion
-
-            private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
-                                                                   {
-                                                                       { WriteNode, WriteNode },
-                                                                       { JustSetPk, JustSetPk },
-                                                                       { DoNothing, DoNothing },
-                                                                       { MakeTemp, MakeTemp }
-                                                                   };
-            /// <summary>
-            /// Instance value
-            /// </summary>
-            public readonly string Value;
-
-            private static string _Parse( string Val )
-            {
-                string ret = CswResources.UnknownEnum;
-                if( _Enums.ContainsKey( Val ) )
-                {
-                    ret = _Enums[Val];
-                }
-                return ret;
-            }
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            public MakeNodeOperation( string ItemName = CswResources.UnknownEnum )
-            {
-                Value = _Parse( ItemName );
-            }
-
-            /// <summary>
-            /// Implicit enum cast
-            /// </summary>
-            public static implicit operator MakeNodeOperation( string Val )
-            {
-                return new MakeNodeOperation( Val );
-            }
-
-            /// <summary>
-            /// Implicit string cast
-            /// </summary>
-            public static implicit operator string( MakeNodeOperation item )
-            {
-                return item.Value;
-            }
-
-            /// <summary>
-            /// ToString
-            /// </summary>
-            public override string ToString()
-            {
-                return Value;
-            }
-
-            #region IEquatable (MakeNodeOperation)
-
-            /// <summary>
-            /// ==
-            /// </summary>
-            public static bool operator ==( MakeNodeOperation ft1, MakeNodeOperation ft2 )
-            {
-                //do a string comparison on the fieldtypes
-                return ft1.ToString() == ft2.ToString();
-            }
-
-            /// <summary>
-            /// !=
-            /// </summary>
-            public static bool operator !=( MakeNodeOperation ft1, MakeNodeOperation ft2 )
-            {
-                return !( ft1 == ft2 );
-            }
-
-            /// <summary>
-            /// Equals
-            /// </summary>
-            public override bool Equals( object obj )
-            {
-                if( !( obj is MakeNodeOperation ) )
-                    return false;
-                return this == (MakeNodeOperation) obj;
-            }
-
-            /// <summary>
-            /// Equals
-            /// </summary>
-            public bool Equals( MakeNodeOperation obj )
-            {
-                return this == obj;
-            }
-
-            /// <summary>
-            /// Get Hash Code
-            /// </summary>
-            public override int GetHashCode()
-            {
-                int ret = 23, prime = 37;
-                ret = ( ret * prime ) + Value.GetHashCode();
-                ret = ( ret * prime ) + _Enums.GetHashCode();
-                return ret;
-            }
-
-            #endregion IEquatable (MakeNodeOperation)
-
-        }
-
         /// <summary>
         /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not.
         /// </summary>
         /// <param name="NodeTypeId">Primary Key of Nodetype</param>
         /// <param name="Op">Specifies the action to take with regard to the database</param>
         /// <param name="OverrideUniqueValidation"></param>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, MakeNodeOperation Op, bool OverrideUniqueValidation = false )
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, CswEnumNbtMakeNodeOperation Op, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
             Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
             Node.fillFromNodeTypeId( NodeTypeId );
-            Node.IsTemp = MakeNodeOperation.MakeTemp == Op;
+            Node.IsTemp = CswEnumNbtMakeNodeOperation.MakeTemp == Op;
 
             switch( Op )
             {
-                case MakeNodeOperation.WriteNode:
-                case MakeNodeOperation.MakeTemp:
+                case CswEnumNbtMakeNodeOperation.WriteNode:
+                case CswEnumNbtMakeNodeOperation.MakeTemp:
                     _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                     Node.postChanges( true, false, OverrideUniqueValidation );
                     break;
-                case MakeNodeOperation.JustSetPk:
+                case CswEnumNbtMakeNodeOperation.JustSetPk:
                     _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
                     //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );    
                     break;
-                case MakeNodeOperation.DoNothing:
+                case CswEnumNbtMakeNodeOperation.DoNothing:
                     //right now there are only three enum values; I'm just making this explicit
                     _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                     break;

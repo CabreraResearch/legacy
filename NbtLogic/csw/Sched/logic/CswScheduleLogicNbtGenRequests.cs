@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.Sched
                                         CswNbtObjClassUser Requestor = _CswNbtResources.Nodes[RecurringRequest.Requestor.RelatedNodeId];
                                         if( null != Requestor )
                                         {
-                                            CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                                            CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                                             //CswNbtObjClassRequestMaterialDispense.fromPropertySet( CurrentRequest.copyNode( PostChanges : false ) );
                                             if( null != NewRequestItem )
                                             {

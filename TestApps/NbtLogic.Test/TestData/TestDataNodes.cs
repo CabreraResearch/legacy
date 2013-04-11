@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null, CswPrimaryKey ControlZoneId = null )
         {
-            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( LocationType ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( LocationType ), CswEnumNbtMakeNodeOperation.DoNothing );
             LocationNode.Name.Text = Name;
             if( ParentLocationId != null )
             {
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createContainerLocationNode( CswNbtNode ContainerNode = null, String Action = "", DateTime? NullableScanDate = null, CswPrimaryKey LocationId = null, String ContainerScan = "", String Type = "Receipt" )
         {
-            CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Location" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Location" ), CswEnumNbtMakeNodeOperation.DoNothing );
             if( null == ContainerNode )
             {
                 ContainerNode = createContainerNode( LocationId: LocationId );
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createContainerNode( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null )
         {
-            CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.DoNothing );
             ContainerNode.Quantity.Quantity = Quantity;
             if( null == UnitOfMeasure )
             {
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
         {
-            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswEnumNbtMakeNodeOperation.DoNothing );
             UnitOfMeasureNode.Name.Text = Name + "Test";
             if( CswTools.IsDouble( ConversionFactorBase ) )
                 UnitOfMeasureNode.ConversionFactor.Base = ConversionFactorBase;
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.Test
         internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
             string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", Tristate IsTierII = Tristate.True )
         {
-            CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
                 MaterialNode.SpecificGravity.Value = SpecificGravity;
             MaterialNode.PhysicalState.Value = State;
@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createControlZoneNode( string Name = "CZ_Test", string FireClassSetName = "Default" )
         {
-            CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), CswEnumNbtMakeNodeOperation.DoNothing );
             CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZoneNode.NodeTypeId, "Name" );
             ControlZoneNode.Properties[NameNTP].AsText.Text = Name;
             CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.Test
             CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswPrimaryKey RoleId = RoleOc.getNodeIdAndNames( false, false ).Select( RoleIds => RoleIds.Key ).FirstOrDefault();
 
-            CswNbtObjClassUser NewUser = CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "User" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
+            CswNbtObjClassUser NewUser = CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "User" ), CswEnumNbtMakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
             NewUser.UsernameProperty.Text = Username;
             NewUser.Role.RelatedNodeId = RoleId;
             NewUser.PasswordProperty.Password = Password;
