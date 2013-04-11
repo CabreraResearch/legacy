@@ -13,20 +13,6 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropNFPA : CswNbtNodeProp
     {
-
-        public sealed class NFPADisplayMode : CswEnum<NFPADisplayMode>
-        {
-            private NFPADisplayMode( string mode ) : base( mode ) { }
-            public static IEnumerable<NFPADisplayMode> all { get { return All; } }
-            public static explicit operator NFPADisplayMode( string str )
-            {
-                NFPADisplayMode ret = Parse( str );
-                return ret ?? Diamond; //return the selected value, or Diamond if none
-            }
-            public static readonly NFPADisplayMode Linear = new NFPADisplayMode( "Linear" );
-            public static readonly NFPADisplayMode Diamond = new NFPADisplayMode( "Diamond" );
-        }
-
         public static implicit operator CswNbtNodePropNFPA( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsNFPA;
@@ -46,7 +32,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _YellowSubField;
         private CswNbtSubField _BlueSubField;
         private CswNbtSubField _WhiteSubField;
-        private NFPADisplayMode _DisplayMode;
+        private CswEnumNbtNFPADisplayMode _DisplayMode;
 
         override public bool Empty
         {
@@ -115,13 +101,13 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public NFPADisplayMode DisplayMode
+        public CswEnumNbtNFPADisplayMode DisplayMode
         {
             get
             {
                 if( null == _DisplayMode )
                 {
-                    _DisplayMode = (NFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Attribute1;
+                    _DisplayMode = (CswEnumNbtNFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Attribute1;
                 }
                 return _DisplayMode;
             }

@@ -2237,12 +2237,12 @@ namespace ChemSW.Nbt.WebPages
                         case CswEnumNbtFieldType.NFPA:
                             TableRow DisplayModeRow = makeEditPropTableRow( EditPropPlaceHolder );
 
-                            CswNbtNodePropNFPA.NFPADisplayMode mode = (CswNbtNodePropNFPA.NFPADisplayMode) SelectedNodeTypeProp.Attribute1;
+                            CswEnumNbtNFPADisplayMode mode = (CswEnumNbtNFPADisplayMode) SelectedNodeTypeProp.Attribute1;
 
                             DropDownList modes = new DropDownList();
                             modes.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
-                            modes.Items.Add( new ListItem( CswNbtNodePropNFPA.NFPADisplayMode.Diamond.ToString(), CswNbtNodePropNFPA.NFPADisplayMode.Diamond.ToString() ) );
-                            modes.Items.Add( new ListItem( CswNbtNodePropNFPA.NFPADisplayMode.Linear.ToString(), CswNbtNodePropNFPA.NFPADisplayMode.Linear.ToString() ) );
+                            modes.Items.Add( new ListItem( CswEnumNbtNFPADisplayMode.Diamond.ToString(), CswEnumNbtNFPADisplayMode.Diamond.ToString() ) );
+                            modes.Items.Add( new ListItem( CswEnumNbtNFPADisplayMode.Linear.ToString(), CswEnumNbtNFPADisplayMode.Linear.ToString() ) );
                             modes.SelectedValue = mode.ToString();
                             ( (Literal) DisplayModeRow.Cells[0].Controls[0] ).Text = "Display Mode:";
                             DisplayModeRow.Cells[1].Controls.Add( modes );
