@@ -65,10 +65,10 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtMetaDataObjectClassProp StatusOcp = InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status );
             CswNbtViewProperty StatusVp = View.AddViewProperty( InspectionDesignVr, StatusOcp );
-            string Completed = CswNbtObjClassInspectionDesign.InspectionStatus.Completed;
-            string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled;
-            string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
-            string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
+            string Completed = CswEnumNbtInspectionStatus.Completed;
+            string Cancelled = CswEnumNbtInspectionStatus.Cancelled;
+            string CompletedLate = CswEnumNbtInspectionStatus.CompletedLate;
+            string Missed = CswEnumNbtInspectionStatus.Missed;
 
             View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Completed, false );
             View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Cancelled, false );

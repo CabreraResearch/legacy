@@ -431,11 +431,11 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         #region Set
 
-        string Completed = CswNbtObjClassInspectionDesign.InspectionStatus.Completed;
-        string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled;
-        string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
-        string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
-        string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatus.ActionRequired;
+        string Completed = CswEnumNbtInspectionStatus.Completed;
+        string Cancelled = CswEnumNbtInspectionStatus.Cancelled;
+        string CompletedLate = CswEnumNbtInspectionStatus.CompletedLate;
+        string Missed = CswEnumNbtInspectionStatus.Missed;
+        string ActionRequired = CswEnumNbtInspectionStatus.ActionRequired;
 
         private void _updateInspectionNode( CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection Inspection, CswNbtSdInspectionsDataModels.InspectionUpdateData UpdateCollection )
         {

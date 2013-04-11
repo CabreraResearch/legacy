@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CopiedInspectionTargetNode.Node.copyPropertyValues( Node );
-            CopiedInspectionTargetNode.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+            CopiedInspectionTargetNode.Status.Value = CswEnumNbtInspectionTargetStatus.TargetStatusAsString( CswEnumNbtInspectionTargetStatus.TargetStatus.Not_Inspected );
             CopiedInspectionTargetNode.postChanges( true );
             return CopiedInspectionTargetNode.Node;
         }

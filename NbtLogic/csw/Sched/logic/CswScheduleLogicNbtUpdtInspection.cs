@@ -40,8 +40,8 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
         }
 
-        private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatus.Pending;
-        private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatus.Overdue;
+        private string _Pending = CswEnumNbtInspectionStatus.Pending;
+        private string _Overdue = CswEnumNbtInspectionStatus.Overdue;
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = LogicRunStatus.Running;
