@@ -13,12 +13,12 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.Containers; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Containers; } }
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
             }
 
             //Show the following Location properties...
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt
 
 
             //Show Print Labels with a dependent NodeType
-            _CswNbtResources.Modules.TogglePrintLabels( false, CswNbtModuleName.Containers );
+            _CswNbtResources.Modules.TogglePrintLabels( false, CswEnumNbtModuleName.Containers );
 
             //Show the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( false, "request_fulfiller" );
@@ -97,17 +97,17 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.MLM );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.FireCode ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.FireCode );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.FireCode );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MultiInventoryGroup ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiInventoryGroup ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MultiInventoryGroup );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.MultiInventoryGroup );
             }
 
             //Hide the following Location properties...
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleReportNodes( "Containers", true );
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Kiosk_Mode );
             }
@@ -177,7 +177,7 @@ namespace ChemSW.Nbt
             }
 
             //Hide Print Labels with a dependent NodeType
-            _CswNbtResources.Modules.TogglePrintLabels( true, CswNbtModuleName.Containers );
+            _CswNbtResources.Modules.TogglePrintLabels( true, CswEnumNbtModuleName.Containers );
 
             //Hide the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );

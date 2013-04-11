@@ -16,7 +16,7 @@ namespace ChemSW.Nbt
         {
         }
 
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.SI; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.SI; } }
 
         public override void OnEnable()
         {
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt
             }
 
             //Case 28117 - hide Future Scheduling
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) && false   == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) && false   == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
             }

@@ -17,12 +17,12 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.RegulatoryLists; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.RegulatoryLists; } }
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
             }
 
             //Show the following Material properties

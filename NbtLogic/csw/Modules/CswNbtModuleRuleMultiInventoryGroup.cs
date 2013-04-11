@@ -15,12 +15,12 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.MultiInventoryGroup; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.MultiInventoryGroup; } }
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.Containers );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
             }
 
             int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );

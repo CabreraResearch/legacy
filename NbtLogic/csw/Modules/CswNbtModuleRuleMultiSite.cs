@@ -15,7 +15,7 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.MultiSite; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.MultiSite; } }
         public override void OnEnable()
         {
             CswNbtMetaDataNodeType siteNT = _CswNbtResources.MetaData.getNodeType( "Site" );

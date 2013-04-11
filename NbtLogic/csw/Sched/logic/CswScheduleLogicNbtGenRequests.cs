@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                     {
                         Int32 RequestsLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
                         if( RequestsLimit <= 0 )

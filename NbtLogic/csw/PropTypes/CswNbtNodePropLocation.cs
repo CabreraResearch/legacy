@@ -221,7 +221,7 @@ namespace ChemSW.Nbt.PropTypes
             Ret.Root.Included = IsLocationNode;
             CswNbtObjClassLocation.makeLocationsTreeView( ref Ret, CswNbtResources,
                                                           NodeIdToFilterOut: NodeId,
-                                                          RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ) );
+                                                          RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ) );
             return Ret;
         }
 

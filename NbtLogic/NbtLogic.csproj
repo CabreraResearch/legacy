@@ -642,7 +642,7 @@
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObjectCollection.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataProp.cs" />
     <Compile Include="csw\Modules\CswNbtModuleManager.cs" />
-    <Compile Include="csw\Modules\CswNbtModuleName.cs" />
+    <Compile Include="csw\Modules\CswEnumNbtModuleName.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRule.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleBioSafety.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleCCPro.cs" />

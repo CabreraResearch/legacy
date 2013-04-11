@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Schema
         {
             //Create action
             _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Assign_Inventory_Groups, true, "", "System" );
-            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.CISPro.ToString(), CswNbtActionName.Assign_Inventory_Groups );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswEnumNbtModuleName.CISPro.ToString(), CswNbtActionName.Assign_Inventory_Groups );
 
             //Make inventory group property required
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );

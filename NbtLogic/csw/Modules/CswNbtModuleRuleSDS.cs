@@ -8,13 +8,13 @@ namespace ChemSW.Nbt
     public class CswNbtModuleRuleSDS : CswNbtModuleRule
     {
         public CswNbtModuleRuleSDS( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.SDS; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.SDS; } }
 
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
             }
 
             //Show the following Material properties...
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt
 
             //Show the following Container properties...
             //   View SDS
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
                 foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
 
             //Hide the following Container properties...
             //   ViewSDS
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
                 foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )

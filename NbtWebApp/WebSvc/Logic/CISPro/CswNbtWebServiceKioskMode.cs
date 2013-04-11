@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.WebServices
                 imgUrl = "Images/newicons/KioskMode/Move_code39.png"
             } );
 
-            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {

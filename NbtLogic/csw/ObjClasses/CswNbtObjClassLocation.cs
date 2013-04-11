@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) &&
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) &&
                 Location.WasModified &&
                 _CswNbtResources.EditMode != NodeEditMode.Add )
             {

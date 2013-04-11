@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.Dev; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Dev; } }
         public override void OnEnable()
         {
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )

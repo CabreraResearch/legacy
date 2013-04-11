@@ -13,7 +13,7 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.CISPro; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.CISPro; } }
         public override void OnEnable()
         {
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
@@ -47,21 +47,21 @@ namespace ChemSW.Nbt
         public override void OnDisable()
         {
             //Disable dependent modules
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.Containers );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.Containers );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.SDS );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.SDS );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.RegulatoryLists );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.RegulatoryLists );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.C3 );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.C3 );
             }
 
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );

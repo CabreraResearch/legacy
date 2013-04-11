@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Receive.setHidden( value: ApprovedForReceiving.Checked != Tristate.True, SaveToDb: true );
             }
 
-            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) && false == IsCopy )
+            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) && false == IsCopy )
             {
                 CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
                 getParentMaterials( ref ParentMaterials );
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
 
                             bool canAddSDS = NodeType.NodeTypeName == "Chemical" &&
-                                _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) &&
+                                _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                                 ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
                             ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
                             if( canAddSDS )
@@ -362,7 +362,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( MaterialNode != null )
             {
                 Ret = MaterialNode.getViewOfNode();
-                if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                 {
                     CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                     CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
@@ -398,7 +398,7 @@ namespace ChemSW.Nbt.ObjClasses
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
             Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
 
-            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
@@ -431,7 +431,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void GetMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) &&
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                 ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue ) )
             {
                 Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
@@ -597,7 +597,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void syncFireDbData()
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireDbSync ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.FireDbSync ) )
             {
                 CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );

@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                _NbtMgrEnabled = Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager );
+                _NbtMgrEnabled = Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager );
 
                 _DisplayMode = StatisticsDisplayMode.Schema;
                 if( Request.QueryString["mode"] == "user" )

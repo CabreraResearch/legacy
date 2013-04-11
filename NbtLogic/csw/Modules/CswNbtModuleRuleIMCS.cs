@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
         {
         }
 
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.IMCS; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.IMCS; } }
 
         public override void OnEnable()
         {
@@ -59,13 +59,13 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "technician" );
 
             //Case 28117 - hide Future Scheduling
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
             }
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Kiosk_Mode );
             }

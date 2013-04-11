@@ -62,14 +62,14 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
 
-            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.FireDbSync );
+            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.FireDbSync );
             if( Int32.MinValue == ModuleId )
             {
                 // Create the FireDb Sync module
-                _CswNbtSchemaModTrnsctn.createModule( "Add-on for Fire Code that syncs FireDb data with ChemCatCentral", CswNbtModuleName.FireDbSync.ToString() );
+                _CswNbtSchemaModTrnsctn.createModule( "Add-on for Fire Code that syncs FireDb data with ChemCatCentral", CswEnumNbtModuleName.FireDbSync.ToString() );
 
                 // Create the module dependency
-                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.FireCode, CswNbtModuleName.FireDbSync );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.FireCode, CswEnumNbtModuleName.FireDbSync );
             }
 
             _resetBlame();

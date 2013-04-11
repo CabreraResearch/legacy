@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                     {
                         CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
                         _CswScheduleLogicDetail.StatusMessage = "Completed without error";

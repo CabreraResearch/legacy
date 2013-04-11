@@ -71,8 +71,8 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
                     // Get all sync modules
-                    Collection<CswNbtModuleName> SyncModules = new Collection<CswNbtModuleName>();
-                    SyncModules.Add( CswNbtModuleName.FireDbSync );
+                    Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
+                    SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
 
                     // Check to see if at least one is enabled
                     if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )

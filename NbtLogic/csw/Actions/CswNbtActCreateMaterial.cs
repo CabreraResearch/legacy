@@ -540,7 +540,7 @@ namespace ChemSW.Nbt.Actions
                         RetObj["createdmaterial"] = true;
 
                         /* 2. Add the sizes */
-                        if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                         {
                             SizesArray = _removeDuplicateSizes( SizesArray );
                             _addMaterialSizes( SizesArray, MaterialNode );
@@ -726,7 +726,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewRelationship SupplierVr = Ret.AddViewRelationship( VendorOc, IncludeDefaultFilters: true );
 
             //This matches the MLM module event logic, but it may need adjustment down the line
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
             {
                 CswNbtMetaDataObjectClassProp CoorporateOcp = VendorOc.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
                 Ret.AddViewPropertyAndFilter( SupplierVr,

@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Material_Approval, false, String.Empty, "Materials" );
-            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Material_Approval );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswEnumNbtModuleName.Containers, CswNbtActionName.Material_Approval );
 
             CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, true ) )

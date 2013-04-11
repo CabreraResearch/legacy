@@ -692,7 +692,7 @@ namespace ChemSW.Nbt.Schema
             JctFtSfUpdate.update( UpdateAsDataTable );
         }
 
-        public void createModuleActionJunction( CswNbtModuleName Module, CswNbtActionName ActionName )
+        public void createModuleActionJunction( CswEnumNbtModuleName Module, CswNbtActionName ActionName )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             Int32 ActionId = getActionId( ActionName );
@@ -716,7 +716,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records
         /// </summary>
-        public void createModuleObjectClassJunction( CswNbtModuleName Module, Int32 ObjectClassId )
+        public void createModuleObjectClassJunction( CswEnumNbtModuleName Module, Int32 ObjectClassId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             createModuleObjectClassJunction( ModuleId, ObjectClassId );
@@ -740,7 +740,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_nodetype records
         /// </summary>
-        public void createModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
+        public void createModuleNodeTypeJunction( CswEnumNbtModuleName Module, Int32 NodeTypeId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             createModuleNodeTypeJunction( ModuleId, NodeTypeId );
@@ -997,7 +997,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Delete all Module junctions on either this Module, this ActionName or both
         /// </summary>
-        public void deleteModuleActionJunction( CswNbtModuleName Module, CswNbtActionName Action )
+        public void deleteModuleActionJunction( CswEnumNbtModuleName Module, CswNbtActionName Action )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             Int32 ActionId = getActionId( Action );
@@ -1035,7 +1035,7 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        public void deleteModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
+        public void deleteModuleNodeTypeJunction( CswEnumNbtModuleName Module, Int32 NodeTypeId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             deleteModuleNodeTypeJunction( ModuleId, NodeTypeId );
@@ -1049,7 +1049,7 @@ namespace ChemSW.Nbt.Schema
             _deleteModuleJunction( ModuleId, NodeTypeId, false );
         }
 
-        public void deleteModuleObjectClassJunction( CswNbtModuleName Module, Int32 ObjectClassId )
+        public void deleteModuleObjectClassJunction( CswEnumNbtModuleName Module, Int32 ObjectClassId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             _deleteModuleJunction( ModuleId, ObjectClassId, true );

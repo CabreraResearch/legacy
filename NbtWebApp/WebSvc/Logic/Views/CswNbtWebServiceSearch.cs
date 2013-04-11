@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.WebServices
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
             ret["filters"] = Search.FilterOptions( Tree );
             ret["searchtype"] = "universal";
-            ret["alternateoption"] = _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 );
+            ret["alternateoption"] = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 );
 
             return ret;
         }

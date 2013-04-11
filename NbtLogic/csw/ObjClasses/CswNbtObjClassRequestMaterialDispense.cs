@@ -417,7 +417,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Count.setReadOnly( value : false, SaveToDb : true );
 
                 //MLM
-                if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
                 {
                     foreach( string PropName in PropertyName.MLMCmgTabProps )
                     {
@@ -446,7 +446,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Size.setReadOnly( value : true, SaveToDb : true );
                 Count.setReadOnly( value : true, SaveToDb : true );
                 //MLM
-                if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
                 {
                     IsRecurring.setHidden( value : false, SaveToDb : true );
                     foreach( string PropName in PropertyName.MLMCmgTabProps )

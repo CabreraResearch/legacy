@@ -12,16 +12,16 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.CISPro; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.CISPro; } }
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
             }
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.Containers );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
             }
 
             //Turn on all views in the MLM (demo) category

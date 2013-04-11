@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
             }
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != CswResources )
             {
                 Ret = (CswNbtResources) CswResources;
-                if( false == Ret.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                if( false == Ret.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
                 }

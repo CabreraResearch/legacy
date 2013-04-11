@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 // case 21036
                 if( IsMobile &&
-                    false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                    false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                 {
                     AuthenticationStatus = CswEnumAuthenticationStatus.ModuleNotEnabled;
                     _CswSessionResources.CswSessionManager.clearSession();

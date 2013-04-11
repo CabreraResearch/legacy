@@ -92,12 +92,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( ModulesEnabled.WasModified )
                 {
-                    Collection<CswNbtModuleName> ModulesToEnable = new Collection<CswNbtModuleName>();
-                    Collection<CswNbtModuleName> ModulesToDisable = new Collection<CswNbtModuleName>();
+                    Collection<CswEnumNbtModuleName> ModulesToEnable = new Collection<CswEnumNbtModuleName>();
+                    Collection<CswEnumNbtModuleName> ModulesToDisable = new Collection<CswEnumNbtModuleName>();
 
                     foreach( string ModuleName in ModulesEnabled.YValues )
                     {
-                        CswNbtModuleName Module = ModuleName;
+                        CswEnumNbtModuleName Module = ModuleName;
                         //Enum.TryParse( ModuleName, true, out Module );
                         if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
                         {
@@ -174,9 +174,9 @@ namespace ChemSW.Nbt.ObjClasses
                 this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
-                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
+                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
                 {
-                    if( CswNbtModuleName.Unknown != ModuleName )
+                    if( CswEnumNbtModuleName.Unknown != ModuleName )
                     {
                         YValues.Add( ModuleName.ToString() );
                     }
@@ -189,8 +189,8 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = CompanyID.Text;
                 CswNbtResources OtherResources = makeOtherResources();
 
-                Collection<CswNbtModuleName> Modules = new Collection<CswNbtModuleName>();
-                foreach( CswNbtModuleName Module in OtherResources.Modules.ModulesEnabled() )
+                Collection<CswEnumNbtModuleName> Modules = new Collection<CswEnumNbtModuleName>();
+                foreach( CswEnumNbtModuleName Module in OtherResources.Modules.ModulesEnabled() )
                 {
                     Modules.Add( Module );
                 }
@@ -214,9 +214,9 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
 
-                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
+                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
                 {
-                    if( CswNbtModuleName.Unknown != ModuleName )
+                    if( CswEnumNbtModuleName.Unknown != ModuleName )
                     {
                         ModulesEnabled.SetValue( ModulesEnabledXValue, ModuleName.ToString(), Modules.Contains( ModuleName ) );
                     }

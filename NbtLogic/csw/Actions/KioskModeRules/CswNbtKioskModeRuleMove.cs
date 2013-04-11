@@ -148,12 +148,12 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 string StatusMsg = "";
                 bool first = true;
-                if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                 {
                     StatusMsg = CswEnumNbtObjectClass.ContainerClass.Replace( "Class", "" );
                     first = false;
                 }
-                if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
                 {
                     if( first )
                     {
