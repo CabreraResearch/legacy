@@ -378,7 +378,7 @@ namespace ChemSW.Nbt.Batch
                 CswNbtObjClassContainer containerNode = _getNodeFromBarcode( barcode, CswEnumNbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Barcode );
                 if( null != containerNode )
                 {
-                    containerNode.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, CswConvert.ToDouble( update["qty"] ), uomId );
+                    containerNode.DispenseOut( CswEnumNbtContainerDispenseType.Dispense, CswConvert.ToDouble( update["qty"] ), uomId );
                     containerNode.postChanges( false );
                 }
                 else

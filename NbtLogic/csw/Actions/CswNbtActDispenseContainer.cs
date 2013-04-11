@@ -50,14 +50,14 @@ namespace ChemSW.Nbt.Actions
             JObject ret = new JObject();
             if( null != _SourceContainer )
             {
-                CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseTypeEnum = _getDispenseTypeFromAction( DispenseType );
+                CswEnumNbtContainerDispenseType DispenseTypeEnum = _getDispenseTypeFromAction( DispenseType );
                 CswPrimaryKey UnitOfMeasurePk = new CswPrimaryKey();
                 UnitOfMeasurePk.FromString( UnitId );
                 CswPrimaryKey RequestItemPk = new CswPrimaryKey();
                 RequestItemPk.FromString( RequestItemId );
                 Double RealQuantity = CswConvert.ToDouble( Quantity );
 
-                if( DispenseTypeEnum == CswNbtObjClassContainerDispenseTransaction.DispenseType.Add )
+                if( DispenseTypeEnum == CswEnumNbtContainerDispenseType.Add )
                 {
                     RealQuantity = -RealQuantity; // deducting negative quantity is adding quantity
                 }
@@ -71,20 +71,20 @@ namespace ChemSW.Nbt.Actions
             return ret;
         }
 
-        private CswNbtObjClassContainerDispenseTransaction.DispenseType _getDispenseTypeFromAction( string DispenseTypeDescription )
+        private CswEnumNbtContainerDispenseType _getDispenseTypeFromAction( string DispenseTypeDescription )
         {
-            CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType = DispenseTypeDescription;
-            if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString() ) )
+            CswEnumNbtContainerDispenseType DispenseType = DispenseTypeDescription;
+            if( DispenseTypeDescription.Contains( CswEnumNbtContainerDispenseType.Add.ToString() ) )
             {
-                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Add;
+                DispenseType = CswEnumNbtContainerDispenseType.Add;
             }
-            else if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste.ToString() ) )
+            else if( DispenseTypeDescription.Contains( CswEnumNbtContainerDispenseType.Waste.ToString() ) )
             {
-                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste;
+                DispenseType = CswEnumNbtContainerDispenseType.Waste;
             }
-            else if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() ) )
+            else if( DispenseTypeDescription.Contains( CswEnumNbtContainerDispenseType.Dispense.ToString() ) )
             {
-                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense;
+                DispenseType = CswEnumNbtContainerDispenseType.Dispense;
             }
             return DispenseType;
         }
@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.Actions
                         if( NumOfContainers == 0 )
                         {
                             _SourceContainer.DispenseOut(
-                                CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense,
+                                CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense,
                                 UnitOfMeasurePK, RequestItemPk );
                             _SourceContainer.postChanges( false );
                         }
@@ -127,9 +127,9 @@ namespace ChemSW.Nbt.Actions
                                 CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId,
                                                                                                UnitOfMeasurePK, Barcodes[c] );
                                 _SourceContainer.DispenseOut(
-                                    CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense,
+                                    CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense,
                                     UnitOfMeasurePK, RequestItemPk, ChildContainer );
-                                //ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
+                                //ChildContainer.DispenseIn( CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
                                 ChildContainer.postChanges( false );
 
                                 JObject BarcodeNode = new JObject();

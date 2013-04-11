@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 }
                 else
                 {
-                    containerToDispense.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, quantityToDispense, containerToDispense.Quantity.UnitId );
+                    containerToDispense.DispenseOut( CswEnumNbtContainerDispenseType.Dispense, quantityToDispense, containerToDispense.Quantity.UnitId );
                     containerToDispense.postChanges( false );
                     OpData.Field1.SecondValue = " (current quantity: " + containerToDispense.Quantity.Quantity + containerToDispense.Quantity.CachedUnitName + ")";
                     OpData.Log.Add( DateTime.Now + " - Dispensed " + OpData.Field2.Value + " " + containerToDispense.Quantity.CachedUnitName + " out of container " + containerToDispense.Barcode.Barcode + ". " + containerToDispense.Quantity.Gestalt + " left in container" );

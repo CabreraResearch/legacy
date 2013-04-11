@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( OverridePermissions || canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
             {
-                _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer : this );
+                _createContainerTransactionNode( CswEnumNbtContainerDispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer : this );
                 this.Quantity.Quantity = 0;
                 this.Disposed.Checked = Tristate.True;
                 this.Undispose.setHidden( false, true );
@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="UnitId"></param>
         /// <param name="RequestItemId"></param>
         /// <param name="DestinationContainer"></param>
-        public void DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityToDeduct, CswPrimaryKey UnitId,
+        public void DispenseOut( CswEnumNbtContainerDispenseType DispenseType, double QuantityToDeduct, CswPrimaryKey UnitId,
                                  CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer DestinationContainer = null, bool RecordTransaction = true )
         {
             double RealQuantityToDeduct = _getDispenseAmountInProperUnits( QuantityToDeduct, UnitId, Quantity.UnitId );
@@ -497,7 +497,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="UnitId"></param>
         /// <param name="RequestItemId"></param>
         /// <param name="SourceContainer"></param>
-        public void DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityToAdd, CswPrimaryKey UnitId,
+        public void DispenseIn( CswEnumNbtContainerDispenseType DispenseType, double QuantityToAdd, CswPrimaryKey UnitId,
                                 CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer SourceContainer = null, bool RecordTransaction = true )
         {
             double RealQuantityToAdd = _getDispenseAmountInProperUnits( QuantityToAdd, UnitId, Quantity.UnitId );
@@ -738,7 +738,7 @@ namespace ChemSW.Nbt.ObjClasses
                 DisposedContainerTransactionsView.AddViewPropertyAndFilter(
                     ParentRelationship,
                     ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.Type ),
-                    CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString(),
+                    CswEnumNbtContainerDispenseType.Dispose.ToString(),
                     CswEnumNbtSubFieldName.Value,
                     false,
                     CswEnumNbtFilterMode.Equals
@@ -764,7 +764,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="RequestItemId"></param>
         /// <param name="SourceContainer"></param>
         /// <param name="DestinationContainer"></param>
-        private void _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double Amount, CswPrimaryKey UnitId, CswPrimaryKey RequestItemId = null,
+        private void _createContainerTransactionNode( CswEnumNbtContainerDispenseType DispenseType, double Amount, CswPrimaryKey UnitId, CswPrimaryKey RequestItemId = null,
                                                       CswNbtObjClassContainer SrcContainer = null, CswNbtObjClassContainer DestinationContainer = null )
         {
             CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
@@ -776,7 +776,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ContDispTransNode.SourceContainer.RelatedNodeId = SrcContainer.NodeId;
                     ContDispTransNode.RemainingSourceContainerQuantity.Quantity = SrcContainer.Quantity.Quantity;
-                    if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose )
+                    if( DispenseType == CswEnumNbtContainerDispenseType.Dispose )
                     {
                         ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
                     }

@@ -151,6 +151,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
+    <Compile Include="csw\ObjClasses\CswEnumNbtContainerDispenseType.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtContainerRequestMenu.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtContainerStatuses.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtContainerStoragePressures.cs" />

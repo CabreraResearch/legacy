@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.Actions
                                                     {
                                                         AsContainer.Quantity.UnitId = UnitId;
                                                     }
-                                                    AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
+                                                    AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId );
                                                     AsContainer.Disposed.Checked = Tristate.False;
                                                     AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
                                                     AsContainer.postChanges( true );

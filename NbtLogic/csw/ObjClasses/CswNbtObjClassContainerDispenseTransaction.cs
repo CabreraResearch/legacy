@@ -25,43 +25,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string RequestItem = "Request Item";
         }
 
-        public sealed class DispenseType : CswEnum<DispenseType>
-        {
-            private DispenseType( string Name ) : base( Name ) { }
-            public static IEnumerable<DispenseType> _All { get { return All; } }
-            public static implicit operator DispenseType( string str )
-            {
-                DispenseType ret = Parse( str );
-                return ret ?? Unknown;
-            }
-            public static readonly DispenseType Unknown = new DispenseType( "Unknown" );
-            /// <summary>
-            /// Add new (child) containers with material specified in existing source container (no parent container)
-            /// </summary>
-            public static readonly DispenseType Receive = new DispenseType( "Receive" );
-
-            /// <summary>
-            /// Transfer material from a source (parent) container to zero or more destination (child) containers
-            /// </summary>
-            public static readonly DispenseType Dispense = new DispenseType( "Dispense" );
-
-            /// <summary>
-            /// Transfer material from a source (parent) container to an undocumented location (no child containers)
-            /// </summary>
-            public static readonly DispenseType Waste = new DispenseType( "Waste" );
-
-            /// <summary>
-            /// Empty material from a source (parent) container and mark as disposed (no child containers)
-            /// </summary>
-            public static readonly DispenseType Dispose = new DispenseType( "Dispose" );
-
-            /// <summary>
-            /// Add material to an existing source container (no parent container, no child containers)
-            /// </summary>
-            public static readonly DispenseType Add = new DispenseType( "Add" );
-
-        }
-
         #endregion
 
         #region ctor
@@ -179,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];
                     if( null != NodeAsPropSet )
                     {
-                        if( Type.Value == DispenseType.Dispense.ToString() )
+                        if( Type.Value == CswEnumNbtContainerDispenseType.Dispense.ToString() )
                         {
                             CswNbtUnitConversion Conversion = null;
                             switch( NodeAsPropSet.Type.Value )
@@ -210,12 +173,12 @@ namespace ChemSW.Nbt.ObjClasses
                             }
 
                         }
-                        else if( Type.Value == DispenseType.Dispose.ToString() )
+                        else if( Type.Value == CswEnumNbtContainerDispenseType.Dispose.ToString() )
                         {
                             CswNbtObjClassRequestContainerUpdate NodeAsCu = CswNbtObjClassRequestContainerUpdate.fromPropertySet( NodeAsPropSet );
                             NodeAsCu.setNextStatus( CswNbtObjClassRequestContainerUpdate.Statuses.Disposed );
                         }
-                        else if( Type.Value == DispenseType.Receive.ToString() )
+                        else if( Type.Value == CswEnumNbtContainerDispenseType.Receive.ToString() )
                         {
                             CswNbtObjClassRequestMaterialDispense NodeAsMd = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NodeAsPropSet );
                             NodeAsMd.setNextStatus( CswNbtObjClassRequestMaterialDispense.Statuses.Received );
