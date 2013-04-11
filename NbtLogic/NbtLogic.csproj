@@ -252,6 +252,7 @@
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspectionsDataModels.cs" />
     <Compile Include="csw\Tree\CswEnumNbtMakeNodeOperation.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswEnumNbtUnitTypeRelationship.cs" />
+    <Compile Include="csw\View\CswEnumNbtViewType.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
