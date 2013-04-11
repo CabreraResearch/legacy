@@ -426,7 +426,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Disposed.Checked = Tristate.True;
                 this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
-                CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
+                CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Dispose );
                 _CswNbtNode.IconFileNameOverride = "x.png";
                 _CswNbtNode.Searchable = false;
             }
@@ -453,7 +453,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _setDisposedReadOnly( false );
                 if( CreateContainerLocation )
                 {
-                    CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
+                    CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Undispose );
                 }
                 _CswNbtNode.IconFileNameOverride = "";
             }
@@ -486,7 +486,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
             }
-            CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispense );
+            CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Dispense );
         } // DispenseOut()
 
         /// <summary>
@@ -511,9 +511,9 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, RealQuantityToAdd, Quantity.UnitId, RequestItemId, SourceContainer, this );
             }
-            CswNbtObjClassContainerLocation.TypeOptions ContainerLocationType =
-                SourceContainer == null ? CswNbtObjClassContainerLocation.TypeOptions.Receipt
-                                        : CswNbtObjClassContainerLocation.TypeOptions.Dispense;
+            CswEnumNbtContainerLocationTypeOptions ContainerLocationType =
+                SourceContainer == null ? CswEnumNbtContainerLocationTypeOptions.Receipt
+                                        : CswEnumNbtContainerLocationTypeOptions.Dispense;
             CreateContainerLocationNode( ContainerLocationType );
         } // DispenseIn()
 
@@ -564,7 +564,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="Type"></param>
         /// <param name="NewLocationBarcode"></param>
         /// <param name="ContainerBarcode"></param>
-        public void CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type, string NewLocationBarcode = "", string ContainerBarcode = "" )
+        public void CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions Type, string NewLocationBarcode = "", string ContainerBarcode = "" )
         {
             CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
             if( ContLocNT != null )
@@ -574,7 +574,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ContLocNode.Container.RelatedNodeId = NodeId;
                 if( null != Location )
                 {
-                    if( Type != CswNbtObjClassContainerLocation.TypeOptions.Scan )
+                    if( Type != CswEnumNbtContainerLocationTypeOptions.Scan )
                     {
                         ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
                         ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
@@ -993,7 +993,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                     {
-                        CreateContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
+                        CreateContainerLocationNode( CswEnumNbtContainerLocationTypeOptions.Move );
                     }
                 }
             }

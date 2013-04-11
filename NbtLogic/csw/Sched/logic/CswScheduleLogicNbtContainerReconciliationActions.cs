@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.Sched
                 FilterMode: CswEnumNbtFilterMode.NotNull );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
-                Value: CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                Value: CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
                 SubFieldName: CswEnumNbtSubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.NotEquals );
             return ContainerLocationsView;

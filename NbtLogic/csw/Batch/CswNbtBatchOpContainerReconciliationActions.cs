@@ -130,20 +130,20 @@ namespace ChemSW.Nbt.Batch
             CswNbtObjClassContainer Container = _CswNbtResources.Nodes[ContainerLocation.Container.RelatedNodeId];
             if( null != Container )
             {
-                CswNbtObjClassContainerLocation.ActionOptions Action = ContainerLocation.Action.Value;
-                if( Action == CswNbtObjClassContainerLocation.ActionOptions.Undispose ||
-                    Action == CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove )
+                CswEnumNbtContainerLocationActionOptions Action = ContainerLocation.Action.Value;
+                if( Action == CswEnumNbtContainerLocationActionOptions.Undispose ||
+                    Action == CswEnumNbtContainerLocationActionOptions.UndisposeAndMove )
                 {
                     Container.UndisposeContainer( OverridePermissions: true, CreateContainerLocation: false );
                 }
-                if( Action == CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation ||
-                    Action == CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove )
+                if( Action == CswEnumNbtContainerLocationActionOptions.MoveToLocation ||
+                    Action == CswEnumNbtContainerLocationActionOptions.UndisposeAndMove )
                 {
                     Container.Location.SelectedNodeId = ContainerLocation.Location.SelectedNodeId;
                     Container.Location.RefreshNodeName();
                     Container.Location.CreateContainerLocation = false;
                 }
-                Container.Missing.Checked = Action == CswNbtObjClassContainerLocation.ActionOptions.MarkMissing 
+                Container.Missing.Checked = Action == CswEnumNbtContainerLocationActionOptions.MarkMissing 
                     ? Tristate.True 
                     : Tristate.False;
                 Container.postChanges( false );

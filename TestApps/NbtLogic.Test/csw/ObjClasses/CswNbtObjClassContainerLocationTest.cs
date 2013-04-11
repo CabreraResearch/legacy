@@ -39,10 +39,10 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocId );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString(), ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Correct.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
@@ -57,11 +57,11 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocId,
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString(), ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
@@ -76,9 +76,9 @@ namespace ChemSW.Nbt.Test.ObjClasses
             ContainerNode.postChanges( false );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(), 
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString(), ContainerLocationNode.Status.Value );
+                CswEnumNbtContainerLocationActionOptions.NoAction.ToString(), 
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Missing.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
@@ -91,9 +91,9 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString() );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString(), ContainerLocationNode.Status.Value );
+                CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
+                Type: CswEnumNbtContainerLocationTypeOptions.Missing.ToString() );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
@@ -110,11 +110,11 @@ namespace ChemSW.Nbt.Test.ObjClasses
             Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocId, 
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Disposed.ToString(), ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Disposed.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
@@ -129,11 +129,11 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocationLocId,
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.WrongLocation.ToString(), ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), ContainerLocationNode.Status.Value );
         }
 
         /// <summary>
@@ -150,11 +150,11 @@ namespace ChemSW.Nbt.Test.ObjClasses
             Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocationLocId,
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
         }
 
         #endregion
