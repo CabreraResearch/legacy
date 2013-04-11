@@ -23,13 +23,13 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Login_Data, false, String.Empty, "System" );
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Login_Data, false, String.Empty, "System" );
 
             CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, true ) )
             {
                 bool CanViewLoginData = ( RoleNode.NodeName == "Administrator" || RoleNode.NodeName == "chemsw_admin_role" );
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Login_Data, RoleNode, CanViewLoginData );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Login_Data, RoleNode, CanViewLoginData );
             }
         } // update()
     }//class CswUpdateSchema_02A_Case27906

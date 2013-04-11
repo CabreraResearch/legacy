@@ -34,8 +34,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtObjClassRole RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
             if( null != RoleNode )
             {
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.HMIS_Reporting, RoleNode, true );
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Tier_II_Reporting, RoleNode, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.HMIS_Reporting, RoleNode, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Tier_II_Reporting, RoleNode, true );
                 CswNbtMetaDataNodeType ControlZoneNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Control Zone" );
                 if( null != ControlZoneNT )
                 {

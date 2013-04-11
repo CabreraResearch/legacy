@@ -185,7 +185,7 @@ namespace ChemSW.Nbt
                         CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
                         if( null != CswNbtObjClassContainerInstance )
                         {
-                            canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
+                            canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request] );
                         }
                     }
                 }
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive );
                     if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
-                        canView = _CswNbtResources.Permit.can( CswNbtActionName.Receiving );
+                        canView = _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
                     }
                 }
             }

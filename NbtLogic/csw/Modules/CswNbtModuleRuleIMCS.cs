@@ -33,11 +33,11 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( false, "technician" );
 
             //Case 28117 - show Future Scheduling
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Future_Scheduling );
+            _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Future_Scheduling );
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Kiosk_Mode );
-            _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
+            _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Kiosk_Mode );
+            _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
         }
 
         public override void OnDisable()
@@ -61,17 +61,17 @@ namespace ChemSW.Nbt
             //Case 28117 - hide Future Scheduling
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
+                _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Future_Scheduling );
             }
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Kiosk_Mode );
+                _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Kiosk_Mode );
             }
             else
             {
-                _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
+                _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
             }
         }
 

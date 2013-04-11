@@ -245,7 +245,7 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-                if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                if( !_CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) )
                     throw new CswDniException( CswEnumErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
@@ -264,7 +264,7 @@ namespace ChemSW.NbtWebControls
         {
             try
             {
-                if( !_CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                if( !_CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) )
                     throw new CswDniException( CswEnumErrorType.Warning, "You do not have permission to edit the tab layout", "User (" + _CswNbtResources.CurrentNbtUser.Username + ") does not have Design Action permissions" );
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
@@ -329,7 +329,7 @@ namespace ChemSW.NbtWebControls
                 else
                     _CancelButton.Visible = false;
 
-                if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) )
                 {
                     _ConfigButton.Visible = true;
                     _AddButton.Visible = true;

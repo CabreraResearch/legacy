@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtActCreateMaterial = new CswNbtActCreateMaterial( CswNbtResources );
-            if( false == _CswNbtResources.Permit.can( CswNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
+            if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "You do not have permission to use the Create Material wizard.", "Attempted to access the Create Material wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }

@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
 
-            if( false == _CswNbtResources.Permit.can(CswNbtActionName.Create_Inspection) )
+            if( false == _CswNbtResources.Permit.can(CswEnumNbtActionName.Create_Inspection) )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "You do not have permission for this Action.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }

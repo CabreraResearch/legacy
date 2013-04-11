@@ -29,9 +29,9 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtResources _OtherResources;
         private readonly CswNbtResources _NbtManagerResources = null;
         private bool _AllowAllAccessIds = false;
-        private CswNbtActionName _Action = CswNbtActionName.Unknown;
+        private CswEnumNbtActionName _Action = CswEnumNbtActionName.Unknown;
 
-        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId, CswNbtActionName ActionName, bool AllowAnyAdmin = false )
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId, CswEnumNbtActionName ActionName, bool AllowAnyAdmin = false )
         {
             _NbtManagerResources = NbtManagerResources;
             _Action = ActionName;
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.WebServices
             _OtherResources = makeOtherResources( AccessId );
         } //ctor
 
-        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, CswNbtActionName ActionName, bool AllowAnyAdmin = false )
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, CswEnumNbtActionName ActionName, bool AllowAnyAdmin = false )
         {
             _NbtManagerResources = NbtManagerResources;
             _Action = ActionName;

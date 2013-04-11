@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.WebServices
                     // SAVE VIEW AS
                     if( _MenuItems.Contains( "Save View As" ) &&
                         false == View.ViewId.isSet() &&
-                        _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswNbtActionName.Edit_View] ) )
+                        _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswEnumNbtActionName.Edit_View] ) )
                     {
                         View.SaveToCache( false );
                         MoreObj["Save View As"] = new JObject();
@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // EDIT VIEW
                 if( _MenuItems.Contains( "Edit View" ) &&
-                    _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) &&
+                    _CswNbtResources.Permit.can( CswEnumNbtActionName.Edit_View ) &&
                     ( null == View || ( false == View.IsSystem || CswNbtObjClassUser.ChemSWAdminUsername == _CswNbtResources.CurrentNbtUser.Username ) ) )
                 {
                     MoreObj["Edit View"] = new JObject();
@@ -326,7 +326,7 @@ namespace ChemSW.Nbt.WebServices
                 if( _MenuItems.Contains( "Multi-Edit" ) &&
                     false == ReadOnly &&
                     null != View &&
-                    _CswNbtResources.Permit.can( CswNbtActionName.Multi_Edit ) &&
+                    _CswNbtResources.Permit.can( CswEnumNbtActionName.Multi_Edit ) &&
                     // Per discussion with David, for the short term eliminate the need to validate the selection of nodes across different nodetypes in Grid views.
                     // Case 21701: for Grid Properties, we need to look one level deeper
                     // Case 29032: furthermore (for Grids), we need to exclude ObjectClass relationships (which can also produce the multi-nodetype no-no
@@ -370,7 +370,7 @@ namespace ChemSW.Nbt.WebServices
                 //    Ret["action"] = CswNbtActionName.Receiving.ToString();
                 //    break;
                 case CswEnumNbtObjectClass.MaterialClass:
-                    Ret["action"] = CswNbtActionName.Create_Material.ToString();
+                    Ret["action"] = CswEnumNbtActionName.Create_Material.ToString();
                     break;
                 default:
                     Ret["relatednodeid"] = default( string );

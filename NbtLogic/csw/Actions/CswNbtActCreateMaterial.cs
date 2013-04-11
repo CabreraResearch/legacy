@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Actions
                 Ret.TradeName.Text = TradeName;
                 Ret.PartNumber.Text = PartNo;
                 Ret.Supplier.RelatedNodeId = SupplierId;
-                Ret.ApprovedForReceiving.Checked = CswConvert.ToTristate( _NbtResources.Permit.can( CswNbtActionName.Material_Approval ) );
+                Ret.ApprovedForReceiving.Checked = CswConvert.ToTristate( _NbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ) );
 
                 Ret.IsTemp = ( false == RemoveTempStatus );
                 Ret.postChanges( ForceUpdate: false );
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.Actions
         {
             _CswNbtResources = CswNbtResources;
 
-            if( false == _CswNbtResources.Permit.can( CswNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
+            if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "You do not have permission to use the Create Material wizard.", "Attempted to access the Create Material wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
@@ -635,7 +635,7 @@ namespace ChemSW.Nbt.Actions
                 MaterialNodeView = MaterialNodeView ?? CswNbtObjClassMaterial.getMaterialNodeView( NbtResources, MaterialNode );
                 MaterialNodeView.SaveToCache( IncludeInQuickLaunch: false );
 
-                Ret["ActionId"] = NbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
+                Ret["ActionId"] = NbtResources.Actions[CswEnumNbtActionName.Create_Material].ActionId.ToString();
                 //Used for Tab and Button items
                 Ret["NodeId"] = MaterialNode.NodeId.ToString();
                 Ret["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();

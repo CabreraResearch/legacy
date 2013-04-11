@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.WebPages
                         //LeftHeaderContentLiteral.Text = "Add " + LabelNodeTypeTab + " to " + LabelNodeType + ": " + SelectedNodeType.NodeTypeName;
                         break;
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType:
-                        if( !Master.CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                        if( !Master.CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) )
                             throw new CswDniException( "You do not have permission to add NodeTypes" );
 
                         create_AddNodeTypePage();

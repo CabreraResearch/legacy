@@ -343,7 +343,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public void ToggleAction( bool showInList, CswNbtActionName actionName )
+        public void ToggleAction( bool showInList, CswEnumNbtActionName actionName )
         {
             string databaseActionName = CswNbtAction.ActionNameEnumToString( actionName );
             CswTableUpdate actionTU = _CswNbtResources.makeCswTableUpdate( "toggleActionVisibility", "actions" );

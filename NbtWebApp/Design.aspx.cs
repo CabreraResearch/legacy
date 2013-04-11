@@ -252,7 +252,7 @@ namespace ChemSW.Nbt.WebPages
                 }
 
                 EnsureChildControls();
-                if( !Master.CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                if( !Master.CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) )
                 {
                     Master.GoHome();
                 }

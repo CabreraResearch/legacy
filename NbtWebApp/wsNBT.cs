@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.WebServices
         private CswEnumAuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswEnumNbtActionName.Unknown, true ); //No action associated with this method
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );
             _CswNbtResources.AccessId = CustomerAccessId;
@@ -3289,7 +3289,7 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtAction Action = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionName )];
-                    if( null != Action && Action.Name != CswNbtActionName.Unknown )
+                    if( null != Action && Action.Name != CswEnumNbtActionName.Unknown )
                     {
                         _CswNbtResources.SessionDataMgr.saveSessionData( Action, true );
                         ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
@@ -3424,7 +3424,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.View_Scheduled_Rules );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswEnumNbtActionName.View_Scheduled_Rules );
                 ReturnVal = ws.getActiveAccessIds();
 
                 _deInitResources();
@@ -3452,7 +3452,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 string AccessId = CswConvert.ToString( Context.Request["AccessId"] );
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId, CswNbtActionName.View_Scheduled_Rules );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId, CswEnumNbtActionName.View_Scheduled_Rules );
                 ReturnVal["success"] = ws.updateScheduledRule( Context );
 
                 _deInitResources();

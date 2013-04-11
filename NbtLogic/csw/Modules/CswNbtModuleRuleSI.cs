@@ -42,7 +42,7 @@ namespace ChemSW.Nbt
             }
 
             //Case 28117 - show Future Scheduling
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Future_Scheduling );
+            _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Future_Scheduling );
         }
 
         public override void OnDisable()
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt
             //Case 28117 - hide Future Scheduling
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) && false   == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
+                _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Future_Scheduling );
             }
         }
 

@@ -92,6 +92,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswEnumNbtActionName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtSystemViewName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtRequestItemType.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignInventoryGroups.cs" />

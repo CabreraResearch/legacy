@@ -949,7 +949,7 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Returns true if the current user has the appropriate permissions for the Action
         /// </summary>
-        public bool can( CswNbtActionName ActionName )
+        public bool can( CswEnumNbtActionName ActionName )
         {
             return can( _CswNbtResources.Actions[ActionName] );
         }
@@ -965,7 +965,7 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Returns true if the user has the appropriate permissions for the Action
         /// </summary>
-        public bool can( CswNbtActionName ActionName, ICswNbtUser User )
+        public bool can( CswEnumNbtActionName ActionName, ICswNbtUser User )
         {
             return can( _CswNbtResources.Actions[ActionName], User );
         }
@@ -990,7 +990,7 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Returns true if the role has the appropriate permissions for the Action
         /// </summary>
-        public bool can( CswNbtActionName ActionName, CswNbtObjClassRole Role )
+        public bool can( CswEnumNbtActionName ActionName, CswNbtObjClassRole Role )
         {
             return can( _CswNbtResources.Actions[ActionName], Role );
         }
@@ -1027,7 +1027,7 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Sets a permission for the given Action for the user
         /// </summary>
-        public void set( CswNbtActionName ActionName, bool value )
+        public void set( CswEnumNbtActionName ActionName, bool value )
         {
             set( _CswNbtResources.Actions[ActionName], _CswNbtResources.CurrentNbtUser, value );
         }
@@ -1035,7 +1035,7 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Sets a permission for the given Action for the user
         /// </summary>
-        public void set( CswNbtActionName ActionName, ICswNbtUser User, bool value )
+        public void set( CswEnumNbtActionName ActionName, ICswNbtUser User, bool value )
         {
             set( _CswNbtResources.Actions[ActionName], User, value );
         }
@@ -1051,7 +1051,7 @@ namespace ChemSW.Nbt.Security
             }
         }
 
-        public void set( CswNbtActionName ActionName, CswNbtObjClassRole Role, bool value )
+        public void set( CswEnumNbtActionName ActionName, CswNbtObjClassRole Role, bool value )
         {
             set( _CswNbtResources.Actions[ActionName], Role, value );
         }

@@ -43,8 +43,8 @@ namespace ChemSW.Nbt.Actions
             {
                 try
                 {
-                    CswNbtActionName CurrentActionName = CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() );
-                    if( CurrentActionName != CswNbtActionName.Unknown )
+                    CswEnumNbtActionName CurrentActionName = CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() );
+                    if( CurrentActionName != CswEnumNbtActionName.Unknown )
                     {
                         Int32 ActionId = CswConvert.ToInt32( ActionRow["actionid"] );
                         CswNbtAction Action = new CswNbtAction( _CswNbtResources,
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.Actions
         /// Find an action by ActionName
         /// </summary>
         /// <param name="ActionName">CswNbtActionName value for action</param>
-        public CswNbtAction this[CswNbtActionName ActionName]
+        public CswNbtAction this[CswEnumNbtActionName ActionName]
         {
             get { return (CswNbtAction) _ActionSL[CswNbtAction.ActionNameEnumToString( ActionName )]; }
         }

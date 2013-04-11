@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
 
-            if( null == _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.Kiosk_Mode] )
+            if( null == _CswNbtSchemaModTrnsctn.Actions[CswEnumNbtActionName.Kiosk_Mode] )
             {
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update actions set actionname = 'Kiosk Mode' where actionname = 'KioskMode'" );
             }

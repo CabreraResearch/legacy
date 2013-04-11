@@ -864,7 +864,7 @@ namespace ChemSW.NbtWebControls
                 if( AllowMobile && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                     _MobileMenuItem.Visible = true;
                 //if( AllowEditView && ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).ActionPermissions.CheckValue( CswNbtAction.PermissionXValue, CswNbtAction.ActionNameEnumToString( _CswNbtResources.Actions[CswNbtActionName.Edit_View].Name ) ) )
-                if( AllowEditView && _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
+                if( AllowEditView && _CswNbtResources.Permit.can( CswEnumNbtActionName.Edit_View ) )
                     _EditViewMenuItem.Visible = true;
                 //if ( AllowExport && NbtViewRenderingMode.Unknown != NbtViewRenderingMode )
                 //    ExportMenuItem.Visible = true;

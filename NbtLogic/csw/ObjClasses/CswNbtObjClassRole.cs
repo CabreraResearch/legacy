@@ -114,9 +114,9 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
                         {
-                            if( ( Action.Name == CswNbtActionName.Design ||
-                                    Action.Name == CswNbtActionName.Create_Inspection || //Case 24288
-                                    Action.Name == CswNbtActionName.View_Scheduled_Rules ) && //Case 28564
+                            if( ( Action.Name == CswEnumNbtActionName.Design ||
+                                    Action.Name == CswEnumNbtActionName.Create_Inspection || //Case 24288
+                                    Action.Name == CswEnumNbtActionName.View_Scheduled_Rules ) && //Case 28564
                                     _CswNbtResources.CurrentNbtUser.Rolename != ChemSWAdminRoleName &&  //Case 28433: chemsw_admin can grant Design to anyone.
                                     false == _CswNbtResources.IsSystemUser
                                 )
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
                             }
                             //Case 29338 - If the Role has no Material NT create permissions, remove the Create Material action permission
-                            if( Action.Name == CswNbtActionName.Create_Material )
+                            if( Action.Name == CswEnumNbtActionName.Create_Material )
                             {
                                 CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
 

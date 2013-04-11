@@ -570,7 +570,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Action
         /// </summary>
-        public Int32 createAction( CswNbtActionName Name, bool ShowInList, string URL, string Category )
+        public Int32 createAction( CswEnumNbtActionName Name, bool ShowInList, string URL, string Category )
         {
             // Create the Action
             CswTableUpdate ActionsTable = makeCswTableUpdate( "SchemaModTrnsctn_ActionUpdate", "actions" );
@@ -663,7 +663,7 @@ namespace ChemSW.Nbt.Schema
             ConfigVarTable.update( ConfigVarDataTable );
         }
 
-        public Int32 getActionId( CswNbtActionName ActionName )
+        public Int32 getActionId( CswEnumNbtActionName ActionName )
         {
             Int32 RetActionId = Int32.MinValue;
             if( null != Actions[ActionName] )
@@ -692,7 +692,7 @@ namespace ChemSW.Nbt.Schema
             JctFtSfUpdate.update( UpdateAsDataTable );
         }
 
-        public void createModuleActionJunction( CswEnumNbtModuleName Module, CswNbtActionName ActionName )
+        public void createModuleActionJunction( CswEnumNbtModuleName Module, CswEnumNbtActionName ActionName )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             Int32 ActionId = getActionId( ActionName );
@@ -997,7 +997,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Delete all Module junctions on either this Module, this ActionName or both
         /// </summary>
-        public void deleteModuleActionJunction( CswEnumNbtModuleName Module, CswNbtActionName Action )
+        public void deleteModuleActionJunction( CswEnumNbtModuleName Module, CswEnumNbtActionName Action )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             Int32 ActionId = getActionId( Action );

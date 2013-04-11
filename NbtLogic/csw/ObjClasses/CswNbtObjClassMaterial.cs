@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _canReceive()
         {
-            return ApprovedForReceiving.Checked == CswEnumTristate.True && _CswNbtResources.Permit.can( CswNbtActionName.Receiving );
+            return ApprovedForReceiving.Checked == CswEnumTristate.True && _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswNbtActionName.Material_Approval ), SaveToDb: false );
+            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
             _toggleButtonVisibility();
             PhysicalState.SetOnPropChange( _physicalStatePropChangeHandler );
             CasNo.SetOnPropChange( _onCasNoPropChange );
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _toggleButtonVisibility()
         {
             Receive.setHidden( value: false == _canReceive(), SaveToDb: false );
-            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ), SaveToDb: false );
+            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb: false );
         }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCPPropName )
                 {
                     case PropertyName.Request:
-                        if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
+                        if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ) )
                         {
                             HasPermission = true;
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Receive:
-                        if( _CswNbtResources.Permit.can( CswNbtActionName.Receiving ) )
+                        if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
                         {
                             HasPermission = true;
                             ButtonData.Data["state"] = new JObject();

@@ -117,8 +117,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ButtonData.Data["action"] = OCPPropName;
 
                     ButtonData.Data["type"] = "view"; //assume it's a view unless it's an action
-                    CswNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( Action.Text );
-                    if( CswNbtActionName.Unknown != ActionName )
+                    CswEnumNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( Action.Text );
+                    if( CswEnumNbtActionName.Unknown != ActionName )
                     {
                         if( null != _CswNbtResources.Actions[ActionName] )
                         {

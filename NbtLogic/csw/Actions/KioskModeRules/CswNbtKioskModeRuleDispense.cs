@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public override void CommitOperation( ref OperationData OpData )
         {
             CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerToDispense.NodeType ) && _CswNbtResources.Permit.can( CswNbtActionName.DispenseContainer ) )
+            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerToDispense.NodeType ) && _CswNbtResources.Permit.can( CswEnumNbtActionName.DispenseContainer ) )
             {
                 double quantityToDispense = CswConvert.ToDouble( OpData.Field2.Value );
                 if( quantityToDispense > containerToDispense.Quantity.Quantity )

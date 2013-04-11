@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.WebServices
                     imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
                 } );
                 CswNbtPermit permissions = new CswNbtPermit( NbtResources );
-                if( permissions.can( CswNbtActionName.DispenseContainer ) )
+                if( permissions.can( CswEnumNbtActionName.DispenseContainer ) )
                 {
                     kioskModeData.AvailableModes.Add( new Mode
                     {
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
                         imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
                     } );
                 }
-                if( permissions.can( CswNbtActionName.DisposeContainer ) )
+                if( permissions.can( CswEnumNbtActionName.DisposeContainer ) )
                 {
                     kioskModeData.AvailableModes.Add( new Mode
                     {
