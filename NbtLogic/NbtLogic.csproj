@@ -496,7 +496,7 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemFactory.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemLink.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemTab.cs" />
-    <Compile Include="csw\LandingPage\CswNbtLandingPageItemType.cs" />
+    <Compile Include="csw\LandingPage\CswEnumNbtLandingPageItemType.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
     <None Include="csw\Schema\scripts\past\01T\CswUpdateSchema_01T_Case27881.cs" />
     <None Include="csw\Schema\scripts\past\01U\CswUpdateSchema_01U_Case27876.cs" />
