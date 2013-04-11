@@ -734,7 +734,7 @@ namespace ChemSW.Nbt.WebPages
                     SelectedNodeType.IconFileName = IconSelect.SelectedValue;
                     SelectedNodeType.setNameTemplateText( NameTemplate.Text );
 
-                    SelectedNodeType.AuditLevel = AuditLevel.Parse( AuditLevelDropDownList.SelectedValue );
+                    SelectedNodeType.AuditLevel = CswEnumAuditLevel.Parse( AuditLevelDropDownList.SelectedValue );
 
 
 
@@ -942,7 +942,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Extended = getPropAttributeValue( "EditProp_ExtendedValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    PropToSave.AuditLevel = AuditLevel.Parse( getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
+                    PropToSave.AuditLevel = CswEnumAuditLevel.Parse( getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
                     PropToSave.Attribute1 = getPropAttributeValue( "EditProp_Attribute1" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.Attribute2 = getPropAttributeValue( "EditProp_Attribute2" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.Attribute3 = getPropAttributeValue( "EditProp_Attribute3" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
@@ -1368,8 +1368,8 @@ namespace ChemSW.Nbt.WebPages
 
 
                 AuditLevelDropDownList.Items.Clear();
-                AuditLevelDropDownList.Items.Add( new ListItem( "No Audit", AuditLevel.NoAudit.ToString() ) );
-                AuditLevelDropDownList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
+                AuditLevelDropDownList.Items.Add( new ListItem( "No Audit", CswEnumAuditLevel.NoAudit.ToString() ) );
+                AuditLevelDropDownList.Items.Add( new ListItem( "Audit", CswEnumAuditLevel.PlainAudit.ToString() ) );
                 AuditLevelDropDownList.SelectedValue = SelectedNodeType.AuditLevel.ToString();
 
                 if( _Mode == NbtDesignMode.Inspection )
@@ -3060,8 +3060,8 @@ namespace ChemSW.Nbt.WebPages
                     DropDownList AuditLevelList = new DropDownList();
                     AuditLevelList.ID = "EditProp_AuditLevel" + SelectedNodeTypeProp.PropId.ToString();
                     AuditLevelList.CssClass = "selectinput";
-                    AuditLevelList.Items.Add( new ListItem( "No Audit", AuditLevel.NoAudit.ToString() ) );
-                    AuditLevelList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
+                    AuditLevelList.Items.Add( new ListItem( "No Audit", CswEnumAuditLevel.NoAudit.ToString() ) );
+                    AuditLevelList.Items.Add( new ListItem( "Audit", CswEnumAuditLevel.PlainAudit.ToString() ) );
                     AuditLevelList.SelectedValue = SelectedNodeTypeProp.AuditLevel.ToString();
                     AuditLevelRow.Cells[1].Controls.Add( AuditLevelList );
 

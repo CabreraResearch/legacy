@@ -576,7 +576,7 @@ namespace ChemSW.Nbt
             if( DataRow.Table.TableName == "jct_nodes_props" )
             {
 
-                ReturnVal = AuditLevel.NoAudit;//27709: don't invalidate the incoming audit level for other tables
+                ReturnVal = CswEnumAuditLevel.NoAudit;//27709: don't invalidate the incoming audit level for other tables
 
                 Int32 NodeTypePropId = Int32.MinValue;
                 if( DataRowState.Deleted != DataRow.RowState )
@@ -593,11 +593,11 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = MetaData.getNodeTypeProp( NodeTypePropId );
 
 
-                    if( ( null != NodeTypeProp ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeTypeProp.AuditLevel, AuditLevel.NoAudit ) ) )
+                    if( ( null != NodeTypeProp ) && ( CswEnumAuditLevel.IsLevel1HigherThanLevel2( NodeTypeProp.AuditLevel, CswEnumAuditLevel.NoAudit ) ) )
                     {
                         CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
 
-                        if( ( null != NodeType ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeType.AuditLevel, AuditLevel.NoAudit ) ) ) //NodeType overrides NodeTypeProp (per order TDU)
+                        if( ( null != NodeType ) && ( CswEnumAuditLevel.IsLevel1HigherThanLevel2( NodeType.AuditLevel, CswEnumAuditLevel.NoAudit ) ) ) //NodeType overrides NodeTypeProp (per order TDU)
                         {
                             ReturnVal = NodeTypeProp.AuditLevel;
                         }

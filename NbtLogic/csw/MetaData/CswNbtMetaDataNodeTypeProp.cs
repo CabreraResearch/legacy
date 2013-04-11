@@ -799,7 +799,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ChemSW.Audit.AuditLevel.Parse( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
+                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
             }
             set
             {

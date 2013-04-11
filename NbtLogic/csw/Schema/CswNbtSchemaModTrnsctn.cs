@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.Schema
 
         public bool isTableAuditable( string TableName ) { return ( _CswNbtResources.CswResources.isTableAuditable( TableName ) ); }
 
-        public void setTableAuditLevel( string TableName, string WhereClause, AuditLevel AuditLevel )
+        public void setTableAuditLevel( string TableName, string WhereClause, CswEnumAuditLevel AuditLevel )
         {
             if( isTableAuditable( TableName ) )
             {

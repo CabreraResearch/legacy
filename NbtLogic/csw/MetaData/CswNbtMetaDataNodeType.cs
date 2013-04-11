@@ -708,11 +708,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
+                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
             }
             set
             {
-                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.AuditLevel.Parse( value );
+                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.CswEnumAuditLevel.Parse( value );
             }
         }
 
