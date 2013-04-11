@@ -348,7 +348,7 @@ namespace ChemSW.Nbt
                     SearchTerm = SearchTerm.Remove( begin, length + 2 ).Trim();
                     if( false == string.IsNullOrEmpty( QueryItem ) )
                     {
-                        Clauses.Add( CswTools.SafeSqlLikeClause( QueryItem, CswTools.SqlLikeMode.Contains, true ) );
+                        Clauses.Add( CswTools.SafeSqlLikeClause( QueryItem, CswEnumSqlLikeMode.Contains, true ) );
                     }
                 }
                 else
@@ -362,7 +362,7 @@ namespace ChemSW.Nbt
                                                           .Select( QueryItem => QueryItem.Trim() )
                                                           .Where( TrimmedQueryItem => false == string.IsNullOrEmpty( TrimmedQueryItem ) ) )
             {
-                Clauses.Add( CswTools.SafeSqlLikeClause( TrimmedQueryItem, CswTools.SqlLikeMode.Contains, true ) );
+                Clauses.Add( CswTools.SafeSqlLikeClause( TrimmedQueryItem, CswEnumSqlLikeMode.Contains, true ) );
             }
             return Clauses;
         } // makeSafeLikeClauses

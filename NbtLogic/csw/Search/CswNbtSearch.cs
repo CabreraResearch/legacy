@@ -346,7 +346,7 @@ namespace ChemSW.Nbt.Search
                     }
                     else
                     {
-                        FilterStr = CswTools.SafeSqlLikeClause( FilterStr, CswTools.SqlLikeMode.Begins, false );
+                        FilterStr = CswTools.SafeSqlLikeClause( FilterStr, CswEnumSqlLikeMode.Begins, false );
                     }
 
                     if( NodeTypePropFirstVersionId != Int32.MinValue )
