@@ -1827,9 +1827,9 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) DateTypeRow.Cells[0].Controls[0] ).Text = "Date Type";
                             DropDownList DateTypeValue = new DropDownList();
                             DateTypeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
-                            DateTypeValue.Items.Add( new ListItem( "Date Only", CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ) );
-                            DateTypeValue.Items.Add( new ListItem( "Time Only", CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ) );
-                            DateTypeValue.Items.Add( new ListItem( "Date and Time", CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() ) );
+                            DateTypeValue.Items.Add( new ListItem( "Date Only", CswEnumNbtDateDisplayMode.Date.ToString() ) );
+                            DateTypeValue.Items.Add( new ListItem( "Time Only", CswEnumNbtDateDisplayMode.Time.ToString() ) );
+                            DateTypeValue.Items.Add( new ListItem( "Date and Time", CswEnumNbtDateDisplayMode.DateTime.ToString() ) );
                             DateTypeValue.SelectedValue = SelectedNodeTypeProp.Extended;
                             DateTypeRow.Cells[1].Controls.Add( DateTypeValue );
                             break;

@@ -84,13 +84,13 @@ namespace ChemSW.Nbt.PropTypes
             {
                 switch( DisplayMode )
                 {
-                    case DateDisplayMode.Date:
+                    case CswEnumNbtDateDisplayMode.Date:
                         _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() );
                         break;
-                    case DateDisplayMode.Time:
+                    case CswEnumNbtDateDisplayMode.Time:
                         _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToLongTimeString() );
                         break;
-                    case DateDisplayMode.DateTime:
+                    case CswEnumNbtDateDisplayMode.DateTime:
                         _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value.ToShortDateString() + " " + Value.ToLongTimeString() );
                         break;
                 }
@@ -110,42 +110,19 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
-        /// Possible display modes for dates
-        /// </summary>
-        public enum DateDisplayMode
-        {
-            /// <summary>
-            /// unknown display mode
-            /// </summary>
-            Unknown,
-            /// <summary>
-            /// display date only
-            /// </summary>
-            Date,
-            /// <summary>
-            /// display time only
-            /// </summary>
-            Time,
-            /// <summary>
-            /// display date and time
-            /// </summary>
-            DateTime
-        }
-
-        /// <summary>
         /// Determines whether dates, times, or datetimes are displayed
         /// </summary>
-        private DateDisplayMode _DisplayMode = DateDisplayMode.Unknown;
-        public DateDisplayMode DisplayMode
+        private CswEnumNbtDateDisplayMode _DisplayMode = CswEnumNbtDateDisplayMode.Unknown;
+        public CswEnumNbtDateDisplayMode DisplayMode
         {
             get
             {
-                if( _DisplayMode == DateDisplayMode.Unknown )
+                if( _DisplayMode == CswEnumNbtDateDisplayMode.Unknown )
                 {
                     if( _CswNbtMetaDataNodeTypeProp.Extended != string.Empty )
-                        _DisplayMode = (DateDisplayMode) Enum.Parse( typeof( DateDisplayMode ), _CswNbtMetaDataNodeTypeProp.Extended, true );
+                        _DisplayMode = (CswEnumNbtDateDisplayMode) Enum.Parse( typeof( CswEnumNbtDateDisplayMode ), _CswNbtMetaDataNodeTypeProp.Extended, true );
                     else
-                        _DisplayMode = DateDisplayMode.Date;
+                        _DisplayMode = CswEnumNbtDateDisplayMode.Date;
                 }
                 return _DisplayMode;
             }

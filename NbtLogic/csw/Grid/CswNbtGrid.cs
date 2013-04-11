@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.Grid
 
                                         // case 26782 - Set dateformat as client date format
                                         string dateformat = string.Empty;
-                                        string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
+                                        string DateDisplayMode = CswEnumNbtDateDisplayMode.Date.ToString();
                                         if( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
                                         {
                                             DateDisplayMode = ViewProp.NodeTypeProp.Extended;
@@ -150,17 +150,17 @@ namespace ChemSW.Nbt.Grid
                                             DateDisplayMode = ViewProp.ObjectClassProp.Extended;
                                         }
                                         if( DateDisplayMode == string.Empty ||
-                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
-                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                            DateDisplayMode == CswEnumNbtDateDisplayMode.Date.ToString() ||
+                                            DateDisplayMode == CswEnumNbtDateDisplayMode.DateTime.ToString() )
                                         {
                                             dateformat += CswTools.ConvertNetToPHP( _CswNbtResources.CurrentNbtUser.DateFormat );
-                                            if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                            if( DateDisplayMode == CswEnumNbtDateDisplayMode.DateTime.ToString() )
                                             {
                                                 dateformat += " ";
                                             }
                                         }
-                                        if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
-                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                        if( DateDisplayMode == CswEnumNbtDateDisplayMode.Time.ToString() ||
+                                            DateDisplayMode == CswEnumNbtDateDisplayMode.DateTime.ToString() )
                                         {
                                             dateformat += CswTools.ConvertNetToPHP( _CswNbtResources.CurrentNbtUser.TimeFormat );
                                         }

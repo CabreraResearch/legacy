@@ -175,6 +175,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeModificationState.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
+    <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemSource.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtIdRefContext.cs" />
