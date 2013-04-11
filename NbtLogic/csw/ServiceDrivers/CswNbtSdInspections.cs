@@ -69,13 +69,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                   orderby _NodeTypeTab.TabOrder
                                                                   select _NodeTypeTab )
                 {
-                    bool canPropOnAnyOtherTab = ( false == _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) );
+                    bool canPropOnAnyOtherTab = ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) );
                     var ResponseSection = new CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspectionDesign.Section
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
                         SectionId = NodeTypeTab.TabId,
-                        ReadOnly = ( ( false == _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType ) ) && ( false == _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) ) )
+                        ReadOnly = ( ( false == _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType ) ) && ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) ) )
                     };
 
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                         orderby _NodeTypeProp.QuestionNo
                                                                         where _NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.Question &&
                                                                               false == _NodeTypeProp.ReadOnly &&
-                                                                              _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, _NodeTypeProp, null )
+                                                                              _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, _NodeTypeProp, null )
                                                                         select _NodeTypeProp )
                     {
                         var ResponseProperty = new CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspectionDesign.SectionProperty
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.Question &&
                         false == Prop.ReadOnly &&
-                        _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
+                        _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         Ret.Counts.Total += 1;
@@ -468,7 +468,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         if( null != InspectionNt )
                         {
                             //Can edit the nodetype
-                            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, InspectionNt ) )
+                            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, InspectionNt ) )
                             {
                                 foreach( CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                                 {
@@ -479,8 +479,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         if( null != Tab )
                                         {
                                             bool CanEdit = (
-                                                                _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, Tab ) ||
-                                                                _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Ntp, Tab )
+                                                                _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, InspectionNt, Tab ) ||
+                                                                _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Ntp, Tab )
                                                             );
 
                                             CswNbtNodePropQuestion PropAsQuestion = InspectionNode.Properties[Ntp];
@@ -534,8 +534,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtResources.MetaData.getNodeTypeTab( ButtonNtp.FirstEditLayout.TabId );
                                         if( null != ButtonTab &&
                                                 (
-                                                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab : ButtonTab ) ||
-                                                    _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, ButtonNtp, ButtonTab )
+                                                    _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, InspectionNt, NodeTypeTab : ButtonTab ) ||
+                                                    _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, ButtonNtp, ButtonTab )
                                                 )
                                            )
                                         {

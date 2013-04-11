@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
             string itemTypeName = item.getNodeType().NodeTypeName;
 
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, item.getNodeType() ) && false == item.Properties[statusPropName].ReadOnly )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, item.getNodeType() ) && false == item.Properties[statusPropName].ReadOnly )
             {
                 item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
                 item.postChanges( false );

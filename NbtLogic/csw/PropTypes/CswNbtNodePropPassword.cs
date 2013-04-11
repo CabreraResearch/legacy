@@ -69,8 +69,8 @@ namespace ChemSW.Nbt.PropTypes
                     //CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( this.NodeId );
                     if( //null != UserNode &&
                         false == (
-                                    _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), this.NodeId ) ) &&
-                                    _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp, null )
+                                    _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp.getNodeType(), this.NodeId ) ) &&
+                                    _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp, null )
                                  )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + this.NodeId + "'." );

@@ -394,7 +394,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
                 CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
-                AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) );
+                AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, TargetNodeType ) );
             }
             else if( TargetType == CswEnumNbtViewRelatedIdType.ObjectClassId )
             {
@@ -419,7 +419,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             ParentObject["viewid"] = View.ViewId.ToString();
 
-            bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp, null );
+            bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );
 
             if( AllowEdit )
             {

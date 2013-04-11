@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     string NodeTypePermission = MakeNodeTypePermissionValue(
                                         MaterialNt.FirstVersionNodeTypeId,
-                                        CswNbtPermit.NodeTypePermission.Create );
+                                        CswEnumNbtNodeTypePermission.Create );
 
                                     HasOneMaterialCreate = HasOneMaterialCreate ||
                                                            NodeTypePermissions.CheckValue( NodeTypePermission );
@@ -195,15 +195,15 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public static string MakeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission Permission )
+        public static string MakeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswEnumNbtNodeTypePermission Permission )
         {
             return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
-        public static string MakeNodeTypePermissionText( string LatestVersionNodeTypeName, CswNbtPermit.NodeTypePermission Permission )
+        public static string MakeNodeTypePermissionText( string LatestVersionNodeTypeName, CswEnumNbtNodeTypePermission Permission )
         {
             return LatestVersionNodeTypeName + ": " + Permission.ToString();
         }
-        public static string MakeNodeTypeTabPermissionValue( Int32 FirstVersionNodeTypeId, Int32 FirstTabVersionID, CswNbtPermit.NodeTypeTabPermission Permission )
+        public static string MakeNodeTypeTabPermissionValue( Int32 FirstVersionNodeTypeId, Int32 FirstTabVersionID, CswEnumNbtNodeTypeTabPermission Permission )
         {
             return "nt_" +
                     FirstVersionNodeTypeId.ToString() +
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
                     "_" +
                     Permission.ToString();
         }
-        public static string MakeNodeTypeTabPermissionText( string LatestVersionNodeTypeName, string LatestVersionTabName, CswNbtPermit.NodeTypeTabPermission Permission )
+        public static string MakeNodeTypeTabPermissionText( string LatestVersionNodeTypeName, string LatestVersionTabName, CswEnumNbtNodeTypeTabPermission Permission )
         {
             return LatestVersionNodeTypeName +
                    ", " +
@@ -238,7 +238,7 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                foreach( CswNbtPermit.NodeTypePermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypePermission ) ) )
+                foreach( CswEnumNbtNodeTypePermission Permission in Enum.GetValues( typeof( CswEnumNbtNodeTypePermission ) ) )
                 {
                     string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
                     string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                 {
-                    foreach( CswNbtPermit.NodeTypeTabPermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypeTabPermission ) ) )
+                    foreach( CswEnumNbtNodeTypeTabPermission Permission in Enum.GetValues( typeof( CswEnumNbtNodeTypeTabPermission ) ) )
                     {
                         string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
                         string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );

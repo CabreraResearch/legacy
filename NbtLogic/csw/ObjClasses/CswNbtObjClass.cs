@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     case CswEnumNbtNodeEditMode.Temp:
                     case CswEnumNbtNodeEditMode.Add:
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, this.NodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, this.NodeType ) )
                         {
                             Ret = true;
                         }
@@ -38,12 +38,12 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );
                             if( null != Tab )
                             {
-                                Ret = _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType, Tab );
+                                Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab );
                             }
                         }
                         else
                         {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType );
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType );
                         }
                         break;
                 }

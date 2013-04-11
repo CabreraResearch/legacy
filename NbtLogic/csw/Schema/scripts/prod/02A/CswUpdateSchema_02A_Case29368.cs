@@ -23,12 +23,12 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtPermit.NodeTypePermission[] NTPermissions = 
+            CswEnumNbtNodeTypePermission[] NTPermissions = 
             { 
-                CswNbtPermit.NodeTypePermission.View, 
-                CswNbtPermit.NodeTypePermission.Create, 
-                CswNbtPermit.NodeTypePermission.Edit, 
-                CswNbtPermit.NodeTypePermission.Delete 
+                CswEnumNbtNodeTypePermission.View, 
+                CswEnumNbtNodeTypePermission.Create, 
+                CswEnumNbtNodeTypePermission.Edit, 
+                CswEnumNbtNodeTypePermission.Delete 
             };
 
             CswNbtObjClassRole RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );

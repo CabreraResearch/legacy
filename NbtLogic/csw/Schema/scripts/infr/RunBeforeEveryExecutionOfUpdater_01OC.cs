@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
             return Prop;
         }
 
-        private static string _makeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission Permission )
+        private static string _makeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswEnumNbtNodeTypePermission Permission )
         {
             return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }

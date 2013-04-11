@@ -95,8 +95,8 @@ namespace ChemSW.Nbt
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
                 if( false == RequireViewPermissions ||
-                   _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ThisNodeType, _RunAsUser ) ||
-                   _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser )
+                   _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.View, ThisNodeType, _RunAsUser ) ||
+                   _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser )
 
                     )
                 {
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt
                             _CswNbtTree.goToRoot();
                         }
                     } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
-                } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
+                } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
             } // foreach(DataRow NodesRow in NodesTable.Rows)
 
             if( NodesTable.Rows.Count > 0 ) // only recurse if there are results

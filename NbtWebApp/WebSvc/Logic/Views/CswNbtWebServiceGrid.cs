@@ -30,10 +30,10 @@ namespace ChemSW.Nbt.WebServices
             public _NodeTypePermission( CswNbtMetaDataNodeType NodeType, CswNbtResources Resources )
             {
                 NodeTypeId = NodeType.FirstVersionNodeTypeId;
-                CanEdit = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType );
-                CanView = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType );
-                CanDelete = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Delete, NodeType );
-                CanCreate = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                CanEdit = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType );
+                CanView = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType );
+                CanDelete = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete, NodeType );
+                CanCreate = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType );
             }
 
             public Int32 NodeTypeId { get; private set; }

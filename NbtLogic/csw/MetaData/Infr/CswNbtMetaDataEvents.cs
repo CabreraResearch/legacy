@@ -22,11 +22,11 @@ namespace ChemSW.Nbt.MetaData
         public void OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
             // Give the current user's role full permissions to the new nodetype
-            CswNbtPermit.NodeTypePermission[] AllPerms = new CswNbtPermit.NodeTypePermission[] {
-                                                CswNbtPermit.NodeTypePermission.Delete, 
-                                                CswNbtPermit.NodeTypePermission.Create, 
-                                                CswNbtPermit.NodeTypePermission.Edit, 
-                                                CswNbtPermit.NodeTypePermission.View };
+            CswEnumNbtNodeTypePermission[] AllPerms = new CswEnumNbtNodeTypePermission[] {
+                                                CswEnumNbtNodeTypePermission.Delete, 
+                                                CswEnumNbtNodeTypePermission.Create, 
+                                                CswEnumNbtNodeTypePermission.Edit, 
+                                                CswEnumNbtNodeTypePermission.View };
 
             if( null != _CswNbtResources.CurrentNbtUser.RoleId )
             {

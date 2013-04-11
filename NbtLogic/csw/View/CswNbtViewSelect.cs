@@ -414,7 +414,7 @@ namespace ChemSW.Nbt
                        (
                            View.Root.ChildRelationships.Any( R => R.SecondType != CswEnumNbtViewRelatedIdType.NodeTypeId ||
                                                                   _CswNbtResources.Permit.canAnyTab(
-                                                                      CswNbtPermit.NodeTypePermission.View,
+                                                                      CswEnumNbtNodeTypePermission.View,
                                                                       _CswNbtResources.MetaData.getNodeType( R.SecondId ),
                                                                       User ) ) )
                      ) || IncludeEmptyViews ) &&

@@ -59,15 +59,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                         NodeTypeId = Prop.NodeTypeId;
                         foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
                         {
-                            //_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
+                            //_CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
                             CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
                             if(
                                     ( _ConfigMode || Tab.TabName != CswNbtMetaData.IdentityTabName ) && (
-                                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
-                                        _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
+                                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) ||
+                                        _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, NodeType, Tab ) ||
                                         (
-                                         _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId ) &&
-                                         _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.View, Prop, Tab )
+                                         _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, NodeType, Node.NodeId ) &&
+                                         _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.View, Prop, Tab )
                                         )
                                     )
                                )
@@ -85,8 +85,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                               orderby _Tab.TabOrder, _Tab.TabName
                                                               where ( ( _ConfigMode || _Tab.TabName != CswNbtMetaData.IdentityTabName ) &&
                                                                     (
-                                                                        _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), _Tab ) ||
-                                                                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() )
+                                                                        _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, Node.getNodeType(), _Tab ) ||
+                                                                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Node.getNodeType() )
                                                                     ) )
                                                               select _Tab )
                     {
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         NodeType.AuditLevel != Audit.CswEnumAuditLevel.NoAudit &&
                         CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
                     {
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) )
                         {
                             _makeTab( Tabs, Int32.MaxValue, "history", "History", false );
                         }
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtNode Ret = null;
             if( null != NodeType )
             {
-                if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                 {
                     NodeOp = NodeOp ?? CswEnumNbtMakeNodeOperation.MakeTemp;
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, NodeOp );
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != NodeType )
                 {
-                    if( false == _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                    if( false == _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Insufficient permission to create a new " + NodeType.NodeTypeName, "User " + _CswNbtResources.CurrentNbtUser.Username + " does not have Create permission for " + NodeType.NodeTypeName );
                     }
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( TabId == "history" )
             {
                 CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
-                if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
+                if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Node.getNodeType() ) )
                 {
                     _getAuditHistoryGridProp( Ret, Node );
                 }
@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                 if( TabId.StartsWith( HistoryTabPrefix ) )
                 {
-                    if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
+                    if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Node.getNodeType() ) )
                     {
                         _getAuditHistoryGridProp( Properties, Node );
                     }
@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
 
                     if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add ||
-                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                     {
                         var CswNbtNodePropColl = Node.Properties;
 
@@ -515,10 +515,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
                 if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible
                     FieldType == CswEnumNbtFieldType.Button || (
-                    _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
-                    _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
-                    ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ) )
+                    _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
+                    _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, NodeId ) &&
+                    ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                    _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, Tab ) ) )
                     )
                 {
                     PropObj["readonly"] = false;
@@ -621,9 +621,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                 }
                 bool CanEdit = (
-                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
-                                    _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, Ret.NodeId )
+                                    _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                                    _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
+                                    _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, Ret.NodeId )
                                );
                 if( CanEdit )
                 {
@@ -707,9 +707,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                             if( null != Node )
                             {
                                 bool CanEdit = (
-                                                   _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
-                                                   _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                                                   _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, Node.NodeId )
+                                                   _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
+                                                   _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                                                   _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeType, Node.NodeId )
                                                );
                                 if( CanEdit )
                                 {
@@ -837,7 +837,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CswNbtNode Node = _CswNbtResources.Nodes[CopyToNodeId];
                                     if( null != Node &&
                                         Node.NodeTypeId == SourceNode.NodeTypeId &&
-                                        _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, SourceNode.getNodeType(), Node.NodeId ) )
+                                        _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, SourceNode.getNodeType(), Node.NodeId ) )
                                     {
                                         CopyToNodes.Add( Node );
                                     }

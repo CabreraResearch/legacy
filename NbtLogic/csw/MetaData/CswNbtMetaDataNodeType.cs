@@ -257,12 +257,12 @@ namespace ChemSW.Nbt.MetaData
         public bool CanSave()
         {
             return ( ( !IsLocked || IsLatestVersion() ) &&
-                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, this ) ) );
         }
         public bool CanDelete()
         {
             return ( ( !IsLocked || IsLatestVersion() ) &&
-                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete, this ) ) );
         }
 
 
@@ -364,8 +364,8 @@ namespace ChemSW.Nbt.MetaData
         {
             foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
             {
-                if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Tab.getNodeType() ) ||
-                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this, NodeTypeTab: Tab ) )
+                if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Tab.getNodeType() ) ||
+                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab: Tab ) )
                 {
                     yield return Tab;
                 }

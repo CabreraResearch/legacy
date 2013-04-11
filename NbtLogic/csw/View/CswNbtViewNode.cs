@@ -290,7 +290,7 @@ namespace ChemSW.Nbt
                         CswNbtViewAddNodeTypeEntry NewEntry = new CswNbtViewAddNodeTypeEntry( FirstVersionNodeType.getNodeTypeLatestVersion(), ChildRelationship );
                         CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
                         if( ObjectClass.CanAdd &&
-                            _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType ) )
+                            _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Create, FirstVersionNodeType ) )
                         {
                             // Only use the first view relationship found per nodetype
                             bool FoundMatch = false;

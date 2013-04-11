@@ -535,7 +535,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab )
                     {
                         CswNbtMetaDataNodeTypeTab SelectedTab = CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedTab.getNodeType() ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SelectedTab.getNodeType() ) )
                         {
                             if( SelectedTab.getNodeType().IsLatestVersion() )
                             {
@@ -561,7 +561,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType )
                     {
                         CswNbtMetaDataNodeType SelectedNodeType = CswNbtResources.MetaData.getNodeType( Convert.ToInt32( DesignSelectedValue ) );
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SelectedNodeType ) )
                         {
                             if( SelectedNodeType != null && SelectedNodeType.IsLatestVersion() )
                             {
@@ -653,7 +653,7 @@ namespace ChemSW.NbtWebControls
                 // Copy
                 if( AllowCopy && SelectedNodeKey != null &&
                     SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
-                    _CswNbtResources.Permit.canNodeType( Nbt.Security.CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ) ) )
+                    _CswNbtResources.Permit.canNodeType( Nbt.Security.CswEnumNbtNodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ) ) )
                 {
                     if( SelectedNodeKeyViewNode != null && SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                       ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).NodeIdsToFilterIn.Count == 0 )   // BZ 8022
@@ -905,7 +905,7 @@ namespace ChemSW.NbtWebControls
                     {
                         if( SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                             ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).AllowDelete &&
-                            _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Delete, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ), CswNbtResources.Nodes[SelectedNodeKey].NodeId ) )
+                            _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ), CswNbtResources.Nodes[SelectedNodeKey].NodeId ) )
                         {
                             DeleteMenuItem.Visible = true;
 

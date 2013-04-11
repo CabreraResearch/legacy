@@ -82,7 +82,7 @@ namespace ChemSW.Nbt
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
+                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.View, ThisNodeType ) )
                     {
                         Int32 ThisNTPId = Int32.MinValue;
                         if( NodesTable.Columns.Contains( "nodetypepropid" ) )
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt
                             } // if( NewNodeKeys != null && ThisNTPId != Int32.MinValue )
                             _CswNbtTree.goToRoot();
                         } // if( _canViewNode( ThisNodeType, ThisNodeId ) &&
-                    } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
+                    } // if( _CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, ThisNodeTypeId ) )
                 } // foreach(DataRow NodesRow in NodesTable.Rows)
 
                 // case 24678 - Mark truncated results
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt
                 CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
                 if( null != CswNbtObjClassContainer )
                 {
-                    canView = CswNbtObjClassContainer.canContainer( CswNbtPermit.NodeTypePermission.View, null );
+                    canView = CswNbtObjClassContainer.canContainer( CswEnumNbtNodeTypePermission.View, null );
                 }
             }
             #endregion
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt
             Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> EditLayouts = NTProp.getEditLayouts();
             bool canView = EditLayouts.Values.Aggregate( false,
                                                         ( current, EditLayout ) => current || _CswNbtResources.Permit.canTab(
-                                                            CswNbtPermit.NodeTypePermission.View,
+                                                            CswEnumNbtNodeTypePermission.View,
                                                             NTProp.getNodeType(),
                                                             _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId ) ) );
 

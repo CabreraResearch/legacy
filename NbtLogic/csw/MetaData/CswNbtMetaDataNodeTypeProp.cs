@@ -534,8 +534,8 @@ namespace ChemSW.Nbt.MetaData
         //    var ret = ( ( false == InPopUp || IsOnAdd ) &&
         //        FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
         //                false == Node.Properties[this].Hidden &&
-        //                ( _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId ) ) &&
-        //                  _CswNbtMetaDataResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, this, null ) );
+        //                ( _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, this.getNodeType(), Node.NodeId ) ) &&
+        //                  _CswNbtMetaDataResources.CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, this, null ) );
         //    return ret;
         //}
 
@@ -583,9 +583,9 @@ namespace ChemSW.Nbt.MetaData
 
             // 3: Permissions
             ret = ret && (
-                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
-                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
-                           _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, this.getNodeType() ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this.getNodeType(), Tab ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, this.getNodeType(), Node.NodeId )
                         );
 
 

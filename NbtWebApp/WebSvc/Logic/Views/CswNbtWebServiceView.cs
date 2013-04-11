@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.WebServices
                                  orderby _LatestNodeType.NodeTypeName
                                  select _LatestNodeType )
                         {
-                            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, LatestNodeType ) )
+                            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, LatestNodeType ) )
                             {
                                 // This is purposefully not the typical way of creating CswNbtViewRelationships.
                                 CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, LatestNodeType.getFirstVersionNodeType(), false );
@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.WebServices
                         ( PropRow["fktype"].ToString() == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() &&
                           PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) )
                     {
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, FirstVersionNodeType ) )
                         {
                             // Special case -- relationship to my own type
                             // We need to create two relationships from this
@@ -477,7 +477,7 @@ namespace ChemSW.Nbt.WebServices
                             //    R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
                             R.overrideSecond( PropRow["fktype"].ToString(), CswConvert.ToInt32( PropRow["fkvalue"] ) );
                             if( R.SecondType != CswEnumNbtViewRelatedIdType.NodeTypeId ||
-                                _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
+                                _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                             {
                                 _InsertRelationship( Relationships, R );
                             }
@@ -501,7 +501,7 @@ namespace ChemSW.Nbt.WebServices
                                 }
 
                                 if( R.SecondType != CswEnumNbtViewRelatedIdType.NodeTypeId ||
-                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
+                                    _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                                 {
                                     _InsertRelationship( Relationships, R );
                                 }

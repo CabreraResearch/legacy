@@ -170,8 +170,8 @@ namespace ChemSW.Nbt.PropTypes
                     NodeId = _Node.NodeId;
                 }
                 bool Ret = (
-                               _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), NodeId ) &&
-                               _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp, null )
+                               _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp.getNodeType(), NodeId ) &&
+                               _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp, null )
                            );
                 return Ret;
             }
@@ -186,8 +186,8 @@ namespace ChemSW.Nbt.PropTypes
                     NodeId = _Node.NodeId;
                 }
                 bool Ret = (
-                                _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), NodeId ) &&
-                                _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp, null )
+                                _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp.getNodeType(), NodeId ) &&
+                                _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null )
                            );
                 return Ret;
             }

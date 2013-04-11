@@ -666,7 +666,7 @@ namespace ChemSW.NbtWebControls
                     } // if( Prop.NodeTypeTab != null && Prop.NodeTypeTab.TabId.ToString() == SelectedTabId.ToString() )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
 
-                if( !_CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId ), SelectedNode.NodeId ) )
+                if( !_CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId ), SelectedNode.NodeId ) )
                 {
                     SaveButton.Visible = false;
                 }
@@ -688,7 +688,7 @@ namespace ChemSW.NbtWebControls
                             _PropertyControlSetHash.Add( Prop.FirstPropVersionId, PCS );
                     }
                 }
-                if( !_CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType ) )
+                if( !_CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, MetaDataNodeType ) )
                 {
                     SaveButton.Visible = false;
                 }

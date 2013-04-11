@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.WebServices
         private bool _userHasTabPermission( string FilterToPermission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
         {
             bool hasPermission = true;
-            CswNbtPermit.NodeTypePermission PermissionType;
+            CswEnumNbtNodeTypePermission PermissionType;
             if( Enum.TryParse( FilterToPermission, out PermissionType ) )
             {
                 hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );
@@ -180,10 +180,10 @@ namespace ChemSW.Nbt.WebServices
         private bool _userHasPermission( string FilterToPermission, CswNbtMetaDataNodeType RetNodeType )
         {
             bool hasPermission = true;
-            CswNbtPermit.NodeTypePermission PermissionType;
+            CswEnumNbtNodeTypePermission PermissionType;
             if( Enum.TryParse( FilterToPermission, out PermissionType ) )
             {
-                if( PermissionType == CswNbtPermit.NodeTypePermission.Create )
+                if( PermissionType == CswEnumNbtNodeTypePermission.Create )
                 {
                     hasPermission = hasPermission && RetNodeType.getObjectClass().CanAdd;
                 }

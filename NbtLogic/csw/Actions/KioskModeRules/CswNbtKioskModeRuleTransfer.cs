@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             CswNbtObjClassContainer containerNode = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
 
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerNode.NodeType ) )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, containerNode.NodeType ) )
             {
                 CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
                 CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );

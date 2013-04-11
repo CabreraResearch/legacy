@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
             string itemType = itemToMove.getNodeType().NodeTypeName;
 
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, itemToMove.getNodeType() ) && false == itemToMove.Properties[locationPropName].ReadOnly )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, itemToMove.getNodeType() ) && false == itemToMove.Properties[locationPropName].ReadOnly )
             {
                 CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( CswEnumNbtObjectClass.LocationClass, OpData.Field1.Value, true );
                 itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;

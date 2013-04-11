@@ -451,7 +451,7 @@ namespace ChemSW.Nbt.ObjClasses
                 throw ( new CswDniException( "There is no delete handler" ) );
             }
             CswNbtMetaDataNodeType thisNT = this.getNodeType();
-            if( false == OverridePermissions && false == _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
+            if( false == OverridePermissions && false == _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Delete, thisNT ) )
             {
                 throw ( new CswDniException( CswEnumErrorType.Warning, "You do not have permission to delete this " + thisNT.NodeTypeName, "User attempted to delete a " + thisNT.NodeTypeName + " without Delete permissions" ) );
             }

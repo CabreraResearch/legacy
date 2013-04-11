@@ -261,9 +261,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
             CswNbtMetaDataNodeType NodeType = MetaDataProp.getNodeType();
 
-            if( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                _CswNbtResources.Permit.canTab( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ||
-                _CswNbtResources.Permit.isPropWritable( Security.CswNbtPermit.NodeTypePermission.Edit, MetaDataProp, Tab ) )
+            if( _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                _CswNbtResources.Permit.canTab( Security.CswEnumNbtNodeTypePermission.Edit, NodeType, Tab ) ||
+                _CswNbtResources.Permit.isPropWritable( Security.CswEnumNbtNodeTypePermission.Edit, MetaDataProp, Tab ) )
             {
                 Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
@@ -461,7 +461,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( KeyValuePair.Key );
                             
                     Ret.CanAdd = Ret.CanAdd ||
-                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create,
+                                    _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create,
                                                                         NodeType );
                 }
                 Ret.ObjectClassId = LowestLevelNodeTypes.FirstOrDefault().Value;
@@ -483,7 +483,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         View.AddViewRelationship( MetaDataNodeType, IncludeDefaultFilters: true );
 
                         Ret.NodeTypeId = MetaDataNodeType.NodeTypeId;
-                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
+                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, MetaDataNodeType );
                     }
                 }
                 else
@@ -552,7 +552,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                 ( current, NodeType ) =>
                                                                 current ||
                                                                 _CswNbtResources.Permit.canNodeType(
-                                                                    CswNbtPermit.NodeTypePermission.Create, NodeType ) );
+                                                                    CswEnumNbtNodeTypePermission.Create, NodeType ) );
                     }
                     else
                     {

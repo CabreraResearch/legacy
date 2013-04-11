@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.LandingPage
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( NodeType != null )
                 {
-                    bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType );
                     if( CanAdd )
                     {
                         String DisplayText = LandingPageRow["displaytext"].ToString();

@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        public bool canContainer( CswNbtPermit.NodeTypePermission Permission, ICswNbtUser User = null )
+        public bool canContainer( CswEnumNbtNodeTypePermission Permission, ICswNbtUser User = null )
         {
             return _canContainer( Permission, null, User );
         }
@@ -310,13 +310,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "You do not have appropriate permissions", "canContainer called with null Action" );
             }
-            return _canContainer( CswNbtPermit.NodeTypePermission.View, Action, User );
+            return _canContainer( CswEnumNbtNodeTypePermission.View, Action, User );
         }
 
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        private bool _canContainer( CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
+        private bool _canContainer( CswEnumNbtNodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
         {
             bool ret = true;
 
@@ -379,7 +379,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
                                         {
-                                            ret = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, ContainerNt );
+                                            ret = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, ContainerNt );
                                             if( ret )
                                             {
                                                 break;
@@ -389,7 +389,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 { //there's only edit, so edit applies to all three
-                                    if( ( Permission == CswNbtPermit.NodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                                    if( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
                                         PermNode.Edit.Checked == CswEnumTristate.True )
                                     {
                                         ret = true;

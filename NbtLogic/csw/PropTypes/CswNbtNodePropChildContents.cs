@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         ParentObject["objectclassid"] = RelationshipOC.ObjectClassId;
                         allowAdd = ( RelationshipOC.CanAdd &&
-                                     _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, RelationshipNT ) );
+                                     _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, RelationshipNT ) );
                     }
                 }
             }

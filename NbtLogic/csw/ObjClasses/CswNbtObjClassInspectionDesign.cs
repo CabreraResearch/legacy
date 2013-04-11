@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.ObjClasses
                 QuestionProp.IsActionRequired = ( Status.Value == CswEnumNbtInspectionStatus.ActionRequired ); // case 25035
             }
 
-            if( false == _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) )
+            if( false == _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
             {
                 Finish.setHidden( value: true, SaveToDb: false );
                 Cancel.setHidden( value: true, SaveToDb: false );

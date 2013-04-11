@@ -146,10 +146,10 @@ namespace ChemSW.Nbt.Actions
 
         private void _setNodeTypePermissions( CswNbtMetaDataNodeType NodeType )
         {
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Create, NodeType, _CurrentUser, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Edit, NodeType, _CurrentUser, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.Delete, NodeType, _CurrentUser, true );
-            _CswNbtResources.Permit.set( CswNbtPermit.NodeTypePermission.View, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Create, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Edit, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.Delete, NodeType, _CurrentUser, true );
+            _CswNbtResources.Permit.set( CswEnumNbtNodeTypePermission.View, NodeType, _CurrentUser, true );
         }
 
         /// <summary>

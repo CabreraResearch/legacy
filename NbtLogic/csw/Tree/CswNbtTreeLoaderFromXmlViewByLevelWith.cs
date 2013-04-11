@@ -92,7 +92,7 @@
 //                // Verify permissions
 //                // this could be a performance problem
 //                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-//                if( false == RequireViewPermissions || _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser ) )
+//                if( false == RequireViewPermissions || _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser ) )
 //                {
 //                    // Handle property multiplexing
 //                    // This assumes that property rows for the same nodeid are next to one another
@@ -193,7 +193,7 @@
 //                        }
 //                        //} // if( ThisJctNodePropId != Int32.MinValue )
 //                    } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
-//                } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
+//                } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
 //            } // foreach(DataRow NodesRow in NodesTable.Rows)
 
 //            if( NodesTable.Rows.Count > 0 ) // only recurse if there are results

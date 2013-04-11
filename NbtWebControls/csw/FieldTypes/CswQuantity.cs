@@ -53,7 +53,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _UnitLabel.Text = Prop.AsQuantity.CachedUnitName + "&nbsp;";
 
                 if( Prop.AsQuantity.TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId && !ReadOnly )
-                    ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
+                    ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
 
                 CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
                 CswNbtView View = new CswNbtView( _CswNbtResources );

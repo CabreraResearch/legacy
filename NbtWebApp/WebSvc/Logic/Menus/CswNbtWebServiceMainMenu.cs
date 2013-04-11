@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
                         JObject AddObj = new JObject();
 
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        if( null != NodeType && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) && NodeType.getObjectClass().CanAdd )
+                        if( null != NodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) && NodeType.getObjectClass().CanAdd )
                         {
                             AddObj[NodeType.NodeTypeName] = makeAddMenuItem( NodeType, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId );
                             AddObj["haschildren"] = true;
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.WebServices
                         false == ReadOnly &&
                         null != Node && Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                         View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&
-                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) &&
+                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, Node.getNodeType() ) &&
                         Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
                         )
                     {
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt.WebServices
                         null != Node &&
                         View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&
                         Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
-                        _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
+                        _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
                     {
                         MoreObj["Delete"] = new JObject();
                         MoreObj["Delete"]["action"] = MenuActions.DeleteNode.ToString();
