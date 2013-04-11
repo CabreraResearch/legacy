@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.WebServices
 
             kioskModeData.AvailableModes.Add( new Mode
             {
-                name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Move._Name ),
+                name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Move._Name ),
                 imgUrl = "Images/newicons/KioskMode/Move_code39.png"
             } );
 
@@ -44,12 +44,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Owner._Name ),
+                    name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Owner._Name ),
                     imgUrl = "Images/newicons/KioskMode/Owner_code39.png"
                 } );
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Transfer._Name ),
+                    name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Transfer._Name ),
                     imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
                 } );
                 CswNbtPermit permissions = new CswNbtPermit( NbtResources );
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     kioskModeData.AvailableModes.Add( new Mode
                     {
-                        name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Dispense._Name ),
+                        name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Dispense._Name ),
                         imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
                     } );
                 }
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     kioskModeData.AvailableModes.Add( new Mode
                     {
-                        name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Dispose._Name ),
+                        name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Dispose._Name ),
                         imgUrl = "Images/newicons/KioskMode/Dispose_code39.png"
                     } );
                 }
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 kioskModeData.AvailableModes.Add( new Mode
                 {
-                    name = CswTools.UppercaseFirst( CswNbtKioskModeRuleName.Status._Name ),
+                    name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Status._Name ),
                     imgUrl = "Images/newicons/KioskMode/Status_code39.png"
                 } );
             }
