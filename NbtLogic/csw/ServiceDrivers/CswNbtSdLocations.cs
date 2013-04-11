@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         LocationNode.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
                         foreach( CswNbtTreeNodeProp Prop in Props )
                         {
-                            if( Prop.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                            if( Prop.FieldType == CswEnumNbtFieldType.Location )
                             {
                                 LocationNode.Name = Prop.Gestalt + CswNbtNodePropLocation.PathDelimiter + Tree.getNodeNameForCurrentPosition();
                             }

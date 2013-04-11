@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.Logic
 
                 addVbPropFilters( ParentObj, ViewBuilderProp );
 
-                if( ViewBuilderProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.List )
+                if( ViewBuilderProp.FieldType == CswEnumNbtFieldType.List )
                 {
                     ParentObj["filtersoptions"] = new JObject();
                     ParentObj["filtersoptions"]["name"] = ViewBuilderProp.MetaDataPropName;
@@ -524,7 +524,7 @@ namespace ChemSW.Nbt.Logic
         public readonly string MetaDataPropName = string.Empty;
         public readonly string MetaDataPropNameWithQuestionNo = string.Empty;
         public readonly string MetaDataTypeName = string.Empty;
-        public readonly CswNbtMetaDataFieldType.NbtFieldType FieldType;
+        public readonly CswEnumNbtFieldType FieldType;
         public readonly ICswNbtFieldTypeRule FieldTypeRule = null;
         public readonly CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
         public readonly NbtViewPropType Type = NbtViewPropType.Unknown;

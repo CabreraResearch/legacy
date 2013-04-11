@@ -349,12 +349,12 @@ namespace ChemSW.Nbt.WebServices
                                     thisProp.JctNodePropId = PropElm.JctNodePropId;
 
                                     // Special case: Image becomes thumbnail
-                                    if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
+                                    if( thisProp.FieldType == CswEnumNbtFieldType.Image )
                                     {
                                         thisNode.ThumbnailUrl = CswNbtNodePropImage.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
                                     }
 
-                                    if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL )
+                                    if( thisProp.FieldType == CswEnumNbtFieldType.MOL )
                                     {
                                         thisNode.ThumbnailUrl = CswNbtNodePropMol.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
                                     }
@@ -363,7 +363,7 @@ namespace ChemSW.Nbt.WebServices
                                         CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.First( Order => Order.NodeTypePropId == thisProp.NodeTypePropId );
                                         thisProp.Source = thisOrder.Source;
 
-                                        if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
+                                        if( thisProp.FieldType == CswEnumNbtFieldType.Button )
                                         {
                                             // Include full info for rendering the button
                                             // This was done in such a way as to prevent instancing the CswNbtNode object, 

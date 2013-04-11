@@ -46,45 +46,45 @@ namespace ChemSW.Nbt
                 {
                     switch( FieldType.FieldType )
                     {
-                        case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Image:
-                        case CswNbtMetaDataFieldType.NbtFieldType.List:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Number:
-                        case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Static:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                        case CswEnumNbtFieldType.Barcode:
+                        case CswEnumNbtFieldType.DateTime:
+                        case CswEnumNbtFieldType.Image:
+                        case CswEnumNbtFieldType.List:
+                        case CswEnumNbtFieldType.Logical:
+                        case CswEnumNbtFieldType.Memo:
+                        case CswEnumNbtFieldType.Number:
+                        case CswEnumNbtFieldType.PropertyReference:
+                        case CswEnumNbtFieldType.Sequence:
+                        case CswEnumNbtFieldType.Static:
+                        case CswEnumNbtFieldType.Text:
                             _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), SimpleTab.TabId );
                             break;
 
-                        case CswNbtMetaDataFieldType.NbtFieldType.Comments:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Composite:
-                        case CswNbtMetaDataFieldType.NbtFieldType.File:
-                        case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Link:
-                        case CswNbtMetaDataFieldType.NbtFieldType.MOL:
-                        case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Password:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
-                        case CswNbtMetaDataFieldType.NbtFieldType.ViewReference:
+                        case CswEnumNbtFieldType.Comments:
+                        case CswEnumNbtFieldType.Composite:
+                        case CswEnumNbtFieldType.File:
+                        case CswEnumNbtFieldType.ImageList:
+                        case CswEnumNbtFieldType.Link:
+                        case CswEnumNbtFieldType.MOL:
+                        case CswEnumNbtFieldType.MTBF:
+                        case CswEnumNbtFieldType.Password:
+                        case CswEnumNbtFieldType.Quantity:
+                        case CswEnumNbtFieldType.Scientific:
+                        case CswEnumNbtFieldType.ViewReference:
                             _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), LessSimpleTab.TabId );
                             break;
 
-                        case CswNbtMetaDataFieldType.NbtFieldType.Grid:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Location:
-                        case CswNbtMetaDataFieldType.NbtFieldType.LogicalSet:
-                        case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                        case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
-                        case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
-                        case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
-                        case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
-                        case CswNbtMetaDataFieldType.NbtFieldType.UserSelect:
+                        case CswEnumNbtFieldType.Grid:
+                        case CswEnumNbtFieldType.Location:
+                        case CswEnumNbtFieldType.LogicalSet:
+                        case CswEnumNbtFieldType.MultiList:
+                        case CswEnumNbtFieldType.Question:
+                        case CswEnumNbtFieldType.NFPA:
+                        case CswEnumNbtFieldType.NodeTypeSelect:
+                        case CswEnumNbtFieldType.Relationship:
+                        case CswEnumNbtFieldType.TimeInterval:
+                        case CswEnumNbtFieldType.ViewPickList:
+                        case CswEnumNbtFieldType.UserSelect:
                             _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), ComplexTab.TabId );
                             break;
                     }

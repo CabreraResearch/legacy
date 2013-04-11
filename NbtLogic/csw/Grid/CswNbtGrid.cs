@@ -126,15 +126,15 @@ namespace ChemSW.Nbt.Grid
                                 CswExtJsGridColumn col = new CswExtJsGridColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
                                 switch( ViewProp.FieldType )
                                 {
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                                    case CswEnumNbtFieldType.Button:
                                         col.MenuDisabled = true;
                                         col.IsSortable = false;
                                         break;
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                                    case CswEnumNbtFieldType.Number:
                                         fld.type = "number";
                                         col.xtype = CswEnumExtJsXType.numbercolumn;
                                         break;
-                                    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                                    case CswEnumNbtFieldType.DateTime:
                                         fld.type = "date";
                                         col.xtype = CswEnumExtJsXType.datecolumn;
 
@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.Grid
 
                     switch( Prop.FieldType )
                     {
-                        case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                        case CswEnumNbtFieldType.Button:
                             if( false == IsLocked )
                             {
                                 grid.rowData.btns.Add( new CswExtJsGridButton
@@ -257,7 +257,7 @@ namespace ChemSW.Nbt.Grid
                                 } );
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.File:
+                        case CswEnumNbtFieldType.File:
                             string File = Prop.getPropColumnValue( MetaDataProp );
                             if( false == String.IsNullOrEmpty( File ) )
                             {
@@ -268,24 +268,24 @@ namespace ChemSW.Nbt.Grid
                                 }
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                        case CswEnumNbtFieldType.Image:
                             string ImageUrl = CswNbtNodePropImage.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
                             if( false == string.IsNullOrEmpty( ImageUrl ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + ImageUrl + "\">" + ( oldValue ?? "Image" ) + "</a>";
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                        case CswEnumNbtFieldType.Link:
                             string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field2, MetaDataProp.Attribute2 );
                             if( false == string.IsNullOrEmpty( Href ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        case CswEnumNbtFieldType.Logical:
                             newValue = CswConvert.ToDisplayString( CswConvert.ToTristate( oldValue ) );
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                        case CswEnumNbtFieldType.MOL:
                             string molUrl = CswNbtNodePropMol.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
                             if( false == string.IsNullOrEmpty( molUrl ) )
                             {

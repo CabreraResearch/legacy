@@ -10,7 +10,7 @@ namespace ChemSW.Nbt
     [DataContract]
     public class CswNbtTreeNodeProp
     {
-        public CswNbtTreeNodeProp( CswNbtMetaDataFieldType.NbtFieldType NbtFieldType, string NbtPropName,
+        public CswNbtTreeNodeProp( CswEnumNbtFieldType NbtFieldType, string NbtPropName,
                                    int NbtNodeTypePropId, int NbtJctNodePropId, CswNbtTreeNode TreeNode )
         {
             FieldType = NbtFieldType;
@@ -34,8 +34,8 @@ namespace ChemSW.Nbt
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "Field2", Order = 4 )]
         public string Field2 = string.Empty;
 
-        private CswNbtMetaDataFieldType.NbtFieldType _FieldType = CswNbtResources.UnknownEnum;
-        public CswNbtMetaDataFieldType.NbtFieldType NbtFieldType
+        private CswEnumNbtFieldType _FieldType = CswNbtResources.UnknownEnum;
+        public CswEnumNbtFieldType NbtFieldType
         {
             get { return _FieldType; }
         }

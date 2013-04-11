@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaData CswNbtMetaData = _CswNbtSchemaModTrnsctn.MetaData;
             CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( NbtObjectClass.GenericClass );
             CswNbtMetaDataNodeType BlobNodeTypeNodeType = CswNbtMetaData.makeNewNodeType( GenericObjectClass.ObjectClassId, BlobNodeTypeName, string.Empty );
-            CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewProp( BlobNodeTypeNodeType, CswNbtMetaDataFieldType.NbtFieldType.Image, BlobPropName, string.Empty );
+            CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewProp( BlobNodeTypeNodeType, CswEnumNbtFieldType.Image, BlobPropName, string.Empty );
 
 
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();

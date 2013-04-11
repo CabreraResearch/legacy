@@ -395,7 +395,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new <see cref="CswNbtViewProperty"/> for this view for unique FieldTypes (Barcode/Location)
         /// </summary>
-        public CswNbtViewProperty AddViewPropertyByFieldType( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataObject MetaDataObject, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public CswNbtViewProperty AddViewPropertyByFieldType( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataObject MetaDataObject, CswEnumNbtFieldType FieldType )
         {
             if( MetaDataObject.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
             {
@@ -413,20 +413,20 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeType NodeType = (CswNbtMetaDataNodeType) MetaDataObject;
                 switch( FieldType )
                 {
-                    case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                    case CswEnumNbtFieldType.Barcode:
                         CswNbtMetaDataNodeTypeProp BarcodeNtp = (CswNbtMetaDataNodeTypeProp) NodeType.getBarcodeProperty();
                         if( null != BarcodeNtp )
                         {
                             return AddViewProperty( ParentViewRelationship, BarcodeNtp );
                         }
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                    case CswEnumNbtFieldType.Button:
                         foreach( CswNbtMetaDataNodeTypeProp ButtonNtp in NodeType.getButtonProperties() )
                         {
                             AddViewProperty( ParentViewRelationship, ButtonNtp );
                         }
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                    case CswEnumNbtFieldType.Location:
                         CswNbtMetaDataNodeTypeProp LocationNtp = NodeType.getLocationProperty();
                         if( null != LocationNtp )
                         {

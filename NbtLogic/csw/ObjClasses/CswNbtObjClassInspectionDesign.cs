@@ -281,7 +281,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != _Design && null != _Design.Node )
                 {
-                    CswNbtPropEnmrtrFiltered QuestionsFlt = _Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    CswNbtPropEnmrtrFiltered QuestionsFlt = _Design.Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Question];
                     foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                     {
                         _Questions.Add( PropWrapper );
@@ -379,7 +379,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _genFutureNodes();
             }
 
-            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Question] )
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
                 if( QuestionProp.IsAnswerCompliant() )
@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetPopulateProps()
         {
-            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Question] )
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
                 QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired ); // case 25035
@@ -483,7 +483,7 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
 
                     case PropertyName.SetPreferred:
-                        CswNbtPropEnmrtrFiltered QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                        CswNbtPropEnmrtrFiltered QuestionsFlt = Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Question];
                         foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                         {
                             CswNbtNodePropQuestion QuestionProp = PropWrapper;  // don't refactor this into the foreach.  it doesn't work. case 28300.

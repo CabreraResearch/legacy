@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.MetaData
         string PropNameWithQuestionNo { get; }
         bool IsRequired { get; }
         CswNbtMetaDataFieldType getFieldType();
-        CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue();
+        CswEnumNbtFieldType getFieldTypeValue();
         string FKType { get; }
         Int32 FKValue { get; }
         string ValuePropType { get; }

@@ -273,7 +273,7 @@ namespace ChemSW.Nbt
                                        Int32 JctNodePropId,
                                        string PropName,
                                        string Gestalt,
-                                       CswNbtMetaDataFieldType.NbtFieldType FieldType,
+                                       CswEnumNbtFieldType FieldType,
                                        string Field1,
                                        string Field2,
                                        Int32 Field1_Fk,
@@ -907,7 +907,7 @@ namespace ChemSW.Nbt
         }
 
         public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt,
-                                 CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2,
+                                 CswEnumNbtFieldType FieldType, string Field1, string Field2,
                                  Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
         {
             _checkCurrentNode();

@@ -522,7 +522,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                     in MetaDataObjectClass.getObjectClassProps()
                                                 where
                                                     _OcProp.getFieldTypeValue() ==
-                                                    CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                                                    CswEnumNbtFieldType.Relationship &&
                                                     //_OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                                                     //_OcProp.FKValue == MetaRelatedObjectClass.ObjectClassId
                                                     _OcProp.FkMatches( MetaRelatedObjectClass )

@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId );
         }
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue()
+        public CswEnumNbtFieldType getFieldTypeValue()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeValue( FieldTypeId );
         }
@@ -522,7 +522,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUserRelationship()
         {
             bool ret = false;
-            if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
                 //if( FKType != string.Empty )
                 //{

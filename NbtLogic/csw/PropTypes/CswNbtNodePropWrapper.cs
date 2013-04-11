@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool Empty { get { return ( _CswNbtNodeProp.Empty ); } }
 
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtNodeProp.getFieldType() ); }
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue() { return ( _CswNbtNodeProp.getFieldTypeValue() ); }
+        public CswEnumNbtFieldType getFieldTypeValue() { return ( _CswNbtNodeProp.getFieldTypeValue() ); }
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
 
         /// <summary>
@@ -298,21 +298,21 @@ namespace ChemSW.Nbt.PropTypes
             bool DoCopy = false;
             switch( this.getFieldTypeValue() )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                case CswEnumNbtFieldType.DateTime:
                     CswNbtNodePropDateTime PropAsDate = this.AsDateTime;
                     if( PropAsDate.DefaultToToday )
                     {
                         PropAsDate.DateTimeValue = DateTime.Now;
                     }
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
+                case CswEnumNbtFieldType.MTBF:
                     CswNbtNodePropMTBF PropAsMTBF = this.AsMTBF;
                     if( PropAsMTBF.DefaultToToday )
                     {
                         PropAsMTBF.StartDateTime = DateTime.Now;
                     }
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                case CswEnumNbtFieldType.Location:
                     // This will default to Top.  Setting the Parent might change this later.
                     this.AsLocation.SelectedNodeId = null;
 
@@ -325,13 +325,13 @@ namespace ChemSW.Nbt.PropTypes
 
                     DoCopy = true;
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                case CswEnumNbtFieldType.Barcode:
                     if( this.DefaultValue.AsBarcode.Barcode != CswNbtNodePropBarcode.AutoSignal )
                     {
                         DoCopy = true;
                     }
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+                case CswEnumNbtFieldType.Sequence:
                     if( this.DefaultValue.AsSequence.Sequence != CswNbtNodePropBarcode.AutoSignal )
                     {
                         DoCopy = true;

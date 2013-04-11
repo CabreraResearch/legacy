@@ -39,12 +39,12 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataFieldType( Resources, Row );
         }
 
-        public Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> getFieldTypeIds()
+        public Dictionary<Int32, CswEnumNbtFieldType> getFieldTypeIds()
         {
             Dictionary<Int32, string> FTDict = _CollImpl.getPkDict();
             return FTDict.Keys
                          .Where( key => FTDict[key] != CswNbtResources.UnknownEnum )
-                         .ToDictionary( key => key, key => (CswNbtMetaDataFieldType.NbtFieldType) FTDict[key] );
+                         .ToDictionary( key => key, key => (CswEnumNbtFieldType) FTDict[key] );
         } // getFieldTypeIds()
 
         public IEnumerable<CswNbtMetaDataFieldType> getFieldTypes()
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getAll().Cast<CswNbtMetaDataFieldType>();
         }
 
-        public CswNbtMetaDataFieldType getFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public CswNbtMetaDataFieldType getFieldType( CswEnumNbtFieldType FieldType )
         {
             return (CswNbtMetaDataFieldType) _CollImpl.getWhereFirst( "where lower(fieldtype)='" + FieldType.ToString().ToLower() + "'" );
         }
@@ -62,16 +62,16 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataFieldType) _CollImpl.getByPk( FieldTypeId );
         }
 
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue( Int32 FieldTypeId )
+        public CswEnumNbtFieldType getFieldTypeValue( Int32 FieldTypeId )
         {
             // This fetches all of them at once.  This was done on purpose.
             // This will actually perform better in any case where you need more than one.
             return getFieldTypeIds()[FieldTypeId];
         }
 
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
+        public CswEnumNbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
         {
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtResources.UnknownEnum;
+            CswEnumNbtFieldType FieldType = CswNbtResources.UnknownEnum;
             if( NodeTypePropId != Int32.MinValue )
             {
                 string FieldTypeStr = _CollImpl.getNameWhereFirst( "where fieldtypeid = (select fieldtypeid from nodetype_props where nodetypepropid = " + NodeTypePropId.ToString() + ")" );
@@ -80,9 +80,9 @@ namespace ChemSW.Nbt.MetaData
             return FieldType;
         } // getFieldTypeValueForNodeTypePropId()
 
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForObjectClassPropId( Int32 ObjectClassPropId )
+        public CswEnumNbtFieldType getFieldTypeValueForObjectClassPropId( Int32 ObjectClassPropId )
         {
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtResources.UnknownEnum;
+            CswEnumNbtFieldType FieldType = CswNbtResources.UnknownEnum;
             if( ObjectClassPropId != Int32.MinValue )
             {
                 string FieldTypeStr = _CollImpl.getNameWhereFirst( "where fieldtypeid = (select fieldtypeid from object_class_props where objectclasspropid = " + ObjectClassPropId.ToString() + ")" );

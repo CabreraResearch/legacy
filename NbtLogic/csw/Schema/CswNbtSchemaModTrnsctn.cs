@@ -929,7 +929,7 @@ namespace ChemSW.Nbt.Schema
                 createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
                 {
                     PropName = CswNbtObjClass.PropertyName.Save,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    FieldType = CswEnumNbtFieldType.Button,
                     Extended = CswNbtNodePropButton.ButtonMode.button
                 } );
 
@@ -1132,7 +1132,7 @@ namespace ChemSW.Nbt.Schema
         /// (Deprecated) Convenience function for making new Object Class Props
         /// </summary>
         public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, Int32 ObjectClassId, string PropName,
-                                              CswNbtMetaDataFieldType.NbtFieldType FieldType, Int32 DisplayColAdd, Int32 DisplayRowAdd )
+                                              CswEnumNbtFieldType FieldType, Int32 DisplayColAdd, Int32 DisplayRowAdd )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
             OCPRow["propname"] = PropName;
@@ -1199,7 +1199,7 @@ namespace ChemSW.Nbt.Schema
         /// (Deprecated) Convenience function for making new Object Class Props with more granular control
         /// </summary>
         private DataRow _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
-                                             CswNbtMetaDataFieldType.NbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
+                                             CswEnumNbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
                                              bool IsFk, string FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
                                              bool ServerManaged, string ListOptions, Int32 DisplayColAdd, Int32 DisplayRowAdd, Int32 NumberPrecision )
         {
@@ -1303,7 +1303,7 @@ namespace ChemSW.Nbt.Schema
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( false );
             }
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuefieldid.ToString()] = CswConvert.ToDbVal( OcpModel.ValueFieldId );
-            if( OcpModel.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Number )
+            if( OcpModel.FieldType == CswEnumNbtFieldType.Number )
             {
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberprecision.ToString()] =
                     CswConvert.ToDbVal( OcpModel.NumberPrecision );

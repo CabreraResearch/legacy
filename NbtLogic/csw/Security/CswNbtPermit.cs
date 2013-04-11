@@ -718,7 +718,7 @@ namespace ChemSW.Nbt.Security
                 // but see case 29095; this is now handled in CswNbtSdTabsAndProps
                 //( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
                 //Buttons are always "writable"  
-                      MetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
+                      MetaDataProp.getFieldType().FieldType == CswEnumNbtFieldType.Button ||
                       (
                 //This prop is not readonly OR
                           ( ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) ) ) ||

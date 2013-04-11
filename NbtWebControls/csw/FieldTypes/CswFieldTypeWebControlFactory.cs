@@ -76,142 +76,142 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             switch( MetaDataProp.getFieldTypeValue() )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                case CswEnumNbtFieldType.Barcode:
                     Control = new CswBarcode( CswNbtResources, MetaDataProp, EditMode ); //, (EditMode == NodeEditMode.AddInPopup));
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.CASNo:
+                case CswEnumNbtFieldType.CASNo:
                     Control = new CswCASNo( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Composite:
+                case CswEnumNbtFieldType.Composite:
                     Control = new CswComposite( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                case CswEnumNbtFieldType.DateTime:
                     Control = new CswDate( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.External:
+                //case CswEnumNbtFieldType.External:
                 //    //Control = new CswExternal(CswNbtResources, MetaDataProp);
                 //    break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.File:
+                case CswEnumNbtFieldType.File:
                     Control = new CswFile( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Grid:
+                case CswEnumNbtFieldType.Grid:
                     if( EditMode != NodeEditMode.Add && EditMode != NodeEditMode.Demo )
                     {
                         Control = new CswGrid( CswNbtResources, MetaDataProp, EditMode );
                     }
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                case CswEnumNbtFieldType.Image:
                     Control = new CswImage( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                case CswEnumNbtFieldType.Link:
                     Control = new CswLink( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.List:
+                case CswEnumNbtFieldType.List:
                     Control = new CswList( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                case CswEnumNbtFieldType.Location:
                     Control = new CswLocation( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.LocationContents:
+                case CswEnumNbtFieldType.LocationContents:
                     Control = new CswLocationContents( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                case CswEnumNbtFieldType.Logical:
                     Control = new CswLogical( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.LogicalSet:
+                case CswEnumNbtFieldType.LogicalSet:
                     Control = new CswLogicalSet( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Memo:
+                case CswEnumNbtFieldType.Memo:
                     Control = new CswMemo( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.NodeTypePermissions:
+                //case CswEnumNbtFieldType.NodeTypePermissions:
                 //    Control = new CswNodeTypePermissions( CswNbtResources, MetaDataProp );
                 //    break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
+                case CswEnumNbtFieldType.NodeTypeSelect:
                     Control = new CswNodeTypeSelect( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                //case CswEnumNbtFieldType.MOL:
                 //    //Control = new CswJMol(CswNbtResources, MetaDataProp);
                 //    break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
+                case CswEnumNbtFieldType.MTBF:
                     Control = new CswMTBF( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+                //case CswEnumNbtFieldType.MultiRelationship:
                 //    Control = new CswMultiRelationship( CswNbtResources, MetaDataProp, ( EditMode != NodeEditMode.Edit ) );
                 //    break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                case CswEnumNbtFieldType.Number:
                     Control = new CswNumber( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Password:
+                case CswEnumNbtFieldType.Password:
                     Control = new CswPassword( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
+                case CswEnumNbtFieldType.PropertyReference:
                     Control = new CswPropertyReference( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
+                case CswEnumNbtFieldType.Quantity:
                     Control = new CswQuantity( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Question:
+                case CswEnumNbtFieldType.Question:
                     Control = new CswQuestion( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
+                case CswEnumNbtFieldType.Relationship:
                     Control = new CswRelationship( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+                case CswEnumNbtFieldType.Sequence:
                     Control = new CswSequence( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Static:
+                case CswEnumNbtFieldType.Static:
                     Control = new CswStatic( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                case CswEnumNbtFieldType.Text:
                     Control = new CswText( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                //case CswEnumNbtFieldType.Time:
                 //    Control = new CswTime( CswNbtResources, MetaDataProp, EditMode );
                 //    break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
+                case CswEnumNbtFieldType.TimeInterval:
                     Control = new CswTimeInterval( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.UserSelect:
+                case CswEnumNbtFieldType.UserSelect:
                     Control = new CswUserSelect( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
+                case CswEnumNbtFieldType.ViewPickList:
                     Control = new CswViewPickList( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.ViewReference:
+                case CswEnumNbtFieldType.ViewReference:
                     Control = new CswViewReference( CswNbtResources, MetaDataProp, EditMode );
                     break;
 

@@ -547,7 +547,7 @@ namespace ChemSW.NbtSchemaDiff
         } // _CompareNodes()
 
 
-        private CompareValueMatchCase _CompareValue( CswNbtMetaDataFieldType.NbtFieldType FieldType,
+        private CompareValueMatchCase _CompareValue( CswEnumNbtFieldType FieldType,
                                          CswNbtNodePropWrapper LeftWrapper,
                                          CswNbtNodePropWrapper RightWrapper,
                                          Dictionary<CswNbtNode, CswNbtNode> NodeMatches )
@@ -560,7 +560,7 @@ namespace ChemSW.NbtSchemaDiff
             bool Applies = false;
             switch( FieldType )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
+                case CswEnumNbtFieldType.Relationship:
                     Applies = true;
                     if( LeftWrapper.AsRelationship.RelatedNodeId != null && LeftWrapper.AsRelationship.RelatedNodeId.PrimaryKey != Int32.MinValue )
                     {
@@ -576,7 +576,7 @@ namespace ChemSW.NbtSchemaDiff
                                   ( NodeMatches.ContainsKey( (CswNbtNode) LeftObj ) &&
                                     NodeMatches[(CswNbtNode) LeftObj] == (CswNbtNode) RightObj ) );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                case CswEnumNbtFieldType.Location:
                     Applies = true;
                     if( LeftWrapper.AsLocation.SelectedNodeId != null && LeftWrapper.AsLocation.SelectedNodeId.PrimaryKey != Int32.MinValue )
                     {
@@ -592,7 +592,7 @@ namespace ChemSW.NbtSchemaDiff
                                   ( NodeMatches.ContainsKey( (CswNbtNode) LeftObj ) &&
                                     NodeMatches[(CswNbtNode) LeftObj] == (CswNbtNode) RightObj ) );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
+                case CswEnumNbtFieldType.NodeTypeSelect:
                     Applies = true;
                     if( LeftWrapper.AsNodeTypeSelect.SelectMode == PropertySelectMode.Single &&
                         LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.Count != 0 )
@@ -609,7 +609,7 @@ namespace ChemSW.NbtSchemaDiff
                                   ( (CswNbtMetaDataNodeType) LeftObj ).NodeTypeName == ( (CswNbtMetaDataNodeType) RightObj ).NodeTypeName &&
                                   ( (CswNbtMetaDataNodeType) LeftObj ).getObjectClass().ObjectClass == ( (CswNbtMetaDataNodeType) RightObj ).getObjectClass().ObjectClass );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
+                case CswEnumNbtFieldType.ViewPickList:
                     Applies = true;
                     if( LeftWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && LeftWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {

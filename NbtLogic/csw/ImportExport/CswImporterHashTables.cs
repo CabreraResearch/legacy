@@ -414,9 +414,9 @@ namespace ChemSW.Nbt.ImportExport
             // Fix relationship references
             //foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             //{
-            foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) )
             {
-                //if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                //if( Prop.FieldType.FieldType == CswEnumNbtFieldType.Relationship )
                 //{
                 if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                 {
@@ -425,7 +425,7 @@ namespace ChemSW.Nbt.ImportExport
                         Prop.SetFK( Prop.FKType, NodeTypeMap[Prop.FKValue], Prop.ValuePropType, Prop.ValuePropId );
                     }
                 } // if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
-                //} // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                //} // if( Prop.FieldType.FieldType == CswEnumNbtFieldType.Relationship )
             } // foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
             //} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
 
@@ -699,7 +699,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( i % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + i.ToString() + " of " + ImportedNodes.Count.ToString() );
 
-                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.ViewPickList] )
+                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.ViewPickList] )
                 {
                     CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
                     Collection<int> SelectedViewIds = ViewProp.AsViewPickList.SelectedViewIds.ToIntCollection();

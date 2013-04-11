@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Field Type primary keys
         /// </summary>
-        public Dictionary<Int32, CswNbtMetaDataFieldType.NbtFieldType> getFieldTypeIds()
+        public Dictionary<Int32, CswEnumNbtFieldType> getFieldTypeIds()
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeIds();
         }
@@ -257,7 +257,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns a CswNbtMetaDataFieldType based on the NbtFieldType provided
         /// </summary>
-        public CswNbtMetaDataFieldType getFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public CswNbtMetaDataFieldType getFieldType( CswEnumNbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldType( FieldType );
         }
@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns a CswNbtMetaDataFieldType based on the Field Type primary key provided
         /// </summary>
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue( Int32 FieldTypeId )
+        public CswEnumNbtFieldType getFieldTypeValue( Int32 FieldTypeId )
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeValue( FieldTypeId );
         }
@@ -281,7 +281,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the NbtFieldType value for a property
         /// </summary>
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
+        public CswEnumNbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeValueForNodeTypePropId( NodeTypePropId );
         }
@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the NbtFieldType value for a property
         /// </summary>
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForObjectClassPropId( Int32 ObjectClassPropId )
+        public CswEnumNbtFieldType getFieldTypeValueForObjectClassPropId( Int32 ObjectClassPropId )
         {
             return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeValueForObjectClassPropId( ObjectClassPropId );
         }
@@ -396,12 +396,12 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches all Object Class Properties that are of the given fieldType
         /// </summary>
-        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps( CswEnumNbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByFieldType( FieldType );
         }
 
-        public ICswNbtFieldTypeRule getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public ICswNbtFieldTypeRule getFieldTypeRule( CswEnumNbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.makeFieldTypeRule( FieldType );
         }
@@ -436,12 +436,12 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId );
         }
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( FieldType );
         }
 
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswEnumNbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, FieldType );
         }
@@ -552,7 +552,7 @@ namespace ChemSW.Nbt.MetaData
 
         #region Make New...
 
-        public CswNbtMetaDataFieldType makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType, CswNbtMetaDataFieldType.DataType DataType, string FieldPrecision = "", string Mask = "" )
+        public CswNbtMetaDataFieldType makeNewFieldType( CswEnumNbtFieldType FieldType, CswNbtMetaDataFieldType.DataType DataType, string FieldPrecision = "", string Mask = "" )
         {
             CswNbtMetaDataFieldType RetFieldType = null;
             if( FieldType != CswNbtResources.UnknownEnum && DataType != CswNbtMetaDataFieldType.DataType.UNKNOWN )
@@ -867,14 +867,14 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswEnumNbtFieldType FieldType, string PropName )
         {
             return makeNewProp( NodeType, InsertAfterProp, getFieldType( FieldType ), PropName, Int32.MinValue, false, null );
         }
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, string NodeTypeTabName )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswEnumNbtFieldType FieldType, string PropName, string NodeTypeTabName )
         {
             CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab = null;
             if( string.Empty == NodeTypeTabName )
@@ -890,7 +890,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, Int32 TabId )
+        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswEnumNbtFieldType FieldType, string PropName, Int32 TabId )
         {
             return makeNewProp( NodeType, null, getFieldType( FieldType ), PropName, TabId, false, null );
         }
@@ -924,7 +924,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeTypePropRowFromXml">A DataRow derived from exported XML</param>
         public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
         {
-            CswNbtMetaDataFieldType FieldType = getFieldType( (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() ) );
+            CswNbtMetaDataFieldType FieldType = getFieldType( (CswEnumNbtFieldType) Enum.Parse( typeof( CswEnumNbtFieldType ), NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() ) );
             CswNbtMetaDataNodeTypeProp NewProp = makeNewProp( NodeType,
                                                               null,
                                                               FieldType,

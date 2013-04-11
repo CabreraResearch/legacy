@@ -720,7 +720,7 @@ namespace ChemSW.Nbt
                     {
                         switch (Node.Properties[ntp].getFieldTypeValue())
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                            case CswEnumNbtFieldType.MOL:
                                 foreach( CAFSubfieldMapping subfield in mapping.Subfields )
                                 {
                                     if( false == string.IsNullOrEmpty( Row[subfield.CAFColName].ToString() ) )

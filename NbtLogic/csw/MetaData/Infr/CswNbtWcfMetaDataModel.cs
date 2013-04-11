@@ -31,16 +31,16 @@ namespace ChemSW.Nbt.MetaData
             [DataMember( IsRequired = true )]
             public string PropName = string.Empty;
 
-            private CswNbtMetaDataFieldType.NbtFieldType _FieldType;
+            private CswEnumNbtFieldType _FieldType;
 
             [DataMember( IsRequired = true )]
-            public CswNbtMetaDataFieldType.NbtFieldType FieldType
+            public CswEnumNbtFieldType FieldType
             {
                 get { return _FieldType; }
                 set
                 {
                     _FieldType = value;
-                    if ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                    if ( FieldType == CswEnumNbtFieldType.Location )
                     {
                         IsFk = true;
                         FkType = NbtViewRelatedIdType.ObjectClassId.ToString();
@@ -195,8 +195,8 @@ namespace ChemSW.Nbt.MetaData
                 FieldType = NbtFieldType;
                 PropName = NbtPropName;
                 UseNumbering = ( NodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass &&
-                                FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question );
-                if ( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect )
+                                FieldType.FieldType == CswEnumNbtFieldType.Question );
+                if ( FieldType.FieldType == CswEnumNbtFieldType.NodeTypeSelect )
                 {
                     Multi = Tristate.False;
                 }
@@ -204,10 +204,10 @@ namespace ChemSW.Nbt.MetaData
                 {
                     Multi = Tristate.Null;
                 }
-                ReadOnly = ( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
-                            FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence );
-                IsUnique = ( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
-                            FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence );
+                ReadOnly = ( FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
+                            FieldType.FieldType == CswEnumNbtFieldType.Sequence );
+                IsUnique = ( FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
+                            FieldType.FieldType == CswEnumNbtFieldType.Sequence );
             }
             public NodeTypeProp( CswNbtMetaDataNodeType NbtNodeType, CswNbtMetaDataFieldType NbtFieldType, string NbtPropName )
             {

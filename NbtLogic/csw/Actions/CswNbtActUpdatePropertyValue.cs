@@ -30,39 +30,39 @@ namespace ChemSW.Nbt.Actions
                 {
                     switch( PropWrapper.getFieldTypeValue() )
                     {
-                        case CswNbtMetaDataFieldType.NbtFieldType.Composite:
+                        case CswEnumNbtFieldType.Composite:
                             CswNbtNodePropComposite CompositeProp = PropWrapper.AsComposite;
                             CompositeProp.RecalculateCompositeValue();
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                        case CswEnumNbtFieldType.Location:
                             CswNbtNodePropLocation LocationProp = PropWrapper.AsLocation;
                             LocationProp.RefreshNodeName();
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.LogicalSet:
+                        case CswEnumNbtFieldType.LogicalSet:
                             CswNbtNodePropLogicalSet LogicalSetProp = PropWrapper.AsLogicalSet;
                             LogicalSetProp.RefreshStringValue( SetPendingUpdate: false );
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
+                        case CswEnumNbtFieldType.NodeTypeSelect:
                             CswNbtNodePropNodeTypeSelect NodeTypeSelectProp = PropWrapper.AsNodeTypeSelect;
                             NodeTypeSelectProp.RefreshSelectedNodeTypeNames();
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
+                        case CswEnumNbtFieldType.PropertyReference:
                             CswNbtNodePropPropertyReference PropertyReferenceProp = PropWrapper.AsPropertyReference;
                             PropertyReferenceProp.RecalculateReferenceValue();
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
+                        case CswEnumNbtFieldType.Relationship:
                             CswNbtNodePropRelationship RelationshipProp = PropWrapper.AsRelationship;
                             RelationshipProp.RefreshNodeName();
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
+                        case CswEnumNbtFieldType.ViewPickList:
                             CswNbtNodePropViewPickList ViewPickListProp = PropWrapper.AsViewPickList;
                             ViewPickListProp.RefreshViewName();
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.ViewReference:
+                        case CswEnumNbtFieldType.ViewReference:
                             CswNbtNodePropViewReference ViewReferenceProp = PropWrapper.AsViewReference;
                             ViewReferenceProp.RefreshViewName();
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
+                        case CswEnumNbtFieldType.MTBF:
                             CswNbtNodePropMTBF MTBFProp = PropWrapper.AsMTBF;
                             MTBFProp.RefreshCachedValue();
                             break;

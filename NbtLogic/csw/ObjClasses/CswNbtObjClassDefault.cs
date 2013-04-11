@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     // When a property changes, we need to:
                     // 1. mark composite property values which include changed properties on this node as pending update
-                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Composite] )
+                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Composite] )
                     {
                         if(
                             CompositeProp.AsComposite.TemplateValue.Contains(
@@ -42,9 +42,9 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 2. mark property references attached to relationships whose values changed as pending update
-                    if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                     {
-                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
+                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.PropertyReference] )
                         {
                             CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
                             if( ( PropRefProp.RelationshipType == NbtViewPropIdType.NodeTypePropId &&
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
                     {
                         //BZ 10239 - Fetch the cached value field name.
-                        CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType.PropertyReference );
+                        CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswEnumNbtFieldType.PropertyReference );
                         CswNbtSubField.PropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
 
                         string SQL = @"update jct_nodes_props 
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 4. For locations, if this node's location changed, we need to update the pathname on the children
-                    if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location &&
+                    if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Location &&
                         CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
                     {
                         _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );

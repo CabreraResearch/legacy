@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             //{
                             foreach( CswNbtNodePropRelationship Relationship in from _Prop
                                                                                     in Ret.Properties
-                                                                                where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                                                                                where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship &&
                                                                                       ( _Prop.AsRelationship.TargetMatches( RelatedNT ) ||
                                                                                         _Prop.AsRelationship.TargetMatches( RelatedOC ) )
                                                                                 //( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
@@ -339,7 +339,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                  ( Prop.IsSaveProp ||
                  ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
                    //Case 24023: Exclude buttons on Add (Except the Save button)
-                   Prop.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                   Prop.getFieldTypeValue() != CswEnumNbtFieldType.Button ) &&
                  ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId ) );
             
             return Ret;
@@ -472,7 +472,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             JObject PropObj = new JObject();
             //ParentObj["prop_" + PropIdAttr] = PropObj;
             JProperty ret = new JProperty( "prop_" + PropIdAttr, PropObj );
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.getFieldTypeValue();
+            CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
             PropObj["helptext"] = Prop.HelpText;
@@ -494,9 +494,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropObj["required"] = Prop.IsRequired;
             PropObj["copyable"] = Prop.IsCopyable();
 
-            bool ShowPropertyName = false == ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image ||
-                                               FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
-                                               ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid &&
+            bool ShowPropertyName = false == ( FieldType == CswEnumNbtFieldType.Image ||
+                                               FieldType == CswEnumNbtFieldType.Button ||
+                                               ( FieldType == CswEnumNbtFieldType.Grid &&
                                                  PropWrapper.AsGrid.GridMode == CswNbtNodePropGrid.GridPropMode.Full ) );
 
             PropObj["showpropertyname"] = ShowPropertyName;
@@ -514,7 +514,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
                 if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible
-                    FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button || (
+                    FieldType == CswEnumNbtFieldType.Button || (
                     _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
                     _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
                     ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
@@ -529,8 +529,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                     // case 29095
                     PropObj["canoverride"] = ( false == Prop.ServerManaged &&
-                            FieldType != CswNbtMetaDataFieldType.NbtFieldType.PropertyReference &&
-                            FieldType != CswNbtMetaDataFieldType.NbtFieldType.Static &&
+                            FieldType != CswEnumNbtFieldType.PropertyReference &&
+                            FieldType != CswEnumNbtFieldType.Static &&
                             _CswNbtResources.CurrentNbtUser.IsAdministrator() );   
                 }
 
@@ -1074,7 +1074,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             foreach( CswNbtMetaDataObjectClassProp Prop in Oc.getObjectClassProps() )
             {
                 CswNbtMetaDataFieldType Type = Prop.getFieldType();
-                if( Type.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
+                if( Type.FieldType == CswEnumNbtFieldType.Button )
                 {
                     string propName = "button_" + Prop.PropId;
                     Buttons[propName] = new JObject();

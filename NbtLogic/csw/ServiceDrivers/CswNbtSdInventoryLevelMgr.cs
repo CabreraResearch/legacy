@@ -129,8 +129,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                                 Tree.goToNthChild( C );
                                 foreach( CswNbtTreeNodeProp Prop in Tree.getChildNodePropsOfNode() )
                                 {
-                                    CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.FieldType;
-                                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
+                                    CswEnumNbtFieldType FieldType = Prop.FieldType;
+                                    if( FieldType == CswEnumNbtFieldType.Quantity )
                                     {
                                         Int32 UnitTypeId = Prop.Field1_Fk;
                                         CswNbtUnitConversion Conversion;

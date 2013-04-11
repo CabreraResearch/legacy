@@ -689,7 +689,7 @@ namespace ChemSW.Nbt.WebServices
                         C3Mapping C3Mapping = _Mappings[NTP.PropName];
                         switch( Node.Properties[NTP].getFieldTypeValue() )
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
+                            case CswEnumNbtFieldType.Quantity:
                                 CswNbtObjClassUnitOfMeasure unitOfMeasure = _getUnitOfMeasure( _ProductToImport.ProductSize[CurrentIndex].pkg_qty_uom );
                                 if( null != unitOfMeasure )
                                 {
@@ -716,7 +716,7 @@ namespace ChemSW.Nbt.WebServices
                                     }
                                 }
                                 break;
-                            case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                            case CswEnumNbtFieldType.MOL:
                                 if( false == string.IsNullOrEmpty( C3Mapping.C3ProductPropertyValue ) )
                                 {
                                     CswNbtSdTabsAndProps TabsPropsSd = new CswNbtSdTabsAndProps( _CswNbtResources );

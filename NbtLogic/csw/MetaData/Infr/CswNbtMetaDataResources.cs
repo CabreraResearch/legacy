@@ -457,7 +457,7 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public ICswNbtFieldTypeRule makeFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public ICswNbtFieldTypeRule makeFieldTypeRule( CswEnumNbtFieldType FieldType )
         {
             return CswNbtFieldTypeRuleFactory.makeRule( CswNbtFieldResources, FieldType );
         }

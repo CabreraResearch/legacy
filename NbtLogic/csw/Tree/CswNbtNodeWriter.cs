@@ -151,12 +151,12 @@ namespace ChemSW.Nbt
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
-                CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
-                if( FT == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                CswEnumNbtFieldType FT = Prop.getFieldTypeValue();
+                if( FT == CswEnumNbtFieldType.Barcode )
                 {
                     Prop.AsBarcode.setBarcodeValue();  // does not overwrite
                 }
-                else if( FT == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
+                else if( FT == CswEnumNbtFieldType.Sequence )
                 {
                     Prop.AsSequence.setSequenceValue();  // does not overwrite
                 }

@@ -247,10 +247,10 @@ namespace ChemSW.Nbt.Actions
             public CswNbtSubField.SubFieldName SubFieldName { get; set; }
             private bool _ShowInGrid = true;
             public bool ShowInGrid { get { return _ShowInGrid; } set { _ShowInGrid = value; } }
-            public CswNbtMetaDataFieldType.NbtFieldType FieldType { get; set; }
+            public CswEnumNbtFieldType FieldType { get; set; }
         }
 
-        public SystemViewPropFilterDefinition makeSystemViewFilter( ICswNbtMetaDataProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null, bool ShowInGrid = true )
+        public SystemViewPropFilterDefinition makeSystemViewFilter( ICswNbtMetaDataProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswEnumNbtFieldType FieldType = null, bool ShowInGrid = true )
         {
             SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
             return new SystemViewPropFilterDefinition
@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.Actions
                                                             SubFieldName: FilterDefinition.SubFieldName,
                                                             ShowInGrid: FilterDefinition.ShowInGrid );
                     }
-                    else if( FilterDefinition.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                    else if( FilterDefinition.FieldType == CswEnumNbtFieldType.Barcode )
                     {
                         ICswNbtMetaDataObject Object = PotentialSystemViewRelationship.SecondMetaDataDefinitionObject();
                         SystemView.AddViewPropertyByFieldType( PotentialSystemViewRelationship, Object, FilterDefinition.FieldType );

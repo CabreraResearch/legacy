@@ -129,6 +129,7 @@
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromRapidLoader.cs" />
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromXml.cs" />
     <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
+    <Compile Include="csw\MetaData\Infr\CswEnumNbtFieldType.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\Infr\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\Collection\CswNbtMetaDataCollectionPropertySet.cs" />

@@ -423,7 +423,7 @@ namespace ChemSW.Nbt.ImportExport
                                                 foreach( CswNbt2DBinding Binding in NodeTypeBindings )
                                                 {
                                                     // special case for TimeInterval, specifically for IMCS imports
-                                                    if( Binding.DestProperty.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.TimeInterval )
+                                                    if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
                                                     {
                                                         XElement input = XElement.Parse( "<rateintervalvalue>" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "</rateintervalvalue>" );
                                                         XmlDocument xmlDoc = new XmlDocument();

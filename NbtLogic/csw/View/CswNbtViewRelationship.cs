@@ -259,8 +259,8 @@ namespace ChemSW.Nbt
         private void setProp( NbtViewPropOwnerType InOwnerType, ICswNbtMetaDataProp Prop )
         {
             CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
-            if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
+            if( FieldType.FieldType != CswEnumNbtFieldType.Relationship &&
+                FieldType.FieldType != CswEnumNbtFieldType.Location )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }

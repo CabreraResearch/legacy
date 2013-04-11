@@ -414,7 +414,7 @@ namespace ChemSW.NbtWebControls
                     // we are using the unsaved form contents to decide, rather than the DB value.
 
                     // Logical needs a special case
-                    if( FilterMetaDataProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+                    if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                     {
                         if( SubField.Name == CswNbtSubField.SubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                         {
@@ -437,10 +437,10 @@ namespace ChemSW.NbtWebControls
 
                         switch( FilterMetaDataProp.getFieldTypeValue() )
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.List:
+                            case CswEnumNbtFieldType.List:
                                 ValueToCompare = ( (CswList) FilterControl ).SelectedValue;
                                 break;
-                            case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                            case CswEnumNbtFieldType.Text:
                                 ValueToCompare = ( (CswText) FilterControl ).Text;
                                 break;
                             default:
@@ -468,7 +468,7 @@ namespace ChemSW.NbtWebControls
                             throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
                         }
 
-                    } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+                    } // if-else( FilterMetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Logical )
                 } // if( Node != null )
             }  // if( _PropertyControlSetHash[FilterMetaDataProp.FirstPropVersionId] != null )
             return FilterMatches;
@@ -627,13 +627,13 @@ namespace ChemSW.NbtWebControls
                             {// The parent needs to use postback
                                 switch( ParentProp.getFieldTypeValue() )
                                 {
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                                    case CswEnumNbtFieldType.Logical:
                                         ( (CswLogical) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
                                         break;
-                                    case CswNbtMetaDataFieldType.NbtFieldType.List:
+                                    case CswEnumNbtFieldType.List:
                                         ( (CswList) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
                                         break;
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                                    case CswEnumNbtFieldType.Text:
                                         ( (CswText) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
                                         break;
                                 }

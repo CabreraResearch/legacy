@@ -380,7 +380,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId );
         }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, FieldType );
         }
@@ -591,7 +591,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                    if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.Barcode )
                     {
                         if( _BarcodeProperty != null )
                             throw new CswDniException( CswEnumErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
@@ -609,7 +609,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.MOL )
+                    if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.MOL )
                     {
                         if( _MolProperty != null )
                             throw new CswDniException( CswEnumErrorType.Warning, "Multiple Mol Props Found", "Nodetype " + NodeTypeName + " has more than one Mol property" );
@@ -629,7 +629,7 @@ namespace ChemSW.Nbt.MetaData
                     from _Ntp
                         in getNodeTypeProps()
                     orderby _Ntp.PropName
-                    where _Ntp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Button
+                    where _Ntp.getFieldTypeValue() == CswEnumNbtFieldType.Button
                     select _Ntp )
                 {
                     yield return ButtonNtp;
@@ -651,7 +651,7 @@ namespace ChemSW.Nbt.MetaData
             if( _LocationProperty == null )
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in from _Prop in getNodeTypeProps()
-                                                            where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location
+                                                            where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Location
                                                             select _Prop )
                 {
                     if( _LocationProperty != null )

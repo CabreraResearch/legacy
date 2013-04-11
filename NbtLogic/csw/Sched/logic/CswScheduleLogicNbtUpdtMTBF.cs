@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Sched
 
                     // BZ 6779
                     // Set all MTBF fields pendingupdate = 1
-                    Int32 MTBFId = CswNbtResources.MetaData.getFieldType( ChemSW.Nbt.MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId;
+                    Int32 MTBFId = CswNbtResources.MetaData.getFieldType( ChemSW.Nbt.MetaData.CswEnumNbtFieldType.MTBF ).FieldTypeId;
 
                     CswTableSelect NTPSelect = CswNbtResources.makeCswTableSelect( "UpdateMTBF_NTP_Select", "nodetype_props" );
                     DataTable NTPTable = NTPSelect.getTable( "fieldtypeid", MTBFId );

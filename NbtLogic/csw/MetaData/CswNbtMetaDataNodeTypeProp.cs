@@ -352,7 +352,7 @@ namespace ChemSW.Nbt.MetaData
                     // This prop is missing a view, so make one
                     CswNbtView ThisView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
                     ThisView.saveNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
-                    if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Grid )
+                    if( this.getFieldTypeValue() == CswEnumNbtFieldType.Grid )
                     {
                         // BZ 9203 - View starts with this property's nodetype at root
                         ThisView.AddViewRelationship( this.getNodeType(), true );
@@ -481,7 +481,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if( Int32.MinValue != ObjectClassPropId &&
                         null != getObjectClassProp() &&
-                        getObjectClassProp().getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button &&
+                        getObjectClassProp().getFieldType().FieldType == CswEnumNbtFieldType.Button &&
                         getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
                     {
                         _IsSaveProp = Tristate.True;
@@ -557,11 +557,11 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 bool Ret = true;
-                CswNbtMetaDataFieldType.NbtFieldType Ft = getFieldType().FieldType;
-                if( Ft == CswNbtMetaDataFieldType.NbtFieldType.Button ||
-                    Ft == CswNbtMetaDataFieldType.NbtFieldType.Grid ||
-                    Ft == CswNbtMetaDataFieldType.NbtFieldType.PropertyReference ||
-                    Ft == CswNbtMetaDataFieldType.NbtFieldType.Static )
+                CswEnumNbtFieldType Ft = getFieldType().FieldType;
+                if( Ft == CswEnumNbtFieldType.Button ||
+                    Ft == CswEnumNbtFieldType.Grid ||
+                    Ft == CswEnumNbtFieldType.PropertyReference ||
+                    Ft == CswEnumNbtFieldType.Static )
                 {
                     Ret = false;
                 }
@@ -593,7 +593,7 @@ namespace ChemSW.Nbt.MetaData
             // 1: throw away properties incompatable with layouts
             if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
             {
-                ret = ret && ( IsSaveProp || getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                ret = ret && ( IsSaveProp || getFieldType().FieldType != CswEnumNbtFieldType.Button ) &&
                     ( ( IsRequired && ( ( null == DefaultValue ) || ( DefaultValue.Empty ) ) ) ||
                             Node.Properties[this].TemporarilyRequired ||
                             AddLayout != null );
@@ -610,7 +610,7 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.PrintReport ||
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup )
             {
-                ret = ret && ( getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
+                ret = ret && ( getFieldType().FieldType != CswEnumNbtFieldType.Button );
             }
 
             // 2: Validate orthogonal use cases
@@ -902,7 +902,7 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId );
         }
 
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue()
+        public CswEnumNbtFieldType getFieldTypeValue()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeValue( FieldTypeId );
         }
@@ -1221,7 +1221,7 @@ namespace ChemSW.Nbt.MetaData
             CswNbtNodePropWrapper FilterProp = Node.Properties[FilterMetaDataProp];
 
             // Logical needs a special case
-            if( FilterMetaDataProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+            if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
             {
                 if( SubField.Name == CswNbtSubField.SubFieldName.Checked )
                 {
@@ -1245,13 +1245,13 @@ namespace ChemSW.Nbt.MetaData
 
                 switch( FilterMetaDataProp.getFieldTypeValue() )
                 {
-                    case CswNbtMetaDataFieldType.NbtFieldType.List:
+                    case CswEnumNbtFieldType.List:
                         ValueToCompare = FilterProp.AsList.Value;
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Static:
+                    case CswEnumNbtFieldType.Static:
                         ValueToCompare = FilterProp.AsStatic.StaticText;
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                    case CswEnumNbtFieldType.Text:
                         ValueToCompare = FilterProp.AsText.Text;
                         break;
                     default:
@@ -1279,7 +1279,7 @@ namespace ChemSW.Nbt.MetaData
                     throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
                 } // switch( FilterMode )
 
-            } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+            } // if-else( FilterMetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Logical )
 
             return FilterMatches;
 
@@ -1365,8 +1365,8 @@ namespace ChemSW.Nbt.MetaData
                 _NodeTypePropRow[SequenceIdColumn] = CswConvert.ToDbVal( SequenceId );
 
                 CswNbtMetaDataFieldType FT = getFieldType();
-                if( SequenceId > 0 && ( FT.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence ||
-                                        FT.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ) )
+                if( SequenceId > 0 && ( FT.FieldType == CswEnumNbtFieldType.Sequence ||
+                                        FT.FieldType == CswEnumNbtFieldType.Barcode ) )
                 {
                     // Update nodes
                     //ICswNbtTree TreeOfNodesOfType = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromNodeTypeId( NodeType.NodeTypeId );
@@ -1384,11 +1384,11 @@ namespace ChemSW.Nbt.MetaData
                     {
                         CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[this];
 
-                        if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
+                        if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
                         {
                             CurrentNode.Properties[this].AsSequence.setSequenceValue();
                         }
-                        else if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
+                        else if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
                         {
                             CurrentNode.Properties[this].AsBarcode.setBarcodeValue();
                         }
@@ -1525,7 +1525,7 @@ namespace ChemSW.Nbt.MetaData
 
             //bz #7632: Locations should be editable
             XmlAttribute ReadOnlyAttr = XmlDoc.CreateAttribute( _Attribute_readonly );
-            if( UseQuestionNo && ( ( CswNbtMetaDataFieldType.NbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
+            if( UseQuestionNo && ( ( CswEnumNbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
                 ReadOnlyAttr.Value = "true";
             else
                 ReadOnlyAttr.Value = ReadOnly.ToString().ToLower();
@@ -1774,7 +1774,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUserRelationship()
         {
             bool ret = false;
-            if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
                 //if( FKType != string.Empty )
                 //{

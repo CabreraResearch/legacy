@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != TargetNode )
                 {
                     CswNbtMetaDataObjectClass PrintLabelClass = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
-                    foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in TargetNodeType.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
+                    foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in TargetNodeType.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) )
                     {
                         //bool PropMatchesPrintLabel = false;
                         //if( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&

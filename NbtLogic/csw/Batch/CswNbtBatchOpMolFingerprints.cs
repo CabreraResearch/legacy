@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Batch
                         CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
 
                         bool hasntBeenInserted = true;
-                        foreach( CswNbtNodePropWrapper prop in node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.MOL] )
+                        foreach( CswNbtNodePropWrapper prop in node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.MOL] )
                         {
                             if( hasntBeenInserted )
                             {

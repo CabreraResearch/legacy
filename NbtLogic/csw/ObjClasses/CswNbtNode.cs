@@ -939,13 +939,13 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( Prop != null )
                         {
-                            CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
-                            if( FT == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                            CswEnumNbtFieldType FT = Prop.getFieldTypeValue();
+                            if( FT == CswEnumNbtFieldType.Relationship )
                             {
                                 Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
                                 Prop.AsRelationship.RefreshNodeName();
                             }
-                            if( FT == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                            if( FT == CswEnumNbtFieldType.Location )
                             {
                                 Prop.AsLocation.SelectedNodeId = ParentNode.NodeId;
                                 Prop.AsLocation.RefreshNodeName();

@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtMetaDataNodeTypeProp RelationshipNtp = RetNodeType.getNodeTypePropByObjectClassProp( RelationshipObjectClassPropName );
                         if( null != RelationshipNtp &&
-                             RelationshipNtp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                             RelationshipNtp.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                         {
                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
                             if( null == RelatedNodeType ||

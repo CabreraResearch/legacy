@@ -552,7 +552,7 @@ namespace ChemSW.Nbt.WebPages
             AddPropNewFieldTypeIdSelect.Items.Clear();
             if( _Mode == NbtDesignMode.Inspection )
             {
-                CswNbtMetaDataFieldType QuestionFT = Master.CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
+                CswNbtMetaDataFieldType QuestionFT = Master.CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Question );
                 AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( QuestionFT.FieldType.ToString(),
                                                                              QuestionFT.FieldTypeId.ToString() ) );
                 AddPropNewFieldTypeIdSelect.SelectedValue = QuestionFT.FieldTypeId.ToString();
@@ -564,12 +564,12 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // Temporarily skip unimplemented ones
                     // If Inspection, filter to allowed question field types
-                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&
-                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External )
+                    if( FieldType.FieldType != CswEnumNbtFieldType.Button &&
+                        FieldType.FieldType != CswEnumNbtFieldType.External )
                     {
                         AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( FieldType.FieldType.ToString(),
                                                                              FieldType.FieldTypeId.ToString() ) );
-                        if( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text )
+                        if( FieldType.FieldType == CswEnumNbtFieldType.Text )
                             AddPropNewFieldTypeIdSelect.SelectedValue = FieldType.FieldTypeId.ToString();
                     }
                 }

@@ -278,8 +278,8 @@ namespace ChemSW.Nbt
                 DataRow PropRow = PropCollData.PropsTable.Rows.Cast<DataRow>().FirstOrDefault( CurrentRow => CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() );
 
                 CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp );
-                //if( MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
-                //    MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
+                //if( MetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
+                //    MetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Sequence )
                 //{
                 //    AddedProp.ensureEmptyVal();
                 //}
@@ -390,7 +390,7 @@ namespace ChemSW.Nbt
         }//this[NodeTypeProp]
 
 
-        public CswNbtPropEnmrtrFiltered this[CswNbtMetaDataFieldType.NbtFieldType FieldType]
+        public CswNbtPropEnmrtrFiltered this[CswEnumNbtFieldType FieldType]
         {
             get
             {

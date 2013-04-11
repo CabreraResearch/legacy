@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Schema
 
         #region Private helpers
 
-        private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true )
+        private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswEnumNbtFieldType PropType, bool SetValOnAdd = true )
         {
             CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
             if( SetValOnAdd )
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ObjectClass )
                         {
                             PropName = CswNbtObjClass.PropertyName.Save,
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                            FieldType = CswEnumNbtFieldType.Button,
                             Extended = CswNbtNodePropButton.ButtonMode.button
                         } );
                 }
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.Schema
                 barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
                 {
                     PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Barcode,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode,
+                    FieldType = CswEnumNbtFieldType.Barcode,
                     IsUnique = true
                 } );
             }
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Schema
                 barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( equipmentOC )
                 {
                     PropName = CswNbtObjClassEquipment.PropertyName.EquipmentId,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode,
+                    FieldType = CswEnumNbtFieldType.Barcode,
                     IsUnique = true
                 } );
             }
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                     {
                         PropName = CswNbtObjClassMaterial.PropertyName.C3ProductId,
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        FieldType = CswEnumNbtFieldType.Text,
                         IsRequired = false,
                         ReadOnly = true,
                         ServerManaged = true
@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.Schema
                 locationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( equipmentOC )
                 {
                     PropName = CswNbtObjClassEquipment.PropertyName.Location,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
+                    FieldType = CswEnumNbtFieldType.Location
                 } );
             }
 
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.Schema
                 locationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
                 {
                     PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
+                    FieldType = CswEnumNbtFieldType.Location
                 } );
             }
 
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Schema
                 statusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
                 {
                     PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    FieldType = CswEnumNbtFieldType.List,
                 } );
             }
 
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.Schema
                 instructionsOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( reportOC )
                 {
                     PropName = CswNbtObjClassReport.PropertyName.Instructions,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                    FieldType = CswEnumNbtFieldType.Memo,
                     ServerManaged = true
                 } );
 
@@ -352,7 +352,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                         {
                             PropName = CswNbtObjClassMaterial.PropertyName.C3SyncDate,
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                            FieldType = CswEnumNbtFieldType.DateTime,
                             ServerManaged = true,
                             ReadOnly = true
                         } );
@@ -380,7 +380,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             {
                 CswNbtMetaDataObjectClassProp AssignLocationButtonOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryGroupOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
                 {
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    FieldType = CswEnumNbtFieldType.Button,
                     PropName = CswNbtObjClassInventoryGroup.PropertyName.AssignLocation
                 } );
 
@@ -401,7 +401,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                 {
                     PropName = CswNbtObjClassMaterial.PropertyName.HazardClasses,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                    FieldType = CswEnumNbtFieldType.MultiList
                 } );
             }
 

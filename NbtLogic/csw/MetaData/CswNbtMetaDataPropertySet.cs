@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 _BarcodeProp = ( from _Prop
                                      in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByPropertySetId( PropertySetId )
-                                 where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                                 where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Barcode
                                  select _Prop ).FirstOrDefault();
             }
             return _BarcodeProp;

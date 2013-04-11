@@ -57,7 +57,7 @@ namespace ChemSW.NbtWebControls
         /// <summary>
         /// Restrict the set of properties to include by field type
         /// </summary>
-        public Collection<CswNbtMetaDataFieldType.NbtFieldType> AllowedFieldTypes = new Collection<CswNbtMetaDataFieldType.NbtFieldType>();
+        public Collection<CswEnumNbtFieldType> AllowedFieldTypes = new Collection<CswEnumNbtFieldType>();
         /// <summary>
         /// Restrict the set of filter modes to include (further restricted by subfield of field type of selected property)
         /// </summary>
@@ -625,7 +625,7 @@ namespace ChemSW.NbtWebControls
                 {
                     switch( SelectedPropLatestVersion.getFieldTypeValue() )
                     {
-                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                        case CswEnumNbtFieldType.DateTime:
                             FilterValueDatePicker.Style[HtmlTextWriterStyle.Display] = "";
                             if( Value != string.Empty && Value != null )
                                 if( Value.Substring( 0, "today".Length ) == "today" )
@@ -636,7 +636,7 @@ namespace ChemSW.NbtWebControls
                                 else
                                     FilterValueDatePicker.SelectedDate = Convert.ToDateTime( Value );
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.List:
+                        case CswEnumNbtFieldType.List:
                             FilterValueSelectBox.Style[HtmlTextWriterStyle.Display] = "";
                             FilterValueSelectBox.Items.Clear();
                             ChemSW.Nbt.PropTypes.CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = new ChemSW.Nbt.PropTypes.CswNbtNodeTypePropListOptions( _CswNbtResources, SelectedPropLatestVersion.PropId );
@@ -647,7 +647,7 @@ namespace ChemSW.NbtWebControls
                             if( FilterValueSelectBox.Items.FindByValue( Value ) != null )
                                 FilterValueSelectBox.SelectedValue = Value;
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        case CswEnumNbtFieldType.Logical:
                             FilterValueCheckBox.Style[HtmlTextWriterStyle.Display] = "";
                             if( Value != string.Empty && Value != null )
                             {
@@ -714,7 +714,7 @@ namespace ChemSW.NbtWebControls
                                     {
                                         switch( MetaDataProp.getFieldTypeValue() )
                                         {
-                                            case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                                            case CswEnumNbtFieldType.DateTime:
                                                 if( FilterValueDatePicker.Today )
                                                 {
                                                     NewFilterValue = "today+" + FilterValueDatePicker.TodayPlusDays.ToString();
@@ -722,10 +722,10 @@ namespace ChemSW.NbtWebControls
                                                 else
                                                     NewFilterValue = values[FilterValueDatePicker.UniqueID];
                                                 break;
-                                            case CswNbtMetaDataFieldType.NbtFieldType.List:
+                                            case CswEnumNbtFieldType.List:
                                                 NewFilterValue = values[FilterValueSelectBox.UniqueID];
                                                 break;
-                                            case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                                            case CswEnumNbtFieldType.Logical:
                                                 //NewFilterValue = ( values[FilterValueCheckBox.UniqueID] == "on" ).ToString().ToLower();
                                                 break;
                                             default:
@@ -963,7 +963,7 @@ namespace ChemSW.NbtWebControls
                 object ret = null;
                 switch( SelectedPropLatestVersion.getFieldTypeValue() )
                 {
-                    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                    case CswEnumNbtFieldType.DateTime:
                         if( FilterValueDatePicker.Today )
                         {
                             ret = "today+" + FilterValueDatePicker.TodayPlusDays.ToString();
@@ -971,10 +971,10 @@ namespace ChemSW.NbtWebControls
                         else
                             ret = FilterValueDatePicker.SelectedDate;
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.List:
+                    case CswEnumNbtFieldType.List:
                         ret = FilterValueSelectBox.SelectedValue;
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                    case CswEnumNbtFieldType.Logical:
                         ret = FilterValueCheckBox.Checked;
                         break;
                     default:
@@ -1072,7 +1072,7 @@ namespace ChemSW.NbtWebControls
                 return ( SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                          SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null ||
                          ( FilterValue.ToString() != string.Empty &&
-                           ( SelectedPropLatestVersion.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
+                           ( SelectedPropLatestVersion.getFieldTypeValue() != CswEnumNbtFieldType.DateTime ||
                              FilterValue.ToString().Substring( 0, "today".Length ) == "today" ||
                              CswConvert.ToDateTime( FilterValue ) != DateTime.MinValue ) ) );
             }

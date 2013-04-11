@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
                         bool FoundMatch = false;
                         foreach( CswNbtNodePropWrapper AssemblyProp in AssemblyNode.Properties )
                         {
-                            if( EquipProp.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // case 27270
+                            if( EquipProp.getFieldTypeValue() != CswEnumNbtFieldType.Grid ) // case 27270
                             {
                                 if( EquipProp.PropName.ToLower() == AssemblyProp.PropName.ToLower() && EquipProp.getFieldType() == AssemblyProp.getFieldType() )
                                 {

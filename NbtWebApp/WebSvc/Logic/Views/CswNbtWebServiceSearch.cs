@@ -23,15 +23,15 @@ namespace ChemSW.Nbt.WebServices
             get
             {
                 ArrayList InvalidFieldTypes = new ArrayList();
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Button ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.LogicalSet ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewPickList ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MOL ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MTBF ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Grid ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Password ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Button ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.LogicalSet ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.ViewPickList ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.ViewReference ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.NodeTypeSelect ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.MOL ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.MTBF ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Grid ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Password ) );
                 return InvalidFieldTypes;
             }
         }

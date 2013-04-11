@@ -155,7 +155,7 @@ namespace ChemSW.Nbt
         }
 
         //public CswNbtMetaDataFieldType FieldType = null;
-        public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtResources.UnknownEnum;
+        public CswEnumNbtFieldType FieldType = CswNbtResources.UnknownEnum;
         public Int32 Order = Int32.MinValue;
         public Int32 Width = Int32.MinValue;
         public bool ShowInGrid = true;
