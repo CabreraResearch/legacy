@@ -25,22 +25,7 @@ namespace ChemSW.Nbt.WebServices
             "Edit View",
             "Multi-Edit"
         };
-
-        public enum MenuActions
-        {
-            Unknown,
-            AddNode,
-            CopyNode,
-            DeleteNode,
-            editview,
-            //GenericSearch,
-            multiedit,
-            PrintView,
-            PrintLabel,
-            SaveViewAs//,
-            //ViewSearch
-        }
-
+        
         private CswNbtResources _CswNbtResources;
 
         public CswNbtWebServiceMainMenu( CswNbtResources CswNbtResources, string LimitMenuTo = null )
@@ -181,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
                         if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
                         {
                             MoreObj["Copy"] = new JObject();
-                            MoreObj["Copy"]["action"] = MenuActions.CopyNode.ToString();
+                            MoreObj["Copy"]["action"] = CswEnumNbtMainMenuActions.CopyNode.ToString();
                             MoreObj["Copy"]["nodeid"] = Node.NodeId.ToString();
                             MoreObj["Copy"]["nodename"] = Node.NodeName;
                             MoreObj["Copy"]["nodetypeid"] = Node.NodeTypeId.ToString();
@@ -198,7 +183,7 @@ namespace ChemSW.Nbt.WebServices
                         _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
                     {
                         MoreObj["Delete"] = new JObject();
-                        MoreObj["Delete"]["action"] = MenuActions.DeleteNode.ToString();
+                        MoreObj["Delete"]["action"] = CswEnumNbtMainMenuActions.DeleteNode.ToString();
                         MoreObj["Delete"]["nodeid"] = Node.NodeId.ToString();
                         MoreObj["Delete"]["nodename"] = Node.NodeName;
                     }
@@ -210,7 +195,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         View.SaveToCache( false );
                         MoreObj["Save View As"] = new JObject();
-                        MoreObj["Save View As"]["action"] = MenuActions.SaveViewAs.ToString();
+                        MoreObj["Save View As"]["action"] = CswEnumNbtMainMenuActions.SaveViewAs.ToString();
                         MoreObj["Save View As"]["viewid"] = View.SessionViewId.ToString();
                         MoreObj["Save View As"]["viewmode"] = View.ViewMode.ToString();
                     }
@@ -262,7 +247,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
                         PrintObj["Print Label"] = new JObject();
-                        PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
+                        PrintObj["Print Label"]["action"] = CswEnumNbtMainMenuActions.PrintLabel.ToString();
 
                         if( ValidForTreePrint )
                         {
@@ -282,7 +267,7 @@ namespace ChemSW.Nbt.WebServices
                         View.SaveToCache( false );
                         PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
                         PrintObj["Print View"] = new JObject();
-                        PrintObj["Print View"]["action"] = MenuActions.PrintView.ToString();
+                        PrintObj["Print View"]["action"] = CswEnumNbtMainMenuActions.PrintView.ToString();
                     }
 
                     if( null != PrintObj )
@@ -320,7 +305,7 @@ namespace ChemSW.Nbt.WebServices
                     ( null == View || ( false == View.IsSystem || CswNbtObjClassUser.ChemSWAdminUsername == _CswNbtResources.CurrentNbtUser.Username ) ) )
                 {
                     MoreObj["Edit View"] = new JObject();
-                    MoreObj["Edit View"]["action"] = MenuActions.editview.ToString();
+                    MoreObj["Edit View"]["action"] = CswEnumNbtMainMenuActions.editview.ToString();
                 }
 
                 if( _MenuItems.Contains( "Multi-Edit" ) &&
@@ -336,7 +321,7 @@ namespace ChemSW.Nbt.WebServices
                     )
                 {
                     MoreObj["Multi-Edit"] = new JObject();
-                    MoreObj["Multi-Edit"]["action"] = MenuActions.multiedit.ToString();
+                    MoreObj["Multi-Edit"]["action"] = CswEnumNbtMainMenuActions.multiedit.ToString();
                 }
 
                 if( MoreObj.Count > 0 )
@@ -382,7 +367,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["relatednodename"] = RelatedNodeName;
                     Ret["relatednodetypeid"] = RelatedNodeTypeId;
                     Ret["relatedobjectclassid"] = RelatedObjectClassId;
-                    Ret["action"] = MenuActions.AddNode.ToString();
+                    Ret["action"] = CswEnumNbtMainMenuActions.AddNode.ToString();
                     break;
             }
             return Ret;
