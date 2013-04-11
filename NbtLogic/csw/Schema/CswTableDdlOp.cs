@@ -6,7 +6,6 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public enum DdlTableOpType { Unknown, Add, Drop, Column };
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
@@ -48,8 +47,8 @@ namespace ChemSW.Nbt.Schema
         }//_clear()
 
 
-        private DdlTableOpType _DdlTableOpType = DdlTableOpType.Unknown;
-        public DdlTableOpType DdlTableOpType
+        private CswEnumDdlTableOpType _DdlTableOpType = CswEnumDdlTableOpType.Unknown;
+        public CswEnumDdlTableOpType DdlTableOpType
         {
             set
             {
@@ -57,7 +56,7 @@ namespace ChemSW.Nbt.Schema
 
                 if( dbg_ManageConstraints )
                 {
-                    if( DdlTableOpType.Drop == _DdlTableOpType )
+                    if( CswEnumDdlTableOpType.Drop == _DdlTableOpType )
                     {
                         _CswConstraintDdlOps.markTableForRemoval( _TableName );
                     }
@@ -197,14 +196,14 @@ namespace ChemSW.Nbt.Schema
         public void apply()
         {
 
-            if( _DropColumnExists || DdlTableOpType.Drop == DdlTableOpType )
+            if( _DropColumnExists || CswEnumDdlTableOpType.Drop == DdlTableOpType )
             {
                 _copyTable();
                 //_BackTableExists = true;
 
             }//if we're dropping
 
-            if( DdlTableOpType.Drop == DdlTableOpType )
+            if( CswEnumDdlTableOpType.Drop == DdlTableOpType )
             {
                 if( CswEnumDdlProcessStatus.Applied != DdlProcessStatus )
                 {
@@ -217,7 +216,7 @@ namespace ChemSW.Nbt.Schema
                     DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
                 }
             }
-            else if( DdlTableOpType.Add == DdlTableOpType )
+            else if( CswEnumDdlTableOpType.Add == DdlTableOpType )
             {
                 if( CswEnumDdlProcessStatus.Applied != DdlProcessStatus )
                 {
@@ -270,7 +269,7 @@ namespace ChemSW.Nbt.Schema
 
         public void revert()
         {
-            if( DdlTableOpType.Add == DdlTableOpType )
+            if( CswEnumDdlTableOpType.Add == DdlTableOpType )
             {
                 if( CswEnumDdlProcessStatus.Applied == DdlProcessStatus )
                 {
@@ -284,7 +283,7 @@ namespace ChemSW.Nbt.Schema
 
                 DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
             }
-            else if( DdlTableOpType.Drop == DdlTableOpType )
+            else if( CswEnumDdlTableOpType.Drop == DdlTableOpType )
             {
                 if( CswEnumDdlProcessStatus.Applied == DdlProcessStatus )
                 {
