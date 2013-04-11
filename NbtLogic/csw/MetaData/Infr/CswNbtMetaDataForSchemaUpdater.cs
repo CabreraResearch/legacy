@@ -273,9 +273,9 @@ namespace ChemSW.Nbt.MetaData
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                     {
-                        CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes NodeTypeAttribute;
+                        CswEnumNbtNodeTypePropAttributes NodeTypeAttribute;
                         Enum.TryParse( AttributeName, true, out NodeTypeAttribute );
-                        if( NodeTypeAttribute != CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes.unknown )
+                        if( NodeTypeAttribute != CswEnumNbtNodeTypePropAttributes.unknown )
                         {
                             NodeTypeProp._DataRow[AttributeName] = DBValue;
                         }

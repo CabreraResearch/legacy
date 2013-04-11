@@ -15,67 +15,21 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
-        public enum NodeTypePropAttributes
+        public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
-            unknown,
-            append,
-            auditlevel,
-            datetoday,
-            fieldtypeid,
-            isbatchentry,
-            isrequired,
-            isunique,
-            iscompoundunique,
-            servermanaged,
-            textareacols,
-            textarearows,
-            textlength,
-            url,
-            valuepropid,
-            width,
-            sequenceid,
-            numberprecision,
-            listoptions,
-            compositetemplate,
-            valueproptype,
-            statictext,
-            multi,
-            nodeviewid,
-            readOnly,
-            numberminvalue,
-            numbermaxvalue,
-            usenumbering,
-            questionno,
-            subquestionno,
-            filter,
-            filterpropid,
-            valueoptions,
-            helptext,
-            propname,
-            isquicksearch,
-            extended,
-            attribute1,
-            attribute2,
-            attribute3,
-            attribute4,
-            attribute5
-        }
-
-        public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
-        {
-            NodeTypePropAttributes ReturnVal = NodeTypePropAttributes.unknown;
+            CswEnumNbtNodeTypePropAttributes ReturnVal = CswEnumNbtNodeTypePropAttributes.unknown;
             AttributeName = AttributeName.Replace( "_", "" );
-            if( Enum.IsDefined( typeof( NodeTypePropAttributes ), AttributeName ) )
+            if( Enum.IsDefined( typeof( CswEnumNbtNodeTypePropAttributes ), AttributeName ) )
             {
-                ReturnVal = (NodeTypePropAttributes) Enum.Parse( typeof( NodeTypePropAttributes ), AttributeName, true );
+                ReturnVal = (CswEnumNbtNodeTypePropAttributes) Enum.Parse( typeof( CswEnumNbtNodeTypePropAttributes ), AttributeName, true );
             }
             return ( ReturnVal );
         }
 
-        public static String getNodeTypePropAttributesAsString( NodeTypePropAttributes Attribute )
+        public static String getCswEnumNbtNodeTypePropAttributesAsString( CswEnumNbtNodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != NodeTypePropAttributes.unknown )
+            if( Attribute != CswEnumNbtNodeTypePropAttributes.unknown )
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
@@ -799,11 +753,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
+                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
             }
             set
             {
-                _setAttribute( NodeTypePropAttributes.auditlevel.ToString(), value.ToString(), false );
+                _setAttribute( CswEnumNbtNodeTypePropAttributes.auditlevel.ToString(), value.ToString(), false );
             }
         }
 
@@ -1037,11 +991,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()] = value;
             }
         }
 
@@ -1049,11 +1003,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()] = value;
             }
         }
 
@@ -1061,11 +1015,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()] = value;
             }
         }
 
@@ -1073,11 +1027,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()] = value;
             }
         }
 
@@ -1085,11 +1039,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()] = value;
             }
         }
 
