@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Sched
                     }
 
                     CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( CswNbtResources );
-                    int nodesPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    int nodesPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";

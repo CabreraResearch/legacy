@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Sched
             {
                 CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
                 Int32 ContainersProcessedPerIteration =
-                    CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                 BatchOp.makeBatchOp( ContainerLocations, ContainersProcessedPerIteration );
             }
         }

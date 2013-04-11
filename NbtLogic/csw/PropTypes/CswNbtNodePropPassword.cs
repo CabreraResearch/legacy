@@ -117,17 +117,17 @@ namespace ChemSW.Nbt.PropTypes
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
             }
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length ) )
             {
-                Int32 Length = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) );
+                Int32 Length = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length ) );
                 if( Ret.Length < Length )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Passwords must be at least " + Length + " characters long.", "The supplied password was not long enough." );
                 }
             }
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity ) )
             {
-                Int32 ComplexityLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity ) );
+                Int32 ComplexityLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity ) );
                 if( ComplexityLevel > 0 )
                 {
                     if( false == CswTools.HasAlpha( Ret ) || false == CswTools.HasNumber( Ret ) )
@@ -177,8 +177,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
-            ParentObject["passwordcomplexity"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity );
-            ParentObject["passwordlength"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length );
+            ParentObject["passwordcomplexity"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity );
+            ParentObject["passwordlength"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length );
             ParentObject["newpassword"] = string.Empty;
             ParentObject["isexpired"] = IsExpired.ToString().ToLower();
             ParentObject["expire"] = false;

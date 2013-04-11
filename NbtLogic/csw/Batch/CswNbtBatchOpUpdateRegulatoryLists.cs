@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Batch
                     RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
 
                     int processed = 0;
-                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
                     {
                         //loop until we hit the limit of nodes processed per iteration or the list is empty

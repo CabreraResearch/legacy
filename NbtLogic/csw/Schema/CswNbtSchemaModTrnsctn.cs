@@ -602,10 +602,10 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Configuration Variable
         /// </summary>
-        public void createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames Name, string Description, string VariableValue, bool IsSystem )
+        public void createConfigurationVariable( CswEnumConfigurationVariableNames Name, string Description, string VariableValue, bool IsSystem )
         {
             // Create the Configuration Variable
-            if( Name != CswConfigurationVariables.ConfigurationVariableNames.Unknown )
+            if( Name != CswEnumConfigurationVariableNames.Unknown )
             {
                 createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
             }

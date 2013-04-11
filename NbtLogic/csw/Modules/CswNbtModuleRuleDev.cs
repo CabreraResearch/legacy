@@ -20,9 +20,9 @@ namespace ChemSW.Nbt
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Dev; } }
         public override void OnEnable()
         {
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
-                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "Info" );
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "Info" );
             }
 
             CswNbtMetaDataNodeType FieldTypeNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev FieldType Test" );
@@ -107,9 +107,9 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
-                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "None" );
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "None" );
             }
         }
     } // class CswNbtModuleRuleDev

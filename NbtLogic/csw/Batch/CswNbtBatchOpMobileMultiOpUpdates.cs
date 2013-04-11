@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Batch
 
                     if( BatchData.Operations.Count > 0 )
                     {
-                        int NodesProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                        int NodesProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                         for( int i = 0; i < NodesProcessedPerIteration && BatchData.Operations.Count > 0; i++ )
                         {
 
