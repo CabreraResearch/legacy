@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Remove the HazardClassesNTP from all layouts for any MaterialNTs != Chemical
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )

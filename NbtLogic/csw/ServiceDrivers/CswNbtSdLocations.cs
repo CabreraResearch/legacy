@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 LocationTable = LocationSelect.getTable();
                 Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
                 LocationPks.Add( StartLocationId );
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
 
                 if( LocationTable.Rows.Count > 0 )
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             
             if( LocationCount > 0 )
             {
-                CswNbtMetaDataObjectClass LocationsOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationsOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 
                 for( Int32 N = 0; N < LocationCount; N += 1 )
                 {

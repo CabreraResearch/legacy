@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getGeneratorsTree()
         {
-            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = GeneratorOC.CreateDefaultView();
             GeneratorView.ViewName = "Generators";
 

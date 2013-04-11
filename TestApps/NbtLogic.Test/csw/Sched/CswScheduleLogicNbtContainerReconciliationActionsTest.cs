@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Test.Sched
             TestData.setAllContainerLocationNodeActions( String.Empty );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.makeReconciliationActionBatchProcess(TestData.CswNbtResources);
-            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
             {
                 if( BatchOpNode.OpName.Value == CswEnumNbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Test.Sched
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.makeReconciliationActionBatchProcess( TestData.CswNbtResources );
-            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
             bool BatchOpFound = false;
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
             {

@@ -28,7 +28,7 @@ namespace ChemSW.Nbt
             //   Inventory Group
             //   Storate Compatibility
             //   Allow Inventory
-            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.AddPropToTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers, "Containers" );
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
                 string sizesNTPName = materialNT.NodeTypeName + " Sizes";
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt
 
             //Show the following User props...
             //   Work Unit
-            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.UserClass );
+            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
             {
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt
             //   Inventory Group
             //   Storate Compatibility
             //   Allow Inventory
-            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers );
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
                 string sizesNTPName = materialNT.NodeTypeName + " Sizes";
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt
 
             //Hide the following User props...
             //   Work Unit
-            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.UserClass );
+            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );

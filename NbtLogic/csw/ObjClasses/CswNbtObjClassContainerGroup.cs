@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerGroupClass ); }
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassContainerGroup( CswNbtNode Node )
         {
             CswNbtObjClassContainerGroup ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.ContainerGroupClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.ContainerGroupClass ) )
             {
                 ret = (CswNbtObjClassContainerGroup) Node.ObjClass;
             }
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView ContainersInGroupView = new CswNbtView( _CswNbtResources );
             ContainersInGroupView.ViewName = "ContainersInGroup";
 
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtViewRelationship Rel1 = ContainersInGroupView.AddViewRelationship( ContainerOC, true );
 
             CswNbtMetaDataObjectClassProp ContainerGroupOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ContainerGroup );

@@ -209,10 +209,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null )
         {
-            CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass UserOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
 
-            bool IsLocationNode = ( null != Prop && Prop.getNodeType().getObjectClass().ObjectClass == NbtObjectClass.LocationClass );
+            bool IsLocationNode = ( null != Prop && Prop.getNodeType().getObjectClass().ObjectClass == CswEnumNbtObjectClass.LocationClass );
             bool IsContainerNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == ContainerOC.ObjectClassId );
             bool IsUserNode = ( null != Prop && null != ContainerOC && Prop.getNodeType().ObjectClassId == UserOC.ObjectClassId );
 
@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.PropTypes
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();
 
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
             JArray LocationNTArray = new JArray();
             foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( LocationNodeId.PrimaryKey == Int32.MinValue && LocationBarcode != string.Empty )
                 {
                     // Find the location with this barcode value
-                    CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                    CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                     CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Barcode );
 
                     CswNbtView LocationView = new CswNbtView( _CswNbtResources );

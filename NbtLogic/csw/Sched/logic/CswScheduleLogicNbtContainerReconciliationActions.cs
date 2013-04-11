@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.Sched
         public CswNbtView getOutstandingContainerLocations( CswNbtResources CswNbtResources )
         {
             CswNbtView ContainerLocationsView = new CswNbtView( CswNbtResources );
-            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtViewRelationship ParentRelationship = ContainerLocationsView.AddViewRelationship( ContainerLocationOc, true );
             CswNbtMetaDataObjectClassProp ActionAppliedOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ActionApplied );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,

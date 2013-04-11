@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of CswNbtMetaDataNodeType objects that have the provided object class
         /// </summary>
-        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes( NbtObjectClass ObjectClass )
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes( CswEnumNbtObjectClass ObjectClass )
         {
             CswNbtMetaDataObjectClass theObjectClass = this.getObjectClass( ObjectClass );
             return getNodeTypes( theObjectClass.ObjectClassId );
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public Dictionary<Int32, NbtObjectClass> getObjectClassIds()
+        public Dictionary<Int32, CswEnumNbtObjectClass> getObjectClassIds()
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds();
         }
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
         /// </summary>
-        public Int32 getObjectClassId( NbtObjectClass ObjectClass )
+        public Int32 getObjectClassId( CswEnumNbtObjectClass ObjectClass )
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassId( ObjectClass );
         }
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns a CswNbtMetaDataObjectClass based on the given NbtObjectClass parameter
         /// </summary>
-        public CswNbtMetaDataObjectClass getObjectClass( NbtObjectClass ObjectClass )
+        public CswNbtMetaDataObjectClass getObjectClass( CswEnumNbtObjectClass ObjectClass )
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClass( ObjectClass );
         }
@@ -588,7 +588,7 @@ namespace ChemSW.Nbt.MetaData
         /// <returns></returns>
         public CswNbtMetaDataNodeType makeNewNodeType( string ObjectClassName, string NodeTypeName, string Category )
         {
-            NbtObjectClass NbtObjectClass = ObjectClassName;
+            CswEnumNbtObjectClass NbtObjectClass = ObjectClassName;
             if( NbtObjectClass == CswNbtResources.UnknownEnum )
             {
                 throw ( new CswDniException( "No such object class: " + ObjectClassName ) );
@@ -1160,7 +1160,7 @@ namespace ChemSW.Nbt.MetaData
             Int32 OriginalObjectClassId = CswConvert.ToInt32( NodeType._DataRow["objectclassid"] );
             if( OriginalObjectClassId != NewObjectClass.ObjectClassId )
             {
-                if( getObjectClass( OriginalObjectClassId ).ObjectClass != NbtObjectClass.GenericClass )
+                if( getObjectClass( OriginalObjectClassId ).ObjectClass != CswEnumNbtObjectClass.GenericClass )
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this nodetype", "Nodetype " + NodeType.NodeTypeName + " cannot be converted because it is not Generic" );
 
                 NodeType = CheckVersioning( NodeType );
@@ -1547,7 +1547,7 @@ namespace ChemSW.Nbt.MetaData
             _ResetAllViews = true;
 
             //validate role nodetype permissions
-            foreach( CswNbtNode roleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( NbtObjectClass.RoleClass ).getNodes( false, true ) )
+            foreach( CswNbtNode roleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
             {
                 CswNbtObjClassRole nodeAsRole = (CswNbtObjClassRole) roleNode;
                 CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;

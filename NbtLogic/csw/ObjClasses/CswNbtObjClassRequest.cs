@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
         {
             CswNbtObjClassRequest ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.RequestClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.RequestClass ) )
             {
                 ret = (CswNbtObjClassRequest) Node.ObjClass;
             }
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass ); }
         }
 
         private void _setDefaultValues()
@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
 
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );

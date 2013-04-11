@@ -194,11 +194,11 @@ namespace ChemSW.Nbt.Actions
         {
             Collection<CswPrimaryKey> LocationIds = _getLocationIds( Request );
 
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
             CswNbtMetaDataObjectClassProp DateCreatedOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
-            CswNbtMetaDataObjectClass ContainerLocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContainerLocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtMetaDataObjectClassProp ContainerOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
             CswNbtMetaDataObjectClassProp ScanDateOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
 
@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.Actions
 
         private void _createMissingContainerLocation( ContainerData.ReconciliationActions Action )
         {
-            CswNbtMetaDataObjectClass ContLocOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContLocOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtMetaDataNodeType ContLocNt = ContLocOc.FirstNodeType;
             if( null != ContLocNt )
             {

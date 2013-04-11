@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             FireClassExemptAmountNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Fire Class Exempt Amount" );
             if( null != FireClassExemptAmountNT )
             {
-                FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
+                FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
                 if( null != FireClassExemptAmountSetOC )
                 {
                     FireClassExemptAmountSetNT = FireClassExemptAmountSetOC.FirstNodeType;

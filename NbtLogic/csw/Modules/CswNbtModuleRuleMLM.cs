@@ -32,7 +32,7 @@ namespace ChemSW.Nbt
             //   Requisitionable
             //   Reserved For
             //   Receipt Lot
-            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             foreach( CswNbtMetaDataNodeType containerNT in containerOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt
             //    uNCodeNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId );
             //}
 
-            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Central Material Group", NodeType.getNextTabOrder() );
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
             //Case 28339
             //   Show Vendor.VendorType and CorporateEntity
             //   Add a filter to Material.Supplier where VendorType = 'Coporate'
-            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
             foreach( CswNbtMetaDataNodeType vendorNT in vendorOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab firstTab = vendorNT.getFirstNodeTypeTab();
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt
             //   Lot Controlled
             //   Requisitionable
             //   Reserved For
-            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             foreach( CswNbtMetaDataNodeType containerNT in containerOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp lotControlledNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LotControlled );
@@ -149,7 +149,7 @@ namespace ChemSW.Nbt
             //    uNCodeNTP.removeFromAllLayouts();
             //}
 
-            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
             {
                 foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
@@ -184,7 +184,7 @@ namespace ChemSW.Nbt
             //Case 28339
             //   Hide Vendor.VendorType and CorporateEntity
             //   Remove filter on Material.Supplier
-            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
             foreach( CswNbtMetaDataNodeType vendorNT in vendorOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
@@ -205,8 +205,8 @@ namespace ChemSW.Nbt
 
         private void _toggleMaterialSupplierView( bool MLMDisabled )
         {
-            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
 
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {

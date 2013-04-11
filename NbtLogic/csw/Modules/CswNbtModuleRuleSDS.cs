@@ -21,7 +21,7 @@ namespace ChemSW.Nbt
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
             {
                 _CswNbtResources.Modules.AddPropToTab( MaterialNT.NodeTypeId, "Documents", "Documents" );
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt
             //   View SDS
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(NbtObjectClass.ContainerClass);
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
                 foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
                 {
                     _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View SDS", ContainerNT.getIdentityTab(), 2, 1 );
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             foreach( int MaterialNTId in MaterialOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.HideProp( MaterialNTId, "Documents" );
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt
             //   ViewSDS
             if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(NbtObjectClass.ContainerClass);
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
                 foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
                 {
                     _CswNbtResources.Modules.HideProp( ContainerNTId, "View SDS" );

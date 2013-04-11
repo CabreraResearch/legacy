@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Material_Approval, false, String.Empty, "Materials" );
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Material_Approval );
 
-            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, true ) )
             {
                 bool CanApprove = ( RoleNode.NodeName == "Administrator" || RoleNode.NodeName == "chemsw_admin_role" ||
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Material_Approval, RoleNode, CanApprove );
             }
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp MaterialIdProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.MaterialId );
             CswNbtMetaDataObjectClassProp TradeNameProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename );
             CswNbtMetaDataObjectClassProp SupplierProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );

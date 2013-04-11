@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass ); }
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassGHS( CswNbtNode Node )
         {
             CswNbtObjClassGHS ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.GHSClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.GHSClass ) )
             {
                 ret = (CswNbtObjClassGHS) Node.ObjClass;
             }
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setupPhraseView( CswNbtView View, CswCommaDelimitedString SelectedPhraseIds )
         {
-            CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSPhraseClass );
+            CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
             CswNbtMetaDataNodeType GhsPhraseNT = GhsPhraseOC.FirstNodeType;
 
             View.SetVisibility( NbtViewVisibility.Hidden, null, null );
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private Dictionary<string, string> _initGhsPhraseOptions()
         {
-            CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GHSPhraseClass );
+            CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
             Dictionary<CswPrimaryKey, string> Phrases = GhsPhraseOC.getNodeIdAndNames( false, false );
             return Phrases.Keys.ToDictionary( pk => pk.ToString(), pk => Phrases[pk] );
         } // _initGhsPhraseOptions()

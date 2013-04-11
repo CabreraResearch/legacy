@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.Actions
 
             _MaterialOc = MaterialOc;
             _MaterialId = MaterialNodeId;
-            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            _SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            _SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
         }
 
         #endregion Constructor
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Actions
                 SizeView.ViewMode = NbtViewRenderingMode.Grid;
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
-                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp InitialQuantityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.Actions
         public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources )
         {
             Int32 Ret = Int32.MinValue;
-            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DocumentClass );
             foreach( CswNbtMetaDataNodeType DocumentNt in DocumentOc.getLatestVersionNodeTypes() )
             {
                 if( DocumentNt.NodeTypeName == "SDS Document" )

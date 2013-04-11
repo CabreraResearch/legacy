@@ -45,13 +45,13 @@ namespace ChemSW.Nbt.Actions.KioskMode
             string locationPropName = "Location";
             switch( OpData.Field2.FoundObjClass )
             {
-                case NbtObjectClass.EquipmentClass:
+                case CswEnumNbtObjectClass.EquipmentClass:
                     locationPropName = CswNbtObjClassEquipment.PropertyName.Location;
                     break;
-                case NbtObjectClass.EquipmentAssemblyClass:
+                case CswEnumNbtObjectClass.EquipmentAssemblyClass:
                     locationPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location;
                     break;
-                case NbtObjectClass.ContainerClass:
+                case CswEnumNbtObjectClass.ContainerClass:
                     locationPropName = CswNbtObjClassContainer.PropertyName.Location;
                     break;
             }
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
             if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, itemToMove.getNodeType() ) && false == itemToMove.Properties[locationPropName].ReadOnly )
             {
-                CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( NbtObjectClass.LocationClass, OpData.Field1.Value, true );
+                CswNbtObjClassLocation locationToMoveTo = _getNodeByBarcode( CswEnumNbtObjectClass.LocationClass, OpData.Field1.Value, true );
                 itemToMove.Properties[locationPropName].AsLocation.SelectedNodeId = locationToMoveTo.NodeId;
                 itemToMove.Properties[locationPropName].AsLocation.SyncGestalt();
                 itemToMove.Properties[locationPropName].AsLocation.RefreshNodeName();
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         private bool _validateLocation( ref OperationData OpData )
         {
             bool ret = false;
-            ICswNbtTree tree = _getTree( NbtObjectClass.LocationClass, OpData.Field1.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.LocationClass, OpData.Field1.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );
@@ -122,21 +122,21 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
                     if( barcodeValue.Equals( OpData.Field2.Value ) )
                     {
-                        if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
+                        if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                         {
-                            OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentAssemblyClass;
+                            OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentAssemblyClass;
                             ret = true;
                         }
 
-                        if( ObjClass == NbtObjectClass.EquipmentClass )
+                        if( ObjClass == CswEnumNbtObjectClass.EquipmentClass )
                         {
-                            OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentClass;
+                            OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentClass;
                             ret = true;
                         }
 
-                        if( ObjClass == NbtObjectClass.ContainerClass )
+                        if( ObjClass == CswEnumNbtObjectClass.ContainerClass )
                         {
-                            OpData.Field2.FoundObjClass = NbtObjectClass.ContainerClass;
+                            OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.ContainerClass;
                             ret = true;
                         }
                     }
@@ -150,20 +150,20 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 bool first = true;
                 if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
                 {
-                    StatusMsg = NbtObjectClass.ContainerClass.Replace( "Class", "" );
+                    StatusMsg = CswEnumNbtObjectClass.ContainerClass.Replace( "Class", "" );
                     first = false;
                 }
                 if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
                 {
                     if( first )
                     {
-                        StatusMsg = NbtObjectClass.EquipmentClass.Replace( "Class", "" );
+                        StatusMsg = CswEnumNbtObjectClass.EquipmentClass.Replace( "Class", "" );
                     }
                     else
                     {
-                        StatusMsg += ", " + NbtObjectClass.EquipmentClass.Replace( "Class", "" );
+                        StatusMsg += ", " + CswEnumNbtObjectClass.EquipmentClass.Replace( "Class", "" );
                     }
-                    StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" );
+                    StatusMsg += " or " + CswEnumNbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" );
                 }
                 StatusMsg = "Could not find " + StatusMsg + " with barcode " + OpData.Field2.Value;
 

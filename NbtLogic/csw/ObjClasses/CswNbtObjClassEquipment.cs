@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass ); }
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassEquipment( CswNbtNode Node )
         {
             CswNbtObjClassEquipment ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.EquipmentClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.EquipmentClass ) )
             {
                 ret = (CswNbtObjClassEquipment) Node.ObjClass;
             }
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.ObjClasses
             CopiedEquipmentNode.postChanges( true, true );
 
             // Copy all Generators
-            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship GeneratorRelationship = GeneratorView.AddViewRelationship( GeneratorObjectClass, false );
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );

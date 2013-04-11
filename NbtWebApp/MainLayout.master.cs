@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.WebPages
                         {
                             CswNbtMetaDataObjectClass UserObjectClass =
                                 Master.CswNbtResources.MetaData.getObjectClass(
-                                    NbtObjectClass.UserClass );
+                                    CswEnumNbtObjectClass.UserClass );
 
                             CswNbtView UserView = new CswNbtView( Master.CswNbtResources );
                             UserView.ViewName = "Preferences";

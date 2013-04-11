@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using ChemSW.Core;
@@ -8,7 +7,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Nbt Object Class Name
     /// </summary>
-    public sealed class NbtObjectClass : IEquatable<NbtObjectClass>, IComparable<NbtObjectClass>
+    public sealed class CswEnumNbtObjectClass : IEquatable<CswEnumNbtObjectClass>, IComparable<CswEnumNbtObjectClass>
     {
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
@@ -92,7 +91,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// The enum constructor
         /// </summary>
-        public NbtObjectClass( string ItemName = CswResources.UnknownEnum )
+        public CswEnumNbtObjectClass( string ItemName = CswResources.UnknownEnum )
         {
             Value = _Parse( ItemName );
         }
@@ -100,15 +99,15 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Implicit cast to Enum
         /// </summary>
-        public static implicit operator NbtObjectClass( string Val )
+        public static implicit operator CswEnumNbtObjectClass( string Val )
         {
-            return new NbtObjectClass( Val );
+            return new CswEnumNbtObjectClass( Val );
         }
 
         /// <summary>
         /// Implicit cast to string
         /// </summary>
-        public static implicit operator string( NbtObjectClass item )
+        public static implicit operator string( CswEnumNbtObjectClass item )
         {
             return ( null != item ) ? item.Value : CswNbtResources.UnknownEnum;
         }
@@ -191,7 +190,7 @@ namespace ChemSW.Nbt.MetaData
 
         #region IComparable
 
-        public int CompareTo( NbtObjectClass other )
+        public int CompareTo( CswEnumNbtObjectClass other )
         {
             return string.Compare( ToString(), other.ToString(), StringComparison.Ordinal );
         }
@@ -203,7 +202,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// == Equality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator ==( NbtObjectClass ft1, NbtObjectClass ft2 )
+        public static bool operator ==( CswEnumNbtObjectClass ft1, CswEnumNbtObjectClass ft2 )
         {
             //do a string comparison on the fieldtypes
             return CswConvert.ToString( ft1 ) == CswConvert.ToString( ft2 );
@@ -212,7 +211,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         ///  != Inequality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator !=( NbtObjectClass ft1, NbtObjectClass ft2 )
+        public static bool operator !=( CswEnumNbtObjectClass ft1, CswEnumNbtObjectClass ft2 )
         {
             return !( ft1 == ft2 );
         }
@@ -222,17 +221,17 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public override bool Equals( object obj )
         {
-            if( !( obj is NbtObjectClass ) )
+            if( !( obj is CswEnumNbtObjectClass ) )
             {
                 return false;
             }
-            return this == (NbtObjectClass) obj;
+            return this == (CswEnumNbtObjectClass) obj;
         }
 
         /// <summary>
         /// Equals
         /// </summary>
-        public bool Equals( NbtObjectClass obj )
+        public bool Equals( CswEnumNbtObjectClass obj )
         {
             return this == obj;
         }

@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.Test
 
         internal void setAllContainerLocationNodeActions( String Action )
         {
-            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             foreach( CswNbtObjClassContainerLocation ContainerLocationNode in ContainerLocationOc.getNodes( false, false ) )
             {
                 _ContainerLocationNodeActions.Add( ContainerLocationNode.NodeId, ContainerLocationNode.Action.Value );
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Test
         {
             LocationId1 = null;
             LocationId2 = null;
-            CswNbtMetaDataObjectClass LocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( CswNbtObjClassLocation LocationNode in LocationOc.getNodes( false, false ) )
             {
                 if( LocationId1 != null )

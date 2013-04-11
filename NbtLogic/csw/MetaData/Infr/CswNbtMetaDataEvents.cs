@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
 
-            if( NewNodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass )
+            if( NewNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
                 OnMakeNewInspectionDesignNodeType( NewNodeType, IsCopy );
         }
 
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public void OnEditNodeTypeName( CswNbtMetaDataNodeType EditedNodeType )
         {
-            if( EditedNodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass )
+            if( EditedNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
                 OnUpdateInspectionDesignNodeType( EditedNodeType );
 
         }
@@ -98,8 +98,8 @@ namespace ChemSW.Nbt.MetaData
 
         public void UpdateEquipmentAssemblyMatchingProperties( CswNbtMetaDataNodeTypeProp EditedProp, NbtPropAction Action )
         {
-            NbtObjectClass EditedPropObjectClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( EditedProp.NodeTypeId ).ObjectClass;
-            if( EditedPropObjectClass == NbtObjectClass.EquipmentClass )
+            CswEnumNbtObjectClass EditedPropObjectClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( EditedProp.NodeTypeId ).ObjectClass;
+            if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentClass )
             {
                 if( Action != NbtPropAction.Delete )
                 {
@@ -173,10 +173,10 @@ namespace ChemSW.Nbt.MetaData
                     }
                 }
             }
-            else if( EditedPropObjectClass == NbtObjectClass.EquipmentAssemblyClass )
+            else if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
             {
                 CswNbtMetaDataNodeType AssemblyNodeType = EditedProp.getNodeType();
-                CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+                CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
                 foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.getNodeTypes() )
                 {
                     //if( EquipmentNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass )

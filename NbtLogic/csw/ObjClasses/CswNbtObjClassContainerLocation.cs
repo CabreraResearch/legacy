@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass ); }
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassContainerLocation( CswNbtNode Node )
         {
             CswNbtObjClassContainerLocation ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.ContainerLocationClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.ContainerLocationClass ) )
             {
                 ret = (CswNbtObjClassContainerLocation) Node.ObjClass;
             }
@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ContainerScan.Text )
             {
-                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                 CswNbtView ContainerView = new CswNbtView( _CswNbtResources );
 
                 CswNbtViewRelationship ContainerRel = ContainerView.AddViewRelationship( ContainerOc, false );
@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != LocationScan.Text )
             {
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 CswNbtView LocationView = new CswNbtView( _CswNbtResources );
 
                 CswNbtViewRelationship LocationRel = LocationView.AddViewRelationship( LocationOc, false );

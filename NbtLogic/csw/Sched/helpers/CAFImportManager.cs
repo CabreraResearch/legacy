@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
             UoM_each_NT = _NBTResources.MetaData.getNodeType( "Unit (Each)" );
             UoM_vol_NT = _NBTResources.MetaData.getNodeType( "Unit (Volume)" );
 
-            unitOfMeasureOC = _NBTResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            unitOfMeasureOC = _NBTResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
             nameOCP = unitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
 
             materialSynNT = _NBTResources.MetaData.getNodeType( "Material Synonym" );
@@ -625,7 +625,7 @@ namespace ChemSW.Nbt
                     new CAFSubfieldMapping{ 
                         CAFColName = "unitofmeasureid", //legacy id on UoM
                         NBTSubfield =  quantityFTR.UnitIdSubField,
-                        ExpectedObjClassId = _NBTResources.MetaData.getObjectClassId(NbtObjectClass.UnitOfMeasureClass)
+                        ExpectedObjClassId = _NBTResources.MetaData.getObjectClassId(CswEnumNbtObjectClass.UnitOfMeasureClass)
                     }
                 }
             } );

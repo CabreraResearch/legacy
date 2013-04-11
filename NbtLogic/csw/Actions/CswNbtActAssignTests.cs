@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.Actions
             Collection<CswPrimaryKey> ResultNodeIds = new Collection<CswPrimaryKey>();
 
             // First, get all parameters for all tests
-            CswNbtMetaDataObjectClass TestObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.TestClass );
-            CswNbtMetaDataObjectClass ParameterObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ParameterClass );
+            CswNbtMetaDataObjectClass TestObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.TestClass );
+            CswNbtMetaDataObjectClass ParameterObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ParameterClass );
             CswNbtMetaDataObjectClassProp ParameterTestObjectClassProp = ParameterObjectClass.getObjectClassProp( CswNbtObjClassParameter.PropertyName.Test );
 
             CswNbtView ParameterView = new CswNbtView( _CswNbtResources );

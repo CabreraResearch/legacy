@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.WebServices
             Ret["Help"]["Help"]["popup"] = "help/index.htm";
             Ret["Help"]["Clear Cache"] = new JObject();
             Ret["Help"]["Clear Cache"]["action"] = "Clear Cache";
-            CswNbtMetaDataObjectClass feedbackOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass );
+            CswNbtMetaDataObjectClass feedbackOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
             IEnumerable<CswNbtMetaDataNodeType> feedbackNodeTypes = feedbackOC.getNodeTypes();
             if( feedbackNodeTypes.Any() )
             {

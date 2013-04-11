@@ -289,7 +289,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
+        public CswNbtViewRelationship AddViewRelationship( CswEnumNbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
         {
             if( NbtObjectClass == CswNbtResources.UnknownEnum )
             {
@@ -966,7 +966,7 @@ namespace ChemSW.Nbt
 
             // Reset user information
 
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );

@@ -518,7 +518,7 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
 
-                    CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+                    CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
 
                     CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
@@ -560,7 +560,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView VendorView = new CswNbtView( _CswNbtResources );
                 VendorView.ViewName = "VendorWithNameEquals";
 
-                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
                 CswNbtViewRelationship Parent = VendorView.AddViewRelationship( VendorOC, true );
 
                 CswNbtMetaDataObjectClassProp VendorOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );

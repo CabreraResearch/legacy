@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtView DispenseContainerView = new CswNbtView( _CswNbtResources );
             DispenseContainerView.ViewName = "Containers Dispensed at " + DateTime.Now.ToShortTimeString();
 
-            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtViewRelationship RootRelationship = DispenseContainerView.AddViewRelationship( ContainerOc, false );
             RootRelationship.NodeIdsToFilterIn = SourceContainerRoot;
 
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Actions
                         Ret.ViewMode = NbtViewRenderingMode.Grid;
                         Ret.Category = "Dispensing";
 
-                        CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                        CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                         CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
                         CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
                         CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );
@@ -236,7 +236,7 @@ namespace ChemSW.Nbt.Actions
 
                         Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
 
-                        CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                        CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                         CswNbtMetaDataObjectClassProp InventoryGroupOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
                         CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( ContainerRel, NbtViewPropOwnerType.First, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ), IncludeDefaultFilters: true );
 

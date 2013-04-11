@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequestMaterialCreate( CswNbtNode Node )
         {
             CswNbtObjClassRequestMaterialCreate ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.RequestMaterialCreateClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.RequestMaterialCreateClass ) )
             {
                 ret = (CswNbtObjClassRequestMaterialCreate) Node.ObjClass;
             }
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass ); }
         }
 
         #endregion Base

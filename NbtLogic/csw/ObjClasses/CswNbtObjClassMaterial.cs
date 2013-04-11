@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass ); }
         }
 
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMaterial( CswNbtNode Node )
         {
             CswNbtObjClassMaterial ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.MaterialClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.MaterialClass ) )
             {
                 ret = (CswNbtObjClassMaterial) Node.ObjClass;
             }
@@ -299,7 +299,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
             {
-                CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
+                CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
                 CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
 
                 CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <returns></returns>
         public void getParentMaterials( ref CswCommaDelimitedString MachingMaterialIDs )
         {
-            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataObjectClassProp constituentOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
             CswNbtMetaDataObjectClassProp mixtureOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
 
@@ -364,7 +364,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Ret = MaterialNode.getViewOfNode();
                 if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
                 {
-                    CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                     CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                     Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
                 }
@@ -400,7 +400,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
             {
-                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
             }

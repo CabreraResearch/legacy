@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ); }
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassLocation( CswNbtNode Node )
         {
             CswNbtObjClassLocation ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.LocationClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.LocationClass ) )
             {
                 ret = (CswNbtObjClassLocation) Node.ObjClass;
             }
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != LocationsView )
             {
-                CswNbtMetaDataObjectClass LocationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOC = MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( PropertyName.Location );
                 CswNbtMetaDataObjectClassProp LocationOrderOCP = LocationOC.getObjectClassProp( PropertyName.Order );
                 CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( PropertyName.AllowInventory );

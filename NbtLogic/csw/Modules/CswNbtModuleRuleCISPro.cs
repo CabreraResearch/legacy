@@ -16,7 +16,7 @@ namespace ChemSW.Nbt
         public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.CISPro; } }
         public override void OnEnable()
         {
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.DisableModule( CswNbtModuleName.C3 );
             }
 
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );

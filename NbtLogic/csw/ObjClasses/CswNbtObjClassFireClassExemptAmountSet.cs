@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass ); }
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassFireClassExemptAmountSet( CswNbtNode Node )
         {
             CswNbtObjClassFireClassExemptAmountSet ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.FireClassExemptAmountSetClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.FireClassExemptAmountSetClass ) )
             {
                 ret = (CswNbtObjClassFireClassExemptAmountSet) Node.ObjClass;
             }
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.ObjClasses
             CopiedFireClassExemptAmountSetNode.postChanges( true, true );
 
             // Copy all Related FireClassExemptAmount Nodes
-            CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+            CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
             CswNbtView FCEAView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship FCEARelationship = FCEAView.AddViewRelationship( FireClassExemptAmountObjectClass, false );
             CswNbtViewProperty SetNameProperty = FCEAView.AddViewProperty( FCEARelationship, FireClassExemptAmountObjectClass.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.SetName ) );

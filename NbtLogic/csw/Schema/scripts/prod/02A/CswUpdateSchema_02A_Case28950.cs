@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp instructionsOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Instructions );
             CswNbtMetaDataObjectClassProp sqlOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Sql );
 

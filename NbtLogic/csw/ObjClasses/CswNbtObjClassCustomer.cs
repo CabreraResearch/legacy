@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.CustomerClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ); }
         }
 
         private bool _CompanyIDDefined()
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassCustomer( CswNbtNode Node )
         {
             CswNbtObjClassCustomer ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.CustomerClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.CustomerClass ) )
             {
                 ret = (CswNbtObjClassCustomer) Node.ObjClass;
             }
@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 //case 28079 - count the number of pending feedback nodes
                 int count = 0;
-                CswNbtMetaDataObjectClass feedbackOC = OtherResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass );
+                CswNbtMetaDataObjectClass feedbackOC = OtherResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
                 foreach( CswNbtObjClassFeedback feedbackNode in feedbackOC.getNodes( false, false ) )
                 {
                     if( feedbackNode.Status.Value.Equals( CswNbtObjClassFeedback.Statuses.PendingReview ) )

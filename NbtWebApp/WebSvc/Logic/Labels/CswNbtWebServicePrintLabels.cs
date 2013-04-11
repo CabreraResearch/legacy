@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType TargetNodeType = NbtResources.MetaData.getNodeType( Request.TargetTypeId );
                 if( null != TargetNodeType )
                 {
-                    CswNbtMetaDataObjectClass PrintLabelObjectClass = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+                    CswNbtMetaDataObjectClass PrintLabelObjectClass = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintLabelClass );
                     CswNbtMetaDataObjectClassProp NodeTypesProperty = PrintLabelObjectClass.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
 
                     CswNbtView PrintLabelView = new CswNbtView( NbtResources );
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtNode TargetNode = NbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( TargetId ) );
                 if( null != TargetNode )
                 {
-                    CswNbtMetaDataObjectClass PrintLabelClass = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+                    CswNbtMetaDataObjectClass PrintLabelClass = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintLabelClass );
                     foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in TargetNodeType.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) )
                     {
                         //bool PropMatchesPrintLabel = false;
@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+            CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintJobClass );
             if( null == PrintJobOC )
             {
                 throw new CswDniException( CswEnumErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job Object Class" );
@@ -288,11 +288,11 @@ namespace ChemSW.Nbt.WebServices
             string ret = string.Empty;
 
             CswNbtMetaDataNodeType ContainerNT = Node.NodeType;
-            if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
+            if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
             {
                 CswNbtMetaDataNodeTypeProp ContainerMaterialNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
 
-                CswNbtMetaDataObjectClass GhsOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.GHSClass );
+                CswNbtMetaDataObjectClass GhsOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
                 if( null != GhsOC )
                 {
                     CswNbtMetaDataObjectClassProp GhsMaterialOCP = GhsOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
@@ -500,7 +500,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             Return.Status.Success = false;
 
-            CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
+            CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrinterClass );
             if( null != PrinterOC )
             {
                 CswNbtMetaDataNodeType PrinterNT = PrinterOC.FirstNodeType;
@@ -553,8 +553,8 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassPrinter Printer = NbtResources.Nodes[PrinterNodeId];
                 if( null != Printer )
                 {
-                    CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass );
-                    CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
+                    CswNbtMetaDataObjectClass PrinterOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrinterClass );
+                    CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintJobClass );
                     if( null != PrinterOC && null != PrintJobOC )
                     {
                         CswNbtMetaDataObjectClassProp JobPrinterOCP = PrintJobOC.getObjectClassProp( CswNbtObjClassPrintJob.PropertyName.Printer );

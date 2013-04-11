@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
             if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerToDispense.NodeType ) && _CswNbtResources.Permit.can( CswNbtActionName.DispenseContainer ) )
             {
                 double quantityToDispense = CswConvert.ToDouble( OpData.Field2.Value );
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool ret = false;
 
-            ICswNbtTree tree = _getTree( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );

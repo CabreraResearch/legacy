@@ -764,12 +764,12 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // saveProps()
 
-        private string _determineAction( NbtObjectClass objectClass )
+        private string _determineAction( CswEnumNbtObjectClass objectClass )
         {
             CswNbtObjClass.NbtButtonAction ret;
             switch( objectClass )
             {
-                case NbtObjectClass.FeedbackClass:
+                case CswEnumNbtObjectClass.FeedbackClass:
                     ret = CswNbtObjClass.NbtButtonAction.loadView;
                     break;
                 default:
@@ -1039,7 +1039,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     JctTable.Rows.Add( JRow );
                     JctUpdate.update( JctTable );
                 }
-                if( Node.getObjectClass().ObjectClass == NbtObjectClass.ReportClass )
+                if( Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ReportClass )
                 {
                     CswNbtObjClassReport Report = Node;
                     CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );
@@ -1104,7 +1104,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 LocationViewId["nodeid"] = LocationId.ToString();
                 CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes[LocationId];
-                if( LocNode.ObjectClass.ObjectClass == NbtObjectClass.LocationClass )
+                if( LocNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.LocationClass )
                 {
                     LocationViewId["path"] = LocNode.Location.CachedPath + " > " + LocNode.Name.Text;
                 }

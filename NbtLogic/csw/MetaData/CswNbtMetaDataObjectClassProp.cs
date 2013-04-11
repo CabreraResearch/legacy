@@ -551,7 +551,7 @@ namespace ChemSW.Nbt.MetaData
                 //        }
                 //    }
                 //}
-                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 ret = FkMatches( UserOC );
             }
             return ret;

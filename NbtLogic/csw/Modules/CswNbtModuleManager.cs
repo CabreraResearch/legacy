@@ -248,7 +248,7 @@ namespace ChemSW.Nbt
         /// <param name="modulename">The module of the nodes to hide</param>
         public void ToggleUserNodes( bool hidden, string modulename )
         {
-            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp usernameOCP = userOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
             CswNbtView usersView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = usersView.AddViewRelationship( userOC, false );
@@ -277,7 +277,7 @@ namespace ChemSW.Nbt
         /// <param name="modulename">The module of the nodes to hide</param>
         public void ToggleRoleNodes( bool hidden, string modulename )
         {
-            CswNbtMetaDataObjectClass roleOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass roleOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswNbtMetaDataObjectClassProp nameOCP = roleOC.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
             CswNbtView rolesView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = rolesView.AddViewRelationship( roleOC, false );
@@ -368,7 +368,7 @@ namespace ChemSW.Nbt
 
         public void TogglePrintLabels( bool Hidden, CswNbtModuleName Module )
         {
-            CswNbtMetaDataObjectClass printLabelOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClass printLabelOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintLabelClass );
             CswNbtMetaDataObjectClassProp nodetypesOCP = printLabelOC.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
 
             CswNbtView printLabelsView = new CswNbtView( _CswNbtResources );
@@ -465,7 +465,7 @@ namespace ChemSW.Nbt
 
         public void ToggleReportNodes( string Category, bool Hidden )
         {
-            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp categoryOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Category );
 
             CswNbtView reportsView = new CswNbtView( _CswNbtResources );

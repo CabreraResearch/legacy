@@ -286,7 +286,7 @@ namespace ChemSW.Nbt.Actions
             if( null != FCEASId )
             {
                 List<HMISData.HMISMaterial> HazardClassList = new List<HMISData.HMISMaterial>();
-                CswNbtMetaDataObjectClass FCEAOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+                CswNbtMetaDataObjectClass FCEAOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
                 foreach ( CswNbtObjClassFireClassExemptAmount FCEANode in FCEAOC.getNodes( false, false ) )
                 {
                     if( FCEANode.SetName.RelatedNodeId == FCEASId )
@@ -354,7 +354,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType ControlZoneNT = _CswNbtResources.MetaData.getNodeType( "Control Zone" );
             if( null != ControlZoneNT )
             {
-                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVR = HMISView.AddViewRelationship( LocationOC, true );
 
                 CswNbtViewProperty ControlZoneVP = null;
@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtPropFilterSql.PropertyFilterMode.Equals,
                     ControlZoneId.PrimaryKey.ToString() );
 
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                 CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
                 CswNbtViewRelationship ContainerVR = HMISView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.Second, LocationOCP, true );
 
@@ -391,7 +391,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewProperty( ContainerVR, UseTypeOCP );
 
                 CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
                 HMISView.AddViewProperty( ContainerVR, MaterialOCP );
                 CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, MaterialOCP, true );                
 
@@ -500,7 +500,7 @@ namespace ChemSW.Nbt.Actions
                     UnitName = "lb";
                     break;
             }
-            CswNbtMetaDataObjectClass UoMOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClass UoMOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
             CswPrimaryKey BaseUnitId = null;
             foreach (CswNbtObjClassUnitOfMeasure UoMNode in UoMOC.getNodes(false, false))
             {

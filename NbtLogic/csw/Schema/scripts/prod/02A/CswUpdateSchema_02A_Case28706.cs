@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             }//if we have a chemical NT
 
 
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( CswNbtMetaDataNodeType CurrentLocationNT in LocationOC.getNodeTypes() )
             {
                     CswNbtMetaDataNodeTypeProp ContainersNTP = CurrentLocationNT.getNodeTypeProp( "Containers" );

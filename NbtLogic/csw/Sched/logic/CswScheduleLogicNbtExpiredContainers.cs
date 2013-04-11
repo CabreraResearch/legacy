@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Sched
                     if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
                     {
                         CswNbtView expiredContainersView = new CswNbtView( CswNbtResources );
-                        CswNbtMetaDataObjectClass containerOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                        CswNbtMetaDataObjectClass containerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                         CswNbtMetaDataObjectClassProp expirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
                         CswNbtViewRelationship parent = expiredContainersView.AddViewRelationship( containerOC, true );
                         expiredContainersView.AddViewPropertyAndFilter( parent,

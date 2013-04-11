@@ -230,8 +230,8 @@ namespace ChemSW.Nbt.Security
 
                     bool ReturnVal = true;
                     // case 24510
-                    NbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
-                    if( ObjectClass == NbtObjectClass.ContainerDispenseTransactionClass )
+                    CswEnumNbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
+                    if( ObjectClass == CswEnumNbtObjectClass.ContainerDispenseTransactionClass )
                     {
                         ReturnVal = NodeTypePermission != NodeTypePermission.Delete;
                     }
@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.Security
                     //class to expose an interface along the lines of allowNodeType(). 
                     //If we come across additonal exception cases such as this, we can 
                     //apply such a strategy.
-                    if( ( null != PropType ) && ( ObjectClass == NbtObjectClass.UserClass ) )
+                    if( ( null != PropType ) && ( ObjectClass == CswEnumNbtObjectClass.UserClass ) )
                     {
 
                         CswNbtObjClassUser CswNbtObjClassUser = _CswNbtResources.Nodes[_CswNbtUser.UserId];
@@ -806,7 +806,7 @@ namespace ChemSW.Nbt.Security
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
-                    if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
+                    if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
                     {
 
                         CswNbtObjClassContainer CswNbtObjClassContainer = Node;

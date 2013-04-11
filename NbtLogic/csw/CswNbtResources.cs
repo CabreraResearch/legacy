@@ -698,7 +698,7 @@ namespace ChemSW.Nbt
         public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
         {
             // Find any matching mail reports
-            CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp TargetTypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType );
             CswNbtMetaDataObjectClassProp EventOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event );
             CswNbtMetaDataObjectClassProp EnabledOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Enabled );
@@ -1050,7 +1050,7 @@ namespace ChemSW.Nbt
         {
             if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
             {
-                CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 if( null != locationOC )
                 {
                     CswNbtMetaDataObjectClassProp locationOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
@@ -1089,7 +1089,7 @@ namespace ChemSW.Nbt
                     CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( NewValue ) );
 
                     CswNbtMetaDataNodeTypeProp EquipmentLocationNTP = null;
-                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
                     if( null != EquipmentOC )
                     {
                         CswNbtMetaDataNodeType EquipmentNT = EquipmentOC.FirstNodeType;
@@ -1100,7 +1100,7 @@ namespace ChemSW.Nbt
                     }
 
                     CswNbtMetaDataNodeTypeProp AssemblyLocationNTP = null;
-                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
                     if( null != AssemblyOC )
                     {
                         CswNbtMetaDataNodeType AssemblyNT = AssemblyOC.FirstNodeType;

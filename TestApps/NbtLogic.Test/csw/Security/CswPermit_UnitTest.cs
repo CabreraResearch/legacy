@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Test.Security
         /// </summary>
         private void _InitMetaData()
         {
-            _GenericOc = _TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass );
+            _GenericOc = _TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass );
 
             _SprocketNt = _TestData.CswNbtResources.MetaData.getNodeTypeFirstVersion( "CswPermit Sprocket" );
             if( null == _SprocketNt )

@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.WebServices
                 //case NbtObjectClass.ContainerClass:
                 //    Ret["action"] = CswNbtActionName.Receiving.ToString();
                 //    break;
-                case NbtObjectClass.MaterialClass:
+                case CswEnumNbtObjectClass.MaterialClass:
                     Ret["action"] = CswNbtActionName.Create_Material.ToString();
                     break;
                 default:

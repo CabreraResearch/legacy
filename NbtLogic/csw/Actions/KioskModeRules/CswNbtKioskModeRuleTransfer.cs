@@ -40,12 +40,12 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            CswNbtObjClassContainer containerNode = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
 
             if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerNode.NodeType ) )
             {
-                CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
-                CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( NbtObjectClass.UserClass, OpData.Field1.Value, true );
+                CswNbtObjClassContainer containerToTransfer = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+                CswNbtObjClassUser newTransferOwner = _getNodeByBarcode( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
                 containerToTransfer.TransferContainer( newTransferOwner );
                 containerToTransfer.postChanges( false );
                 CswNbtObjClassLocation newLocationNode = _CswNbtResources.Nodes[newTransferOwner.DefaultLocationId];
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         private bool _validateUser( ref OperationData OpData )
         {
             bool ret = false;
-            ICswNbtTree tree = _getTree( NbtObjectClass.UserClass, OpData.Field1.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 ret = true;
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool ret = false;
 
-            ICswNbtTree tree = _getTree( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 ret = true;

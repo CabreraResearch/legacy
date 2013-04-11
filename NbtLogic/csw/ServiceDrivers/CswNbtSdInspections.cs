@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public CswNbtSdInspections( CswNbtResources Resources, CswEnumNbtSystemViewName ViewName )
         {
             _CswNbtResources = Resources;
-            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
             _NbtSystemView = new CswNbtActSystemViews( _CswNbtResources,
                                                        ViewName,
                                                        _InspectionDesignOc
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public CswNbtSdInspections( CswNbtResources Resources, CswEnumNbtSystemViewName ViewName, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> Inspections )
         {
             _CswNbtResources = Resources;
-            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
             _NbtSystemView = new CswNbtActSystemViews( _CswNbtResources,
                                                        ViewName,
                                                        _InspectionDesignOc
@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return new CswDateTime( _CswNbtResources, Date );
         }
 
-        private void _addSystemViewPropFilter( NbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
+        private void _addSystemViewPropFilter( CswEnumNbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
         {
             if( ObjectClass != CswNbtResources.UnknownEnum )
             {
@@ -390,8 +390,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             //In case we were provided valid dates, grab just the Day @midnight
             Start = Start.Date;
             End = End.Date;
-            _addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            _addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
 
 
             return getInspectionsAndDesigns();
@@ -422,7 +422,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyLocation );
             }
-            _addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
             return getInspectionsAndDesigns();
         }
 
@@ -539,7 +539,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                 )
                                            )
                                         {
-                                            _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+                                            _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
                                             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, _InspectionDesignOc, InspectionNode );
                                             CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( ButtonNtp );
                                             NbtObjClass.triggerOnButtonClick( ButtonData );

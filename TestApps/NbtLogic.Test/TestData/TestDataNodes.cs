@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.Test
             CswNbtNode ControlZoneNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Control Zone" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CswNbtMetaDataNodeTypeProp NameNTP = _CswNbtResources.MetaData.getNodeTypeProp( ControlZoneNode.NodeTypeId, "Name" );
             ControlZoneNode.Properties[NameNTP].AsText.Text = Name;
-            CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
+            CswNbtMetaDataObjectClass FCEASOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
             foreach ( CswNbtObjClassFireClassExemptAmountSet DefaultFireClassSet in FCEASOC.getNodes( false, false ) )
             {
                 if( DefaultFireClassSet.SetName.Text == FireClassSetName )
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", Tristate isLocked = Tristate.False, Tristate isArchived = Tristate.False )
         {
-            CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswPrimaryKey RoleId = RoleOc.getNodeIdAndNames( false, false ).Select( RoleIds => RoleIds.Key ).FirstOrDefault();
 
             CswNbtObjClassUser NewUser = CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "User" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: true );

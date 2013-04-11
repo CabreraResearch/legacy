@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             foreach( CswNbtObjClassEquipmentAssembly assemblyNode in assemblyOC.getNodes( false, false, false, true ) )
             {
                 assemblyNode.Barcode.setBarcodeValue();

@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Actions
             {
                 _ThisUser = _CswNbtResources.CurrentNbtUser;
             }
-            _RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            _RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
         }
 
         #endregion Constructor
@@ -261,7 +261,7 @@ namespace ChemSW.Nbt.Actions
                 RootVr.NodeIdsToFilterIn.Add( _CurrentRequestNode.NodeId );
             }
 
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
@@ -325,7 +325,7 @@ namespace ChemSW.Nbt.Actions
             Ret.ViewName = SubmittedItemsViewName;
             Ret.GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Request;
 
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
@@ -401,7 +401,7 @@ namespace ChemSW.Nbt.Actions
                 GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Name
             };
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
 
             CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, false );
 
@@ -431,7 +431,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView Ret = getAllRecurringRequestsItemsView();
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
 
             //We'll use the Current cart for both pending and recurring items and trust the filters to keep them separate
@@ -447,7 +447,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView Ret = getAllRecurringRequestsItemsView( AddRunTimeFilters: false );
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
 
             Ret.AddViewPropertyAndFilter( RequestItemRel,
@@ -470,7 +470,7 @@ namespace ChemSW.Nbt.Actions
 
             //Unlike other Request Items, Recurring requests are not tied to a Request, so they don't have a Name.
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
 
             CswNbtViewProperty Vp3 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
@@ -536,7 +536,7 @@ namespace ChemSW.Nbt.Actions
             FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
             Cart.FavoriteItemsView = FavoriteItems;
 
-            Cart.CopyableObjectClassId = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialDispenseClass );
+            Cart.CopyableObjectClassId = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
 
             Cart.Counts = new CartCounts();
             if( CalculateCounts )
@@ -585,11 +585,11 @@ namespace ChemSW.Nbt.Actions
             {
                 if( ButtonData.SelectedText == CswNbtObjClassContainer.RequestMenu.Dispense )
                 {
-                    ItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
+                    ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerDispenseClass );
                 }
                 else
                 {
-                    ItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
+                    ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerUpdateClass );
                 }
             }
 
@@ -675,7 +675,7 @@ namespace ChemSW.Nbt.Actions
             if( null == ItemOc )
             {
                 //TODO: This will need to be conditional when Material Create is added
-                ItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+                ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             }
 
             if( null != ItemOc )
@@ -743,7 +743,7 @@ namespace ChemSW.Nbt.Actions
 
         private void _setRequestItemSizesView( CswNbtViewId SizeViewId, CswPrimaryKey SizeMaterialId )
         {
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( SizeViewId );
             SizeView.Root.ChildRelationships.Clear();

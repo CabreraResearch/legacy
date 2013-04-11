@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
             string BlobNodeTypeName = "TestForBlobNodeType";
             string BlobPropName = "The Blob";
             CswNbtMetaData CswNbtMetaData = _CswNbtSchemaModTrnsctn.MetaData;
-            CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( NbtObjectClass.GenericClass );
+            CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass );
             CswNbtMetaDataNodeType BlobNodeTypeNodeType = CswNbtMetaData.makeNewNodeType( GenericObjectClass.ObjectClassId, BlobNodeTypeName, string.Empty );
             CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewProp( BlobNodeTypeNodeType, CswEnumNbtFieldType.Image, BlobPropName, string.Empty );
 

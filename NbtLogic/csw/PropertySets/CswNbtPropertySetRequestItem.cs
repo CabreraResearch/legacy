@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass ); }
         }
 
         /// <summary>
@@ -187,14 +187,14 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        public static Collection<NbtObjectClass> Members()
+        public static Collection<CswEnumNbtObjectClass> Members()
         {
-            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>
+            Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>
             {
-                NbtObjectClass.RequestContainerDispenseClass, 
-                NbtObjectClass.RequestContainerUpdateClass, 
-                NbtObjectClass.RequestMaterialCreateClass, 
-                NbtObjectClass.RequestMaterialDispenseClass
+                CswEnumNbtObjectClass.RequestContainerDispenseClass, 
+                CswEnumNbtObjectClass.RequestContainerUpdateClass, 
+                CswEnumNbtObjectClass.RequestMaterialCreateClass, 
+                CswEnumNbtObjectClass.RequestMaterialDispenseClass
             };
             return Ret;
         }

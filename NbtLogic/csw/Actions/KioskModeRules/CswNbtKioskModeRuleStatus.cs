@@ -48,10 +48,10 @@ namespace ChemSW.Nbt.Actions.KioskMode
             string statusPropName = "Status";
             switch( OpData.Field2.FoundObjClass )
             {
-                case NbtObjectClass.EquipmentClass:
+                case CswEnumNbtObjectClass.EquipmentClass:
                     statusPropName = CswNbtObjClassEquipment.PropertyName.Status;
                     break;
-                case NbtObjectClass.EquipmentAssemblyClass:
+                case CswEnumNbtObjectClass.EquipmentAssemblyClass:
                     statusPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status;
                     break;
             }
@@ -87,14 +87,14 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
             Collection<CswNbtMetaDataNodeTypeProp> statusNTPs = new Collection<CswNbtMetaDataNodeTypeProp>();
 
-            CswNbtMetaDataObjectClass equipmentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp statusOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Status );
             foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusOCP.getNodeTypeProps() )
             {
                 statusNTPs.Add( statusNTP );
             }
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             statusOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Status );
             foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusOCP.getNodeTypeProps() )
             {
@@ -163,15 +163,15 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
                     if( barcodeValue.Equals( OpData.Field2.Value ) )
                     {
-                if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
+                if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                 {
-                    OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentAssemblyClass;
+                    OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentAssemblyClass;
                     ret = true;
                 }
 
-                if( ObjClass == NbtObjectClass.EquipmentClass )
+                if( ObjClass == CswEnumNbtObjectClass.EquipmentClass )
                 {
-                    OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentClass;
+                    OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentClass;
                     ret = true;
                 }
                     }
@@ -181,8 +181,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
             if( string.IsNullOrEmpty( OpData.Field2.FoundObjClass ) )
             {
-                string StatusMsg = "Could not find " + NbtObjectClass.EquipmentClass.Replace( "Class", "" );
-                StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" ) + " with barcode " + OpData.Field2.Value;
+                string StatusMsg = "Could not find " + CswEnumNbtObjectClass.EquipmentClass.Replace( "Class", "" );
+                StatusMsg += " or " + CswEnumNbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" ) + " with barcode " + OpData.Field2.Value;
 
                 OpData.Field2.StatusMsg = StatusMsg;
                 OpData.Field2.ServerValidated = false;

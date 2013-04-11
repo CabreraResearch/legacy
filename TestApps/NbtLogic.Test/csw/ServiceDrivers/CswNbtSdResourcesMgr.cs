@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
             {
                 //ICswResources IResources = Resources;
                 //CswNbtResources NbtResources = (CswNbtResources) IResources;
-                CswNbtMetaDataObjectClass UserOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 CswNbtMetaDataNodeType UserNt = UserOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != UserNt )
                 {
@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
             CswPrimaryKey Ret = null;
             if( false == string.IsNullOrEmpty( RoleName ) )
             {
-                CswNbtMetaDataObjectClass RoleOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+                CswNbtMetaDataObjectClass RoleOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
                 CswNbtMetaDataNodeType RoleNt = RoleOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != RoleNt )
                 {

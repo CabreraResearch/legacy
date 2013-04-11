@@ -237,7 +237,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // Reports
-                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
                 CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
                 ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
                 ICswNbtTree ReportTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, ReportView, true, false, false );

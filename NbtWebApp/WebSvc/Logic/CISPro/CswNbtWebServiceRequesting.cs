@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.WebServices
         public static void getRequestMaterialCreate( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtMetaDataObjectClass RequestMaterialCreateOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass );
+            CswNbtMetaDataObjectClass RequestMaterialCreateOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass );
             CswNbtMetaDataNodeType FirstNodeType = RequestMaterialCreateOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != FirstNodeType )
             {
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                CswNbtMetaDataObjectClass RequestOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+                CswNbtMetaDataObjectClass RequestOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
                 CswNbtMetaDataNodeType RequestNt = RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != RequestNt )
                 {

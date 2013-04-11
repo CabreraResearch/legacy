@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             CswNbtMetaDataObjectClassProp barcodeOCP = (CswNbtMetaDataObjectClassProp) assemblyOC.getBarcodeProperty();
             if( null == barcodeOCP )
             {
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp barcodeOCP = (CswNbtMetaDataObjectClassProp) equipmentOC.getBarcodeProperty();
             if( null == barcodeOCP )
             {
@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, Case );
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
                 // Add property to material object class
@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp locationOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Location );
             if( null == locationOCP )
             {
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.Schema
                 } );
             }
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             locationOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Location );
             if( null == locationOCP )
             {
@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             CswNbtMetaDataObjectClassProp statusOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Status );
             if( null == statusOCP )
             {
@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( BlameMe );
 
-            CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp instructionsOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Instructions );
             if( null == instructionsOCP )
             {
@@ -256,7 +256,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+            CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
             if( null != FireClassExemptAmountOC )
             {
                 CswNbtMetaDataObjectClassProp HazardClassOCP = FireClassExemptAmountOC.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
@@ -343,7 +343,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         private void _createMaterialC3SyncDataProp( UnitOfBlame Blame )
         {
             // Add the C3SyncData property to the Material Object Class
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
                 CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
@@ -375,7 +375,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
 
             _acceptBlame( Blame );
-            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
             if( null != InventoryGroupOC )
             {
                 CswNbtMetaDataObjectClassProp AssignLocationButtonOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryGroupOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
@@ -394,7 +394,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp HazardClassOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.HazardClasses );
             if( null == HazardClassOCP )
             {

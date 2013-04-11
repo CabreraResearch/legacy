@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass ); }
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassGeneric( CswNbtNode Node )
         {
             CswNbtObjClassGeneric ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.GenericClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.GenericClass ) )
             {
                 ret = (CswNbtObjClassGeneric) Node.ObjClass;
             }

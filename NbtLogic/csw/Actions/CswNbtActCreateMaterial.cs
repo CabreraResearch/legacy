@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Actions
             public NewMaterial( CswNbtResources CswNbtResources, CswNbtNode Node )
             {
                 _NbtResources = CswNbtResources;
-                if( Node.ObjClass.ObjectClass.ObjectClass != NbtObjectClass.MaterialClass )
+                if( Node.ObjClass.ObjectClass.ObjectClass != CswEnumNbtObjectClass.MaterialClass )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
                 }
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
                     }
-                    if( PotentialNt.getObjectClass().ObjectClass != NbtObjectClass.MaterialClass )
+                    if( PotentialNt.getObjectClass().ObjectClass != CswEnumNbtObjectClass.MaterialClass )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Cannot make a Material for Object Class: " + PotentialNt.getObjectClass().ObjectClass + "." );
                     }
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.Actions
                 set
                 {
                     CswNbtObjClassVendor PotentialSupplier = _NbtResources.Nodes[value];
-                    if( null == PotentialSupplier || PotentialSupplier.ObjectClass.ObjectClass != NbtObjectClass.VendorClass )
+                    if( null == PotentialSupplier || PotentialSupplier.ObjectClass.ObjectClass != CswEnumNbtObjectClass.VendorClass )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Supplier.", "Provided SupplierId was invalid." );
                     }
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.Actions
             //Check if the vendor needs to be created
             if( false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( SupplierId ) ) )
             {
-                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
                 if( null != VendorOC )
                 {
                     CswNbtMetaDataNodeType VendorNT = VendorOC.FirstNodeType;
@@ -413,7 +413,7 @@ namespace ChemSW.Nbt.Actions
                 CswPrimaryKey pk = MaterialId;
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
-                    CswNbtMetaDataObjectClass sizeOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClass sizeOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                     CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
 
                     CswNbtView sizesView = new CswNbtView( CswNbtResources );
@@ -722,7 +722,7 @@ namespace ChemSW.Nbt.Actions
         public CswNbtView getMaterialSuppliersView()
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass VendorOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass VendorOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
             CswNbtViewRelationship SupplierVr = Ret.AddViewRelationship( VendorOc, IncludeDefaultFilters: true );
 
             //This matches the MLM module event logic, but it may need adjustment down the line

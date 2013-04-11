@@ -147,7 +147,7 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
             #region Container View Inventory Group Permission
-            if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerClass )
+            if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass )
             {
 
                 CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
@@ -176,7 +176,7 @@ namespace ChemSW.Nbt
 
             if( canView )
             {
-                CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                 if( null != ContainerClass )
                 {
                     CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
@@ -197,7 +197,7 @@ namespace ChemSW.Nbt
 
             if( canView )
             {
-                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
                 if( null != MaterialClass )
                 {
                     CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive );

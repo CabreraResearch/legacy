@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
         {
             _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Login_Data, false, String.Empty, "System" );
 
-            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, true ) )
             {
                 bool CanViewLoginData = ( RoleNode.NodeName == "Administrator" || RoleNode.NodeName == "chemsw_admin_role" );

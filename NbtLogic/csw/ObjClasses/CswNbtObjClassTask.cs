@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.TaskClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.TaskClass ); }
         }
 
         //BZ 10247
@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassTask( CswNbtNode Node )
         {
             CswNbtObjClassTask ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.TaskClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.TaskClass ) )
             {
                 ret = (CswNbtObjClassTask) Node.ObjClass;
             }
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( EquipmentOrAssemblyNode != null )
                 {
                     CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
-                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == NbtObjectClass.EquipmentClass )
+                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.EquipmentClass )
                     {
                         CswNbtObjClassEquipment EquipmentNodeAsEquipment = (CswNbtObjClassEquipment) EquipmentOrAssemblyNode;
                         foreach( string YValue in EquipmentNodeAsEquipment.Parts.YValues )
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 NewYValues.Add( YValue );
                         }
                     }
-                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == NbtObjectClass.EquipmentAssemblyClass )
+                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                     {
                         CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = (CswNbtObjClassEquipmentAssembly) EquipmentOrAssemblyNode;
                         foreach( string YValue in AssemblyNodeAsAssembly.AssemblyParts.YValues )

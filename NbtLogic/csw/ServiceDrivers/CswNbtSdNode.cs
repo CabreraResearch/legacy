@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
 
-            private NbtObjectClass _ObjectClass;
+            private CswEnumNbtObjectClass _ObjectClass;
 
             [DataMember( IsRequired = false )]
             public string ObjectClass
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 set { _ObjectClass = value; }
             }
 
-            private NbtObjectClass _RelatedToObjectClass;
+            private CswEnumNbtObjectClass _RelatedToObjectClass;
 
             [DataMember( IsRequired = false )]
             public string RelatedToObjectClass
@@ -507,7 +507,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         if( false == string.IsNullOrEmpty( Request.RelatedToObjectClass ) &&
                            CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
                         {
-                            NbtObjectClass RealRelatedObjectClass = Request.RelatedToObjectClass;
+                            CswEnumNbtObjectClass RealRelatedObjectClass = Request.RelatedToObjectClass;
 
                             CswNbtNode RelatedNode = _CswNbtResources.Nodes[Request.RelatedNodeId];
                             if( null != RelatedNode )

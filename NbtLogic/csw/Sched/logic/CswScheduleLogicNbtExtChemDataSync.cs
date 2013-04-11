@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.Sched
 
             // Create the view
             CswNbtView MaterialsToBeSyncedView = new CswNbtView( CswNbtResources );
-            CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtViewRelationship ParentRelationship = MaterialsToBeSyncedView.AddViewRelationship( MaterialOC, true );
 
             CswNbtMetaDataObjectClassProp CasNoOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );

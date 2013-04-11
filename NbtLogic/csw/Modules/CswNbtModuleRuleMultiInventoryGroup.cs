@@ -23,7 +23,7 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.EnableModule( CswNbtModuleName.Containers );
             }
 
-            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.InventoryGroupClass );
+            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
             QuotasAct.SetQuotaForObjectClass( invGrpOC_Id, Int32.MinValue, false );
 
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt
         public override void OnDisable()
         {
 
-            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.InventoryGroupClass );
+            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
             int InvGroupsCount = QuotasAct.GetNodeCountForObjectClass( invGrpOC_Id );
             if( InvGroupsCount > 1 && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )

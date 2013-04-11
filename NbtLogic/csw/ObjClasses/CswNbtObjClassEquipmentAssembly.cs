@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass ); }
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassEquipmentAssembly( CswNbtNode Node )
         {
             CswNbtObjClassEquipmentAssembly ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.EquipmentAssemblyClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.EquipmentAssemblyClass ) )
             {
                 ret = (CswNbtObjClassEquipmentAssembly) Node.ObjClass;
             }
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
             CopiedAssemblyNode.postChanges( true, true );
 
             // Copy all Equipment
-            CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );
             CswNbtViewProperty AssemblyProperty = EquipmentView.AddViewProperty( EquipmentRelationship, EquipmentObjectClass.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly ) );

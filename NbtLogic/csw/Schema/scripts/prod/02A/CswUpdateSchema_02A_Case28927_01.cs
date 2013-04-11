@@ -32,11 +32,11 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.CISPro.ToString(), CswNbtActionName.Assign_Inventory_Groups );
 
             //Make inventory group property required
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             if( null != LocationOC )
             {
 
-                CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+                CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
                 if( null != InventoryGroupOC )
                 {
                     CswNbtMetaDataObjectClassProp InventoryGroupOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );

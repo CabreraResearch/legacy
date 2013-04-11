@@ -586,7 +586,7 @@
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeProp.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeTab.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataObjectClass.cs" />
-    <Compile Include="csw\MetaData\Infr\CswNbtMetaDataObjectClassName.cs" />
+    <Compile Include="csw\MetaData\Infr\CswEnumNbtObjectClass.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassProp.cs" />
     <Compile Include="csw\MetaData\Infr\CswNbtMetaDataResources.cs" />
     <Compile Include="csw\MetaData\Infr\CswNbtMetaDataTableCache.cs" />

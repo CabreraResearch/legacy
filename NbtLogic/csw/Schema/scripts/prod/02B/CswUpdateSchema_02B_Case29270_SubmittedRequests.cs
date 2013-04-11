@@ -29,13 +29,13 @@ namespace ChemSW.Nbt.Schema
             Ret.Category = "Requests";
             Ret.ViewMode = NbtViewRenderingMode.Grid;
 
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( Member );
                 CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
 
                 Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ), CswNbtPropertySetRequestItem.Statuses.Submitted, ShowInGrid: false, ShowAtRuntime: true );
-                if( MemberOc.ObjectClass == NbtObjectClass.RequestMaterialDispenseClass )
+                if( MemberOc.ObjectClass == CswEnumNbtObjectClass.RequestMaterialDispenseClass )
                 {
                     Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite ),
                                                   FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,

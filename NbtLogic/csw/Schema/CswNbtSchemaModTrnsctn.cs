@@ -903,7 +903,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public CswNbtMetaDataObjectClass createObjectClass( NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
+        public CswNbtMetaDataObjectClass createObjectClass( CswEnumNbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
         {
             if( ObjectClass == CswNbtResources.UnknownEnum )
             {

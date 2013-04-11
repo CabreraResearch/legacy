@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     //Reassign required relationships which may be tied to Demo data
                     CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
-                    CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                    CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                     foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
                     {
                         if( CswTools.IsPrimaryKey( User.WorkUnitProperty.RelatedNodeId ) )
@@ -377,14 +377,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     switch( RelatedNode.ObjClass.ObjectClass.ObjectClass )
                     {
-                        case NbtObjectClass.ContainerClass:
+                        case CswEnumNbtObjectClass.ContainerClass:
                             CswNbtObjClassContainer NodeAsContainer = Node;
                             if( null != NodeAsContainer )
                             {
                                 SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
                             }
                             break;
-                        case NbtObjectClass.RequestContainerDispenseClass:
+                        case CswEnumNbtObjectClass.RequestContainerDispenseClass:
                             CswNbtObjClassRequestContainerDispense NodeAsCd = Node;
                             if( null != NodeAsCd )
                             {
@@ -398,7 +398,7 @@ namespace ChemSW.Nbt.WebServices
                                 }
                             }
                             break;
-                        case NbtObjectClass.RequestMaterialDispenseClass:
+                        case CswEnumNbtObjectClass.RequestMaterialDispenseClass:
                             CswNbtObjClassRequestMaterialDispense NodeAsMd = Node;
                             if( null != NodeAsMd )
                             {
@@ -443,7 +443,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
-                    CswNbtMetaDataObjectClass sizeOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClass sizeOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                     CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
 
                     CswNbtView sizesView = new CswNbtView( NbtResources );

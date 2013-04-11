@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass ); }
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassFireClassExemptAmount( CswNbtNode Node )
         {
             CswNbtObjClassFireClassExemptAmount ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.FireClassExemptAmountClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.FireClassExemptAmountClass ) )
             {
                 ret = (CswNbtObjClassFireClassExemptAmount) Node.ObjClass;
             }
