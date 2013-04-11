@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpUpdateRegulatoryListsForMaterials : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.UpdateRegulatoryListsForMaterials;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials;
 
         public CswNbtBatchOpUpdateRegulatoryListsForMaterials( CswNbtResources CswNbtResources )
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryListsForMaterials )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials )
             {
                 RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
                 //update percent done based on how many Materials have been processed
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryListsForMaterials )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials )
                 {
                     BatchNode.start();
                     RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;

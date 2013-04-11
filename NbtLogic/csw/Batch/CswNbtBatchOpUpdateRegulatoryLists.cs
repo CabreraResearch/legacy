@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpUpdateRegulatoryLists : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.UpdateRegulatoryLists;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.UpdateRegulatoryLists;
 
         public CswNbtBatchOpUpdateRegulatoryLists( CswNbtResources CswNbtResources )
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryLists )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryLists )
             {
                 RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
                 ret = ( ( BatchData.totalCASNos - BatchData.CASNos.Count ) / BatchData.totalCASNos ) * 100;
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryLists )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryLists )
                 {
                     BatchNode.start();
                     RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;

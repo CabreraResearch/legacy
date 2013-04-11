@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpMobileMultiOpUpdates: ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MobileMultiOpUpdates;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MobileMultiOpUpdates;
 
         public CswNbtBatchOpMobileMultiOpUpdates( CswNbtResources CswNbtResources )
         {
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.SyncLocation )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.SyncLocation )
             {
                 MobileMultiOpUpdatesBatchData BatchData = new MobileMultiOpUpdatesBatchData( BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Batch
 
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MobileMultiOpUpdates )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MobileMultiOpUpdates )
                 {
                     BatchNode.start();
 

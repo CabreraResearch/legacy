@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpContainerReconciliationActions : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.ContainerReconciliationActions;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.ContainerReconciliationActions;
 
         public CswNbtBatchOpContainerReconciliationActions( CswNbtResources CswNbtResources )
         {
@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double PercentDone = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.ContainerReconciliationActions )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.ContainerReconciliationActions )
             {
                 ContainerReconciliationActionsBatchData BatchData = BatchNode.BatchData.Text;
                 PercentDone = CswConvert.ToDouble( BatchData.TotalContainerLocations - BatchData.ContainerLocationIds.Count )
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.ContainerReconciliationActions )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.ContainerReconciliationActions )
                 {
                     BatchNode.start();
                     ContainerReconciliationActionsBatchData BatchData = BatchNode.BatchData.Text;

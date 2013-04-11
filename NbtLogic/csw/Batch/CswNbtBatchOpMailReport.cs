@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpMailReport : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MailReport;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MailReport;
         private Int32 NodeLimit = 10;   // TODO: change me in Titania to use NodesProcessedPerIteration
 
         public CswNbtBatchOpMailReport( CswNbtResources CswNbtResources )
@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MailReport )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MailReport )
             {
                 MailReportBatchData BatchData = new MailReportBatchData( _CswNbtResources, BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MailReport )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MailReport )
                 {
                     BatchNode.start();
                     MailReportBatchData BatchData = new MailReportBatchData( _CswNbtResources, BatchNode.BatchData.Text );

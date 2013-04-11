@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpExpiredContainers : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.ExpiredContainers;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.ExpiredContainers;
 
         public CswNbtBatchOpExpiredContainers( CswNbtResources CswNbtResources )
         {
@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.ExpiredContainers )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.ExpiredContainers )
             {
                 ExpiredContainerBatchData BatchData = BatchNode.BatchData.Text;
                 return ( ( BatchData.expiredContainerIDs.Count / BatchData.totalExpiredContainers ) * 100 );
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.ExpiredContainers )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.ExpiredContainers )
                 {
                     BatchNode.start();
                     ExpiredContainerBatchData BatchData = BatchNode.BatchData.Text;

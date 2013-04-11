@@ -107,10 +107,11 @@
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleDispense.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleMove.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleFactory.cs" />
-    <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleName.cs" />
+    <Compile Include="csw\Actions\KioskModeRules\CswEnumNbtKioskModeRuleName.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRuleStatus.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeDataContracts.cs" />
     <Compile Include="csw\Actions\KioskModeRules\CswNbtKioskModeRule.cs" />
+    <Compile Include="csw\Batch\CswEnumNbtBatchOpStatus.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\ChemCatCentral\CswNbtC3ClientManager.cs" />
@@ -1083,7 +1084,7 @@
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
     <Compile Include="csw\Actions\CswNbtActRequesting.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
-    <Compile Include="csw\Batch\CswNbtBatchEnums.cs" />
+    <Compile Include="csw\Batch\CswEnumNbtBatchOpName.cs" />
     <Compile Include="csw\Batch\CswNbtBatchManager.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpExpiredContainers.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpFutureNodes.cs" />

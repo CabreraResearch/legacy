@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpMolFingerprints : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MolFingerprints;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MolFingerprints;
 
         public CswNbtBatchOpMolFingerprints( CswNbtResources CswNbtResources )
         {
@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MolFingerprints )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MolFingerprints )
             {
                 MolFingerprintBatchData BatchData = BatchNode.BatchData.Text;
                 return ( ( (double) ( BatchData.totalNodes - BatchData.nodeIds.Count ) / BatchData.totalNodes ) * 100 );
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MolFingerprints )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MolFingerprints )
                 {
                     BatchNode.start();
                     MolFingerprintBatchData BatchData = BatchNode.BatchData.Text;

@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpMultiEdit : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MultiEdit;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MultiEdit;
 
         public CswNbtBatchOpMultiEdit( CswNbtResources CswNbtResources )
         {
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MultiEdit )
             {
                 MultiEditBatchData BatchData = new MultiEditBatchData( BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MultiEdit )
                 {
                     BatchNode.start();
 

@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Test.Sched
             CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
             {
-                if( BatchOpNode.OpName.Value == NbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
+                if( BatchOpNode.OpName.Value == CswEnumNbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
                 {
                     Assert.Fail( "Unexpected BatchOp created." );
                 }
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Test.Sched
             bool BatchOpFound = false;
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
             {
-                if( BatchOpNode.OpName.Value == NbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
+                if( BatchOpNode.OpName.Value == CswEnumNbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
                 {
                     BatchOpFound = true;
                 }

@@ -64,11 +64,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void start()
         {
-            if( NbtBatchOpStatus.Pending.ToString() == Status.Value )
+            if( CswEnumNbtBatchOpStatus.Pending.ToString() == Status.Value )
             {
                 //appendToLog( "Operation started." );
                 StartDate.DateTimeValue = DateTime.Now;
-                Status.Value = NbtBatchOpStatus.Processing.ToString();
+                Status.Value = CswEnumNbtBatchOpStatus.Processing.ToString();
                 postChanges( false );
             }
         }
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //appendToLog( "Operation Complete." );
             EndDate.DateTimeValue = DateTime.Now;
-            Status.Value = NbtBatchOpStatus.Completed.ToString();
+            Status.Value = CswEnumNbtBatchOpStatus.Completed.ToString();
             postChanges( false );
         }
 
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Message += ex.StackTrace;
             } 
             appendToLog( Message );
-            Status.Value = NbtBatchOpStatus.Error.ToString();
+            Status.Value = CswEnumNbtBatchOpStatus.Error.ToString();
             postChanges( false );
         }
 
@@ -191,11 +191,11 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.OpName] );
             }
         }
-        public NbtBatchOpName OpNameValue
+        public CswEnumNbtBatchOpName OpNameValue
         {
             get
             {
-                return (NbtBatchOpName) OpName.Value;
+                return (CswEnumNbtBatchOpName) OpName.Value;
             }
         }
         public CswNbtNodePropNumber PercentDone

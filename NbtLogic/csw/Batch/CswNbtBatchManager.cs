@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Batch
         /// Makes a new batch operation instance in the database
         /// </summary>
         public static CswNbtObjClassBatchOp makeNew( CswNbtResources CswNbtResources,
-                                                     NbtBatchOpName BatchOpName,
+                                                     CswEnumNbtBatchOpName BatchOpName,
                                                      string BatchData,
                                                      CswPrimaryKey UserId = null,
                                                      Double Priority = Double.NaN )
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Batch
                     {
                         BatchNode.Priority.Value = Priority;
                     }
-                    BatchNode.Status.Value = NbtBatchOpStatus.Pending.ToString();
+                    BatchNode.Status.Value = CswEnumNbtBatchOpStatus.Pending.ToString();
                     BatchNode.User.RelatedNodeId = UserId ?? CswNbtResources.CurrentNbtUser.UserId;
 
                     BatchNode.postChanges( true );
@@ -83,9 +83,9 @@ namespace ChemSW.Nbt.Batch
             CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
             CswNbtViewRelationship BatchVR = NextBatchOpView.AddViewRelationship( BatchOpOC, false );
             CswNbtViewProperty StatusVP = NextBatchOpView.AddViewProperty( BatchVR, StatusOCP );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Completed.ToString() );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Error.ToString() );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Unknown.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Completed.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Error.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Unknown.ToString() );
             CswNbtViewProperty PriorityVP = NextBatchOpView.AddViewProperty( BatchVR, PriorityOCP );
             NextBatchOpView.setSortProperty( PriorityVP, NbtViewPropertySortMethod.Descending );
 
@@ -96,53 +96,53 @@ namespace ChemSW.Nbt.Batch
                 CswNbtNode Node = BatchOpTree.getNodeForCurrentPosition();
                 CswNbtObjClassBatchOp BatchNode = Node;
 
-                NbtBatchOpName OpName = BatchNode.OpNameValue;
+                CswEnumNbtBatchOpName OpName = BatchNode.OpNameValue;
                 ICswNbtBatchOp op = null;
-                if( OpName == NbtBatchOpName.FutureNodes )
+                if( OpName == CswEnumNbtBatchOpName.FutureNodes )
                 {
                     op = new CswNbtBatchOpFutureNodes( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.MultiEdit )
+                else if( OpName == CswEnumNbtBatchOpName.MultiEdit )
                 {
                     op = new CswNbtBatchOpMultiEdit( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.InventoryLevel )
+                else if( OpName == CswEnumNbtBatchOpName.InventoryLevel )
                 {
                     op = new CswNbtBatchOpInventoryLevels( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.MultiDelete )
+                else if( OpName == CswEnumNbtBatchOpName.MultiDelete )
                 {
                     op = new CswNbtBatchOpMultiDelete( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.MailReport )
+                else if( OpName == CswEnumNbtBatchOpName.MailReport )
                 {
                     op = new CswNbtBatchOpMailReport( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.UpdateRegulatoryLists )
+                else if( OpName == CswEnumNbtBatchOpName.UpdateRegulatoryLists )
                 {
                     op = new CswNbtBatchOpUpdateRegulatoryLists( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.UpdateRegulatoryListsForMaterials )
+                else if( OpName == CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials )
                 {
                     op = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.ExpiredContainers )
+                else if( OpName == CswEnumNbtBatchOpName.ExpiredContainers )
                 {
                     op = new CswNbtBatchOpExpiredContainers( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.MolFingerprints )
+                else if( OpName == CswEnumNbtBatchOpName.MolFingerprints )
                 {
                     op = new CswNbtBatchOpMolFingerprints( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.ContainerReconciliationActions )
+                else if( OpName == CswEnumNbtBatchOpName.ContainerReconciliationActions )
                 {
                     op = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.SyncLocation )
+                else if( OpName == CswEnumNbtBatchOpName.SyncLocation )
                 {
                     op = new CswNbtBatchOpSyncLocation( CswNbtResources );
                 }
-                else if( OpName == NbtBatchOpName.MobileMultiOpUpdates )
+                else if( OpName == CswEnumNbtBatchOpName.MobileMultiOpUpdates )
                 {
                     op = new CswNbtBatchOpMobileMultiOpUpdates( CswNbtResources );
                 }
