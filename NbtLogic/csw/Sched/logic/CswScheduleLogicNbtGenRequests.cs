@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Sched
                                 if( null != CurrentRequestItem && // The Request Item isn't null
                                     CurrentRequestItem.IsRecurring.Checked == CswEnumTristate.True && // This is actually a recurring request
                                     false == CurrentRequestItem.RecurringFrequency.Empty && // The recurring frequency has been defined
-                                    CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswRateInterval.RateIntervalType.Hourly || // Recurring on any frequency other than hourly
+                                    CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswEnumRateIntervalType.Hourly || // Recurring on any frequency other than hourly
                                     ( CurrentRequestItem.NextReorderDate.DateTimeValue.Date <= DateTime.Today && // Recurring no more than once per hour
                                       DateTime.Now.AddHours( 1 ).Subtract( CurrentRequestItem.NextReorderDate.DateTimeValue ).Hours >= 1 ) ) //if we wait until the rule is overdue, then we'll never run more than once per hour.
                                 {

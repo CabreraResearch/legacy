@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.Sched
                                 {
                                     // BZ 7124 - set runtime
                                     if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue &&
-                                        CswRateInterval.RateIntervalType.Hourly != CurrentGenerator.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly generators
+                                        CswEnumRateIntervalType.Hourly != CurrentGenerator.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly generators
                                     {
                                         ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
                                     }

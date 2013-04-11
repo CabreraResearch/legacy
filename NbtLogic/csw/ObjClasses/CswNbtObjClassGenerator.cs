@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
         public void OnDueDateIntervalChange( CswNbtNodeProp Prop )
         {
-            if( DueDateInterval.RateInterval.RateType == CswRateInterval.RateIntervalType.Hourly )
+            if( DueDateInterval.RateInterval.RateType == CswEnumRateIntervalType.Hourly )
             {
                 RunTime.setHidden( value: true, SaveToDb: true );
             }

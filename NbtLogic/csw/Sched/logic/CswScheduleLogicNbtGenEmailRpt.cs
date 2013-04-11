@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.Sched
                                                 // BZ 7866
                                                 if( DateTime.MinValue != ThisDueDateValue )
                                                 {
-                                                    if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly reports
+                                                    if( CswEnumRateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly reports
                                                     {
                                                         // Trim times
                                                         ThisDueDateValue = ThisDueDateValue.Date;
