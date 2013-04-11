@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -69,14 +68,14 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getTimeline" )]
         [Description( "Save changes to scheduled rules" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtSchedServiceTimeLineReturn getTimeline( string Request )
+        public CswNbtSchedServiceTimeLineReturn getTimeline( CswNbtSchedServiceTimeLineRequest Request )
         {
             CswNbtSchedServiceTimeLineReturn Ret = new CswNbtSchedServiceTimeLineReturn();
-            var SvcDriver = new CswWebSvcDriver<CswNbtSchedServiceTimeLineReturn, String>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtSchedServiceTimeLineReturn, CswNbtSchedServiceTimeLineRequest>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceNbtManager.getTimelines,
-                ParamObj : String.Empty
+                ParamObj : Request
                 );
 
             SvcDriver.run();
