@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.Batch
             MailMessage.RecipientDisplayName = FirstName + " " + LastName;
             MailMessage.Subject = Subject;
             MailMessage.Content = MailReportMessage;
-            MailMessage.Format = CswMailMessageBodyFormat.HTML;
+            MailMessage.Format = CswEnumMailMessageBodyFormat.HTML;
 
             if( null != ReportTable )
             {
