@@ -329,13 +329,13 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                         CswConsoleOutput.write( UpdateDescription + ": " );
                         CswSchemaUpdateThread.start();
-                        while( UpdateState.Running == CswSchemaUpdateThread.UpdateState )
+                        while( CswEnumSchemaUpdateState.Running == CswSchemaUpdateThread.UpdateState )
                         {
                             CswConsoleOutput.write( "." );
                             Thread.Sleep( 1000 );
                         }
 
-                        UpdateSucceeded = ( UpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
+                        UpdateSucceeded = ( CswEnumSchemaUpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
 
                         if( UpdateSucceeded )
                         {
