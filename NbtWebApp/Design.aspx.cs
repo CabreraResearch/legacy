@@ -905,7 +905,7 @@ namespace ChemSW.Nbt.WebPages
                     //bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
                     ////We're not using Design mode to configure layouts anymore
-                    //PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, 
+                    //PropToSave.updateLayout( CswEnumNbtLayoutType.Edit, 
                     //    TabId: Tab.TabId, 
                     //    DisplayRow: DisplayRow, 
                     //    DisplayColumn: DisplayColumn, 
@@ -914,11 +914,11 @@ namespace ChemSW.Nbt.WebPages
 
                     //if( SetValueOnAdd )
                     //{
-                    //    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, DisplayRow: DisplayRowAdd, DisplayColumn: DisplayColAdd, DoMove: false );
+                    //    PropToSave.updateLayout( CswEnumNbtLayoutType.Add, TabId: Int32.MinValue, DisplayRow: DisplayRowAdd, DisplayColumn: DisplayColAdd, DoMove: false );
                     //}
                     //else
                     //{
-                    //    PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    //    PropToSave.removeFromLayout( CswEnumNbtLayoutType.Add );
                     //}
                     PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     //PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );

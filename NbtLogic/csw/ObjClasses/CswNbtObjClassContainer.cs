@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != material )
             {
                 CswNbtMetaDataNodeTypeTab materialIdentityTab = material.NodeType.getIdentityTab();
-                bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( material.NodeType, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit ).Contains( material.ViewSDS.NodeTypeProp );
+                bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( material.NodeType, Int32.MinValue, CswEnumNbtLayoutType.Edit ).Contains( material.ViewSDS.NodeTypeProp );
                 ViewSDS.setHidden( isHidden, false );
             }
 

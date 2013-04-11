@@ -314,7 +314,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
             _CswNbtResources.EditMode = NodeEditMode.Add;
 
-            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswEnumNbtLayoutType.Add );
         }
 
         public const string SubmittedItemsViewName = "Submitted Request Items";

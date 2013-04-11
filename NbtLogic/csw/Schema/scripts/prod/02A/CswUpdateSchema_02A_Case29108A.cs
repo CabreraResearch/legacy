@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 barcodeNTP.removeFromAllLayouts();
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit,
                         assemblyNT.NodeTypeId,
                         barcodeNTP,
                         true,

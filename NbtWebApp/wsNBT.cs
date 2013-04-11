@@ -2638,7 +2638,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = LayoutType;
+                    CswEnumNbtLayoutType RealLayoutType = LayoutType;
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal["add"] = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, RealLayoutType );
                 }
@@ -2670,7 +2670,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = LayoutType;
+                    CswEnumNbtLayoutType RealLayoutType = LayoutType;
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     bool ret = ws.addPropertyToLayout( PropId, TabId, RealLayoutType );
                     ReturnVal.Add( new JProperty( "result", ret.ToString().ToLower() ) );
@@ -3103,7 +3103,7 @@ namespace ChemSW.Nbt.WebServices
                 newFeedbackNode.postChanges( false );
 
                 _CswNbtResources.EditMode = NodeEditMode.Add;
-                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ); //DO I REALLY BREAK THIS?
+                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 
                 _deInitResources();

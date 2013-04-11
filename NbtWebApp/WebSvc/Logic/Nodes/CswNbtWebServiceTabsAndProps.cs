@@ -89,13 +89,13 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.copyPropValues( SourceNodeId, CopyNodeIds, PropIds );
         } // copyPropValues()
 
-        public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswEnumNbtLayoutType LayoutType )
         {
             return _TabsPropsSd.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, LayoutType );
         } // getPropertiesForLayoutAdd()
 
 
-        public bool addPropertyToLayout( string PropId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public bool addPropertyToLayout( string PropId, string TabId, CswEnumNbtLayoutType LayoutType )
         {
             return _TabsPropsSd.addPropertyToLayout( PropId, TabId, LayoutType );
         } // addPropertyToLayout()

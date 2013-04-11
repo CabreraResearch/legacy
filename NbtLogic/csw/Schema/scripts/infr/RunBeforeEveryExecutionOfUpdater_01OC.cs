@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
             if( SetValOnAdd )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add,
+                    CswEnumNbtLayoutType.Add,
                     Nodetype.NodeTypeId,
                     Prop,
                     true,
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Schema
                     );
             }
             _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                CswEnumNbtLayoutType.Edit,
                 Nodetype.NodeTypeId,
                 Prop,
                 true,

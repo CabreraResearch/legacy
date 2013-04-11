@@ -41,17 +41,17 @@ namespace ChemSW.Nbt
                     cmgTab = _CswNbtResources.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
                 }
                 CswNbtMetaDataNodeTypeProp lotControlledNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LotControlled );
-                lotControlledNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: cmgTab.TabId );
+                lotControlledNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp requisitionableNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Requisitionable );
-                requisitionableNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: cmgTab.TabId );
+                requisitionableNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
-                reservedForNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: cmgTab.TabId );
+                reservedForNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp receiptLotNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReceiptLot );
                 CswNbtMetaDataNodeTypeTab firstTab = containerNT.getFirstNodeTypeTab();
-                receiptLotNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: firstTab.TabId );
+                receiptLotNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: firstTab.TabId );
             }
 
             //Case 27864 on enable show Material props...
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt
             //    CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
             //    CswNbtMetaDataNodeTypeTab HazardsTab = materialNT.getNodeTypeTab( "Hazards" );
             //    int TabId = HazardsTab != null ? HazardsTab.TabId : materialNT.getFirstNodeTypeTab().TabId;
-            //    uNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId );
+            //    uNCodeNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId );
             //}
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
@@ -72,15 +72,15 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Central Material Group", NodeType.getNextTabOrder() );
 
                 CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
-                RofNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
+                RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, CmgTab.TabId );
                 CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
-                NrdNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RofNtp, true );
+                NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
 
                 CswNbtMetaDataNodeTypeProp LastNtp = NrdNtp;
                 foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
                 {
                     CswNbtMetaDataNodeTypeProp CmgNtp = NodeType.getNodeTypePropByObjectClassProp( CmgTabProp );
-                    CmgNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, LastNtp, true );
+                    CmgNtp.updateLayout( CswEnumNbtLayoutType.Edit, LastNtp, true );
                     LastNtp = CmgNtp;
                 }
 
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt
                 foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
                 {
                     CswNbtMetaDataNodeTypeProp ReceiveNtp = NodeType.getNodeTypePropByObjectClassProp( ReceiveTabProp );
-                    ReceiveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ReceiveTab.TabId );
+                    ReceiveNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, ReceiveTab.TabId );
                 }
             }
 
@@ -100,11 +100,11 @@ namespace ChemSW.Nbt
             {
                 CswNbtMetaDataNodeTypeTab firstTab = vendorNT.getFirstNodeTypeTab();
                 CswNbtMetaDataNodeTypeProp vendorTypeNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                vendorTypeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, TabId: firstTab.TabId );
-                vendorTypeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, TabId: firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId: firstTab.TabId );
+                vendorTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, TabId: firstTab.TabId );
 
                 CswNbtMetaDataNodeTypeProp corporateEntityNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.CorporateEntityName );
-                corporateEntityNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, TabId: firstTab.TabId );
+                corporateEntityNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId: firstTab.TabId );
             }
 
             _toggleMaterialSupplierView( false );
@@ -175,9 +175,9 @@ namespace ChemSW.Nbt
                 }
 
                 CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
-                RofNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, NodeType.getFirstNodeTypeTab().TabId );
+                RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, NodeType.getFirstNodeTypeTab().TabId );
                 CswNbtMetaDataNodeTypeProp NrdNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
-                NrdNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RofNtp, true );
+                NrdNtp.updateLayout( CswEnumNbtLayoutType.Edit, RofNtp, true );
 
             }
 

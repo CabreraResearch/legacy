@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.Actions
                         Node = Ret.Node;
 
                         bool InAddLayout = false;
-                        foreach( CswNbtMetaDataNodeTypeProp ntp in _NbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeTypeId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
+                        foreach( CswNbtMetaDataNodeTypeProp ntp in _NbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeTypeId, Int32.MinValue, CswEnumNbtLayoutType.Add ) )
                         {
                             if( Ret.PhysicalState.NodeTypePropId == ntp.PropId )
                             {
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.Actions
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     NodeAsMaterial.Save.setHidden( value: true, SaveToDb: true );
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswEnumNbtLayoutType.Add );
                     Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
                     if( Int32.MinValue != DocumentNodeTypeId )
                     {

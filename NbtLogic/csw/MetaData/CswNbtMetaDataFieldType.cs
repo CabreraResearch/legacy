@@ -131,10 +131,10 @@ namespace ChemSW.Nbt.MetaData
                      FieldType != CswEnumNbtFieldType.Static );
         }
 
-        public bool IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public bool IsLayoutCompatible( CswEnumNbtLayoutType LayoutType )
         {
             bool ret = true;
-            if( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            if( LayoutType != CswEnumNbtLayoutType.Edit )
             {
                 ret = ( FieldType != CswEnumNbtFieldType.Grid );
             }

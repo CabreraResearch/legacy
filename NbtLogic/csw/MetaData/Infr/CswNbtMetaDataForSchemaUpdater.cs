@@ -283,11 +283,11 @@ namespace ChemSW.Nbt.MetaData
                         {
                             if( CswConvert.ToBoolean( Value ) )
                             {
-                                NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+                                NodeTypeProp.updateLayout( CswEnumNbtLayoutType.Add, true );
                             }
                             else
                             {
-                                NodeTypeProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                                NodeTypeProp.removeFromLayout( CswEnumNbtLayoutType.Add );
                             }
                         }
                     }

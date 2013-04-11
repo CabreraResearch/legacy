@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.Search
                     Int32 maxOrder = ( ret.Count > 0 ) ? ret.Max().Order : 0;
                     if( false == _TableLayoutDict.Keys.Contains( NodeType ) )
                     {
-                        _TableLayoutDict[NodeType] = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeType.NodeTypeId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+                        _TableLayoutDict[NodeType] = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeType.NodeTypeId, Int32.MinValue, CswEnumNbtLayoutType.Table );
                     }
                     foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[NodeType])
                     {

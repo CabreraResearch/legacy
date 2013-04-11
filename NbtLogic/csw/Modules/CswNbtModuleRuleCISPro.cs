@@ -22,8 +22,8 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
                 if( null != UserJurisdictionNTP )
                 {
-                    UserJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
-                    UserJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, UserNT.getFirstNodeTypeTab().TabId );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, UserNT.getFirstNodeTypeTab().TabId );
                 }
             }
 

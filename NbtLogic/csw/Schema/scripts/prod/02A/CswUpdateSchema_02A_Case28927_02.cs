@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
                         //AssignLocationsNTP
                         //_CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.
                         _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                            CswEnumNbtLayoutType.Edit,
                             InventoryGroupNT.NodeTypeId,
                             AssignLocationsNTP,
                             true,
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
                             );
 
                         _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                            CswEnumNbtLayoutType.Edit,
                             InventoryGroupNT.NodeTypeId,
                             LocationsGridNTP,
                             true,

@@ -93,50 +93,50 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the layout for this property.  If edit, be sure to supply a valid TabId
         /// </summary>
-        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue )
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswEnumNbtLayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this.PropId, TabId );
         }
 
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getEditLayout( Int32 TabId )
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId );
+            return getLayout( CswEnumNbtLayoutType.Edit, TabId );
         }
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getAddLayout()
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            return getLayout( CswEnumNbtLayoutType.Add );
         }
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getTableLayout()
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+            return getLayout( CswEnumNbtLayoutType.Table );
         }
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getPreviewLayout()
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
+            return getLayout( CswEnumNbtLayoutType.Preview );
         }
         public Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> getEditLayouts()
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, this );
+            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswEnumNbtLayoutType.Edit, this );
         }
 
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
+        public void updateLayout( CswEnumNbtLayoutType LayoutType, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeTypeId, this, DoMove, TabId, DisplayRow, DisplayColumn, TabGroup );
         }
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
+        public void updateLayout( CswEnumNbtLayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this, InsertAfterProp, DoMove );
         }
-        public void removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue )
+        public void removeFromLayout( CswEnumNbtLayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this, TabId );
         }
         public void removeFromAllLayouts( Int32 TabId = Int32.MinValue )
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Add, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Edit, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Preview, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Table, this, TabId );
         }
 
 
@@ -380,9 +380,9 @@ namespace ChemSW.Nbt.MetaData
                     if( this.DefaultValue.Empty )
                     {
                         //If the prop isn't on the Add layout, Add it.
-                        if( false == ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
+                        if( false == ExistsOnLayout( CswEnumNbtLayoutType.Add ) )
                         {
-                            updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
+                            updateLayout( CswEnumNbtLayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
                         }
                     }
                 }
@@ -405,26 +405,26 @@ namespace ChemSW.Nbt.MetaData
             return Ret;
         }
 
-        public bool ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Type )
+        public bool ExistsOnLayout( CswEnumNbtLayoutType Type )
         {
             bool Ret = false;
 
-            if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+            if( Type == CswEnumNbtLayoutType.Add )
             {
                 Ret = _ExistsInLayout( getAddLayout() );
             }
-            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            else if( Type == CswEnumNbtLayoutType.Edit )
             {
                 foreach( KeyValuePair<int, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> KeyValuePair in getEditLayouts() )
                 {
                     Ret = Ret || _ExistsInLayout( KeyValuePair.Value );
                 }
             }
-            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table )
+            else if( Type == CswEnumNbtLayoutType.Table )
             {
                 Ret = _ExistsInLayout( getTableLayout() );
             }
-            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview )
+            else if( Type == CswEnumNbtLayoutType.Preview )
             {
                 Ret = _ExistsInLayout( getPreviewLayout() );
             }
@@ -495,12 +495,12 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public bool ShowSaveProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Layout, bool IsConfigMode, bool HasEditableProps )
+        public bool ShowSaveProp( CswEnumNbtLayoutType Layout, bool IsConfigMode, bool HasEditableProps )
         {
             return IsSaveProp &&
                    false == IsConfigMode &&
-                   ( ( Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && HasEditableProps ) ||
-                    Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                   ( ( Layout == CswEnumNbtLayoutType.Edit && HasEditableProps ) ||
+                    Layout == CswEnumNbtLayoutType.Add );
         }
 
 
@@ -585,20 +585,20 @@ namespace ChemSW.Nbt.MetaData
         //    return ret;
         //}
 
-        public bool ShowProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtNode Node, Int32 TabId, bool IsConfigMode, bool HasEditableProps )
+        public bool ShowProp( CswEnumNbtLayoutType LayoutType, CswNbtNode Node, Int32 TabId, bool IsConfigMode, bool HasEditableProps )
         {
             bool ret = true;
             CswNbtMetaDataNodeTypeTab Tab = null;
 
             // 1: throw away properties incompatable with layouts
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+            if( LayoutType == CswEnumNbtLayoutType.Add )
             {
                 ret = ret && ( IsSaveProp || getFieldType().FieldType != CswEnumNbtFieldType.Button ) &&
                     ( ( IsRequired && ( ( null == DefaultValue ) || ( DefaultValue.Empty ) ) ) ||
                             Node.Properties[this].TemporarilyRequired ||
                             AddLayout != null );
             }
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            if( LayoutType == CswEnumNbtLayoutType.Edit )
             {
                 CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout( TabId );
                 if( EditLayout != null )
@@ -606,7 +606,7 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview ||
+            if( LayoutType == CswEnumNbtLayoutType.Preview ||
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.PrintReport ||
                 _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup )
             {
@@ -1167,7 +1167,7 @@ namespace ChemSW.Nbt.MetaData
 
             // BZ 7363
             //SetValueOnAdd = false;
-            //removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            //removeFromLayout( CswEnumNbtLayoutType.Add );
         }
 
         public void clearFilter()

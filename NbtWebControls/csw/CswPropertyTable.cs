@@ -273,13 +273,13 @@ namespace ChemSW.NbtWebControls
                 {
                     //MovedProp.DisplayRowAdd = NewDisplayRow;
                     //MovedProp.DisplayColAdd = NewDisplayColumn;
-                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
+                    MovedProp.updateLayout( CswEnumNbtLayoutType.Add, false, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
                 }
                 else
                 {
                     //MovedProp.DisplayRow = NewDisplayRow;
                     //MovedProp.DisplayColumn = NewDisplayColumn;
-                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
+                    MovedProp.updateLayout( CswEnumNbtLayoutType.Edit, false, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
                 }
             }
             catch( Exception ex )

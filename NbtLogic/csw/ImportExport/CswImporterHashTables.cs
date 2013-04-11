@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( ThisProp != null )
                                 {
                                     ThisProp.SetFromXmlDataRow( NodeTypePropRow );
-                                    ThisProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ThisTab.TabId, Int32.MinValue, Int32.MinValue );
+                                    ThisProp.updateLayout( CswEnumNbtLayoutType.Edit, true, ThisTab.TabId, Int32.MinValue, Int32.MinValue );
                                 }
                                 else
                                 {

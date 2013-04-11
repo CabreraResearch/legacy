@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             else
             {
-                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
+                CswEnumNbtLayoutType LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
                 if( _CswNbtResources.EditMode == NodeEditMode.Add )
@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Get props of a Node instance
         /// </summary>
-        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswEnumNbtLayoutType LayoutType )
         {
             JObject Ret = new JObject();
             Ret["node"] = new JObject();
@@ -333,11 +333,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node, bool HasEditableProps )
+        private bool _showProp( CswEnumNbtLayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node, bool HasEditableProps )
         {
             bool Ret = Prop.ShowProp( LayoutType, Node, TabId, _ConfigMode, HasEditableProps ) &&
                  ( Prop.IsSaveProp ||
-                 ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ||
+                 ( LayoutType != CswEnumNbtLayoutType.Add ||
                    //Case 24023: Exclude buttons on Add (Except the Save button)
                    Prop.getFieldTypeValue() != CswEnumNbtFieldType.Button ) &&
                  ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId ) );
@@ -400,7 +400,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private void _addProp( JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 TabId )
         {
-            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
+            CswEnumNbtLayoutType LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
             if( false == Node.Properties[Prop].Hidden || _ConfigMode )
             {
@@ -502,7 +502,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropObj["showpropertyname"] = ShowPropertyName;
 
             CswNbtMetaDataNodeTypeTab Tab = null;
-            if( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ) == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit &&
+            if( CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode ) == CswEnumNbtLayoutType.Edit &&
                 Layout.TabId != Int32.MinValue )
             {
                 Tab = _CswNbtResources.MetaData.getNodeTypeTab( Layout.TabId );
@@ -573,7 +573,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ), false, TabId, NewRow, NewColumn );
+                    Prop.updateLayout( CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode ), false, TabId, NewRow, NewColumn );
                     ret = true;
                 }
             } // _canEditLayout()
@@ -598,7 +598,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, Prop.PropName + " may not be removed", Prop.PropName + " is required and has no unique value, and therefore cannot be removed from 'Add' layouts" );
                     }
-                    Prop.removeFromLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ), TabId );
+                    Prop.removeFromLayout( CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode ), TabId );
                     ret = true;
                 }
             } // _canEditLayout()
@@ -883,7 +883,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // copyPropValues()
 
-        public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswEnumNbtLayoutType LayoutType )
         {
             JArray ret = new JArray();
 
@@ -912,7 +912,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         JObject ThisPropObj = new JObject();
                         ThisPropObj["propid"] = Prop.PropId.ToString();
                         ThisPropObj["propname"] = Prop.PropNameWithQuestionNo.ToString();
-                        ThisPropObj["hidden"] = ( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && Prop.FirstEditLayout == null ).ToString().ToLower();
+                        ThisPropObj["hidden"] = ( LayoutType == CswEnumNbtLayoutType.Edit && Prop.FirstEditLayout == null ).ToString().ToLower();
                         ret.Add( ThisPropObj );
                     }
                 }
@@ -921,7 +921,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         } // getPropertiesForLayoutAdd()
 
 
-        public bool addPropertyToLayout( string PropId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public bool addPropertyToLayout( string PropId, string TabId, CswEnumNbtLayoutType LayoutType )
         {
             CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( LayoutType, Prop.NodeTypeId, Prop, false, CswConvert.ToInt32( TabId ), Int32.MinValue, Int32.MinValue );
