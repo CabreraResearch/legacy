@@ -160,7 +160,7 @@ namespace ChemSW.Nbt
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionViewId );
 
             if( null == SessionDataItem ||
-                SessionDataItem.DataType != CswNbtSessionDataItem.SessionDataType.View )
+                SessionDataItem.DataType != CswEnumNbtSessionDataType.View )
             {
                 throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId (" + SessionViewId.get() + ") is not a view" );
             }

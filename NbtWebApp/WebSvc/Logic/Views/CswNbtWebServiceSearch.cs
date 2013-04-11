@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( null != SessionDataItem && SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( null != SessionDataItem && SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 ret = _finishUniversalSearch( Search );
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 if( Action == "add" )
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 Search.addFilter( NodeTypeId, true );
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 Search.Name = Name;
