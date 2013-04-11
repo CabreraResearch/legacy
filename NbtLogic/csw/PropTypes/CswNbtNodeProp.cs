@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
                 }
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.GestaltSearch, GestaltSearchValue );
+                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
 
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
                 if( null != OnPropChange )
@@ -354,13 +354,13 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns the original value of the provided subfield for this property
         /// </summary>
-        public string GetOriginalPropRowValue( CswNbtSubField.SubFieldName SubfieldName )
+        public string GetOriginalPropRowValue( CswEnumNbtSubFieldName SubfieldName )
         {
             string ret = string.Empty;
             ICswNbtFieldTypeRule FieldTypeRule = _CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             if( FieldTypeRule != null )
             {
-                CswNbtSubField.PropColumn Column = FieldTypeRule.SubFields[SubfieldName].Column;
+                CswEnumNbtPropColumn Column = FieldTypeRule.SubFields[SubfieldName].Column;
                 ret = GetOriginalPropRowValue( Column );
             }
             return ret;
@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns the original value of the provided column for this property
         /// </summary>
-        public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
+        public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column )
         {
             return _CswNbtNodePropData.GetOriginalPropRowValue( Column );
         }

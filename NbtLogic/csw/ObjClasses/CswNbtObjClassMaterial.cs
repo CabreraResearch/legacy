@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
                 Value: NodeId.PrimaryKey.ToString(),
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID );
+                SubFieldName: CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -395,7 +395,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.PartNumber );
 
             Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
-            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
             Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
 
             if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
@@ -449,13 +449,13 @@ namespace ChemSW.Nbt.ObjClasses
 
                 docView.AddViewPropertyAndFilter( parent,
                                                  MetaDataProp: archivedNTP,
-                                                 SubFieldName: CswNbtSubField.SubFieldName.Checked,
+                                                 SubFieldName: CswEnumNbtSubFieldName.Checked,
                                                  Value: false.ToString(),
                                                  FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
                 docView.AddViewPropertyAndFilter( parent,
                                                  MetaDataProp: ownerNTP,
-                                                 SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                 SubFieldName: CswEnumNbtSubFieldName.NodeID,
                                                  Value: NodeId.PrimaryKey.ToString(),
                                                  FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 

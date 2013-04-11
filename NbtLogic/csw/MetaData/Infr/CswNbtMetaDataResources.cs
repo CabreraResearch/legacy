@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.MetaData
         //                CswNbtMetaDataNodeTypeProp ThisProp = NodeTypePropsCollection.getNodeTypeProp( CswConvert.ToInt32( JctDdNtpRow["nodetypepropid"] ) );
         //                if( ThisProp != null )
         //                {
-        //                    CswNbtSubField.SubFieldName ThisSubFieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), JctDdNtpRow["subfieldname"].ToString(), true );
+        //                    CswEnumNbtSubFieldName ThisSubFieldName = (CswEnumNbtSubFieldName) Enum.Parse( typeof( CswEnumNbtSubFieldName ), JctDdNtpRow["subfieldname"].ToString(), true );
         //                    CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( JctDdNtpRow["datadictionaryid"] ) );
         //                    ThisProp.FieldTypeRule.SubFields[ThisSubFieldName].RelationalTable = CswNbtResources.DataDictionary.TableName;
         //                    ThisProp.FieldTypeRule.SubFields[ThisSubFieldName].RelationalColumn = CswNbtResources.DataDictionary.ColumnName;

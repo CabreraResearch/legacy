@@ -537,7 +537,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         {
                                             View.AddViewPropertyAndFilter( Relationship, RelationshipProp,
                                                                            SubFieldName :
-                                                                               CswNbtSubField.SubFieldName.NodeID,
+                                                                               CswEnumNbtSubFieldName.NodeID,
                                                                            Value :
                                                                                Request.RelatedNodeId.PrimaryKey.ToString() );
                                         }

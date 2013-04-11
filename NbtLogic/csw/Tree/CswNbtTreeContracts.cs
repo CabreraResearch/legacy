@@ -70,20 +70,20 @@ namespace ChemSW.Nbt
         public string getPropColumnValue( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             string ret = Gestalt;
-            CswNbtSubField.PropColumn Column = NodeTypeProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name].Column;
-            if( Column == CswNbtSubField.PropColumn.Field1 )
+            CswEnumNbtPropColumn Column = NodeTypeProp.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name].Column;
+            if( Column == CswEnumNbtPropColumn.Field1 )
             {
                 ret = Field1;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field2 )
+            else if( Column == CswEnumNbtPropColumn.Field2 )
             {
                 ret = Field2;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field1_FK )
+            else if( Column == CswEnumNbtPropColumn.Field1_FK )
             {
                 ret = Field1_Fk.ToString();
             }
-            else if( Column == CswNbtSubField.PropColumn.Field1_Numeric )
+            else if( Column == CswEnumNbtPropColumn.Field1_Numeric )
             {
                 ret = Field1_Numeric.ToString();
             }

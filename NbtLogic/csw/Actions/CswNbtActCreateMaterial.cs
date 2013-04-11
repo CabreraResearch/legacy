@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.Actions
                     sizesView.AddViewPropertyAndFilter( parent,
                                                        MetaDataProp: materialOCP,
                                                        Value: pk.PrimaryKey.ToString(),
-                                                       SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                       SubFieldName: CswEnumNbtSubFieldName.NodeID,
                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
                     SizesTree = CswNbtResources.Trees.getTreeFromView( sizesView, true, false, false );

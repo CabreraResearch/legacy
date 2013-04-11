@@ -110,18 +110,18 @@ namespace ChemSW.Nbt.Sched
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionAppliedOcp,
                 Value: Tristate.True.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.Checked,
+                SubFieldName: CswEnumNbtSubFieldName.Checked,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             CswNbtMetaDataObjectClassProp ActionOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Action );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
                 Value: String.Empty,
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
+                SubFieldName: CswEnumNbtSubFieldName.Value,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
                 Value: CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
+                SubFieldName: CswEnumNbtSubFieldName.Value,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             return ContainerLocationsView;
         }

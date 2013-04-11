@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewPropertyFilter Filt3 = ContainersInGroupView.AddViewPropertyFilter( Prop2,
                                                       CswNbtPropFilterSql.PropertyFilterConjunction.And,
                                                       CswNbtPropFilterSql.FilterResultMode.Hide,
-                                                      CswNbtSubField.SubFieldName.NodeID,
+                                                      CswEnumNbtSubFieldName.NodeID,
                                                       CswNbtPropFilterSql.PropertyFilterMode.Equals,
                                                       this.NodeId.PrimaryKey.ToString(),
                                                       false,

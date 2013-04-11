@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.ImportExport
                                 DestProp = DestNodeType.getNodeTypeProp( BindingRow["destproperty"].ToString() );
                                 if( null != DestProp )
                                 {
-                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswNbtSubField.SubFieldName) BindingRow["destsubfield"].ToString()];
+                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
                                     if( DestSubfield == null )
                                     {
                                         DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
@@ -433,7 +433,7 @@ namespace ChemSW.Nbt.ImportExport
                                                         rateInterval.ReadXml( xmlDoc.DocumentElement );
 
                                                         ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
-                                                        //Node.Properties[Binding.DestProperty].SetPropRowValue( CswNbtSubField.PropColumn.ClobData, rateInterval.ToXmlString() );
+                                                        //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
                                                         Node.Properties[Binding.DestProperty].SyncGestalt();
                                                     }
                                                     else
@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.ImportExport
                                                     if( null != TargetOrder )
                                                     {
                                                         Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                                                            RowRelationship.Relationship.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID].Column,
+                                                            RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
                                                             ImportRow[TargetOrder.PkColName]
                                                             );
                                                     }

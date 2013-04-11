@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.Actions
                         CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
                         CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
                         CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );
-                        Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
+                        Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
                         MaterialVp.ShowInGrid = false;
 
                         CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.Actions
                         MissingVp.ShowInGrid = false;
 
                         CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
-                        Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
+                        Ret.AddViewPropertyFilter( QuantityVp, CswEnumNbtSubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
 
                         CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
                         Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
@@ -242,16 +242,16 @@ namespace ChemSW.Nbt.Actions
 
                         if( CswTools.IsPrimaryKey( RequestMaterialDispense.InventoryGroup.RelatedNodeId ) )
                         {
-                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RequestMaterialDispense.InventoryGroup.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
+                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: RequestMaterialDispense.InventoryGroup.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
                         }
                         else
                         {
-                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
                         }
 
                         if( RequestMaterialDispense.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
                         {
-                            Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Size ), SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RequestMaterialDispense.Size.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
+                            Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Size ), SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: RequestMaterialDispense.Size.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
                         }
                     }
                 }

@@ -382,11 +382,11 @@ namespace ChemSW.Nbt
                     sortAlias++;
                     if( null != Prop.MetaDataProp )
                     {
-                        CswNbtSubField.PropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
-                        if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-                                SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
-                                SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
-                                SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+                        CswEnumNbtPropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
+                        if( SubFieldColumn == CswEnumNbtPropColumn.Field1_Numeric ||
+                                SubFieldColumn == CswEnumNbtPropColumn.Field1_Date ||
+                                SubFieldColumn == CswEnumNbtPropColumn.Field2_Numeric ||
+                                SubFieldColumn == CswEnumNbtPropColumn.Field2_Date )
                         {
                             Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
                         }
@@ -396,15 +396,15 @@ namespace ChemSW.Nbt
                         }
 
                         // Case 10533
-                        if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
-                                SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
+                        if( SubFieldColumn == CswEnumNbtPropColumn.Gestalt ||
+                                SubFieldColumn == CswEnumNbtPropColumn.ClobData )
                         {
                             OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
                         }
-                        else if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-                                    SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
-                                    SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
-                                    SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+                        else if( SubFieldColumn == CswEnumNbtPropColumn.Field1_Numeric ||
+                                    SubFieldColumn == CswEnumNbtPropColumn.Field1_Date ||
+                                    SubFieldColumn == CswEnumNbtPropColumn.Field2_Numeric ||
+                                    SubFieldColumn == CswEnumNbtPropColumn.Field2_Date )
                         {
                             OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
                         }

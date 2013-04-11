@@ -1054,8 +1054,8 @@ namespace ChemSW.Nbt
                 if( null != locationOC )
                 {
                     CswNbtMetaDataObjectClassProp locationOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
-                    CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID];
-                    CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name];
+                    CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID];
+                    CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name];
 
                     string sql = @"update (select jnp.pendingupdate from jct_nodes_props jnp
                                        join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid and ntp.objectclasspropid = " + locationOCP.ObjectClassPropId +

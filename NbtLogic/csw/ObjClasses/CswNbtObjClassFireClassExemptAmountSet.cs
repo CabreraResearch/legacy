@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty SetNameProperty = FCEAView.AddViewProperty( FCEARelationship, FireClassExemptAmountObjectClass.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.SetName ) );
             FCEAView.AddViewPropertyFilter(
                 SetNameProperty,
-                CswNbtSubField.SubFieldName.NodeID,
+                CswEnumNbtSubFieldName.NodeID,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 

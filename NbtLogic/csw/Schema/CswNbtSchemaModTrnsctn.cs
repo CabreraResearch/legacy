@@ -677,8 +677,8 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_actions records
         /// </summary>
-        public void createFieldTypesSubFieldsJunction( CswNbtMetaDataFieldType FieldType, CswNbtSubField.PropColumn Column,
-            CswNbtSubField.SubFieldName SubField, bool IsReportable, bool IsDefault = false )
+        public void createFieldTypesSubFieldsJunction( CswNbtMetaDataFieldType FieldType, CswEnumNbtPropColumn Column,
+            CswEnumNbtSubFieldName SubField, bool IsReportable, bool IsDefault = false )
         {
             CswTableUpdate JctFtSfUpdate = makeCswTableUpdate( "SchemaModTrnsctn_FieldTypeSubFieldJunction", "field_types_subfields" );
             DataTable UpdateAsDataTable = JctFtSfUpdate.getEmptyTable();

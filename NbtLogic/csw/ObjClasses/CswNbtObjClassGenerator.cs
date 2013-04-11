@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
                         GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
                         CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
                         CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
-                        View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True" );
+                        View.AddViewPropertyFilter( IsFutureProperty, CswEnumNbtSubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True" );
 
                         ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 

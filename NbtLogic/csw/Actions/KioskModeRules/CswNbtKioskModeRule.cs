@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 view.AddViewPropertyAndFilter( parent,
                     MetaDataProp : barcodeOCP,
                     Value : Barcode,
-                    SubFieldName : CswNbtSubField.SubFieldName.Barcode,
+                    SubFieldName : CswEnumNbtSubFieldName.Barcode,
                     FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals
                 );
 

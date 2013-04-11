@@ -427,8 +427,8 @@ namespace ChemSW.NbtSchemaDiff
 
                         foreach( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.getFieldTypeRule().SubFields )
                         {
-                            //string LeftValue = LeftPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );
-                            //string RightValue = RightPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );
+                            //string LeftValue = LeftPropWrapper.GetPropRowValue( ( (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), Subfield.Column ) ) );
+                            //string RightValue = RightPropWrapper.GetPropRowValue( ( (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), Subfield.Column ) ) );
                             string LeftValue = LeftPropWrapper.GetPropRowValue( Subfield.Column );
                             string RightValue = RightPropWrapper.GetPropRowValue( Subfield.Column );
 

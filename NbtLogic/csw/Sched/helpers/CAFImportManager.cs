@@ -1093,7 +1093,7 @@ namespace ChemSW.Nbt
                 materialView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: supplierNTP,
                     Value: supplierName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
                 materialView.AddViewPropertyAndFilter( parent,
@@ -1173,12 +1173,12 @@ namespace ChemSW.Nbt
 
             synonymsView.AddViewPropertyAndFilter( parent, synonymMaterialNTP,
                 Value: ChemicalNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             synonymsView.AddViewPropertyAndFilter( parent, synonymLegacyIdNTP,
                 Value: SynonymId,
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
+                SubFieldName: CswEnumNbtSubFieldName.Value,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( synonymsView, false, true, true );
@@ -1260,7 +1260,7 @@ namespace ChemSW.Nbt
 
             sizesView.AddViewPropertyAndFilter( parent, materialNTP,
                 Value: ChemicalNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             ICswNbtTree sizesTree = _NBTResources.Trees.getTreeFromView( sizesView, false, false, true );
@@ -1283,17 +1283,17 @@ namespace ChemSW.Nbt
 
             //    sizesView.AddViewPropertyAndFilter( parent, materialNTP,
             //        Value: PotentialSizeNode.NodeId.PrimaryKey.ToString(),
-            //        SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+            //        SubFieldName: CswEnumNbtSubFieldName.NodeID,
             //        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             //    sizesView.AddViewPropertyAndFilter( parent, quantNTP,
             //        Value: PotentialSizeNode.InitialQuantity.CachedUnitName,
-            //        SubFieldName: CswNbtSubField.SubFieldName.Name,
+            //        SubFieldName: CswEnumNbtSubFieldName.Name,
             //        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             //    sizesView.AddViewPropertyAndFilter( parent, quantNTP,
             //        Value: CswConvert.ToString( PotentialSizeNode.InitialQuantity.Quantity ),
-            //        SubFieldName: CswNbtSubField.SubFieldName.Value,
+            //        SubFieldName: CswEnumNbtSubFieldName.Value,
             //        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             //    sizesTree = _NBTResources.Trees.getTreeFromView( sizesView, false, false, true );

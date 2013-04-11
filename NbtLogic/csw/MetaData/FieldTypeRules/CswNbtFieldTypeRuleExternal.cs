@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            //SubFields.add( CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
+            //SubFields.add( CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Value );
             //We are not setting any filter values because there is no search allowed
         }//ctor
 

@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 NewGestalt = PropRefVal + "-" + SeqVal;
             }
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, NewGestalt );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, NewGestalt );
         }
 
         public string CachedValue

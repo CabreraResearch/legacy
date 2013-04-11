@@ -520,7 +520,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( NodeTypeProp != null )
                                 {
                                     // BZ 10340 - Create the relationship target, if it's not there
-                                    string RelatedNodeID = PropValueRow[CswNbtSubField.SubFieldName.NodeID.ToString()].ToString();
+                                    string RelatedNodeID = PropValueRow[CswEnumNbtSubFieldName.NodeID.ToString()].ToString();
                                     if( !NodeIdMap.ContainsKey( CswTools.XmlRealAttributeName( RelatedNodeID ).ToLower() ) )
                                     {
                                         if( RelatedNodeID.StartsWith( "ND--" ) )

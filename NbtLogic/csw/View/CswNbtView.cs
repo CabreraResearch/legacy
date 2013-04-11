@@ -261,7 +261,7 @@ namespace ChemSW.Nbt
         {
             bool IsSearchable = false;
             ArrayList PropFilters = Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter );
-            IsSearchable = ( IsFullyEnabled() && PropFilters.Cast<CswNbtViewPropertyFilter>().Any( Filter => Filter.SubfieldName != CswNbtSubField.SubFieldName.NodeID ) );
+            IsSearchable = ( IsFullyEnabled() && PropFilters.Cast<CswNbtViewPropertyFilter>().Any( Filter => Filter.SubfieldName != CswEnumNbtSubFieldName.NodeID ) );
             return IsSearchable;
         }
 
@@ -446,7 +446,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
         public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
-                                                               CswNbtSubField.SubFieldName SubFieldName = null,
+                                                               CswEnumNbtSubFieldName SubFieldName = null,
                                                                CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
                                                                string Value = "",
                                                                bool CaseSensitive = false,
@@ -460,7 +460,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
                                                                CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
-                                                               CswNbtSubField.SubFieldName SubFieldName = null,
+                                                               CswEnumNbtSubFieldName SubFieldName = null,
                                                                CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
                                                                string Value = "",
                                                                bool CaseSensitive = false,
@@ -472,7 +472,7 @@ namespace ChemSW.Nbt
         public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
                                                                CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
                                                                CswNbtPropFilterSql.FilterResultMode ResultMode,
-                                                               CswNbtSubField.SubFieldName SubFieldName = null,
+                                                               CswEnumNbtSubFieldName SubFieldName = null,
                                                                CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
                                                                string Value = "",
                                                                bool CaseSensitive = false,
@@ -494,7 +494,7 @@ namespace ChemSW.Nbt
         public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship,
                                                                   ICswNbtMetaDataProp MetaDataProp,
                                                                   string Value = "",
-                                                                  CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                  CswEnumNbtSubFieldName SubFieldName = null,
                                                                   bool CaseSensitive = false,
                                                                   CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
                                                                   bool ShowAtRuntime = false,
@@ -509,7 +509,7 @@ namespace ChemSW.Nbt
                                                                   ICswNbtMetaDataProp MetaDataProp,
                                                                   CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
                                                                   string Value = "",
-                                                                  CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                  CswEnumNbtSubFieldName SubFieldName = null,
                                                                   bool CaseSensitive = false,
                                                                   CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
                                                                   bool ShowAtRuntime = false,
@@ -525,7 +525,7 @@ namespace ChemSW.Nbt
                                                                   CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
                                                                   CswNbtPropFilterSql.FilterResultMode ResultMode,
                                                                   string Value = "",
-                                                                  CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                  CswEnumNbtSubFieldName SubFieldName = null,
                                                                   bool CaseSensitive = false,
                                                                   CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
                                                                   bool ShowAtRuntime = false,

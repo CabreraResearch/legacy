@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != RequestItem.RelatedNodeId &&
                 Int32.MinValue != RequestItem.RelatedNodeId.PrimaryKey )
             {
-                Int32 RequestItemOriginalValue = CswConvert.ToInt32( RequestItem.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) );
+                Int32 RequestItemOriginalValue = CswConvert.ToInt32( RequestItem.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) );
                 if( RequestItemOriginalValue != RequestItem.RelatedNodeId.PrimaryKey )
                 {
                     CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];

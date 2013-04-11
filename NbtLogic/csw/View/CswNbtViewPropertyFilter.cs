@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
         /// For creating a property filter
         /// </summary>
         public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View,
-                                         CswNbtSubField.SubFieldName inSubFieldName,
+                                         CswEnumNbtSubFieldName inSubFieldName,
                                          CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
                                          string inValue,
                                          CswNbtPropFilterSql.PropertyFilterConjunction PropertyFilterConjunction,
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt
         /// For creating a property filter
         /// </summary>
         public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View,
-                                         CswNbtSubField.SubFieldName inSubFieldName,
+                                         CswEnumNbtSubFieldName inSubFieldName,
                                          CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
                                          string inValue,
                                          CswNbtPropFilterSql.FilterResultMode inResultMode,
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt
         }
 
         private void _constructor( CswNbtResources CswNbtResources, CswNbtView View,
-                                   CswNbtSubField.SubFieldName inSubFieldName,
+                                   CswEnumNbtSubFieldName inSubFieldName,
                                    CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
                                    string inValue,
                                    CswNbtPropFilterSql.FilterResultMode inResultMode,
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
                 //}
                 if( FilterString[6] != string.Empty )
                 {
-                    SubfieldName = (CswNbtSubField.SubFieldName) FilterString[6].ToString();
+                    SubfieldName = (CswEnumNbtSubFieldName) FilterString[6].ToString();
                 }
                 if( FilterString[7] != string.Empty )
                 {
@@ -137,8 +137,8 @@ namespace ChemSW.Nbt
                 //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
                 if( FilterNode.Attributes["subfieldname"] != null )
                 {
-                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
-                    SubfieldName = (CswNbtSubField.SubFieldName) FilterNode.Attributes["subfieldname"].Value;
+                    //SubfieldName = (CswEnumNbtSubFieldName) Enum.Parse( typeof( CswEnumNbtSubFieldName ), FilterNode.Attributes["subfieldname"].Value );
+                    SubfieldName = (CswEnumNbtSubFieldName) FilterNode.Attributes["subfieldname"].Value;
                 }
                 if( FilterNode.Attributes["resultmode"] != null )
                 {
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt
                 string _SfName = CswConvert.ToString( FilterObj["subfieldname"] );
                 if( !string.IsNullOrEmpty( _SfName ) )
                 {
-                    SubfieldName = (CswNbtSubField.SubFieldName) _SfName;
+                    SubfieldName = (CswEnumNbtSubFieldName) _SfName;
                 }
 
                 string _ResultMode = CswConvert.ToString( FilterObj["resultmode"] );
@@ -239,7 +239,7 @@ namespace ChemSW.Nbt
                 else
                     throw new CswDniException( "Illegal parent assignment on CswNbtViewPropertyFilter" );
 
-                if( SubfieldName == CswNbtSubField.SubFieldName.Unknown )
+                if( SubfieldName == CswEnumNbtSubFieldName.Unknown )
                 {
                     // Set the subfield to be the default subfield for the new parent's field type:
                     if( _Parent.Type == NbtViewPropType.NodeTypePropId )
@@ -274,8 +274,8 @@ namespace ChemSW.Nbt
         public CswNbtPropFilterSql.PropertyFilterConjunction Conjunction = CswNbtPropFilterSql.PropertyFilterConjunction.And;
         public string Value;
 
-        private CswNbtSubField.SubFieldName _SubfieldName = CswNbtSubField.SubFieldName.Unknown;
-        public CswNbtSubField.SubFieldName SubfieldName
+        private CswEnumNbtSubFieldName _SubfieldName = CswEnumNbtSubFieldName.Unknown;
+        public CswEnumNbtSubFieldName SubfieldName
         {
             set
             {

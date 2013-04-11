@@ -416,7 +416,7 @@ namespace ChemSW.NbtWebControls
                     // Logical needs a special case
                     if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                     {
-                        if( SubField.Name == CswNbtSubField.SubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                        if( SubField.Name == CswEnumNbtSubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                         {
                             //if( FilterValue == "1" || FilterValue.ToLower() == "true" )
                             //    FilterMatches = ( ( (CswLogical) FilterControl ).Checked == Tristate.True );

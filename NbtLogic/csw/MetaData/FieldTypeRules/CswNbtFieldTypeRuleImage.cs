@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            FileNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
+            FileNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
             FileNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
             FileNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
             FileNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             FileNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( FileNameSubField );
 
-            ContentTypeSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.ContentType );
+            ContentTypeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.ContentType );
             ContentTypeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
             ContentTypeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
             ContentTypeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ContentTypeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( ContentTypeSubField );
 
-            //SubFields.add( CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Image );
-            //SubFields[CswNbtSubField.SubFieldName.Image].SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull |
+            //SubFields.add( CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Image );
+            //SubFields[CswEnumNbtSubFieldName.Image].SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull |
             //                                  CswNbtPropFilterSql.PropertyFilterMode.Null;
 
         }//ctor

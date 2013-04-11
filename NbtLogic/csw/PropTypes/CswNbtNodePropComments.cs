@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( CswNbtSubField.PropColumn.Gestalt );
+                return _CswNbtNodePropData.GetPropRowValue( CswEnumNbtPropColumn.Gestalt );
             }
 
         }//Gestalt
@@ -192,7 +192,7 @@ namespace ChemSW.Nbt.PropTypes
                 string dateSubmitted = lastComment["datetime"].ToString();
                 string message = lastComment["message"].ToString();
 
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
             }
         }
 

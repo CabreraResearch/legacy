@@ -448,7 +448,7 @@ namespace ChemSW.Nbt.Logic
                 }
                 else
                 {
-                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty, false );
+                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswEnumNbtSubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty, false );
                 }
 
                 //Case 23779, 23937, 24064
@@ -462,11 +462,11 @@ namespace ChemSW.Nbt.Logic
             if( ViewPropFilt != null )
             {
                 CswNbtPropFilterSql.PropertyFilterConjunction Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) CswConvert.ToString( FilterProp["conjunction"] );
-                CswNbtSubField.SubFieldName FieldName = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfieldname"] );
+                CswEnumNbtSubFieldName FieldName = (CswEnumNbtSubFieldName) CswConvert.ToString( FilterProp["subfieldname"] );
                 CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
                 string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
-                if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
+                if( FieldName != CswEnumNbtSubFieldName.Unknown &&
                     FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Unknown )
                 {
                     ViewPropFilt.FilterMode = FilterMode;

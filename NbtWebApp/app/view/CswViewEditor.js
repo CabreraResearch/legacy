@@ -1080,7 +1080,7 @@
                 code += 'CswNbtViewFilter ' + elmid + ' = ' + viewname + '.AddViewPropertyFilter( ' + parentelmid + ',\n';
                 code += '                                          CswNbtPropFilterSql.PropertyFilterConjunction.' + filt.conjunction + ',\n';
                 code += '                                          CswNbtPropFilterSql.FilterResultMode.' + filt.resultmode + ',\n';
-                code += '                                          CswNbtSubField.SubFieldName.' + filt.subfieldname + ',\n';
+                code += '                                          CswEnumNbtSubFieldName.' + filt.subfieldname + ',\n';
                 code += '                                          CswNbtPropFilterSql.PropertyFilterMode.' + filt.filtermode + ',\n';
                 code += '                                          "' + filt.value + '",\n';
                 code += '                                          ' + filt.casesensitive + ',\n';

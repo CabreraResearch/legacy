@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 {
     class CswNbtFieldTypeRuleDateImpl
     {
-        public static string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtFieldResources CswNbtFieldResources, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, CswNbtSubField.PropColumn Column )
+        public static string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtFieldResources CswNbtFieldResources, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn, CswEnumNbtPropColumn Column )
         {
             string ValueColumn = "jnp." + Column.ToString();
             string ReturnVal = string.Empty;

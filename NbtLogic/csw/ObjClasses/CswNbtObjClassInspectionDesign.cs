@@ -517,7 +517,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( PropertyName.Status ),
                 InspectionStatus.ActionRequired,
-                CswNbtSubField.SubFieldName.Value,
+                CswEnumNbtSubFieldName.Value,
                 false,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals
                 );
@@ -525,7 +525,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( PropertyName.Target ),
                 this.Parent.RelatedNodeId.PrimaryKey.ToString(),
-                CswNbtSubField.SubFieldName.NodeID,
+                CswEnumNbtSubFieldName.NodeID,
                 false,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals
                 );

@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
             CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter(
                 OwnerProperty,
-                CswNbtSubField.SubFieldName.NodeID,
+                CswEnumNbtSubFieldName.NodeID,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 

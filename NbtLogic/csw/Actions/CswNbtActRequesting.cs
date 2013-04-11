@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtViewRelationship RootVr = RequestView.Root.ChildRelationships[0];
 
                 RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring ), Value: Tristate.True.ToString() );
-                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: _ThisUser.UserId.PrimaryKey.ToString() );
+                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: _ThisUser.UserId.PrimaryKey.ToString() );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestView, RequireViewPermissions: false, IncludeHiddenNodes: false, IncludeSystemNodes: false );
                 if( Tree.getChildNodeCount() > 0 )
@@ -382,7 +382,7 @@ namespace ChemSW.Nbt.Actions
                 ShowInGrid: false );
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
                 Value: _ThisUser.UserId.PrimaryKey.ToString(),
                 ShowInGrid: false );
 
@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.Actions
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                 MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ),
                 ShowInGrid: false,
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
                 Value: getRecurringRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }
@@ -750,7 +750,7 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtViewRelationship SizeVr = SizeView.AddViewRelationship( SizeOc, false );
 
-            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
+            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
             SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ), "false", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
 
             SizeView.AddViewPropertyAndFilter( SizeVr,

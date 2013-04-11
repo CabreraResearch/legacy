@@ -311,7 +311,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         GHSView.AddViewPropertyAndFilter( GHSRel, GhsJurisdictionOCP,
                                                           Value: NbtResources.CurrentNbtUser.JurisdictionId.PrimaryKey.ToString(),
-                                                          SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                          SubFieldName: CswEnumNbtSubFieldName.NodeID,
                                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                     }
 
@@ -567,12 +567,12 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtViewRelationship JobRel = JobQueueView.AddViewRelationship( PrintJobOC, false );
                         // ... assigned to this printer ...
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
-                                                               SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                                                               SubFieldName: CswEnumNbtSubFieldName.NodeID,
                                                                Value: PrinterNodeId.PrimaryKey.ToString(),
                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                         //with state==pending
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobStateOCP,
-                                                               SubFieldName: CswNbtSubField.SubFieldName.Value,
+                                                               SubFieldName: CswEnumNbtSubFieldName.Value,
                                                                Value: CswNbtObjClassPrintJob.StateOption.Pending,
                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                         // ... order by Created Date

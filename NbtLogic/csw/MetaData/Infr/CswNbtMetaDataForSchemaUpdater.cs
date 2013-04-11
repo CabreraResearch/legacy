@@ -235,19 +235,19 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="Value"></param>
         /// <param name="SubFieldName">Optional. Use the default subfield if null.</param>
         /// 
-        public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, object Value, CswNbtSubField.SubFieldName SubFieldName = null )
+        public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, object Value, CswEnumNbtSubFieldName SubFieldName = null )
         {
             if( null != ObjectClassProp )
             {
                 SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
                 ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
                 // We're going to regret this day
-                ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+                ObjectClassProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
 
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                 {
                     NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
-                    NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+                    NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
                 }
             }
         }

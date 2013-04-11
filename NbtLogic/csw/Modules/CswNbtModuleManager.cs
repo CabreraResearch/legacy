@@ -255,7 +255,7 @@ namespace ChemSW.Nbt
             usersView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: usernameOCP,
                 Value: modulename,
-                SubFieldName: CswNbtSubField.SubFieldName.Text,
+                SubFieldName: CswEnumNbtSubFieldName.Text,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( usersView, false, true, true );
@@ -284,7 +284,7 @@ namespace ChemSW.Nbt
             rolesView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: nameOCP,
                 Value: modulename,
-                SubFieldName: CswNbtSubField.SubFieldName.Text,
+                SubFieldName: CswEnumNbtSubFieldName.Text,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( rolesView, false, true, true );

@@ -63,17 +63,17 @@ namespace ChemSW.Nbt.ObjClasses
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: WorkUnitOCP,
                     Value: WorkUnit.CachedNodeName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: RoleOCP,
                     Value: Role.CachedNodeName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: InvGroupOCP,
                     Value: InventoryGroup.CachedNodeName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 parent.NodeIdsToFilterOut.Add( this.NodeId );
 

@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
                     //    Int32 FirstNodeTypePropId = CswConvert.ToInt32( PropRefsTable.Rows[0]["nodetypepropid"] );
                     //    CswNbtMetaDataNodeTypeProp FirstNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( FirstNodeTypePropId );
                     //    CswNbtFieldTypeRulePropertyReference PropRefFieldTypeRule = (CswNbtFieldTypeRulePropertyReference) FirstNodeTypeProp.getFieldTypeRule();
-                    //    CswNbtSubField.PropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
+                    //    CswEnumNbtPropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
 
                     //    // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a prop ref to this prop
                     //    string PkString = string.Empty;
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         //BZ 10239 - Fetch the cached value field name.
                         CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswEnumNbtFieldType.PropertyReference );
-                        CswNbtSubField.PropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
+                        CswEnumNbtPropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
 
                         string SQL = @"update jct_nodes_props 
                                       set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"',

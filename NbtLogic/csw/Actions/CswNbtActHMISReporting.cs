@@ -370,7 +370,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( ControlZoneVP,
                     CswNbtPropFilterSql.PropertyFilterConjunction.And,
                     CswNbtPropFilterSql.FilterResultMode.Hide,
-                    CswNbtSubField.SubFieldName.NodeID,
+                    CswEnumNbtSubFieldName.NodeID,
                     CswNbtPropFilterSql.PropertyFilterMode.Equals,
                     ControlZoneId.PrimaryKey.ToString() );
 
@@ -383,7 +383,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( QuantityVP,
                     CswNbtPropFilterSql.PropertyFilterConjunction.And,
                     CswNbtPropFilterSql.FilterResultMode.Hide,
-                    CswNbtSubField.SubFieldName.Value,
+                    CswEnumNbtSubFieldName.Value,
                     CswNbtPropFilterSql.PropertyFilterMode.GreaterThan,
                     "0" );
 
@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( HazardClassesVP,
                     CswNbtPropFilterSql.PropertyFilterConjunction.And,
                     CswNbtPropFilterSql.FilterResultMode.Hide,
-                    CswNbtSubField.SubFieldName.Value,
+                    CswEnumNbtSubFieldName.Value,
                     CswNbtPropFilterSql.PropertyFilterMode.NotNull );
 
                 CswNbtViewProperty SpecialFlagsVP = null;
@@ -424,7 +424,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( SpecialFlagsVP,
                     CswNbtPropFilterSql.PropertyFilterConjunction.And,
                     CswNbtPropFilterSql.FilterResultMode.Hide,
-                    CswNbtSubField.SubFieldName.Value,
+                    CswEnumNbtSubFieldName.Value,
                     CswNbtPropFilterSql.PropertyFilterMode.NotContains,
                     "Not Reportable" );
             }
