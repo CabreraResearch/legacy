@@ -378,11 +378,6 @@ namespace ChemSW.Nbt.PropTypes
 
         #region Xml Operations
 
-        public enum NbtDataItemType { Unknown, Reference, Value };
-        public enum NbtDataItemSource { Unknown, Doc, Proc };
-        public enum IdRefContext { Unknown, Source, Destination };
-        public enum IdRefState { Unknown, SourceResolved, SourceOpen, DestinationOpen, DestinationResolved };
-
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         public abstract void ToJSON( JObject ParentObject );
         public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );

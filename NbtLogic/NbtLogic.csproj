@@ -175,6 +175,10 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeModificationState.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
+    <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
+    <Compile Include="csw\PropTypes\CswEnumNbtDataItemSource.cs" />
+    <Compile Include="csw\PropTypes\CswEnumNbtIdRefContext.cs" />
+    <Compile Include="csw\PropTypes\CswEnumNbtIdRefState.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtNFPADisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtGridPropMode.cs" />
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
