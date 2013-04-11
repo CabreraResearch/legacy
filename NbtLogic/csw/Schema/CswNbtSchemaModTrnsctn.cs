@@ -614,10 +614,10 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Configuration Variable
         /// </summary>
-        public void createConfigurationVariable( CswNbtResources.ConfigurationVariables Name, string Description, string VariableValue, bool IsSystem )
+        public void createConfigurationVariable( CswEnumNbtConfigurationVariables Name, string Description, string VariableValue, bool IsSystem )
         {
             // Create the Configuration Variable
-            if( Name != CswNbtResources.ConfigurationVariables.unknown )
+            if( Name != CswEnumNbtConfigurationVariables.unknown )
             {
                 createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
             }
@@ -643,7 +643,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for deleting a Configuration Variable
         /// </summary>
-        public void deleteConfigurationVariable( CswNbtResources.ConfigurationVariables Name )
+        public void deleteConfigurationVariable( CswEnumNbtConfigurationVariables Name )
         {
             deleteConfigurationVariable( Name.ToString() );
         }

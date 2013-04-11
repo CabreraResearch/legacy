@@ -68,8 +68,8 @@ namespace ChemSW.Nbt.Sched
                     {
                         CswAdminAsUser.AccountLocked.Checked = CswEnumTristate.False;
                         CswAdminAsUser.FailedLoginCount.Value = 0;
-                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.password_length.ToString(), "16" );
-                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.passwordexpiry_days.ToString(), "30" );
+                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumNbtConfigurationVariables.password_length.ToString(), "16" );
+                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumNbtConfigurationVariables.passwordexpiry_days.ToString(), "30" );
                     }
                     ChemSWAdminUserNode.postChanges( ForceUpdate: true );
 

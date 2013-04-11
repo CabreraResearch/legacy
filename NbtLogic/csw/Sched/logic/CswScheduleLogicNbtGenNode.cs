@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    Int32 GeneratorLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
+                    Int32 GeneratorLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
                     if( Int32.MinValue == GeneratorLimit )
                     {
                         GeneratorLimit = 1;

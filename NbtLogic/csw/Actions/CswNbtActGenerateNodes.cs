@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.Actions
             }
             
             // case 26111 - only generate a few at a time, and only increment NextDueDate when we're completely done
-            Int32 GeneratorTargetLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatortargetlimit.ToString() ) );
+            Int32 GeneratorTargetLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatortargetlimit.ToString() ) );
             if( Int32.MinValue == GeneratorTargetLimit )
             {
                 GeneratorTargetLimit = 5;

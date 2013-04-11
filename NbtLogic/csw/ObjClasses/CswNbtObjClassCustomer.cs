@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 // case 25960
-                string OtherSchemaVersion = OtherResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.schemaversion.ToString() );
+                string OtherSchemaVersion = OtherResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.schemaversion.ToString() );
 
                 //case 28079 - count the number of pending feedback nodes
                 int count = 0;

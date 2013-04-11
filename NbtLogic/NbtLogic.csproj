@@ -116,6 +116,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMobileMultiOpUpdates.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\ChemCatCentral\CswNbtC3ClientManager.cs" />
+    <Compile Include="csw\CswEnumNbtConfigurationVariables.cs" />
     <Compile Include="csw\ImportExport\2D\CswNbt2DBindingCollection.cs" />
     <Compile Include="csw\ImportExport\2D\CswNbt2DRowRelationship.cs" />
     <Compile Include="csw\ImportExport\2D\CswNbt2DDefinitionCollection.cs" />

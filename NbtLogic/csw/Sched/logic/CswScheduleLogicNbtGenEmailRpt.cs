@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Sched
                     CswResources.AuditContext = "Scheduler Task: " + RuleName;
 
                     //Review K4566: limit iteration and always increment https://fogbugz.chemswlive.com/kiln/Review/K4566
-                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
+                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
                     if( MailReportLimit < 1 )
                     {
                         MailReportLimit = 1;

@@ -190,7 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["tradeName"] = TradeName.Text;
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
                             //ButtonData.Data["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
-                            Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.container_receipt_limit.ToString() ) );
+                            Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString() ) );
                             ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
                             CswNbtObjClassContainer Container = Act.makeContainer();
                             Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerNodeId"] = Container.NodeId.ToString();
                             ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
-                            bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
+                            bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
                             ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
 
