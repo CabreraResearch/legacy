@@ -537,7 +537,7 @@ namespace ChemSW.Nbt.WebServices
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
                     dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "text" ),
-                    xtype = extJsXType.treecolumn,
+                    xtype = CswEnumExtJsXType.treecolumn,
                     MenuDisabled = true,
                     width = 269,
                     header = "Tree",
@@ -550,7 +550,7 @@ namespace ChemSW.Nbt.WebServices
                     hidden = true,
                     resizable = false,
                     width = 0,
-                    xtype = extJsXType.gridcolumn,
+                    xtype = CswEnumExtJsXType.gridcolumn,
                     MenuDisabled = false
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
@@ -560,7 +560,7 @@ namespace ChemSW.Nbt.WebServices
                     hidden = true,
                     resizable = false,
                     width = 0,
-                    xtype = extJsXType.gridcolumn,
+                    xtype = CswEnumExtJsXType.gridcolumn,
                     MenuDisabled = false
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
@@ -570,7 +570,7 @@ namespace ChemSW.Nbt.WebServices
                 hidden = true,
                 resizable = false,
                 width = 0,
-                xtype = extJsXType.gridcolumn,
+                xtype = CswEnumExtJsXType.gridcolumn,
                 MenuDisabled = false
             } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
@@ -580,7 +580,7 @@ namespace ChemSW.Nbt.WebServices
                     hidden = true,
                     resizable = false,
                     width = 0,
-                    xtype = extJsXType.booleancolumn,
+                    xtype = CswEnumExtJsXType.booleancolumn,
                     MenuDisabled = false
                 } );
 
@@ -612,7 +612,7 @@ namespace ChemSW.Nbt.WebServices
                                                                                                   hidden = HideProp,
                                                                                                   resizable = false,
                                                                                                   width = ViewProperty.Width * 7,
-                                                                                                  xtype = extJsXType.gridcolumn,
+                                                                                                  xtype = CswEnumExtJsXType.gridcolumn,
                                                                                                   MenuDisabled = false
                                                                                               };
                                                                  CswExtJsGridField Fld = new CswExtJsGridField { name = PropName, type = "string" };

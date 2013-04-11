@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.WebServices
                 HistoryTable.Columns.Remove( "AuditId" );
 
                 CswNbtGrid g = new CswNbtGrid( _CswNbtResources );
-                ret = g.DataTableToJSON( HistoryTable, GroupByCol: "ChangeDate", GroupByColType: extJsXType.datecolumn );
+                ret = g.DataTableToJSON( HistoryTable, GroupByCol: "ChangeDate", GroupByColType: CswEnumExtJsXType.datecolumn );
             }
             return ret;
 

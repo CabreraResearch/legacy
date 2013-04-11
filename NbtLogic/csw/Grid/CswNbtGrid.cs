@@ -132,11 +132,11 @@ namespace ChemSW.Nbt.Grid
                                         break;
                                     case CswNbtMetaDataFieldType.NbtFieldType.Number:
                                         fld.type = "number";
-                                        col.xtype = extJsXType.numbercolumn;
+                                        col.xtype = CswEnumExtJsXType.numbercolumn;
                                         break;
                                     case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                         fld.type = "date";
-                                        col.xtype = extJsXType.datecolumn;
+                                        col.xtype = CswEnumExtJsXType.datecolumn;
 
                                         // case 26782 - Set dateformat as client date format
                                         string dateformat = string.Empty;
@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.Grid
         } // _TreeNodeToGrid()
 
 
-        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", extJsXType GroupByColType = null )
+        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null )
         {
             string gridUniquePrefix = DT.TableName;
 
@@ -341,28 +341,28 @@ namespace ChemSW.Nbt.Grid
                 else if( Column.DataType == typeof( bool ) )
                 {
                     fld.type = "bool";
-                    gridcol.xtype = extJsXType.booleancolumn;
+                    gridcol.xtype = CswEnumExtJsXType.booleancolumn;
                 }
                 else if( Column.DataType == typeof( Int32 ) ||
                     ( GroupByColType != null &&
                       Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
-                      GroupByColType.Equals( extJsXType.numbercolumn ) ) )
+                      GroupByColType.Equals( CswEnumExtJsXType.numbercolumn ) ) )
                 {
                     fld.type = "number";
-                    gridcol.xtype = extJsXType.numbercolumn;
+                    gridcol.xtype = CswEnumExtJsXType.numbercolumn;
                     gridcol.Format = "0";
                 }
                 else if( Column.DataType == typeof( DateTime ) ||
                     ( GroupByColType != null &&
                       Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
-                      GroupByColType.Equals( extJsXType.datecolumn ) ) )
+                      GroupByColType.Equals( CswEnumExtJsXType.datecolumn ) ) )
                 {
                     string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
                     string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
                     gridcol.dateformat = CswTools.ConvertNetToPHP( userDateFormat ) + " " + CswTools.ConvertNetToPHP( userTimeFormat );
 
                     fld.type = "date";
-                    gridcol.xtype = extJsXType.datecolumn;
+                    gridcol.xtype = CswEnumExtJsXType.datecolumn;
                     gridcol.Format = "m/d/y H:i:s";
                 }
 
@@ -383,7 +383,7 @@ namespace ChemSW.Nbt.Grid
             return grid;
         } // DataTableToGrid()
 
-        public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "", extJsXType GroupByColType = null )
+        public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null )
         {
             CswExtJsGrid grid = DataTableToGrid( DT, Editable, GroupByCol, GroupByColType );
             return grid.ToJson();
