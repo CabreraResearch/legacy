@@ -50,9 +50,9 @@ namespace ChemSW.Nbt.Schema
             for( int idx = 0; idx < DataTableFromInsert.Rows.Count; idx++ )
             {
                 DataRow CurrentRow = DataTableFromInsert.Rows[idx];
-                if( AuditEventType.Insert != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+                if( CswEnumAuditEventType.Insert != (CswEnumAuditEventType) Enum.Parse( typeof( CswEnumAuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
                 {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Insert.ToString() ) );
+                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + CswEnumAuditEventType.Insert.ToString() ) );
                 }
 
                 if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_025.PksOfAuditedRecords[idx] )
@@ -81,9 +81,9 @@ namespace ChemSW.Nbt.Schema
             {
                 DataRow CurrentRow = DataTableFromUpdate.Rows[idx];
 
-                if( AuditEventType.Update != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+                if( CswEnumAuditEventType.Update != (CswEnumAuditEventType) Enum.Parse( typeof( CswEnumAuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
                 {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Update.ToString() ) );
+                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + CswEnumAuditEventType.Update.ToString() ) );
                 }
 
 
@@ -111,9 +111,9 @@ namespace ChemSW.Nbt.Schema
             {
                 DataRow CurrentRow = DataTableFromDelete.Rows[idx];
 
-                if( AuditEventType.PhysicalDelete != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+                if( CswEnumAuditEventType.PhysicalDelete != (CswEnumAuditEventType) Enum.Parse( typeof( CswEnumAuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
                 {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.PhysicalDelete.ToString() ) );
+                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + CswEnumAuditEventType.PhysicalDelete.ToString() ) );
                 }
 
                 if( Convert.ToInt32( CurrentRow[TargetTablePkColName] ) != _CswTstCaseRsrc_025.PksOfAuditedRecords[idx] )

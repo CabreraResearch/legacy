@@ -46,9 +46,9 @@ namespace ChemSW.Nbt.Schema
 
             foreach( DataRow CurrentRow in DataTableFromUpdate.Rows )
             {
-                if( AuditEventType.Update != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+                if( CswEnumAuditEventType.Update != (CswEnumAuditEventType) Enum.Parse( typeof( CswEnumAuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
                 {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Insert.ToString() ) );
+                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + CswEnumAuditEventType.Insert.ToString() ) );
                 }
             }
 
@@ -67,9 +67,9 @@ namespace ChemSW.Nbt.Schema
 
             foreach( DataRow CurrentRow in DataTableFromInsert.Rows )
             {
-                if( AuditEventType.Insert != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+                if( CswEnumAuditEventType.Insert != (CswEnumAuditEventType) Enum.Parse( typeof( CswEnumAuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
                 {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Insert.ToString() ) );
+                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + CswEnumAuditEventType.Insert.ToString() ) );
                 }
             }
 
