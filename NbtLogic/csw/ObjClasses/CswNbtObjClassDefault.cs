@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( ModifiedProps.Count > 0 )
             {
-                _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Edit, _CswNbtNode, ModifiedProps );
+                _CswNbtResources.runMailReportEvents( this.NodeType, CswEnumNbtMailReportEventOption.Edit, _CswNbtNode, ModifiedProps );
             }
         }//afterWriteNode()
 
@@ -303,7 +303,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
-            //_CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Delete, _CswNbtNode );
+            //_CswNbtResources.runMailReportEvents( this.NodeType, CswEnumNbtMailReportEventOption.Delete, _CswNbtNode );
         }
 
 

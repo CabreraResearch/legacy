@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Sched
                                     {
                                         // for notifications, make sure at least one node has changed
                                         if( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView ||
-                                            CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() ||
+                                            CurrentMailReport.Event.Value != CswEnumNbtMailReportEventOption.Edit.ToString() ||
                                             false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) )
                                         {
                                             if( false == CurrentMailReport.Type.Empty )

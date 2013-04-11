@@ -695,7 +695,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Store a nodeid on a mail report for emails later, based on node events
         /// </summary>
-        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
+        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswEnumNbtMailReportEventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
         {
             // Find any matching mail reports
             CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
