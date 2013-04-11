@@ -376,8 +376,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             DateTime StartDate = new DateTime();
-            int maxLines = 100;
+            int maxLines = 35000;
             int counter = 0;
+
+            int SeriesNo = 30;
 
             Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
 
@@ -386,7 +388,6 @@ namespace ChemSW.Nbt.WebServices
             string line;
             while( ( line = file.ReadLine() ) != null && counter <= maxLines )
             {
-                counter++;
                 line = line.Replace( "\"", "" );
                 string[] splitLine = line.Split( ',' );
                 if( splitLine.Length >= 28 )
@@ -397,43 +398,83 @@ namespace ChemSW.Nbt.WebServices
                     double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
                     string LegendName = Schema + " " + OpName;
 
+                    //( Schema == "nbt_master" || Schema == "cisdemo" ) &&
+                    //if( OpName == "BatchOp" )
+                    //{
                     if( 0 == counter )
                     {
                         StartDate = CswConvert.ToDateTime( StartTime );
                     }
+                    counter++;
 
-                    DateTime thisStartDate = CswConvert.ToDateTime( StartDate );
-                    double DataStartMS = ( thisStartDate - StartDate ).TotalMilliseconds;
-                    double DataEndMS = DataStartMS + ExecutionTime;
+                    DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
+                    double DataStartMS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
+                    double DataEndMS = DataStartMS + ExecutionTime / 1000;
 
-                    DataPoint point = new DataPoint()
+                    DateTime MIN = CswConvert.ToDateTime( "2/9/2013  3:23:04 AM" );
+                    DateTime MAX = CswConvert.ToDateTime( "2/9/2013  3:23:10 AM" );
+
+                    //if( thisStartDate >= MIN && thisStartDate <= MAX )
+                    //{
+
+                    if( TimeLineData.ContainsKey( LegendName ) )
+                    {
+                        DataPoint point = new DataPoint()
                         {
                             Start = DataStartMS,
-                            End = DataEndMS,
+                            End = TimeLineData[LegendName].SeriesNo,
                             ExecutionTime = ExecutionTime,
                             StartDate = StartTime
                         };
-                    DataPoint nullPt = new DataPoint()
+                        DataPoint point2 = new DataPoint()
+                        {
+                            Start = DataEndMS,
+                            End = TimeLineData[LegendName].SeriesNo,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime
+                        };
+                        DataPoint nullPt = new DataPoint()
                         {
                             IsNull = true
                         };
 
-                    if( TimeLineData.ContainsKey( LegendName ) )
-                    {
                         TimeLineData[LegendName].DataPoints.Add( point );
+                        TimeLineData[LegendName].DataPoints.Add( point2 );
                         TimeLineData[LegendName].DataPoints.Add( nullPt );
                     }
                     else
                     {
+                        DataPoint point = new DataPoint()
+                        {
+                            Start = DataStartMS,
+                            End = SeriesNo,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime
+                        };
+                        DataPoint point2 = new DataPoint()
+                        {
+                            Start = DataEndMS,
+                            End = SeriesNo,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime
+                        };
+                        DataPoint nullPt = new DataPoint()
+                        {
+                            IsNull = true
+                        };
                         Series NewSeries = new Series()
                             {
                                 OpName = OpName,
-                                SchemaName = Schema
+                                SchemaName = Schema,
+                                SeriesNo = SeriesNo
                             };
+                        SeriesNo += 30;
                         NewSeries.DataPoints.Add( point );
+                        NewSeries.DataPoints.Add( point2 );
                         NewSeries.DataPoints.Add( nullPt );
                         TimeLineData.Add( LegendName, NewSeries );
                     }
+                    //}
                 }
             }
 

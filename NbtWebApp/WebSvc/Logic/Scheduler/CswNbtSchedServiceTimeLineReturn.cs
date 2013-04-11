@@ -5,8 +5,25 @@ using NbtWebApp.WebSvc.Returns;
 namespace NbtWebApp.WebSvc.Logic.Scheduler
 {
     [DataContract]
+    public class CswNbtSchedServiceTimeLineRequest
+    {
+        [DataMember]
+        public string FilterSchemaTo = string.Empty;
+
+        [DataMember]
+        public string FilterOpTo = string.Empty;
+
+        [DataMember]
+        public string FilterStartTimeTo = string.Empty;
+        
+        [DataMember]
+        public string FilterEndTimeTo = string.Empty;
+    }
+
+    [DataContract]
     public class CswNbtSchedServiceTimeLineReturn: CswWebSvcReturn
     {
+        [DataMember]
         public TimelineData Data;
         public CswNbtSchedServiceTimeLineReturn()
         {
@@ -29,6 +46,8 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
 
         [DataMember]
         public string OpName = string.Empty;
+
+        public int SeriesNo = -1;
 
         [DataMember]
         public Collection<DataPoint> DataPoints = new Collection<DataPoint>();
