@@ -228,7 +228,6 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes[Tree.getNodeIdForCurrentPosition()];
                             NodeAsPropSet.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
                             NodeAsPropSet.Request.RefreshNodeName();
-                            NodeAsPropSet.Request.SyncGestalt();
                             NodeAsPropSet.Name.RecalculateReferenceValue();
                             NodeAsPropSet.postChanges( ForceUpdate: false );
                             Tree.goToParentNode();
