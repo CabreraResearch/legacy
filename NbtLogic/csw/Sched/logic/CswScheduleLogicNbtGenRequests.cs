@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Sched
     {
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.GenRequest ); }
+            get { return ( CswEnumNbtScheduleRuleNames.GenRequest ); }
         }
 
         public bool hasLoad( ICswResources CswResources )

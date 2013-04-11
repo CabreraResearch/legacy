@@ -40,7 +40,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
 
             // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: false );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled: false );
 
         }
 
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "cispro" );
             _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", NbtViewVisibility.Global );
             // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: true );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled: true );
 
         } // OnDisable()
 

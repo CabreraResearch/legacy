@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.Reconciliation.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.Reconciliation.ToString() ); }
         }
 
         #endregion Properties

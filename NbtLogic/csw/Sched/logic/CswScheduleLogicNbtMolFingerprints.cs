@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.MolFingerprints.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.MolFingerprints.ToString() ); }
         }
 
         public bool hasLoad( ICswResources CswResources )

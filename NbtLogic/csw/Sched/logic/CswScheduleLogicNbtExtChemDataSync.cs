@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.ExtChemDataSync ); }
+            get { return ( CswEnumNbtScheduleRuleNames.ExtChemDataSync ); }
         }
 
         #endregion Properties

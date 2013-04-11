@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate TableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "extChemDataSyncSchedRule_29245", "scheduledrules" );
             DataTable ScheduledRules = TableUpdate.getTable();
             DataRow ExtChemDataSyncRow = ScheduledRules.NewRow();
-            ExtChemDataSyncRow["rulename"] = NbtScheduleRuleNames.ExtChemDataSync;
+            ExtChemDataSyncRow["rulename"] = CswEnumNbtScheduleRuleNames.ExtChemDataSync;
             ExtChemDataSyncRow["recurrence"] = "NSeconds";
             ExtChemDataSyncRow["interval"] = "60";
             ExtChemDataSyncRow["disabled"] = CswConvert.ToDbVal( false );

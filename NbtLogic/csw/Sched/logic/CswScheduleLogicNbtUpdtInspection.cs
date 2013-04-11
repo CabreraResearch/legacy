@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.UpdtInspection ); }
+            get { return ( CswEnumNbtScheduleRuleNames.UpdtInspection ); }
         }
 
         public bool hasLoad( ICswResources CswResources )

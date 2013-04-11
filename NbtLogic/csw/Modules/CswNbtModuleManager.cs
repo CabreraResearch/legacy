@@ -355,7 +355,7 @@ namespace ChemSW.Nbt
             actionTU.update( actionsDT );
         }
 
-        public void ToggleScheduledRule( NbtScheduleRuleNames RuleName, bool Disabled )
+        public void ToggleScheduledRule( CswEnumNbtScheduleRuleNames RuleName, bool Disabled )
         {
             CswTableUpdate RuleUpdate = _CswNbtResources.makeCswTableUpdate( "toggleScheduledRule", "scheduledrules" );
             DataTable RuleDt = RuleUpdate.getTable( "where lower(rulename) = '" + RuleName.ToString().ToLower() + "'" );

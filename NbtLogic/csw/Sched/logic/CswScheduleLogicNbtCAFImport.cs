@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.CAFImport.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.CAFImport.ToString() ); }
         }
 
 

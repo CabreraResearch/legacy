@@ -874,7 +874,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Scheduled Rule
         /// </summary>
-        public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, CswEnumRecurrence Recurrence, Int32 Interval )
+        public Int32 createScheduledRule( CswEnumNbtScheduleRuleNames RuleName, CswEnumRecurrence Recurrence, Int32 Interval )
         {
             Int32 RetRuleId = Int32.MinValue;
             if( null != Recurrence &&

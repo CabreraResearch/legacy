@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.BatchOp.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.BatchOp.ToString() ); }
         }
 
         public bool hasLoad( ICswResources CswResources )

@@ -6,23 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Search
 {
-
-    public sealed class CswNbtSearchFilterType : CswEnum<CswNbtSearchFilterType>
-    {
-        private CswNbtSearchFilterType( string Name ) : base( Name ) { }
-        public static IEnumerable<CswNbtSearchFilterType> _All { get { return CswEnum<CswNbtSearchFilterType>.All; } }
-        public static explicit operator CswNbtSearchFilterType( string str )
-        {
-            CswNbtSearchFilterType ret = Parse( str );
-            return ( ret != null ) ? ret : CswNbtSearchFilterType.Unknown;
-        }
-        public static readonly CswNbtSearchFilterType Unknown = new CswNbtSearchFilterType( "Unknown" );
-
-        public static readonly CswNbtSearchFilterType nodetype = new CswNbtSearchFilterType( "nodetype" );
-        public static readonly CswNbtSearchFilterType objectclass = new CswNbtSearchFilterType( "objectclass" );
-        public static readonly CswNbtSearchFilterType propval = new CswNbtSearchFilterType( "propval" );
-    }
-    
     [DataContract]
     public class CswNbtSearchFilter : IEquatable<CswNbtSearchFilter>
     {
@@ -32,7 +15,7 @@ namespace ChemSW.Nbt.Search
         {
             FromJObject( FilterObj );
         }
-        public CswNbtSearchFilter( string inFilterName, CswNbtSearchFilterType inType, string inFilterId, string inFilterValue, Int32 inCount, string inIcon, bool inRemoveable, CswNbtSearchPropOrder.PropOrderSourceType inSource )
+        public CswNbtSearchFilter( string inFilterName, CswEnumNbtSearchFilterType inType, string inFilterId, string inFilterValue, Int32 inCount, string inIcon, bool inRemoveable, CswNbtSearchPropOrder.PropOrderSourceType inSource )
         {
             FilterName = inFilterName;
             Type = inType;
@@ -47,7 +30,7 @@ namespace ChemSW.Nbt.Search
         [DataMember]
         public string FilterName;
         [DataMember]
-        public CswNbtSearchFilterType Type;
+        public CswEnumNbtSearchFilterType Type;
         [DataMember]
         public string FilterId;
         [DataMember]
@@ -118,7 +101,7 @@ namespace ChemSW.Nbt.Search
         public JObject FromJObject( JObject FilterObj )
         {
             FilterName = FilterObj["filtername"].ToString();
-            Type = (CswNbtSearchFilterType) FilterObj["filtertype"].ToString();
+            Type = (CswEnumNbtSearchFilterType) FilterObj["filtertype"].ToString();
             FilterId = FilterObj["filterid"].ToString();
             Count = CswConvert.ToInt32( FilterObj["count"] );
             Icon = FilterObj["icon"].ToString();

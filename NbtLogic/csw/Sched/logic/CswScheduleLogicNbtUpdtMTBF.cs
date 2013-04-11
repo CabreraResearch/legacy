@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Sched
 
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.UpdtMTBF.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.UpdtMTBF.ToString() ); }
         }
 
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
