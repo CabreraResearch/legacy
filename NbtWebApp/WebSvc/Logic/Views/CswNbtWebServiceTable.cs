@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.WebServices
             public string Gestalt;
             public Int32 JctNodePropId;
             public JObject PropData;
-            public CswNbtSearchPropOrder.PropOrderSourceType Source;
+            public CswEnumNbtSearchPropOrderSourceType Source;
 
             public JObject ToJson()
             {

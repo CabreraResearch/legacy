@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Search
         {
             FromJObject( FilterObj );
         }
-        public CswNbtSearchFilter( string inFilterName, CswEnumNbtSearchFilterType inType, string inFilterId, string inFilterValue, Int32 inCount, string inIcon, bool inRemoveable, CswNbtSearchPropOrder.PropOrderSourceType inSource )
+        public CswNbtSearchFilter( string inFilterName, CswEnumNbtSearchFilterType inType, string inFilterId, string inFilterValue, Int32 inCount, string inIcon, bool inRemoveable, CswEnumNbtSearchPropOrderSourceType inSource )
         {
             FilterName = inFilterName;
             Type = inType;
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Search
         [DataMember]
         public bool Removeable;
         [DataMember]
-        public CswNbtSearchPropOrder.PropOrderSourceType Source;
+        public CswEnumNbtSearchPropOrderSourceType Source;
         [DataMember]
         public string FilterValue;
 
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.Search
             Count = CswConvert.ToInt32( FilterObj["count"] );
             Icon = FilterObj["icon"].ToString();
             Removeable = CswConvert.ToBoolean( FilterObj["removeable"] );
-            Source = (CswNbtSearchPropOrder.PropOrderSourceType) FilterObj["source"].ToString();
+            Source = (CswEnumNbtSearchPropOrderSourceType) FilterObj["source"].ToString();
             FilterValue = FilterObj["filtervalue"].ToString();
             FirstVersionId = CswConvert.ToInt32( FilterObj["firstversionid"] );
             FirstPropVersionId = CswConvert.ToInt32( FilterObj["firstpropversionid"] );
